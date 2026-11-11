@@ -1,0 +1,67 @@
+{
+  "schema_version": 1,
+  "kind": "source_reference_not_UE_runtime_configuration",
+  "pivot_orbit": true,
+  "orbit_mouse_gain_degrees_per_reference_pixel": {
+    "source_yaw": -0.32,
+    "elevation": 0.28
+  },
+  "elevation_limits_degrees": [
+    12,
+    84
+  ],
+  "keyboard_yaw_degrees_per_second": 75,
+  "wheel_distance_multipliers": {
+    "in": 0.88,
+    "out": 1.13
+  },
+  "camera_fov": {
+    "value": 52,
+    "axis": "vertical",
+    "at_16_9_horizontal_equivalent_degrees": 81.8558147117492
+  },
+  "source_initial": {
+    "yaw_degrees": -32,
+    "elevation_degrees": 38,
+    "distance_reference_units": 290
+  },
+  "source_distance_limits_reference_units": [
+    35,
+    680
+  ],
+  "source_min_distance_hull_half_extents_length_multiplier": 1.45,
+  "source_pan": {
+    "speed_reference_units_per_second": 180,
+    "zoom_scale_reference_distance": 240,
+    "zoom_scale_limits": [
+      0.45,
+      2.5
+    ],
+    "normalize_diagonals": true
+  },
+  "source_follow": {
+    "lerp_alpha": "min(1,real_delta_seconds*10)",
+    "cancel_on_WASD_or_arrow_pan": true
+  },
+  "source_selection": {
+    "click_drag_threshold_pixels": 6
+  },
+  "source_move": {
+    "commit": "right_button_release",
+    "altitude_threshold_pixels": 8,
+    "enemy_target_click_threshold_pixels": 25,
+    "altitude_reference_units_per_pixel": 0.55,
+    "altitude_reference_units_limits": [
+      -180,
+      180
+    ]
+  },
+  "UE_integration_pending": [
+    "UE source not available",
+    "calibrate scene scale instead of copying reference distances blindly",
+    "Godot vertical FOV to UE projection conversion",
+    "resolve R camera height versus repair action",
+    "explicit pointer capture release and UI priority",
+    "real mouse keyboard acceptance"
+  ]
+}
