@@ -8,8 +8,6 @@
 - 최소 C++ 테스트 프로젝트 `C:\Users\user\UE584BuildSmokeTest`의 Win64 Development Editor 빌드 성공.
 - 사용된 도구: MSVC 14.51.36260(설치 폴더 14.51.36231), Windows SDK 10.0.26100.0.
 - 이 클라우드 작업 공간에는 언리얼이 없으며 위 로컬 검증을 직접 실행한 것은 아니다. 현재 저장소에는 기획 문서만 있다.
-- **1단계 로컬 구현 보고(2026-11-11):** `codex/phase1-playground`에 3D 조작 시험장 구현이 있고 아직 미커밋·미푸시다. 제공된 `PLAYGROUND_GUIDE.md`·`PLAYGROUND_VALIDATION.md`에 따르면 Editor 빌드, 자동 테스트 3/3, PIE API 검사 20/20을 통과했다. 직접 입력은 미검증이며 한국어 환경의 엔진 시작 자체 검사 15건 오류는 별도로 남아 있다. 클라우드에는 소스가 없어 직접 검증하지 않았다.
-- 첫 구현 기준은 `77e21f6`으로 최신 수정 문서 `ce073e4`보다 이전이다. 다음 단계에서는 기존 작업을 보존한 뒤 최신 입력·규칙을 동기화한다. 구체적인 범위와 검증 기준은 [2단계 제작 계획](PHASE2_PLAN.md)을 따른다.
 
 ## 저장소와 프로젝트
 
@@ -50,3 +48,11 @@
 ## 로컬 챗 작업 결과 기록
 
 완료한 기능, 조작법, 빌드 명령, 실제 검증 결과, 남은 제약을 짧은 문서로 저장한다. 기획 변경이나 임시 규칙이 필요했다면 확정 규칙과 구분해 기록한다. 이후 챗은 실제 파일과 검증 결과를 읽고 이어간다.
+
+
+## 관련 기준 문서 (GitHub `docs` 세트)
+
+본 게임(UE5) 착수 전까지 확정된 전체 기획 및 프로토타입 검증 산출물은 다음 10개 문서로 구성된다.
+- **게임 기획 및 결정:** `GDD.md`, `DECISIONS.md`
+- **시스템별 상세 설계:** `FLEET_COMBAT.md`, `SHIP_SYSTEMS.md`, `HERO_SYSTEMS.md`, `BOARDING_COMBAT.md`, `UI_SYSTEMS.md`
+- **프로토타입 검증 및 AI 구현 방지 가이드:** `PROTOTYPE_IMPROVEMENT_PLAN.md`, `DEVELOPMENT_PITFALLS.md`, `IMPLEMENTATION_PLAN.md`
