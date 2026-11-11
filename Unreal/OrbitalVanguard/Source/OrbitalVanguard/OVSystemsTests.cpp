@@ -88,4 +88,86 @@ bool FOVExplosionTest::RunTest(const FString&)
  const auto Control=OVTest::Find(S,EOVFacilityType::WeaponControl)[0];S->DebugSetCrew(S->Slots[Control].SlotId,0);S->DebugRepairWeapon(Gun);
  TestFalse(TEXT("Repair gun does not fix control crew"),S->IsWeaponAvailable(Gun));return true;
 }
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(FOVOuterFaceDestructionTest,"OrbitalVanguard.Systems.ThreeDeckDestructionFaces",EAutomationTestFlags::EditorContext|EAutomationTestFlags::EngineFilter)
+bool FOVOuterFaceDestructionTest::RunTest(const FString&)
+{
+    for (int32 Deck = 1; Deck <= 3; ++Deck)
+    {
+        for (EOVDamageCause Cause : {EOVDamageCause::External, EOVDamageCause::Explosion, EOVDamageCause::Sabotage})
+        {
+            auto* Layout = UShipLayoutDataAsset::MakeTestLayout(GetTransientPackage(), 3);
+            const FName RoomId(*FString::Printf(TEXT("D%d_X4_Y0"), Deck));
+            const int32 Room = Layout->GetSlotIndex(RoomId);
+            // A non-explosive edge room overlaps an end face, a side, and (on outer decks) top/bottom.
+            Layout->Slots[Room].Facility = EOVFacilityType::Engine;
+            Layout->Slots[Room].MaxFacilityHP = 100;
+            Layout->Slots[Room].RequiredCrew = 10;
+            auto* Systems = NewObject<UOVShipSystemsComponent>();
+            Systems->Initialize(Layout);
+            TestNotNull(TEXT("Edge-room fixture validates"), Systems->Layout.Get());
+            if (!Systems->Layout) return false;
+            Systems->DebugDestroySlot(RoomId, Cause);
+            int32 Broken = 0;
+            int32 PreservedLinked = 0;
+            for (int32 Index = 0; Index < Layout->ArmorSections.Num(); ++Index)
+            {
+                const auto& Armor = Layout->ArmorSections[Index];
+                const bool Linked = Armor.InnerSlotIds.Contains(RoomId);
+                const bool MatchingFace = (Deck == 3 && Armor.Face == EOVArmorFace::Top)
+                    || (Deck == 2 && (Armor.Face == EOVArmorFace::Left || Armor.Face == EOVArmorFace::Right))
+                    || (Deck == 1 && Armor.Face == EOVArmorFace::Bottom);
+                const bool ShouldBreak = Linked && MatchingFace && Cause != EOVDamageCause::Sabotage;
+                TestEqual(FString::Printf(TEXT("Deck %d cause %d section %s"), Deck, int32(Cause), *Armor.ArmorId.ToString()),
+                    Systems->ArmorSections[Index].HP, ShouldBreak ? 0.f : Armor.MaxArmor);
+                if (ShouldBreak) ++Broken;
+                if (Linked && !ShouldBreak) ++PreservedLinked;
+            }
+            if (Cause != EOVDamageCause::Sabotage) TestTrue(TEXT("The deck's appropriate armor face is destroyed"), Broken > 0);
+            TestTrue(TEXT("Unrelated linked faces survive room destruction"), PreservedLinked > 0);
+        }
+    }
+    return true;
+}
+
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(FOVShieldCapacityTransitionTest,"OrbitalVanguard.Systems.PartialShieldCapacityTransition",EAutomationTestFlags::EditorContext|EAutomationTestFlags::EngineFilter)
+bool FOVShieldCapacityTransitionTest::RunTest(const FString&)
+{
+    auto* Systems = OVTest::Make();
+    Systems->Tuning.NoHitRecoveryInterval = 100;
+    const auto Controls = OVTest::Find(Systems, EOVFacilityType::ShieldControl);
+    TestEqual(TEXT("Three control-room fixture"), Controls.Num(), 3);
+    Systems->DebugSetOccupation(Systems->Slots[Controls[2]].SlotId, 1);
+    TestEqual(TEXT("Two controllers provide 450 capacity"), Systems->MaxShield, 450.f);
+    OVTest::Hit(Systems, FVector(0, 0, 30), Systems->Shield);
+    TestTrue(TEXT("Initial break remains inactive at zero charge"), !Systems->bShieldActive && Systems->Shield == 0);
+    Systems->Simulate(Systems->Tuning.ShieldRecoveryDelay + 180.f / Systems->ShieldRegen);
+    TestTrue(TEXT("180/450 recovery remains below reactivation threshold"), !Systems->bShieldActive && FMath::IsNearlyEqual(Systems->Shield, 180.f, .001f));
+    Systems->DebugSetOccupation(Systems->Slots[Controls[1]].SlotId, 1);
+    TestTrue(TEXT("Capacity loss immediately activates existing 180/300 charge"), Systems->bShieldActive && Systems->MaxShield == 300.f);
+    const float Before = Systems->Shield;
+    Systems->Simulate(2);
+    TestEqual(TEXT("Capacity transition does not grant active combat regeneration"), Systems->Shield, Before);
+    Systems->DebugSetOccupation(Systems->Slots[Controls[1]].SlotId, -1);
+    TestTrue(TEXT("Capacity restoration neither refills nor deactivates an active shield"), Systems->bShieldActive && Systems->Shield == Before && Systems->MaxShield == 450.f);
+    Systems->Simulate(0);
+    TestEqual(TEXT("Paused transition does not create charge"), Systems->Shield, Before);
+    return true;
+}
+
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(FOVInvalidRuntimeLayoutTest,"OrbitalVanguard.Systems.RejectInvalidRuntimeLayout",EAutomationTestFlags::EditorContext|EAutomationTestFlags::EngineFilter)
+bool FOVInvalidRuntimeLayoutTest::RunTest(const FString&)
+{
+    auto* Systems = OVTest::Make();
+    auto* Invalid = UShipLayoutDataAsset::MakeTestLayout(GetTransientPackage(), 3);
+    Invalid->ArmorSections.Pop();
+    AddExpectedMessagePlain(TEXT("OVLayout rejected:"), ELogVerbosity::Warning);
+    Systems->Initialize(Invalid);
+    TestNull(TEXT("Invalid layout cannot become active runtime data"), Systems->Layout.Get());
+    TestTrue(TEXT("Previous runtime arrays are discarded on rejected initialization"), Systems->Slots.IsEmpty() && Systems->ArmorSections.IsEmpty() && Systems->WeaponMountStates.IsEmpty());
+    TestTrue(TEXT("Invalid design has no usable actions or shields"), !Systems->CanMove() && !Systems->CanCommand() && !Systems->bShieldActive && Systems->MaxShield == 0);
+    Systems->Simulate(10);
+    Systems->ApplyWorldHit(FVector(175, 0, 0), FVector::ForwardVector, 100, EOVDamageCause::External);
+    TestEqual(TEXT("Invalid-design simulation and hits remain inert"), Systems->HitEventId, 0);
+    return true;
+}
 #endif

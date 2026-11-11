@@ -46,6 +46,7 @@ public:
  UFUNCTION(BlueprintCallable, Category="Control Range")
  void SelectShip(AOVShip* Ship);
  UFUNCTION(BlueprintCallable, Category="Control Range") void ClearSelection();
+ UFUNCTION(BlueprintCallable, Category="Control Range") void SelectAdditional(AOVShip* Ship);
  UFUNCTION(BlueprintCallable, Category="Control Range") void SetTarget(AOVShip* Ship);
  UFUNCTION(BlueprintCallable, Category="Control Range") void SampleOrderCursor(FVector RayOrigin,FVector RayDirection,float MouseY,bool Altitude,bool Blocked);
  UFUNCTION(BlueprintCallable, Category="Control Range") void IssueHeading(FVector WorldPoint);
@@ -60,7 +61,6 @@ public:
  FOVOrderInput OrderInput;
 private:
  bool ActionPressed(FName Name) const;
- void SelectAdditional(AOVShip* Ship);
  void ResolveContacts(float SimDelta);
  TMap<int32,TArray<TWeakObjectPtr<AOVShip>>> Groups;
  bool bRightGesture=false;

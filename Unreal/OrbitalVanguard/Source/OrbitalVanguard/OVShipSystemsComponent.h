@@ -61,14 +61,14 @@ struct ORBITALVANGUARD_API FOVWeaponMountState
 };
 
 /** Per-vessel runtime state. Only the controller's supplied simulation time advances it. */
-UCLASS(ClassGroup=(OrbitalVanguard), meta=(BlueprintSpawnableComponent))
+UCLASS(Config=Game, DefaultConfig, ClassGroup=(OrbitalVanguard), meta=(BlueprintSpawnableComponent))
 class ORBITALVANGUARD_API UOVShipSystemsComponent : public UActorComponent
 {
     GENERATED_BODY()
 public:
     UOVShipSystemsComponent();
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Systems") TObjectPtr<UShipLayoutDataAsset> Layout;
-    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Systems") FOVDamageTuning Tuning;
+    UPROPERTY(Config, EditAnywhere, BlueprintReadWrite, Category="Systems") FOVDamageTuning Tuning;
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Systems") TArray<FOVFacilityState> Slots;
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Systems") TArray<FOVArmorSectionState> ArmorSections;
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Systems") TArray<FOVWeaponMountState> WeaponMountStates;

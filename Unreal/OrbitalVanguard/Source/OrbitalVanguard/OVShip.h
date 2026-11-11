@@ -45,7 +45,7 @@ public:
     float ArrivalRadius = 5.0f;
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Orders")
     bool bHold = true;
-    UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Orders")
+    UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Orders", meta=(ScriptName="has_manual_attitude"))
     bool bManualAttitude = false;
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Orders")
     FRotator ManualAttitude = FRotator::ZeroRotator;
@@ -60,6 +60,9 @@ public:
     UFUNCTION(BlueprintCallable, Category="Orders") void StopMovement();
     /** Sets a bounded-turn posture independently of destination and attack target. */
     UFUNCTION(BlueprintCallable, Category="Orders") void SetManualAttitude(const FRotator& Rotation);
+    /** Explicit test controls; no FTL travel or production repair behavior. */
+    UFUNCTION(BlueprintCallable, Category="Debug") void DebugResetMotion();
+    UFUNCTION(BlueprintCallable, Category="Debug") void DebugSetFTLCharging(bool bCharging);
     void Simulate(float SimDelta);
     void Configure(const FString& Name, bool Friendly, float Speed, float RotationRate,
         const FVector& Scale, const FLinearColor& Color);

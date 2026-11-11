@@ -21,6 +21,15 @@ UOVShipSystemsComponent::UOVShipSystemsComponent()
 void UOVShipSystemsComponent::Initialize(UShipLayoutDataAsset* InLayout)
 {
     Layout = InLayout;
+    if (Layout)
+    {
+        TArray<FString> Errors;
+        if (!Layout->ValidateLayout(Errors))
+        {
+            UE_LOG(LogTemp, Warning, TEXT("OVLayout rejected: %s"), *FString::Join(Errors, TEXT("; ")));
+            Layout = nullptr;
+        }
+    }
     ResetState();
 }
 
@@ -134,6 +143,11 @@ void UOVShipSystemsComponent::RefreshDerivedState()
     ShieldRegen = MaxShield * FMath::Max(0.f, Tuning.ShieldRegenFraction);
     Shield = FMath::Clamp(Shield, 0.f, MaxShield);
     if (MaxShield <= 0 || bWrecked || bShieldManualOff || Shield <= 0) bShieldActive = false;
+    else if (!bShieldActive && Shield >= MaxShield * 0.5f)
+    {
+        // Capacity loss can move existing charge past 50%; transition before any recovery time is applied.
+        bShieldActive = true;
+    }
     SyncArmorDisplay();
 }
 
@@ -258,8 +272,21 @@ void UOVShipSystemsComponent::DestroyFacility(int32 SlotIndex, EOVDamageCause Ca
     FOVFacilityState& State = Slots[SlotIndex];
     State.HP = 0;
     if (Cause != EOVDamageCause::Sabotage)
+    {
+        const int32 Deck = Layout->Slots[SlotIndex].DeckId;
         for (int32 Armor = 0; Armor < ArmorSections.Num(); ++Armor)
-            if (!FrontOrRear(Layout->ArmorSections[Armor].Face) && Layout->ArmorSections[Armor].InnerSlotIds.Contains(State.SlotId)) ArmorSections[Armor].HP = 0;
+        {
+            const FOVArmorDefinition& Definition = Layout->ArmorSections[Armor];
+            if (FrontOrRear(Definition.Face) || !Definition.InnerSlotIds.Contains(State.SlotId)) continue;
+            // Three-deck destruction links only its authored outer face. The one/two-deck
+            // test fixtures retain their provisional non-end-face overlap mapping.
+            const bool bBreakFace = Layout->DeckCount != 3
+                || (Deck == 3 && Definition.Face == EOVArmorFace::Top)
+                || (Deck == 2 && (Definition.Face == EOVArmorFace::Left || Definition.Face == EOVArmorFace::Right))
+                || (Deck == 1 && Definition.Face == EOVArmorFace::Bottom);
+            if (bBreakFace) ArmorSections[Armor].HP = 0;
+        }
+    }
     if (Layout->Slots[SlotIndex].Facility == EOVFacilityType::Core) MarkWrecked();
     if (ExplosionDamage(SlotIndex) > 0) ExplosionQueue.AddUnique(SlotIndex);
 }

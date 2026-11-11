@@ -19,28 +19,32 @@ void AOVHUD::Button(FName N,const FString& L,float X,float Y,float W,bool Active
 }
 bool AOVHUD::IsOverPanel(float X,float Y) const
 {
- const auto* PC=Cast<AOVController>(PlayerOwner); if(!Canvas||!PC) return false;
+ const auto* PC=Cast<AOVController>(PlayerOwner); if(!PC) return false;
  const FVector2D P(X/UIScale,Y/UIScale);
  if(bDragging||bResizing) return true;
- if(P.Y<55 || (PC->Selected&&P.Y>Canvas->SizeY/UIScale-88) || (P.X<200&&P.Y<210)) return true;
+ if(P.Y<55 || (PC->Selected&&P.Y>ViewportPixels.Y/UIScale-88) || (P.X<200&&P.Y<210)) return true;
  return PC->Selected&&bDetailsOpen&&P.X>=WindowPosition.X&&P.X<=WindowPosition.X+WindowSize.X&&P.Y>=WindowPosition.Y&&P.Y<=WindowPosition.Y+(bMinimized?32:WindowSize.Y);
 }
 bool AOVHUD::HandlePointer(float X,float Y,bool Pressed,bool Down,float Wheel,bool Orbit,float DX,float DY)
 {
- const bool Over=IsOverPanel(X,Y); const auto* PC=Cast<AOVController>(PlayerOwner);
+ const auto* PC=Cast<AOVController>(PlayerOwner);
+ if(PC) { int32 Width=0,Height=0; PC->GetViewportSize(Width,Height); if(Width>0&&Height>0) ViewportPixels=FVector2D(Width,Height); }
+ UIScale=FMath::Max(.25f,FMath::Min(1.f,FMath::Min(ViewportPixels.X/1280.f,ViewportPixels.Y/740.f)));
+ // AHUD::Canvas is cleared by the viewport after rendering. Input runs outside DrawHUD.
+ const bool Over=IsOverPanel(X,Y);
  if(!PC||!PC->Selected||!bDetailsOpen) { bDragging=false;bResizing=false;return Over; }
  const FVector2D P(X/UIScale,Y/UIScale);
  if(Pressed&&Over) {
   if(P.X>=WindowPosition.X&&P.X<WindowPosition.X+WindowSize.X-90&&P.Y>=WindowPosition.Y&&P.Y<WindowPosition.Y+30) { bDragging=true;DragOffset=P-WindowPosition; }
-  if(!bMinimized&&P.X>WindowPosition.X+WindowSize.X-18&&P.Y>WindowPosition.Y+WindowSize.Y-18) bResizing=true;
+  if(!bMinimized&&P.X>WindowPosition.X+WindowSize.X-18&&P.X<=WindowPosition.X+WindowSize.X&&P.Y>WindowPosition.Y+WindowSize.Y-18&&P.Y<=WindowPosition.Y+WindowSize.Y) bResizing=true;
  }
  if(!Down) { bDragging=false;bResizing=false; }
- if(Canvas&&bDragging) {
+ if(bDragging) {
   WindowPosition=P-DragOffset;
-  WindowPosition.X=FMath::Clamp(WindowPosition.X,0.0,FMath::Max(0.0,Canvas->SizeX/UIScale-WindowSize.X));
-  WindowPosition.Y=FMath::Clamp(WindowPosition.Y,56.0,FMath::Max(56.0,Canvas->SizeY/UIScale-WindowSize.Y-90));
+  WindowPosition.X=FMath::Clamp(WindowPosition.X,0.0,FMath::Max(0.0,ViewportPixels.X/UIScale-WindowSize.X));
+  WindowPosition.Y=FMath::Clamp(WindowPosition.Y,56.0,FMath::Max(56.0,ViewportPixels.Y/UIScale-WindowSize.Y-90));
  }
- if(Canvas&&bResizing) { WindowSize.X=FMath::Clamp(P.X-WindowPosition.X,400.0,700.0);WindowSize.Y=FMath::Clamp(P.Y-WindowPosition.Y,550.0,750.0); }
+ if(bResizing) { WindowSize.X=FMath::Clamp(P.X-WindowPosition.X,400.0,700.0);WindowSize.Y=FMath::Clamp(P.Y-WindowPosition.Y,550.0,750.0); }
  if(Over&&!bMinimized&&P.X>WindowPosition.X&&P.Y>WindowPosition.Y+65&&P.Y<WindowPosition.Y+275) {
   if(Orbit) { PreviewRotation.Yaw+=DX;PreviewRotation.Pitch=FMath::Clamp(PreviewRotation.Pitch-DY,-85.,85.); }
   if(Wheel) PreviewZoom=FMath::Clamp(PreviewZoom+Wheel*.1f,.5f,1.6f);
@@ -59,8 +63,19 @@ void AOVHUD::DrawExternal(float X,float Y,float W)
  const auto* PC=Cast<AOVController>(PlayerOwner);const auto* S=PC->Selected->Systems.Get();const auto* L=S->Layout.Get();
  DrawRect(FLinearColor(.005f,.012f,.025f),X,Y,W,192);
  // Read-only 3D geometry projection: no actors, simulation ticks or damage state.
- const FQuat R=PreviewRotation.Quaternion();const float Scale=W/440.f*PreviewZoom;
- auto Project=[&](FVector P) { P=R.RotateVector(P)*Scale;return FVector2D(X+W*.5f+P.Y,Y+100-P.Z); };
+ const FQuat R=PreviewRotation.Quaternion(); double ExtentY=1,ExtentZ=1;
+ for(int32 I=0;I<8;++I) { const FVector Corner=R.RotateVector(L->LocalHalfExtent*FVector((I&1)?1:-1,(I&2)?1:-1,(I&4)?1:-1)); ExtentY=FMath::Max(ExtentY,FMath::Abs(Corner.Y));ExtentZ=FMath::Max(ExtentZ,FMath::Abs(Corner.Z)); }
+ const double Scale=.9*FMath::Min((W-24)/(2*ExtentY),150/(2*ExtentZ))*PreviewZoom;
+ auto Project=[&](FVector P) { P=R.RotateVector(P)*Scale;return FVector2D(X+W*.5f+P.Y,Y+85-P.Z); };
+ auto Inside=[&](FVector2D P) { return P.X>=X+10&&P.X<=X+W-10&&P.Y>=Y+10&&P.Y<=Y+162; };
+ auto Line=[&](FVector2D A,FVector2D B,FLinearColor Color) {
+  // Clip projected edges and hit markers to the same preview rectangle.
+  const FVector2D D=B-A; double T0=0,T1=1;
+  auto Clip=[&](double P,double Q) { if(FMath::Abs(P)<UE_SMALL_NUMBER)return Q>=0; const double T=Q/P; if(P<0)T0=FMath::Max(T0,T);else T1=FMath::Min(T1,T);return T0<=T1; };
+  if(Clip(-D.X,A.X-X)&&Clip(D.X,X+W-A.X)&&Clip(-D.Y,A.Y-Y)&&Clip(D.Y,Y+170-A.Y)) {
+   const FVector2D Start=A+D*T0,End=A+D*T1;DrawLine(Start.X,Start.Y,End.X,End.Y,Color,2);
+  }
+ };
  struct FFace { int32 Index;double Depth; };TArray<FFace> Faces;
  for(int32 I=0;I<L->ArmorSections.Num();++I) Faces.Add({I,R.RotateVector(L->ArmorSections[I].LocalCenter).X});
  Faces.Sort([](const FFace& A,const FFace& B){return A.Depth<B.Depth;});
@@ -77,13 +92,15 @@ void AOVHUD::DrawExternal(float X,float Y,float W)
   if(R.RotateVector(Normal).X<=0) continue;
   const FVector2D P[]={Project(D.LocalCenter-U-V),Project(D.LocalCenter+U-V),Project(D.LocalCenter+U+V),Project(D.LocalCenter-U+V)};
   const FLinearColor Color=Face.Index==PC->SelectedArmor?FLinearColor(1,.7f,.1f):Health(S->ArmorSections[Face.Index].HP/D.MaxArmor);
-  for(int32 J=0;J<4;++J) DrawLine(P[J].X,P[J].Y,P[(J+1)%4].X,P[(J+1)%4].Y,Color,2);
+  for(int32 J=0;J<4;++J) Line(P[J],P[(J+1)%4],Color);
   const FVector2D C=Project(D.LocalCenter);
+  if(!Inside(C)) continue;
   AddHitBox((C-FVector2D(10,8))*UIScale,FVector2D(20,16)*UIScale,FName(*FString::Printf(TEXT("Armor_%d"),Face.Index)),true,20);
   DrawRect(Color,C.X-4,C.Y-4,8,8);
  }
  for(int32 I=0;I<L->WeaponMounts.Num();++I) {
   const auto& M=L->WeaponMounts[I];const FVector2D P=Project(M.LocalPosition);
+  if(!Inside(P))continue;
   DrawRect(I==PC->SelectedWeapon?Accent:Health(S->WeaponMountStates[I].HP/M.MaxHP),P.X-6,P.Y-6,12,12);
   AddHitBox((P-FVector2D(7,7))*UIScale,FVector2D(14,14)*UIScale,FName(*FString::Printf(TEXT("Weapon_%d"),I)),true,30);
  }
@@ -131,7 +148,7 @@ void AOVHUD::DrawDetails()
   DrawText(TEXT("DEV ONLY: direct tools, not supply repair"),FLinearColor::Yellow,X+10,Y+384,GEngine->GetSmallFont());
   const FName Names[]={TEXT("TestHit"),TEXT("ArmorZero"),TEXT("RepairArmor"),TEXT("Reset"),TEXT("DestroyExt"),TEXT("Sabotage"),TEXT("RepairSlot"),TEXT("Occupy"),TEXT("CrewDown"),TEXT("CrewUp"),TEXT("WeaponHit"),TEXT("RepairWeapon")};
   const TCHAR* Labels[]={TEXT("HIT 150"),TEXT("ARMOR 0"),TEXT("FIX ARMOR"),TEXT("RESET"),TEXT("DESTROY"),TEXT("SABOTAGE"),TEXT("FIX ROOM"),TEXT("OCCUPY"),TEXT("CREW -2"),TEXT("CREW +2"),TEXT("HIT GUN"),TEXT("FIX GUN")};
-  for(int32 I=0;I<12;++I)Button(Names[I],Labels[I],X+10+(I%4)*(W-20)/4,Y+405+(I/4)*33,(W-32)/4);
+  for(int32 I=0;I<12;++I)Button(Names[I],I==0?FString::Printf(TEXT("HIT %.0f"),PC->TestDamage):FString(Labels[I]),X+10+(I%4)*(W-20)/4,Y+405+(I/4)*33,(W-32)/4);
   DrawText(FString::Printf(TEXT("Event %d: %s -> %s / HP -%.1f"),S->HitEventId,*S->LastArmorSection.ToString(),*S->LastDamageSlot.ToString(),S->LastHullDamage),Accent,X+10,Y+510,GEngine->GetSmallFont());
  }
  DrawLine(X+W-16,Y+WindowSize.Y-2,X+W-2,Y+WindowSize.Y-16,Ink,2);
@@ -139,6 +156,7 @@ void AOVHUD::DrawDetails()
 void AOVHUD::DrawHUD()
 {
  Super::DrawHUD();auto* PC=Cast<AOVController>(PlayerOwner);if(!PC||!Canvas||PC->Ships.Num()<3)return;
+ ViewportPixels=FVector2D(Canvas->SizeX,Canvas->SizeY);
  UIScale=FMath::Max(.25f,FMath::Min(1.f,FMath::Min(Canvas->SizeX/1280.f,Canvas->SizeY/740.f)));
  Canvas->Canvas->PushRelativeTransform(FScaleMatrix(FVector(UIScale,UIScale,1)));
  const float Width=Canvas->SizeX/UIScale,Height=Canvas->SizeY/UIScale;
@@ -154,15 +172,16 @@ void AOVHUD::DrawHUD()
   const FName Names[]={TEXT("Manual"),TEXT("Auto"),TEXT("Move"),TEXT("Stop"),TEXT("Target"),TEXT("ClearTarget"),TEXT("Heading"),TEXT("Port"),TEXT("Starboard"),TEXT("Focus"),TEXT("Details"),TEXT("Cancel"),TEXT("Deselect")};
   const TCHAR* Labels[]={TEXT("MANUAL"),TEXT("AUTO"),TEXT("V MOVE"),TEXT("X STOP"),TEXT("T TARGET"),TEXT("CLEAR"),TEXT("H FACING"),TEXT("PORT"),TEXT("STBD"),TEXT("F FOLLOW"),TEXT("DETAILS"),TEXT("CANCEL"),TEXT("DESELECT")};
   for(int32 I=0;I<13;++I)Button(Names[I],Labels[I],20+I*86,Y+6,80);
-  DrawText(PC->LastAction.Left(130),Accent,20,Y+47,GEngine->GetSmallFont());DrawDetails();
+  DrawText(PC->LastAction.Left(130),Accent,20,Y+47,GEngine->GetSmallFont());
  }
  DrawText(TEXT("WASD pan | MMB/Z/C orbit | Q/E height | Wheel zoom | Backspace cancel"),Ink,210,58,GEngine->GetSmallFont());
  for(AOVShip* Ship:PC->Ships) {
-  FVector2D P;if(PC->ProjectWorldLocationToScreen(Ship->GetActorLocation()+FVector(0,0,220),P)) {
+  FVector2D P;if(PC->ProjectWorldLocationToScreen(Ship->GetActorLocation()+FVector(0,0,220),P)&&!IsOverPanel(P.X,P.Y)) {
    P/=UIScale;DrawText(Ship->ShipName,Ship->Systems->bWrecked?FLinearColor::Gray:Ship->bFriendly?Accent:FLinearColor(1,.3f,.2f),P.X,P.Y,GEngine->GetSmallFont());
    DrawRect(Health(Ship->Systems->HullHP/FMath::Max(1.f,Ship->Systems->MaxHullHP)),P.X,P.Y+16,100*Ship->Systems->HullHP/FMath::Max(1.f,Ship->Systems->MaxHullHP),3);
   }
  }
+ DrawDetails();
  Canvas->Canvas->PopTransform();
 }
 

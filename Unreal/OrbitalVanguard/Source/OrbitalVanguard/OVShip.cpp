@@ -148,7 +148,7 @@ void AOVShip::Configure(const FString& Name, bool Friendly, float Speed, float R
 
 void AOVShip::SetDestination(const FVector& Location)
 {
-    if (!Location.ContainsNaN() && !bFTLCharging && (!Systems || !Systems->Layout || Systems->CanMove()))
+    if (!Location.ContainsNaN() && !bFTLCharging && Systems && Systems->CanMove())
     {
         Destination = Location;
         bHasDestination = true;
@@ -166,7 +166,7 @@ void AOVShip::StopMovement()
 
 void AOVShip::SetManualAttitude(const FRotator& Rotation)
 {
-    if (Rotation.ContainsNaN() || bFTLCharging || (Systems && Systems->Layout && !Systems->CanMove())) return;
+    if (Rotation.ContainsNaN() || bFTLCharging || !Systems || !Systems->CanMove()) return;
     ManualAttitude = Rotation.GetNormalized();
     bManualAttitude = true;
 }
@@ -174,7 +174,7 @@ void AOVShip::SetManualAttitude(const FRotator& Rotation)
 void AOVShip::Simulate(float SimDelta)
 {
     if (!FMath::IsFinite(SimDelta) || SimDelta <= 0.0f) return;
-    if (bFTLCharging || (Systems && Systems->Layout && !Systems->CanMove()))
+    if (bFTLCharging || !Systems || !Systems->CanMove())
     {
         // Gameplay immobilization is separate from an ordinary inertial stop order.
         Velocity = FVector::ZeroVector;
@@ -204,6 +204,18 @@ void AOVShip::Simulate(float SimDelta)
         if (bManualAttitude) OVShipMotion::Turn(Orientation, ManualAttitude.Quaternion(), TurnRate * EngineEfficiency, SimDelta);
     }
     SetActorLocationAndRotation(Position, Orientation, false, nullptr, ETeleportType::TeleportPhysics);
+}
+
+void AOVShip::DebugResetMotion()
+{
+    StopMovement(); Velocity=FVector::ZeroVector; bManualAttitude=false;
+    ManualAttitude=GetActorRotation(); bFTLCharging=false; AttackTarget=nullptr; bManual=true;
+}
+
+void AOVShip::DebugSetFTLCharging(bool bCharging)
+{
+    bFTLCharging=bCharging;
+    if(bCharging) { StopMovement(); Velocity=FVector::ZeroVector; }
 }
 
 #if WITH_DEV_AUTOMATION_TESTS

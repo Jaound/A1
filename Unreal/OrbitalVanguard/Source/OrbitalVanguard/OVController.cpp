@@ -5,6 +5,7 @@
 #include "GameFramework/InputSettings.h"
 #include "Engine/LocalPlayer.h"
 #include "Engine/GameViewportClient.h"
+#include "UnrealClient.h"
 #include "Camera/CameraActor.h"
 #include "Camera/CameraComponent.h"
 #include "DrawDebugHelpers.h"
@@ -61,7 +62,7 @@ void AOVController::SelectAdditional(AOVShip* Ship)
 {
  if(!Ship) return;
  if(!Selected) { SelectShip(Ship); return; }
- if(Selection.Contains(Ship)) { Selection.Remove(Ship); Ship->bSelected=false; Selected=Selection.Num()?Selection[0]:nullptr; }
+ if(Selection.Contains(Ship)) { Selection.Remove(Ship); Ship->bSelected=false; if(Selected==Ship) { Selected=Selection.Num()?Selection[0]:nullptr; ViewedDeck=0; SelectedSlot=0; SelectedArmor=0; SelectedWeapon=0; bPlacing=false; InputMode=EOVInputMode::None; bFollow=false; } }
  else { Selection.Add(Ship); Ship->bSelected=true; }
 }
 void AOVController::SetTarget(AOVShip* Ship)
@@ -75,7 +76,10 @@ void AOVController::SetTarget(AOVShip* Ship)
 bool AOVController::ActionPressed(FName Name) const
 {
  TArray<FInputActionKeyMapping> Mappings; GetDefault<UInputSettings>()->GetActionMappingByName(Name,Mappings);
- for(const auto& Mapping:Mappings) if(WasInputKeyJustPressed(Mapping.Key)) return true;
+ for(const auto& Mapping:Mappings) if(WasInputKeyJustPressed(Mapping.Key)
+  && (!Mapping.bShift || IsInputKeyDown(EKeys::LeftShift)||IsInputKeyDown(EKeys::RightShift))
+  && (!Mapping.bCtrl || IsInputKeyDown(EKeys::LeftControl)||IsInputKeyDown(EKeys::RightControl))
+  && (!Mapping.bAlt || IsInputKeyDown(EKeys::LeftAlt)||IsInputKeyDown(EKeys::RightAlt))) return true;
  return false;
 }
 void AOVController::Action(FName Name)
@@ -124,9 +128,9 @@ void AOVController::Action(FName Name)
    if(Name==TEXT("CrewDown")) S->DebugSetCrew(Slot,S->Slots[SelectedSlot].Crew-2);
    if(Name==TEXT("CrewUp")) S->DebugSetCrew(Slot,S->Slots[SelectedSlot].Crew+2);
    if(Name==TEXT("Occupy")) S->DebugSetOccupation(Slot,S->Slots[SelectedSlot].OccupyingFaction<0?1-S->FactionId:-1);
-   if(Name==TEXT("Reset")) { S->ResetState(); Selected->StopMovement(); }
-   if(Name==TEXT("ArmorZero")) S->DebugSetArmor(S->ArmorSections[SelectedArmor].ArmorSectionId,0);
-   if(Name==TEXT("RepairArmor")) S->DebugSetArmor(S->ArmorSections[SelectedArmor].ArmorSectionId,S->Layout->ArmorSections[SelectedArmor].MaxArmor);
+   if(Name==TEXT("Reset")) { S->ResetState(); Selected->DebugResetMotion(); }
+   if(Name==TEXT("ArmorZero") && S->ArmorSections.IsValidIndex(SelectedArmor)) S->DebugSetArmor(S->ArmorSections[SelectedArmor].ArmorSectionId,0);
+   if(Name==TEXT("RepairArmor") && S->ArmorSections.IsValidIndex(SelectedArmor)) S->DebugSetArmor(S->ArmorSections[SelectedArmor].ArmorSectionId,S->Layout->ArmorSections[SelectedArmor].MaxArmor);
    if(Name==TEXT("WeaponHit") && S->WeaponMountStates.IsValidIndex(SelectedWeapon)) S->DebugHitWeapon(S->WeaponMountStates[SelectedWeapon].WeaponMountId,TestDamage);
    if(Name==TEXT("RepairWeapon") && S->WeaponMountStates.IsValidIndex(SelectedWeapon)) S->DebugRepairWeapon(S->WeaponMountStates[SelectedWeapon].WeaponMountId);
   }
@@ -145,7 +149,8 @@ void AOVController::UpdatePreview()
 {
  FVector Origin,Direction; float X=0,Y=0; GetMousePosition(X,Y);
  const AOVHUD* HUD=Cast<AOVHUD>(GetHUD());
- const bool Blocked=!DeprojectMousePositionToWorld(Origin,Direction) || (HUD && HUD->IsOverPanel(X,Y));
+ const auto* Viewport=GetWorld()->GetGameViewport();
+ const bool Blocked=!Viewport || !Viewport->Viewport || !Viewport->Viewport->HasFocus() || !DeprojectMousePositionToWorld(Origin,Direction) || (HUD && HUD->IsOverPanel(X,Y));
  SampleOrderCursor(Origin,Direction,Y,IsInputKeyDown(EKeys::LeftShift)||IsInputKeyDown(EKeys::RightShift)||IsInputKeyDown(EKeys::RightMouseButton),Blocked);
 }
 void AOVController::SampleOrderCursor(FVector Origin,FVector Direction,float MouseY,bool Altitude,bool Blocked)
@@ -184,7 +189,8 @@ void AOVController::StepSimulation(float DeltaTime)
   const float Dt=FMath::Min(Remaining,1.f/60.f); Remaining-=Dt;
   for(AOVShip* Ship:Ships) {
    Ship->Systems->Simulate(Dt);
-   if(Ship->Systems->bWrecked || Ship->Systems->bNeutral) { Ship->StopMovement(); continue; }
+   if(Ship->Systems->bWrecked || Ship->Systems->bNeutral) { Ship->StopMovement(); Ship->Velocity=FVector::ZeroVector; Ship->AttackTarget=nullptr; continue; }
+   if(Ship->AttackTarget&&Ship->AttackTarget->Systems->bWrecked) Ship->AttackTarget=nullptr;
    if(!Ship->Systems->CanCommand()) { Ship->bManual=false; Ship->StopMovement(); }
    if(Ship->bFriendly) Ship->Simulate(Dt);
   }
@@ -244,11 +250,11 @@ void AOVController::PlayerTick(float DeltaTime)
  CameraFocus+=Pan.GetClampedToMaxSize(1)*CameraDistance*0.45*Dt;
  if(!OverUI&&IsInputKeyDown(EKeys::MiddleMouseButton)) { CameraYaw+=DX*0.3f; CameraPitch=FMath::Clamp(CameraPitch-DY*0.3f,-85.f,-10.f); }
  if(Wheel&&!OverUI) { if(bPlacing) { Preview.Z=FMath::Clamp(Preview.Z+Wheel*250,-1500.0,4000.0); OrderInput.bShowAltitude=true; OrderInput.bReanchor=true; } else CameraDistance=FMath::Clamp(CameraDistance*FMath::Pow(0.86f,Wheel),1200.f,16000.f); }
- if(WasInputKeyJustPressed(EKeys::Z)) CameraYaw-=15;
- if(WasInputKeyJustPressed(EKeys::C)) CameraYaw+=15;
+ if(!OverUI&&WasInputKeyJustPressed(EKeys::Z)) CameraYaw-=15;
+ if(!OverUI&&WasInputKeyJustPressed(EKeys::C)) CameraYaw+=15;
  if(WasInputKeyJustPressed(EKeys::PageUp)&&!OverUI) CameraPitch=FMath::Clamp(CameraPitch-10,-85.f,-10.f);
- if(WasInputKeyJustPressed(EKeys::G)) CameraPitch=FMath::Clamp(CameraPitch+10,-85.f,-10.f);
- if(WasInputKeyJustPressed(EKeys::Home)) { CameraFocus=FVector::ZeroVector; CameraYaw=-45; CameraPitch=-48; CameraDistance=6500; }
+ if(!OverUI&&WasInputKeyJustPressed(EKeys::G)) CameraPitch=FMath::Clamp(CameraPitch+10,-85.f,-10.f);
+ if(!OverUI&&WasInputKeyJustPressed(EKeys::Home)) { CameraFocus=FVector::ZeroVector; CameraYaw=-45; CameraPitch=-48; CameraDistance=6500; }
  if(WasInputKeyJustPressed(EKeys::F9)) UE_LOG(LogTemp,Display,TEXT("OV VERIFY: camera=%s yaw=%.1f pitch=%.1f distance=%.1f ship=%s pos=%s manual=%d moving=%d paused=%d speed=%.0f sim=%.3f"),*CameraFocus.ToString(),CameraYaw,CameraPitch,CameraDistance,Selected?*Selected->ShipName:TEXT("none"),Selected?*Selected->GetActorLocation().ToString():TEXT("none"),Selected?Selected->bManual:0,Selected?Selected->bHasDestination:0,bSimulationPaused,SimulationSpeed,SimulationSeconds);
  if(ActionPressed(TEXT("OVPause"))) Action(TEXT("Pause"));
  if(ActionPressed(TEXT("OVSpeed1"))) Action(TEXT("Speed1"));
@@ -262,8 +268,7 @@ void AOVController::PlayerTick(float DeltaTime)
   if(ActionPressed(TEXT("OVHeading"))) Action(TEXT("Heading"));
   if(ActionPressed(TEXT("OVStop"))) Action(TEXT("Stop"));
   if(ActionPressed(TEXT("OVRepair"))) Action(TEXT("Repair"));
-  const FKey Keys[]={EKeys::One,EKeys::Two,EKeys::Three,EKeys::Four,EKeys::Five,EKeys::Six,EKeys::Seven,EKeys::Eight,EKeys::Nine};
-  for(int32 I=0;I<9;++I) if(WasInputKeyJustPressed(Keys[I])) {
+  for(int32 I=0;I<9;++I) if(ActionPressed(FName(*FString::Printf(TEXT("OVGroup%d"),I+1)))) {
    if(Ctrl) { auto& Group=Groups.FindOrAdd(I); Group.Reset(); for(AOVShip* S:Selection) if(S->bFriendly) Group.Add(S); }
    else if(const auto* Group=Groups.Find(I)) { ClearSelection(); for(const auto& S:*Group) if(S.IsValid()&&!S->Systems->bWrecked) SelectAdditional(S.Get()); }
   }
@@ -281,7 +286,7 @@ void AOVController::PlayerTick(float DeltaTime)
  }
  UpdateCamera();
  if(bPlacing) UpdatePreview();
- if(WasInputKeyJustPressed(EKeys::Enter)) ConfirmMove();
+ if(!OverUI&&WasInputKeyJustPressed(EKeys::Enter)) ConfirmMove();
  if(WasInputKeyJustPressed(EKeys::LeftMouseButton) && !OverUI) {
   if(bPlacing) ConfirmMove();
   else if(InputMode==EOVInputMode::Heading) { FVector O,D,P; if(DeprojectMousePositionToWorld(O,D)&&FOVOrderInput::Project(O,D,PlacementPlaneZ,P,ProjectionNearDistance)) IssueHeading(P); }
