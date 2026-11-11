@@ -1,0 +1,10 @@
+Target: OrbitalVanguardEditor Win64 Development
+Engine: E:\UE_5.8 (5.8.4, CL 58902052)
+Date: 2026-11-11 Asia/Seoul
+Build command exit code: 0
+
+Visual Studio compiler version 14.51.36260 is newer than latest preferred version 14.50.35717. Please use caution as this compiler has not been heavily tested
+Using Visual Studio 14.51.36260 toolchain (C:\Program Files (x86)\Microsoft Visual Studio\18\BuildTools\VC\Tools\MSVC\14.51.36231) and Windows 10.0.26100.0 SDK (C:\Program Files (x86)\Windows Kits\10).
+Warning: Visual Studio compiler 14.51.36260 is not a preferred version
+Result: Succeeded
+Total execution time: 6.76 seconds

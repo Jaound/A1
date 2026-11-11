@@ -1,0 +1,9 @@
+# Generated files
+Unreal/**/Binaries/
+Unreal/**/Intermediate/
+Unreal/**/Saved/
+Unreal/**/DerivedDataCache/
+Unreal/**/.vs/
+Unreal/**/*.sln
+Unreal/**/*.VC.db
+Unreal/**/__pycache__/

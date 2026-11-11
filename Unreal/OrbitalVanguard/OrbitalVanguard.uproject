@@ -1,0 +1,5 @@
+{
+ "FileVersion":3,"EngineAssociation":"5.8","Category":"Games","Description":"Orbital Vanguard - 3D Control Range",
+ "Modules":[{"Name":"OrbitalVanguard","Type":"Runtime","LoadingPhase":"Default"}],
+ "Plugins":[{"Name":"PythonScriptPlugin","Enabled":true,"TargetAllowList":["Editor"]},{"Name":"EditorScriptingUtilities","Enabled":true,"TargetAllowList":["Editor"]},{"Name":"AndroidFileServer","Enabled":false}]
+}

@@ -1,0 +1,25 @@
+Engine startup smoke-test comparison, 2026-11-11 KST
+Default Korean run (FinalAutomation.log):
+[2026.11.11-03.51.56:256][  0]LogAutomationTest: FUnifiedErrorTest_CreateErrorMessage: 실패 (0.17ms)
+[2026.11.11-03.51.56:256][  0]LogAutomationTest: Error: Condition failed
+[2026.11.11-03.51.56:256][  0]LogAutomationTest: Error: Condition failed
+[2026.11.11-03.51.56:256][  0]LogAutomationTest: Error: Condition failed
+[2026.11.11-03.51.56:256][  0]LogAutomationTest: Error: Condition failed
+[2026.11.11-03.51.56:256][  0]LogAutomationTest: Error: Condition failed
+[2026.11.11-03.51.56:256][  0]LogAutomationTest: Error: Condition failed
+[2026.11.11-03.51.56:256][  0]LogAutomationTest: Error: Condition failed
+[2026.11.11-03.51.56:256][  0]LogAutomationTest: FUnifiedErrorTest_CreateErrorMessageWithContext: 실패 (0.07ms)
+[2026.11.11-03.51.56:256][  0]LogAutomationTest: Error: Condition failed
+[2026.11.11-03.51.56:256][  0]LogAutomationTest: Error: Condition failed
+[2026.11.11-03.51.56:256][  0]LogAutomationTest: Error: Condition failed
+[2026.11.11-03.51.56:256][  0]LogAutomationTest: Error: Condition failed
+[2026.11.11-03.51.56:257][  0]LogAutomationTest: FStructuredLogFormatTest: 실패 (0.54ms)
+[2026.11.11-03.51.56:257][  0]LogAutomationTest: Error: Condition failed
+[2026.11.11-03.51.56:257][  0]LogAutomationTest: Error: Condition failed
+[2026.11.11-03.51.56:257][  0]LogAutomationTest: Error: Condition failed
+[2026.11.11-03.51.56:257][  0]LogAutomationTest: Error: Condition failed
+
+Transient command-line -culture=en run (StartupEnglish.log):
+[2026.11.11-03.53.16:539][  0]LogAutomationTest: FUnifiedErrorTest_CreateErrorMessage: Success (0.21ms)
+[2026.11.11-03.53.16:539][  0]LogAutomationTest: FUnifiedErrorTest_CreateErrorMessageWithContext: Success (0.13ms)
+[2026.11.11-03.53.16:539][  0]LogAutomationTest: FStructuredLogFormatTest: Success (0.49ms)

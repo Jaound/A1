@@ -1,0 +1,107 @@
+{
+  "checks": [
+    {
+      "name": "Editor map loaded",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Real PIE world",
+      "passed": true,
+      "detail": "/Game/Maps/UEDPIE_0_ControlRange.ControlRange"
+    },
+    {
+      "name": "Two friendly + one enemy",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Pause freezes real-time simulation",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Select while paused",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Camera pan while paused",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Camera orbit while paused",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Camera zoom while paused",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "XYZ order while paused",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Paused order does not move ship",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "XYZ arrival and stop",
+      "passed": true,
+      "detail": "<Struct 'Vector' (0x0000022EB18B5FA0) {x: -200.000000, y: 1200.000000, z: 1400.000000}>"
+    },
+    {
+      "name": "Manual persists after arrival",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Auto heading changes",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Explicit manual restored",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Simulation clock 1x",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Simulation clock 2x",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Simulation clock 3x",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "1/2/3x actual travel ratio",
+      "passed": true,
+      "detail": "[850.0000190734863, 1700.0000381469727, 2550.000171661377]"
+    },
+    {
+      "name": "Real PIE frames advance movement",
+      "passed": true,
+      "detail": "<Struct 'Vector' (0x0000022EB18A27C0) {x: 336.676408, y: -464.350499, z: 1265.377406}>"
+    },
+    {
+      "name": "Altitude control works while paused",
+      "passed": true,
+      "detail": ""
+    }
+  ],
+  "kind": "Editor PIE API integration, not physical input",
+  "errors": [],
+  "passed": true
+}

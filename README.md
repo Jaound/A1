@@ -13,3 +13,10 @@
 - [제작 순서와 로컬 개발 안내](docs/IMPLEMENTATION_PLAN.md): 언리얼 프로젝트 생성, 단계별 구현과 검증 기준
 
 새로운 기획을 논의할 때 위 문서를 먼저 확인하고, 합의된 변경을 반영합니다.
+
+## 실행 가능한 첫 제작 단계
+
+UE 5.8.4 C++ 프로젝트: [`Unreal/OrbitalVanguard/OrbitalVanguard.uproject`](Unreal/OrbitalVanguard/OrbitalVanguard.uproject).
+
+- [실행 방법과 조작법](docs/PLAYGROUND_GUIDE.md): 임시 함선 3척을 사용하는 3D 조작 시험장
+- [빌드·에디터·PIE 검증 결과](docs/PLAYGROUND_VALIDATION.md): 자동 검사와 직접 입력 미확인 항목을 구분한 기록
