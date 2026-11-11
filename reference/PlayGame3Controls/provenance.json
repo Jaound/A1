@@ -1,0 +1,51 @@
+{
+  "archive": "Play_Game_3.zip",
+  "archive_sha256": "bc65912ae558c70ef163ee68e2d6ac767c16de25497cc4e38d197c64f8a80c25",
+  "source_engine_claim": "Godot 4.3 (project.godot and README_DEV.md)",
+  "review_engine": "Godot 4.6.3 headless",
+  "sources": [
+    {
+      "path": "src/view3d/RtsCameraRig.gd",
+      "sha256": "a85b076fc25d37282d6c6f9235c3ca39d21aa5c4bd73dc14b90d9eb75e4129c6"
+    },
+    {
+      "path": "src/view3d/SpaceViewport.gd",
+      "sha256": "00254ca5afd12a2de93eeac380e67ce343faf5b30fdb9c758960dff84ac8942a"
+    },
+    {
+      "path": "src/ui/MainGame.gd",
+      "sha256": "17f523db627c35084dd0ffe0a39d618223a46a43db5104da6766b2d80d036f3d"
+    }
+  ],
+  "excerpts": [
+    {
+      "output": "SpaceViewport_input.gd.txt",
+      "source": "src/view3d/SpaceViewport.gd",
+      "first_line": 184,
+      "last_line": 351
+    }
+  ],
+  "phase2a_report_sources": [
+    {
+      "file": "PHASE2A_GUIDE.md",
+      "sha256": "a177de6a8ab8c3099018be8892ebef25947e77433716fa7dcb4112c9a7ea7e40"
+    },
+    {
+      "file": "PHASE2A_VALIDATION.md",
+      "sha256": "eb5f1f652ea521ee08b987f1f0edc1d5f1e9cde08ea4f1f422524feb6b281e69"
+    },
+    {
+      "file": "CODEX_PROGRESS.md",
+      "sha256": "4d5645c7057b4b328e55246efaf9dda13f3571ab4487c546a45c49e2d5ff6429"
+    },
+    {
+      "file": "WORK_STATUS.md",
+      "sha256": "d5c37db4f0811aa92a667e33464cf2bfbfac43a78d5977baf55478c5cf04528a"
+    }
+  ],
+  "ue_static_review": {
+    "commit": "6d679704be34f164bf2237609b7e1d05939d301a",
+    "branch": "codex/phase1-playground",
+    "method": "Static source and committed validation artifact review; UE build/PIE not rerun here"
+  }
+}

@@ -1,0 +1,87 @@
+{
+  "checks": [
+    {
+      "details": null,
+      "name": "MMB orbit angular response",
+      "passed": true
+    },
+    {
+      "details": null,
+      "name": "Orbit preserves pivot and distance",
+      "passed": true
+    },
+    {
+      "details": null,
+      "name": "MMB release stops orbit",
+      "passed": true
+    },
+    {
+      "details": null,
+      "name": "Alt LMB orbit",
+      "passed": true
+    },
+    {
+      "details": null,
+      "name": "Pitch upper clamp",
+      "passed": true
+    },
+    {
+      "details": null,
+      "name": "Pitch lower clamp",
+      "passed": true
+    },
+    {
+      "details": null,
+      "name": "Proportional wheel in",
+      "passed": true
+    },
+    {
+      "details": {
+        "in_out_multiplier": 0.9944
+      },
+      "name": "Proportional wheel out",
+      "passed": true
+    },
+    {
+      "details": {
+        "distance": 21.75
+      },
+      "name": "W pan at zoom 290",
+      "passed": true
+    },
+    {
+      "details": null,
+      "name": "Diagonal pan normalized",
+      "passed": true
+    },
+    {
+      "details": null,
+      "name": "Q continuous yaw 75 deg per second",
+      "passed": true
+    },
+    {
+      "details": null,
+      "name": "Camera pan independent of simulation pause flag",
+      "passed": true
+    }
+  ],
+  "edge_observations": [
+    {
+      "classification": "Observed source edge bug; UE port should release by captured gesture button, not modifier state",
+      "motion_still_rotates_camera": true,
+      "name": "Alt released before LMB release",
+      "orbit_remains_active": true
+    }
+  ],
+  "engine": "4.6.3-stable (official)",
+  "failed": 0,
+  "method": "Headless source camera event/API probe; no OS mouse input, no UE runtime validation",
+  "passed": 12,
+  "projection": {
+    "configured_fov": 52.0,
+    "horizontal_fov": 81.8558147117492,
+    "keep_aspect": 1,
+    "vertical_fov": 51.9999957552075,
+    "viewport": "1600x900"
+  }
+}

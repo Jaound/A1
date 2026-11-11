@@ -1,0 +1,168 @@
+func handle_viewport_gui_input(event: InputEvent, vp_size: Vector2) -> void:
+	if camera_rig != null and camera_rig.handle_viewport_input(event):
+		return
+
+	if event is InputEventMouseButton:
+		var mb := event as InputEventMouseButton
+		if mb.button_index == MOUSE_BUTTON_LEFT:
+			if mb.pressed:
+				# 대기 중인 타겟팅/방향/강습 명령 처리
+				var mode := GameManager.pending_command_mode
+				if mode == "pod" or mode == "shuttle" or not GameManager.pending_pod_launch_source_id.is_empty():
+					var clicked_id := _pick_ship_at_screen(mb.position)
+					if not clicked_id.is_empty():
+						pod_target_requested.emit(clicked_id)
+						return
+				elif mode == "focus_target":
+					var enemy_id := _pick_ship_at_screen(mb.position, true)
+					GameManager.pending_command_mode = ""
+					if not enemy_id.is_empty():
+						GameManager.set_focus_target_for_selected(enemy_id)
+					return
+				elif mode == "repair_target":
+					var rep_id := _pick_ship_at_screen(mb.position, false)
+					GameManager.pending_command_mode = ""
+					if not rep_id.is_empty():
+						GameManager.set_repair_target_for_selected(rep_id)
+					return
+				elif mode == "set_heading":
+					var primary := GameManager.get_primary_selected_ship()
+					var ref_y := primary.position.y if primary != null else 0.0
+					var hit_pt := _raycast_plane_y(mb.position, ref_y)
+					GameManager.pending_command_mode = ""
+					GameManager.issue_facing_order(hit_pt)
+					return
+				is_lmb_dragging = true
+				lmb_start_mouse = mb.position
+				lmb_cur_mouse = mb.position
+			else:
+				if is_lmb_dragging:
+					is_lmb_dragging = false
+					selection_box_updated.emit(false, Rect2())
+					if mb.position.distance_to(lmb_start_mouse) < 6.0:
+						var sid := _pick_ship_at_screen(mb.position)
+						if not sid.is_empty():
+							if mb.shift_pressed:
+								GameManager.toggle_ship_in_selection(sid)
+							else:
+								GameManager.select_single_ship(sid)
+						elif not mb.shift_pressed:
+							GameManager.clear_selection()
+					else:
+						_select_ships_in_box(_make_rect(lmb_start_mouse, mb.position))
+
+		elif mb.button_index == MOUSE_BUTTON_RIGHT:
+			if mb.pressed:
+				# 방식 A: 우클릭 유지(또는 Shift+우클릭). Ctrl+우클릭은 제자리 선체 방향 지정
+				is_rmb_dragging = true
+				is_rmb_actually_dragging = false
+				rmb_ctrl_held = mb.ctrl_pressed
+				rmb_start_mouse = mb.position
+				rmb_cur_mouse = mb.position
+				rmb_altitude_offset = 0.0
+				var primary := GameManager.get_primary_selected_ship()
+				rmb_ref_y = primary.position.y if primary != null else 0.0
+				rmb_clicked_enemy_id = "" if (mb.shift_pressed or mb.ctrl_pressed) else _pick_ship_at_screen(mb.position, true)
+				rmb_base_plane_pos = _raycast_plane_y(mb.position, rmb_ref_y)
+			else:
+				if is_rmb_dragging:
+					is_rmb_dragging = false
+					is_rmb_actually_dragging = false
+					move_drag_updated.emit(false, "", Vector2.ZERO)
+					var drag_dist := mb.position.distance_to(rmb_start_mouse)
+					if rmb_ctrl_held:
+						GameManager.issue_facing_order(rmb_base_plane_pos)
+					elif not rmb_clicked_enemy_id.is_empty() and drag_dist <= 25.0:
+						# 시작 지점에 적함이 있으면 25px 이내 미세 흔들림은 무조건 적함 공격 지정
+						_issue_focus_target(rmb_clicked_enemy_id)
+					else:
+						var final_dest := rmb_base_plane_pos + Vector3(0.0, rmb_altitude_offset, 0.0)
+						GameManager.issue_3d_move_order(final_dest)
+
+	elif event is InputEventMouseMotion:
+		var mm := event as InputEventMouseMotion
+		hover_mouse_pos = mm.position
+		if is_lmb_dragging:
+			hovered_ship_id = ""
+			lmb_cur_mouse = mm.position
+			if lmb_cur_mouse.distance_to(lmb_start_mouse) >= 6.0:
+				selection_box_updated.emit(true, _make_rect(lmb_start_mouse, lmb_cur_mouse))
+		if is_rmb_dragging:
+			hovered_ship_id = ""
+			rmb_cur_mouse = mm.position
+			var drag_len := rmb_cur_mouse.distance_to(rmb_start_mouse)
+			var threshold := 25.0 if not rmb_clicked_enemy_id.is_empty() else 8.0
+			if not rmb_ctrl_held and drag_len >= threshold:
+				is_rmb_actually_dragging = true
+				var dy := rmb_start_mouse.y - rmb_cur_mouse.y # 위로 드래그 = +고도, 아래 = -고도
+				rmb_altitude_offset = clampf(dy * 0.55, -180.0, 180.0)
+				_emit_move_drag_hint()
+		elif not is_lmb_dragging:
+			hovered_ship_id = _pick_ship_at_screen(mm.position, false)
+
+func _emit_move_drag_hint() -> void:
+	var final_pos := rmb_base_plane_pos + Vector3(0.0, rmb_altitude_offset, 0.0)
+	var eta_str := ""
+	var primary := GameManager.get_primary_selected_ship()
+	var sec := GameManager.get_active_sector()
+	if primary != null and sec != null:
+		var min_spd := maxf(primary.get_effective_speed(), 1.0)
+		if GameManager.selected_ship_ids.size() > 1:
+			for sid in GameManager.selected_ship_ids:
+				var ss := sec.get_ship(sid)
+				if ss != null and ss.alive and ss.faction == Enums.Faction.PLAYER and not ss.is_fighter:
+					var es := ss.get_effective_speed()
+					if es > 0.1:
+						min_spd = minf(min_spd, es)
+		var dist := primary.position.distance_to(final_pos)
+		var eta := dist / maxf(min_spd, 1.0)
+		eta_str = " | ETA: %.1fs (%.0fm)" % [eta, dist]
+	var txt := "3D 이동 (X:%.0f, Y:%.0f) Z%+.0fm%s" % [
+		final_pos.x, final_pos.z, rmb_altitude_offset, eta_str
+	]
+	move_drag_updated.emit(true, txt, rmb_cur_mouse + Vector2(18, -14))
+
+func _issue_focus_target(enemy_id: String) -> void:
+	GameManager.set_focus_target_for_selected(enemy_id)
+
+func _raycast_plane_y(screen_pos: Vector2, plane_y: float) -> Vector3:
+	if camera_rig == null or camera_rig.camera == null:
+		return Vector3(0, plane_y, 0)
+	var cam := camera_rig.camera
+	var orig := cam.project_ray_origin(screen_pos)
+	var dir := cam.project_ray_normal(screen_pos)
+	var anchor := Vector3(camera_rig.pivot_pos.x, plane_y, camera_rig.pivot_pos.z)
+
+	# 홈월드식 레이캐스트: 근접 클리핑(min_cam_dist)과 얕은 카메라 피치 각도/수평선 너머 보정
+	var min_cam_dist := maxf(38.0, camera_rig.distance * 0.22)
+	var denom := dir.y
+	if absf(denom) > 0.065:
+		var t := (plane_y - orig.y) / denom
+		if t >= min_cam_dist:
+			var hit := orig + dir * t
+			var offset := Vector3(hit.x - anchor.x, 0.0, hit.z - anchor.z)
+			if offset.length() <= 720.0:
+				return Vector3(clampf(hit.x, -620.0, 620.0), plane_y, clampf(hit.z, -620.0, 620.0))
+
+	# 얕은 피치 각도/수평선 위 커서/카메라보다 높은 기준 고도일 때:
+	# 카메라 전방 수평 깊이에 수직 가상 평면을 두고 커서 레이와 교차시켜 의도한 수평 지점 산출
+	var cam_fwd_h := Vector3(-cam.global_transform.basis.z.x, 0.0, -cam.global_transform.basis.z.z)
+	if cam_fwd_h.length_squared() < 0.001:
+		cam_fwd_h = Vector3(0.0, 0.0, -1.0)
+	cam_fwd_h = cam_fwd_h.normalized()
+	var depth_plane := Plane(cam_fwd_h, anchor.dot(cam_fwd_h))
+	var vhit: Variant = depth_plane.intersects_ray(orig, dir)
+	if vhit != null:
+		var vp: Vector3 = vhit
+		var off := Vector3(vp.x - anchor.x, 0.0, vp.z - anchor.z)
+		if off.length() > 540.0:
+			off = off.normalized() * 540.0
+		var res := anchor + off
+		return Vector3(clampf(res.x, -620.0, 620.0), plane_y, clampf(res.z, -620.0, 620.0))
+
+	var fallback_dir := Vector3(dir.x, 0.0, dir.z)
+	if fallback_dir.length_squared() < 0.001:
+		fallback_dir = cam_fwd_h
+	var depth := clampf(camera_rig.distance, 120.0, 420.0)
+	var fpt := Vector3(orig.x, plane_y, orig.z) + fallback_dir.normalized() * depth
+	return Vector3(clampf(fpt.x, -620.0, 620.0), plane_y, clampf(fpt.z, -620.0, 620.0))
