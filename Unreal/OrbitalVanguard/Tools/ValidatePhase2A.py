@@ -42,6 +42,7 @@ def run(pc, ships, world):
     check('Layout validation from serialized assets', all(p(s, 'layout').validate_layout() is not None and len(p(s, 'layout').validate_layout()) == 0 for s in (sa, sb, st)))
     pc.action('Ship2'); check('Selection while paused', p(pc, 'selected') == b)
     cam = p(pc, 'range_camera'); old = cam.get_actor_location()
+    check('Camera uses full viewport for HUD input coordinates', not p(cam.get_component_by_class(unreal.CameraComponent), 'constrain_aspect_ratio'))
     pc.set_editor_property('camera_focus', unreal.Vector(300, 400, 500)); pc.update_camera()
     check('Paused camera pan', not near(old, cam.get_actor_location()))
     old = cam.get_actor_rotation(); pc.set_editor_property('camera_yaw', 15); pc.set_editor_property('camera_pitch', -35); pc.update_camera()

@@ -20,6 +20,8 @@ void AOVController::BeginPlay()
  FInputModeGameAndUI Mode; Mode.SetHideCursorDuringCapture(false); Mode.SetLockMouseToViewportBehavior(EMouseLockMode::DoNotLock); SetInputMode(Mode);
  RangeCamera=GetWorld()->SpawnActor<ACameraActor>();
  RangeCamera->GetCameraComponent()->SetFieldOfView(55);
+ // Keep HUD and mouse coordinates in the same full viewport on ultrawide/resized windows.
+ RangeCamera->GetCameraComponent()->bConstrainAspectRatio=false;
  RangeCamera->GetCameraComponent()->PostProcessSettings.bOverride_AutoExposureMethod=true;
  RangeCamera->GetCameraComponent()->PostProcessSettings.AutoExposureMethod=EAutoExposureMethod::AEM_Manual;
  RangeCamera->GetCameraComponent()->PostProcessSettings.bOverride_AutoExposureApplyPhysicalCameraExposure=true;
@@ -147,7 +149,7 @@ void AOVController::ConfirmMove()
 }
 void AOVController::UpdatePreview()
 {
- FVector Origin,Direction; float X=0,Y=0; GetMousePosition(X,Y);
+ FVector Origin=FVector::ZeroVector,Direction=FVector::ZeroVector; float X=0,Y=0; GetMousePosition(X,Y);
  const AOVHUD* HUD=Cast<AOVHUD>(GetHUD());
  const auto* Viewport=GetWorld()->GetGameViewport();
  const bool Blocked=!Viewport || !Viewport->Viewport || !Viewport->Viewport->HasFocus() || !DeprojectMousePositionToWorld(Origin,Direction) || (HUD && HUD->IsOverPanel(X,Y));
@@ -155,7 +157,7 @@ void AOVController::UpdatePreview()
 }
 void AOVController::SampleOrderCursor(FVector Origin,FVector Direction,float MouseY,bool Altitude,bool Blocked)
 {
- FVector Raw; const bool Valid=FOVOrderInput::Project(Origin,Direction,PlacementPlaneZ,Raw,ProjectionNearDistance);
+ FVector Raw=Preview; const bool Valid=!Blocked&&FOVOrderInput::Project(Origin,Direction,PlacementPlaneZ,Raw,ProjectionNearDistance);
  OrderInput.Sample(Preview,Raw,MouseY,Altitude,Blocked||!Valid,AltitudeUnitsPerPixel);
 }
 void AOVController::IssueHeading(FVector Point)
