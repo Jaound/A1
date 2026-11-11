@@ -18,6 +18,41 @@ enum class EOVConnectionKind : uint8
     Corridor, Door, Vertical
 };
 
+UENUM(BlueprintType)
+enum class EOVArmorFace : uint8 { Front, Rear, Left, Right, Top, Bottom };
+
+UENUM(BlueprintType)
+enum class EOVWeaponType : uint8 { Cannon, Beam, Missile, Interception };
+
+USTRUCT(BlueprintType)
+struct ORBITALVANGUARD_API FOVArmorDefinition
+{
+    GENERATED_BODY()
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Armor") FName ArmorId;
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Armor") EOVArmorFace Face = EOVArmorFace::Front;
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Armor") int32 Row = 0;
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Armor") int32 Column = 0;
+    // UV: front/rear = Y/Z; left/right = X/Z; top/bottom = X/Y.
+    // Rows follow V, columns follow U. Shared boundaries belong to the positive cell.
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Armor") FVector2D NormalizedMin = FVector2D(-1, -1);
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Armor") FVector2D NormalizedMax = FVector2D(1, 1);
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Armor") FVector LocalCenter = FVector::ZeroVector;
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Armor") FVector HalfExtent = FVector::OneVector;
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Armor") float MaxArmor = 100;
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Armor") TArray<FName> InnerSlotIds;
+};
+
+USTRUCT(BlueprintType)
+struct ORBITALVANGUARD_API FOVWeaponMountDefinition
+{
+    GENERATED_BODY()
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Weapon") FName WeaponId;
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Weapon") EOVWeaponType Type = EOVWeaponType::Cannon;
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Weapon") float Tier = 1;
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Weapon") FVector LocalPosition = FVector::ZeroVector;
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Weapon") float MaxHP = 200;
+};
+
 USTRUCT(BlueprintType)
 struct ORBITALVANGUARD_API FOVSlotDefinition
 {
@@ -60,6 +95,9 @@ public:
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Layout") TArray<FName> BridgeAllowedSlots;
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Layout") TArray<FOVSlotDefinition> Slots;
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Layout") TArray<FOVConnectionDefinition> Connections;
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Layout") TArray<FOVArmorDefinition> ArmorSections;
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Layout") TArray<FOVWeaponMountDefinition> WeaponMounts;
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Layout") FVector LocalHalfExtent = FVector(175, 75, 30);
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Layout") int32 CannonSlots = 0;
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Layout") int32 BeamSlots = 0;
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Layout") int32 MissileSlots = 0;
@@ -74,4 +112,7 @@ public:
     UFUNCTION(BlueprintPure, Category="Layout") int32 GetSlotIndex(FName SlotId) const;
     UFUNCTION(BlueprintCallable, Category="Layout") bool ValidateLayout(TArray<FString>& Errors) const;
     UFUNCTION(BlueprintPure, Category="Layout") int32 ResolveHit(FVector LocalPoint, FVector LocalNormal) const;
+    UFUNCTION(BlueprintPure, Category="Layout") int32 ResolveArmor(FVector LocalPoint, FVector LocalNormal) const;
+    UFUNCTION(BlueprintPure, Category="Layout") int32 GetArmorIndex(FName ArmorId) const;
+    UFUNCTION(BlueprintPure, Category="Layout") int32 MapArmorToSlot(int32 ArmorIndex, FVector LocalPoint) const;
 };

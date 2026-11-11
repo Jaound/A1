@@ -9,7 +9,19 @@ public:
  virtual void DrawHUD() override;
  virtual void NotifyHitBoxClick(FName BoxName) override;
  bool IsOverPanel(float X,float Y) const;
+ void OpenDetails() { bDetailsOpen=true; bMinimized=false; }
+ bool HandlePointer(float X,float Y,bool Pressed,bool Down,float Wheel,bool Orbit,float DX,float DY);
+ UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="UI") bool bDetailsOpen=true;
+ UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="UI") bool bMinimized=false;
+ UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="UI") FVector2D WindowPosition=FVector2D(840,76);
+ UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="UI") FVector2D WindowSize=FVector2D(424,550);
 private:
  float UIScale=1.f;
+ bool bDragging=false,bResizing=false;
+ FVector2D DragOffset=FVector2D::ZeroVector;
+ FRotator PreviewRotation=FRotator(-25,35,0);
+ float PreviewZoom=1;
+ void DrawDetails();
+ void DrawExternal(float X,float Y,float W);
  void Button(FName Name,const FString& Label,float X,float Y,float W,bool Active=false);
 };

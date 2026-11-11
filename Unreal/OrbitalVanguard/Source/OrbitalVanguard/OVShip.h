@@ -5,8 +5,9 @@
 #include "OVShip.generated.h"
 
 class UStaticMeshComponent;
+class UOVShipSystemsComponent;
 
-/** Phase-one placeholder vessel. The controller owns the simulation clock. */
+/** Placeholder vessel. The controller supplies the single simulation clock. */
 UCLASS()
 class ORBITALVANGUARD_API AOVShip : public AActor
 {
@@ -16,6 +17,8 @@ public:
 
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Ship")
     TObjectPtr<UStaticMeshComponent> Hull;
+    UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Ship")
+    TObjectPtr<UOVShipSystemsComponent> Systems;
     UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Ship")
     FString ShipName = TEXT("Vessel");
     UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Ship")
@@ -32,8 +35,31 @@ public:
     FVector Destination = FVector::ZeroVector;
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Ship")
     bool bHasDestination = false;
+    UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Motion")
+    FVector Velocity = FVector::ZeroVector;
+    UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Motion", meta=(ClampMin="0"))
+    float Acceleration = 1700.0f;
+    UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Motion", meta=(ClampMin="1"))
+    float Braking = 2200.0f;
+    UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Motion", meta=(ClampMin="0.1"))
+    float ArrivalRadius = 5.0f;
+    UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Orders")
+    bool bHold = true;
+    UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Orders")
+    bool bManualAttitude = false;
+    UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Orders")
+    FRotator ManualAttitude = FRotator::ZeroRotator;
+    UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Orders")
+    bool bFTLCharging = false;
+    UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Orders")
+    TObjectPtr<AOVShip> AttackTarget;
 
-    void SetDestination(const FVector& Location);
+    /** Releases Hold but preserves an explicit manual attitude, including pitch/roll. */
+    UFUNCTION(BlueprintCallable, Category="Orders") void SetDestination(const FVector& Location);
+    /** Brakes to rest; automatic behavior must not replace this persistent Hold order. */
+    UFUNCTION(BlueprintCallable, Category="Orders") void StopMovement();
+    /** Sets a bounded-turn posture independently of destination and attack target. */
+    UFUNCTION(BlueprintCallable, Category="Orders") void SetManualAttitude(const FRotator& Rotation);
     void Simulate(float SimDelta);
     void Configure(const FString& Name, bool Friendly, float Speed, float RotationRate,
         const FVector& Scale, const FLinearColor& Color);
