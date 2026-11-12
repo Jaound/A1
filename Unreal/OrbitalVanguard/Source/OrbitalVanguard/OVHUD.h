@@ -27,6 +27,7 @@ private:
  FRotator PreviewRotation=FRotator(-25,35,0);
  float PreviewZoom=1;
  void DrawDetails();
+ void DrawCombat();
  void DrawExternal(float X,float Y,float W);
  void Button(FName Name,const FString& Label,float X,float Y,float W,bool Active=false);
 };

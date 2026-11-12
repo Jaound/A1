@@ -1,0 +1,7 @@
+[2026.11.12-23.08.20:461][593]LogTemp: OVCombat attack=1 source=OVShip_0 faction=0 weapon=Weapon_1 result=1 target=OVShip_1 hull=0.00 explosions=0
+[2026.11.12-23.08.20:461][593]LogTemp: OVCombat attack=2 source=OVShip_0 faction=0 weapon=Weapon_1 result=1 target=OVShip_1 hull=200.00 explosions=0
+[2026.11.12-23.08.20:463][593]LogTemp: OVCombat attack=3 source=OVShip_0 faction=0 weapon=Weapon_1 result=1 target=OVShip_1 hull=145.00 explosions=1
+[2026.11.12-23.08.20:463][593]LogTemp: OVCombat attack=4 source=OVShip_0 faction=0 weapon=Weapon_1 result=1 target=OVShip_1 hull=1.00 explosions=0
+[2026.11.12-23.08.20:477][595]LogAutomationController: Display: Test Completed. Result={Success} Name={LaunchedDamageChainAndSingleImpact} Path={OrbitalVanguard.Combat.LaunchedDamageChainAndSingleImpact}
+[2026.11.12-23.08.20:479][595]LogAutomationCommandLine: Display: ...Automation Test Queue Empty 1 tests performed.
+[2026.11.12-23.08.20:479][596]LogExit: Display: **** TestExit: Automation Test Queue Empty ****

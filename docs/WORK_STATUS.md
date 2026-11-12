@@ -1,5 +1,16 @@
 # Orbital Vanguard 작업 상태
 
+## 현재 작업 — 2B 실제 함대 전투 (2026-11-12)
+
+- 기준: `codex/phase1-playground` / `be544d7`. 시작 시 미커밋 변경 없음. 원격 코드와 `work`를 명시 fetch했으며 기획 HEAD는 `bca769f`, 이후 변경 없음.
+- 사용자가 2A 보완의 실제 조작을 직접 확인하고 2B 진행을 승인했다. 이전의 도구 직접 입력 미검증 기록은 역사 증거로 보존한다.
+- 디스크 AGENTS.md/agent.md는 저장소와 부모 경로에서 발견하지 못했다. 대화에 제공된 CODEX DEVELOPMENT RULES v1.0 적용.
+- 2026-11-13 첫 실행 체크포인트: 빔 발사·정식 탐지·로컬 포탑·기존 피해 경로 연결. Win64 Development Editor 빌드 성공 29.70초 (MSVC 14.51.36260 / SDK 10.0.26100.0). 실제 발사→쉴드→장갑/시설/선체→유폭→완파 자동 테스트 `LaunchedDamageChainAndSingleImpact` 1/1 통과. 증거: `validation/Phase2B-Beam-*`.
+- 아직 미완료: 함포/미사일 프로필·살보·유도/목표 이탈 수명·자동 사선 확보, 화면 효과. 새 자동 테스트 8개 중 위 1개만 실행했으며 나머지는 검증 대기(투사체 관련은 구현 대기). 기존 17/57 회귀·2B PIE·직접 입력도 아직 미실행.
+- 완료 순서: 기본 빔 연결 → 정식 탐지/로컬 포탑 → 함포/일반·유도 미사일 → 수동/자동 적 교전 → 수명/피해 회귀 → 문서/푸시.
+- 2C 요격·함재기·포드, 3단계 선내 작전 제외. 기존 ControlRange와 카메라 프로필/XYZ 입력, Content 자산, UE584BuildSmokeTest 보존.
+- 재개 시 Git diff와 새 `OVCombat*`, Controller/HUD, `ValidatePhase2B.py`의 실제 존재/상태를 먼저 확인한다. 아래 2A 상태는 과거 기록이다.
+
 ## 현재 작업 — 2A 조작 보완
 
 `codex/phase1-playground`의 기준은 `6d67970`이며 원격 기획 `bca769f`를 `823dca3`에 반영했다. PlayGame3 기본 프로필, `P` 전환, 우클릭 고정 XY·해제 확정, 전장/프리뷰 회전 소유권을 구현했다. 아래는 이전 2A 체크포인트의 기록이다.

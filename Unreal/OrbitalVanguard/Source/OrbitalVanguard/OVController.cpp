@@ -2,6 +2,7 @@
 #include "OVShip.h"
 #include "OVHUD.h"
 #include "OVShipSystemsComponent.h"
+#include "OVCombatSubsystem.h"
 #include "GameFramework/InputSettings.h"
 #include "Engine/LocalPlayer.h"
 #include "Engine/GameViewportClient.h"
@@ -19,6 +20,7 @@ AOVController::AOVController() { bShowMouseCursor=true; bEnableClickEvents=true;
 void AOVController::BeginPlay()
 {
  Super::BeginPlay();
+ Combat=GetWorld()->GetSubsystem<UOVCombatSubsystem>();
  FInputModeGameAndUI Mode; Mode.SetHideCursorDuringCapture(false); Mode.SetLockMouseToViewportBehavior(EMouseLockMode::DoNotLock); SetInputMode(Mode);
  RangeCamera=GetWorld()->SpawnActor<ACameraActor>();
  RangeCamera->GetCameraComponent()->SetFieldOfView(55);
@@ -45,6 +47,32 @@ void AOVController::BeginPlay()
  }
  SelectShip(Ships[0]); ResetCameraProfile();
  UE_LOG(LogTemp,Display,TEXT("OV: ControlRange ready; two friendly ships + one target"));
+}
+void AOVController::StartCombatRange()
+{
+ if(!Combat || Ships.Num()!=3) return;
+ Action(TEXT("Cancel")); OrbitGesture={}; Groups.Reset();
+ Combat->DisableCombat();
+ const FVector Positions[]={FVector(-1400,-700,300),FVector(-1600,800,300),FVector(1600,0,300)};
+ for(int32 I=0;I<Ships.Num();++I) {
+  AOVShip* Ship=Ships[I];
+  // Transient per-run fixture. Authored 2A Content assets are never modified.
+  UShipLayoutDataAsset* Layout=UShipLayoutDataAsset::MakeTestLayout(this,I+1);
+  Ship->Systems->FactionId=I==2?1:0;
+  Ship->Systems->Initialize(Layout);
+  Ship->DebugResetMotion();
+  Ship->bFriendly=I!=2;
+  Ship->SetActorHiddenInGame(false);
+  Ship->SetActorLocationAndRotation(Positions[I],FRotator(0,I==2?180:0,0));
+  Ship->bManual=I!=2;
+ }
+ TArray<AOVShip*> Combatants; for(AOVShip* Ship:Ships) Combatants.Add(Ship);
+ Combat->EnableCombat(Combatants,260112);
+ Combat->RegisterShip(Ships[1],2,true);
+ bSimulationPaused=true; SimulationSpeed=1; SimulationSeconds=0;
+ SelectShip(Ships[0]); SelectedWeapon=1;
+ LastAction=TEXT("2B ready (paused). T + enemy selects only; B fires chosen mount; L fires all; AUTO engages. F1 resumes.");
+ UE_LOG(LogTemp,Display,TEXT("OV2B: Combat range reset, seed=260112, paused"));
 }
 void AOVController::SelectShip(AOVShip* Ship)
 {
@@ -75,8 +103,10 @@ void AOVController::SelectAdditional(AOVShip* Ship)
 void AOVController::SetTarget(AOVShip* Ship)
 {
  if(Selected && Ship && Ship!=Selected && Ship->bFriendly!=Selected->bFriendly && !Ship->Systems->bWrecked) {
-  for(AOVShip* Vessel:Selection) if(Vessel->bFriendly && Vessel->Systems->CanCommand()) Vessel->AttackTarget=Ship;
-  LastAction=TEXT("Target only: ")+Ship->ShipName+TEXT(" (weapons not active in 2A)");
+  for(AOVShip* Vessel:Selection) if(Vessel->bFriendly && Vessel->Systems->CanCommand()) {
+   if(Combat && Combat->bEnabled) Combat->SetTarget(Vessel,Ship); else Vessel->AttackTarget=Ship;
+  }
+  LastAction=TEXT("Target only: ")+Ship->ShipName+(Combat&&Combat->bEnabled?TEXT(" / B or L requests fire"):TEXT(" (weapons not active in 2A)"));
  }
  InputMode=EOVInputMode::None;
 }
@@ -91,6 +121,7 @@ bool AOVController::ActionPressed(FName Name) const
 }
 void AOVController::Action(FName Name)
 {
+ if(Name==TEXT("CombatRange")) { StartCombatRange(); return; }
  if(Name==TEXT("CameraProfile"))
  {
   Action(TEXT("Cancel"));
@@ -115,14 +146,21 @@ void AOVController::Action(FName Name)
  if(Name==TEXT("Developer")) { bDeveloperMode=!bDeveloperMode; ViewedDeck=0; }
  if(Selected && Selected->bFriendly && Selected->Systems->CanCommand()) {
   if(Name==TEXT("Manual")) { Selected->bManual=true; LastAction=TEXT("MANUAL - persists until AUTO is clicked"); }
-  if(Name==TEXT("Auto")) { Selected->bManual=false; bPlacing=false; InputMode=EOVInputMode::None; LastAction=TEXT("AUTO / Hold and manual attitude preserved; combat deferred"); }
+  if(Name==TEXT("Auto")) { Selected->bManual=false; bPlacing=false; InputMode=EOVInputMode::None; LastAction=TEXT("AUTO / Hold and manual attitude preserved")+(Combat&&Combat->bEnabled?FString(TEXT(" / automatic engagement")):FString(TEXT("; combat deferred"))); }
+  if(Name==TEXT("NextWeapon") && Selected->Systems->WeaponMountStates.Num()>0) SelectedWeapon=(SelectedWeapon+1)%Selected->Systems->WeaponMountStates.Num();
+  if((Name==TEXT("Fire") || Name==TEXT("FireAll")) && Combat && Combat->bEnabled) {
+   const auto& Mounts=Selected->Systems->WeaponMountStates;
+   const FName Mount=Name==TEXT("FireAll")?NAME_None:(Mounts.IsValidIndex(SelectedWeapon)?Mounts[SelectedWeapon].WeaponMountId:NAME_None);
+   const bool Accepted=Combat->RequestFire(Selected,Mount);
+   LastAction=Accepted?TEXT("Fire requested (one salvo). Awaiting live gates / simulation."):TEXT("Fire request rejected: check target, ownership and weapon state");
+  }
   if(Name==TEXT("Move")) { bPlacing=true; InputMode=EOVInputMode::Move; Preview=Selected->GetActorLocation(); PlacementPlaneZ=Preview.Z; OrderInput.Reset(); LastAction=(bPlayGame3?TEXT("Cursor XY; hold Shift + drag Z; LMB/Enter confirms"):TEXT("Cursor XY; hold Shift/RMB + drag Z; LMB/Enter confirms")); }
   if(Name==TEXT("Up") && bPlacing) Preview.Z=FMath::Min(Preview.Z+250,4000.0);
   if(Name==TEXT("Down") && bPlacing) Preview.Z=FMath::Max(Preview.Z-250,-1500.0);
   if(Name==TEXT("Confirm")) ConfirmMove();
   if(Name==TEXT("Stop")) { for(AOVShip* Ship:Selection) Ship->StopMovement(); bPlacing=false; InputMode=EOVInputMode::None; LastAction=TEXT("Braking to persistent HOLD"); }
   if(Name==TEXT("Target")) { bPlacing=false; InputMode=EOVInputMode::Target; LastAction=TEXT("Click enemy: target selection does not fire or change mode"); }
-  if(Name==TEXT("ClearTarget")) Selected->AttackTarget=nullptr;
+  if(Name==TEXT("ClearTarget")) { if(Combat&&Combat->bEnabled) Combat->SetTarget(Selected,nullptr); else Selected->AttackTarget=nullptr; }
   if(Name==TEXT("Heading")) { bPlacing=false; InputMode=EOVInputMode::Heading; PlacementPlaneZ=Selected->GetActorLocation().Z; LastAction=TEXT("Click world to set heading; hold current pitch and roll"); }
   if(Name==TEXT("Port") || Name==TEXT("Starboard")) { FRotator Attitude=Selected->GetActorRotation(); Attitude.Yaw+=Name==TEXT("Port")?-90:90; Selected->SetManualAttitude(Attitude); }
   if(Name==TEXT("Repair")) LastAction=TEXT("R reserved: supply repair not implemented; use explicit DEV tools");
@@ -404,6 +442,7 @@ void AOVController::StepSimulation(float DeltaTime)
 {
  if(bSimulationPaused || DeltaTime<=0 || !FMath::IsFinite(DeltaTime)) return;
  float Remaining=DeltaTime*SimulationSpeed; SimulationSeconds+=Remaining;
+ if(Combat && Combat->bEnabled) { Combat->Simulate(Remaining); return; }
  while(Remaining>UE_SMALL_NUMBER) {
   const float Dt=FMath::Min(Remaining,1.f/60.f); Remaining-=Dt;
   for(AOVShip* Ship:Ships) {
@@ -507,6 +546,7 @@ void AOVController::PlayerTick(float DeltaTime)
  }
  ApplyCameraInput(FVector2D::ZeroVector,Pan,YawAxis,CameraWheel,FApp::GetDeltaTime());
  if(ActionPressed(TEXT("OVCameraProfile"))) Action(TEXT("CameraProfile"));
+ if(Focused && ActionPressed(TEXT("OVCombatRange"))) Action(TEXT("CombatRange"));
  if(WasInputKeyJustPressed(EKeys::F9)) UE_LOG(LogTemp,Display,TEXT("OV VERIFY: camera=%s yaw=%.1f pitch=%.1f distance=%.1f ship=%s pos=%s manual=%d moving=%d paused=%d speed=%.0f sim=%.3f"),*CameraFocus.ToString(),CameraYaw,CameraPitch,CameraDistance,Selected?*Selected->ShipName:TEXT("none"),Selected?*Selected->GetActorLocation().ToString():TEXT("none"),Selected?Selected->bManual:0,Selected?Selected->bHasDestination:0,bSimulationPaused,SimulationSpeed,SimulationSeconds);
  if(ActionPressed(TEXT("OVPause"))) Action(TEXT("Pause"));
  if(ActionPressed(TEXT("OVSpeed1"))) Action(TEXT("Speed1"));
@@ -520,6 +560,9 @@ void AOVController::PlayerTick(float DeltaTime)
   if(ActionPressed(TEXT("OVHeading"))) Action(TEXT("Heading"));
   if(ActionPressed(TEXT("OVStop"))) Action(TEXT("Stop"));
   if(ActionPressed(TEXT("OVRepair"))) Action(TEXT("Repair"));
+  if(ActionPressed(TEXT("OVFire"))) Action(TEXT("Fire"));
+  if(ActionPressed(TEXT("OVFireAll"))) Action(TEXT("FireAll"));
+  if(ActionPressed(TEXT("OVNextWeapon"))) Action(TEXT("NextWeapon"));
   for(int32 I=0;I<9;++I) if(ActionPressed(FName(*FString::Printf(TEXT("OVGroup%d"),I+1)))) {
    if(Ctrl) { auto& Group=Groups.FindOrAdd(I); Group.Reset(); for(AOVShip* S:Selection) if(S->bFriendly) Group.Add(S); }
    else if(const auto* Group=Groups.Find(I)) { ClearSelection(); for(const auto& S:*Group) if(S.IsValid()&&!S->Systems->bWrecked) SelectAdditional(S.Get()); }

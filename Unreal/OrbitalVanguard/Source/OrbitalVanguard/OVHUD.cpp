@@ -2,6 +2,7 @@
 #include "OVController.h"
 #include "OVShip.h"
 #include "OVShipSystemsComponent.h"
+#include "OVCombatSubsystem.h"
 #include "Engine/Canvas.h"
 #include "Engine/Engine.h"
 #include "CanvasItem.h"
@@ -22,6 +23,7 @@ bool AOVHUD::IsOverPanel(float X,float Y) const
  const auto* PC=Cast<AOVController>(PlayerOwner); if(!PC) return false;
  const FVector2D P(X/UIScale,Y/UIScale);
  if(bDragging||bResizing) return true;
+ if(PC->Combat && PC->Combat->bEnabled && PC->Selected && P.X>=10 && P.X<=440 && P.Y>=216 && P.Y<=448) return true;
  if(P.Y<55 || (PC->Selected&&P.Y>ViewportPixels.Y/UIScale-88) || (P.X<200&&P.Y<210)) return true;
  return PC->Selected&&bDetailsOpen&&P.X>=WindowPosition.X&&P.X<=WindowPosition.X+WindowSize.X&&P.Y>=WindowPosition.Y&&P.Y<=WindowPosition.Y+(bMinimized?32:WindowSize.Y);
 }
@@ -155,7 +157,8 @@ void AOVHUD::DrawDetails()
  }
  if(PC->ViewedDeck==0&&S->WeaponMountStates.IsValidIndex(PC->SelectedWeapon)) {
   const auto& M=S->WeaponMountStates[PC->SelectedWeapon];const auto& D=L->WeaponMounts[PC->SelectedWeapon];
-  DrawText(FString::Printf(TEXT("Weapon %s T%.0f HP %.0f/%.0f %s"),*M.WeaponMountId.ToString(),D.Tier,M.HP,D.MaxHP,S->IsWeaponAvailable(M.WeaponMountId)?TEXT("READY"):TEXT("OFF")),Ink,X+10,Y+322,GEngine->GetSmallFont());
+  const FString Status=PC->Combat&&PC->Combat->bEnabled?PC->Combat->GetReadiness(PC->Selected,M.WeaponMountId).Reason:(S->IsWeaponAvailable(M.WeaponMountId)?TEXT("SUPPLIED"):TEXT("OFF"));
+  DrawText(FString::Printf(TEXT("Weapon %s T%.0f HP %.0f/%.0f %s"),*M.WeaponMountId.ToString(),D.Tier,M.HP,D.MaxHP,*Status),Ink,X+10,Y+322,GEngine->GetSmallFont());
  }else if(Reveal&&L->Slots.IsValidIndex(PC->SelectedSlot)) {
   const auto& F=S->Slots[PC->SelectedSlot];const auto& D=L->Slots[PC->SelectedSlot];
   DrawText(FString::Printf(TEXT("%s %s HP %.0f/%.0f Crew %.0f/%.0f"),*F.SlotId.ToString(),*Facility(D.Facility),F.HP,D.MaxFacilityHP,F.Crew,D.RequiredCrew),Ink,X+10,Y+322,GEngine->GetSmallFont());
@@ -179,12 +182,14 @@ void AOVHUD::DrawHUD()
  UIScale=FMath::Max(.25f,FMath::Min(1.f,FMath::Min(Canvas->SizeX/1280.f,Canvas->SizeY/740.f)));
  Canvas->Canvas->PushRelativeTransform(FScaleMatrix(FVector(UIScale,UIScale,1)));
  const float Width=Canvas->SizeX/UIScale,Height=Canvas->SizeY/UIScale;
- DrawRect(Panel,10,10,Width-20,40);DrawText(TEXT("ORBITAL VANGUARD / 2A TEST RANGE"),Accent,20,22,GEngine->GetSmallFont());
+ const bool CombatOn=PC->Combat&&PC->Combat->bEnabled;
+ DrawRect(Panel,10,10,Width-20,40);DrawText(CombatOn?TEXT("ORBITAL VANGUARD / 2B COMBAT RANGE"):TEXT("ORBITAL VANGUARD / 2A TEST RANGE"),Accent,20,22,GEngine->GetSmallFont());
  Button(TEXT("Pause"),PC->bSimulationPaused?TEXT("F1 RESUME"):TEXT("F1 PAUSE"),380,16,100,PC->bSimulationPaused);
  Button(TEXT("Speed1"),TEXT("F2 1x"),488,16,68,PC->SimulationSpeed==1);Button(TEXT("Speed2"),TEXT("F3 2x"),564,16,68,PC->SimulationSpeed==2);Button(TEXT("Speed3"),TEXT("F4 3x"),640,16,68,PC->SimulationSpeed==3);
  Button(TEXT("Developer"),PC->bDeveloperMode?TEXT("DEV: ON"):TEXT("DEV: OFF"),725,16,100,PC->bDeveloperMode);
  DrawText(FString::Printf(TEXT("SIM %.1fs"),PC->SimulationSeconds),Ink,840,24,GEngine->GetSmallFont());
  Button(TEXT("CameraProfile"),PC->bPlayGame3?TEXT("P PlayGame3"):TEXT("P Legacy"),960,16,124);
+ Button(TEXT("CombatRange"),CombatOn?TEXT("F5 RESET BATTLE"):TEXT("F5 COMBAT RANGE"),1092,16,158);
  for(int32 I=0;I<PC->Ships.Num();++I)if(PC->Ships[I]->bFriendly||PC->bDeveloperMode)Button(FName(*FString::Printf(TEXT("Ship%d"),I+1)),PC->Ships[I]->ShipName.Left(24),12,72+I*36,182,PC->Selected==PC->Ships[I]);
  DrawText(TEXT("Ctrl+1..9 save / 1..9 select"),Ink,14,190,GEngine->GetSmallFont());
  if(PC->Selected) {
@@ -201,6 +206,34 @@ void AOVHUD::DrawHUD()
    DrawRect(Health(Ship->Systems->HullHP/FMath::Max(1.f,Ship->Systems->MaxHullHP)),P.X,P.Y+16,100*Ship->Systems->HullHP/FMath::Max(1.f,Ship->Systems->MaxHullHP),3);
   }
  }
- DrawDetails();
+ DrawCombat(); DrawDetails();
  Canvas->Canvas->PopTransform();
+}
+void AOVHUD::DrawCombat()
+{
+ const auto* PC=Cast<AOVController>(PlayerOwner);
+ if(!PC || !PC->Selected || !PC->Combat || !PC->Combat->bEnabled) return;
+ const auto* C=PC->Combat.Get(); const auto* Ship=PC->Selected.Get();
+ const FOVCombatShipState State=C->GetShipState(PC->Selected);
+ DrawRect(Panel,10,216,430,232);
+ DrawText(TEXT("2B / LIVE FIRE CONTROL"),Accent,20,226,GEngine->GetSmallFont());
+ DrawText((TEXT("Target: ")+(Ship->AttackTarget?Ship->AttackTarget->ShipName:TEXT("NONE"))).Left(58),Ink,20,247,GEngine->GetSmallFont());
+ const FOVDetectionInfo Detection=C->GetDetection(PC->Selected,Ship->AttackTarget);
+ DrawText(FString::Printf(TEXT("Sensor: %s / bonus +%.1f%%"),*Detection.Source,Detection.AccuracyBonus*100),Ink,20,267,GEngine->GetSmallFont());
+ if(State.Mounts.IsValidIndex(PC->SelectedWeapon)) {
+  const auto& M=State.Mounts[PC->SelectedWeapon];
+  const auto R=C->GetReadiness(PC->Selected,M.MountId);
+  DrawText(FString::Printf(TEXT("%s / %s"),*M.MountId.ToString(),*M.Profile.ProfileId.ToString()),Accent,20,287,GEngine->GetSmallFont());
+  DrawText(FString::Printf(TEXT("%s | CD %.2fs | aim %.1f deg"),*R.Reason,R.Cooldown,R.AimError),R.bReady?FLinearColor::Green:FLinearColor::Yellow,20,307,GEngine->GetSmallFont());
+  DrawText(FString::Printf(TEXT("%.0f/%.0f cm | accuracy %.1f%% | queued %s"),R.Distance,M.Profile.Range,100*R.Accuracy,M.bFireRequested?TEXT("YES"):TEXT("NO")),Ink,20,327,GEngine->GetSmallFont());
+ }
+ Button(TEXT("Fire"),TEXT("B FIRE"),20,351,90);
+ Button(TEXT("FireAll"),TEXT("L FIRE ALL"),118,351,105);
+ Button(TEXT("NextWeapon"),TEXT("N NEXT GUN"),231,351,110);
+ DrawText(FString::Printf(TEXT("Shots %d / hits %d / flying %d"),C->ShotCount,C->HitCount,C->Attacks.Num()),Ink,20,386,GEngine->GetSmallFont());
+ if(C->RecentEvents.Num()) {
+  const auto& E=C->RecentEvents.Last();
+  DrawText(FString::Printf(TEXT("#%d %s / hull -%.1f / blasts %d"),E.AttackId,*StaticEnum<EOVAttackResult>()->GetNameStringByValue(static_cast<int64>(E.Result)),E.HullDamage,E.Explosions),Accent,20,407,GEngine->GetSmallFont());
+ }
+ DrawText(TEXT("One request = one salvo. AUTO selects and fires."),Ink,20,428,GEngine->GetSmallFont());
 }

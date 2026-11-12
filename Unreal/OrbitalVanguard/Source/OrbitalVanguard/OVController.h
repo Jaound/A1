@@ -6,6 +6,7 @@
 #include "OVController.generated.h"
 class AOVShip;
 class ACameraActor;
+class UOVCombatSubsystem;
 UENUM(BlueprintType)
 enum class EOVInputMode : uint8 { None, Move, Target, Heading, Repair };
 UCLASS()
@@ -63,10 +64,13 @@ public:
  void UpdatePreview();
  UFUNCTION(BlueprintCallable, Category="Control Range")
  void StepSimulation(float DeltaTime);
+ UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Combat") TObjectPtr<UOVCombatSubsystem> Combat;
+ /** Explicit test-range reset; never rewrites authored layout assets. */
+ UFUNCTION(BlueprintCallable, Category="Combat") void StartCombatRange();
+ void ResolveContacts(float SimDelta);
  FOVOrderInput OrderInput;
 private:
  bool ActionPressed(FName Name) const;
- void ResolveContacts(float SimDelta);
  TMap<int32,TArray<TWeakObjectPtr<AOVShip>>> Groups;
  bool bRightGesture=false;
  FVector2D RightStart=FVector2D::ZeroVector;

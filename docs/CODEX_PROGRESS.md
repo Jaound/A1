@@ -1,5 +1,15 @@
 # Codex 진행 기록
 
+## 2026-11-12 2B 실제 함대 전투
+
+사용자가 2A 직접 조작을 확인하고 다음 단계를 승인했다. 깨끗한 `be544d7`에서 시작, 코드·기획 원격 fetch 결과 이후 변경 없음 (`work=bca769f`). DECISIONS/FLEET_COMBAT/SHIP_SYSTEMS/PHASE2_PLAN/UE5_IMPLEMENTATION_CONTRACT/PLANNING_REVIEW 및 2A 가이드·검증 기록을 실제 소스와 대조했다.
+
+설계: 기존 `ApplyWorldHit`과 개별 시설/무장 상태를 재사용하며, 전투 활성 시 공통 고정 게임 시간으로 탐지·포탑·발사·투사체를 진행한다. 기본 2A 시험장은 비활성 전투 상태로 유지하고 F5로 전투 시험을 명시 시작한다. 카메라·이동 성능은 변경하지 않는다. R10 살보 중단, R14 포탑 피해 전달, 유도탄 추적 수명은 미정과 시험 설정을 구분한다.
+
+2026-11-13 재개: 중단 때 저장된 cpp/h·테스트·Controller/HUD를 보존했다. 원격 재fetch 후 변화 없음. 첫 빌드 성공 29.70초, 실제 빔 피해 연결 자동 검사 1/1 통과 (`OrbitalVanguard.Combat.LaunchedDamageChainAndSingleImpact`). `Saved/Logs/CombatBuild.log`, `CombatBeamAutomation.log`; 제출 증거는 `docs/validation/Phase2B-Beam-*`. 정식 탐지는 이미 사용 중(`bDevelopmentOmniscient=false`). 한국어 엔진 자체 검사 오류 15건은 별도 유지.
+
+다음: 무장 확장·살보·유도 수명·자동 사선 확보, 함교 상실 정지/FTL 이탈 충돌 제외 보완. 새 테스트 전체·기존 17/57·PIE·직접 입력은 아직 미검증이다. 첫 체크포인트의 발사 가능 무장은 BeamRapid뿐이며 함포/미사일은 PROFILE UNAVAILABLE로 명시된다.
+
 ## 2026-11-12 조작 보완
 
 `6d67970`의 깨끗한 `codex/phase1-playground`에서 시작했다. 디스크에서 적용할 AGENTS.md를 찾지 못해 대화에 제공된 개발 지침을 적용했다. `origin/work`의 `bca769f`를 fetch하고 검토 문서와 참조 자료를 `823dca3`에 반영했다.
