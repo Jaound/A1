@@ -2,6 +2,7 @@
 #include "CoreMinimal.h"
 #include "GameFramework/PlayerController.h"
 #include "OVOrderInput.h"
+#include "OVControlProfile.h"
 #include "OVController.generated.h"
 class AOVShip;
 class ACameraActor;
@@ -15,6 +16,10 @@ public:
  AOVController();
  virtual void BeginPlay() override;
  virtual void PlayerTick(float DeltaTime) override;
+ virtual bool InputKey(const FInputKeyEventArgs& Params) override;
+ virtual void FlushPressedKeys() override;
+ UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Camera") bool bPlayGame3=true;
+ UFUNCTION(BlueprintCallable, Category="Camera") void ApplyCameraInput(FVector2D OrbitDelta, FVector LocalPan, float YawAxis, int32 Wheel, float RealSeconds);
  UFUNCTION(BlueprintCallable, Category="Control Range")
  void Action(FName Name);
  UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Control Range") TArray<TObjectPtr<AOVShip>> Ships;
@@ -66,5 +71,14 @@ private:
  bool bRightGesture=false;
  FVector2D RightStart=FVector2D::ZeroVector;
  TWeakObjectPtr<AOVShip> RightTarget;
- bool bWasOverUI=false;
+ FOVOrbitGesture OrbitGesture;
+ FOVRightMoveGesture RightMove;
+ TWeakObjectPtr<AOVShip> RightCommander;
+ bool bRightHeading=false;
+ bool bConsumeAltLeft=false;
+ void ResetCameraProfile();
+ void CancelRightMove();
+ void UpdateOrbit(FVector2D Cursor);
+ void UpdateRightMove(FVector2D Cursor);
+ UFUNCTION(BlueprintCallable, Category="Control Range") void HandleRightMove(bool Pressed, FVector2D Cursor, bool InWorld, bool Shift, bool Ctrl);
 };

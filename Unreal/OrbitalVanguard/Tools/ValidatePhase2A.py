@@ -20,7 +20,7 @@ def near(a, b, tolerance=.1):
     return all(abs(getattr(a, k)-getattr(b, k)) <= tolerance for k in fields)
 def save():
     report['passed'] = bool(report['checks']) and all(c['passed'] for c in report['checks']) and not report['errors']
-    with open(os.path.join(root, 'Validation', 'Phase2A.json'), 'w', encoding='utf-8') as out:
+    with open(os.path.join(root, 'Validation', 'Phase2AControls.json'), 'w', encoding='utf-8') as out:
         json.dump(report, out, indent=2)
 def stop(): unreal.unregister_slate_post_tick_callback(state['handle'])
 def frames(pc, count, dt=1/60):
@@ -150,6 +150,59 @@ def run(pc, ships, world):
     pc.action('Speed1'); pause(pc, True); pc.select_ship(b); pc.action('External')
     pc.set_editor_property('camera_focus', unreal.Vector()); pc.set_editor_property('camera_yaw', -45); pc.set_editor_property('camera_pitch', -48); pc.set_editor_property('camera_distance', 6500); pc.update_camera()
 
+def controls(pc, ships):
+    a = ships[0]
+    pc.select_ship(a)
+    check('PlayGame3 is the default profile', p(pc, 'play_game3'))
+    pc.action('CameraProfile')
+    check('Legacy profile retains its reset distance', not p(pc, 'play_game3') and p(pc, 'camera_distance') == 6500)
+    pc.action('CameraProfile')
+    check('PlayGame3 reset distance and angles', p(pc, 'camera_distance') == 4060 and p(pc, 'camera_yaw') == 32 and p(pc, 'camera_pitch') == -38)
+    results = []
+    for paused, speed in ((True, 1), (False, 1), (False, 2), (False, 3)):
+        pause(pc, paused)
+        pc.action('Speed'+str(speed))
+        for fps in (30, 60, 144):
+            pc.set_editor_property('camera_yaw', 32)
+            pc.set_editor_property('camera_pitch', -38)
+            for _ in range(fps):
+                pc.apply_camera_input(unreal.Vector2D(120/fps, 30/fps), unreal.Vector(), 0, 0, 1/fps)
+            results.append((p(pc, 'camera_yaw'), p(pc, 'camera_pitch')))
+    check('Equal 120x30 px orbit at 30/60/144 samples and paused/1x/2x/3x', all(abs(y-70.4)<.003 and abs(t+46.4)<.003 for y,t in results), results)
+    pause(pc, True); pc.action('Speed1')
+    pc.action('Move')
+    before = p(pc, 'preview')
+    distance = p(pc, 'camera_distance')
+    pc.apply_camera_input(unreal.Vector2D(), unreal.Vector(), 0, 1, 0)
+    check('PlayGame3 zoom during precision order keeps destination', abs(p(pc, 'camera_distance')-distance*.88)<.01 and near(before,p(pc,'preview')))
+    pc.action('Cancel')
+    pc.action('CameraProfile'); pc.action('CameraProfile')
+    cursor = pc.project_world_location_to_screen(unreal.Vector(900, 900, a.get_actor_location().z))
+    check('RMB test point projects in PIE', cursor is not None)
+    up = unreal.Vector2D(cursor.x+40,cursor.y-20)
+    pc.handle_right_move(True, cursor, True, True, False)
+    preview = p(pc, 'preview')
+    anchor = unreal.Vector(preview.x,preview.y,preview.z)
+    check('RMB press does not issue orders', not p(a,'has_destination') and near(anchor,unreal.Vector(900,900,a.get_actor_location().z),15), (anchor, cursor, p(a,'has_destination')))
+    pc.handle_right_move(False, up, True, True, False)
+    check('RMB release issues fixed XY and dragged Z', p(a,'has_destination') and near(p(a,'destination'),unreal.Vector(anchor.x,anchor.y,anchor.z+154),1), (anchor,p(a,'destination')))
+    a.stop_movement()
+    pc.handle_right_move(False, up, True, True, False)
+    check('Repeated RMB release cannot issue a second order', not p(a,'has_destination'))
+    pc.handle_right_move(True, cursor, True, True, False)
+    pc.handle_right_move(False, up, False, True, False)
+    check('Release outside battlefield cancels RMB order', not p(a,'has_destination'))
+    pc.action('Move')
+    pc.handle_right_move(True,cursor,True,True,False)
+    pc.handle_right_move(False,up,True,True,False)
+    check('RMB cannot commit active V precision order', p(pc,'placing') and not p(a,'has_destination'))
+    pc.set_editor_property('preview', unreal.Vector(900,900,800))
+    pc.action('Confirm')
+    check('V precision confirm remains available', p(a,'has_destination') and near(p(a,'destination'),unreal.Vector(900,900,800)))
+    a.stop_movement()
+    pc.action('CameraProfile'); pc.action('CameraProfile')
+    pc.select_ship(ships[1])
+
 def tick(dt):
     try:
         if time.monotonic()-state['start'] > 120: raise TimeoutError('PIE validation timeout')
@@ -168,6 +221,7 @@ def tick(dt):
             if time.monotonic()-state['at'] < 1: return
             check('Pause freezes real frame simulation', p(state['pc'],'simulation_seconds') == state['sim'])
             run(state['pc'], state['ships'], state['world'])
+            controls(state['pc'], state['ships'])
             a = state['ships'][0]; state['real_pos'] = a.get_actor_location()
             a.set_destination(unreal.Vector(1500,-650,900)); pause(state['pc'], False)
             state['real_sim'] = p(state['pc'], 'simulation_seconds')

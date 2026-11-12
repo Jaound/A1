@@ -1,5 +1,12 @@
 # Orbital Vanguard 작업 상태
 
+## 현재 작업 — 2A 조작 보완
+
+`codex/phase1-playground`의 기준은 `6d67970`이며 원격 기획 `bca769f`를 `823dca3`에 반영했다. PlayGame3 기본 프로필, `P` 전환, 우클릭 고정 XY·해제 확정, 전장/프리뷰 회전 소유권을 구현했다. 아래는 이전 2A 체크포인트의 기록이다.
+
+재개 시 에디터의 ControlRange PIE에서 프로필 비교와 포커스/창 경계, 우클릭 및 V 정밀 이동을 실제 입력으로 확인한다. Win64 Editor 빌드, 자동 17/17, PIE API 57/57은 완료했다. 이번 승인 범위는 2A 조작 보완이다. [직접 확인 순서](PHASE2A_GUIDE.md#playgame3-기본-조작)
+
+
 갱신: 2026-11-12 (KST). 실제 소스/로그와 함께 읽는 재개 지점이다. 새 지침의 진행 기록은 [CODEX_PROGRESS.md](CODEX_PROGRESS.md)에 있다.
 
 ## 작업 기준과 보존

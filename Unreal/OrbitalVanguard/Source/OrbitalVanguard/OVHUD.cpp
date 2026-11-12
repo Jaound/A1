@@ -25,6 +25,25 @@ bool AOVHUD::IsOverPanel(float X,float Y) const
  if(P.Y<55 || (PC->Selected&&P.Y>ViewportPixels.Y/UIScale-88) || (P.X<200&&P.Y<210)) return true;
  return PC->Selected&&bDetailsOpen&&P.X>=WindowPosition.X&&P.X<=WindowPosition.X+WindowSize.X&&P.Y>=WindowPosition.Y&&P.Y<=WindowPosition.Y+(bMinimized?32:WindowSize.Y);
 }
+bool AOVHUD::HasOrbitPreview() const
+{
+ const auto* PC=Cast<AOVController>(PlayerOwner);
+ return PC && PC->Selected && PC->Selected->Systems->Layout && bDetailsOpen && !bMinimized && PC->ViewedDeck==0;
+}
+
+bool AOVHUD::IsOverOrbitPreview(FVector2D Cursor) const
+{
+ const FVector2D P=Cursor/UIScale-WindowPosition;
+ return HasOrbitPreview() && P.X>=10 && P.X<=WindowSize.X-10 && P.Y>=72 && P.Y<=264;
+}
+
+void AOVHUD::OrbitPreview(FVector2D Delta)
+{
+ if(!HasOrbitPreview()) return;
+ PreviewRotation.Yaw+=Delta.X;
+ PreviewRotation.Pitch=FMath::Clamp(PreviewRotation.Pitch-Delta.Y,-85.,85.);
+}
+
 bool AOVHUD::HandlePointer(float X,float Y,bool Pressed,bool Down,float Wheel,bool Orbit,float DX,float DY)
 {
  const auto* PC=Cast<AOVController>(PlayerOwner);
@@ -45,8 +64,8 @@ bool AOVHUD::HandlePointer(float X,float Y,bool Pressed,bool Down,float Wheel,bo
   WindowPosition.Y=FMath::Clamp(WindowPosition.Y,56.0,FMath::Max(56.0,ViewportPixels.Y/UIScale-WindowSize.Y-90));
  }
  if(bResizing) { WindowSize.X=FMath::Clamp(P.X-WindowPosition.X,400.0,700.0);WindowSize.Y=FMath::Clamp(P.Y-WindowPosition.Y,550.0,750.0); }
- if(Over&&!bMinimized&&P.X>WindowPosition.X&&P.Y>WindowPosition.Y+65&&P.Y<WindowPosition.Y+275) {
-  if(Orbit) { PreviewRotation.Yaw+=DX;PreviewRotation.Pitch=FMath::Clamp(PreviewRotation.Pitch-DY,-85.,85.); }
+ if(IsOverOrbitPreview(FVector2D(X,Y))) {
+  if(Orbit) OrbitPreview(FVector2D(DX,DY));
   if(Wheel) PreviewZoom=FMath::Clamp(PreviewZoom+Wheel*.1f,.5f,1.6f);
  }
  return Over||bDragging||bResizing;
@@ -165,6 +184,7 @@ void AOVHUD::DrawHUD()
  Button(TEXT("Speed1"),TEXT("F2 1x"),488,16,68,PC->SimulationSpeed==1);Button(TEXT("Speed2"),TEXT("F3 2x"),564,16,68,PC->SimulationSpeed==2);Button(TEXT("Speed3"),TEXT("F4 3x"),640,16,68,PC->SimulationSpeed==3);
  Button(TEXT("Developer"),PC->bDeveloperMode?TEXT("DEV: ON"):TEXT("DEV: OFF"),725,16,100,PC->bDeveloperMode);
  DrawText(FString::Printf(TEXT("SIM %.1fs"),PC->SimulationSeconds),Ink,840,24,GEngine->GetSmallFont());
+ Button(TEXT("CameraProfile"),PC->bPlayGame3?TEXT("P PlayGame3"):TEXT("P Legacy"),960,16,124);
  for(int32 I=0;I<PC->Ships.Num();++I)if(PC->Ships[I]->bFriendly||PC->bDeveloperMode)Button(FName(*FString::Printf(TEXT("Ship%d"),I+1)),PC->Ships[I]->ShipName.Left(24),12,72+I*36,182,PC->Selected==PC->Ships[I]);
  DrawText(TEXT("Ctrl+1..9 save / 1..9 select"),Ink,14,190,GEngine->GetSmallFont());
  if(PC->Selected) {
@@ -174,7 +194,7 @@ void AOVHUD::DrawHUD()
   for(int32 I=0;I<13;++I)Button(Names[I],Labels[I],20+I*86,Y+6,80);
   DrawText(PC->LastAction.Left(130),Accent,20,Y+47,GEngine->GetSmallFont());
  }
- DrawText(TEXT("WASD pan | MMB/Z/C orbit | Q/E height | Wheel zoom | Backspace cancel"),Ink,210,58,GEngine->GetSmallFont());
+ DrawText(PC->bPlayGame3?TEXT("WASD pan | MMB/Alt+LMB orbit | Q/E turn | RMB move | Wheel zoom"):TEXT("WASD pan | MMB/Z/C orbit | Q/E height | Wheel zoom | Backspace cancel"),Ink,210,58,GEngine->GetSmallFont());
  for(AOVShip* Ship:PC->Ships) {
   FVector2D P;if(PC->ProjectWorldLocationToScreen(Ship->GetActorLocation()+FVector(0,0,220),P)&&!IsOverPanel(P.X,P.Y)) {
    P/=UIScale;DrawText(Ship->ShipName,Ship->Systems->bWrecked?FLinearColor::Gray:Ship->bFriendly?Accent:FLinearColor(1,.3f,.2f),P.X,P.Y,GEngine->GetSmallFont());
@@ -184,4 +204,3 @@ void AOVHUD::DrawHUD()
  DrawDetails();
  Canvas->Canvas->PopTransform();
 }
-

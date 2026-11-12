@@ -1,5 +1,14 @@
 # Codex 진행 기록
 
+## 2026-11-12 조작 보완
+
+`6d67970`의 깨끗한 `codex/phase1-playground`에서 시작했다. 디스크에서 적용할 AGENTS.md를 찾지 못해 대화에 제공된 개발 지침을 적용했다. `origin/work`의 `bca769f`를 fetch하고 검토 문서와 참조 자료를 `823dca3`에 반영했다.
+
+`OVController`, `OVHUD`, `DefaultInput.ini`에 PlayGame3 기본 프로필과 Legacy 비교, 우클릭 XY 고정 및 단일 해제 확정, 뷰포트별 회전 제스처 소유권을 연결했다. 기존 V/Enter를 유지한다. 프로필 수치와 재현 절차는 가이드에 기록했다.
+
+Win64 Development Editor 성공. 자동 17/17, PIE API 57/57 통과. Windows 화면 캡처 실패로 직접 입력은 확인 대기다. `P`로 프로필을 전환할 수 있는 ControlRange PIE를 일시정지 상태로 열어두었다. 다음 재개 시 직접 조작 4단계를 먼저 확인한다. [검증 결과](PHASE2A_VALIDATION.md#2026-11-12-조작-보완-검증)
+
+
 갱신: 2026-11-12 (KST). 사용자 제공 CODEX DEVELOPMENT RULES v1.0을 적용한다.
 
 ## 목표와 완료 상태
