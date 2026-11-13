@@ -101,6 +101,9 @@ struct ORBITALVANGUARD_API FOVCombatMountState
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly) float SalvoDelay = 0;
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly) int32 SalvoRemaining = 0;
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly) bool bFireRequested = false;
+    UPROPERTY(VisibleAnywhere, BlueprintReadOnly) TWeakObjectPtr<AOVShip> RequestedTarget;
+    UPROPERTY(VisibleAnywhere, BlueprintReadOnly) TWeakObjectPtr<AOVShip> SalvoTarget;
+    UPROPERTY(VisibleAnywhere, BlueprintReadOnly) bool bAutomaticSalvo = false;
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly) float TrackingRemaining = 0;
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly) FVector LastTrackedWorldPoint = FVector::ZeroVector;
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly) int32 ShotsFired = 0;
@@ -135,6 +138,9 @@ struct ORBITALVANGUARD_API FOVAttackState
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly) FVector Direction = FVector::ForwardVector;
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly) FVector AimOffset = FVector::ZeroVector;
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly) float Age = 0;
+    UPROPERTY(VisibleAnywhere, BlueprintReadOnly) double LaunchTime = 0;
+    UPROPERTY(VisibleAnywhere, BlueprintReadOnly) double ResolvedAt = 0;
+    UPROPERTY(VisibleAnywhere, BlueprintReadOnly) float TrackingLifetime = 0;
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly) float Damage = 0;
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly) float Accuracy = 0;
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly) EOVAttackResult Result = EOVAttackResult::Flying;
@@ -179,12 +185,13 @@ private:
     double Accumulator = 0;
     FRandomStream Random;
     int32 FindShip(AOVShip* Ship) const;
+    TSet<int32> ResolvedAttackIds;
     int32 FindMount(const FOVCombatShipState& State, FName Id) const;
     bool IsValidTarget(AOVShip* Source, AOVShip* Target) const;
     FOVFireReadiness Evaluate(const FOVCombatShipState& State, const FOVCombatMountState& Mount, bool bIgnoreCooldown) const;
     void Step(float Delta);
     void UpdateAim(FOVCombatShipState& State, FOVCombatMountState& Mount, float Delta);
-    void Launch(FOVCombatShipState& State, FOVCombatMountState& Mount);
+    void Launch(FOVCombatShipState& State, FOVCombatMountState& Mount, bool bAutomatic);
     void AdvanceAttacks(float Delta);
     bool SweepAttack(FOVAttackState& Attack, FVector End);
     void RecordEvent(const FOVAttackState& Attack);

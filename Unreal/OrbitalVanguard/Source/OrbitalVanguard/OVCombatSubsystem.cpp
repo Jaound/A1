@@ -60,6 +60,35 @@ UOVCombatSettings::UOVCombatSettings()
         Beam.Tier = Tier; Beam.Damage = 45.f * Tier;
         Beam.Range = 6000.f + (Tier - 1) * 800.f;
         Weapons.Add(Beam);
+        FOVWeaponProfile HeavyBeam = Beam;
+        HeavyBeam.ProfileId = FName(*FString::Printf(TEXT("BeamHeavy_T%d"), Tier));
+        HeavyBeam.Interval = 2.2f; HeavyBeam.Damage = 95.f * Tier;
+        HeavyBeam.Range += 1000.f; HeavyBeam.TraverseSpeed = 35; HeavyBeam.TraverseAcceleration = 100;
+        Weapons.Add(HeavyBeam);
+        FOVWeaponProfile Cannon;
+        Cannon.ProfileId = FName(*FString::Printf(TEXT("CannonRapid_T%d"), Tier));
+        Cannon.Family = EOVWeaponType::Cannon; Cannon.Kind = EOVAttackKind::Cannon; Cannon.Tier = Tier;
+        Cannon.Range = 6500.f + (Tier - 1) * 900.f; Cannon.Interval = 1.8f; Cannon.Damage = 95.f * Tier;
+        Cannon.Speed = 2200; Cannon.Accuracy = .76f; Cannon.TraverseSpeed = 70; Cannon.TraverseAcceleration = 220;
+        Cannon.Lifetime = 8;
+        Weapons.Add(Cannon);
+        FOVWeaponProfile HeavyCannon = Cannon;
+        HeavyCannon.ProfileId = FName(*FString::Printf(TEXT("CannonHeavy_T%d"), Tier));
+        HeavyCannon.Interval = 3.8f; HeavyCannon.Damage = 190.f * Tier; HeavyCannon.Range += 1500;
+        HeavyCannon.Speed = 1800; HeavyCannon.TraverseSpeed = 22; HeavyCannon.TraverseAcceleration = 65;
+        Weapons.Add(HeavyCannon);
+        FOVWeaponProfile Missile;
+        Missile.ProfileId = FName(*FString::Printf(TEXT("Missile_T%d"), Tier));
+        Missile.Family = EOVWeaponType::Missile; Missile.Kind = EOVAttackKind::Missile; Missile.Tier = Tier;
+        Missile.Range = 7500.f + (Tier - 1) * 1000.f; Missile.Interval = 6.5f; Missile.Damage = 145.f * Tier;
+        Missile.Speed = 1000; Missile.Accuracy = .64f; Missile.Salvo = 2; Missile.SalvoInterval = .18f;
+        Missile.TraverseSpeed = 60; Missile.TraverseAcceleration = 180; Missile.Lifetime = 15;
+        Weapons.Add(Missile);
+        FOVWeaponProfile Guided = Missile;
+        Guided.ProfileId = FName(*FString::Printf(TEXT("GuidedMissile_T%d"), Tier));
+        Guided.Kind = EOVAttackKind::GuidedMissile; Guided.Interval = 8.f; Guided.Damage = 155.f * Tier;
+        Guided.Speed = 900; Guided.Accuracy = .72f; Guided.Salvo = 3;
+        Weapons.Add(Guided);
     }
 }
 
@@ -76,6 +105,7 @@ void UOVCombatSubsystem::DisableCombat()
 {
     bEnabled = false; GameTime = 0; Accumulator = 0;
     ShotCount = 0; HitCount = 0; Ships.Reset(); Attacks.Reset(); RecentEvents.Reset();
+    ResolvedAttackIds.Reset();
 }
 
 int32 UOVCombatSubsystem::FindShip(AOVShip* Ship) const
@@ -139,7 +169,7 @@ bool UOVCombatSubsystem::SetTarget(AOVShip* Ship, AOVShip* Target)
     Ship->AttackTarget = Target;
     // A change of target cannot carry a queued volley to a new recipient.
     for (FOVCombatMountState& Mount : Ships[FindShip(Ship)].Mounts)
-    { Mount.bFireRequested = false; Mount.SalvoRemaining = 0; }
+    { Mount.bFireRequested = false; Mount.RequestedTarget.Reset(); Mount.SalvoRemaining = 0; Mount.SalvoTarget.Reset(); }
     return true;
 }
 
@@ -151,7 +181,7 @@ bool UOVCombatSubsystem::RequestFire(AOVShip* Ship, FName MountId)
     bool bAccepted = false;
     for (FOVCombatMountState& Mount : Ships[Index].Mounts)
         if (MountId.IsNone() || Mount.MountId == MountId)
-        { Mount.bFireRequested = true; bAccepted = true; }
+        { Mount.bFireRequested = true; Mount.RequestedTarget = Ship->AttackTarget; bAccepted = true; }
     return bAccepted;
 }
 
@@ -184,7 +214,7 @@ void UOVCombatSubsystem::NotifyFTLDeparture(AOVShip* Ship)
 FOVDetectionInfo UOVCombatSubsystem::GetDetection(AOVShip* Ship, AOVShip* Target) const
 {
     FOVDetectionInfo Best;
-    if (!Settings || !IsValidTarget(Ship, Target) || IsDeparted(Ship) || Ship->Systems->bWrecked) return Best;
+    if (!Settings || !IsValidTarget(Ship, Target) || IsDeparted(Ship) || Ship->Systems->bWrecked || Ship->Systems->bNeutral) return Best;
     if (Settings->bDevelopmentOmniscient)
     { Best.bDetected = true; Best.Source = TEXT("DEV OMNISCIENT"); return Best; }
     if (FVector::Dist(Ship->GetActorLocation(), Target->GetActorLocation()) <= Settings->GuaranteedRange)
@@ -231,6 +261,13 @@ FOVFireReadiness UOVCombatSubsystem::Evaluate(const FOVCombatShipState& State, c
     if (Systems->bNeutral) return Block(TEXT("NEUTRAL"));
     const FOVWeaponMountDefinition* Def = MountDefinition(State, Mount.MountId);
     if (!Def || Mount.Profile.ProfileId.IsNone()) return Block(TEXT("PROFILE UNAVAILABLE"));
+    const int32 TierCap = Systems->Layout->bSmallHull ? 1 : Systems->Layout->DeckCount < 3 ? 2 : 4;
+    if (Mount.Profile.Tier > TierCap) return Block(TEXT("TIER LIMIT"));
+    if (!FMath::IsFinite(Mount.Profile.Range) || Mount.Profile.Range <= 0
+        || !FMath::IsFinite(Mount.Profile.Damage) || Mount.Profile.Damage <= 0
+        || !FMath::IsFinite(Mount.Profile.Interval) || Mount.Profile.Interval <= 0
+        || !FMath::IsFinite(Mount.Profile.Speed) || Mount.Profile.Speed <= 0)
+        return Block(TEXT("INVALID PROFILE"));
     const FOVWeaponMountState* Health = Systems->WeaponMountStates.FindByPredicate(
         [&](const FOVWeaponMountState& H) { return H.WeaponMountId == Mount.MountId; });
     if (!Health || Health->HP <= 0) return Block(TEXT("MOUNT DESTROYED"));
@@ -295,10 +332,13 @@ void UOVCombatSubsystem::Step(float Delta)
         Ship->Systems->Simulate(Delta);
         Ship->bFriendly = Ship->Systems->FactionId == 0;
         if (Ship->Systems->GetEfficiency(EOVFacilityType::Engine) <= 0) Ship->bFTLCharging = false;
+        // Bridge loss preserves the existing 2A stop rule and hands only combat to the fallback AI.
+        if (!Ship->Systems->CanCommand()) { Ship->bManual = false; Ship->StopMovement(); }
         Ship->Simulate(Delta);
     }
     if (AOVController* Controller = Cast<AOVController>(GetWorld()->GetFirstPlayerController()))
         Controller->ResolveContacts(Delta);
+    AdvanceAttacks(Delta);
     for (FOVCombatShipState& State : Ships)
     {
         AOVShip* Ship = State.Ship;
@@ -314,21 +354,56 @@ void UOVCombatSubsystem::Step(float Delta)
                 const double Distance = FVector::DistSquared(Ship->GetActorLocation(), Target->GetActorLocation());
                 if (Distance < BestDistance) { Best = Target; BestDistance = Distance; }
             }
-            Ship->AttackTarget = Best;
+            if (Ship->AttackTarget != Best)
+            {
+                for (FOVCombatMountState& Mount : State.Mounts)
+                { Mount.SalvoRemaining = 0; Mount.bFireRequested = false; Mount.RequestedTarget.Reset(); Mount.SalvoTarget.Reset(); }
+                Ship->AttackTarget = Best;
+            }
+        }
+        // Existing destination, Hold, manual posture and FTL always precede optional AI clearance.
+        if (bAutomatic && IsValidTarget(Ship, Ship->AttackTarget) && !Ship->bHold && !Ship->bHasDestination
+            && !Ship->bManualAttitude && !Ship->bFTLCharging && Ship->Systems->CanMove())
+        {
+            if (Ship->Systems->Layout->DeckCount <= 2
+                && FindBlockingFriend(Ship, Ship->AttackTarget, Ship->GetActorLocation()))
+                Ship->SetDestination(Ship->GetActorLocation() + FVector(0, 0, Settings->AutoClearanceHeight));
+            else
+            {
+                FRotator Desired = (Ship->AttackTarget->GetActorLocation() - Ship->GetActorLocation()).Rotation();
+                Desired.Roll = 0;
+                const FQuat Before = Ship->GetActorQuat();
+                const FQuat Wanted = Desired.Quaternion();
+                const double Angle = Before.AngularDistance(Wanted);
+                const double MaxTurn = FMath::DegreesToRadians(Ship->TurnRate * Ship->Systems->GetEfficiency(EOVFacilityType::Engine)) * Delta;
+                Ship->SetActorRotation(FQuat::Slerp(Before, Wanted, Angle > UE_SMALL_NUMBER ? FMath::Min(1.0, MaxTurn / Angle) : 1.0));
+            }
         }
         for (FOVCombatMountState& Mount : State.Mounts)
         {
             Mount.Cooldown = FMath::Max(0.f, Mount.Cooldown - Delta);
             Mount.SalvoDelay = FMath::Max(0.f, Mount.SalvoDelay - Delta);
             UpdateAim(State, Mount, Delta);
+            if (Mount.bFireRequested && Mount.RequestedTarget.Get() != Ship->AttackTarget)
+            { Mount.bFireRequested = false; Mount.RequestedTarget.Reset(); }
+            if (Mount.SalvoRemaining > 0 && (Mount.SalvoTarget.Get() != Ship->AttackTarget
+                || (Mount.bAutomaticSalvo && !bAutomatic)))
+            { Mount.SalvoRemaining = 0; Mount.SalvoTarget.Reset(); }
             if (!(bAutomatic || Mount.bFireRequested || Mount.SalvoRemaining > 0)) continue;
             const FOVFireReadiness Ready = Evaluate(State, Mount, false);
-            if (!Ready.bReady) continue;
-            Launch(State, Mount);
+            if (!Ready.bReady)
+            {
+                // Cooldown is a timer, not a failed salvo gate. Each remaining round rechecks all other gates.
+                if (Mount.SalvoRemaining > 0 && Settings->bCancelBlockedSalvo
+                    && !Evaluate(State, Mount, true).bReady)
+                { Mount.SalvoRemaining = 0; Mount.SalvoTarget.Reset(); }
+                continue;
+            }
+            Launch(State, Mount, bAutomatic);
             Mount.bFireRequested = false;
+            Mount.RequestedTarget.Reset();
         }
     }
-    AdvanceAttacks(Delta);
 }
 
 void UOVCombatSubsystem::UpdateAim(FOVCombatShipState& State, FOVCombatMountState& Mount, float Delta)
@@ -348,7 +423,7 @@ void UOVCombatSubsystem::UpdateAim(FOVCombatShipState& State, FOVCombatMountStat
     Mount.LocalAim.Roll = 0;
 }
 
-void UOVCombatSubsystem::Launch(FOVCombatShipState& State, FOVCombatMountState& Mount)
+void UOVCombatSubsystem::Launch(FOVCombatShipState& State, FOVCombatMountState& Mount, bool bAutomatic)
 {
     const FOVFireReadiness Ready = Evaluate(State, Mount, false);
     const FOVWeaponMountDefinition* Def = MountDefinition(State, Mount.MountId);
@@ -357,6 +432,7 @@ void UOVCombatSubsystem::Launch(FOVCombatShipState& State, FOVCombatMountState& 
     Attack.AttackId = ++ShotCount;
     Attack.AttackerId = State.ShipId; Attack.Attacker = State.Ship;
     Attack.FactionId = State.Ship->Systems->FactionId;
+    Attack.LaunchTime = GameTime; Attack.TrackingLifetime = Settings->GuidedTrackingSeconds;
     Attack.WeaponId = Mount.MountId; Attack.Weapon = Mount.Profile;
     Attack.Target = State.Ship->AttackTarget;
     Attack.Origin = Attack.Position = MountOrigin(State, *Def);
@@ -376,11 +452,18 @@ void UOVCombatSubsystem::Launch(FOVCombatShipState& State, FOVCombatMountState& 
     ++Mount.ShotsFired; Mount.TrackingRemaining = PostShotTracking;
     const float Efficiency = State.Ship->Systems->GetEfficiency(EOVFacilityType::WeaponControl)
         * State.Ship->Systems->GetEfficiency(SupplyFor(Def->Type));
-    Mount.Cooldown = FMath::Max(0.01f, Mount.Profile.Interval / FMath::Max(0.05f, Efficiency));
+    if (Mount.SalvoRemaining <= 0)
+    {
+        Mount.Cooldown = FMath::Max(0.01f, Mount.Profile.Interval / FMath::Max(0.05f, Efficiency));
+        Mount.SalvoRemaining = FMath::Max(1, Mount.Profile.Salvo);
+        Mount.SalvoTarget = Attack.Target; Mount.bAutomaticSalvo = bAutomatic;
+    }
+    --Mount.SalvoRemaining;
+    Mount.SalvoDelay = FMath::Max(0.001f, Mount.Profile.SalvoInterval);
     if (Attack.Weapon.Kind == EOVAttackKind::Beam)
     {
         if (!SweepAttack(Attack, Attack.Position + Attack.Direction * Attack.Weapon.Range)) Attack.Result = EOVAttackResult::Miss;
-        RecordEvent(Attack);
+        Attack.ResolvedAt = GameTime; RecordEvent(Attack);
     }
     else Attacks.Add(Attack);
 }
@@ -431,10 +514,12 @@ bool UOVCombatSubsystem::SweepAttack(FOVAttackState& Attack, FVector End)
 
 bool UOVCombatSubsystem::ResolveImpact(FOVAttackState& Attack, AOVShip* HitShip, FVector Point, FVector Normal)
 {
-    if (Attack.Result != EOVAttackResult::Flying || !IsValid(HitShip) || !HitShip->Systems
+    if (Attack.Result != EOVAttackResult::Flying || Attack.AttackId <= 0 || Attack.AttackId > ShotCount || ResolvedAttackIds.Contains(Attack.AttackId)
+        || !IsValid(HitShip) || !HitShip->Systems
         || HitShip->Systems->bWrecked || IsDeparted(HitShip)) return false;
     // Mark resolved before the damage path, including its queued secondary explosions.
     Attack.Result = EOVAttackResult::Hit; Attack.Position = Point; Attack.HitShipId = HitShip->GetFName();
+    Attack.ResolvedAt = GameTime; ResolvedAttackIds.Add(Attack.AttackId);
     UOVShipSystemsComponent* Systems = HitShip->Systems;
     Systems->IncomingSourceId = Attack.AttackerId;
     Systems->IncomingFactionId = Attack.FactionId;
@@ -451,15 +536,37 @@ void UOVCombatSubsystem::AdvanceAttacks(float Delta)
     for (FOVAttackState& Attack : Attacks)
     {
         Attack.Age += Delta;
-        if (!SweepAttack(Attack, Attack.Position + Attack.Direction * Attack.Weapon.Speed * Delta)
-            && Attack.Age >= Attack.Weapon.Lifetime) Attack.Result = EOVAttackResult::Expired;
-        if (Attack.Result != EOVAttackResult::Flying) RecordEvent(Attack);
+        if (Attack.Weapon.Kind == EOVAttackKind::GuidedMissile)
+        {
+            AOVShip* Target = Attack.Target.Get();
+            // Sensor/source state is deliberately absent here: this attack already owns its launch snapshot.
+            if (!IsValid(Target) || !Target->Systems || Target->Systems->bWrecked) Attack.Result = EOVAttackResult::TargetWrecked;
+            else if (IsDeparted(Target)) Attack.Result = EOVAttackResult::TargetDeparted;
+            else if (Attack.Age >= Attack.TrackingLifetime) Attack.Result = EOVAttackResult::TrackingExpired;
+            else
+            {
+                const FVector Desired = (Target->GetActorLocation() + Attack.AimOffset - Attack.Position).GetSafeNormal();
+                const FQuat Before = Attack.Direction.ToOrientationQuat();
+                const FQuat Wanted = Desired.ToOrientationQuat();
+                const double Angle = Before.AngularDistance(Wanted);
+                const double MaxTurn = FMath::DegreesToRadians(Attack.Weapon.GuidanceTurnRate) * Delta;
+                Attack.Direction = FQuat::Slerp(Before, Wanted, Angle > UE_SMALL_NUMBER ? FMath::Min(1.0, MaxTurn / Angle) : 1.0).GetForwardVector();
+            }
+        }
+        if (Attack.Result == EOVAttackResult::Flying)
+        {
+            if (Attack.Age >= Attack.Weapon.Lifetime) Attack.Result = EOVAttackResult::Expired;
+            else SweepAttack(Attack, Attack.Position + Attack.Direction * Attack.Weapon.Speed * Delta);
+        }
+        if (Attack.Result != EOVAttackResult::Flying)
+        { Attack.ResolvedAt = GameTime; RecordEvent(Attack); }
     }
     Attacks.RemoveAll([](const FOVAttackState& Attack) { return Attack.Result != EOVAttackResult::Flying; });
 }
 
 void UOVCombatSubsystem::RecordEvent(const FOVAttackState& Attack)
 {
+    ResolvedAttackIds.Add(Attack.AttackId);
     RecentEvents.Add(Attack);
     if (RecentEvents.Num() > 128) RecentEvents.RemoveAt(0);
     UE_LOG(LogTemp, Log, TEXT("OVCombat attack=%d source=%s faction=%d weapon=%s result=%d target=%s hull=%.2f explosions=%d"),

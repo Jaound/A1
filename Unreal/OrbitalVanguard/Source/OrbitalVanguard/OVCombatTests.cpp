@@ -175,6 +175,13 @@ bool FOVCombatTurretTest::RunTest(const FString&)
     TestTrue(TEXT("Turret cannot overwrite manual hull attitude"), R.A->GetActorRotation().Equals(HullBefore, .01f));
     R.Combat->Simulate(3);
     TestTrue(TEXT("Turret finishes alignment without moving held ship"), R.Combat->GetReadiness(R.A, Id).bReady && R.A->GetActorLocation().IsNearlyZero());
+    R.A->DebugResetMotion(); R.A->SetActorRotation(FRotator::ZeroRotator);
+    R.Combat->SetTarget(R.A, R.B);
+    R.A->Systems->Layout->WeaponMounts[1].LocalPosition.Z = -40;
+    R.B->SetActorLocation(FVector(1000, 0, 1000)); R.Align();
+    TestFalse(TEXT("Lower mount cannot shoot above local neutral band"), R.Combat->GetReadiness(R.A, Id).bReady);
+    R.B->SetActorLocation(FVector(1000, 0, 0)); R.Align();
+    TestTrue(TEXT("Equator permits lower mount too"), R.Combat->GetReadiness(R.A, Id).bReady);
     float T; FVector Normal;
     TestTrue(TEXT("Swept segment intersects a rotated scaled hull"), UOVCombatSubsystem::SegmentBox(FVector(-1000, 0, 0), FVector(1000, 0, 0), FTransform(FRotator(10, 37, 25), FVector::ZeroVector, FVector(1.4, 1.2, 1.8)), FVector(175, 75, 30), T, Normal));
     TestTrue(TEXT("Continuous impact has bounded fraction and finite normal"), T >= 0 && T <= 1 && !Normal.ContainsNaN());
@@ -202,6 +209,10 @@ bool FOVCombatDamageTest::RunTest(const FString&)
         const int32 Events = R.B->Systems->HitEventId;
         TestFalse(TEXT("Resolved attack cannot damage twice"), R.Combat->ResolveImpact(Resolved, R.B, R.B->GetActorLocation(), FVector::ForwardVector));
         TestEqual(TEXT("Duplicate impact does not create another damage event"), R.B->Systems->HitEventId, Events);
+        FOVAttackState Duplicate = Resolved;
+        Duplicate.Result = EOVAttackResult::Flying;
+        TestFalse(TEXT("Copying an attack cannot bypass its globally consumed ID"), R.Combat->ResolveImpact(Duplicate, R.B, R.B->GetActorLocation(), FVector::ForwardVector));
+        TestEqual(TEXT("Duplicate attack ID cannot create another damage event"), R.B->Systems->HitEventId, Events);
     }
     // Move the target so the beam enters the known ammunition slot from above.
     R.B->Systems->ResetState();
@@ -209,9 +220,6 @@ bool FOVCombatDamageTest::RunTest(const FString&)
     int32 Ammo = Layout->Slots.IndexOfByPredicate([](const auto& S) { return S.Facility == EOVFacilityType::Ammo; });
     TestTrue(TEXT("Ammunition fixture exists"), Ammo != INDEX_NONE);
     if (Ammo == INDEX_NONE) return false;
-    const FVector Local = Layout->Slots[Ammo].LocalCenter;
-    R.B->SetActorLocation(FVector(0, 0, 1000));
-    R.B->SetActorRotation(FRotator(0, 0, 180));
     // Center-targeting attacks enter the rear-face central slot; put volatile supply there
     // in this disposable layout without changing any production asset or damage code.
     R.B->SetActorLocation(FVector(1000, 0, 0)); R.B->SetActorRotation(FRotator::ZeroRotator);
@@ -365,6 +373,66 @@ bool FOVCombatSalvoTest::RunTest(const FString&)
         TestEqual(TEXT("An inaccurate beam still launches"), R.Combat->ShotCount, 1);
         TestTrue(TEXT("Beam can geometrically miss without a second damage probability roll"), R.Combat->HitCount == 0 && R.B->Systems->HitEventId == 0);
     }
+    return true;
+}
+
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(FOVCombatOrdersTest, "OrbitalVanguard.Combat.OrdersAndFriendlyClearance", EAutomationTestFlags::EditorContext | EAutomationTestFlags::EngineFilter)
+bool FOVCombatOrdersTest::RunTest(const FString&)
+{
+    {
+        OVCombatTest::FRange R;
+        R.Combat->RequestFire(R.A, R.Gun().MountId);
+        R.Combat->SetTarget(R.A, nullptr);
+        R.Combat->SetTarget(R.A, R.B);
+        R.Combat->Simulate(.3f);
+        TestTrue(TEXT("Changing target clears a pending manual launch"), !R.Gun().bFireRequested && R.Combat->ShotCount == 0);
+        const int32 Bridge = R.A->Systems->Layout->Slots.IndexOfByPredicate([](const auto& Slot) { return Slot.Facility == EOVFacilityType::Bridge; });
+        R.A->Systems->DebugDestroySlot(R.A->Systems->Slots[Bridge].SlotId, EOVDamageCause::Sabotage);
+        TestFalse(TEXT("Destroyed bridge rejects new player fire requests"), R.Combat->RequestFire(R.A, R.Gun().MountId));
+        R.Combat->Simulate(1);
+        TestTrue(TEXT("Intact weapon systems continue autonomous engagement after bridge loss"), R.Combat->ShotCount > 0);
+    }
+    for (int32 Policy = 0; Policy < 5; ++Policy)
+    {
+        OVCombatTest::FRange R;
+        R.A->Systems->Initialize(UShipLayoutDataAsset::MakeTestLayout(R.A, 1));
+        R.Enable();
+        R.Scout->SetActorLocation(FVector(500, 0, 0));
+        R.A->bManual = false;
+        // 0: persistent Hold; 1: free auto; 2: explicit destination; 3: manual
+        // posture; 4: FTL. The latter four test precedence, not a strategic AI.
+        if (Policy != 0) R.A->bHold = false;
+        if (Policy == 2) R.A->SetDestination(FVector(3000, 0, 0));
+        if (Policy == 3) R.A->SetManualAttitude(FRotator::ZeroRotator);
+        if (Policy == 4) R.A->DebugSetFTLCharging(true);
+        const FVector Destination = R.A->Destination;
+        R.Combat->Simulate(.3f);
+        if (Policy == 1)
+            TestTrue(TEXT("Free small automatic ship prioritizes Z clearance"), R.A->GetActorLocation().Z > 0 || (R.A->bHasDestination && R.A->Destination.Z > 0));
+        else if (Policy == 2)
+            TestTrue(TEXT("Explicit movement remains authoritative over clearance"), R.A->Destination.Equals(Destination, .01f));
+        else
+            TestTrue(TEXT("Hold manual posture and FTL prohibit automatic clearance"), FMath::Abs(R.A->GetActorLocation().Z) < .01f);
+    }
+    return true;
+}
+
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(FOVCombatProfilesTest, "OrbitalVanguard.Combat.DataProfilesAndTierLimits", EAutomationTestFlags::EditorContext | EAutomationTestFlags::EngineFilter)
+bool FOVCombatProfilesTest::RunTest(const FString&)
+{
+    OVCombatTest::FRange R;
+    TestTrue(TEXT("Same-family rapid beam profile applies"), R.Combat->SetWeaponProfile(R.A, R.Gun().MountId, TEXT("BeamRapid_T1")));
+    const FOVWeaponProfile Rapid = R.Gun().Profile;
+    TestTrue(TEXT("Same-tier heavy beam is a separate kind profile"), R.Combat->SetWeaponProfile(R.A, R.Gun().MountId, TEXT("BeamHeavy_T1")));
+    const FOVWeaponProfile Heavy = R.Gun().Profile;
+    TestTrue(TEXT("Weapon kind changes interval and damage within a tier"), Heavy.Tier == Rapid.Tier && Heavy.Interval != Rapid.Interval && Heavy.Damage != Rapid.Damage);
+    TestTrue(TEXT("Higher-tier profile applies within hull cap"), R.Combat->SetWeaponProfile(R.A, R.Gun().MountId, TEXT("BeamHeavy_T2")));
+    TestTrue(TEXT("Tier changes performance independently of kind"), R.Gun().Profile.Damage != Heavy.Damage && R.Gun().Profile.Tier == 2);
+    TestFalse(TEXT("Profile cannot change a beam mount into a cannon"), R.Combat->SetWeaponProfile(R.A, R.Gun().MountId, TEXT("CannonRapid_T1")));
+    R.A->Systems->Initialize(UShipLayoutDataAsset::MakeTestLayout(R.A, 1));
+    R.Enable();
+    TestFalse(TEXT("Small hull cannot install tier 2"), R.Combat->SetWeaponProfile(R.A, R.Gun().MountId, TEXT("BeamRapid_T2")));
+    TestTrue(TEXT("Small hull retains valid tier 1"), R.Gun().Profile.Tier == 1);
     return true;
 }
 #endif

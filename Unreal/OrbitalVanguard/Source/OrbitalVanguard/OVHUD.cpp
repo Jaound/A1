@@ -23,7 +23,7 @@ bool AOVHUD::IsOverPanel(float X,float Y) const
  const auto* PC=Cast<AOVController>(PlayerOwner); if(!PC) return false;
  const FVector2D P(X/UIScale,Y/UIScale);
  if(bDragging||bResizing) return true;
- if(PC->Combat && PC->Combat->bEnabled && PC->Selected && P.X>=10 && P.X<=440 && P.Y>=216 && P.Y<=448) return true;
+ if(PC->Combat && PC->Combat->bEnabled && PC->Selected && (PC->Selected->bFriendly||PC->bDeveloperMode) && P.X>=10 && P.X<=440 && P.Y>=216 && P.Y<=448) return true;
  if(P.Y<55 || (PC->Selected&&P.Y>ViewportPixels.Y/UIScale-88) || (P.X<200&&P.Y<210)) return true;
  return PC->Selected&&bDetailsOpen&&P.X>=WindowPosition.X&&P.X<=WindowPosition.X+WindowSize.X&&P.Y>=WindowPosition.Y&&P.Y<=WindowPosition.Y+(bMinimized?32:WindowSize.Y);
 }
@@ -122,6 +122,11 @@ void AOVHUD::DrawExternal(float X,float Y,float W)
  for(int32 I=0;I<L->WeaponMounts.Num();++I) {
   const auto& M=L->WeaponMounts[I];const FVector2D P=Project(M.LocalPosition);
   if(!Inside(P))continue;
+  if(PC->Combat&&PC->Combat->bEnabled) {
+   const auto State=PC->Combat->GetShipState(PC->Selected);
+   if(const auto* Mount=State.Mounts.FindByPredicate([&](const FOVCombatMountState& Item){return Item.MountId==M.WeaponId;}))
+    Line(P,Project(M.LocalPosition+Mount->LocalAim.Vector()*60),Accent);
+  }
   DrawRect(I==PC->SelectedWeapon?Accent:Health(S->WeaponMountStates[I].HP/M.MaxHP),P.X-6,P.Y-6,12,12);
   AddHitBox((P-FVector2D(7,7))*UIScale,FVector2D(14,14)*UIScale,FName(*FString::Printf(TEXT("Weapon_%d"),I)),true,30);
  }
@@ -157,7 +162,7 @@ void AOVHUD::DrawDetails()
  }
  if(PC->ViewedDeck==0&&S->WeaponMountStates.IsValidIndex(PC->SelectedWeapon)) {
   const auto& M=S->WeaponMountStates[PC->SelectedWeapon];const auto& D=L->WeaponMounts[PC->SelectedWeapon];
-  const FString Status=PC->Combat&&PC->Combat->bEnabled?PC->Combat->GetReadiness(PC->Selected,M.WeaponMountId).Reason:(S->IsWeaponAvailable(M.WeaponMountId)?TEXT("SUPPLIED"):TEXT("OFF"));
+  const FString Status=!Reveal?TEXT("EXTERNAL ONLY"):(PC->Combat&&PC->Combat->bEnabled?PC->Combat->GetReadiness(PC->Selected,M.WeaponMountId).Reason:(S->IsWeaponAvailable(M.WeaponMountId)?TEXT("SUPPLIED"):TEXT("OFF")));
   DrawText(FString::Printf(TEXT("Weapon %s T%.0f HP %.0f/%.0f %s"),*M.WeaponMountId.ToString(),D.Tier,M.HP,D.MaxHP,*Status),Ink,X+10,Y+322,GEngine->GetSmallFont());
  }else if(Reveal&&L->Slots.IsValidIndex(PC->SelectedSlot)) {
   const auto& F=S->Slots[PC->SelectedSlot];const auto& D=L->Slots[PC->SelectedSlot];
@@ -190,7 +195,7 @@ void AOVHUD::DrawHUD()
  DrawText(FString::Printf(TEXT("SIM %.1fs"),PC->SimulationSeconds),Ink,840,24,GEngine->GetSmallFont());
  Button(TEXT("CameraProfile"),PC->bPlayGame3?TEXT("P PlayGame3"):TEXT("P Legacy"),960,16,124);
  Button(TEXT("CombatRange"),CombatOn?TEXT("F5 RESET BATTLE"):TEXT("F5 COMBAT RANGE"),1092,16,158);
- for(int32 I=0;I<PC->Ships.Num();++I)if(PC->Ships[I]->bFriendly||PC->bDeveloperMode)Button(FName(*FString::Printf(TEXT("Ship%d"),I+1)),PC->Ships[I]->ShipName.Left(24),12,72+I*36,182,PC->Selected==PC->Ships[I]);
+ for(int32 I=0;I<PC->Ships.Num();++I)if((PC->Ships[I]->bFriendly||PC->bDeveloperMode) && !(CombatOn&&PC->Combat->IsDeparted(PC->Ships[I])))Button(FName(*FString::Printf(TEXT("Ship%d"),I+1)),PC->Ships[I]->ShipName.Left(24),12,72+I*36,182,PC->Selected==PC->Ships[I]);
  DrawText(TEXT("Ctrl+1..9 save / 1..9 select"),Ink,14,190,GEngine->GetSmallFont());
  if(PC->Selected) {
   const float Y=Height-83;DrawRect(Panel,10,Y,Width-20,74);
@@ -201,6 +206,7 @@ void AOVHUD::DrawHUD()
  }
  DrawText(PC->bPlayGame3?TEXT("WASD pan | MMB/Alt+LMB orbit | Q/E turn | RMB move | Wheel zoom"):TEXT("WASD pan | MMB/Z/C orbit | Q/E height | Wheel zoom | Backspace cancel"),Ink,210,58,GEngine->GetSmallFont());
  for(AOVShip* Ship:PC->Ships) {
+  if(CombatOn&&PC->Combat->IsDeparted(Ship)) continue;
   FVector2D P;if(PC->ProjectWorldLocationToScreen(Ship->GetActorLocation()+FVector(0,0,220),P)&&!IsOverPanel(P.X,P.Y)) {
    P/=UIScale;DrawText(Ship->ShipName,Ship->Systems->bWrecked?FLinearColor::Gray:Ship->bFriendly?Accent:FLinearColor(1,.3f,.2f),P.X,P.Y,GEngine->GetSmallFont());
    DrawRect(Health(Ship->Systems->HullHP/FMath::Max(1.f,Ship->Systems->MaxHullHP)),P.X,P.Y+16,100*Ship->Systems->HullHP/FMath::Max(1.f,Ship->Systems->MaxHullHP),3);
@@ -213,6 +219,7 @@ void AOVHUD::DrawCombat()
 {
  const auto* PC=Cast<AOVController>(PlayerOwner);
  if(!PC || !PC->Selected || !PC->Combat || !PC->Combat->bEnabled) return;
+ if(!PC->Selected->bFriendly && !PC->bDeveloperMode) return;
  const auto* C=PC->Combat.Get(); const auto* Ship=PC->Selected.Get();
  const FOVCombatShipState State=C->GetShipState(PC->Selected);
  DrawRect(Panel,10,216,430,232);
@@ -220,8 +227,10 @@ void AOVHUD::DrawCombat()
  DrawText((TEXT("Target: ")+(Ship->AttackTarget?Ship->AttackTarget->ShipName:TEXT("NONE"))).Left(58),Ink,20,247,GEngine->GetSmallFont());
  const FOVDetectionInfo Detection=C->GetDetection(PC->Selected,Ship->AttackTarget);
  DrawText(FString::Printf(TEXT("Sensor: %s / bonus +%.1f%%"),*Detection.Source,Detection.AccuracyBonus*100),Ink,20,267,GEngine->GetSmallFont());
- if(State.Mounts.IsValidIndex(PC->SelectedWeapon)) {
-  const auto& M=State.Mounts[PC->SelectedWeapon];
+ const auto& Health=Ship->Systems->WeaponMountStates;
+ const FName SelectedId=Health.IsValidIndex(PC->SelectedWeapon)?Health[PC->SelectedWeapon].WeaponMountId:NAME_None;
+ if(const auto* Mount=State.Mounts.FindByPredicate([SelectedId](const FOVCombatMountState& M){return M.MountId==SelectedId;})) {
+  const auto& M=*Mount;
   const auto R=C->GetReadiness(PC->Selected,M.MountId);
   DrawText(FString::Printf(TEXT("%s / %s"),*M.MountId.ToString(),*M.Profile.ProfileId.ToString()),Accent,20,287,GEngine->GetSmallFont());
   DrawText(FString::Printf(TEXT("%s | CD %.2fs | aim %.1f deg"),*R.Reason,R.Cooldown,R.AimError),R.bReady?FLinearColor::Green:FLinearColor::Yellow,20,307,GEngine->GetSmallFont());

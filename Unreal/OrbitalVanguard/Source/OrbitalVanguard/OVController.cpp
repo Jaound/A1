@@ -58,6 +58,14 @@ void AOVController::StartCombatRange()
   AOVShip* Ship=Ships[I];
   // Transient per-run fixture. Authored 2A Content assets are never modified.
   UShipLayoutDataAsset* Layout=UShipLayoutDataAsset::MakeTestLayout(this,I+1);
+  if(I==0) { Layout->WeaponMounts.RemoveAt(2); Layout->MissileSlots=0; }
+  if(I==1) {
+   FOVWeaponMountDefinition Guided=Layout->WeaponMounts[2];
+   Guided.WeaponId=TEXT("Weapon_3"); Guided.LocalPosition=FVector(0,0,-40);
+   Layout->WeaponMounts.Add(Guided); ++Layout->MissileSlots;
+  }
+  Layout->WeaponTier=I==0?1:2;
+  for(auto& Mount:Layout->WeaponMounts) Mount.Tier=Layout->WeaponTier;
   Ship->Systems->FactionId=I==2?1:0;
   Ship->Systems->Initialize(Layout);
   Ship->DebugResetMotion();
@@ -69,14 +77,16 @@ void AOVController::StartCombatRange()
  TArray<AOVShip*> Combatants; for(AOVShip* Ship:Ships) Combatants.Add(Ship);
  Combat->EnableCombat(Combatants,260112);
  Combat->RegisterShip(Ships[1],2,true);
+ Combat->SetWeaponProfile(Ships[1],TEXT("Weapon_3"),TEXT("GuidedMissile_T2"));
  bSimulationPaused=true; SimulationSpeed=1; SimulationSeconds=0;
- SelectShip(Ships[0]); SelectedWeapon=1;
+ SelectShip(Ships[1]); SelectedWeapon=1;
  LastAction=TEXT("2B ready (paused). T + enemy selects only; B fires chosen mount; L fires all; AUTO engages. F1 resumes.");
  UE_LOG(LogTemp,Display,TEXT("OV2B: Combat range reset, seed=260112, paused"));
 }
 void AOVController::SelectShip(AOVShip* Ship)
 {
  CancelRightMove();
+ if(Combat && Combat->bEnabled && Combat->IsDeparted(Ship)) Ship=nullptr;
  if(!Ship) { ClearSelection(); return; }
  for(AOVShip* Other:Ships) Other->bSelected=false;
  Selection.Reset(); Selection.Add(Ship);
@@ -95,6 +105,7 @@ void AOVController::ClearSelection()
 void AOVController::SelectAdditional(AOVShip* Ship)
 {
  if(!Ship) return;
+ if(Combat && Combat->bEnabled && Combat->IsDeparted(Ship)) return;
  CancelRightMove();
  if(!Selected) { SelectShip(Ship); return; }
  if(Selection.Contains(Ship)) { Selection.Remove(Ship); Ship->bSelected=false; if(Selected==Ship) { Selected=Selection.Num()?Selection[0]:nullptr; ViewedDeck=0; SelectedSlot=0; SelectedArmor=0; SelectedWeapon=0; bPlacing=false; InputMode=EOVInputMode::None; bFollow=false; } }
@@ -144,7 +155,7 @@ void AOVController::Action(FName Name)
  if(Name==TEXT("Ship3")) SelectShip(Ships[2]);
  if(Name==TEXT("Deselect")) ClearSelection();
  if(Name==TEXT("Developer")) { bDeveloperMode=!bDeveloperMode; ViewedDeck=0; }
- if(Selected && Selected->bFriendly && Selected->Systems->CanCommand()) {
+ if(Selected && Selected->bFriendly && Selected->Systems->CanCommand() && !(Combat&&Combat->bEnabled&&Combat->IsDeparted(Selected))) {
   if(Name==TEXT("Manual")) { Selected->bManual=true; LastAction=TEXT("MANUAL - persists until AUTO is clicked"); }
   if(Name==TEXT("Auto")) { Selected->bManual=false; bPlacing=false; InputMode=EOVInputMode::None; LastAction=TEXT("AUTO / Hold and manual attitude preserved")+(Combat&&Combat->bEnabled?FString(TEXT(" / automatic engagement")):FString(TEXT("; combat deferred"))); }
   if(Name==TEXT("NextWeapon") && Selected->Systems->WeaponMountStates.Num()>0) SelectedWeapon=(SelectedWeapon+1)%Selected->Systems->WeaponMountStates.Num();
@@ -461,6 +472,7 @@ void AOVController::ResolveContacts(float SimDelta)
  for(int32 I=0;I<Ships.Num();++I) for(int32 J=I+1;J<Ships.Num();++J) {
   AOVShip* A=Ships[I]; AOVShip* B=Ships[J];
   if(A->Systems->bWrecked||B->Systems->bWrecked) continue;
+  if(Combat && Combat->bEnabled && (Combat->IsDeparted(A)||Combat->IsDeparted(B))) continue;
   const float RadiusA=100*A->GetActorScale3D().GetMax(); const float RadiusB=100*B->GetActorScale3D().GetMax();
   FVector Delta=B->GetActorLocation()-A->GetActorLocation(); const double Distance=Delta.Size();
   const FVector Normal=Distance>0.001?Delta/Distance:FVector::RightVector;
@@ -591,11 +603,32 @@ void AOVController::PlayerTick(float DeltaTime)
   }
  }
  StepSimulation(DeltaTime);
+ if(Combat && Combat->bEnabled) {
+  // Presentation reads resolved events. It never requests fire or applies damage.
+  for(const auto& Shot:Combat->Attacks) {
+   const FColor Color=Shot.Weapon.Kind==EOVAttackKind::Cannon?FColor::Orange:FColor::Yellow;
+   DrawDebugLine(GetWorld(),Shot.Position-Shot.Direction*100,Shot.Position,Color,false,-1,0,4);
+   DrawDebugSphere(GetWorld(),Shot.Position,12,6,Color,false,-1,0,2);
+  }
+  for(const auto& Event:Combat->RecentEvents) if(Combat->GameTime-Event.ResolvedAt<.20) {
+   if(Event.Weapon.Kind==EOVAttackKind::Beam) DrawDebugLine(GetWorld(),Event.Origin,Event.Position,Event.FactionId==0?FColor::Cyan:FColor::Red,false,-1,0,4);
+   if(Event.Result==EOVAttackResult::Hit) DrawDebugSphere(GetWorld(),Event.Position,35,8,FColor::Orange,false,-1,0,3);
+  }
+  for(const auto& State:Combat->Ships) if(IsValid(State.Ship)&&State.Ship->Systems->Layout&&!State.Ship->Systems->bWrecked&&!State.bDeparted) {
+   for(const auto& Mount:State.Mounts) {
+    const auto* Def=State.Ship->Systems->Layout->WeaponMounts.FindByPredicate([&](const FOVWeaponMountDefinition& M){return M.WeaponId==Mount.MountId;});
+    if(!Def) continue;
+    const FVector Base=State.Ship->GetActorTransform().TransformPosition(Def->LocalPosition);
+    DrawDebugLine(GetWorld(),Base,Base+State.Ship->GetActorQuat().RotateVector(Mount.LocalAim.Vector())*100,FColor::Silver,false,-1,0,3);
+   }
+  }
+ }
  for(int I=-12;I<=12;++I) {
   DrawDebugLine(GetWorld(),FVector(I*500,-6000,0),FVector(I*500,6000,0),I==0?FColor(50,130,180):FColor(18,35,55),false,-1,0,2);
   DrawDebugLine(GetWorld(),FVector(-6000,I*500,0),FVector(6000,I*500,0),I==0?FColor(180,75,60):FColor(18,35,55),false,-1,0,2);
  }
  for(AOVShip* Ship:Ships) {
+  if(Combat && Combat->bEnabled && Combat->IsDeparted(Ship)) continue;
   const FVector P=Ship->GetActorLocation();
   DrawDebugLine(GetWorld(),FVector(P.X,P.Y,0),P,Ship->bFriendly?FColor(30,80,110):FColor(140,30,30),false,-1,0,2);
   if(Ship->bSelected) { FVector Center,Extent; Ship->GetActorBounds(false,Center,Extent); DrawDebugBox(GetWorld(),Center,Extent+FVector(25),FColor::Cyan,false,-1,0,3); }

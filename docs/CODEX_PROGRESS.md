@@ -8,7 +8,7 @@
 
 2026-11-13 재개: 중단 때 저장된 cpp/h·테스트·Controller/HUD를 보존했다. 원격 재fetch 후 변화 없음. 첫 빌드 성공 29.70초, 실제 빔 피해 연결 자동 검사 1/1 통과 (`OrbitalVanguard.Combat.LaunchedDamageChainAndSingleImpact`). `Saved/Logs/CombatBuild.log`, `CombatBeamAutomation.log`; 제출 증거는 `docs/validation/Phase2B-Beam-*`. 정식 탐지는 이미 사용 중(`bDevelopmentOmniscient=false`). 한국어 엔진 자체 검사 오류 15건은 별도 유지.
 
-다음: 무장 확장·살보·유도 수명·자동 사선 확보, 함교 상실 정지/FTL 이탈 충돌 제외 보완. 새 테스트 전체·기존 17/57·PIE·직접 입력은 아직 미검증이다. 첫 체크포인트의 발사 가능 무장은 BeamRapid뿐이며 함포/미사일은 PROFILE UNAVAILABLE로 명시된다.
+첫 체크포인트 `4981302` 이후 함포/일반·유도 미사일/살보/추적 수명/자동 교전, 함교 상실 정지, 이탈 충돌 제외, 읽기 전용 발사/포탑 표시를 추가했다. 2026-11-13 14:24~14:26 KST 빌드 성공 26.97초, 자동 27/27, 기존 2A PIE 57/57, 새 2B PIE 37/37. 실제 입력은 아직 미검증이다. 후속 검토 중인 티어 상한/유폭 데이터·자유 자동 기동 진입·이탈 선택 정리는 WORK_STATUS와 검증 문서에 남겼다.
 
 ## 2026-11-12 조작 보완
 

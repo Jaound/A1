@@ -1,0 +1,7 @@
+Using bundled DotNet SDK version: 10.0 win-x64
+Available x64 toolchains (1):
+===== Toolchain Information =====
+Using Visual Studio 14.51.36260 toolchain (C:\Program Files (x86)\Microsoft Visual Studio\18\BuildTools\VC\Tools\MSVC\14.51.36231) and Windows 10.0.26100.0 SDK (C:\Program Files (x86)\Windows Kits\10).
+===== End Toolchain Information =====
+Result: Succeeded
+Total execution time: 26.97 seconds

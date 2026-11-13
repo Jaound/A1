@@ -1,0 +1,196 @@
+{
+  "kind": "Editor PIE API; not physical mouse/keyboard input",
+  "planning": "bca769f",
+  "seed": 260112,
+  "checks": [
+    {
+      "name": "Editor ControlRange loaded",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Real PIE game world",
+      "passed": true,
+      "detail": "/Game/Maps/UEDPIE_0_ControlRange.ControlRange"
+    },
+    {
+      "name": "Opt-in range enabled and 2A camera profile preserved",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Combat fixture is transient; authored 2A assets remain separate",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Formal detection is default",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Manual target selection does not fire or switch mode",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Aligned live beam READY with detection source",
+      "passed": true,
+      "detail": "READY"
+    },
+    {
+      "name": "Fire action requests; UI does not directly apply damage",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Requested beam launches once and hits existing shield path",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Shield-only hit records event without independent hull damage",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Cooldown displayed by same launch evaluator",
+      "passed": true,
+      "detail": "COOLDOWN"
+    },
+    {
+      "name": "One manual request does not repeat after cooldown",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Auto fires while preserving Hold and manual hull posture",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Pause freezes request consumption and projectile simulation",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Range blocks actual launch and reports reason",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "No own or shared detection blocks new launch",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Radar support provides strongest valid shared source",
+      "passed": true,
+      "detail": "SUPPORT RADAR"
+    },
+    {
+      "name": "Local underside blind arc blocks top mount",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Stopped facility blocks live launch <OVFacilityType.WEAPON_CONTROL: 5>",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Stopped facility blocks live launch <OVFacilityType.CAPACITOR: 7>",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "FTL charging blocks beam, distinct from departure",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Individual mount HP blocks actual firing",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Same seed and game time give identical shots damage and active projectiles at 1/2/3x",
+      "passed": true,
+      "detail": "[(16, 15, 1, 4193.49, 0.0), (16, 15, 1, 4193.49, 0.0), (16, 15, 1, 4193.49, 0.0)]"
+    },
+    {
+      "name": "Real projectile launched <OVAttackKind.CANNON: 1>",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Source loss preserves in-flight attack <OVAttackKind.CANNON: 1>",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Only guided missiles revise direction <OVAttackKind.CANNON: 1>",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Real projectile launched <OVAttackKind.MISSILE: 2>",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Source loss preserves in-flight attack <OVAttackKind.MISSILE: 2>",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Only guided missiles revise direction <OVAttackKind.MISSILE: 2>",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Real projectile launched <OVAttackKind.GUIDED_MISSILE: 3>",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Source loss preserves in-flight attack <OVAttackKind.GUIDED_MISSILE: 3>",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Only guided missiles revise direction <OVAttackKind.GUIDED_MISSILE: 3>",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Guided FTL departure is a distinct result",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Supply loss cancels unlaunched salvo, preserves launched missile",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Real PIE frames advance reciprocal player and enemy fire",
+      "passed": true,
+      "detail": "(4.975000259466469, 9, 11)"
+    },
+    {
+      "name": "Rendered detail/HUD observes paused combat without extra shots",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Fresh paused combat range ready for user input",
+      "passed": true,
+      "detail": ""
+    }
+  ],
+  "errors": [],
+  "physical_input": "not performed by this script",
+  "scope": "full_2B",
+  "passed": true
+}
