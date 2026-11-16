@@ -2,6 +2,7 @@
 #include "OVShipSystemsComponent.h"
 #include "Components/SceneComponent.h"
 #include "Components/StaticMeshComponent.h"
+#include "Components/BoxComponent.h"
 #include "Materials/MaterialInstanceDynamic.h"
 #include "UObject/ConstructorHelpers.h"
 
@@ -124,16 +125,40 @@ AOVShip::AOVShip()
     AddAccent(TEXT("Bridge"), Cube.Object, FVector(-35, 0, 45), FVector(0.75, 0.65, 0.4), FRotator::ZeroRotator);
     AddAccent(TEXT("PortEngine"), Cube.Object, FVector(-125, -75, 0), FVector(1.0, 0.35, 0.45), FRotator::ZeroRotator);
     AddAccent(TEXT("StarboardEngine"), Cube.Object, FVector(-125, 75, 0), FVector(1.0, 0.35, 0.45), FRotator::ZeroRotator);
+    CalibrationSelection=CreateDefaultSubobject<UBoxComponent>(TEXT("CalibrationSelection"));
+    CalibrationSelection->SetupAttachment(Root);
+    CalibrationSelection->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+    CalibrationSelection->SetCollisionResponseToAllChannels(ECR_Ignore);
+    CalibrationSelection->SetCollisionResponseToChannel(ECC_Visibility,ECR_Block);
+    CalibrationSelection->SetGenerateOverlapEvents(false);
 }
 
 void AOVShip::SetCalibrationHull(const FVector* LocalHalfExtent)
 {
-    Hull->SetRelativeScale3D(LocalHalfExtent ? *LocalHalfExtent / 50.0 : FVector(3.2,1.0,.6));
-    for (UStaticMeshComponent* Part : AccentMeshes)
-    {
-        Part->SetVisibility(!LocalHalfExtent);
-        Part->SetCollisionEnabled(LocalHalfExtent ? ECollisionEnabled::NoCollision : ECollisionEnabled::QueryOnly);
+    // Readable temporary silhouette inside the existing coarse combat OBB.
+    // Selection retains exactly that OBB; neither actor scale nor combat dimensions change.
+    CalibrationSelection->SetCollisionEnabled(LocalHalfExtent?ECollisionEnabled::QueryOnly:ECollisionEnabled::NoCollision);
+    Hull->SetCollisionEnabled(LocalHalfExtent?ECollisionEnabled::NoCollision:ECollisionEnabled::QueryOnly);
+    if(LocalHalfExtent) {
+        const FVector E=*LocalHalfExtent; CalibrationSelection->SetBoxExtent(E);
+        const bool Carrier=ShipName.Contains(TEXT("CARRIER"));
+        Hull->SetRelativeLocation(FVector(-E.X*.2,0,0));
+        Hull->SetRelativeScale3D(E/50.0*FVector(.8,Carrier?.85:.55,.65));
+        AccentMeshes[0]->SetRelativeLocation(FVector(E.X*.6,0,0));
+        AccentMeshes[0]->SetRelativeScale3D(FVector(E.Z*1.3/50,E.Y*(Carrier?.85:.55)/50,E.X*.8/100));
+        AccentMeshes[1]->SetRelativeLocation(FVector(-E.X*.25,0,E.Z*.8));
+        AccentMeshes[1]->SetRelativeScale3D(FVector(E.X*.28/50,E.Y*.35/50,E.Z*.2/50));
+        for(int32 I=2;I<4;++I) {
+            AccentMeshes[I]->SetRelativeLocation(FVector(-E.X*.6,(I==2?-1:1)*E.Y*.8,-E.Z*.1));
+            AccentMeshes[I]->SetRelativeScale3D(FVector(E.X*.4/50,E.Y*.2/50,E.Z*.5/50));
+        }
+    } else {
+        Hull->SetRelativeLocation(FVector::ZeroVector); Hull->SetRelativeScale3D(FVector(3.2,1,.6));
+        const FVector Locations[]={{190,0,0},{-35,0,45},{-125,-75,0},{-125,75,0}};
+        const FVector Scales[]={{1,1,1.25},{.75,.65,.4},{1,.35,.45},{1,.35,.45}};
+        for(int32 I=0;I<AccentMeshes.Num();++I) { AccentMeshes[I]->SetRelativeLocation(Locations[I]); AccentMeshes[I]->SetRelativeScale3D(Scales[I]); }
     }
+    for(UStaticMeshComponent* Part:AccentMeshes) { Part->SetVisibility(true);Part->SetCollisionEnabled(LocalHalfExtent?ECollisionEnabled::NoCollision:ECollisionEnabled::QueryOnly); }
 }
 
 void AOVShip::Configure(const FString& Name, bool Friendly, float Speed, float RotationRate,

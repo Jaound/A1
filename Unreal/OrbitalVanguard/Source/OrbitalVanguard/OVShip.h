@@ -5,6 +5,7 @@
 #include "OVShip.generated.h"
 
 class UStaticMeshComponent;
+class UBoxComponent;
 class UOVShipSystemsComponent;
 
 /** Placeholder vessel. The controller supplies the single simulation clock. */
@@ -78,4 +79,5 @@ private:
     bool bLastManual = true;
     UPROPERTY()
     TArray<TObjectPtr<UStaticMeshComponent>> AccentMeshes;
+    UPROPERTY() TObjectPtr<UBoxComponent> CalibrationSelection;
 };

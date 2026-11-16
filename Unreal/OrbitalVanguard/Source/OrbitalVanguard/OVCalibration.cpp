@@ -164,7 +164,7 @@ bool OVCalibration::Start(UOVCombatSubsystem& Combat, const TArray<AOVShip*>& Sh
         const bool bFriendly = I != 2;
         const bool bInactive = bDuel && I == 1;
         const double Scale = I == 1 ? 6 : I == 0 ? 10 : Scenario == 2 ? 18 : 13;
-        Ship->Configure(FString(Hull.Key).ToUpper(), bFriendly, Hull.Speed, Hull.Turn, FVector(Scale),
+        Ship->Configure(I==0?TEXT("백터"):I==1?TEXT("초계함"):Scenario==2?TEXT("미사일함"):TEXT("바스티온"), bFriendly, Hull.Speed, Hull.Turn, FVector(Scale),
             bFriendly ? FLinearColor(.12f,.65f,1) : FLinearColor(1,.12f,.08f));
         Ship->SetCalibrationHull(&Layouts[I]->LocalHalfExtent);
         auto& Systems = *Ship->Systems;

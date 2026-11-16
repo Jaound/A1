@@ -70,7 +70,7 @@ struct ORBITALVANGUARD_API FOVPodState
 };
 
 USTRUCT(BlueprintType)
-struct ORBITALVANGUARD_API FOVShuttleState
+struct ORBITALVANGUARD_API FOVShuttleRecord
 {
     GENERATED_BODY()
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly) TWeakObjectPtr<AOVShip> Ship;
@@ -78,6 +78,7 @@ struct ORBITALVANGUARD_API FOVShuttleState
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly) TWeakObjectPtr<AOVShip> Target;
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly) int32 FactionId = -1;
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly) EOVShuttleState State = EOVShuttleState::Ready;
+    UPROPERTY(VisibleAnywhere, BlueprintReadOnly) bool bManualSuspended = false;
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly) TArray<int32> PassengerIds;
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly) FVector HomePosition = FVector::ZeroVector;
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly) FVector DockLocalPoint = FVector::ZeroVector;
@@ -111,7 +112,7 @@ public:
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly) double GameTime = 0;
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly) TArray<FOVPassengerToken> Persons;
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly) TArray<FOVPodState> Pods;
-    UPROPERTY(VisibleAnywhere, BlueprintReadOnly) TArray<FOVShuttleState> Shuttles;
+    UPROPERTY(VisibleAnywhere, BlueprintReadOnly) TArray<FOVShuttleRecord> Shuttles;
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly) TArray<FOVTransportEntryEvent> EntryEvents;
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly) FString LastMessage;
     // Explicit scenario reset, never called by UI refresh or profile selection.
@@ -125,6 +126,7 @@ public:
     UFUNCTION(BlueprintCallable) bool InterceptPod(int32 PodId, float Damage);
     UFUNCTION(BlueprintCallable) bool RegisterShuttle(AOVShip* Ship, AOVShip* Home = nullptr);
     UFUNCTION(BlueprintCallable) bool DispatchShuttle(AOVShip* Ship, AOVShip* Target, const TArray<int32>& PassengerIds);
+    UFUNCTION(BlueprintCallable) bool SuspendShuttle(AOVShip* Ship);
     UFUNCTION(BlueprintCallable) bool RecallShuttle(AOVShip* Ship);
     UFUNCTION(BlueprintCallable) void Simulate(float GameDelta);
     UFUNCTION(BlueprintPure) FOVPassengerToken GetPerson(int32 PersonId) const;
@@ -139,7 +141,7 @@ private:
     double Accumulator = 0;
     void Step(float Delta);
     void AdvancePod(FOVPodState& Pod, float Delta);
-    void AdvanceShuttle(FOVShuttleState& Shuttle, float Delta);
+    void AdvanceShuttle(FOVShuttleRecord& Shuttle, float Delta);
     void Enter(FOVPassengerToken& Person, AOVShip* Target, FVector WorldPoint, FVector WorldNormal);
     void RefreshPresence();
     void DestroyPod(FOVPodState& Pod);

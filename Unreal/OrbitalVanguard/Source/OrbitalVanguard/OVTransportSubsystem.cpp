@@ -76,7 +76,7 @@ int32 UOVTransportSubsystem::LaunchPods(AOVShip* Origin, AOVShip* Target)
         Origin->Systems->FactionId == Target->Systems->FactionId || Origin->Systems->GetEfficiency(EOVFacilityType::Boarding) <= 0 ||
         FVector::Distance(Origin->GetActorLocation(), Target->GetActorLocation()) > Settings.PodLaunchRange)
     { LastMessage = TEXT("발사 불가: 강습 시설·거리·표적 확인"); return 0; }
-    int32 Count = 0;
+    int32 Count = 0, RemotePodCount = 0;
     double NextTime = GameTime;
     for (const FOVPodState& Pod : Pods)
         if (Pod.Origin == Origin && Pod.State == EOVPodFlightState::Queued) NextTime = FMath::Max(NextTime, Pod.ScheduledTime + Settings.LaunchInterval);
@@ -86,7 +86,8 @@ int32 UOVTransportSubsystem::LaunchPods(AOVShip* Origin, AOVShip* Target)
         if (Pods.ContainsByPredicate([&](const FOVPodState& Pod) { return Pod.PersonId == Person.PersonId && Pod.State == EOVPodFlightState::Queued; })) continue;
         FOVPodState* Reusable = Pods.FindByPredicate([&](const FOVPodState& Pod) {
             return Pod.PersonId == Person.PersonId && Pod.HP > 0 &&
-                (Pod.State == EOVPodFlightState::Recovered || Pod.State == EOVPodFlightState::Cancelled); });
+                ((Pod.State == EOVPodFlightState::Recovered && Pod.ReturnDestination == Origin) ||
+                 (Pod.State == EOVPodFlightState::Cancelled && Pod.Origin == Origin)); });
         if (Reusable)
         {
             Reusable->State = EOVPodFlightState::Queued; Reusable->Origin = Origin; Reusable->Target = Target;
@@ -95,13 +96,18 @@ int32 UOVTransportSubsystem::LaunchPods(AOVShip* Origin, AOVShip* Target)
             // Recovered pod identity and damage persist: a new sortie is not free replacement/repair.
             NextTime += FMath::Max(.001f, Settings.LaunchInterval); ++Count; continue;
         }
+        if (Pods.ContainsByPredicate([&](const FOVPodState& Pod) {
+            return Pod.PersonId == Person.PersonId && Pod.HP > 0 &&
+                (Pod.State == EOVPodFlightState::Recovered || Pod.State == EOVPodFlightState::Cancelled); }))
+        { ++RemotePodCount; continue; } // A person transfer is not a physical pod inventory transfer.
         FOVPodState Pod;
         Pod.PodId = NextPodId++; Pod.PersonId = Person.PersonId; Pod.FactionId = Person.FactionId;
         Pod.Origin = Origin; Pod.Target = Target; Pod.Position = Origin->GetActorLocation();
         Pod.HP = Settings.PodHP; Pod.Evasion = Settings.PodEvasion; Pod.ScheduledTime = NextTime;
         Pods.Add(Pod); NextTime += FMath::Max(.001f, Settings.LaunchInterval); ++Count;
     }
-    LastMessage = FString::Printf(TEXT("개인 포드 %d기 발사 예약"), Count);
+    LastMessage = RemotePodCount > 0 ? FString::Printf(TEXT("포드 %d기 예약 · %d명은 타 함선 보관 포드 이송 필요(미지원)"), Count, RemotePodCount) :
+        FString::Printf(TEXT("개인 포드 %d기 발사 예약"), Count);
     return Count;
 }
 
@@ -277,11 +283,11 @@ void UOVTransportSubsystem::AdvancePod(FOVPodState& Pod, float Delta)
 bool UOVTransportSubsystem::RegisterShuttle(AOVShip* Ship, AOVShip* Home)
 {
     if (!bEnabled || !Usable(Ship) || !Ship->Systems->Layout->bSmallHull ||
-        Shuttles.ContainsByPredicate([Ship](const FOVShuttleState& S) { return S.Ship == Ship; })) return false;
+        Shuttles.ContainsByPredicate([Ship](const FOVShuttleRecord& S) { return S.Ship == Ship; })) return false;
     // General ship status is preserved: this actor is never a PD target.
     for (const FOVWeaponMountDefinition& Mount : Ship->Systems->Layout->WeaponMounts)
         if (Mount.Type != EOVWeaponType::Interception) return false;
-    FOVShuttleState Shuttle;
+    FOVShuttleRecord Shuttle;
     Shuttle.Ship = Ship; Shuttle.Home = Home; Shuttle.FactionId = Ship->Systems->FactionId;
     Shuttle.HomePosition = Ship->GetActorLocation();
     Shuttles.Add(Shuttle);
@@ -290,7 +296,7 @@ bool UOVTransportSubsystem::RegisterShuttle(AOVShip* Ship, AOVShip* Home)
 
 bool UOVTransportSubsystem::DispatchShuttle(AOVShip* Ship, AOVShip* Target, const TArray<int32>& Ids)
 {
-    FOVShuttleState* Shuttle = Shuttles.FindByPredicate([Ship](const FOVShuttleState& S) { return S.Ship == Ship; });
+    FOVShuttleRecord* Shuttle = Shuttles.FindByPredicate([Ship](const FOVShuttleRecord& S) { return S.Ship == Ship; });
     if (!bEnabled || !Shuttle || Shuttle->State != EOVShuttleState::Ready || !Usable(Ship) || !Usable(Target) ||
         Ship->Systems->FactionId == Target->Systems->FactionId || Ids.IsEmpty() || Ids.Num() > Settings.ShuttleCapacity)
     { LastMessage = TEXT("강습선 출발 불가 · 준비 상태/표적/정원 확인"); return false; }
@@ -308,18 +314,29 @@ bool UOVTransportSubsystem::DispatchShuttle(AOVShip* Ship, AOVShip* Target, cons
     if (Heroes > Settings.ShuttleHeroCapacity) { LastMessage = TEXT("출발 불가 · 영웅형 DEV 토큰 정원 초과"); return false; }
     Shuttle->PassengerIds = Ids; Shuttle->Target = Target; Shuttle->FactionId = Ship->Systems->FactionId;
     Shuttle->State = EOVShuttleState::Approaching; Shuttle->Progress = 0; Shuttle->HomePosition = Ship->GetActorLocation();
+    Shuttle->bManualSuspended = false;
     for (int32 Id : Ids) { auto& Person = *FindPerson(Id); Person.State = EOVPassengerState::InShuttle; Person.CurrentShip = Ship; Person.Shuttle = Ship; Person.PodId = 0; }
     Ship->SetAutomation(false, false);
     LastMessage = TEXT("강습선 접근 시작 (공격 무장 없음)");
     return true;
 }
 
+bool UOVTransportSubsystem::SuspendShuttle(AOVShip* Ship)
+{
+    FOVShuttleRecord* Shuttle = Shuttles.FindByPredicate([Ship](const FOVShuttleRecord& S) { return S.Ship == Ship; });
+    if (!bEnabled || !Shuttle || Shuttle->State == EOVShuttleState::Ready || Shuttle->State == EOVShuttleState::Lost) return false;
+    Shuttle->bManualSuspended = true;
+    Shuttle->Reason = LastMessage = TEXT("수동 이동/자세/정지 우선 · 수송선 회수 명령으로 운송 재개");
+    return true;
+}
+
 bool UOVTransportSubsystem::RecallShuttle(AOVShip* Ship)
 {
-    FOVShuttleState* Shuttle = Shuttles.FindByPredicate([Ship](const FOVShuttleState& S) { return S.Ship == Ship; });
+    FOVShuttleRecord* Shuttle = Shuttles.FindByPredicate([Ship](const FOVShuttleRecord& S) { return S.Ship == Ship; });
     if (!bEnabled || !Shuttle || !Usable(Ship) || Shuttle->FactionId != Ship->Systems->FactionId ||
         Shuttle->State == EOVShuttleState::Lost || Shuttle->State == EOVShuttleState::Ready)
     { LastMessage = TEXT("회수 불가 · 원 강습선 상태/소속/진행 작전 확인"); return false; }
+    Shuttle->bManualSuspended = false;
     if (Shuttle->State == EOVShuttleState::Delivered || Shuttle->State == EOVShuttleState::RecoveryBlocked)
     { Shuttle->State = EOVShuttleState::Recovering; Shuttle->Progress = 0; }
     else if (Shuttle->State == EOVShuttleState::Approaching || Shuttle->State == EOVShuttleState::Docking)
@@ -328,7 +345,7 @@ bool UOVTransportSubsystem::RecallShuttle(AOVShip* Ship)
     return true;
 }
 
-void UOVTransportSubsystem::AdvanceShuttle(FOVShuttleState& Shuttle, float Delta)
+void UOVTransportSubsystem::AdvanceShuttle(FOVShuttleRecord& Shuttle, float Delta)
 {
     AOVShip* Ship = Shuttle.Ship.Get();
     if (Shuttle.State == EOVShuttleState::Lost) return;
@@ -349,6 +366,8 @@ void UOVTransportSubsystem::AdvanceShuttle(FOVShuttleState& Shuttle, float Delta
         Shuttle.Reason = Destroyed ? TEXT("수송선 완파; 내부 진입자는 영향 없음") : TEXT("수송선 이탈/소속 변경; 회수 불가, 포로 처리는 미지원");
         return;
     }
+    // Explicit manual orders suspend only automation, never ownership/loss or passenger accounting.
+    if (Shuttle.bManualSuspended) return;
     if (Shuttle.State == EOVShuttleState::Ready || Shuttle.State == EOVShuttleState::Delivered || Shuttle.State == EOVShuttleState::RecoveryBlocked) return;
     AOVShip* Target = Shuttle.Target.Get();
     if (Shuttle.State != EOVShuttleState::Returning && !Usable(Target)) Shuttle.State = EOVShuttleState::Returning;
@@ -439,7 +458,7 @@ void UOVTransportSubsystem::Step(float Delta)
         { Person.State = EOVPassengerState::Dead; Person.CurrentShip = nullptr; }
     }
     for (FOVPodState& Pod : Pods) AdvancePod(Pod, Delta);
-    for (FOVShuttleState& Shuttle : Shuttles) AdvanceShuttle(Shuttle, Delta);
+    for (FOVShuttleRecord& Shuttle : Shuttles) AdvanceShuttle(Shuttle, Delta);
     RefreshPresence();
 }
 

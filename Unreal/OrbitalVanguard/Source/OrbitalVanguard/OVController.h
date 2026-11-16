@@ -7,6 +7,9 @@
 class AOVShip;
 class ACameraActor;
 class UOVCombatSubsystem;
+class UOVCarrierSubsystem;
+class UOVPointDefenseSubsystem;
+class UOVTransportSubsystem;
 UENUM(BlueprintType)
 enum class EOVInputMode : uint8 { None, Move, Target, Heading, Repair };
 UCLASS()
@@ -65,12 +68,16 @@ public:
  UFUNCTION(BlueprintCallable, Category="Control Range")
  void StepSimulation(float DeltaTime);
  UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Combat") TObjectPtr<UOVCombatSubsystem> Combat;
+ UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Combat") TObjectPtr<UOVCarrierSubsystem> Carrier;
+ UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Combat") TObjectPtr<UOVPointDefenseSubsystem> PointDefense;
+ UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Combat") TObjectPtr<UOVTransportSubsystem> Transport;
  /** Explicit test-range reset; never rewrites authored layout assets. */
  UFUNCTION(BlueprintCallable, Category="Combat") void StartCombatRange();
  UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Combat") int32 CalibrationScenario=-1;
  UFUNCTION(BlueprintCallable, Category="Combat") bool StartCalibrationRange(int32 Scenario=0);
  UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Combat") int32 Phase2CScenario=-1;
  UFUNCTION(BlueprintCallable, Category="Combat") bool StartPhase2CRange(int32 Scenario=0);
+ UFUNCTION(BlueprintCallable, Category="Debug") bool StartPhase2CStress(int32 ExtraCarrierPairs=1);
  UFUNCTION(BlueprintCallable, Category="Camera") void FrameEngagement();
  UFUNCTION(BlueprintPure, Category="Combat") FString GetScenarioLabel() const;
  UFUNCTION(BlueprintCallable, Category="Combat") void ResetPhase2C();

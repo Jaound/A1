@@ -47,7 +47,7 @@ struct ORBITALVANGUARD_API FOVHangarState
 };
 
 USTRUCT(BlueprintType)
-struct ORBITALVANGUARD_API FOVAircraftState
+struct ORBITALVANGUARD_API FOVAircraftRecord
 {
     GENERATED_BODY()
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly) int32 AircraftId = 0;
@@ -61,6 +61,8 @@ struct ORBITALVANGUARD_API FOVAircraftState
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly) float Shield = 80;
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly) float Evasion = .62f;
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly) FVector Position = FVector::ZeroVector;
+    UPROPERTY(VisibleAnywhere, BlueprintReadOnly) FVector PreviousPosition = FVector::ZeroVector;
+    UPROPERTY(VisibleAnywhere, BlueprintReadOnly) FVector Velocity = FVector::ZeroVector;
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly) FVector Direction = FVector::ForwardVector;
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly) FVector Waypoint = FVector::ZeroVector;
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly) float Cooldown = 0;
@@ -112,7 +114,7 @@ class ORBITALVANGUARD_API UOVCarrierSubsystem : public UWorldSubsystem
 public:
     UPROPERTY(EditAnywhere, BlueprintReadWrite) FOVAircraftProfile Profile;
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly) TArray<FOVHangarState> Hangars;
-    UPROPERTY(VisibleAnywhere, BlueprintReadOnly) TArray<FOVAircraftState> Aircraft;
+    UPROPERTY(VisibleAnywhere, BlueprintReadOnly) TArray<FOVAircraftRecord> Aircraft;
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly) TArray<FOVAircraftBolt> Bolts;
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly) TArray<FOVAircraftBolt> RecentEvents;
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly) TArray<FOVCarrierState> Carriers;
@@ -148,10 +150,10 @@ private:
     bool IsHangarDestroyed(const FOVHangarState& Hangar) const;
     bool HasControl(AOVShip* Ship) const;
     FVector HangarPosition(const FOVHangarState& Hangar) const;
-    FOVHangarState* FindDock(FOVAircraftState& Craft);
+    FOVHangarState* FindDock(FOVAircraftRecord& Craft);
     void Step(float Delta);
-    void AdvanceAircraft(FOVAircraftState& Craft, float Delta);
+    void AdvanceAircraft(FOVAircraftRecord& Craft, float Delta);
     void AdvanceBolts(float Delta);
-    bool Fire(FOVAircraftState& Craft, FVector AimPoint, FName TargetId);
-    void DestroyAircraft(FOVAircraftState& Craft);
+    bool Fire(FOVAircraftRecord& Craft, FVector AimPoint, FName TargetId);
+    void DestroyAircraft(FOVAircraftRecord& Craft);
 };

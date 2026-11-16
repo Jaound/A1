@@ -30,6 +30,12 @@ state = {"phase": 0, "start": time.monotonic()}
 
 
 def p(obj, key):
+    # Digit/acronym boundaries are not uniformly snake-cased by UE's Python bridge.
+    if key == "phase2_c_scenario":
+        try:
+            return obj.get_editor_property("phase2c_scenario")
+        except Exception:
+            return obj.get_editor_property("Phase2CScenario")
     return obj.get_editor_property(key)
 
 
@@ -61,11 +67,23 @@ def advance(pc, seconds, speed=1, batch=.25):
 
 
 def subsystem(world, cls):
-    return unreal.get_world_subsystem(world, cls)
+    # UE 5.8's Python module does not expose get_world_subsystem. Controller
+    # owns reflected read-only references to the same production world systems.
+    keys = {unreal.OVCarrierSubsystem: "carrier", unreal.OVPointDefenseSubsystem: "point_defense",
+            unreal.OVTransportSubsystem: "transport"}
+    return p(unreal.GameplayStatics.get_player_controller(world, 0), keys[cls])
+
+
+def request_scene(pc, scenario):
+    for name in ("start_phase2c_range", "start_phase2_c_range"):
+        method = getattr(pc, name, None)
+        if method is not None:
+            return method(scenario)
+    raise AttributeError("OVController StartPhase2CRange reflection method missing")
 
 
 def start(pc, scenario):
-    if not pc.start_phase2_c_range(scenario):
+    if not request_scene(pc, scenario):
         raise AssertionError("Could not create 2C scene " + str(scenario))
     return list(p(pc, "ships"))
 
@@ -142,7 +160,7 @@ def run_scenes(pc, world, carrier, pd, transport):
     combat = p(pc, "combat")
     camera = p(pc, "play_game3")
     old = p(pc, "phase2_c_scenario")
-    check("2C-SCENE-REJECT", not pc.start_phase2_c_range(99) and p(pc, "phase2_c_scenario") == old)
+    check("2C-SCENE-REJECT", not request_scene(pc, 99) and p(pc, "phase2_c_scenario") == old)
     for scene in range(6):
         ships = start(pc, scene)
         check("2C-SCENE-" + str(scene), p(pc, "simulation_paused") and p(pc, "play_game3") == camera
@@ -241,6 +259,7 @@ def run_pods(pc, carrier, pd, transport):
           {"casualties": casualties, "inside": entered, "PD_kills": p(pd, "kill_count")})
     ships = start(pc, 3); own, _, target = ships
     quiet(ships, combat, pd, carrier)
+    combat.set_target(own, target)
     persons = list(p(transport, "persons")); ids = [p(person, "person_id") for person in persons]
     check("2C-PERSON-IDENTITIES", len(ids) == 10 and len(set(ids)) == 10 and sum(p(x, "hero_type_dev") for x in persons) == 4)
     pc.action("LaunchPods")
@@ -259,18 +278,18 @@ def run_pods(pc, carrier, pd, transport):
           and [p(pod, "pod_id") for pod in p(transport, "pods")] == pod_ids
           and [p(person, "person_id") for person in p(transport, "persons")] == ids)
     check("2C-EXIT-PROTECTION-CLEARED", not combat.is_target_protected(own, target))
-    ships = start(pc, 3); own, _, target = ships; quiet(ships, combat, pd, carrier)
+    ships = start(pc, 3); own, _, target = ships; quiet(ships, combat, pd, carrier); combat.set_target(own, target)
     p(target, "systems").reset_state()  # DEV: restore active shield, not a boarding action.
     pc.action("LaunchPods"); advance(pc, 7)
     check("2C-ACTIVE-SHIELD-BARRIER", not p(transport, "entry_events")
           and transport.count_state(unreal.OVPassengerState.RESCUE_WAITING) == 4 and transport.count_state(unreal.OVPassengerState.DEAD) == 6)
-    ships = start(pc, 3); own, _, target = ships; quiet(ships, combat, pd, carrier)
+    ships = start(pc, 3); own, _, target = ships; quiet(ships, combat, pd, carrier); combat.set_target(own, target)
     pc.action("LaunchPods"); advance(pc, 6)
     p(target, "systems").debug_destroy_slot(p(p(p(target, "systems"), "layout"), "core_slot_id"), unreal.OVDamageCause.SABOTAGE)
     advance(pc, .25)
     check("2C-RESIDENT-WRECK-DEATH", transport.count_state(unreal.OVPassengerState.DEAD) == 10
           and transport.count_state(unreal.OVPassengerState.RESCUE_WAITING) == 0 and not p(target, "systems").has_interior_presence(0))
-    ships = start(pc, 3); own, escort, target = ships; quiet(ships, combat, pd, carrier)
+    ships = start(pc, 3); own, escort, target = ships; quiet(ships, combat, pd, carrier); combat.set_target(own, target)
     pc.action("LaunchPods"); advance(pc, .25)
     first_id = p(p(transport, "persons")[0], "person_id")
     combat.notify_ftl_departure(target); combat.notify_ftl_departure(own); advance(pc, 8)
@@ -302,6 +321,56 @@ def run_shuttle(pc, carrier, pd, transport):
     check("2C-NO-FREE-ESCAPE-PODS", not p(transport, "pods") and transport.count_state(unreal.OVPassengerState.AWAITING_RECOVERY) == 10)
 
 
+def run_control_regressions(pc, world, carrier, pd, transport):
+    combat = p(pc, "combat")
+    ships = start(pc, 0)
+    pc.select_ship(ships[0])
+    mounts = p(p(p(ships[0], "systems"), "layout"), "weapon_mounts")
+    visited = set()
+    for _ in range(len(mounts) * 2):
+        pc.action("NextWeapon")
+        index = p(pc, "selected_weapon")
+        if p(mounts[index], "type") == unreal.OVWeaponType.INTERCEPTION:
+            raise AssertionError("N selected an autonomous PD mount for offensive fire")
+        visited.add(index)
+    check("2C-N-CYCLE-OFFENSIVE-ONLY", len(visited) == sum(p(m, "type") != unreal.OVWeaponType.INTERCEPTION for m in mounts))
+    method = getattr(pc, "start_phase2c_stress", None) or getattr(pc, "start_phase2_c_stress", None)
+    if method is None:
+        raise AttributeError("StartPhase2CStress API missing")
+    check("2C-STRESS-ROSTER", method(1) and len(p(pc, "ships")) == 5 and len(p(carrier, "aircraft")) == 160)
+    pc.action("CombatRange")
+    check("2C-STRESS-F5-CLEANUP", len(p(pc, "ships")) == 3 and len(p(combat, "ships")) == 3
+          and not p(pd, "ships") and not p(carrier, "aircraft")
+          and len(unreal.GameplayStatics.get_all_actors_of_class(world, unreal.OVShip)) == 3)
+    method(1); pc.action("CalibrationRange")
+    check("2C-STRESS-F6-CLEANUP", len(p(pc, "ships")) == 3 and not p(pd, "ships") and not p(carrier, "aircraft"))
+    method(1); pc.action("Phase2C")
+    check("2C-STRESS-F7-CLEANUP", len(p(pc, "ships")) == 3 and len(p(pd, "ships")) == 3
+          and not p(carrier, "aircraft") and len(unreal.GameplayStatics.get_all_actors_of_class(world, unreal.OVShip)) == 3)
+
+    ships = start(pc, 4); quiet(ships, combat, pd, carrier)
+    pc.action("DispatchShuttle"); advance(pc, .25)
+    shuttle = ships[1]; pc.select_ship(shuttle)
+    goal = shuttle.get_actor_location() + unreal.Vector(-8000, -4000, 5000)
+    pc.action("Move"); pc.set_editor_property("preview", goal); pc.action("Confirm")
+    advance(pc, .5)
+    check("2C-SHUTTLE-MANUAL-XYZ-PRIORITY", p(p(transport, "shuttles")[0], "manual_suspended")
+          and p(shuttle, "has_destination") and (p(shuttle, "destination") - goal).length() < .01)
+    pc.action("Stop"); advance(pc, 2)
+    stopped = shuttle.get_actor_location(); advance(pc, 1)
+    check("2C-SHUTTLE-STOP-PRIORITY", p(shuttle, "hold") and not p(shuttle, "has_destination")
+          and (shuttle.get_actor_location() - stopped).length() < .01)
+    pc.action("RecallShuttle"); advance(pc, .25)
+    check("2C-SHUTTLE-EXPLICIT-RESUME", not p(p(transport, "shuttles")[0], "manual_suspended"))
+
+    ships = start(pc, 2); quiet(ships, combat, pd, carrier); own = ships[0]
+    pc.select_ship(own); pc.action("TrialFTL"); advance(pc, 2)
+    check("2C-FTL-TRIAL-CHARGING", p(own, "ftl_charging") and len(p(pc, "trial_ftl_remaining")) == 1)
+    p(own, "systems").set_editor_property("faction_id", 2); advance(pc, .25)
+    check("2C-FTL-CAPTURE-CLEARS-OLD-ORDER", not p(own, "ftl_charging")
+          and not p(pc, "trial_ftl_remaining") and not combat.is_departed(own))
+
+
 def tick(dt):
     try:
         if time.monotonic() - state["start"] > 300:
@@ -326,6 +395,7 @@ def tick(dt):
             run_carrier(pc, carrier, pd, transport)
             run_pods(pc, carrier, pd, transport)
             run_shuttle(pc, carrier, pd, transport)
+            run_control_regressions(pc, world, carrier, pd, transport)
             for _ in range(3):
                 start(pc, 2); before = len(p(carrier, "aircraft")); pc.action("RestartScene")
                 if len(p(carrier, "aircraft")) != before:
@@ -334,7 +404,6 @@ def tick(dt):
             check("2C-REPEATED-SCENE-RESET", not p(pd, "enabled") and not p(transport, "enabled") and not p(carrier, "aircraft"))
             start(pc, 5); pc.set_editor_property("developer_mode", False); pc.get_hud().set_details_open(False)
             state.update(phase=2, at=time.monotonic())
-            save()
             return
         pc, world = state["pc"], state["world"]
         if state["phase"] == 2:
@@ -344,6 +413,15 @@ def tick(dt):
             for action in ("Pause", "LaunchAircraft", "RecallAircraft", "PDPriority"):
                 center = hud.get_action_center(action)
                 check("2C-HUD-ID-" + action, center.x >= 0 and center.y >= 0 and str(hud.get_hit_action_at_canvas_point(center)) == action, center)
+            marker, roster = hud.get_action_center("WorldPick_0"), hud.get_action_center("Pick_0")
+            width, height = pc.get_viewport_size()
+            scale = max(.25, min(1, width/1280, height/740))
+            pixel = unreal.Vector2D(marker.x*scale, marker.y*scale)
+            check("2C-WORLD-ROSTER-DISTINCT-IDS", marker.x >= 0 and roster.x >= 0
+                  and str(hud.get_hit_action_at_canvas_point(marker)) == "WorldPick_0"
+                  and str(hud.get_hit_action_at_canvas_point(roster)) == "Pick_0")
+            check("2C-WORLD-MARKER-CAMERA-OWNERSHIP", hud.is_over_world_marker(pixel)
+                  and not hud.is_over_panel(pixel.x, pixel.y))
             hud.set_details_open(True)
             state.update(phase=3, at=time.monotonic())
             return
@@ -351,8 +429,9 @@ def tick(dt):
             if time.monotonic() - state["at"] < .5:
                 return
             hud = pc.get_hud(); position = p(hud, "window_position")
-            center = unreal.Vector2D(position.x + 20, position.y + 110)
-            check("2C-HUD-DETAIL-CONSUMES", str(hud.get_hit_action_at_canvas_point(center)) != "None")
+            # Window's empty left gutter must own the click even over world/HUD.
+            center = unreal.Vector2D(position.x + 2, position.y + 110)
+            check("2C-HUD-DETAIL-CONSUMES", str(hud.get_hit_action_at_canvas_point(center)) == "WindowBackground")
             before = snapshot(pc, state["carrier"], state["pd"], state["transport"])
             for _ in range(5):
                 hud.set_details_open(False); hud.set_details_open(True)

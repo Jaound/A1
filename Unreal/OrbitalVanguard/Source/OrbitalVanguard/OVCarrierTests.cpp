@@ -93,7 +93,7 @@ bool FOVCarrierFacilitiesTest::RunTest(const FString&)
     R.Facility(EOVFacilityType::FighterControl, 10, 1);
     TestEqual(TEXT("Enemy occupation blocks launch independently"), R.Fleet->Launch(R.Carrier), 0);
     R.Facility(EOVFacilityType::FighterControl, 10);
-    R.Fleet->Launch(R.Carrier); R.Advance(.5);
+    R.Fleet->Launch(R.Carrier); R.Advance(.5f);
     R.Facility(EOVFacilityType::FighterControl, 0);
     const FVector Position = R.Fleet->Aircraft[0].Position;
     R.Advance(1);
@@ -106,7 +106,7 @@ bool FOVCarrierFacilitiesTest::RunTest(const FString&)
     TestEqual(TEXT("Restored hangar safely docks survivor"), R.Fleet->Aircraft[0].State, EOVAircraftState::Stored);
     const int32 Count = R.Fleet->Aircraft.Num();
     R.Carrier->Systems->DebugDestroySlot(R.Fleet->Hangars[0].SlotId, EOVDamageCause::Sabotage);
-    R.Advance(.1);
+    R.Advance(.1f);
     TestTrue(TEXT("Destroyed hangar loses stored craft"), R.Fleet->LossCount > 0);
     TestEqual(TEXT("Lost inventory records persist for accounting"), R.Fleet->Aircraft.Num(), Count);
     return true;
@@ -120,10 +120,24 @@ bool FOVCarrierOwnershipTest::RunTest(const FString&)
     TestTrue(TEXT("Aircraft actually issue a projectile"), R.Fleet->ShotCount > 0);
     TestTrue(TEXT("Projectile in flight before capture"), !R.Fleet->Bolts.IsEmpty());
     const int32 Faction = R.Fleet->Bolts.IsEmpty() ? -1 : R.Fleet->Bolts[0].FactionId;
+    for (const auto& Slot : R.Carrier->Systems->Layout->Slots)
+        R.Carrier->Systems->DebugSetCrew(Slot.SlotId, 0);
+    TestTrue(TEXT("Fixture has no operating crew and is neutral"), R.Carrier->Systems->bNeutral);
+    const FVector FrozenPosition = R.Fleet->Aircraft[0].Position;
+    const float HP = R.Fleet->Aircraft[0].HP, Shield = R.Fleet->Aircraft[0].Shield;
     R.Carrier->Systems->FactionId = 1;
     R.Advance(.025f, 1.f / 120);
-    TestEqual(TEXT("Exterior aircraft follow captured carrier"), R.Fleet->Aircraft[0].FactionId, 1);
+    TestEqual(TEXT("Exterior aircraft follow captured uncrewed carrier immediately"), R.Fleet->Aircraft[0].FactionId, 1);
+    TestEqual(TEXT("Ownership transfer does not restore control"), R.Fleet->Aircraft[0].State, EOVAircraftState::ControlLost);
+    TestTrue(TEXT("Uncrewed capture keeps exterior aircraft stationary"), R.Fleet->Aircraft[0].Position.Equals(FrozenPosition));
+    TestEqual(TEXT("Capture does not repair hull"), R.Fleet->Aircraft[0].HP, HP);
+    TestEqual(TEXT("Capture does not refill shield"), R.Fleet->Aircraft[0].Shield, Shield);
     if (!R.Fleet->Bolts.IsEmpty()) TestEqual(TEXT("Old projectile keeps original attacker faction"), R.Fleet->Bolts[0].FactionId, Faction);
+    R.Facility(EOVFacilityType::FighterControl, 10);
+    R.Facility(EOVFacilityType::Hangar, 10);
+    R.Advance(.025f, 1.f / 120);
+    TestEqual(TEXT("Actual control restoration resumes surviving craft"), R.Fleet->Aircraft[0].State, EOVAircraftState::Sortie);
+    TestEqual(TEXT("Restored operation keeps the newly transferred faction"), R.Fleet->Aircraft[0].FactionId, 1);
     R.Carrier->DebugSetFTLCharging(true); R.Advance(.025f, 1.f / 120);
     TestTrue(TEXT("Charging orders emergency recall"), R.Fleet->Carriers[0].bRecallOrdered);
     TestFalse(TEXT("FTL waits for airborne inventory"), R.Fleet->CanDepart(R.Carrier));
@@ -175,11 +189,14 @@ bool FOVCarrierDogfightTest::RunTest(const FString&)
     // Separated from ship boxes so the shot is a real aircraft-aircraft collision.
     for (auto& C : R.Fleet->Aircraft) C.Position = FVector(C.FactionId == 0 ? 0 : 600, (C.AircraftId % 2) * 400, 10000);
     const float Before = R.Fleet->Aircraft.Last().Shield;
-    R.Advance(2);
+    R.Advance(8);
     TestTrue(TEXT("Enemy aircraft are actually hit, not ship targets only"),
-        R.Fleet->Aircraft.ContainsByPredicate([Before](const FOVAircraftState& C) { return C.FactionId == 1 && C.Shield < Before; }));
+        R.Fleet->Aircraft.ContainsByPredicate([Before](const FOVAircraftRecord& C) { return C.FactionId == 1 && C.Shield < Before; }));
+    TestTrue(TEXT("Dogfight damage is attributable to an opposing launched aircraft bolt"),
+        R.Fleet->RecentEvents.ContainsByPredicate([](const FOVAircraftBolt& B)
+            { return B.bHit && B.FactionId == 0 && (B.HitId == TEXT("Aircraft_3") || B.HitId == TEXT("Aircraft_4")); }));
     R.Carrier->Systems->bWrecked = true;
-    R.Advance(.1);
+    R.Advance(.1f);
     for (const auto& C : R.Fleet->Aircraft)
         if (C.Carrier == R.Carrier && C.State != EOVAircraftState::Wrecked)
             TestEqual(TEXT("Mother loss leaves surviving exterior aircraft control-lost"), C.State, EOVAircraftState::ControlLost);
@@ -231,12 +248,12 @@ bool FOVCarrierAlternateDockTest::RunTest(const FString&)
     const int32 Count = R.Fleet->Aircraft.Num();
     R.Fleet->Launch(R.Carrier);
     R.Carrier->Systems->DebugDestroySlot(R.Fleet->Hangars[0].SlotId, EOVDamageCause::Sabotage);
-    R.Advance(.1);
+    R.Advance(.1f);
     TestEqual(TEXT("External inventory is not lost when its original hangar is destroyed"), R.Fleet->LossCount, 0);
     R.Fleet->Recall(R.Carrier); R.Advance(5);
     TestEqual(TEXT("Other operational hangar recovers actual surviving records"), R.Fleet->CountAircraft(R.Carrier, EOVAircraftState::Stored), Count);
     TestTrue(TEXT("Every returned craft records its new storage hangar"),
-        !R.Fleet->Aircraft.ContainsByPredicate([H0](const FOVAircraftState& C) { return C.HangarId == H0; }));
+        !R.Fleet->Aircraft.ContainsByPredicate([H0](const FOVAircraftRecord& C) { return C.HangarId == H0; }));
     return true;
 }
 #endif

@@ -389,6 +389,12 @@ void UOVCombatSubsystem::Step(float Delta)
     {
         AOVShip* Ship = State.Ship;
         if (!IsValid(Ship) || !Ship->Systems || State.bDeparted) continue;
+        if(State.OrderFaction!=Ship->Systems->FactionId) {
+            Ship->bFTLCharging=false;
+            Ship->StopMovement(); Ship->Velocity=FVector::ZeroVector;
+            Ship->bManualAttitude=false; Ship->SetAutomation(false,false);
+            if(auto* PC=Cast<AOVController>(GetWorld()->GetFirstPlayerController()))PC->TrialFTLRemaining.Remove(Ship);
+        }
         if(State.OrderFaction!=Ship->Systems->FactionId || (Ship->AttackTarget && State.TargetFaction>=0 && State.TargetFaction!=Ship->AttackTarget->Systems->FactionId)) {
             ClearPending(State); State.Intent=EOVAttackIntent::DestroyHull; Ship->AttackTarget=nullptr; State.TargetFaction=-1;
         }
@@ -405,8 +411,8 @@ void UOVCombatSubsystem::Step(float Delta)
     if (AOVController* Controller = Cast<AOVController>(GetWorld()->GetFirstPlayerController()))
         Controller->ResolveContacts(Delta);
     // One game clock: aircraft/transport positions, PD opportunities, then surviving ordnance.
-    GetWorld()->GetSubsystem<UOVCarrierSubsystem>()->Simulate(Delta);
     GetWorld()->GetSubsystem<UOVTransportSubsystem>()->Simulate(Delta);
+    GetWorld()->GetSubsystem<UOVCarrierSubsystem>()->Simulate(Delta);
     GetWorld()->GetSubsystem<UOVPointDefenseSubsystem>()->Step(Delta);
     if(auto* PC=Cast<AOVController>(GetWorld()->GetFirstPlayerController())) PC->AdvancePhase2C(Delta);
     AdvanceAttacks(Delta);

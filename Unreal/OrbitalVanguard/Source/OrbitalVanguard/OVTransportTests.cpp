@@ -124,6 +124,12 @@ bool FOVTransportLocalEntryReturnTest::RunTest(const FString&)
     TestEqual(TEXT("Return preserves individual pod ID"), R.Transport->GetPerson(Id).PodId, OriginalPod);
     TestEqual(TEXT("Return creates no additional pods"), R.Transport->Pods.Num(), 1);
     TestEqual(TEXT("Return does not duplicate entry events"), R.Transport->EntryEvents.Num(), 1);
+    // Fixture for a future passenger-only transfer; physical pod is still stored at original return host.
+    R.Transport->Persons[0].CurrentShip = R.Friend;
+    TestEqual(TEXT("Passenger transfer cannot teleport or mint replacement pod hardware"), R.Transport->LaunchPods(R.Friend, R.Target), 0);
+    TestEqual(TEXT("Remote pod stays in its recorded return host"), R.Transport->Pods[0].ReturnDestination.Get(), R.Origin);
+    TestEqual(TEXT("Remote reuse rejection preserves original hardware count"), R.Transport->Pods.Num(), 1);
+    R.Transport->Persons[0].CurrentShip = R.Origin;
     for (int32 I = 0; I < R.Origin->Systems->Slots.Num(); ++I)
         if (R.Origin->Systems->Layout->Slots[I].Facility == EOVFacilityType::Boarding)
             R.Origin->Systems->DebugSetCrew(R.Origin->Systems->Slots[I].SlotId, 10);
@@ -163,6 +169,18 @@ bool FOVTransportShuttleTest::RunTest(const FString&)
     Shuttle->SetActorLocation(FVector(-8000, 0, 0));
     auto Ids = R.Transport->AddDevPassengers(Shuttle, 4, 6);
     TestTrue(TEXT("Unarmed small shuttle dispatches ten explicit people"), R.Transport->DispatchShuttle(Shuttle, R.Target, Ids));
+    R.Drive(Shuttle, .1f);
+    TestTrue(TEXT("Explicit manual command suspends transport automation"), R.Transport->SuspendShuttle(Shuttle));
+    const FVector ManualDestination(-8000, -2000, 400);
+    Shuttle->SetDestination(ManualDestination); R.Drive(Shuttle, 1);
+    TestTrue(TEXT("Transport does not overwrite manual XYZ destination"), Shuttle->Destination.Equals(ManualDestination));
+    Shuttle->StopMovement(); R.Drive(Shuttle, .5f);
+    TestTrue(TEXT("Persistent manual Hold remains stopped while transport is suspended"), Shuttle->bHold && !Shuttle->bHasDestination);
+    TestEqual(TEXT("Manual suspension preserves actual embarked passengers"), R.Transport->CountState(EOVPassengerState::InShuttle), 10);
+    TestTrue(TEXT("Explicit recall resumes suspended transport"), R.Transport->RecallShuttle(Shuttle));
+    TestFalse(TEXT("Recall clears manual suspension"), R.Transport->Shuttles[0].bManualSuspended);
+    R.Drive(Shuttle, 20);
+    TestTrue(TEXT("Returned passengers can explicitly restart the mission"), R.Transport->DispatchShuttle(Shuttle, R.Target, Ids));
     R.Drive(Shuttle, 12);
     TestEqual(TEXT("Shuttle delivers all ten without creating pods"), R.Transport->EntryEvents.Num(), 10);
     TestEqual(TEXT("No free pods on shuttle entry"), R.Transport->Pods.Num(), 0);
@@ -174,7 +192,9 @@ bool FOVTransportShuttleTest::RunTest(const FString&)
     TestEqual(TEXT("Recovery never creates pods"), R.Transport->Pods.Num(), 0);
     TestFalse(TEXT("Recovery clears last faction resident"), R.Target->Systems->HasInteriorPresence(0));
     TestTrue(TEXT("Second sortie reuses same people"), R.Transport->DispatchShuttle(Shuttle, R.Target, Ids));
+    R.Transport->SuspendShuttle(Shuttle);
     Shuttle->Systems->bWrecked = true; R.Transport->Simulate(.1f);
+    TestEqual(TEXT("Manual suspension does not suppress transport destruction"), R.Transport->Shuttles[0].State, EOVShuttleState::Lost);
     TestEqual(TEXT("Undelivered hero-type shuttle passengers await rescue"), R.Transport->CountState(EOVPassengerState::RescueWaiting), 4);
     TestEqual(TEXT("Undelivered ordinary passengers die"), R.Transport->CountState(EOVPassengerState::Dead), 6);
     return true;

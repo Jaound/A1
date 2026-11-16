@@ -9,6 +9,8 @@ report['scope'] = 'R1 commands/protection plus original 2B regression'
 original_common = run_common
 
 def run_common(pc, world):
+    pc.set_editor_property("developer_mode", True)
+    pc.get_hud().set_details_open(True)
     combat, a, support, target = fixture(pc)
     systems = p(target, 'systems')
     pc.action('GunIntent')

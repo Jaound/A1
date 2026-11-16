@@ -10,7 +10,9 @@
 namespace {
 const FLinearColor Ink(.75f,.86f,.94f),Accent(.18f,.85f,1),Panel(.008f,.018f,.035f,.96f);
 FLinearColor Health(float R) { return R<=0?FLinearColor(.2f,.23f,.26f):R<.3f?FLinearColor(.85f,.15f,.1f):R<.7f?FLinearColor(.9f,.65f,.1f):FLinearColor(.15f,.65f,.4f); }
-FString Facility(EOVFacilityType T) { return StaticEnum<EOVFacilityType>()->GetNameStringByValue(static_cast<int64>(T)); }
+FString Facility(EOVFacilityType T) {
+ const TCHAR* Labels[]={TEXT("빈 공간"),TEXT("코어"),TEXT("함교"),TEXT("생명유지"),TEXT("엔진"),TEXT("무기제어실"),TEXT("탄약고"),TEXT("축전실"),TEXT("미사일 적재실"),TEXT("쉴드 제어실"),TEXT("레이더"),TEXT("요격 제어실"),TEXT("포드 발사실"),TEXT("격납고"),TEXT("함재기 관제실"),TEXT("자원 저장소"),TEXT("보안 시설")};
+ return Labels[FMath::Clamp(static_cast<int32>(T),0,16)]; }
 }
 void AOVHUD::Button(FName N,const FString& L,float X,float Y,float W,bool Active)
 {
@@ -32,7 +34,6 @@ bool AOVHUD::IsOverPanel(float X,float Y) const
  if(bDragging||bResizing) return true;
  if(!PC->bDeveloperMode) {
   if(P.Y<96 || P.Y>ViewportPixels.Y/UIScale-126 || (P.X<204 && P.Y<100+PC->Ships.Num()*36) || (PC->Phase2CScenario>=0 && P.X<258 && P.Y>=300 && P.Y<=600)) return true;
-  for(const FHUDHitBox& Hit:HitBoxMap) if(Hit.GetName().ToString().StartsWith(TEXT("Pick_")) && Hit.Contains(FVector2D(X,Y))) return true;
  }
  if(PC->bDeveloperMode && PC->Combat && PC->Combat->bEnabled && PC->Selected && (PC->Selected->bFriendly||PC->bDeveloperMode) && P.X>=10 && P.X<=440 && P.Y>=216 && P.Y<=560) return true;
  if(PC->bDeveloperMode && (P.Y<55 || (PC->Selected&&P.Y>ViewportPixels.Y/UIScale-88) || (P.X<200&&P.Y<210))) return true;
@@ -142,7 +143,7 @@ void AOVHUD::DrawExternal(float X,float Y,float W)
   DrawRect(I==PC->SelectedWeapon?Accent:Health(S->WeaponMountStates[I].HP/M.MaxHP),P.X-6,P.Y-6,12,12);
   AddHitBox((P-FVector2D(7,7))*UIScale,FVector2D(14,14)*UIScale,FName(*FString::Printf(TEXT("Weapon_%d"),I)),true,130);
  }
- DrawText(TEXT("READ ONLY 3D | MMB orbit / wheel zoom"),Ink,X+8,Y+174,GEngine->GetSmallFont());
+ DrawText(TEXT("3D 상태 보기 · 중클릭 회전 / 휠 확대"),Ink,X+8,Y+174,GEngine->GetSmallFont());
 }
 void AOVHUD::DrawDetails()
 {
@@ -156,7 +157,7 @@ void AOVHUD::DrawDetails()
  DrawText(PC->Selected->ShipName,Accent,X+10,Y+8,GEngine->GetSmallFont());
  Button(TEXT("WindowMin"),bMinimized?TEXT("+"):TEXT("_"),X+W-90,Y+2,26);Button(TEXT("WindowMax"),TEXT("[]"),X+W-60,Y+2,26);Button(TEXT("WindowClose"),TEXT("X"),X+W-30,Y+2,26);
  if(bMinimized)return;
- Button(TEXT("External"),TEXT("ARMOR / WEAPONS"),X+10,Y+38,145,PC->ViewedDeck==0);
+ Button(TEXT("External"),TEXT("장갑 / 외장 무장"),X+10,Y+38,145,PC->ViewedDeck==0);
  const bool Reveal=PC->Selected->bFriendly||PC->bDeveloperMode;
  for(int32 D=1;D<=L->DeckCount;++D) if(Reveal)Button(FName(*FString::Printf(TEXT("Deck%d"),D)),FString::Printf(TEXT("%dF"),D),X+165+(D-1)*52,Y+38,46,PC->ViewedDeck==D);
  if(PC->ViewedDeck==0)DrawExternal(X+10,Y+72,W-20);
@@ -165,27 +166,27 @@ void AOVHUD::DrawDetails()
   for(int32 I=0;I<L->Slots.Num();++I)if(L->Slots[I].DeckId==PC->ViewedDeck) {
    const float CX=X+10+(Cell%5)*(W-20)/5,CY=Y+78+(Cell/5)*54;++Cell;
    const auto& D=L->Slots[I];const auto& State=S->Slots[I];
-   Button(FName(*FString::Printf(TEXT("Slot_%d"),I)),D.SlotId.ToString(),CX,CY,(W-30)/5,I==PC->SelectedSlot);
+   Button(FName(*FString::Printf(TEXT("Slot_%d"),I)),PC->bDeveloperMode?D.SlotId.ToString():Facility(D.Facility),CX,CY,(W-30)/5,I==PC->SelectedSlot);
    DrawRect(Health(D.MaxFacilityHP>0?State.HP/D.MaxFacilityHP:0),CX,CY+30,(W-30)/5,4);
    DrawText(Facility(D.Facility).Left(10),Ink,CX,CY+36,GEngine->GetSmallFont());
   }
  }
- DrawText(FString::Printf(TEXT("HP %.0f/%.0f | Shield %.0f/%.0f %s"),S->HullHP,S->MaxHullHP,S->Shield,S->MaxShield,S->bShieldActive?TEXT("ON"):TEXT("OFF")),Ink,X+10,Y+280,GEngine->GetSmallFont());
+ DrawText(FString::Printf(TEXT("선체 %.0f/%.0f | 쉴드 %.0f/%.0f %s"),S->HullHP,S->MaxHullHP,S->Shield,S->MaxShield,S->bShieldActive?TEXT("ON"):TEXT("OFF")),Ink,X+10,Y+280,GEngine->GetSmallFont());
  if(S->ArmorSections.IsValidIndex(PC->SelectedArmor)) {
   const auto& A=S->ArmorSections[PC->SelectedArmor];
-  DrawText(FString::Printf(TEXT("Armor %s %.0f/%.0f"),*A.ArmorSectionId.ToString(),A.HP,L->ArmorSections[PC->SelectedArmor].MaxArmor),Accent,X+10,Y+301,GEngine->GetSmallFont());
+  DrawText(FString::Printf(TEXT("장갑 %s %.0f/%.0f"),*(PC->bDeveloperMode?A.ArmorSectionId.ToString():FString(TEXT("선택 구역"))),A.HP,L->ArmorSections[PC->SelectedArmor].MaxArmor),Accent,X+10,Y+301,GEngine->GetSmallFont());
  }
  if(PC->ViewedDeck==0&&S->WeaponMountStates.IsValidIndex(PC->SelectedWeapon)) {
   const auto& M=S->WeaponMountStates[PC->SelectedWeapon];const auto& D=L->WeaponMounts[PC->SelectedWeapon];
   const FString Status=!Reveal?TEXT("EXTERNAL ONLY"):(PC->Combat&&PC->Combat->bEnabled?PC->Combat->GetReadiness(PC->Selected,M.WeaponMountId).Reason:(S->IsWeaponAvailable(M.WeaponMountId)?TEXT("SUPPLIED"):TEXT("OFF")));
-  DrawText(FString::Printf(TEXT("Weapon %s T%.0f HP %.0f/%.0f %s"),*M.WeaponMountId.ToString(),D.Tier,M.HP,D.MaxHP,*Status),Ink,X+10,Y+322,GEngine->GetSmallFont());
+  DrawText(FString::Printf(TEXT("외장 무장 %s T%.0f HP %.0f/%.0f %s"),*(PC->bDeveloperMode?M.WeaponMountId.ToString():FString::FromInt(PC->SelectedWeapon+1)),D.Tier,M.HP,D.MaxHP,*(PC->bDeveloperMode?Status:FString(M.HP>0?TEXT("상태 정상"):TEXT("파괴")))),Ink,X+10,Y+322,GEngine->GetSmallFont());
  }else if(Reveal&&L->Slots.IsValidIndex(PC->SelectedSlot)) {
   const auto& F=S->Slots[PC->SelectedSlot];const auto& D=L->Slots[PC->SelectedSlot];
-  DrawText(FString::Printf(TEXT("%s %s HP %.0f/%.0f Crew %.0f/%.0f"),*F.SlotId.ToString(),*Facility(D.Facility),F.HP,D.MaxFacilityHP,F.Crew,D.RequiredCrew),Ink,X+10,Y+322,GEngine->GetSmallFont());
+  DrawText(FString::Printf(TEXT("%s %s HP %.0f/%.0f Crew %.0f/%.0f"),*(PC->bDeveloperMode?F.SlotId.ToString():FString(TEXT("시설"))),*Facility(D.Facility),F.HP,D.MaxFacilityHP,F.Crew,D.RequiredCrew),Ink,X+10,Y+322,GEngine->GetSmallFont());
   DrawText(S->GetSlotStatus(F.SlotId),Accent,X+10,Y+341,GEngine->GetSmallFont());
  }
- if(Reveal)DrawText(FString::Printf(TEXT("Engine %.0f%% Shield %.0f%% Radar %.0f%%"),100*S->GetEfficiency(EOVFacilityType::Engine),100*S->GetEfficiency(EOVFacilityType::ShieldControl),100*S->GetEfficiency(EOVFacilityType::Radar)),Ink,X+10,Y+362,GEngine->GetSmallFont());
- else DrawText(TEXT("Enemy interior hidden / no boarding reveal"),Ink,X+10,Y+362,GEngine->GetSmallFont());
+ if(Reveal)DrawText(FString::Printf(TEXT("엔진 %.0f%% 쉴드 %.0f%% 레이더 %.0f%%"),100*S->GetEfficiency(EOVFacilityType::Engine),100*S->GetEfficiency(EOVFacilityType::ShieldControl),100*S->GetEfficiency(EOVFacilityType::Radar)),Ink,X+10,Y+362,GEngine->GetSmallFont());
+ else DrawText(TEXT("적 내부 정보 숨김 · 관측된 외장만 표시"),Ink,X+10,Y+362,GEngine->GetSmallFont());
  if(PC->bDeveloperMode) {
   DrawText(TEXT("DEV ONLY: direct tools, not supply repair"),FLinearColor::Yellow,X+10,Y+384,GEngine->GetSmallFont());
   const FName Names[]={TEXT("TestHit"),TEXT("ArmorZero"),TEXT("RepairArmor"),TEXT("Reset"),TEXT("DestroyExt"),TEXT("Sabotage"),TEXT("RepairSlot"),TEXT("Occupy"),TEXT("CrewDown"),TEXT("CrewUp"),TEXT("WeaponHit"),TEXT("RepairWeapon")};

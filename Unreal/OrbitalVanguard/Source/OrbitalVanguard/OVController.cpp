@@ -4,12 +4,17 @@
 #include "OVCalibration.h"
 #include "OVShipSystemsComponent.h"
 #include "OVCombatSubsystem.h"
+#include "OVCarrierSubsystem.h"
+#include "OVPointDefenseSubsystem.h"
+#include "OVTransportSubsystem.h"
 #include "GameFramework/InputSettings.h"
 #include "Engine/LocalPlayer.h"
 #include "Engine/GameViewportClient.h"
 #include "UnrealClient.h"
 #include "InputKeyEventArgs.h"
 #include "Misc/App.h"
+#include "Misc/CommandLine.h"
+#include "Misc/Parse.h"
 #include "Camera/CameraActor.h"
 #include "Camera/CameraComponent.h"
 #include "DrawDebugHelpers.h"
@@ -23,6 +28,9 @@ void AOVController::BeginPlay()
  Super::BeginPlay();
  LegacyTraceDistance=HitResultTraceDistance;
  Combat=GetWorld()->GetSubsystem<UOVCombatSubsystem>();
+ Carrier=GetWorld()->GetSubsystem<UOVCarrierSubsystem>();
+ PointDefense=GetWorld()->GetSubsystem<UOVPointDefenseSubsystem>();
+ Transport=GetWorld()->GetSubsystem<UOVTransportSubsystem>();
  FInputModeGameAndUI Mode; Mode.SetHideCursorDuringCapture(false); Mode.SetLockMouseToViewportBehavior(EMouseLockMode::DoNotLock); SetInputMode(Mode);
  RangeCamera=GetWorld()->SpawnActor<ACameraActor>();
  RangeCamera->GetCameraComponent()->SetFieldOfView(55);
@@ -49,6 +57,11 @@ void AOVController::BeginPlay()
  }
  SelectShip(Ships[0]); ResetCameraProfile();
  UE_LOG(LogTemp,Display,TEXT("OV: ControlRange ready; two friendly ships + one target"));
+ // Optional local play/viewport quality harness. Normal Editor/PIE startup is unchanged.
+ int32 RequestedScene=-1;
+ if(FParse::Value(FCommandLine::Get(),TEXT("OV2CScene="),RequestedScene)&&StartPhase2CRange(RequestedScene)) {
+  if(FParse::Param(FCommandLine::Get(),TEXT("OVAutoRun"))) { for(AOVShip* Ship:Ships)Ship->SetAutomation(false,true);bSimulationPaused=false; }
+ }
 }
 void AOVController::StartCombatRange()
 {
@@ -98,7 +111,7 @@ void AOVController::StartCombatRange()
  SelectShip(Ships[1]); SelectedWeapon=1;
  // Frame the wider combat fixture; profile gains and all subsequent controls stay unchanged.
  CameraFocus=FVector(0,0,300); CameraDistance=6500; UpdateCamera();
- LastAction=TEXT("2B ready (paused). T + enemy selects only; B fires chosen mount; L fires all; AUTO engages. F1 resumes.");
+ LastAction=TEXT("전투 준비 · T 표적 지정 → B 선택 무장 / L 전체 발사 · F1 진행");
  UE_LOG(LogTemp,Display,TEXT("OV2B: Combat range reset, seed=260112, paused"));
 }
 bool AOVController::StartCalibrationRange(int32 Scenario)
@@ -119,7 +132,7 @@ bool AOVController::StartCalibrationRange(int32 Scenario)
  SimulationSeconds=0;
  SelectShip(Ships[0]);
  CameraFocus=FVector(0,0,2000);
- CameraDistance=OVCalibration::StartZoom;
+ CameraDistance=OVCalibration::StartZoom; CameraYaw=-90; CameraPitch=-55;
  UpdateCamera();
  LastAction=TEXT("교정 전투 · F6 장면 변경 · F5 기본 전투 · T 표적 → B 발사 · F1 진행");
  return true;
@@ -184,8 +197,8 @@ void AOVController::Action(FName Name)
  if(Name==TEXT("Phase2C")) { StartPhase2CRange((Phase2CScenario+1)%6); return; }
  if(Name==TEXT("RestartScene")) { if(Phase2CScenario>=0) StartPhase2CRange(Phase2CScenario); else if(CalibrationScenario>=0) StartCalibrationRange(CalibrationScenario); else StartCombatRange(); return; }
  if(Name==TEXT("Overview")) { FrameEngagement(); return; }
- if(Name.ToString().StartsWith(TEXT("Pick_"))) {
-  const int32 Index=FCString::Atoi(*Name.ToString().Mid(5));
+ if(Name.ToString().StartsWith(TEXT("Pick_")) || Name.ToString().StartsWith(TEXT("WorldPick_"))) {
+  const int32 Index=FCString::Atoi(*Name.ToString().Mid(Name.ToString().StartsWith(TEXT("WorldPick_"))?10:5));
   if(Ships.IsValidIndex(Index)) { if(InputMode==EOVInputMode::Target) SetTarget(Ships[Index]); else SelectShip(Ships[Index]); } return;
  }
  if(Name==TEXT("CalibrationRange")) { StartCalibrationRange((CalibrationScenario+1)%3); return; }
@@ -213,16 +226,16 @@ void AOVController::Action(FName Name)
  if(Name==TEXT("Deselect")) ClearSelection();
  if(Name==TEXT("Developer")) { bDeveloperMode=!bDeveloperMode; ViewedDeck=0; }
  if(Selected && Selected->bFriendly && Selected->Systems->CanCommand() && !(Combat&&Combat->bEnabled&&Combat->IsDeparted(Selected))) {
-  if(Name==TEXT("Manual")) { Selected->SetAutomation(false,false); LastAction=TEXT("MANUAL / movement and fire manual"); }
+  if(Name==TEXT("Manual")) { Selected->SetAutomation(false,false); LastAction=TEXT("이동·사격 수동"); }
   if(Name==TEXT("Auto")) { Selected->SetAutomation(true,true); bPlacing=false; InputMode=EOVInputMode::None; LastAction=TEXT("AUTO / Hold and manual attitude preserved")+(Combat&&Combat->bEnabled?FString(TEXT(" / automatic engagement")):FString(TEXT("; combat deferred"))); }
   if(Name==TEXT("MoveAuto") && Combat && Combat->bEnabled) {
    Selected->SetAutomation(!Selected->IsMovementAutomatic(),Selected->IsAttackAutomatic());
    bPlacing=false; InputMode=EOVInputMode::None;
-   LastAction=TEXT("Movement automation toggled; firing, Hold and manual attitude preserved");
+   LastAction=TEXT("이동 자동화 변경 · 사격과 정지/수동 자세 유지");
   }
   if(Name==TEXT("FireAuto") && Combat && Combat->bEnabled) {
    Selected->SetAutomation(Selected->IsMovementAutomatic(),!Selected->IsAttackAutomatic());
-   LastAction=TEXT("Fire automation toggled; movement preserved");
+   LastAction=TEXT("사격 자동화 변경 · 이동 명령 유지");
   }
   if(Name==TEXT("AutoFree") && Combat && Combat->bEnabled) {
    Selected->SetAutomation(true,true);
@@ -249,23 +262,26 @@ void AOVController::Action(FName Name)
     if(Name==TEXT("DevObjective")) TargetSystems->SetInteriorPresence(F,true,!TargetSystems->IsInteriorObjectiveComplete(F),true);
    }
   }
-  if(Name==TEXT("NextWeapon") && Selected->Systems->WeaponMountStates.Num()>0) SelectedWeapon=(SelectedWeapon+1)%Selected->Systems->WeaponMountStates.Num();
+  if(Name==TEXT("NextWeapon") && Selected->Systems->WeaponMountStates.Num()>0) {
+   const auto* L=Selected->Systems->Layout.Get();
+   for(int32 I=0;I<Selected->Systems->WeaponMountStates.Num();++I) { SelectedWeapon=(SelectedWeapon+1)%Selected->Systems->WeaponMountStates.Num(); if(!L||!L->WeaponMounts.IsValidIndex(SelectedWeapon)||L->WeaponMounts[SelectedWeapon].Type!=EOVWeaponType::Interception)break; }
+  }
   if((Name==TEXT("Fire") || Name==TEXT("FireAll")) && Combat && Combat->bEnabled) {
    const auto& Mounts=Selected->Systems->WeaponMountStates;
    const FName Mount=Name==TEXT("FireAll")?NAME_None:(Mounts.IsValidIndex(SelectedWeapon)?Mounts[SelectedWeapon].WeaponMountId:NAME_None);
    const bool Accepted=Combat->RequestFire(Selected,Mount);
-   LastAction=Accepted?TEXT("Fire requested (one salvo). Awaiting live gates / simulation."):TEXT("Fire request rejected: check target, ownership and weapon state");
+   LastAction=Accepted?TEXT("발사 요청 접수 · 조준/사거리/시설 조건 충족 시 한 차례 발사"):TEXT("발사 요청 거부 · 표적/소유/무장 상태 확인");
   }
-  if(Name==TEXT("Move")) { bPlacing=true; InputMode=EOVInputMode::Move; Preview=Selected->GetActorLocation(); PlacementPlaneZ=Preview.Z; OrderInput.Reset(); LastAction=(bPlayGame3?TEXT("Cursor XY; hold Shift + drag Z; LMB/Enter confirms"):TEXT("Cursor XY; hold Shift/RMB + drag Z; LMB/Enter confirms")); }
+  if(Name==TEXT("Move")) { bPlacing=true; InputMode=EOVInputMode::Move; Preview=Selected->GetActorLocation(); PlacementPlaneZ=Preview.Z; OrderInput.Reset(); LastAction=(bPlayGame3?TEXT("평면 위치 지정 · Shift 드래그 고도 · 클릭/Enter 확정"):TEXT("평면 위치 지정 · Shift/우클릭 고도 · 클릭/Enter 확정")); }
   if(Name==TEXT("Up") && bPlacing) Preview.Z=FMath::Min(Preview.Z+250*AltitudeScale(),CommandMaxZ());
   if(Name==TEXT("Down") && bPlacing) Preview.Z=FMath::Max(Preview.Z-250*AltitudeScale(),CommandMinZ());
   if(Name==TEXT("Confirm")) ConfirmMove();
-  if(Name==TEXT("Stop")) { for(AOVShip* Ship:Selection) Ship->StopMovement(); bPlacing=false; InputMode=EOVInputMode::None; LastAction=TEXT("Braking to persistent HOLD"); }
-  if(Name==TEXT("Target")) { bPlacing=false; InputMode=EOVInputMode::Target; LastAction=TEXT("Click enemy: target selection does not fire or change mode"); }
+  if(Name==TEXT("Stop")) { for(AOVShip* Ship:Selection) { Transport->SuspendShuttle(Ship); Ship->StopMovement(); } bPlacing=false; InputMode=EOVInputMode::None; LastAction=TEXT("감속 정지 · 위치 유지"); }
+  if(Name==TEXT("Target")) { bPlacing=false; InputMode=EOVInputMode::Target; LastAction=TEXT("적을 클릭해 표적 지정 · 발사는 별도 B/L 명령"); }
   if(Name==TEXT("ClearTarget")) { if(Combat&&Combat->bEnabled) Combat->SetTarget(Selected,nullptr); else Selected->AttackTarget=nullptr; }
-  if(Name==TEXT("Heading")) { bPlacing=false; InputMode=EOVInputMode::Heading; PlacementPlaneZ=Selected->GetActorLocation().Z; LastAction=TEXT("Click world to set heading; hold current pitch and roll"); }
+  if(Name==TEXT("Heading")) { Transport->SuspendShuttle(Selected); bPlacing=false; InputMode=EOVInputMode::Heading; PlacementPlaneZ=Selected->GetActorLocation().Z; LastAction=TEXT("전장을 클릭해 방향 지정 · 현재 상하 기울기 유지"); }
   if(Name==TEXT("Port") || Name==TEXT("Starboard")) { FRotator Attitude=Selected->GetActorRotation(); Attitude.Yaw+=Name==TEXT("Port")?-90:90; Selected->SetManualAttitude(Attitude); }
-  if(Name==TEXT("Repair")) LastAction=TEXT("R reserved: supply repair not implemented; use explicit DEV tools");
+  if(Name==TEXT("Repair")) LastAction=TEXT("보급 수리 미지원 · 시험 수리는 DEV에서만 가능");
  }
  if(Name==TEXT("Cancel")) { bPlacing=false; InputMode=EOVInputMode::None; bRightGesture=false; }
  if(Name==TEXT("Focus") && Selected) { bFollow=!bFollow && !Selected->Systems->bWrecked; if(bFollow || !bPlayGame3) CameraFocus=Selected->GetActorLocation(); }
@@ -300,9 +316,9 @@ void AOVController::Action(FName Name)
 void AOVController::ConfirmMove()
 {
  if(!bPlacing || !Selected || !Selected->bFriendly || !Selected->Systems->CanCommand()) return;
- for(AOVShip* Ship:Selection) if(Ship->bFriendly && Ship->Systems->CanCommand()) { Ship->SetAutomation(false,Ship->IsAttackAutomatic()); Ship->SetDestination(Preview+(Ship->GetActorLocation()-Selected->GetActorLocation())); }
+ for(AOVShip* Ship:Selection) if(Ship->bFriendly && Ship->Systems->CanCommand()) { Transport->SuspendShuttle(Ship); Ship->SetAutomation(false,Ship->IsAttackAutomatic()); Ship->SetDestination(Preview+(Ship->GetActorLocation()-Selected->GetActorLocation())); }
  bPlacing=false; InputMode=EOVInputMode::None;
- LastAction=FString::Printf(TEXT("MANUAL order: X %.0f  Y %.0f  Z %.0f"),Preview.X,Preview.Y,Preview.Z);
+ LastAction=FString::Printf(TEXT("이동 명령 수락 · X %.0fm  Y %.0fm  고도 %.0fm"),Preview.X/100,Preview.Y/100,Preview.Z/100);
  UE_LOG(LogTemp,Display,TEXT("OV: %s"),*LastAction);
 }
 void AOVController::UpdatePreview()
@@ -479,7 +495,7 @@ void AOVController::HandleRightMove(bool Pressed, FVector2D Cursor, bool InWorld
   Point.Y=FMath::Clamp(Point.Y,-CommandXY(),CommandXY());
   RightMove.Begin(Cursor,Point,Valid);
   UpdateRightMove(Cursor);
-  LastAction=TEXT("RMB: fixed XY; drag Z and release");
+  LastAction=TEXT("우클릭 XY 고정 · 드래그로 고도 · 해제로 명령 확정");
   return;
  }
 
@@ -613,7 +629,7 @@ void AOVController::PlayerTick(float DeltaTime)
  const bool LeftPressed=Inside&&WasInputKeyJustPressed(EKeys::LeftMouseButton);
  const int Wheel=Focused?int(WasInputKeyJustPressed(EKeys::MouseScrollUp))-int(WasInputKeyJustPressed(EKeys::MouseScrollDown)):0;
  const bool WorldGesture=RightMove.bActive||OrbitGesture.Surface==EOVOrbitSurface::World;
- const bool OverUI=HUD&&Inside&&HUD->HandlePointer(MX,MY,LeftPressed,IsInputKeyDown(EKeys::LeftMouseButton),WorldGesture?0:Wheel,false,0,0);
+ const bool OverUI=HUD&&Inside&&(HUD->HandlePointer(MX,MY,LeftPressed,IsInputKeyDown(EKeys::LeftMouseButton),WorldGesture?0:Wheel,false,0,0) || (LeftPressed && !WorldGesture && HUD->IsOverWorldMarker(Cursor)));
  const bool InWorld=Inside&&!OverUI;
  if(!Focused)
  {
@@ -712,21 +728,27 @@ void AOVController::PlayerTick(float DeltaTime)
  StepSimulation(DeltaTime);
  if(Combat && Combat->bEnabled) {
   // Presentation reads resolved events. It never requests fire or applies damage.
+  const float FX=CalibrationScenario>=0?20.f:1.f;
   for(const auto& Shot:Combat->Attacks) {
    const FColor Color=Shot.Weapon.Kind==EOVAttackKind::Cannon?FColor::Orange:FColor::Yellow;
-   DrawDebugLine(GetWorld(),Shot.Position-Shot.Direction*100,Shot.Position,Color,false,-1,0,4);
-   DrawDebugSphere(GetWorld(),Shot.Position,12,6,Color,false,-1,0,2);
+   DrawDebugLine(GetWorld(),Shot.Position-Shot.Direction*FMath::Max(100.f,Shot.Weapon.Speed*.035f),Shot.Position,Color,false,-1,0,4);
+   DrawDebugSphere(GetWorld(),Shot.Position,12*FX,6,Color,false,-1,0,2);
   }
   for(const auto& Event:Combat->RecentEvents) if(Combat->GameTime-Event.ResolvedAt<.20) {
    if(Event.Weapon.Kind==EOVAttackKind::Beam) DrawDebugLine(GetWorld(),Event.Origin,Event.Position,Event.FactionId==0?FColor::Cyan:FColor::Red,false,-1,0,4);
-   if(Event.Result==EOVAttackResult::Hit) DrawDebugSphere(GetWorld(),Event.Position,35,8,FColor::Orange,false,-1,0,3);
+   DrawDebugSphere(GetWorld(),Event.Origin,15*FX,8,Event.FactionId==0?FColor::Cyan:FColor::Red,false,-1,0,3);
+   if(Event.Result==EOVAttackResult::Hit) {
+    DrawDebugSphere(GetWorld(),Event.Position,35*FX,12,FColor::Orange,false,-1,0,3);
+    for(AOVShip* Hit:Ships) if(Hit->GetFName()==Event.HitShipId && Hit->Systems->bShieldActive && Hit->Systems->Layout)
+     DrawDebugBox(GetWorld(),Hit->GetActorLocation(),Hit->Systems->Layout->LocalHalfExtent*Hit->GetActorScale3D()*1.06,Hit->GetActorQuat(),FColor(100,160,255),false,-1,0,4);
+   }
   }
   for(const auto& State:Combat->Ships) if(IsValid(State.Ship)&&State.Ship->Systems->Layout&&!State.Ship->Systems->bWrecked&&!State.bDeparted) {
    for(const auto& Mount:State.Mounts) {
     const auto* Def=State.Ship->Systems->Layout->WeaponMounts.FindByPredicate([&](const FOVWeaponMountDefinition& M){return M.WeaponId==Mount.MountId;});
     if(!Def) continue;
     const FVector Base=State.Ship->GetActorTransform().TransformPosition(Def->LocalPosition);
-    DrawDebugLine(GetWorld(),Base,Base+State.Ship->GetActorQuat().RotateVector(Mount.LocalAim.Vector())*100,FColor::Silver,false,-1,0,3);
+    DrawDebugLine(GetWorld(),Base,Base+State.Ship->GetActorQuat().RotateVector(Mount.LocalAim.Vector())*100*FX,FColor::Silver,false,-1,0,3);
    }
   }
  }
@@ -755,8 +777,8 @@ void AOVController::PlayerTick(float DeltaTime)
   // The disc and projection use exactly the same selected-ship elevation.
   DrawDebugCircle(GetWorld(),Ground,600,48,FColor(30,110,140),false,-1,0,2,FVector::ForwardVector,FVector::RightVector,false);
   if(OrderInput.bShowAltitude) DrawDebugLine(GetWorld(),Ground,Preview,FColor::Yellow,false,-1,0,5);
-  DrawDebugSphere(GetWorld(),Preview,90,16,FColor::Yellow,false,-1,0,3);
-  DrawDebugCircle(GetWorld(),Ground,180,32,FColor::Yellow,false,-1,0,3,FVector::ForwardVector,FVector::RightVector,false);
+  DrawDebugSphere(GetWorld(),Preview,90*(CalibrationScenario>=0?20:1),16,FColor::Yellow,false,-1,0,3);
+  DrawDebugCircle(GetWorld(),Ground,180*(CalibrationScenario>=0?20:1),32,FColor::Yellow,false,-1,0,3,FVector::ForwardVector,FVector::RightVector,false);
   if(Selected) DrawDebugLine(GetWorld(),Selected->GetActorLocation(),Preview,FColor::Yellow,false,-1,0,2);
  }
 }

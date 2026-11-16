@@ -24,6 +24,19 @@ bool SegmentSphere(const FVector& Start, const FVector& End, const FVector& Cent
     if (T < 0 || T > 1) return false;
     Fraction = float(T); return true;
 }
+
+FVector LeadPoint(FVector Origin, FVector Target, FVector Velocity, double Speed, double Lifetime)
+{
+    const FVector R = Target - Origin;
+    const double A = Velocity.SizeSquared() - Speed * Speed;
+    const double B = 2 * FVector::DotProduct(R, Velocity), C = R.SizeSquared();
+    const double D = B * B - 4 * A * C;
+    if (Speed <= 0 || D < 0 || FMath::Abs(A) < UE_SMALL_NUMBER) return Target;
+    const double T1 = (-B - FMath::Sqrt(D)) / (2 * A), T2 = (-B + FMath::Sqrt(D)) / (2 * A);
+    double T = T1 > 0 ? T1 : T2;
+    if (T2 > 0 && T2 < T) T = T2;
+    return T > 0 && T <= Lifetime ? Target + Velocity * T : Target;
+}
 }
 
 void UOVCarrierSubsystem::Reset(int32 Seed)
@@ -50,7 +63,7 @@ bool UOVCarrierSubsystem::RegisterCarrier(AOVShip* Ship, int32 InitialPerHangar)
         Hangar.HangarId = NextHangarId++; Hangar.Carrier = Ship; Hangar.SlotId = Slot.SlotId;
         for (int32 I = 0; I < FMath::Clamp(InitialPerHangar, 0, 20); ++I)
         {
-            FOVAircraftState& Craft = Aircraft.AddDefaulted_GetRef();
+            FOVAircraftRecord& Craft = Aircraft.AddDefaulted_GetRef();
             Craft.AircraftId = NextAircraftId++; Craft.HangarId = Hangar.HangarId;
             Craft.Carrier = Ship; Craft.FactionId = Ship->Systems->FactionId;
             Craft.HP = Profile.Hull; Craft.Shield = Profile.Shield; Craft.Evasion = Profile.Evasion;
@@ -161,7 +174,7 @@ bool UOVCarrierSubsystem::SetHangarMode(int32 HangarId, EOVHangarMode Mode)
     auto* H = Hangars.FindByPredicate([HangarId](const FOVHangarState& V) { return V.HangarId == HangarId; });
     if (!H) return false;
     if (H->Mode == Mode) return true;
-    if (H->StoredSmallShip.IsValid() || Aircraft.ContainsByPredicate([HangarId](const FOVAircraftState& C)
+    if (H->StoredSmallShip.IsValid() || Aircraft.ContainsByPredicate([HangarId](const FOVAircraftRecord& C)
         { return C.HangarId == HangarId && C.State != EOVAircraftState::Wrecked; })) return false;
     H->Mode = Mode; return true;
 }
@@ -175,7 +188,7 @@ int32 UOVCarrierSubsystem::CountAircraft(AOVShip* Ship, EOVAircraftState State) 
 
 bool UOVCarrierSubsystem::HasOutstandingAircraft(AOVShip* Ship) const
 {
-    return Aircraft.ContainsByPredicate([Ship](const FOVAircraftState& C) { return C.Carrier == Ship && IsAirborneState(C.State); });
+    return Aircraft.ContainsByPredicate([Ship](const FOVAircraftRecord& C) { return C.Carrier == Ship && IsAirborneState(C.State); });
 }
 
 bool UOVCarrierSubsystem::CanDepart(AOVShip* Ship) const
@@ -217,7 +230,7 @@ FString UOVCarrierSubsystem::GetCarrierStatus(AOVShip* Ship) const
         CountAircraft(Ship, EOVAircraftState::Wrecked));
 }
 
-void UOVCarrierSubsystem::DestroyAircraft(FOVAircraftState& Craft)
+void UOVCarrierSubsystem::DestroyAircraft(FOVAircraftRecord& Craft)
 {
     if (Craft.State == EOVAircraftState::Wrecked) return;
     Craft.HP = Craft.Shield = 0; Craft.State = EOVAircraftState::Wrecked; ++LossCount;
@@ -225,7 +238,7 @@ void UOVCarrierSubsystem::DestroyAircraft(FOVAircraftState& Craft)
 
 bool UOVCarrierSubsystem::ApplyAircraftDamage(int32 AircraftId, float Damage)
 {
-    auto* Craft = Aircraft.FindByPredicate([AircraftId](const FOVAircraftState& C) { return C.AircraftId == AircraftId; });
+    auto* Craft = Aircraft.FindByPredicate([AircraftId](const FOVAircraftRecord& C) { return C.AircraftId == AircraftId; });
     if (!Craft || !IsAirborneState(Craft->State) || !FMath::IsFinite(Damage) || Damage <= 0) return false;
     const float Absorbed = FMath::Min(Craft->Shield, Damage);
     Craft->Shield -= Absorbed; Craft->HP = FMath::Max(0.f, Craft->HP - (Damage - Absorbed));
@@ -233,7 +246,7 @@ bool UOVCarrierSubsystem::ApplyAircraftDamage(int32 AircraftId, float Damage)
     return true;
 }
 
-FOVHangarState* UOVCarrierSubsystem::FindDock(FOVAircraftState& Craft)
+FOVHangarState* UOVCarrierSubsystem::FindDock(FOVAircraftRecord& Craft)
 {
     // R25 trial: same-carrier operational hangars only, stable ID order. No teleport to another carrier.
     for (auto& H : Hangars)
@@ -265,7 +278,9 @@ void UOVCarrierSubsystem::Step(float Delta)
     for (auto& State : Carriers)
     {
         auto* Ship = State.Carrier.Get();
-        if (!LivingShip(Ship)) continue;
+        // Ownership is independent of operational crew/control. A captured, uncrewed
+        // carrier transfers its surviving inventory immediately but cannot make it fly.
+        if (!IsValid(Ship) || !Ship->Systems || Ship->Systems->bWrecked) continue;
         if (Ship->Systems->FactionId != State.LastFaction)
         {
             State.LastFaction = Ship->Systems->FactionId;
@@ -274,16 +289,23 @@ void UOVCarrierSubsystem::Step(float Delta)
                 if (Craft.Carrier == Ship && Craft.State != EOVAircraftState::Wrecked) Craft.FactionId = State.LastFaction;
             // Launched Bolts intentionally retain their immutable previous faction.
         }
+        if (!LivingShip(Ship)) continue;
         if (Ship->bFTLCharging && !State.bWasFTLCharging) Recall(Ship);
         State.bWasFTLCharging = Ship->bFTLCharging;
         if (!State.bRecallOrdered && !Ship->bFTLCharging && LivingShip(Ship->AttackTarget)
             && Ship->AttackTarget->Systems->FactionId != Ship->Systems->FactionId) Launch(Ship);
     }
-    for (auto& Craft : Aircraft) AdvanceAircraft(Craft, Delta);
+    // All craft expose the same start-of-step positions to relative projectile sweeps.
+    for (auto& Craft : Aircraft) Craft.PreviousPosition = Craft.Position;
+    for (auto& Craft : Aircraft)
+    {
+        AdvanceAircraft(Craft, Delta);
+        Craft.Velocity = (Craft.Position - Craft.PreviousPosition) / Delta;
+    }
     AdvanceBolts(Delta);
 }
 
-void UOVCarrierSubsystem::AdvanceAircraft(FOVAircraftState& Craft, float Delta)
+void UOVCarrierSubsystem::AdvanceAircraft(FOVAircraftRecord& Craft, float Delta)
 {
     if (Craft.State == EOVAircraftState::Wrecked) return;
     auto* Ship = Craft.Carrier.Get();
@@ -333,7 +355,7 @@ void UOVCarrierSubsystem::AdvanceAircraft(FOVAircraftState& Craft, float Delta)
         if (D < Best) { Target = S.Ship; Best = D; }
     }
     // Nearby opposing aircraft are valid dogfight targets; normal ship weapons never see this array.
-    const FOVAircraftState* AirTarget = nullptr;
+    const FOVAircraftRecord* AirTarget = nullptr;
     double BestAir = FMath::Square(double(Profile.AttackRange));
     for (const auto& Other : Aircraft)
     {
@@ -352,7 +374,8 @@ void UOVCarrierSubsystem::AdvanceAircraft(FOVAircraftState& Craft, float Delta)
         Craft.Waypoint = bHasTarget ? Center + Offset * .12 : Center + Offset;
         if (bHasTarget && FVector::DistSquared(Craft.Position, Center) <= FMath::Square(Profile.AttackRange) && Craft.Cooldown <= 0)
         {
-            if (Fire(Craft, Center, AirTarget ? FName(*FString::Printf(TEXT("Aircraft_%d"), AirTarget->AircraftId)) : FName(*Target->ShipName)))
+            const FVector Aim = AirTarget ? LeadPoint(Craft.Position, Center, AirTarget->Velocity, Profile.BoltSpeed, Profile.BoltLifetime) : Center;
+            if (Fire(Craft, Aim, AirTarget ? FName(*FString::Printf(TEXT("Aircraft_%d"), AirTarget->AircraftId)) : FName(*Target->ShipName)))
             {
                 Craft.Leg = EOVAircraftLeg::Egress;
                 Craft.Waypoint = Center + Offset;
@@ -373,7 +396,7 @@ void UOVCarrierSubsystem::AdvanceAircraft(FOVAircraftState& Craft, float Delta)
     Craft.Position += Craft.Direction * FMath::Min(double(Profile.Speed * Delta), V.Size());
 }
 
-bool UOVCarrierSubsystem::Fire(FOVAircraftState& Craft, FVector AimPoint, FName TargetId)
+bool UOVCarrierSubsystem::Fire(FOVAircraftRecord& Craft, FVector AimPoint, FName TargetId)
 {
     // Block a known friendly line before launch. Later crossing/capture never rewrites a bolt.
     const auto* Combat = GetWorld()->GetSubsystem<UOVCombatSubsystem>();
@@ -424,7 +447,7 @@ void UOVCarrierSubsystem::AdvanceBolts(float Delta)
         {
             if (Other.AircraftId == Bolt.AircraftId || !IsAirborneState(Other.State)) continue;
             float T;
-            if (SegmentSphere(Bolt.Position, End, Other.Position, Profile.CollisionRadius, T) && T < First)
+            if (SegmentSphere(Bolt.Position - Other.PreviousPosition, End - Other.Position, FVector::ZeroVector, Profile.CollisionRadius, T) && T < First)
             { First = T; HitAircraft = Other.AircraftId; HitShip = nullptr; }
         }
         if (First <= 1)

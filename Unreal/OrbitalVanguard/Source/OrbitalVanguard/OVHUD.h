@@ -18,6 +18,7 @@ public:
  UFUNCTION(BlueprintCallable, Category="UI") bool HandlePointer(float X,float Y,bool Pressed,bool Down,float Wheel,bool Orbit,float DX,float DY);
  UFUNCTION(BlueprintCallable, Category="UI") void SetDetailsOpen(bool Open) { bDetailsOpen=Open; bMinimized=false; }
  UFUNCTION(BlueprintPure, Category="UI") FVector2D GetActionCenter(FName Action) const;
+ UFUNCTION(BlueprintPure, Category="UI") bool IsOverWorldMarker(FVector2D Pixel) const;
  UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="UI") bool bDetailsOpen=false;
  UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="UI") bool bMinimized=false;
  UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="UI") FVector2D WindowPosition=FVector2D(840,76);
