@@ -11,7 +11,7 @@
 - 남은 작업은 사용자 직접 플레이 체크리스트와 피드백이다. 실제 영웅·선내전/나포·경제/연구·다른 모함 회수·독립 소형함 실제 격납 운용·환경/최종 모델은 미지원이며 이번 운송 토큰이나 시험 공급을 해당 기능의 성공으로 처리하지 않았다.
 - 재실행: `Tools/Build.ps1`, `Tools/RunEditor.ps1`, ControlRange Play → F7 → F1. `Tools/RunPlay.ps1 -Scene 5 -Width 1280 -Height 800`도 가능. 회귀 명령, 임시 R번호/값, 증거는 PHASE2C_GUIDE/PHASE2C_VALIDATION에 있다.
 
-이 단위 뒤에는 최종 문서·증거 커밋과 코드 브랜치 push 결과를 기록한다. 다음 세션은 이 상단과 Git HEAD/status부터 확인하고 아래의 오래된 실패나 미구현 문구를 재구현 지시로 해석하지 않는다.
+검증 코드 체크포인트는 `3d641fc344ba50bce818826b605eda0fbe8c328c`다. 이후 문서·증거 커밋은 게임 코드를 바꾸지 않는다. 제출 대상은 `origin/codex/phase1-playground` 하나이며, 원격 확인은 `git ls-remote origin refs/heads/codex/phase1-playground refs/heads/work`를 사용한다. 다음 세션은 이 상단과 Git HEAD/status부터 확인하고 아래의 오래된 실패나 미구현 문구를 재구현 지시로 해석하지 않는다.
 
 ## 진행 중 — 2026-11-16
 

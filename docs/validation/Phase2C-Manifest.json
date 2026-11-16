@@ -1,0 +1,86 @@
+{
+  "date": "2026-11-16",
+  "branch": "codex/phase1-playground",
+  "planning_sha": "035a4fba81d26f1d67daa1f44bded0f7e8d3a434",
+  "verified_code_sha": "3d641fc344ba50bce818826b605eda0fbe8c328c",
+  "build_log": "Phase2CReleaseBuild.log",
+  "automation": 53,
+  "api_2a": 57,
+  "api_regression_includes_2b_r1": 79,
+  "api_2c": 77,
+  "physical_input": "Not performed: two native-window capture timeouts",
+  "performance_source_commit": "127c6a6",
+  "performance_scope": "One DX11 Editor,1133x936,3/5/9ships,80/160/320aircraft,3s warmup+8s capture",
+  "evidence": [
+    {
+      "file": "Phase2C-2A.json",
+      "bytes": 7787,
+      "sha256": "6c7f100c0267c2fe33b78ceda925fd6e8592336dedf47f250524a41811ff4183"
+    },
+    {
+      "file": "Phase2C-960.png",
+      "bytes": 122574,
+      "sha256": "b2b3d69e41bbb758b57dffe35f88675970926a8733f0d98e3b082b679ecfeab6"
+    },
+    {
+      "file": "Phase2C-After-F6.png",
+      "bytes": 167580,
+      "sha256": "ff8fc026791b4dbb13bae039cdc0881eb70f401b203990dc6b56b90310aa0e89"
+    },
+    {
+      "file": "Phase2C-API-Log.txt",
+      "bytes": 30086,
+      "sha256": "96fa5181b276d014832d54ccf1d4ebf8348ee83243d5b784ae2af6a4ac925fc5"
+    },
+    {
+      "file": "Phase2C-Automation.txt",
+      "bytes": 11195,
+      "sha256": "9a1febf8088a8f48823e6707bf31de6522b1c7cba7c3d945c685217b550e4cc7"
+    },
+    {
+      "file": "Phase2C-Before-F6.png",
+      "bytes": 232395,
+      "sha256": "a9d114cecc2657bd174e12e40167a6de632f1e27fc60dcab81d16c5bf0f91a3d"
+    },
+    {
+      "file": "Phase2C-Build.txt",
+      "bytes": 3415,
+      "sha256": "03825d5afefc00777d72e1415249281f147718ec27c95a7b849ed890eb18e1bb"
+    },
+    {
+      "file": "Phase2C-Combat-API.mp4",
+      "bytes": 294906,
+      "sha256": "05601dcae223fb6863fd9f3aee992c866101eed54788723d94a44be20b330585"
+    },
+    {
+      "file": "Phase2C-CSVSummary.json",
+      "bytes": 1475,
+      "sha256": "721de5c986aebe368c24a7f0f57356bd1a67f38d07d4b71cd0748ec1291b474b"
+    },
+    {
+      "file": "Phase2C-EngineSelfCheck.txt",
+      "bytes": 1110,
+      "sha256": "56a6c029c566f39462592543987fb40c10f268124976d8b83068bad4813d4692"
+    },
+    {
+      "file": "Phase2C-Integration77.json",
+      "bytes": 20525,
+      "sha256": "574ada948ebf4827d35a3ef85feda2e0dfcc466840039881fc14f1996956b91f"
+    },
+    {
+      "file": "Phase2C-Performance.json",
+      "bytes": 1515,
+      "sha256": "6df9b29c1b7947d60111d812c843fd8a46b581a1b82ff95e954ffe2e15c206bd"
+    },
+    {
+      "file": "Phase2C-ProcessLoad.json",
+      "bytes": 4631,
+      "sha256": "d375ee0f27fcb9834910ad87ee77b7a41277ce3f71c76032e46e8d9c5ff57300"
+    },
+    {
+      "file": "Phase2C-Regression79.json",
+      "bytes": 18273,
+      "sha256": "8ff2ff93f759abd35650350debe38cf1523ce1b2057a494dd03b52ffb9dcb4c1"
+    }
+  ]
+}

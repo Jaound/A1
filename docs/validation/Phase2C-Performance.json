@@ -1,0 +1,57 @@
+{
+  "kind": "real Editor/Slate frames, not API batch timings",
+  "conditions": {
+    "seed": 260112,
+    "rhi": "DX11",
+    "speed": 1,
+    "vsync": "engine default",
+    "frame_cap": "engine default",
+    "warmup_wall_s": 3,
+    "measurement_wall_s": 8
+  },
+  "samples": [
+    {
+      "ships": 3,
+      "aircraft_records": 80,
+      "live_aircraft": 80,
+      "weapon_attacks": 0,
+      "fighter_bolts": 13,
+      "viewport": "(1133, 936)",
+      "wall_seconds": 8.0,
+      "game_seconds": 8.000000417232513,
+      "frames": 959,
+      "mean_frame_ms": 8.345333367927976,
+      "p95_frame_ms": 8.746299892663956,
+      "max_frame_ms": 19.02809739112854
+    },
+    {
+      "ships": 5,
+      "aircraft_records": 160,
+      "live_aircraft": 160,
+      "weapon_attacks": 4,
+      "fighter_bolts": 24,
+      "viewport": "(1133, 936)",
+      "wall_seconds": 8.0,
+      "game_seconds": 8.000000417232513,
+      "frames": 955,
+      "mean_frame_ms": 8.37256575676159,
+      "p95_frame_ms": 8.95480066537857,
+      "max_frame_ms": 11.773303151130676
+    },
+    {
+      "ships": 9,
+      "aircraft_records": 320,
+      "live_aircraft": 320,
+      "weapon_attacks": 12,
+      "fighter_bolts": 52,
+      "viewport": "(1133, 936)",
+      "wall_seconds": 8.0,
+      "game_seconds": 8.000000417232513,
+      "frames": 440,
+      "mean_frame_ms": 18.18072795021263,
+      "p95_frame_ms": 22.863201797008514,
+      "max_frame_ms": 24.9565988779068
+    }
+  ],
+  "errors": []
+}

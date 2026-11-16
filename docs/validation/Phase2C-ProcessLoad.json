@@ -1,0 +1,166 @@
+{
+  "pid": 6312,
+  "gpu_note": "Maximum observed per-process 3D engine utilization; null means unavailable; not total system GPU load",
+  "kind": "Read-only OS process counters during rendered Editor benchmark",
+  "cpu_note": "Process CPU seconds divided by wall seconds and logical core count",
+  "samples": [
+    {
+      "wall_s": 2.0293647,
+      "cpu_percent_machine": 10.971721839844756,
+      "gpu_3d_max_percent": 0.0,
+      "working_set_mb": 816.28515625
+    },
+    {
+      "wall_s": 4.669124,
+      "cpu_percent_machine": 1.28247172636788,
+      "gpu_3d_max_percent": 0.0,
+      "working_set_mb": 816.515625
+    },
+    {
+      "wall_s": 6.9707124,
+      "cpu_percent_machine": 28.682637173527638,
+      "gpu_3d_max_percent": 0.0,
+      "working_set_mb": 1244.08203125
+    },
+    {
+      "wall_s": 9.2857803,
+      "cpu_percent_machine": 6.6367743828737495,
+      "gpu_3d_max_percent": 0.0,
+      "working_set_mb": 1433.328125
+    },
+    {
+      "wall_s": 11.5896541,
+      "cpu_percent_machine": 0.0,
+      "gpu_3d_max_percent": 0.0,
+      "working_set_mb": 1433.3359375
+    },
+    {
+      "wall_s": 13.8908649,
+      "cpu_percent_machine": 0.0,
+      "gpu_3d_max_percent": 0.0,
+      "working_set_mb": 1433.34765625
+    },
+    {
+      "wall_s": 16.1838593,
+      "cpu_percent_machine": 0.0,
+      "gpu_3d_max_percent": 0.0,
+      "working_set_mb": 1433.359375
+    },
+    {
+      "wall_s": 18.486173,
+      "cpu_percent_machine": 0.0,
+      "gpu_3d_max_percent": 0.0,
+      "working_set_mb": 1433.37109375
+    },
+    {
+      "wall_s": 20.7861352,
+      "cpu_percent_machine": 0.0,
+      "gpu_3d_max_percent": 0.0,
+      "working_set_mb": 1507.30078125
+    },
+    {
+      "wall_s": 23.090901,
+      "cpu_percent_machine": 26.270293927478463,
+      "gpu_3d_max_percent": 0.0,
+      "working_set_mb": 2142.4609375
+    },
+    {
+      "wall_s": 25.3958828,
+      "cpu_percent_machine": 16.438578820882665,
+      "gpu_3d_max_percent": 30.0,
+      "working_set_mb": 3011.94921875
+    },
+    {
+      "wall_s": 27.6986658,
+      "cpu_percent_machine": 26.123282132966917,
+      "gpu_3d_max_percent": 29.0,
+      "working_set_mb": 2902.25390625
+    },
+    {
+      "wall_s": 30.00366,
+      "cpu_percent_machine": 23.669166571727896,
+      "gpu_3d_max_percent": 29.0,
+      "working_set_mb": 2907.37890625
+    },
+    {
+      "wall_s": 32.316847,
+      "cpu_percent_machine": 21.615200154591886,
+      "gpu_3d_max_percent": 27.0,
+      "working_set_mb": 2871.875
+    },
+    {
+      "wall_s": 34.6275669,
+      "cpu_percent_machine": 24.11766422519094,
+      "gpu_3d_max_percent": 28.0,
+      "working_set_mb": 2881.09765625
+    },
+    {
+      "wall_s": 36.9335414,
+      "cpu_percent_machine": 22.92505113709333,
+      "gpu_3d_max_percent": 29.0,
+      "working_set_mb": 2888.63671875
+    },
+    {
+      "wall_s": 39.2400056,
+      "cpu_percent_machine": 24.50088610378893,
+      "gpu_3d_max_percent": 28.0,
+      "working_set_mb": 2909.09765625
+    },
+    {
+      "wall_s": 41.5510894,
+      "cpu_percent_machine": 23.494117781449564,
+      "gpu_3d_max_percent": 29.0,
+      "working_set_mb": 2909.3046875
+    },
+    {
+      "wall_s": 43.8658223,
+      "cpu_percent_machine": 20.98199249396482,
+      "gpu_3d_max_percent": 29.0,
+      "working_set_mb": 2905.453125
+    },
+    {
+      "wall_s": 46.1711336,
+      "cpu_percent_machine": 20.89829834839804,
+      "gpu_3d_max_percent": 30.0,
+      "working_set_mb": 2905.2265625
+    },
+    {
+      "wall_s": 48.4730057,
+      "cpu_percent_machine": 17.874943326926488,
+      "gpu_3d_max_percent": 15.0,
+      "working_set_mb": 2913.84765625
+    },
+    {
+      "wall_s": 50.782576,
+      "cpu_percent_machine": 16.744186137135575,
+      "gpu_3d_max_percent": 15.0,
+      "working_set_mb": 2861.55078125
+    },
+    {
+      "wall_s": 53.0833345,
+      "cpu_percent_machine": 14.601163051228538,
+      "gpu_3d_max_percent": 15.0,
+      "working_set_mb": 2861.4765625
+    },
+    {
+      "wall_s": 55.3820887,
+      "cpu_percent_machine": 15.973325899741711,
+      "gpu_3d_max_percent": 16.0,
+      "working_set_mb": 2862.44140625
+    },
+    {
+      "wall_s": 57.6930486,
+      "cpu_percent_machine": 15.776272592758241,
+      "gpu_3d_max_percent": 15.0,
+      "working_set_mb": 2861.90625
+    },
+    {
+      "wall_s": 60.0049759,
+      "cpu_percent_machine": 5.744665933050747,
+      "gpu_3d_max_percent": 0.0,
+      "working_set_mb": 2799.92578125
+    }
+  ],
+  "gpu_names": "NVIDIA GeForce RTX 5070",
+  "logical_cores": 12
+}

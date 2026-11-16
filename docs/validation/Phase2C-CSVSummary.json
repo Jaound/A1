@@ -1,0 +1,53 @@
+[
+  {
+    "ships": 3,
+    "csv": "Profile(20261116_220313).csv",
+    "scope": "entire capture including 3s warmup; not same window as Slate8s",
+    "mean_ms": {
+      "FrameTime": 8.588516513761467,
+      "GameThreadTime": 14.030172018348622,
+      "RenderThreadTime": 2.5553495412844036,
+      "GPUTime": 7.339780275229358
+    },
+    "p95_ms": {
+      "FrameTime": 8.34,
+      "GameThreadTime": 7.2718,
+      "RenderThreadTime": 6.3831,
+      "GPUTime": 8.5753
+    }
+  },
+  {
+    "ships": 5,
+    "csv": "Profile(20261116_220324).csv",
+    "scope": "entire capture including 3s warmup; not same window as Slate8s",
+    "mean_ms": {
+      "FrameTime": 8.389917294388932,
+      "GameThreadTime": 7.522186779400461,
+      "RenderThreadTime": 6.914805303612606,
+      "GPUTime": 7.898601998462721
+    },
+    "p95_ms": {
+      "FrameTime": 8.5254,
+      "GameThreadTime": 8.4301,
+      "RenderThreadTime": 8.5985,
+      "GPUTime": 10.8706
+    }
+  },
+  {
+    "ships": 9,
+    "csv": "Profile(20261116_220335).csv",
+    "scope": "entire capture including 3s warmup; not same window as Slate8s",
+    "mean_ms": {
+      "FrameTime": 18.361921885521884,
+      "GameThreadTime": 18.279803872053872,
+      "RenderThreadTime": 8.520690404040405,
+      "GPUTime": 15.754284343434344
+    },
+    "p95_ms": {
+      "FrameTime": 22.9894,
+      "GameThreadTime": 23.0725,
+      "RenderThreadTime": 11.1731,
+      "GPUTime": 22.8501
+    }
+  }
+]
