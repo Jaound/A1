@@ -1,0 +1,19 @@
+{
+  "archive": "Play_Game_3.zip",
+  "archive_sha256": "bc65912ae558c70ef163ee68e2d6ac767c16de25497cc4e38d197c64f8a80c25",
+  "method": "Static source review; no Godot/UE gameplay rerun",
+  "sources": [
+    {
+      "path": "src/core/ShipState.gd",
+      "sha256": "4e5cd4b1121772c455be4018dbe3b3608713030969d5f0dbcbb69f88bd7ecdfd"
+    },
+    {
+      "path": "src/core/DataCatalog.gd",
+      "sha256": "bd6c795521ffd97af659b15f910d8382b69fc3b8207d5c47c6592735daa56096"
+    },
+    {
+      "path": "src/core/ShipLayout.gd",
+      "sha256": "5645c771ffdd302b39c84cfe8c77e6231af14b87f0259d6791f744a9f6a1f093"
+    }
+  ]
+}

@@ -1,0 +1,805 @@
+{
+  "hero": [
+    {
+      "id": "original",
+      "changes": {},
+      "results": {
+        "melee": {
+          "wins": 0,
+          "mean_surviving_heroes": 0,
+          "median_seconds": 22.5
+        },
+        "ranged": {
+          "wins": 19,
+          "mean_surviving_heroes": 2.45,
+          "median_seconds": 24.1
+        },
+        "guards12": {
+          "wins": 20,
+          "mean_surviving_heroes": 3.45,
+          "median_seconds": 20.9
+        },
+        "guards16": {
+          "wins": 19,
+          "mean_surviving_heroes": 1.7,
+          "median_seconds": 38.0
+        }
+      }
+    },
+    {
+      "id": "A",
+      "changes": {
+        "melee": {
+          "hp": 300,
+          "damage": 25,
+          "armor": 0.18
+        },
+        "soldier": {
+          "hp": 60,
+          "damage": 8
+        }
+      },
+      "results": {
+        "melee": {
+          "wins": 0,
+          "mean_surviving_heroes": 0,
+          "median_seconds": 29.6
+        },
+        "ranged": {
+          "wins": 14,
+          "mean_surviving_heroes": 1.15,
+          "median_seconds": 30.9
+        },
+        "guards12": {
+          "wins": 20,
+          "mean_surviving_heroes": 2.3,
+          "median_seconds": 30.799999999999997
+        },
+        "guards16": {
+          "wins": 0,
+          "mean_surviving_heroes": 0,
+          "median_seconds": 23.9
+        }
+      }
+    },
+    {
+      "id": "B",
+      "changes": {
+        "melee": {
+          "hp": 300,
+          "damage": 25,
+          "armor": 0.18
+        },
+        "ranged": {
+          "hp": 240,
+          "damage": 28
+        },
+        "support": {
+          "hp": 230,
+          "heal": 70
+        },
+        "soldier": {
+          "hp": 65,
+          "damage": 8
+        }
+      },
+      "results": {
+        "melee": {
+          "wins": 2,
+          "mean_surviving_heroes": 0.1,
+          "median_seconds": 31.1
+        },
+        "ranged": {
+          "wins": 6,
+          "mean_surviving_heroes": 0.4,
+          "median_seconds": 31.35
+        },
+        "guards12": {
+          "wins": 20,
+          "mean_surviving_heroes": 2.5,
+          "median_seconds": 28.2
+        },
+        "guards16": {
+          "wins": 0,
+          "mean_surviving_heroes": 0,
+          "median_seconds": 28.1
+        }
+      }
+    },
+    {
+      "id": "C",
+      "changes": {
+        "melee": {
+          "hp": 300,
+          "damage": 23,
+          "armor": 0.15
+        },
+        "ranged": {
+          "hp": 240,
+          "damage": 28
+        },
+        "support": {
+          "hp": 230,
+          "heal": 70
+        },
+        "soldier": {
+          "hp": 65,
+          "damage": 8
+        }
+      },
+      "results": {
+        "melee": {
+          "wins": 4,
+          "mean_surviving_heroes": 0.35,
+          "median_seconds": 35.85
+        },
+        "ranged": {
+          "wins": 4,
+          "mean_surviving_heroes": 0.25,
+          "median_seconds": 31.2
+        },
+        "guards12": {
+          "wins": 20,
+          "mean_surviving_heroes": 2.2,
+          "median_seconds": 32.4
+        },
+        "guards16": {
+          "wins": 0,
+          "mean_surviving_heroes": 0,
+          "median_seconds": 25.3
+        }
+      }
+    },
+    {
+      "id": "D",
+      "changes": {
+        "melee": {
+          "hp": 310,
+          "damage": 24,
+          "armor": 0.18
+        },
+        "ranged": {
+          "hp": 240,
+          "damage": 28
+        },
+        "support": {
+          "hp": 230,
+          "heal": 70
+        },
+        "soldier": {
+          "hp": 65,
+          "damage": 9
+        }
+      },
+      "results": {
+        "melee": {
+          "wins": 0,
+          "mean_surviving_heroes": 0,
+          "median_seconds": 34.1
+        },
+        "ranged": {
+          "wins": 6,
+          "mean_surviving_heroes": 0.4,
+          "median_seconds": 31.35
+        },
+        "guards12": {
+          "wins": 19,
+          "mean_surviving_heroes": 1.75,
+          "median_seconds": 33.2
+        },
+        "guards16": {
+          "wins": 0,
+          "mean_surviving_heroes": 0,
+          "median_seconds": 22.5
+        }
+      }
+    },
+    {
+      "id": "E",
+      "changes": {
+        "melee": {
+          "hp": 300,
+          "damage": 25,
+          "armor": 0.18
+        },
+        "support": {
+          "hp": 240,
+          "heal": 100,
+          "skill_cd": 6
+        },
+        "commander": {
+          "hp": 280,
+          "damage": 22,
+          "aura_damage": 0.12
+        },
+        "soldier": {
+          "hp": 65,
+          "damage": 8
+        }
+      },
+      "results": {
+        "melee": {
+          "wins": 6,
+          "mean_surviving_heroes": 0.6,
+          "median_seconds": 35.1
+        },
+        "ranged": {
+          "wins": 20,
+          "mean_surviving_heroes": 2.95,
+          "median_seconds": 21.6
+        },
+        "guards12": {
+          "wins": 20,
+          "mean_surviving_heroes": 2.95,
+          "median_seconds": 28.4
+        },
+        "guards16": {
+          "wins": 0,
+          "mean_surviving_heroes": 0,
+          "median_seconds": 28.1
+        }
+      }
+    },
+    {
+      "id": "F",
+      "changes": {
+        "melee": {
+          "hp": 300,
+          "damage": 25,
+          "armor": 0.18
+        },
+        "support": {
+          "hp": 240,
+          "heal": 100,
+          "skill_cd": 6
+        },
+        "commander": {
+          "hp": 300,
+          "damage": 22,
+          "aura_damage": 0.16
+        },
+        "soldier": {
+          "hp": 65,
+          "damage": 8
+        }
+      },
+      "results": {
+        "melee": {
+          "wins": 6,
+          "mean_surviving_heroes": 0.7,
+          "median_seconds": 35.1
+        },
+        "ranged": {
+          "wins": 20,
+          "mean_surviving_heroes": 2.95,
+          "median_seconds": 20.7
+        },
+        "guards12": {
+          "wins": 20,
+          "mean_surviving_heroes": 3,
+          "median_seconds": 25.4
+        },
+        "guards16": {
+          "wins": 2,
+          "mean_surviving_heroes": 0.1,
+          "median_seconds": 28.1
+        }
+      }
+    },
+    {
+      "id": "G",
+      "changes": {
+        "melee": {
+          "hp": 300,
+          "damage": 25,
+          "armor": 0.18
+        },
+        "support": {
+          "hp": 240,
+          "heal": 120,
+          "skill_cd": 6
+        },
+        "commander": {
+          "hp": 280,
+          "damage": 22,
+          "aura_damage": 0.12
+        },
+        "soldier": {
+          "hp": 65,
+          "damage": 8
+        }
+      },
+      "results": {
+        "melee": {
+          "wins": 6,
+          "mean_surviving_heroes": 0.8,
+          "median_seconds": 35.6
+        },
+        "ranged": {
+          "wins": 20,
+          "mean_surviving_heroes": 2.95,
+          "median_seconds": 21.3
+        },
+        "guards12": {
+          "wins": 20,
+          "mean_surviving_heroes": 3,
+          "median_seconds": 28.299999999999997
+        },
+        "guards16": {
+          "wins": 1,
+          "mean_surviving_heroes": 0.05,
+          "median_seconds": 28.1
+        }
+      }
+    },
+    {
+      "id": "H",
+      "changes": {
+        "melee": {
+          "hp": 300,
+          "damage": 25,
+          "armor": 0.18
+        },
+        "support": {
+          "hp": 240,
+          "heal": 120,
+          "skill_cd": 6
+        },
+        "commander": {
+          "hp": 300,
+          "damage": 22,
+          "aura_damage": 0.16
+        },
+        "soldier": {
+          "hp": 65,
+          "damage": 8
+        }
+      },
+      "results": {
+        "melee": {
+          "wins": 8,
+          "mean_surviving_heroes": 1.1,
+          "median_seconds": 34.35
+        },
+        "ranged": {
+          "wins": 20,
+          "mean_surviving_heroes": 3,
+          "median_seconds": 21.0
+        },
+        "guards12": {
+          "wins": 20,
+          "mean_surviving_heroes": 3,
+          "median_seconds": 25.4
+        },
+        "guards16": {
+          "wins": 2,
+          "mean_surviving_heroes": 0.1,
+          "median_seconds": 28.1
+        }
+      }
+    },
+    {
+      "id": "I",
+      "changes": {
+        "melee": {
+          "hp": 300,
+          "damage": 25,
+          "armor": 0.18
+        },
+        "ranged": {
+          "hp": 240,
+          "damage": 28
+        },
+        "support": {
+          "hp": 240,
+          "heal": 100,
+          "skill_cd": 6
+        },
+        "commander": {
+          "hp": 280,
+          "damage": 22,
+          "aura_damage": 0.12
+        },
+        "soldier": {
+          "hp": 65,
+          "damage": 8
+        }
+      },
+      "results": {
+        "melee": {
+          "wins": 7,
+          "mean_surviving_heroes": 0.65,
+          "median_seconds": 36.1
+        },
+        "ranged": {
+          "wins": 19,
+          "mean_surviving_heroes": 2.2,
+          "median_seconds": 24.6
+        },
+        "guards12": {
+          "wins": 20,
+          "mean_surviving_heroes": 3,
+          "median_seconds": 24.95
+        },
+        "guards16": {
+          "wins": 6,
+          "mean_surviving_heroes": 0.5,
+          "median_seconds": 29.5
+        }
+      }
+    },
+    {
+      "id": "J",
+      "changes": {
+        "melee": {
+          "hp": 300,
+          "damage": 25,
+          "armor": 0.18
+        },
+        "ranged": {
+          "hp": 240,
+          "damage": 28
+        },
+        "support": {
+          "hp": 240,
+          "heal": 120,
+          "skill_cd": 6
+        },
+        "commander": {
+          "hp": 280,
+          "damage": 22,
+          "aura_damage": 0.12
+        },
+        "soldier": {
+          "hp": 65,
+          "damage": 8
+        }
+      },
+      "results": {
+        "melee": {
+          "wins": 7,
+          "mean_surviving_heroes": 0.85,
+          "median_seconds": 34.75
+        },
+        "ranged": {
+          "wins": 19,
+          "mean_surviving_heroes": 2.45,
+          "median_seconds": 24.3
+        },
+        "guards12": {
+          "wins": 20,
+          "mean_surviving_heroes": 3,
+          "median_seconds": 24.5
+        },
+        "guards16": {
+          "wins": 8,
+          "mean_surviving_heroes": 0.65,
+          "median_seconds": 29.5
+        }
+      }
+    },
+    {
+      "id": "K",
+      "changes": {
+        "melee": {
+          "hp": 300,
+          "damage": 25,
+          "armor": 0.18
+        },
+        "ranged": {
+          "hp": 230,
+          "damage": 27
+        },
+        "support": {
+          "hp": 240,
+          "heal": 110,
+          "skill_cd": 6
+        },
+        "commander": {
+          "hp": 280,
+          "damage": 22,
+          "aura_damage": 0.12
+        },
+        "soldier": {
+          "hp": 65,
+          "damage": 8
+        }
+      },
+      "results": {
+        "melee": {
+          "wins": 7,
+          "mean_surviving_heroes": 0.8,
+          "median_seconds": 35.6
+        },
+        "ranged": {
+          "wins": 19,
+          "mean_surviving_heroes": 2.7,
+          "median_seconds": 23.5
+        },
+        "guards12": {
+          "wins": 20,
+          "mean_surviving_heroes": 3,
+          "median_seconds": 28.2
+        },
+        "guards16": {
+          "wins": 3,
+          "mean_surviving_heroes": 0.15,
+          "median_seconds": 28.8
+        }
+      }
+    },
+    {
+      "id": "L",
+      "changes": {
+        "melee": {
+          "hp": 300,
+          "damage": 25,
+          "armor": 0.18
+        },
+        "ranged": {
+          "hp": 240,
+          "damage": 28,
+          "range": 18
+        },
+        "support": {
+          "hp": 240,
+          "heal": 100,
+          "skill_cd": 6
+        },
+        "commander": {
+          "hp": 280,
+          "damage": 22,
+          "aura_damage": 0.12
+        },
+        "soldier": {
+          "hp": 65,
+          "damage": 8
+        }
+      },
+      "results": {
+        "melee": {
+          "wins": 8,
+          "mean_surviving_heroes": 0.8,
+          "median_seconds": 38.6
+        },
+        "ranged": {
+          "wins": 15,
+          "mean_surviving_heroes": 1.55,
+          "median_seconds": 26.9
+        },
+        "melee_vs_ranged": {
+          "wins": 1,
+          "mean_surviving_heroes": 0.05,
+          "median_seconds": 25.9
+        },
+        "guards12": {
+          "wins": 20,
+          "mean_surviving_heroes": 3,
+          "median_seconds": 24.5
+        },
+        "guards16": {
+          "wins": 8,
+          "mean_surviving_heroes": 0.5,
+          "median_seconds": 34.1
+        }
+      }
+    },
+    {
+      "id": "M",
+      "changes": {
+        "melee": {
+          "hp": 300,
+          "damage": 25,
+          "armor": 0.18
+        },
+        "ranged": {
+          "hp": 240,
+          "damage": 28,
+          "range": 20
+        },
+        "support": {
+          "hp": 240,
+          "heal": 100,
+          "skill_cd": 6
+        },
+        "commander": {
+          "hp": 280,
+          "damage": 22,
+          "aura_damage": 0.12
+        },
+        "soldier": {
+          "hp": 65,
+          "damage": 8
+        }
+      },
+      "results": {
+        "melee": {
+          "wins": 8,
+          "mean_surviving_heroes": 0.9,
+          "median_seconds": 34.85
+        },
+        "ranged": {
+          "wins": 11,
+          "mean_surviving_heroes": 0.95,
+          "median_seconds": 31.3
+        },
+        "melee_vs_ranged": {
+          "wins": 1,
+          "mean_surviving_heroes": 0.05,
+          "median_seconds": 25.95
+        },
+        "guards12": {
+          "wins": 20,
+          "mean_surviving_heroes": 3,
+          "median_seconds": 24.5
+        },
+        "guards16": {
+          "wins": 11,
+          "mean_surviving_heroes": 0.75,
+          "median_seconds": 38.25
+        }
+      }
+    },
+    {
+      "id": "N",
+      "changes": {
+        "melee": {
+          "hp": 300,
+          "damage": 25,
+          "armor": 0.18
+        },
+        "ranged": {
+          "hp": 240,
+          "damage": 28,
+          "range": 18
+        },
+        "support": {
+          "hp": 240,
+          "heal": 85,
+          "skill_cd": 6
+        },
+        "commander": {
+          "hp": 280,
+          "damage": 22,
+          "aura_damage": 0.12
+        },
+        "soldier": {
+          "hp": 65,
+          "damage": 8
+        }
+      },
+      "results": {
+        "melee": {
+          "wins": 8,
+          "mean_surviving_heroes": 0.8,
+          "median_seconds": 38.75
+        },
+        "ranged": {
+          "wins": 14,
+          "mean_surviving_heroes": 1.35,
+          "median_seconds": 28.4
+        },
+        "melee_vs_ranged": {
+          "wins": 1,
+          "mean_surviving_heroes": 0.05,
+          "median_seconds": 25.9
+        },
+        "guards12": {
+          "wins": 20,
+          "mean_surviving_heroes": 3,
+          "median_seconds": 24.5
+        },
+        "guards16": {
+          "wins": 6,
+          "mean_surviving_heroes": 0.4,
+          "median_seconds": 32.7
+        }
+      }
+    },
+    {
+      "id": "O",
+      "changes": {
+        "melee": {
+          "hp": 300,
+          "damage": 25,
+          "armor": 0.18
+        },
+        "ranged": {
+          "hp": 240,
+          "damage": 28,
+          "range": 20
+        },
+        "support": {
+          "hp": 240,
+          "heal": 85,
+          "skill_cd": 6
+        },
+        "commander": {
+          "hp": 280,
+          "damage": 22,
+          "aura_damage": 0.12
+        },
+        "soldier": {
+          "hp": 65,
+          "damage": 8
+        }
+      },
+      "results": {
+        "melee": {
+          "wins": 8,
+          "mean_surviving_heroes": 0.9,
+          "median_seconds": 34.85
+        },
+        "ranged": {
+          "wins": 10,
+          "mean_surviving_heroes": 0.7,
+          "median_seconds": 30.8
+        },
+        "melee_vs_ranged": {
+          "wins": 1,
+          "mean_surviving_heroes": 0.05,
+          "median_seconds": 25.95
+        },
+        "guards12": {
+          "wins": 20,
+          "mean_surviving_heroes": 3,
+          "median_seconds": 24.5
+        },
+        "guards16": {
+          "wins": 10,
+          "mean_surviving_heroes": 0.65,
+          "median_seconds": 37.25
+        }
+      }
+    }
+  ],
+  "selected": "N",
+  "seed_range": [
+    0,
+    19
+  ],
+  "step_seconds": 0.1,
+  "fleet_preliminary": [
+    {
+      "case": "mirror",
+      "left_wins": 4,
+      "right_wins": 2,
+      "timeouts": 0,
+      "median_seconds": 83.6
+    },
+    {
+      "case": "5small",
+      "left_wins": 0,
+      "right_wins": 6,
+      "timeouts": 0,
+      "median_seconds": 71.4
+    },
+    {
+      "case": "5medium",
+      "left_wins": 6,
+      "right_wins": 0,
+      "timeouts": 0,
+      "median_seconds": 103.6
+    },
+    {
+      "case": "5large",
+      "left_wins": 6,
+      "right_wins": 0,
+      "timeouts": 0,
+      "median_seconds": 81.2
+    },
+    {
+      "case": "vector_bastion",
+      "left_wins": 5,
+      "right_wins": 1,
+      "timeouts": 0,
+      "median_seconds": 71.2
+    }
+  ],
+  "notes": [
+    "Early fleet probe used six seeds at step .2, not held-out evaluation.",
+    "Before fleet probe, angular spreads were narrowed and radar-loss approach and surface PD measurement corrected.",
+    "O provides a counter cycle in this one-dimensional corridor; full room geometry remains untested.",
+    "v0.1/O evaluation seeds1000+ revealed ranged-stack advantage. v0.2/N reduces ranged range20 to18m, with fresh hero/hybrid evaluation4000+; fleet inputs unchanged."
+  ]
+}
