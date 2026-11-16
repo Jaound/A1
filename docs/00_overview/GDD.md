@@ -43,3 +43,5 @@
 UE5의 단일 시뮬레이션에 3D 전투와 2D/3D 표시를 연결한다. 장기 검증 목표는 ‘강습→쉴드실 무력화→집중 포격→탈출’이며 현재 단계 완료 조건과 혼동하지 않는다. 실제 진행은 [구현 상태](../03_development/IMPLEMENTATION_STATUS.md), 다음 외부 전투 범위는 [2단계 계획](../03_development/PHASE2_PLAN.md)을 따른다. 미정 정책은 [한곳에서 관리](OPEN_QUESTIONS.md)한다.
 
 입체 기지의 연결/생산 규칙은 [기지 명세](../01_design/strategy/BASE_SYSTEMS.md), 새 수치·기술/무장 해금 경로 제안은 [밸런스 초안](../02_balance/BASE_BALANCE_DRAFT.md)에서 구분해 관리한다.
+
+D116 전투 연동은 [통합 기준](../02_balance/INTEGRATED_COMBAT_BALANCE.md)을 따른다. 아군 영웅 강습 중 자동 공격 제외와 무장 무력화 명령, 관측된 적 정보만 제공하는 정책, 함재기 전용 연구/개조를 지원한다. 캠페인 적 전력은 임무/난이도/시간에 따라 비대칭일 수 있다.

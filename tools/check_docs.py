@@ -48,6 +48,7 @@ reports = {
     'reference/CombatSimulation/write_report.py': 'docs/archive/analysis/COMBAT_SIMULATION.md',
     'reference/FleetEndurance/report.py': 'docs/04_analysis/FLEET_ENDURANCE_RESULTS.md',
     'reference/BoardingReview/report.py': 'docs/04_analysis/BOARDING_REVIEW.md',
+    'reference/IntegratedCombat/report.py': 'docs/04_analysis/INTEGRATED_COMBAT_RESULTS.md',
 }
 for script, output in reports.items():
     tree = ast.parse((ROOT / script).read_text(encoding='utf-8'), filename=script)

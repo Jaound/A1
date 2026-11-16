@@ -9,7 +9,7 @@
 | `01_design/boarding/` | 영웅 정체성/성장/스킬과 선내 작전 | [영웅](01_design/boarding/HERO_SYSTEMS.md), [강습](01_design/boarding/BOARDING_COMBAT.md) |
 | `01_design/strategy/` | 입체 기지·성계·자원·경영 | [기지](01_design/strategy/BASE_SYSTEMS.md), [전략/경제](01_design/strategy/STRATEGY_ECONOMY.md) |
 | `01_design/interface/` | 화면·조작·정보 표시 | [UI](01_design/interface/UI_SYSTEMS.md) |
-| `02_balance/` | 여러 시스템을 가로지르는 현행 수치 기준안·생산/연구 표 | [기지/생산](02_balance/BASE_BALANCE_DRAFT.md), [장기전](02_balance/FLEET_ENDURANCE_BALANCE.md) |
+| `02_balance/` | 여러 시스템을 가로지르는 현행 수치 기준안·생산/연구 표 | [기지/생산](02_balance/BASE_BALANCE_DRAFT.md), [통합 전투](02_balance/INTEGRATED_COMBAT_BALANCE.md) |
 | `03_development/` | 구현 순서·실제 완료 상태·UE 기준·회귀 체크 | [구현 상태](03_development/IMPLEMENTATION_STATUS.md), [제작 순서](03_development/IMPLEMENTATION_PLAN.md) |
 | `04_analysis/` | 현재도 참고하는 분석 결과·한계·정리 근거 | [강습 공방 검토](04_analysis/BOARDING_REVIEW.md), [장기전 결과](04_analysis/FLEET_ENDURANCE_RESULTS.md) |
 | `05_references/` | 다른 프로토타입의 관측·이식 자료 | [조작 이식](05_references/PLAY_GAME_3_CONTROLS.md), [업데이트 보고](05_references/PROTOTYPE_FBX_UPDATE_RECORD.md) |
@@ -21,7 +21,7 @@
 - 분야 폴더에 들어 있어도 본문에서 **사용자 확정 / 제안 / 미검증**을 구분한다. 분석 폴더의 통계는 해당 입력/버전에만 유효하며 최신 설계의 통과 증거가 아니다.
 - 새 확정은 담당 명세를 고치고 결정/R목록/요약의 참조를 갱신한다. 같은 규칙을 다른 문서 끝에 추가 선언하지 않는다.
 - 대체된 원문은 Git 이력 또는 `archive/`로 보존한다. 과거 결과/입력의 수치를 새 규칙에 맞춰 고쳐 쓰지 않는다. 기존 archive의 날짜 파일은 당시 원문이다.
-- `reference/`는 저장소 루트에 유지한다. 재현 코드·JSON·원시 결과·이미지의 경로와 해시를 보존하며 기획 문서 경로만 연결한다. 최신 수치의 기계 판독 원본은 [v0.5](../reference/DesignBaseline/README.md)다.
+- `reference/`는 저장소 루트에 유지한다. 재현 코드·JSON·원시 결과·이미지의 경로와 해시를 보존하며 기획 문서 경로만 연결한다. 영웅/수리 기본값은 [v0.5](../reference/DesignBaseline/README.md), D116을 적용한 통합 시험 스냅샷은 [v0.6](../reference/IntegratedCombat/README.md)다.
 
 ## 기존 경로와 작업 재개
 
