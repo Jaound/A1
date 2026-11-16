@@ -244,7 +244,8 @@ void AOVHUD::DrawCombat()
   const auto R=C->GetReadiness(PC->Selected,M.MountId);
   DrawText(FString::Printf(TEXT("%s / %s"),*M.MountId.ToString(),*M.Profile.ProfileId.ToString()),Accent,20,287,GEngine->GetSmallFont());
   DrawText(FString::Printf(TEXT("%s | CD %.2fs | aim %.1f deg"),*R.Reason,R.Cooldown,R.AimError),R.bReady?FLinearColor::Green:FLinearColor::Yellow,20,307,GEngine->GetSmallFont());
-  DrawText(FString::Printf(TEXT("%.0f/%.0f cm | accuracy %.1f%% | queued %s"),R.Distance,M.Profile.Range,100*R.Accuracy,M.bFireRequested?TEXT("YES"):TEXT("NO")),Ink,20,327,GEngine->GetSmallFont());
+  const FString AimQuality=M.Profile.Kind==EOVAttackKind::Beam?FString::Printf(TEXT("hit %.1f%%"),100*R.Accuracy):FString::Printf(TEXT("spread %.2f deg"),R.AimSpreadDegrees);
+  DrawText(FString::Printf(TEXT("%.0f/%.0f cm | %s | queued %s"),R.Distance,M.Profile.Range,*AimQuality,M.bFireRequested?TEXT("YES"):TEXT("NO")),Ink,20,327,GEngine->GetSmallFont());
  }
  Button(TEXT("Fire"),TEXT("B FIRE"),20,351,90);
  Button(TEXT("FireAll"),TEXT("L FIRE ALL"),118,351,105);
@@ -255,5 +256,6 @@ void AOVHUD::DrawCombat()
   const auto& E=C->RecentEvents.Last();
   DrawText(FString::Printf(TEXT("#%d %s / hull -%.1f / blasts %d"),E.AttackId,*StaticEnum<EOVAttackResult>()->GetNameStringByValue(static_cast<int64>(E.Result)),E.HullDamage,E.Explosions),Accent,20,407,GEngine->GetSmallFont());
  }
- DrawText(TEXT("One request = one salvo. AUTO selects and fires."),Ink,20,428,GEngine->GetSmallFont());
+ Button(TEXT("MoveAuto"),Ship->IsMovementAutomatic()?TEXT("MOVE: AUTO"):TEXT("MOVE: MANUAL"),20,422,195,Ship->IsMovementAutomatic());
+ Button(TEXT("FireAuto"),Ship->IsAttackAutomatic()?TEXT("FIRE: AUTO"):TEXT("FIRE: MANUAL"),223,422,207,Ship->IsAttackAutomatic());
 }

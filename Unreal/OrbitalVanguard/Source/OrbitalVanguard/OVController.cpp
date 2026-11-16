@@ -73,7 +73,7 @@ void AOVController::StartCombatRange()
   Ship->SetActorHiddenInGame(false);
   Ship->SetActorEnableCollision(true);
   Ship->SetActorLocationAndRotation(Positions[I],FRotator(0,I==2?180:0,0));
-  Ship->bManual=I!=2;
+  Ship->SetAutomation(I==2,I==2);
  }
  TArray<AOVShip*> Combatants; for(AOVShip* Ship:Ships) Combatants.Add(Ship);
  Combat->EnableCombat(Combatants,260112);
@@ -146,7 +146,7 @@ void AOVController::Action(FName Name)
   return;
  }
  if(Name==TEXT("Move") || Name==TEXT("Stop") || Name==TEXT("Auto") ||
-    Name==TEXT("AutoFree") || Name==TEXT("Target") || Name==TEXT("Heading") || Name==TEXT("Cancel"))
+    Name==TEXT("AutoFree") || Name==TEXT("MoveAuto") || Name==TEXT("Target") || Name==TEXT("Heading") || Name==TEXT("Cancel"))
  {
   CancelRightMove();
  }
@@ -160,10 +160,19 @@ void AOVController::Action(FName Name)
  if(Name==TEXT("Deselect")) ClearSelection();
  if(Name==TEXT("Developer")) { bDeveloperMode=!bDeveloperMode; ViewedDeck=0; }
  if(Selected && Selected->bFriendly && Selected->Systems->CanCommand() && !(Combat&&Combat->bEnabled&&Combat->IsDeparted(Selected))) {
-  if(Name==TEXT("Manual")) { Selected->bManual=true; LastAction=TEXT("MANUAL - persists until AUTO is clicked"); }
-  if(Name==TEXT("Auto")) { Selected->bManual=false; bPlacing=false; InputMode=EOVInputMode::None; LastAction=TEXT("AUTO / Hold and manual attitude preserved")+(Combat&&Combat->bEnabled?FString(TEXT(" / automatic engagement")):FString(TEXT("; combat deferred"))); }
+  if(Name==TEXT("Manual")) { Selected->SetAutomation(false,false); LastAction=TEXT("MANUAL / movement and fire manual"); }
+  if(Name==TEXT("Auto")) { Selected->SetAutomation(true,true); bPlacing=false; InputMode=EOVInputMode::None; LastAction=TEXT("AUTO / Hold and manual attitude preserved")+(Combat&&Combat->bEnabled?FString(TEXT(" / automatic engagement")):FString(TEXT("; combat deferred"))); }
+  if(Name==TEXT("MoveAuto") && Combat && Combat->bEnabled) {
+   Selected->SetAutomation(!Selected->IsMovementAutomatic(),Selected->IsAttackAutomatic());
+   bPlacing=false; InputMode=EOVInputMode::None;
+   LastAction=TEXT("Movement automation toggled; firing, Hold and manual attitude preserved");
+  }
+  if(Name==TEXT("FireAuto") && Combat && Combat->bEnabled) {
+   Selected->SetAutomation(Selected->IsMovementAutomatic(),!Selected->IsAttackAutomatic());
+   LastAction=TEXT("Fire automation toggled; movement preserved");
+  }
   if(Name==TEXT("AutoFree") && Combat && Combat->bEnabled) {
-   Selected->bManual=false;
+   Selected->SetAutomation(true,true);
    if(!Selected->bHasDestination && !Selected->bFTLCharging && !Selected->bManualAttitude) Selected->bHold=false;
    bPlacing=false; InputMode=EOVInputMode::None;
    LastAction=TEXT("AUTO FREE / release Hold only; existing destination, manual attitude and FTL remain authoritative");
@@ -219,7 +228,7 @@ void AOVController::Action(FName Name)
 void AOVController::ConfirmMove()
 {
  if(!bPlacing || !Selected || !Selected->bFriendly || !Selected->Systems->CanCommand()) return;
- for(AOVShip* Ship:Selection) if(Ship->bFriendly && Ship->Systems->CanCommand()) { Ship->bManual=true; Ship->SetDestination(Preview+(Ship->GetActorLocation()-Selected->GetActorLocation())); }
+ for(AOVShip* Ship:Selection) if(Ship->bFriendly && Ship->Systems->CanCommand()) { Ship->SetAutomation(false,Ship->IsAttackAutomatic()); Ship->SetDestination(Preview+(Ship->GetActorLocation()-Selected->GetActorLocation())); }
  bPlacing=false; InputMode=EOVInputMode::None;
  LastAction=FString::Printf(TEXT("MANUAL order: X %.0f  Y %.0f  Z %.0f"),Preview.X,Preview.Y,Preview.Z);
  UE_LOG(LogTemp,Display,TEXT("OV: %s"),*LastAction);
@@ -470,7 +479,7 @@ void AOVController::StepSimulation(float DeltaTime)
    Ship->Systems->Simulate(Dt);
    if(Ship->Systems->bWrecked || Ship->Systems->bNeutral) { Ship->StopMovement(); Ship->Velocity=FVector::ZeroVector; Ship->AttackTarget=nullptr; continue; }
    if(Ship->AttackTarget&&Ship->AttackTarget->Systems->bWrecked) Ship->AttackTarget=nullptr;
-   if(!Ship->Systems->CanCommand()) { Ship->bManual=false; Ship->StopMovement(); }
+   if(!Ship->Systems->CanCommand()) { Ship->SetAutomation(true,true); Ship->StopMovement(); }
    if(Ship->bFriendly) Ship->Simulate(Dt);
   }
   ResolveContacts(Dt);

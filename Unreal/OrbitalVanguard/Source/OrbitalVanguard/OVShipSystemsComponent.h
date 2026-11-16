@@ -8,7 +8,7 @@
 UENUM(BlueprintType)
 enum class EOVDamageCause : uint8 { External, Explosion, Sabotage };
 
-/** Unresolved out-of-combat recovery behavior is explicitly a test-profile choice. */
+/** Legacy serialized enum; D083 now always uses inactive-only gradual recovery. */
 UENUM(BlueprintType)
 enum class EOVShieldRecoveryPolicy : uint8 { Gradual, FullAfterNoHitInterval };
 
@@ -18,6 +18,7 @@ struct ORBITALVANGUARD_API FOVDamageTuning
     GENERATED_BODY()
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Provisional") float ShieldBase = 300;
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Provisional") float ShieldRegenFraction = 0.03f;
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Provisional") float ShieldNonCombatRegenFraction = 0.06f;
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Provisional") float ShieldRecoveryDelay = 6.5f;
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Provisional") float NoHitRecoveryInterval = 15;
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Provisional") EOVShieldRecoveryPolicy RecoveryPolicy = EOVShieldRecoveryPolicy::Gradual;
@@ -121,6 +122,8 @@ public:
     UFUNCTION(BlueprintPure, Category="Systems") FOVFacilityState GetSlotState(FName SlotId) const;
     UFUNCTION(BlueprintPure, Category="Systems") FString GetSlotStatus(FName SlotId) const;
     UFUNCTION(BlueprintCallable, Category="Damage") void ApplyWorldHit(FVector WorldPoint, FVector WorldNormal, float Damage, EOVDamageCause Cause);
+    /** D089: the external shield protects mounts; remaining damage never spills into the hull. */
+    UFUNCTION(BlueprintCallable, Category="Damage") void ApplyWorldWeaponHit(FName WeaponMountId, FVector WorldPoint, FVector WorldNormal, float Damage);
     UFUNCTION(BlueprintCallable, Category="Debug") void DebugDestroySlot(FName SlotId, EOVDamageCause Cause);
     UFUNCTION(BlueprintCallable, Category="Debug") void DebugRepairSlot(FName SlotId);
     UFUNCTION(BlueprintCallable, Category="Debug") void DebugSetCrew(FName SlotId, float Crew);
@@ -138,6 +141,7 @@ private:
     void MarkWrecked();
     void SyncArmorDisplay();
     void BeginDamageEvent(EOVDamageCause Cause, FName Source);
+    float AbsorbExternalDamage(float Damage);
     void ProcessDamage(int32 SlotIndex, int32 ArmorIndex, float Damage, EOVDamageCause Cause, bool bBypassArmor, bool bDirectHull);
     void DestroyFacility(int32 SlotIndex, EOVDamageCause Cause, TArray<int32>& ExplosionQueue);
     float ExplosionDamage(int32 SlotIndex) const;

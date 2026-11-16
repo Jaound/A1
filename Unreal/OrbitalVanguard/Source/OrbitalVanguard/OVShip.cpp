@@ -171,6 +171,22 @@ void AOVShip::SetManualAttitude(const FRotator& Rotation)
     bManualAttitude = true;
 }
 
+void AOVShip::SetAutomation(bool bMove, bool bAttack)
+{
+    bMovementAutomatic = bMove; bAttackAutomatic = bAttack;
+    bManual = !bMove && !bAttack; bLastManual = bManual;
+}
+
+bool AOVShip::IsMovementAutomatic() const
+{
+    return bManual != bLastManual ? !bManual : bMovementAutomatic;
+}
+
+bool AOVShip::IsAttackAutomatic() const
+{
+    return bManual != bLastManual ? !bManual : bAttackAutomatic;
+}
+
 void AOVShip::Simulate(float SimDelta)
 {
     if (!FMath::IsFinite(SimDelta) || SimDelta <= 0.0f) return;
@@ -209,7 +225,7 @@ void AOVShip::Simulate(float SimDelta)
 void AOVShip::DebugResetMotion()
 {
     StopMovement(); Velocity=FVector::ZeroVector; bManualAttitude=false;
-    ManualAttitude=GetActorRotation(); bFTLCharging=false; AttackTarget=nullptr; bManual=true;
+    ManualAttitude=GetActorRotation(); bFTLCharging=false; AttackTarget=nullptr; SetAutomation(false,false);
 }
 
 void AOVShip::DebugSetFTLCharging(bool bCharging)

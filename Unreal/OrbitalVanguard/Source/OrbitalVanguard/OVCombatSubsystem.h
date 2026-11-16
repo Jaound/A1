@@ -27,6 +27,10 @@ struct ORBITALVANGUARD_API FOVWeaponProfile
     UPROPERTY(EditAnywhere, BlueprintReadWrite) float Damage = 45;
     UPROPERTY(EditAnywhere, BlueprintReadWrite) float Speed = 60000;
     UPROPERTY(EditAnywhere, BlueprintReadWrite) float Accuracy = 0.94f;
+    // D085: beam probability; for physical projectiles Accuracy is aim quality, not a hit roll.
+    UPROPERTY(EditAnywhere, BlueprintReadWrite) float AimSpreadDegrees = 0;
+    UPROPERTY(EditAnywhere, BlueprintReadWrite) float VLSHeight = 300;
+    UPROPERTY(EditAnywhere, BlueprintReadWrite) FRotator StandbyAim = FRotator::ZeroRotator;
     UPROPERTY(EditAnywhere, BlueprintReadWrite) float TraverseSpeed = 100;
     UPROPERTY(EditAnywhere, BlueprintReadWrite) float TraverseAcceleration = 400;
     UPROPERTY(EditAnywhere, BlueprintReadWrite) float FireTolerance = 3;
@@ -54,14 +58,13 @@ public:
     UPROPERTY(Config, EditAnywhere, BlueprintReadWrite, Category="Provisional 2B") TArray<FOVWeaponProfile> Weapons;
     UPROPERTY(Config, EditAnywhere, BlueprintReadWrite, Category="Provisional 2B") TArray<FOVRadarProfile> Radars;
     UPROPERTY(Config, EditAnywhere, BlueprintReadWrite, Category="Provisional 2B") float GuaranteedRange = 1600;
-    UPROPERTY(Config, EditAnywhere, BlueprintReadWrite, Category="Provisional 2B") float OrdinaryShareCoefficient = 0.25f;
+    UPROPERTY(Config, EditAnywhere, BlueprintReadWrite, Category="Provisional 2B") float OrdinaryShareCoefficient = 0;
     UPROPERTY(Config, EditAnywhere, BlueprintReadWrite, Category="Provisional 2B") float SupportShareCoefficient = 0.8f;
     UPROPERTY(Config, EditAnywhere, BlueprintReadWrite, Category="Provisional 2B") float GuidedTrackingSeconds = 8;
     UPROPERTY(Config, EditAnywhere, BlueprintReadWrite, Category="Provisional 2B") float MissOffsetRadiusFactor = 2.5f;
     UPROPERTY(Config, EditAnywhere, BlueprintReadWrite, Category="Provisional 2B") float ControlAccuracyBonus = 0.02f;
     UPROPERTY(Config, EditAnywhere, BlueprintReadWrite, Category="Provisional 2B") float AutoClearanceHeight = 600;
-    // An unfinished salvo is cancelled on any new-shot gate failure. This is a test policy.
-    UPROPERTY(Config, EditAnywhere, BlueprintReadWrite, Category="Provisional 2B") bool bCancelBlockedSalvo = true;
+    UPROPERTY(Config, EditAnywhere, BlueprintReadWrite, Category="Provisional 2B") float MountCollisionRadius = 18;
     // Only for the first executable checkpoint. Final 2B defaults to formal detection.
     UPROPERTY(Config, EditAnywhere, BlueprintReadWrite, Category="Development") bool bDevelopmentOmniscient = false;
 };
@@ -85,6 +88,7 @@ struct ORBITALVANGUARD_API FOVFireReadiness
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly) FOVDetectionInfo Detection;
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly) float Cooldown = 0;
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly) float Accuracy = 0;
+    UPROPERTY(VisibleAnywhere, BlueprintReadOnly) float AimSpreadDegrees = 0;
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly) float Distance = 0;
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly) float AimError = 0;
 };
@@ -105,6 +109,7 @@ struct ORBITALVANGUARD_API FOVCombatMountState
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly) TWeakObjectPtr<AOVShip> SalvoTarget;
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly) bool bAutomaticSalvo = false;
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly) float TrackingRemaining = 0;
+    UPROPERTY(VisibleAnywhere, BlueprintReadOnly) bool bHadDetection = false;
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly) FVector LastTrackedWorldPoint = FVector::ZeroVector;
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly) int32 ShotsFired = 0;
 };
@@ -138,6 +143,9 @@ struct ORBITALVANGUARD_API FOVAttackState
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly) FVector Position = FVector::ZeroVector;
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly) FVector Direction = FVector::ForwardVector;
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly) FVector AimOffset = FVector::ZeroVector;
+    UPROPERTY(VisibleAnywhere, BlueprintReadOnly) FVector FrozenAimPoint = FVector::ZeroVector;
+    UPROPERTY(VisibleAnywhere, BlueprintReadOnly) FVector VLSControlPoint = FVector::ZeroVector;
+    UPROPERTY(VisibleAnywhere, BlueprintReadOnly) float VLSDuration = 0;
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly) float Age = 0;
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly) double LaunchTime = 0;
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly) double ResolvedAt = 0;
@@ -146,6 +154,7 @@ struct ORBITALVANGUARD_API FOVAttackState
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly) float Accuracy = 0;
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly) EOVAttackResult Result = EOVAttackResult::Flying;
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly) FName HitShipId;
+    UPROPERTY(VisibleAnywhere, BlueprintReadOnly) FName ImpactWeaponId;
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly) FName ArmorId;
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly) FName SlotId;
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly) float HullDamage = 0;
@@ -179,7 +188,7 @@ public:
     UFUNCTION(BlueprintPure) FOVFireReadiness GetReadiness(AOVShip* Ship, FName MountId) const;
     UFUNCTION(BlueprintPure) bool IsDeparted(AOVShip* Ship) const;
     // Reuses immutable damage metadata; resolved attacks cannot deliver damage twice.
-    bool ResolveImpact(FOVAttackState& Attack, AOVShip* HitShip, FVector Point, FVector Normal);
+    bool ResolveImpact(FOVAttackState& Attack, AOVShip* HitShip, FVector Point, FVector Normal, FName HitWeaponId = NAME_None);
     static bool SegmentBox(FVector Start, FVector End, const FTransform& Transform,
         FVector HalfExtent, float& HitFraction, FVector& HitNormal);
 private:

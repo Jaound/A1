@@ -156,37 +156,20 @@ void UOVShipSystemsComponent::Simulate(float SimDelta)
     if (!Layout || bWrecked || !FMath::IsFinite(SimDelta) || SimDelta <= 0) return;
     RefreshDerivedState();
     if (bWrecked) return;
-    const float PreviousNoHit = TimeSinceExternalHit;
     TimeSinceExternalHit += SimDelta;
     const float DelayBefore = ShieldRecoveryRemaining;
     ShieldRecoveryRemaining = FMath::Max(0.f, ShieldRecoveryRemaining - SimDelta);
-    if (MaxShield <= 0 || bShieldManualOff) return;
-    // No render-time tick, and active shields never regenerate during the combat interval.
-    if (Tuning.RecoveryPolicy == EOVShieldRecoveryPolicy::FullAfterNoHitInterval
-        && TimeSinceExternalHit >= Tuning.NoHitRecoveryInterval && ShieldRecoveryRemaining <= 0)
-    {
-        Shield = MaxShield; bShieldActive = true; return;
-    }
-    float RecoverTime = FMath::Max(0.f, SimDelta - DelayBefore);
-    if (bShieldActive)
-        RecoverTime = FMath::Min(RecoverTime, FMath::Max(0.f, TimeSinceExternalHit - FMath::Max(PreviousNoHit, Tuning.NoHitRecoveryInterval)));
-    if (RecoverTime > 0)
-    {
-        // Split at reactivation so a large frame cannot recharge an active combat shield above 50%.
-        const float Half = 0.5f * MaxShield;
-        if (!bShieldActive && Shield < Half && ShieldRegen > 0)
-        {
-            const float ToHalf = (Half - Shield) / ShieldRegen;
-            const float Used = FMath::Min(RecoverTime, ToHalf);
-            Shield = FMath::Min(MaxShield, Shield + ShieldRegen * Used);
-            RecoverTime -= Used;
-            if (Shield + UE_KINDA_SMALL_NUMBER >= Half) { Shield = FMath::Max(Shield, Half); bShieldActive = true; }
-            const float EndOfInactive = TimeSinceExternalHit - RecoverTime;
-            RecoverTime = FMath::Min(RecoverTime, FMath::Max(0.f, TimeSinceExternalHit - FMath::Max(EndOfInactive, Tuning.NoHitRecoveryInterval)));
-        }
-        Shield = FMath::Min(MaxShield, Shield + ShieldRegen * RecoverTime);
-    }
-    if (!bShieldActive && Shield >= MaxShield * 0.5f) bShieldActive = true;
+    // D083: active shields never recharge, including outside combat. Legacy RecoveryPolicy is ignored.
+    if (MaxShield <= 0 || bShieldManualOff || bShieldActive) return;
+    const float RecoverTime = FMath::Max(0.f, SimDelta - DelayBefore);
+    const float RecoveryStart = TimeSinceExternalHit - RecoverTime;
+    const float CombatTime = FMath::Clamp(Tuning.NoHitRecoveryInterval - RecoveryStart, 0.f, RecoverTime);
+    const float NonCombatTime = RecoverTime - CombatTime;
+    const float Recovery = ShieldRegen * CombatTime
+        + MaxShield * FMath::Max(0.f, Tuning.ShieldNonCombatRegenFraction) * NonCombatTime;
+    const float Half = 0.5f * MaxShield;
+    Shield = FMath::Min(Half, Shield + Recovery);
+    if (Shield + UE_KINDA_SMALL_NUMBER >= Half) { Shield = Half; bShieldActive = true; }
 }
 
 FOVFacilityState UOVShipSystemsComponent::GetSlotState(FName SlotId) const
@@ -213,6 +196,30 @@ void UOVShipSystemsComponent::BeginDamageEvent(EOVDamageCause Cause, FName Sourc
     LastWeaponMount = NAME_None; LastHullDamage = 0; LastExplosionCount = 0;
 }
 
+float UOVShipSystemsComponent::AbsorbExternalDamage(float Damage)
+{
+    TimeSinceExternalHit = 0;
+    ShieldRecoveryRemaining = FMath::Max(0.f, Tuning.ShieldRecoveryDelay);
+    if (!bShieldActive || Shield <= 0) return Damage;
+    const float Overflow = FMath::Max(0.f, Damage - Shield);
+    Shield = FMath::Max(0.f, Shield - Damage);
+    if (Shield <= 0) bShieldActive = false;
+    return Overflow * FMath::Clamp(Tuning.ShieldOverflowFraction, 0.f, 1.f);
+}
+
+void UOVShipSystemsComponent::ApplyWorldWeaponHit(FName WeaponMountId, FVector WorldPoint, FVector WorldNormal, float Damage)
+{
+    if (!Layout || bWrecked || !FMath::IsFinite(Damage) || Damage <= 0 || WorldPoint.ContainsNaN() || WorldNormal.ContainsNaN()) return;
+    FOVWeaponMountState* Mount = WeaponMountStates.FindByPredicate([WeaponMountId](const FOVWeaponMountState& State) { return State.WeaponMountId == WeaponMountId; });
+    if (!Mount || Mount->HP <= 0) return;
+    BeginDamageEvent(EOVDamageCause::External, IncomingSourceId.IsNone() ? FName(TEXT("WorldWeaponHit")) : IncomingSourceId);
+    const FTransform Transform = GetOwner() ? GetOwner()->GetActorTransform() : FTransform::Identity;
+    LastWorldHit = WorldPoint; LastLocalHit = Transform.InverseTransformPosition(WorldPoint);
+    LastLocalNormal = (Transform.InverseTransformVectorNoScale(WorldNormal) * Transform.GetScale3D()).GetSafeNormal();
+    LastWeaponMount = WeaponMountId;
+    Mount->HP = FMath::Max(0.f, Mount->HP - AbsorbExternalDamage(Damage));
+}
+
 void UOVShipSystemsComponent::ApplyWorldHit(FVector WorldPoint, FVector WorldNormal, float Damage, EOVDamageCause Cause)
 {
     if (!Layout || bWrecked || !FMath::IsFinite(Damage) || Damage <= 0 || WorldPoint.ContainsNaN() || WorldNormal.ContainsNaN()) return;
@@ -229,15 +236,7 @@ void UOVShipSystemsComponent::ApplyWorldHit(FVector WorldPoint, FVector WorldNor
     LastArmorSection = ArmorSections[ArmorIndex].ArmorSectionId;
     if (Cause == EOVDamageCause::External)
     {
-        TimeSinceExternalHit = 0;
-        ShieldRecoveryRemaining = FMath::Max(0.f, Tuning.ShieldRecoveryDelay);
-        if (bShieldActive && Shield > 0)
-        {
-            const float Overflow = FMath::Max(0.f, Damage - Shield);
-            Shield = FMath::Max(0.f, Shield - Damage);
-            if (Shield <= 0) bShieldActive = false;
-            Damage = Overflow * FMath::Clamp(Tuning.ShieldOverflowFraction, 0.f, 1.f);
-        }
+        Damage = AbsorbExternalDamage(Damage);
     }
     if (Damage <= 0) return;
     bool bDirectHull = false;

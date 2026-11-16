@@ -25,6 +25,8 @@ public:
     bool bFriendly = true;
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Ship")
     bool bManual = true;
+    UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Orders") bool bMovementAutomatic = false;
+    UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Orders") bool bAttackAutomatic = false;
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Ship")
     bool bSelected = false;
     UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Ship")
@@ -60,6 +62,9 @@ public:
     UFUNCTION(BlueprintCallable, Category="Orders") void StopMovement();
     /** Sets a bounded-turn posture independently of destination and attack target. */
     UFUNCTION(BlueprintCallable, Category="Orders") void SetManualAttitude(const FRotator& Rotation);
+    UFUNCTION(BlueprintCallable, Category="Orders") void SetAutomation(bool bMove, bool bAttack);
+    UFUNCTION(BlueprintPure, Category="Orders") bool IsMovementAutomatic() const;
+    UFUNCTION(BlueprintPure, Category="Orders") bool IsAttackAutomatic() const;
     /** Explicit test controls; no FTL travel or production repair behavior. */
     UFUNCTION(BlueprintCallable, Category="Debug") void DebugResetMotion();
     UFUNCTION(BlueprintCallable, Category="Debug") void DebugSetFTLCharging(bool bCharging);
@@ -68,6 +73,8 @@ public:
         const FVector& Scale, const FLinearColor& Color);
 
 private:
+    // Detect legacy direct bManual writes while preserving the four D101 combinations.
+    bool bLastManual = true;
     UPROPERTY()
     TArray<TObjectPtr<UStaticMeshComponent>> AccentMeshes;
 };

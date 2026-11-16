@@ -8,7 +8,7 @@ namespace
 {
 constexpr float FixedStep = 1.f / 120.f;
 constexpr float NeutralElevation = 15.f;
-constexpr float PostShotTracking = 3.5f;
+constexpr float LostDetectionTracking = 3.5f;
 
 const FOVWeaponMountDefinition* MountDefinition(const FOVCombatShipState& State, FName Id)
 {
@@ -45,6 +45,33 @@ void TurnAxis(double& Angle, double& Velocity, double Desired, float Speed, floa
     { Travel = Error; Velocity = 0; }
     Angle = FRotator::NormalizeAxis(Angle + Travel);
 }
+
+FVector FixedVLSPoint(const FOVAttackState& Attack, double Alpha)
+{
+    const double Inverse = 1.0 - Alpha;
+    return Inverse * Inverse * Attack.Origin + 2.0 * Inverse * Alpha * Attack.VLSControlPoint
+        + Alpha * Alpha * Attack.FrozenAimPoint;
+}
+
+bool SegmentMount(FVector Start, FVector End, const FTransform& Transform, FVector LocalCenter,
+    float Radius, float& Fraction, FVector& Normal)
+{
+    if (Radius <= 0) return false;
+    const FVector S = Transform.InverseTransformPosition(Start) - LocalCenter;
+    const FVector D = Transform.InverseTransformPosition(End) - Transform.InverseTransformPosition(Start);
+    const double A = D.SizeSquared();
+    if (A < UE_SMALL_NUMBER) return false;
+    const double B = FVector::DotProduct(S, D);
+    const double C = S.SizeSquared() - Radius * Radius;
+    const double Discriminant = B * B - A * C;
+    if (Discriminant < 0) return false;
+    const double Entry = C <= 0 ? 0.0 : (-B - FMath::Sqrt(Discriminant)) / A;
+    if (Entry < 0 || Entry > 1) return false;
+    Fraction = float(Entry);
+    const FVector LocalNormal = (S + D * Entry).GetSafeNormal();
+    Normal = Transform.TransformVectorNoScale(LocalNormal / Transform.GetScale3D()).GetSafeNormal();
+    return true;
+}
 }
 
 UOVCombatSettings::UOVCombatSettings()
@@ -70,6 +97,7 @@ UOVCombatSettings::UOVCombatSettings()
         Cannon.Family = EOVWeaponType::Cannon; Cannon.Kind = EOVAttackKind::Cannon; Cannon.Tier = Tier;
         Cannon.Range = 6500.f + (Tier - 1) * 900.f; Cannon.Interval = 1.8f; Cannon.Damage = 95.f * Tier;
         Cannon.Speed = 2200; Cannon.Accuracy = .76f; Cannon.TraverseSpeed = 70; Cannon.TraverseAcceleration = 220;
+        Cannon.AimSpreadDegrees = 5;
         Cannon.Lifetime = 8;
         Weapons.Add(Cannon);
         FOVWeaponProfile HeavyCannon = Cannon;
@@ -82,12 +110,14 @@ UOVCombatSettings::UOVCombatSettings()
         Missile.Family = EOVWeaponType::Missile; Missile.Kind = EOVAttackKind::Missile; Missile.Tier = Tier;
         Missile.Range = 7500.f + (Tier - 1) * 1000.f; Missile.Interval = 6.5f; Missile.Damage = 145.f * Tier;
         Missile.Speed = 1000; Missile.Accuracy = .64f; Missile.Salvo = 2; Missile.SalvoInterval = .18f;
+        Missile.AimSpreadDegrees = 8;
         Missile.TraverseSpeed = 60; Missile.TraverseAcceleration = 180; Missile.Lifetime = 15;
         Weapons.Add(Missile);
         FOVWeaponProfile Guided = Missile;
         Guided.ProfileId = FName(*FString::Printf(TEXT("GuidedMissile_T%d"), Tier));
         Guided.Kind = EOVAttackKind::GuidedMissile; Guided.Interval = 8.f; Guided.Damage = 155.f * Tier;
         Guided.Speed = 900; Guided.Accuracy = .72f; Guided.Salvo = 3;
+        Guided.AimSpreadDegrees = 6;
         Weapons.Add(Guided);
     }
 }
@@ -168,19 +198,25 @@ bool UOVCombatSubsystem::IsValidTarget(AOVShip* Source, AOVShip* Target) const
 
 bool UOVCombatSubsystem::SetTarget(AOVShip* Ship, AOVShip* Target)
 {
-    if (!bEnabled || FindShip(Ship) == INDEX_NONE || !Ship->Systems->CanCommand()
+    if (!bEnabled || FindShip(Ship) == INDEX_NONE || IsDeparted(Ship) || !Ship->Systems->CanCommand()
         || (Target && !IsValidTarget(Ship, Target))) return false;
+    const bool bChangedTarget = Ship->AttackTarget != Target;
     Ship->AttackTarget = Target;
     // A change of target cannot carry a queued volley to a new recipient.
     for (FOVCombatMountState& Mount : Ships[FindShip(Ship)].Mounts)
-    { Mount.bFireRequested = false; Mount.RequestedTarget.Reset(); Mount.SalvoRemaining = 0; Mount.SalvoTarget.Reset(); }
+    {
+        Mount.bFireRequested = false; Mount.RequestedTarget.Reset(); Mount.SalvoRemaining = 0; Mount.SalvoTarget.Reset();
+        // An explicit order changes identity. AI sensor-loss clearing below retains the separate last-known memory.
+        if (bChangedTarget)
+        { Mount.TrackingRemaining = 0; Mount.bHadDetection = false; Mount.LastTrackedWorldPoint = FVector::ZeroVector; }
+    }
     return true;
 }
 
 bool UOVCombatSubsystem::RequestFire(AOVShip* Ship, FName MountId)
 {
     const int32 Index = FindShip(Ship);
-    if (!bEnabled || !Ships.IsValidIndex(Index) || !Ship->Systems->CanCommand()
+    if (!bEnabled || !Ships.IsValidIndex(Index) || Ships[Index].bDeparted || !Ship->Systems->CanCommand()
         || !IsValidTarget(Ship, Ship->AttackTarget)) return false;
     bool bAccepted = false;
     for (FOVCombatMountState& Mount : Ships[Index].Mounts)
@@ -290,6 +326,8 @@ FOVFireReadiness UOVCombatSubsystem::Evaluate(const FOVCombatShipState& State, c
     const float ControlBonus = Settings->ControlAccuracyBonus * (Systems->GetEfficiency(EOVFacilityType::WeaponControl) - 1.f);
     R.Accuracy = FMath::Clamp(Mount.Profile.Accuracy + R.Detection.AccuracyBonus + ControlBonus, 0.f,
         Mount.Profile.Kind == EOVAttackKind::Beam ? 0.995f : 1.f);
+    R.AimSpreadDegrees = Mount.Profile.Kind == EOVAttackKind::Beam ? 0.f
+        : FMath::Clamp(Mount.Profile.AimSpreadDegrees * (1.f - R.Accuracy), 0.f, 45.f);
     const FVector LocalDirection = Ship->GetActorQuat().UnrotateVector(Offset).GetSafeNormal();
     const float Elevation = LocalDirection.Rotation().Pitch;
     if ((Def->LocalPosition.Z >= 0 && Elevation < -NeutralElevation)
@@ -312,6 +350,13 @@ AOVShip* UOVCombatSubsystem::FindBlockingFriend(AOVShip* Ship, AOVShip* Target, 
         float Fraction; FVector Normal;
         if (SegmentBox(Origin, Target->GetActorLocation(), Friend->GetActorTransform(),
             Friend->Systems->Layout->LocalHalfExtent, Fraction, Normal)) return Friend;
+        for (const FOVWeaponMountDefinition& Mount : Friend->Systems->Layout->WeaponMounts)
+        {
+            const FOVWeaponMountState* Health = Friend->Systems->WeaponMountStates.FindByPredicate(
+                [&](const FOVWeaponMountState& H) { return H.WeaponMountId == Mount.WeaponId; });
+            if (Health && Health->HP > 0 && SegmentMount(Origin, Target->GetActorLocation(), Friend->GetActorTransform(),
+                Mount.LocalPosition, Settings->MountCollisionRadius, Fraction, Normal)) return Friend;
+        }
     }
     return nullptr;
 }
@@ -338,7 +383,7 @@ void UOVCombatSubsystem::Step(float Delta)
         Ship->bFriendly = Ship->Systems->FactionId == 0;
         if (Ship->Systems->GetEfficiency(EOVFacilityType::Engine) <= 0) Ship->bFTLCharging = false;
         // Bridge loss preserves the existing 2A stop rule and hands only combat to the fallback AI.
-        if (!Ship->Systems->CanCommand()) { Ship->bManual = false; Ship->StopMovement(); }
+        if (!Ship->Systems->CanCommand()) { Ship->SetAutomation(true, true); Ship->StopMovement(); }
         Ship->Simulate(Delta);
     }
     if (AOVController* Controller = Cast<AOVController>(GetWorld()->GetFirstPlayerController()))
@@ -348,7 +393,7 @@ void UOVCombatSubsystem::Step(float Delta)
     {
         AOVShip* Ship = State.Ship;
         if (!IsValid(Ship) || !Ship->Systems || State.bDeparted || Ship->Systems->bWrecked || Ship->Systems->bNeutral) continue;
-        const bool bAutomatic = !Ship->bManual || !Ship->Systems->CanCommand();
+        const bool bAutomatic = Ship->IsAttackAutomatic() || !Ship->Systems->CanCommand();
         if (bAutomatic && (!IsValidTarget(Ship, Ship->AttackTarget) || !GetDetection(Ship, Ship->AttackTarget).bDetected))
         {
             AOVShip* Best = nullptr; double BestDistance = TNumericLimits<double>::Max();
@@ -367,7 +412,8 @@ void UOVCombatSubsystem::Step(float Delta)
             }
         }
         // Existing destination, Hold, manual posture and FTL always precede optional AI clearance.
-        if (bAutomatic && IsValidTarget(Ship, Ship->AttackTarget) && !Ship->bHold && !Ship->bHasDestination
+        if (Ship->IsMovementAutomatic() && IsValidTarget(Ship, Ship->AttackTarget)
+            && GetDetection(Ship, Ship->AttackTarget).bDetected && !Ship->bHold && !Ship->bHasDestination
             && !Ship->bManualAttitude && !Ship->bFTLCharging && Ship->Systems->CanMove())
         {
             if (Ship->Systems->Layout->DeckCount <= 2
@@ -399,8 +445,7 @@ void UOVCombatSubsystem::Step(float Delta)
             if (!Ready.bReady)
             {
                 // Cooldown is a timer, not a failed salvo gate. Each remaining round rechecks all other gates.
-                if (Mount.SalvoRemaining > 0 && Settings->bCancelBlockedSalvo
-                    && !Evaluate(State, Mount, true).bReady)
+                if (Mount.SalvoRemaining > 0 && !Evaluate(State, Mount, true).bReady)
                 { Mount.SalvoRemaining = 0; Mount.SalvoTarget.Reset(); }
                 continue;
             }
@@ -416,13 +461,18 @@ void UOVCombatSubsystem::UpdateAim(FOVCombatShipState& State, FOVCombatMountStat
     const FOVWeaponMountDefinition* Def = MountDefinition(State, Mount.MountId);
     if (!Def) return;
     AOVShip* Ship = State.Ship;
-    Mount.TrackingRemaining = FMath::Max(0.f, Mount.TrackingRemaining - Delta);
     const bool bDetected = IsValidTarget(Ship, Ship->AttackTarget) && GetDetection(Ship, Ship->AttackTarget).bDetected;
-    if (bDetected) Mount.LastTrackedWorldPoint = Ship->AttackTarget->GetActorLocation();
-    if (!bDetected && Mount.TrackingRemaining <= 0)
-    { Mount.AngularVelocity = FVector2D::ZeroVector; return; }
+    if (bDetected)
+    {
+        Mount.LastTrackedWorldPoint = Ship->AttackTarget->GetActorLocation();
+        Mount.TrackingRemaining = 0;
+    }
+    else if (Mount.bHadDetection) Mount.TrackingRemaining = LostDetectionTracking;
+    else Mount.TrackingRemaining = FMath::Max(0.f, Mount.TrackingRemaining - Delta);
+    Mount.bHadDetection = bDetected;
+    // No hidden current position is read after loss. Return to authored standby through the same inertial turn.
     const FVector Local = Ship->GetActorQuat().UnrotateVector(Mount.LastTrackedWorldPoint - MountOrigin(State, *Def));
-    const FRotator Desired = Local.Rotation();
+    const FRotator Desired = bDetected || Mount.TrackingRemaining > 0 ? Local.Rotation() : Mount.Profile.StandbyAim;
     TurnAxis(Mount.LocalAim.Yaw, Mount.AngularVelocity.X, Desired.Yaw, Mount.Profile.TraverseSpeed, Mount.Profile.TraverseAcceleration, Delta);
     TurnAxis(Mount.LocalAim.Pitch, Mount.AngularVelocity.Y, Desired.Pitch, Mount.Profile.TraverseSpeed, Mount.Profile.TraverseAcceleration, Delta);
     Mount.LocalAim.Roll = 0;
@@ -444,17 +494,40 @@ void UOVCombatSubsystem::Launch(FOVCombatShipState& State, FOVCombatMountState& 
     Attack.Accuracy = Ready.Accuracy;
     Attack.Damage = Mount.Profile.Damage * State.Ship->Systems->GetEfficiency(SupplyFor(Def->Type));
     FVector AimPoint = Attack.Target->GetActorLocation();
-    if (Random.FRand() > Ready.Accuracy)
+    const FVector Sight = (AimPoint - Attack.Position).GetSafeNormal();
+    FVector Side, Up; Sight.FindBestAxisVectors(Side, Up);
+    if (Attack.Weapon.Kind == EOVAttackKind::Beam && Random.FRand() > Ready.Accuracy)
     {
-        const FVector Sight = (AimPoint - Attack.Position).GetSafeNormal();
-        FVector Side, Up; Sight.FindBestAxisVectors(Side, Up);
         const float Angle = Random.FRandRange(0.f, 2.f * PI);
         Attack.AimOffset = (Side * FMath::Cos(Angle) + Up * FMath::Sin(Angle))
             * TargetRadius(Attack.Target.Get()) * FMath::Max(1.1f, Settings->MissOffsetRadiusFactor);
         AimPoint += Attack.AimOffset;
     }
+    else if (Attack.Weapon.Kind != EOVAttackKind::Beam)
+    {
+        // A continuous uniform aim disk, never a binary hit/evasion draw. Collision alone decides impact.
+        const float Angle = Random.FRandRange(0.f, 2.f * PI);
+        const float Radius = FMath::Sqrt(Random.FRand()) * FMath::Tan(FMath::DegreesToRadians(Ready.AimSpreadDegrees))
+            * FVector::Dist(AimPoint, Attack.Position);
+        Attack.AimOffset = (Side * FMath::Cos(Angle) + Up * FMath::Sin(Angle)) * Radius;
+        AimPoint += Attack.AimOffset;
+    }
+    Attack.FrozenAimPoint = AimPoint;
     Attack.Direction = (AimPoint - Attack.Position).GetSafeNormal();
-    ++Mount.ShotsFired; Mount.TrackingRemaining = PostShotTracking;
+    if (Attack.Weapon.Kind == EOVAttackKind::Missile)
+    {
+        const FVector LaunchUp = State.Ship->GetActorQuat().GetUpVector() * (Def->LocalPosition.Z < 0 ? -1.f : 1.f);
+        Attack.VLSControlPoint = Attack.Origin + LaunchUp * FMath::Max(1.f, Attack.Weapon.VLSHeight);
+        FVector Previous = Attack.Origin; double Length = 0;
+        for (int32 Sample = 1; Sample <= 16; ++Sample)
+        {
+            const FVector Point = FixedVLSPoint(Attack, Sample / 16.0);
+            Length += FVector::Dist(Previous, Point); Previous = Point;
+        }
+        Attack.VLSDuration = FMath::Max(.01f, float(Length / Attack.Weapon.Speed));
+        Attack.Direction = LaunchUp;
+    }
+    ++Mount.ShotsFired;
     const float Efficiency = State.Ship->Systems->GetEfficiency(EOVFacilityType::WeaponControl)
         * State.Ship->Systems->GetEfficiency(SupplyFor(Def->Type));
     if (Mount.SalvoRemaining <= 0)
@@ -501,7 +574,7 @@ bool UOVCombatSubsystem::SegmentBox(FVector Start, FVector End, const FTransform
 bool UOVCombatSubsystem::SweepAttack(FOVAttackState& Attack, FVector End)
 {
     if (Attack.Result != EOVAttackResult::Flying) return false;
-    AOVShip* Closest = nullptr; float BestFraction = 1.f; FVector BestNormal = FVector::ZeroVector;
+    AOVShip* Closest = nullptr; float BestFraction = 1.f; FVector BestNormal = FVector::ZeroVector; FName HitWeaponId;
     for (const FOVCombatShipState& State : Ships)
     {
         AOVShip* Ship = State.Ship;
@@ -510,14 +583,24 @@ bool UOVCombatSubsystem::SweepAttack(FOVAttackState& Attack, FVector End)
         float Fraction; FVector Normal;
         if (SegmentBox(Attack.Position, End, Ship->GetActorTransform(), Ship->Systems->Layout->LocalHalfExtent, Fraction, Normal)
             && Fraction <= BestFraction)
-        { Closest = Ship; BestFraction = Fraction; BestNormal = Normal; }
+        { Closest = Ship; BestFraction = Fraction; BestNormal = Normal; HitWeaponId = NAME_None; }
+        // These small local sphere proxies are provisional geometry, not the final turret model.
+        for (const FOVWeaponMountDefinition& Mount : Ship->Systems->Layout->WeaponMounts)
+        {
+            const FOVWeaponMountState* Health = Ship->Systems->WeaponMountStates.FindByPredicate(
+                [&](const FOVWeaponMountState& H) { return H.WeaponMountId == Mount.WeaponId; });
+            if (!Health || Health->HP <= 0) continue;
+            if (SegmentMount(Attack.Position, End, Ship->GetActorTransform(), Mount.LocalPosition,
+                Settings->MountCollisionRadius, Fraction, Normal) && Fraction <= BestFraction)
+            { Closest = Ship; BestFraction = Fraction; BestNormal = Normal; HitWeaponId = Mount.WeaponId; }
+        }
     }
     if (!Closest) { Attack.Position = End; return false; }
     const FVector Point = FMath::Lerp(Attack.Position, End, BestFraction);
-    return ResolveImpact(Attack, Closest, Point, BestNormal);
+    return ResolveImpact(Attack, Closest, Point, BestNormal, HitWeaponId);
 }
 
-bool UOVCombatSubsystem::ResolveImpact(FOVAttackState& Attack, AOVShip* HitShip, FVector Point, FVector Normal)
+bool UOVCombatSubsystem::ResolveImpact(FOVAttackState& Attack, AOVShip* HitShip, FVector Point, FVector Normal, FName HitWeaponId)
 {
     if (Attack.Result != EOVAttackResult::Flying || Attack.AttackId <= 0 || Attack.AttackId > ShotCount || ResolvedAttackIds.Contains(Attack.AttackId)
         || !IsValid(HitShip) || !HitShip->Systems
@@ -529,7 +612,9 @@ bool UOVCombatSubsystem::ResolveImpact(FOVAttackState& Attack, AOVShip* HitShip,
     Systems->IncomingSourceId = Attack.AttackerId;
     Systems->IncomingFactionId = Attack.FactionId;
     Systems->IncomingWeaponId = Attack.WeaponId;
-    Systems->ApplyWorldHit(Point, Normal, Attack.Damage, EOVDamageCause::External);
+    Attack.ImpactWeaponId = HitWeaponId;
+    if (!HitWeaponId.IsNone()) Systems->ApplyWorldWeaponHit(HitWeaponId, Point, Normal, Attack.Damage);
+    else Systems->ApplyWorldHit(Point, Normal, Attack.Damage, EOVDamageCause::External);
     Attack.ArmorId = Systems->LastArmorSection; Attack.SlotId = Systems->LastDamageSlot;
     Attack.HullDamage = Systems->LastHullDamage; Attack.Explosions = Systems->LastExplosionCount;
     ++HitCount;
@@ -561,6 +646,16 @@ void UOVCombatSubsystem::AdvanceAttacks(float Delta)
         if (Attack.Result == EOVAttackResult::Flying)
         {
             if (Attack.Age >= Attack.Weapon.Lifetime) Attack.Result = EOVAttackResult::Expired;
+            else if (Attack.Weapon.Kind == EOVAttackKind::Missile && Attack.VLSDuration > 0)
+            {
+                // Every coefficient was frozen at launch. This branch never reads Target or attacker transforms.
+                const FVector ExitDirection = (Attack.FrozenAimPoint - Attack.VLSControlPoint).GetSafeNormal();
+                const FVector End = Attack.Age < Attack.VLSDuration
+                    ? FixedVLSPoint(Attack, Attack.Age / Attack.VLSDuration)
+                    : Attack.FrozenAimPoint + ExitDirection * Attack.Weapon.Speed * (Attack.Age - Attack.VLSDuration);
+                Attack.Direction = (End - Attack.Position).GetSafeNormal();
+                SweepAttack(Attack, End);
+            }
             else SweepAttack(Attack, Attack.Position + Attack.Direction * Attack.Weapon.Speed * Delta);
         }
         if (Attack.Result != EOVAttackResult::Flying)
@@ -574,7 +669,7 @@ void UOVCombatSubsystem::RecordEvent(const FOVAttackState& Attack)
     ResolvedAttackIds.Add(Attack.AttackId);
     RecentEvents.Add(Attack);
     if (RecentEvents.Num() > 128) RecentEvents.RemoveAt(0);
-    UE_LOG(LogTemp, Log, TEXT("OVCombat attack=%d source=%s faction=%d weapon=%s result=%d target=%s hull=%.2f explosions=%d"),
+    UE_LOG(LogTemp, Log, TEXT("OVCombat attack=%d source=%s faction=%d weapon=%s result=%d target=%s mount=%s hull=%.2f explosions=%d"),
         Attack.AttackId, *Attack.AttackerId.ToString(), Attack.FactionId, *Attack.WeaponId.ToString(),
-        int32(Attack.Result), *Attack.HitShipId.ToString(), Attack.HullDamage, Attack.Explosions);
+        int32(Attack.Result), *Attack.HitShipId.ToString(), *Attack.ImpactWeaponId.ToString(), Attack.HullDamage, Attack.Explosions);
 }

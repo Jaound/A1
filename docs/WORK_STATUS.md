@@ -1,5 +1,15 @@
 # Orbital Vanguard 작업 상태
 
+## 최신 실행 체크포인트 — 2026-11-16 2B 정책 반영
+
+- 코드 브랜치 `codex/phase1-playground`. 이전 구현 `80eaf88` 보존 후 최신 기획 `cac0a6f`를 `505e424`에 안전 병합했다. 아래의 11월 12~13일 기록은 당시 결과다.
+- D083 비활성 쉴드만 회복, D084 탐지 상실 후 3.5초 기억, D085 연속 조준 분산, D088 고정 VLS, D089 실제 외장 무장 충돌, D090 공유 보정 0/80%, D101 독립 이동/사격 자동화를 구현했다. 혼합 자동 모드에서 탐지 상실 후 숨은 위치를 바라보는 문제도 차단했다.
+- 관련 소스: `OVCombatSubsystem.*`, `OVShip.*`, `OVShipSystemsComponent.*`, `OVController.cpp`, `OVHUD.cpp`, `DefaultGame.ini`. 기존 2A 조작/시설/레이아웃 자산과 빌드 스모크 프로젝트 보존. 2C/3단계/경제/새 밸런스 후보 이식은 제외했다.
+- 최신 Win64 Development Editor 빌드 성공: `Saved/Logs/CombatPolicyFinalBuild.log`, 6.01초. MSVC 14.51.36260 / SDK 10.0.26100.0. 앞선 전체 정책 빌드도 80.60초 성공.
+- 검증 진행 중: 자동 31개(기존 17 + 전투 14), 기존 2A PIE 57개, 확대 2B PIE. 새 규칙 적용 후의 성공 수는 아직 확정하지 않는다. 이전 창 검사 실패는 `HandlePointer` 드래그로 수정했다.
+- 다음: `CombatPolicyAutomation.log` 결과 확인 → 필요한 실패 수정 → `ValidatePhase2A.py` 및 `ValidatePhase2B.py` 실제 PIE → 직접 입력 시도/실패 시 체크리스트 → 최종 증거와 문서 갱신 → 코드 브랜치만 push. 명령은 `PHASE2B_GUIDE.md`.
+- 남은 미결정 시험값: 유도 추적 8초, 무장 충돌 구 18cm/파괴 시 제거, 조준 분포·수치, 쉴드 전투/비전투 판정과 회복 수치. 확정 정책과 구분하며 가이드에 기록했다.
+
 ## 재개 체크포인트 — 2026-11-16
 
 원격 work가 `bca769f`에서 `cac0a6f`까지 변경됐다. 기존 빔 `4981302`, 무장 확장 `1cc7407` 이후의 UI 차단·AUTO FREE·티어 제한 보완을 먼저 보존한다. 마지막 소스 빌드 성공 6.01초, 자동 27/27, 기존 PIE 57/57. 새 2B PIE는 39개 통과 후 **검사 스크립트의 읽기 전용 WindowPosition 쓰기 오류로 중단**했다. 창 드래그 API 사용으로 검사 스크립트를 수정했으며 아직 재실행 전이다. 직접 입력은 창 복원 후 `FrameArrived timed out`으로 미검증이다.

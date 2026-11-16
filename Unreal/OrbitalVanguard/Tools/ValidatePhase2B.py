@@ -15,7 +15,7 @@ import unreal
 root = unreal.Paths.convert_relative_path_to_full(unreal.Paths.project_saved_dir())
 os.makedirs(os.path.join(root, 'Validation'), exist_ok=True)
 report = {'kind': 'Editor PIE API; not physical mouse/keyboard input',
-          'planning': 'bca769f', 'seed': 260112, 'checks': [], 'errors': [],
+          'planning': 'cac0a6f; approved D083-D102 policies', 'seed': 260112, 'checks': [], 'errors': [],
           'physical_input': 'not performed by this script'}
 level = unreal.get_editor_subsystem(unreal.LevelEditorSubsystem)
 editor = unreal.get_editor_subsystem(unreal.UnrealEditorSubsystem)
@@ -198,6 +198,7 @@ def run_common(pc, world):
     check('Same seed and game time give identical shots damage and active projectiles at 1/2/3x', samples[0] == samples[1] == samples[2], samples)
     if full:
         run_projectiles(pc)
+        run_approved_policies(pc)
     # Fresh actual demo, both sides automatic, then observe real slate/PIE frames.
     pc.start_combat_range()
     a, support, target = p(pc, 'ships')
@@ -218,6 +219,10 @@ def run_projectiles(pc):
         check('Real projectile launched '+str(kind), len(shots) == 1 and p(shots[0], 'result') == unreal.OVAttackResult.FLYING)
         direction = p(shots[0], 'direction')
         direction = unreal.Vector(direction.x, direction.y, direction.z)
+        frozen = p(shots[0], 'frozen_aim_point')
+        frozen = unreal.Vector(frozen.x, frozen.y, frozen.z)
+        control = p(shots[0], 'vls_control_point')
+        control = unreal.Vector(control.x, control.y, control.z)
         faction = p(shots[0], 'faction_id')
         target.set_actor_location(unreal.Vector(1200, 400, 300), False, False)
         facility_disable(a, unreal.OVFacilityType.RADAR)
@@ -227,7 +232,10 @@ def run_projectiles(pc):
         shots = p(combat, 'attacks')
         check('Source loss preserves in-flight attack '+str(kind), len(shots) == 1 and p(shots[0], 'faction_id') == faction)
         changed = (p(shots[0], 'direction')-direction).length() > .001
-        check('Only guided missiles revise direction '+str(kind), changed == (kind == unreal.OVAttackKind.GUIDED_MISSILE))
+        if kind == unreal.OVAttackKind.MISSILE:
+            check('Ordinary VLS path stays frozen despite target motion', (p(shots[0], 'frozen_aim_point')-frozen).length() < .001 and (p(shots[0], 'vls_control_point')-control).length() < .001)
+        else:
+            check('Cannon stays straight and guided missile follows target '+str(kind), changed == (kind == unreal.OVAttackKind.GUIDED_MISSILE))
         if kind == unreal.OVAttackKind.GUIDED_MISSILE:
             combat.notify_ftl_departure(target); frames(pc, 3)
             check('Guided FTL departure is a distinct result', any(p(e, 'result') == unreal.OVAttackResult.TARGET_DEPARTED for e in p(combat, 'recent_events')))
@@ -236,6 +244,46 @@ def run_projectiles(pc):
     combat.request_fire(a, weapon_id(combat, a, 2)); frames(pc, 3)
     facility_disable(a, unreal.OVFacilityType.MISSILE_STORAGE); frames(pc, 30)
     check('Supply loss cancels unlaunched salvo, preserves launched missile', p(combat, 'shot_count') == 1 and len(p(combat, 'attacks')) == 1 and p(mount(combat, a, 2), 'salvo_remaining') == 0)
+
+
+def run_approved_policies(pc):
+    for movement in (False, True):
+        for attack in (False, True):
+            combat, a, support, target = fixture(pc)
+            combat.set_target(a, None)
+            a.set_automation(movement, attack)
+            frames(pc, 90)
+            check('D101 independent automation '+str((movement, attack)), a.is_movement_automatic() == movement and a.is_attack_automatic() == attack and ((p(combat, 'shot_count') > 0) == attack) and p(a, 'hold'))
+    combat, a, support, target = fixture(pc)
+    target.set_actor_location(unreal.Vector(3000, 1000, 600), False, False)
+    frames(pc, 300)
+    known = p(mount(combat, a), 'last_tracked_world_point')
+    known = unreal.Vector(known.x, known.y, known.z)
+    facility_disable(a, unreal.OVFacilityType.RADAR)
+    target.set_actor_location(unreal.Vector(3000, -1500, 600), False, False)
+    frames(pc, 1)
+    remaining = p(mount(combat, a), 'tracking_remaining')
+    check('D084 loss starts 3.5 seconds even when no shot preceded loss', 3.4 < remaining <= 3.5 and p(combat, 'shot_count') == 0, remaining)
+    pc.action('Fire'); frames(pc, 180)
+    check('D084 hidden target motion cannot update last-known point or permit fire', (p(mount(combat, a), 'last_tracked_world_point')-known).length() < .001 and p(combat, 'shot_count') == 0)
+    frames(pc, 180)
+    check('D084 lost target tracking expires', p(mount(combat, a), 'tracking_remaining') == 0)
+    combat, a, support, target = fixture(pc)
+    st = p(target, 'systems'); layout = p(st, 'layout')
+    mounts = list(p(layout, 'weapon_mounts'))
+    mounts[0].set_editor_property('local_position', unreal.Vector(-210, 0, 8))
+    layout.set_editor_property('weapon_mounts', mounts)
+    st.initialize(layout)
+    custom_profile(combat, a, damage=100, accuracy=1)
+    hp = p(p(st, 'weapon_mount_states')[0], 'hp')
+    hull = p(st, 'hull_hp'); shield = p(st, 'shield')
+    pc.action('Fire'); frames(pc, 90)
+    check('D089 real mount collision first consumes shield without mount damage', p(st, 'shield') < shield and p(p(st, 'weapon_mount_states')[0], 'hp') == hp)
+    # Test precondition only: disable shield production by removing crew. The
+    # following damage is still delivered exclusively by a launched beam.
+    facility_disable(target, unreal.OVFacilityType.SHIELD_CONTROL)
+    pc.action('Fire'); frames(pc, 90)
+    check('D089 unshielded real collision damages one mount without hull transfer', p(p(st, 'weapon_mount_states')[0], 'hp') < hp and p(st, 'hull_hp') == hull and str(p(st, 'last_weapon_mount')) == str(p(mounts[0], 'weapon_id')) and p(st, 'last_hull_damage') == 0)
 
 
 def stop():

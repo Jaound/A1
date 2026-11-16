@@ -91,7 +91,7 @@ bool FOVCombatDetectionTest::RunTest(const FString&)
     TestFalse(TEXT("Beyond guaranteed range needs a live sensor"), R.Combat->GetDetection(R.A, R.B).bDetected);
     R.Scout->Systems->ResetState();
     auto Ordinary = R.Combat->GetDetection(R.A, R.B);
-    TestTrue(TEXT("Ordinary ally shares valid detection"), Ordinary.bDetected && Ordinary.AccuracyBonus > 0);
+    TestTrue(TEXT("D090 ordinary ally shares detection with zero accuracy correction"), Ordinary.bDetected && Ordinary.AccuracyBonus == 0);
     R.State(R.Scout).bRadarSupport = true;
     auto Support = R.Combat->GetDetection(R.A, R.B);
     TestTrue(TEXT("Radar support shares a stronger correction"), Support.AccuracyBonus > Ordinary.AccuracyBonus);
@@ -149,6 +149,9 @@ bool FOVCombatGateTest::RunTest(const FString&)
         TestFalse(TEXT("Each ammunition family independently requires its supply"), R.Combat->GetReadiness(R.A, R.Gun(Index).MountId).bReady);
         R.A->Systems->ResetState();
     }
+    R.Combat->NotifyFTLDeparture(R.A);
+    TestFalse(TEXT("Departed source cannot accept a new fire request"), R.Combat->RequestFire(R.A, Id));
+    TestFalse(TEXT("Departed source cannot acquire a new manual target"), R.Combat->SetTarget(R.A, R.B));
     return true;
 }
 
@@ -261,6 +264,8 @@ bool FOVCombatFlightTest::RunTest(const FString&)
         TestTrue(TEXT("Slow launched projectile remains in flight"), R.Combat->Attacks.Num() == 1);
         if (R.Combat->Attacks.IsEmpty()) return false;
         const FVector Direction = R.Combat->Attacks[0].Direction;
+        const FVector FrozenAim = R.Combat->Attacks[0].FrozenAimPoint;
+        const FVector VLSControl = R.Combat->Attacks[0].VLSControlPoint;
         const FName Source = R.Combat->Attacks[0].AttackerId;
         R.A->Systems->FactionId = 1;
         R.A->Systems->DebugDestroySlot(R.A->Systems->Layout->CoreSlotId, EOVDamageCause::Sabotage);
@@ -271,7 +276,10 @@ bool FOVCombatFlightTest::RunTest(const FString&)
         if (R.Combat->Attacks.IsEmpty()) return false;
         const auto& Shot = R.Combat->Attacks[0];
         TestTrue(TEXT("Launch faction/source immutable after ownership change"), Shot.FactionId == 0 && Shot.AttackerId == Source);
-        TestTrue(TEXT("Only guided kind corrects path"), Kind == EOVAttackKind::GuidedMissile ? !Shot.Direction.Equals(Direction, .001f) : Shot.Direction.Equals(Direction, .000001f));
+        if (Kind == EOVAttackKind::Missile)
+            TestTrue(TEXT("D088 ordinary VLS curve is frozen at launch despite target motion"), Shot.FrozenAimPoint.Equals(FrozenAim, .000001f) && Shot.VLSControlPoint.Equals(VLSControl, .000001f));
+        else
+            TestTrue(TEXT("Cannon remains straight; guided kind follows moved target"), Kind == EOVAttackKind::GuidedMissile ? !Shot.Direction.Equals(Direction, .001f) : Shot.Direction.Equals(Direction, .000001f));
         R.Combat->NotifyFTLDeparture(R.B);
         R.Combat->Simulate(.05f);
         if (Kind == EOVAttackKind::GuidedMissile)
@@ -445,6 +453,137 @@ bool FOVCombatProfilesTest::RunTest(const FString&)
     TestFalse(TEXT("Three decks alone do not authorize extra-large tier 4"), R.Combat->GetReadiness(R.A, R.Gun().MountId).bReady);
     R.Combat->RegisterShip(R.A, 1, false, 4);
     TestTrue(TEXT("Explicit extra-large authoring permits tier 4"), R.Combat->GetReadiness(R.A, R.Gun().MountId).bReady);
+    return true;
+}
+
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(FOVCombatDetectionMemoryTest, "OrbitalVanguard.Combat.DetectionLossStartsLastKnownTracking", EAutomationTestFlags::EditorContext | EAutomationTestFlags::EngineFilter)
+bool FOVCombatDetectionMemoryTest::RunTest(const FString&)
+{
+    OVCombatTest::FRange R;
+    R.B->SetActorLocation(FVector(3000, 1000, 300));
+    R.Combat->Simulate(5);
+    TestEqual(TEXT("Tracking is not conditional on a prior shot"), R.Combat->ShotCount, 0);
+    const FVector LastKnown = R.Gun().LastTrackedWorldPoint;
+    TestTrue(TEXT("Valid target is continuously tracked beyond 3.5 seconds"), LastKnown.Equals(R.B->GetActorLocation(), .001f));
+    R.DisableFacility(R.A, EOVFacilityType::Radar);
+    R.DisableFacility(R.Scout, EOVFacilityType::Radar);
+    R.B->SetActorLocation(FVector(3000, -1200, 300));
+    R.Combat->Simulate(1.f / 120.f);
+    TestTrue(TEXT("D084 3.5 second retention begins at detection loss"), R.Gun().TrackingRemaining > 3.4f && R.Gun().TrackingRemaining <= 3.5f);
+    R.Combat->RequestFire(R.A, R.Gun().MountId);
+    R.Combat->Simulate(3.3f);
+    TestTrue(TEXT("Loss tracking uses frozen last-known position, never hidden target transform"), R.Gun().LastTrackedWorldPoint.Equals(LastKnown, .001f));
+    TestEqual(TEXT("Tracking retention cannot authorize new fire"), R.Combat->ShotCount, 0);
+    R.Combat->Simulate(3);
+    TestTrue(TEXT("Expired retention returns turret to standby with bounded movement"), R.Gun().TrackingRemaining == 0 && R.Gun().LocalAim.Equals(R.Gun().Profile.StandbyAim, .1f));
+    R.Combat->SetTarget(R.A, nullptr);
+    TestTrue(TEXT("Explicit target clear also clears retained tracking memory"), R.Gun().TrackingRemaining == 0 && R.Gun().LastTrackedWorldPoint.IsNearlyZero());
+    return true;
+}
+
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(FOVCombatMixedAutomationTest, "OrbitalVanguard.Combat.IndependentMovementAndAttackAutomation", EAutomationTestFlags::EditorContext | EAutomationTestFlags::EngineFilter)
+bool FOVCombatMixedAutomationTest::RunTest(const FString&)
+{
+    for (bool Movement : {false, true}) for (bool Attack : {false, true})
+    {
+        OVCombatTest::FRange R;
+        R.A->SetAutomation(Movement, Attack);
+        R.Combat->SetTarget(R.A, nullptr);
+        R.Combat->Simulate(1);
+        TestTrue(TEXT("D101 getter state preserves each independent automation choice"), R.A->IsMovementAutomatic() == Movement && R.A->IsAttackAutomatic() == Attack);
+        TestTrue(TEXT("Attack automation independently selects and fires at a valid target"), Attack ? R.A->AttackTarget == R.B && R.Combat->ShotCount > 0 : !R.A->AttackTarget && R.Combat->ShotCount == 0);
+        TestTrue(TEXT("Persistent Hold is preserved in every automation combination"), R.A->bHold && R.A->GetActorLocation().IsNearlyZero());
+    }
+    for (bool Movement : {false, true}) for (bool Attack : {false, true})
+    {
+        OVCombatTest::FRange R;
+        R.A->Systems->Initialize(UShipLayoutDataAsset::MakeTestLayout(R.A, 1));
+        R.Enable();
+        R.A->SetAutomation(Movement, Attack);
+        R.A->bHold = false;
+        R.Scout->SetActorLocation(FVector(500, 0, 0));
+        R.Combat->Simulate(.2f);
+        const bool Clearance = R.A->GetActorLocation().Z > .01 || (R.A->bHasDestination && R.A->Destination.Z > .01);
+        TestTrue(TEXT("D086 automatic Z clearance depends on movement choice, not attack choice"), Clearance == Movement);
+    }
+    for (bool BlockedLine : {false, true})
+    {
+        OVCombatTest::FRange R;
+        R.A->Systems->Initialize(UShipLayoutDataAsset::MakeTestLayout(R.A, 1));
+        R.Enable();
+        R.A->SetAutomation(true, false); R.A->bHold = false;
+        R.B->SetActorLocation(FVector(3000, 1000, 0));
+        R.Combat->Simulate(1.f / 120.f);
+        const FRotator Before = R.A->GetActorRotation();
+        R.DisableFacility(R.A, EOVFacilityType::Radar); R.DisableFacility(R.Scout, EOVFacilityType::Radar);
+        R.B->SetActorLocation(FVector(3000, -1000, 0));
+        if (BlockedLine) R.Scout->SetActorLocation(FVector(1500, -500, 0));
+        R.Combat->Simulate(.3f);
+        TestTrue(TEXT("Movement-auto attack-manual cannot turn toward an undetected target"), R.A->GetActorRotation().Equals(Before, .001f));
+        TestTrue(TEXT("Hidden target cannot trigger new automatic line clearance"), !R.A->bHasDestination && R.A->GetActorLocation().IsNearlyZero());
+    }
+    return true;
+}
+
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(FOVCombatMountImpactTest, "OrbitalVanguard.Combat.RealMountImpactShieldThenMountOnly", EAutomationTestFlags::EditorContext | EAutomationTestFlags::EngineFilter)
+bool FOVCombatMountImpactTest::RunTest(const FString&)
+{
+    OVCombatTest::FRange R;
+    UShipLayoutDataAsset* Layout = DuplicateObject<UShipLayoutDataAsset>(R.B->Systems->Layout, R.B);
+    // A visible external proxy in front of the hull's rear face intercepts the
+    // production beam segment before its hull OBB. This is fixture authoring only.
+    Layout->WeaponMounts[0].LocalPosition = FVector(-210, 0, 8);
+    R.B->Systems->Initialize(Layout);
+    R.Exact(); R.Gun().Profile.Damage = 100;
+    const FName HitMount = Layout->WeaponMounts[0].WeaponId;
+    const float Hull = R.B->Systems->HullHP;
+    const float MountHP = R.B->Systems->WeaponMountStates[0].HP;
+    R.Fire();
+    TestTrue(TEXT("D089 actual mount collision consumes active shield first"), R.Combat->HitCount == 1 && R.B->Systems->Shield < R.B->Systems->MaxShield && R.B->Systems->WeaponMountStates[0].HP == MountHP);
+    R.B->Systems->Shield = 0; R.B->Systems->bShieldActive = false;
+    R.Gun().Profile.Damage = 50;
+    R.Fire();
+    TestTrue(TEXT("Unshielded external collision damages only identified mount"), R.B->Systems->LastWeaponMount == HitMount && R.B->Systems->WeaponMountStates[0].HP < MountHP);
+    TestEqual(TEXT("External mount event never transfers raw damage to hull"), R.B->Systems->HullHP, Hull);
+    TestTrue(TEXT("External mount event neither damages facilities nor triggers explosions"), R.B->Systems->LastDamageSlot.IsNone() && R.B->Systems->LastExplosionCount == 0);
+    for (int32 I = 0; I < R.B->Systems->Slots.Num(); ++I)
+        if (Layout->Slots[I].Facility != EOVFacilityType::None)
+            TestEqual(TEXT("Each facility stays intact after mount-only hit"), R.B->Systems->Slots[I].HP, Layout->Slots[I].MaxFacilityHP);
+    R.Gun().Profile.Damage = 10000;
+    R.Fire();
+    TestTrue(TEXT("External hit can destroy a weapon while preserving the vessel"), R.B->Systems->WeaponMountStates[0].HP == 0 && !R.B->Systems->bWrecked && R.B->Systems->HullHP == Hull);
+    return true;
+}
+
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(FOVCombatFixedPathTest, "OrbitalVanguard.Combat.FixedVLSPathAndContinuousSpread", EAutomationTestFlags::EditorContext | EAutomationTestFlags::EngineFilter)
+bool FOVCombatFixedPathTest::RunTest(const FString&)
+{
+    FVector Positions[2], Directions[2];
+    for (int32 Variant = 0; Variant < 2; ++Variant)
+    {
+        OVCombatTest::FRange R;
+        R.Exact(2); R.Gun(2).Profile.Kind = EOVAttackKind::Missile;
+        R.Gun(2).Profile.Speed = 200; R.Gun(2).Profile.Salvo = 1;
+        R.Fire(2, .05f);
+        if (R.Combat->Attacks.IsEmpty()) return false;
+        const FVector Initial = R.Combat->Attacks[0].Direction;
+        if (Variant) R.B->SetActorLocation(FVector(1200, 3000, 800));
+        R.Combat->Simulate(.3f);
+        TestTrue(TEXT("VLS fixture remains in flight"), R.Combat->Attacks.Num() == 1);
+        if (R.Combat->Attacks.IsEmpty()) return false;
+        Positions[Variant] = R.Combat->Attacks[0].Position;
+        Directions[Variant] = R.Combat->Attacks[0].Direction;
+        TestFalse(TEXT("D088 VLS has actual curved launch travel"), Directions[Variant].Equals(Initial, .001f));
+    }
+    TestTrue(TEXT("Moved target cannot change ordinary missile's predetermined path"), Positions[0].Equals(Positions[1], .001f) && Directions[0].Equals(Directions[1], .001f));
+    OVCombatTest::FRange R;
+    R.Exact(0); R.Gun(0).Profile.Accuracy = .3f; R.Gun(0).Profile.Speed = 100;
+    R.DisableFacility(R.A, EOVFacilityType::Radar); R.DisableFacility(R.Scout, EOVFacilityType::Radar);
+    for (int32 I = 0; I < 8; ++I) R.Fire(0, .11f);
+    TestEqual(TEXT("Dispersion sample fires eight real cannon shells"), R.Combat->Attacks.Num(), 8);
+    TArray<double> Radii;
+    for (const FOVAttackState& Shot : R.Combat->Attacks) Radii.AddUnique(FMath::RoundToDouble(Shot.AimOffset.Size() * 1000));
+    TestTrue(TEXT("D085 cannon aim samples continuous spread instead of binary hit/miss offsets"), Radii.Num() > 3);
     return true;
 }
 #endif

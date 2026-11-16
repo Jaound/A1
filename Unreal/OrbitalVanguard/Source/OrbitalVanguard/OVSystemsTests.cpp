@@ -33,14 +33,28 @@ bool FOVShieldTest::RunTest(const FString&)
  S->Simulate(1);TestTrue(TEXT("Only post-delay half second"),FMath::IsNearlyEqual(S->Shield,Max*.03f*.5f,.001f));
  S->Simulate(16.166667f);TestTrue(TEXT("50 percent auto reactivate"),S->bShieldActive&&FMath::IsNearlyEqual(S->Shield,Max*.5f,.01f));
  const float Half=S->Shield;S->Simulate(2);TestEqual(TEXT("Active combat no regen"),S->Shield,Half);
- S->Tuning.NoHitRecoveryInterval=15;S->Simulate(1);TestTrue(TEXT("Provisional gradual out of combat"),S->Shield>Half&&S->Shield<Max);
+ S->Tuning.NoHitRecoveryInterval=15;S->Simulate(100);TestEqual(TEXT("D083 active shield never regenerates, including non-combat"),S->Shield,Half);
+ S->Tuning.RecoveryPolicy=EOVShieldRecoveryPolicy::FullAfterNoHitInterval;
+ S->Simulate(100);TestEqual(TEXT("Legacy serialized recovery policy cannot restore active-shield full charge"),S->Shield,Half);
  const auto Controls=OVTest::Find(S,EOVFacilityType::ShieldControl);
  for(int32 I:Controls)S->DebugSetOccupation(S->Slots[I].SlotId,1);
  TestTrue(TEXT("All controls unavailable immediately disappear"),S->Shield==0&&S->MaxShield==0&&!S->bShieldActive);
  S->Simulate(100);TestEqual(TEXT("No controls no recovery"),S->Shield,0.f);
  S->DebugSetOccupation(S->Slots[Controls[0]].SlotId,-1);TestEqual(TEXT("Restore control never gifts charge"),S->Shield,0.f);
  float Results[3];for(int32 Scale=1;Scale<=3;++Scale){auto* T=OVTest::Make();OVTest::Hit(T,Point,T->MaxShield);for(int32 I=0;I<600/Scale;++I)T->Simulate(Scale/60.f);Results[Scale-1]=T->Shield;}
- TestTrue(TEXT("Same game time across speeds"),FMath::IsNearlyEqual(Results[0],Results[1],.01f)&&FMath::IsNearlyEqual(Results[0],Results[2],.01f));return true;
+ TestTrue(TEXT("Same game time across speeds"),FMath::IsNearlyEqual(Results[0],Results[1],.01f)&&FMath::IsNearlyEqual(Results[0],Results[2],.01f));
+ auto* Fast=OVTest::Make();Fast->Tuning.ShieldRecoveryDelay=0;Fast->Tuning.NoHitRecoveryInterval=2;
+ Fast->Tuning.ShieldRegenFraction=.03f;Fast->Tuning.ShieldNonCombatRegenFraction=.06f;
+ OVTest::Hit(Fast,Point,Fast->MaxShield);Fast->Simulate(1);
+ TestTrue(TEXT("Inactive combat recovery uses explicitly configured slow rate"),FMath::IsNearlyEqual(Fast->Shield,Fast->MaxShield*.03f,.001f));
+ Fast->Simulate(1);TestTrue(TEXT("Combat to non-combat boundary has no instant fill"),FMath::IsNearlyEqual(Fast->Shield,Fast->MaxShield*.06f,.001f));
+ Fast->Simulate(1);TestTrue(TEXT("Inactive non-combat recovery uses faster configured rate"),FMath::IsNearlyEqual(Fast->Shield,Fast->MaxShield*.12f,.001f));
+ Fast->Simulate(100);TestTrue(TEXT("Large non-combat step stops at 50 percent reactivation"),Fast->bShieldActive&&FMath::IsNearlyEqual(Fast->Shield,Fast->MaxShield*.5f,.001f));
+ auto* Boundary=OVTest::Make();Boundary->Tuning.ShieldRecoveryDelay=0;Boundary->Tuning.NoHitRecoveryInterval=2;
+ Boundary->Tuning.ShieldRegenFraction=.03f;Boundary->Tuning.ShieldNonCombatRegenFraction=.06f;
+ OVTest::Hit(Boundary,Point,Boundary->MaxShield);Boundary->Simulate(3);
+ TestTrue(TEXT("Single step crossing combat boundary equals split recovery"),FMath::IsNearlyEqual(Boundary->Shield,Boundary->MaxShield*.12f,.001f));
+ return true;
 }
 IMPLEMENT_SIMPLE_AUTOMATION_TEST(FOVDamageTest,"OrbitalVanguard.Systems.ArmorCausesAndSingleHullDamage",EAutomationTestFlags::EditorContext|EAutomationTestFlags::EngineFilter)
 bool FOVDamageTest::RunTest(const FString&)
