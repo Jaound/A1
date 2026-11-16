@@ -32,7 +32,7 @@
 - **설계 초안:** [기지·생산·연구 밸런스v0.1](BASE_BALANCE_DRAFT.md)의 새 비용/시간/운영안. 사용자 요청으로 제안했지만 채택/실측 전이며 확정 규칙을 대체하지 않는다.
 - **시험 기준값:** 프로토타입에서 채택한 밸런스 출발값. 원형·단위를 명시하며 전체 티어의 고정 규칙으로 확대하지 않는다.
 - **임시 구현:** 로컬 코드를 작동시키기 위한 선택. 사용자 확정 기획과 구분하며 교체 가능한 설정으로 둔다.
-- **과거/참조:** [프로토타입 개선 기록](PROTOTYPE_IMPROVEMENT_PLAN.md), [시행착오](DEVELOPMENT_PITFALLS.md), [PlayGame3 이식안](PLAY_GAME_3_CONTROLS.md), archive 및 검토 보고서. 이 문서가 현행 규칙을 덮어쓰지 않는다.
+- **과거/참조:** [프로토타입 개선 기록](PROTOTYPE_IMPROVEMENT_PLAN.md), [시행착오](DEVELOPMENT_PITFALLS.md), [PlayGame3 이식안](PLAY_GAME_3_CONTROLS.md), [후속FBX/함급/전장 보고](PROTOTYPE_FBX_UPDATE_RECORD.md), archive 및 검토 보고서. 이 문서가 현행 규칙을 덮어쓰지 않는다.
 - **검증 기록:** 특정 커밋의 빌드·자동/API·실제 입력 결과. 테스트 통과가 미구현 기능의 완료나 기획 확정을 의미하지 않는다.
 
 동일한 최신 근거끼리 다르면 [미결정 목록](OPEN_QUESTIONS.md)에 남긴다. 코드에서 먼저 사용했다는 이유로 설계를 확정하지 않는다. 사용자 후속 확정은 해당 규칙을 대체하며 분야별 본문도 함께 갱신한다.
