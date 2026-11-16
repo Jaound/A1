@@ -1,0 +1,7721 @@
+{
+  "version": "integrated-v0.6",
+  "cases": {
+    "active_6": {
+      "hero_budget": 6,
+      "mode": "assault",
+      "level": 10
+    },
+    "active_10": {
+      "hero_budget": 10,
+      "mode": "assault",
+      "level": 10
+    },
+    "active_15": {
+      "hero_budget": 15,
+      "mode": "assault",
+      "level": 10
+    },
+    "left_weapon_order": {
+      "level": 10
+    },
+    "left_hull_order": {
+      "level": 10
+    }
+  },
+  "trials": [
+    {
+      "seed": 930000,
+      "seconds": 1097.0,
+      "main_seconds": 956.0,
+      "first_loss_seconds": 54.0,
+      "winner": 0,
+      "outcome": "victory",
+      "remaining_cost": [
+        25,
+        0
+      ],
+      "initial_cost": [
+        100,
+        100
+      ],
+      "initial_heroes": [
+        6,
+        6
+      ],
+      "initial_fighters": [
+        40,
+        40
+      ],
+      "fighter_package_cost": [
+        [
+          1200,
+          240,
+          0
+        ],
+        [
+          1200,
+          240,
+          0
+        ]
+      ],
+      "hero_states": {
+        "0:aboard": 2,
+        "0:dead": 4,
+        "1:dead": 6
+      },
+      "metrics": {
+        "fighter_losses": 80.0,
+        "shots_launched": 29813.0,
+        "pd_damage_missile": 13656.0,
+        "facility_destroyed": 388.0,
+        "repair_resource_0": 408.9382744831453,
+        "repair_resource_1": 12.406620458948568,
+        "repair_resource_2": 0.6210903033088085,
+        "repair_work": 9968.037856461993,
+        "repair_hull_hp": 4224.0,
+        "explosions": 67.0,
+        "wreck_hull": 50.0,
+        "operations_launched": 1.0,
+        "wreck_core": 1.0,
+        "entry_at": 96.0,
+        "launch_to_entry": 6.0,
+        "entered_heroes": 4.0,
+        "entered_soldiers": 8.0,
+        "hero_heal": 0.0,
+        "objectives": 1.0,
+        "entry_to_objective": 27.0,
+        "returned_heroes": 4.0,
+        "returned_soldiers": 7.0,
+        "entry_to_exit": 53.0,
+        "hero_wreck_deaths": 6.0,
+        "hero_repair_hp": 1238.8681249999697,
+        "escaped_cost_1": 0.0
+      },
+      "damage_by_target_size": {
+        "(1, 1)": 135505.14499274956,
+        "(0, 1)": 141030.1447185919,
+        "(0, 2)": 173432.14282501428,
+        "(1, 2)": 173480.56119020103,
+        "(1, 3)": 242302.71341116066,
+        "(0, 3)": 294554.12440922984
+      },
+      "mounts_remaining": [
+        10,
+        0
+      ],
+      "transport_log": [
+        {
+          "unit_id": 0,
+          "hero": true,
+          "time": 96.0,
+          "returning": false,
+          "direct": true,
+          "destination": 34
+        },
+        {
+          "unit_id": 1,
+          "hero": true,
+          "time": 96.0,
+          "returning": false,
+          "direct": true,
+          "destination": 34
+        },
+        {
+          "unit_id": 2,
+          "hero": true,
+          "time": 96.0,
+          "returning": false,
+          "direct": true,
+          "destination": 34
+        },
+        {
+          "unit_id": 3,
+          "hero": true,
+          "time": 96.0,
+          "returning": false,
+          "direct": true,
+          "destination": 34
+        },
+        {
+          "unit_id": 4,
+          "hero": false,
+          "time": 96.0,
+          "returning": false,
+          "direct": true,
+          "destination": 34
+        },
+        {
+          "unit_id": 5,
+          "hero": false,
+          "time": 96.0,
+          "returning": false,
+          "direct": true,
+          "destination": 34
+        },
+        {
+          "unit_id": 6,
+          "hero": false,
+          "time": 96.0,
+          "returning": false,
+          "direct": true,
+          "destination": 34
+        },
+        {
+          "unit_id": 7,
+          "hero": false,
+          "time": 96.0,
+          "returning": false,
+          "direct": true,
+          "destination": 34
+        },
+        {
+          "unit_id": 8,
+          "hero": false,
+          "time": 96.0,
+          "returning": false,
+          "direct": true,
+          "destination": 34
+        },
+        {
+          "unit_id": 9,
+          "hero": false,
+          "time": 96.0,
+          "returning": false,
+          "direct": true,
+          "destination": 34
+        },
+        {
+          "unit_id": 10,
+          "hero": false,
+          "time": 96.0,
+          "returning": false,
+          "direct": true,
+          "destination": 34
+        },
+        {
+          "unit_id": 11,
+          "hero": false,
+          "time": 96.0,
+          "returning": false,
+          "direct": true,
+          "destination": 34
+        }
+      ],
+      "operation_timeline": [
+        {
+          "launch": 90.0,
+          "entry": 96.0,
+          "objective": 123.0,
+          "exit": 149.0,
+          "target_id": 34,
+          "target_kind": "air_defense",
+          "target_wreck_at": 491.0,
+          "observed_survival_after_entry": 395.0,
+          "units": [
+            {
+              "id": 0,
+              "kind": "melee",
+              "state": "dead",
+              "hp": 0
+            },
+            {
+              "id": 1,
+              "kind": "ranged",
+              "state": "dead",
+              "hp": 0
+            },
+            {
+              "id": 2,
+              "kind": "support",
+              "state": "dead",
+              "hp": 0
+            },
+            {
+              "id": 3,
+              "kind": "commander",
+              "state": "dead",
+              "hp": 0
+            },
+            {
+              "id": 4,
+              "kind": "soldier",
+              "state": "dead",
+              "hp": 0
+            },
+            {
+              "id": 5,
+              "kind": "soldier",
+              "state": "dead",
+              "hp": 0
+            },
+            {
+              "id": 6,
+              "kind": "soldier",
+              "state": "dead",
+              "hp": 0
+            },
+            {
+              "id": 7,
+              "kind": "soldier",
+              "state": "dead",
+              "hp": 0
+            },
+            {
+              "id": 8,
+              "kind": "soldier",
+              "state": "dead",
+              "hp": 0
+            },
+            {
+              "id": 9,
+              "kind": "soldier",
+              "state": "dead",
+              "hp": 0
+            },
+            {
+              "id": 10,
+              "kind": "soldier",
+              "state": "dead",
+              "hp": 0
+            },
+            {
+              "id": 11,
+              "kind": "soldier",
+              "state": "dead",
+              "hp": 0
+            }
+          ]
+        }
+      ],
+      "target_survival_after_entry": 395.0,
+      "target_wreck_before_exit": false,
+      "case": "active_6",
+      "enemy_weapon_disabled": true
+    },
+    {
+      "seed": 930001,
+      "seconds": 1160.0,
+      "main_seconds": 930.0,
+      "first_loss_seconds": 51.0,
+      "winner": 1,
+      "outcome": "defeat",
+      "remaining_cost": [
+        0,
+        25
+      ],
+      "initial_cost": [
+        100,
+        100
+      ],
+      "initial_heroes": [
+        6,
+        6
+      ],
+      "initial_fighters": [
+        40,
+        40
+      ],
+      "fighter_package_cost": [
+        [
+          1200,
+          240,
+          0
+        ],
+        [
+          1200,
+          240,
+          0
+        ]
+      ],
+      "hero_states": {
+        "0:dead": 6,
+        "1:aboard": 2,
+        "1:dead": 4
+      },
+      "metrics": {
+        "fighter_losses": 80.0,
+        "shots_launched": 32250.0,
+        "pd_damage_missile": 14940.0,
+        "repair_resource_0": 471.89584694359104,
+        "repair_resource_1": 21.80669426419961,
+        "repair_resource_2": 0.9793766084558888,
+        "repair_work": 10579.054433509955,
+        "facility_destroyed": 388.0,
+        "explosions": 61.0,
+        "wreck_hull": 47.0,
+        "repair_hull_hp": 3136.0,
+        "operations_launched": 1.0,
+        "entry_at": 96.0,
+        "launch_to_entry": 6.0,
+        "entered_heroes": 4.0,
+        "entered_soldiers": 8.0,
+        "hero_heal": 215.1,
+        "catalysts_used": 2.0,
+        "objectives": 1.0,
+        "entry_to_objective": 47.0,
+        "returned_heroes": 4.0,
+        "returned_soldiers": 8.0,
+        "entry_to_exit": 78.0,
+        "hero_repair_hp": 1953.5298750000122,
+        "hero_wreck_deaths": 9.0,
+        "escaped_cost_0": 0.0
+      },
+      "damage_by_target_size": {
+        "(1, 1)": 137249.81093047696,
+        "(0, 1)": 134958.58073130416,
+        "(0, 2)": 171722.1012661276,
+        "(1, 2)": 173448.3570739567,
+        "(0, 3)": 262363.55975269433,
+        "(1, 3)": 293578.10918578773
+      },
+      "mounts_remaining": [
+        0,
+        10
+      ],
+      "transport_log": [
+        {
+          "unit_id": 0,
+          "hero": true,
+          "time": 96.0,
+          "returning": false,
+          "direct": true,
+          "destination": 32
+        },
+        {
+          "unit_id": 1,
+          "hero": true,
+          "time": 96.0,
+          "returning": false,
+          "direct": true,
+          "destination": 32
+        },
+        {
+          "unit_id": 2,
+          "hero": true,
+          "time": 96.0,
+          "returning": false,
+          "direct": true,
+          "destination": 32
+        },
+        {
+          "unit_id": 3,
+          "hero": true,
+          "time": 96.0,
+          "returning": false,
+          "direct": true,
+          "destination": 32
+        },
+        {
+          "unit_id": 4,
+          "hero": false,
+          "time": 96.0,
+          "returning": false,
+          "direct": true,
+          "destination": 32
+        },
+        {
+          "unit_id": 5,
+          "hero": false,
+          "time": 96.0,
+          "returning": false,
+          "direct": true,
+          "destination": 32
+        },
+        {
+          "unit_id": 6,
+          "hero": false,
+          "time": 96.0,
+          "returning": false,
+          "direct": true,
+          "destination": 32
+        },
+        {
+          "unit_id": 7,
+          "hero": false,
+          "time": 96.0,
+          "returning": false,
+          "direct": true,
+          "destination": 32
+        },
+        {
+          "unit_id": 8,
+          "hero": false,
+          "time": 96.0,
+          "returning": false,
+          "direct": true,
+          "destination": 32
+        },
+        {
+          "unit_id": 9,
+          "hero": false,
+          "time": 96.0,
+          "returning": false,
+          "direct": true,
+          "destination": 32
+        },
+        {
+          "unit_id": 10,
+          "hero": false,
+          "time": 96.0,
+          "returning": false,
+          "direct": true,
+          "destination": 32
+        },
+        {
+          "unit_id": 11,
+          "hero": false,
+          "time": 96.0,
+          "returning": false,
+          "direct": true,
+          "destination": 32
+        }
+      ],
+      "operation_timeline": [
+        {
+          "launch": 90.0,
+          "entry": 96.0,
+          "objective": 143.0,
+          "exit": 174.0,
+          "target_id": 32,
+          "target_kind": "cruiser",
+          "target_wreck_at": 443.0,
+          "observed_survival_after_entry": 347.0,
+          "units": [
+            {
+              "id": 0,
+              "kind": "melee",
+              "state": "dead",
+              "hp": 0
+            },
+            {
+              "id": 1,
+              "kind": "ranged",
+              "state": "dead",
+              "hp": 0
+            },
+            {
+              "id": 2,
+              "kind": "support",
+              "state": "dead",
+              "hp": 0
+            },
+            {
+              "id": 3,
+              "kind": "commander",
+              "state": "dead",
+              "hp": 0
+            },
+            {
+              "id": 4,
+              "kind": "soldier",
+              "state": "dead",
+              "hp": 0
+            },
+            {
+              "id": 5,
+              "kind": "soldier",
+              "state": "dead",
+              "hp": 0
+            },
+            {
+              "id": 6,
+              "kind": "soldier",
+              "state": "dead",
+              "hp": 0
+            },
+            {
+              "id": 7,
+              "kind": "soldier",
+              "state": "dead",
+              "hp": 0
+            },
+            {
+              "id": 8,
+              "kind": "soldier",
+              "state": "dead",
+              "hp": 0
+            },
+            {
+              "id": 9,
+              "kind": "soldier",
+              "state": "dead",
+              "hp": 0
+            },
+            {
+              "id": 10,
+              "kind": "soldier",
+              "state": "dead",
+              "hp": 0
+            },
+            {
+              "id": 11,
+              "kind": "soldier",
+              "state": "dead",
+              "hp": 0
+            }
+          ]
+        }
+      ],
+      "target_survival_after_entry": 347.0,
+      "target_wreck_before_exit": false,
+      "case": "active_6",
+      "enemy_weapon_disabled": false
+    },
+    {
+      "seed": 930002,
+      "seconds": 1101.0,
+      "main_seconds": 994.0,
+      "first_loss_seconds": 35.0,
+      "winner": 0,
+      "outcome": "victory",
+      "remaining_cost": [
+        26,
+        0
+      ],
+      "initial_cost": [
+        100,
+        100
+      ],
+      "initial_heroes": [
+        6,
+        6
+      ],
+      "initial_fighters": [
+        40,
+        40
+      ],
+      "fighter_package_cost": [
+        [
+          1200,
+          240,
+          0
+        ],
+        [
+          1200,
+          240,
+          0
+        ]
+      ],
+      "hero_states": {
+        "0:aboard": 6,
+        "1:dead": 6
+      },
+      "metrics": {
+        "fighter_losses": 80.0,
+        "shots_launched": 30802.0,
+        "pd_damage_missile": 16476.0,
+        "facility_destroyed": 393.0,
+        "explosions": 65.0,
+        "repair_resource_0": 255.66600883704533,
+        "repair_resource_1": 10.124999999999996,
+        "repair_resource_2": 1.0125000000000004,
+        "repair_work": 5359.950464556389,
+        "wreck_hull": 50.0,
+        "repair_hull_hp": 2272.0,
+        "operations_launched": 1.0,
+        "entry_at": 95.0,
+        "launch_to_entry": 5.0,
+        "entered_heroes": 4.0,
+        "entered_soldiers": 8.0,
+        "hero_heal": 0.0,
+        "objectives": 1.0,
+        "entry_to_objective": 8.0,
+        "returned_heroes": 4.0,
+        "returned_soldiers": 8.0,
+        "entry_to_exit": 18.0,
+        "hero_wreck_deaths": 6.0,
+        "hero_repair_hp": 2019.6000000000001,
+        "escaped_cost_1": 0.0
+      },
+      "damage_by_target_size": {
+        "(1, 1)": 132913.6159015741,
+        "(0, 1)": 140898.45252208938,
+        "(1, 2)": 173524.61674647976,
+        "(0, 2)": 173727.718140729,
+        "(1, 3)": 239434.92360348612,
+        "(0, 3)": 295138.6907809463
+      },
+      "mounts_remaining": [
+        10,
+        0
+      ],
+      "transport_log": [
+        {
+          "unit_id": 0,
+          "hero": true,
+          "time": 95.0,
+          "returning": false,
+          "direct": true,
+          "destination": 39
+        },
+        {
+          "unit_id": 1,
+          "hero": true,
+          "time": 95.0,
+          "returning": false,
+          "direct": true,
+          "destination": 39
+        },
+        {
+          "unit_id": 2,
+          "hero": true,
+          "time": 95.0,
+          "returning": false,
+          "direct": true,
+          "destination": 39
+        },
+        {
+          "unit_id": 3,
+          "hero": true,
+          "time": 95.0,
+          "returning": false,
+          "direct": true,
+          "destination": 39
+        },
+        {
+          "unit_id": 4,
+          "hero": false,
+          "time": 95.0,
+          "returning": false,
+          "direct": true,
+          "destination": 39
+        },
+        {
+          "unit_id": 5,
+          "hero": false,
+          "time": 95.0,
+          "returning": false,
+          "direct": true,
+          "destination": 39
+        },
+        {
+          "unit_id": 6,
+          "hero": false,
+          "time": 95.0,
+          "returning": false,
+          "direct": true,
+          "destination": 39
+        },
+        {
+          "unit_id": 7,
+          "hero": false,
+          "time": 95.0,
+          "returning": false,
+          "direct": true,
+          "destination": 39
+        },
+        {
+          "unit_id": 8,
+          "hero": false,
+          "time": 95.0,
+          "returning": false,
+          "direct": true,
+          "destination": 39
+        },
+        {
+          "unit_id": 9,
+          "hero": false,
+          "time": 95.0,
+          "returning": false,
+          "direct": true,
+          "destination": 39
+        },
+        {
+          "unit_id": 10,
+          "hero": false,
+          "time": 95.0,
+          "returning": false,
+          "direct": true,
+          "destination": 39
+        },
+        {
+          "unit_id": 11,
+          "hero": false,
+          "time": 95.0,
+          "returning": false,
+          "direct": true,
+          "destination": 39
+        }
+      ],
+      "operation_timeline": [
+        {
+          "launch": 90.0,
+          "entry": 95.0,
+          "objective": 103.0,
+          "exit": 113.0,
+          "target_id": 39,
+          "target_kind": "corvette",
+          "target_wreck_at": null,
+          "observed_survival_after_entry": 1006.0,
+          "units": [
+            {
+              "id": 0,
+              "kind": "melee",
+              "state": "aboard",
+              "hp": 316.4899677929687
+            },
+            {
+              "id": 1,
+              "kind": "ranged",
+              "state": "aboard",
+              "hp": 298.32996779296883
+            },
+            {
+              "id": 2,
+              "kind": "support",
+              "state": "aboard",
+              "hp": 361.20996779296877
+            },
+            {
+              "id": 3,
+              "kind": "commander",
+              "state": "aboard",
+              "hp": 422.80996779296873
+            },
+            {
+              "id": 4,
+              "kind": "soldier",
+              "state": "aboard",
+              "hp": 56.609967792968746
+            },
+            {
+              "id": 5,
+              "kind": "soldier",
+              "state": "aboard",
+              "hp": 56.609967792968746
+            },
+            {
+              "id": 6,
+              "kind": "soldier",
+              "state": "aboard",
+              "hp": 56.609967792968746
+            },
+            {
+              "id": 7,
+              "kind": "soldier",
+              "state": "aboard",
+              "hp": 56.609967792968746
+            },
+            {
+              "id": 8,
+              "kind": "soldier",
+              "state": "aboard",
+              "hp": 56.609967792968746
+            },
+            {
+              "id": 9,
+              "kind": "soldier",
+              "state": "aboard",
+              "hp": 56.609967792968746
+            },
+            {
+              "id": 10,
+              "kind": "soldier",
+              "state": "aboard",
+              "hp": 56.609967792968746
+            },
+            {
+              "id": 11,
+              "kind": "soldier",
+              "state": "aboard",
+              "hp": 56.609967792968746
+            }
+          ]
+        }
+      ],
+      "target_survival_after_entry": null,
+      "target_wreck_before_exit": false,
+      "case": "active_6",
+      "enemy_weapon_disabled": true
+    },
+    {
+      "seed": 930003,
+      "seconds": 1196.0,
+      "main_seconds": 1135.0,
+      "first_loss_seconds": 35.0,
+      "winner": 0,
+      "outcome": "victory",
+      "remaining_cost": [
+        51,
+        0
+      ],
+      "initial_cost": [
+        100,
+        100
+      ],
+      "initial_heroes": [
+        6,
+        6
+      ],
+      "initial_fighters": [
+        40,
+        40
+      ],
+      "fighter_package_cost": [
+        [
+          1200,
+          240,
+          0
+        ],
+        [
+          1200,
+          240,
+          0
+        ]
+      ],
+      "hero_states": {
+        "0:aboard": 6,
+        "1:dead": 6
+      },
+      "metrics": {
+        "fighter_losses": 80.0,
+        "shots_launched": 31838.0,
+        "pd_damage_missile": 13440.0,
+        "repair_resource_0": 604.3027086306786,
+        "repair_resource_1": 40.520625920597546,
+        "repair_resource_2": 1.0125000000000004,
+        "repair_work": 13847.04446202703,
+        "facility_destroyed": 400.0,
+        "explosions": 63.0,
+        "wreck_hull": 45.0,
+        "repair_hull_hp": 4448.0,
+        "operations_launched": 1.0,
+        "entry_at": 96.0,
+        "launch_to_entry": 6.0,
+        "entered_heroes": 4.0,
+        "entered_soldiers": 8.0,
+        "hero_heal": 0.0,
+        "objectives": 1.0,
+        "entry_to_objective": 14.0,
+        "returned_heroes": 4.0,
+        "returned_soldiers": 7.0,
+        "entry_to_exit": 26.0,
+        "hero_repair_hp": 2019.6000000000001,
+        "hero_wreck_deaths": 6.0,
+        "wreck_explosion": 1.0,
+        "escaped_cost_1": 0.0
+      },
+      "damage_by_target_size": {
+        "(0, 1)": 137610.3017140569,
+        "(1, 1)": 133841.01475570255,
+        "(0, 2)": 173628.7466491622,
+        "(1, 2)": 173389.28701499003,
+        "(0, 3)": 295226.1344429304,
+        "(1, 3)": 224251.44744331995
+      },
+      "mounts_remaining": [
+        14,
+        0
+      ],
+      "transport_log": [
+        {
+          "unit_id": 0,
+          "hero": true,
+          "time": 96.0,
+          "returning": false,
+          "direct": true,
+          "destination": 32
+        },
+        {
+          "unit_id": 1,
+          "hero": true,
+          "time": 96.0,
+          "returning": false,
+          "direct": true,
+          "destination": 32
+        },
+        {
+          "unit_id": 2,
+          "hero": true,
+          "time": 96.0,
+          "returning": false,
+          "direct": true,
+          "destination": 32
+        },
+        {
+          "unit_id": 3,
+          "hero": true,
+          "time": 96.0,
+          "returning": false,
+          "direct": true,
+          "destination": 32
+        },
+        {
+          "unit_id": 4,
+          "hero": false,
+          "time": 96.0,
+          "returning": false,
+          "direct": true,
+          "destination": 32
+        },
+        {
+          "unit_id": 5,
+          "hero": false,
+          "time": 96.0,
+          "returning": false,
+          "direct": true,
+          "destination": 32
+        },
+        {
+          "unit_id": 6,
+          "hero": false,
+          "time": 96.0,
+          "returning": false,
+          "direct": true,
+          "destination": 32
+        },
+        {
+          "unit_id": 7,
+          "hero": false,
+          "time": 96.0,
+          "returning": false,
+          "direct": true,
+          "destination": 32
+        },
+        {
+          "unit_id": 8,
+          "hero": false,
+          "time": 96.0,
+          "returning": false,
+          "direct": true,
+          "destination": 32
+        },
+        {
+          "unit_id": 9,
+          "hero": false,
+          "time": 96.0,
+          "returning": false,
+          "direct": true,
+          "destination": 32
+        },
+        {
+          "unit_id": 10,
+          "hero": false,
+          "time": 96.0,
+          "returning": false,
+          "direct": true,
+          "destination": 32
+        },
+        {
+          "unit_id": 11,
+          "hero": false,
+          "time": 96.0,
+          "returning": false,
+          "direct": true,
+          "destination": 32
+        }
+      ],
+      "operation_timeline": [
+        {
+          "launch": 90.0,
+          "entry": 96.0,
+          "objective": 110.0,
+          "exit": 122.0,
+          "target_id": 32,
+          "target_kind": "cruiser",
+          "target_wreck_at": 595.0,
+          "observed_survival_after_entry": 499.0,
+          "units": [
+            {
+              "id": 0,
+              "kind": "melee",
+              "state": "aboard",
+              "hp": 156.24403320312496
+            },
+            {
+              "id": 1,
+              "kind": "ranged",
+              "state": "aboard",
+              "hp": 291.1752332031251
+            },
+            {
+              "id": 2,
+              "kind": "support",
+              "state": "aboard",
+              "hp": 359.9720332031251
+            },
+            {
+              "id": 3,
+              "kind": "commander",
+              "state": "aboard",
+              "hp": 380.63603320312507
+            },
+            {
+              "id": 4,
+              "kind": "soldier",
+              "state": "dead",
+              "hp": 0
+            },
+            {
+              "id": 5,
+              "kind": "soldier",
+              "state": "aboard",
+              "hp": 32.572033203125
+            },
+            {
+              "id": 6,
+              "kind": "soldier",
+              "state": "aboard",
+              "hp": 55.372033203125
+            },
+            {
+              "id": 7,
+              "kind": "soldier",
+              "state": "aboard",
+              "hp": 55.372033203125
+            },
+            {
+              "id": 8,
+              "kind": "soldier",
+              "state": "aboard",
+              "hp": 55.372033203125
+            },
+            {
+              "id": 9,
+              "kind": "soldier",
+              "state": "aboard",
+              "hp": 55.372033203125
+            },
+            {
+              "id": 10,
+              "kind": "soldier",
+              "state": "aboard",
+              "hp": 55.372033203125
+            },
+            {
+              "id": 11,
+              "kind": "soldier",
+              "state": "aboard",
+              "hp": 55.372033203125
+            }
+          ]
+        }
+      ],
+      "target_survival_after_entry": 499.0,
+      "target_wreck_before_exit": false,
+      "case": "active_6",
+      "enemy_weapon_disabled": true
+    },
+    {
+      "seed": 930004,
+      "seconds": 1119.0,
+      "main_seconds": 1014.0,
+      "first_loss_seconds": 42.0,
+      "winner": 1,
+      "outcome": "defeat",
+      "remaining_cost": [
+        0,
+        50
+      ],
+      "initial_cost": [
+        100,
+        100
+      ],
+      "initial_heroes": [
+        6,
+        6
+      ],
+      "initial_fighters": [
+        40,
+        40
+      ],
+      "fighter_package_cost": [
+        [
+          1200,
+          240,
+          0
+        ],
+        [
+          1200,
+          240,
+          0
+        ]
+      ],
+      "hero_states": {
+        "0:dead": 6,
+        "1:aboard": 2,
+        "1:officer": 1,
+        "1:dead": 3
+      },
+      "metrics": {
+        "fighter_losses": 80.0,
+        "shots_launched": 31492.0,
+        "facility_destroyed": 407.0,
+        "pd_damage_missile": 15288.0,
+        "repair_resource_0": 355.22493011064876,
+        "repair_resource_1": 17.24360904040094,
+        "repair_resource_2": 0.9737985461229903,
+        "repair_work": 7517.652918018183,
+        "repair_hull_hp": 3360.0,
+        "explosions": 62.0,
+        "wreck_hull": 46.0,
+        "operations_launched": 1.0,
+        "entry_at": 96.0,
+        "launch_to_entry": 6.0,
+        "entered_heroes": 4.0,
+        "entered_soldiers": 8.0,
+        "hero_heal": 0.0,
+        "objectives": 1.0,
+        "entry_to_objective": 33.0,
+        "returned_heroes": 4.0,
+        "returned_soldiers": 8.0,
+        "entry_to_exit": 51.0,
+        "hero_repair_hp": 1942.4034999999906,
+        "hero_wreck_deaths": 9.0,
+        "escaped_cost_0": 0.0
+      },
+      "damage_by_target_size": {
+        "(0, 1)": 142858.1948588438,
+        "(1, 1)": 136360.2992736059,
+        "(0, 2)": 173699.78415553627,
+        "(1, 2)": 173534.57726798655,
+        "(1, 3)": 293149.4365337747,
+        "(0, 3)": 264144.51095923054
+      },
+      "mounts_remaining": [
+        0,
+        14
+      ],
+      "transport_log": [
+        {
+          "unit_id": 0,
+          "hero": true,
+          "time": 96.0,
+          "returning": false,
+          "direct": true,
+          "destination": 34
+        },
+        {
+          "unit_id": 1,
+          "hero": true,
+          "time": 96.0,
+          "returning": false,
+          "direct": true,
+          "destination": 34
+        },
+        {
+          "unit_id": 2,
+          "hero": true,
+          "time": 96.0,
+          "returning": false,
+          "direct": true,
+          "destination": 34
+        },
+        {
+          "unit_id": 3,
+          "hero": true,
+          "time": 96.0,
+          "returning": false,
+          "direct": true,
+          "destination": 34
+        },
+        {
+          "unit_id": 4,
+          "hero": false,
+          "time": 96.0,
+          "returning": false,
+          "direct": true,
+          "destination": 34
+        },
+        {
+          "unit_id": 5,
+          "hero": false,
+          "time": 96.0,
+          "returning": false,
+          "direct": true,
+          "destination": 34
+        },
+        {
+          "unit_id": 6,
+          "hero": false,
+          "time": 96.0,
+          "returning": false,
+          "direct": true,
+          "destination": 34
+        },
+        {
+          "unit_id": 7,
+          "hero": false,
+          "time": 96.0,
+          "returning": false,
+          "direct": true,
+          "destination": 34
+        },
+        {
+          "unit_id": 8,
+          "hero": false,
+          "time": 96.0,
+          "returning": false,
+          "direct": true,
+          "destination": 34
+        },
+        {
+          "unit_id": 9,
+          "hero": false,
+          "time": 96.0,
+          "returning": false,
+          "direct": true,
+          "destination": 34
+        },
+        {
+          "unit_id": 10,
+          "hero": false,
+          "time": 96.0,
+          "returning": false,
+          "direct": true,
+          "destination": 34
+        },
+        {
+          "unit_id": 11,
+          "hero": false,
+          "time": 96.0,
+          "returning": false,
+          "direct": true,
+          "destination": 34
+        }
+      ],
+      "operation_timeline": [
+        {
+          "launch": 90.0,
+          "entry": 96.0,
+          "objective": 129.0,
+          "exit": 147.0,
+          "target_id": 34,
+          "target_kind": "air_defense",
+          "target_wreck_at": 376.0,
+          "observed_survival_after_entry": 280.0,
+          "units": [
+            {
+              "id": 0,
+              "kind": "melee",
+              "state": "dead",
+              "hp": 0
+            },
+            {
+              "id": 1,
+              "kind": "ranged",
+              "state": "dead",
+              "hp": 0
+            },
+            {
+              "id": 2,
+              "kind": "support",
+              "state": "dead",
+              "hp": 0
+            },
+            {
+              "id": 3,
+              "kind": "commander",
+              "state": "dead",
+              "hp": 0
+            },
+            {
+              "id": 4,
+              "kind": "soldier",
+              "state": "dead",
+              "hp": 0
+            },
+            {
+              "id": 5,
+              "kind": "soldier",
+              "state": "dead",
+              "hp": 0
+            },
+            {
+              "id": 6,
+              "kind": "soldier",
+              "state": "dead",
+              "hp": 0
+            },
+            {
+              "id": 7,
+              "kind": "soldier",
+              "state": "dead",
+              "hp": 0
+            },
+            {
+              "id": 8,
+              "kind": "soldier",
+              "state": "dead",
+              "hp": 0
+            },
+            {
+              "id": 9,
+              "kind": "soldier",
+              "state": "dead",
+              "hp": 0
+            },
+            {
+              "id": 10,
+              "kind": "soldier",
+              "state": "dead",
+              "hp": 0
+            },
+            {
+              "id": 11,
+              "kind": "soldier",
+              "state": "dead",
+              "hp": 0
+            }
+          ]
+        }
+      ],
+      "target_survival_after_entry": 280.0,
+      "target_wreck_before_exit": false,
+      "case": "active_6",
+      "enemy_weapon_disabled": false
+    },
+    {
+      "seed": 930005,
+      "seconds": 1075.0,
+      "main_seconds": 994.0,
+      "first_loss_seconds": 70.0,
+      "winner": 0,
+      "outcome": "victory",
+      "remaining_cost": [
+        51,
+        0
+      ],
+      "initial_cost": [
+        100,
+        100
+      ],
+      "initial_heroes": [
+        6,
+        6
+      ],
+      "initial_fighters": [
+        40,
+        40
+      ],
+      "fighter_package_cost": [
+        [
+          1200,
+          240,
+          0
+        ],
+        [
+          1200,
+          240,
+          0
+        ]
+      ],
+      "hero_states": {
+        "0:aboard": 6,
+        "1:dead": 6
+      },
+      "metrics": {
+        "fighter_losses": 80.0,
+        "shots_launched": 30281.0,
+        "pd_damage_missile": 15420.0,
+        "repair_resource_0": 452.6860422268435,
+        "repair_resource_1": 10.915400836375897,
+        "repair_resource_2": 1.0125000000000004,
+        "repair_work": 10726.43525575773,
+        "facility_destroyed": 371.0,
+        "explosions": 64.0,
+        "repair_hull_hp": 4128.0,
+        "wreck_hull": 44.0,
+        "operations_launched": 1.0,
+        "entry_at": 95.0,
+        "launch_to_entry": 5.0,
+        "entered_heroes": 4.0,
+        "entered_soldiers": 8.0,
+        "aborted_operations": 1,
+        "hero_heal": 0.0,
+        "returned_heroes": 4.0,
+        "returned_soldiers": 8.0,
+        "entry_to_exit": 5.0,
+        "wreck_core": 1.0,
+        "hero_wreck_deaths": 6.0,
+        "hero_repair_hp": 2019.6000000000001,
+        "escaped_cost_1": 0.0
+      },
+      "damage_by_target_size": {
+        "(0, 1)": 138548.13712209094,
+        "(1, 2)": 169481.22883194403,
+        "(1, 1)": 131261.67048444517,
+        "(0, 2)": 172811.41576952382,
+        "(0, 3)": 295182.5028553198,
+        "(1, 3)": 183460.05411788466
+      },
+      "mounts_remaining": [
+        14,
+        0
+      ],
+      "transport_log": [
+        {
+          "unit_id": 0,
+          "hero": true,
+          "time": 95.0,
+          "returning": false,
+          "direct": true,
+          "destination": 40
+        },
+        {
+          "unit_id": 1,
+          "hero": true,
+          "time": 95.0,
+          "returning": false,
+          "direct": true,
+          "destination": 40
+        },
+        {
+          "unit_id": 2,
+          "hero": true,
+          "time": 95.0,
+          "returning": false,
+          "direct": true,
+          "destination": 40
+        },
+        {
+          "unit_id": 3,
+          "hero": true,
+          "time": 95.0,
+          "returning": false,
+          "direct": true,
+          "destination": 40
+        },
+        {
+          "unit_id": 4,
+          "hero": false,
+          "time": 95.0,
+          "returning": false,
+          "direct": true,
+          "destination": 40
+        },
+        {
+          "unit_id": 5,
+          "hero": false,
+          "time": 95.0,
+          "returning": false,
+          "direct": true,
+          "destination": 40
+        },
+        {
+          "unit_id": 6,
+          "hero": false,
+          "time": 95.0,
+          "returning": false,
+          "direct": true,
+          "destination": 40
+        },
+        {
+          "unit_id": 7,
+          "hero": false,
+          "time": 95.0,
+          "returning": false,
+          "direct": true,
+          "destination": 40
+        },
+        {
+          "unit_id": 8,
+          "hero": false,
+          "time": 95.0,
+          "returning": false,
+          "direct": true,
+          "destination": 40
+        },
+        {
+          "unit_id": 9,
+          "hero": false,
+          "time": 95.0,
+          "returning": false,
+          "direct": true,
+          "destination": 40
+        },
+        {
+          "unit_id": 10,
+          "hero": false,
+          "time": 95.0,
+          "returning": false,
+          "direct": true,
+          "destination": 40
+        },
+        {
+          "unit_id": 11,
+          "hero": false,
+          "time": 95.0,
+          "returning": false,
+          "direct": true,
+          "destination": 40
+        }
+      ],
+      "operation_timeline": [
+        {
+          "launch": 90.0,
+          "entry": 95.0,
+          "objective": null,
+          "exit": 100.0,
+          "target_id": 40,
+          "target_kind": "corvette",
+          "target_wreck_at": 137.0,
+          "observed_survival_after_entry": 42.0,
+          "units": [
+            {
+              "id": 0,
+              "kind": "melee",
+              "state": "aboard",
+              "hp": 392.32639685546866
+            },
+            {
+              "id": 1,
+              "kind": "ranged",
+              "state": "aboard",
+              "hp": 365.5263968554687
+            },
+            {
+              "id": 2,
+              "kind": "support",
+              "state": "aboard",
+              "hp": 365.5263968554687
+            },
+            {
+              "id": 3,
+              "kind": "commander",
+              "state": "aboard",
+              "hp": 427.12639685546867
+            },
+            {
+              "id": 4,
+              "kind": "soldier",
+              "state": "aboard",
+              "hp": 60.92639685546875
+            },
+            {
+              "id": 5,
+              "kind": "soldier",
+              "state": "aboard",
+              "hp": 60.92639685546875
+            },
+            {
+              "id": 6,
+              "kind": "soldier",
+              "state": "aboard",
+              "hp": 60.92639685546875
+            },
+            {
+              "id": 7,
+              "kind": "soldier",
+              "state": "aboard",
+              "hp": 60.92639685546875
+            },
+            {
+              "id": 8,
+              "kind": "soldier",
+              "state": "aboard",
+              "hp": 60.92639685546875
+            },
+            {
+              "id": 9,
+              "kind": "soldier",
+              "state": "aboard",
+              "hp": 60.92639685546875
+            },
+            {
+              "id": 10,
+              "kind": "soldier",
+              "state": "aboard",
+              "hp": 60.92639685546875
+            },
+            {
+              "id": 11,
+              "kind": "soldier",
+              "state": "aboard",
+              "hp": 60.92639685546875
+            }
+          ]
+        }
+      ],
+      "target_survival_after_entry": 42.0,
+      "target_wreck_before_exit": false,
+      "case": "active_6",
+      "enemy_weapon_disabled": true
+    },
+    {
+      "seed": 930006,
+      "seconds": 1177.0,
+      "main_seconds": 1138.0,
+      "first_loss_seconds": 40.0,
+      "winner": 0,
+      "outcome": "victory",
+      "remaining_cost": [
+        50,
+        0
+      ],
+      "initial_cost": [
+        100,
+        100
+      ],
+      "initial_heroes": [
+        6,
+        6
+      ],
+      "initial_fighters": [
+        40,
+        40
+      ],
+      "fighter_package_cost": [
+        [
+          1200,
+          240,
+          0
+        ],
+        [
+          1200,
+          240,
+          0
+        ]
+      ],
+      "hero_states": {
+        "0:aboard": 2,
+        "0:dead": 4,
+        "1:dead": 6
+      },
+      "metrics": {
+        "fighter_losses": 80.0,
+        "shots_launched": 31253.0,
+        "pd_damage_missile": 15312.0,
+        "repair_resource_0": 297.14664923761944,
+        "repair_resource_1": 12.414726434051882,
+        "repair_resource_2": 1.0125000000000004,
+        "repair_work": 6393.9591752581355,
+        "facility_destroyed": 387.0,
+        "explosions": 59.0,
+        "repair_hull_hp": 2400.0,
+        "wreck_hull": 47.0,
+        "wreck_core": 1.0,
+        "operations_launched": 1.0,
+        "entry_at": 96.0,
+        "launch_to_entry": 6.0,
+        "entered_heroes": 4.0,
+        "entered_soldiers": 8.0,
+        "hero_heal": 0.0,
+        "objectives": 1.0,
+        "entry_to_objective": 15.0,
+        "returned_heroes": 4.0,
+        "returned_soldiers": 8.0,
+        "entry_to_exit": 29.0,
+        "hero_repair_hp": 2019.6000000000001,
+        "hero_wreck_deaths": 6.0,
+        "escaped_cost_1": 0.0
+      },
+      "damage_by_target_size": {
+        "(0, 1)": 136100.30924729706,
+        "(1, 1)": 133320.39669360543,
+        "(0, 2)": 173671.29814614667,
+        "(1, 2)": 173396.7621102703,
+        "(0, 3)": 295467.0371200059,
+        "(1, 3)": 239486.31665355482
+      },
+      "mounts_remaining": [
+        14,
+        0
+      ],
+      "transport_log": [
+        {
+          "unit_id": 0,
+          "hero": true,
+          "time": 96.0,
+          "returning": false,
+          "direct": true,
+          "destination": 34
+        },
+        {
+          "unit_id": 1,
+          "hero": true,
+          "time": 96.0,
+          "returning": false,
+          "direct": true,
+          "destination": 34
+        },
+        {
+          "unit_id": 2,
+          "hero": true,
+          "time": 96.0,
+          "returning": false,
+          "direct": true,
+          "destination": 34
+        },
+        {
+          "unit_id": 3,
+          "hero": true,
+          "time": 96.0,
+          "returning": false,
+          "direct": true,
+          "destination": 34
+        },
+        {
+          "unit_id": 4,
+          "hero": false,
+          "time": 96.0,
+          "returning": false,
+          "direct": true,
+          "destination": 34
+        },
+        {
+          "unit_id": 5,
+          "hero": false,
+          "time": 96.0,
+          "returning": false,
+          "direct": true,
+          "destination": 34
+        },
+        {
+          "unit_id": 6,
+          "hero": false,
+          "time": 96.0,
+          "returning": false,
+          "direct": true,
+          "destination": 34
+        },
+        {
+          "unit_id": 7,
+          "hero": false,
+          "time": 96.0,
+          "returning": false,
+          "direct": true,
+          "destination": 34
+        },
+        {
+          "unit_id": 8,
+          "hero": false,
+          "time": 96.0,
+          "returning": false,
+          "direct": true,
+          "destination": 34
+        },
+        {
+          "unit_id": 9,
+          "hero": false,
+          "time": 96.0,
+          "returning": false,
+          "direct": true,
+          "destination": 34
+        },
+        {
+          "unit_id": 10,
+          "hero": false,
+          "time": 96.0,
+          "returning": false,
+          "direct": true,
+          "destination": 34
+        },
+        {
+          "unit_id": 11,
+          "hero": false,
+          "time": 96.0,
+          "returning": false,
+          "direct": true,
+          "destination": 34
+        }
+      ],
+      "operation_timeline": [
+        {
+          "launch": 90.0,
+          "entry": 96.0,
+          "objective": 111.0,
+          "exit": 125.0,
+          "target_id": 34,
+          "target_kind": "air_defense",
+          "target_wreck_at": 482.0,
+          "observed_survival_after_entry": 386.0,
+          "units": [
+            {
+              "id": 0,
+              "kind": "melee",
+              "state": "dead",
+              "hp": 0
+            },
+            {
+              "id": 1,
+              "kind": "ranged",
+              "state": "dead",
+              "hp": 0
+            },
+            {
+              "id": 2,
+              "kind": "support",
+              "state": "dead",
+              "hp": 0
+            },
+            {
+              "id": 3,
+              "kind": "commander",
+              "state": "dead",
+              "hp": 0
+            },
+            {
+              "id": 4,
+              "kind": "soldier",
+              "state": "dead",
+              "hp": 0
+            },
+            {
+              "id": 5,
+              "kind": "soldier",
+              "state": "dead",
+              "hp": 0
+            },
+            {
+              "id": 6,
+              "kind": "soldier",
+              "state": "dead",
+              "hp": 0
+            },
+            {
+              "id": 7,
+              "kind": "soldier",
+              "state": "dead",
+              "hp": 0
+            },
+            {
+              "id": 8,
+              "kind": "soldier",
+              "state": "dead",
+              "hp": 0
+            },
+            {
+              "id": 9,
+              "kind": "soldier",
+              "state": "dead",
+              "hp": 0
+            },
+            {
+              "id": 10,
+              "kind": "soldier",
+              "state": "dead",
+              "hp": 0
+            },
+            {
+              "id": 11,
+              "kind": "soldier",
+              "state": "dead",
+              "hp": 0
+            }
+          ]
+        }
+      ],
+      "target_survival_after_entry": 386.0,
+      "target_wreck_before_exit": false,
+      "case": "active_6",
+      "enemy_weapon_disabled": true
+    },
+    {
+      "seed": 930007,
+      "seconds": 971.0,
+      "main_seconds": 897.0,
+      "first_loss_seconds": 67.0,
+      "winner": 0,
+      "outcome": "victory",
+      "remaining_cost": [
+        51,
+        0
+      ],
+      "initial_cost": [
+        100,
+        100
+      ],
+      "initial_heroes": [
+        6,
+        6
+      ],
+      "initial_fighters": [
+        40,
+        40
+      ],
+      "fighter_package_cost": [
+        [
+          1200,
+          240,
+          0
+        ],
+        [
+          1200,
+          240,
+          0
+        ]
+      ],
+      "hero_states": {
+        "0:aboard": 6,
+        "1:dead": 6
+      },
+      "metrics": {
+        "fighter_losses": 80.0,
+        "shots_launched": 29131.0,
+        "pd_damage_missile": 13644.0,
+        "facility_destroyed": 395.0,
+        "explosions": 68.0,
+        "repair_resource_0": 451.91015799554197,
+        "repair_resource_1": 26.003647665566447,
+        "repair_resource_2": 0.9171042782250131,
+        "repair_work": 10178.699464430432,
+        "repair_hull_hp": 3776.0,
+        "wreck_hull": 51.0,
+        "operations_launched": 1.0,
+        "entry_at": 96.0,
+        "launch_to_entry": 6.0,
+        "entered_heroes": 4.0,
+        "entered_soldiers": 8.0,
+        "hero_heal": 392.2,
+        "catalysts_used": 3.0,
+        "objectives": 1.0,
+        "entry_to_objective": 47.0,
+        "returned_heroes": 4.0,
+        "returned_soldiers": 8.0,
+        "entry_to_exit": 78.0,
+        "hero_wreck_deaths": 5.0,
+        "hero_repair_hp": 1829.3173336328252,
+        "escaped_cost_1": 0.0
+      },
+      "damage_by_target_size": {
+        "(1, 1)": 136896.3703440324,
+        "(0, 1)": 141799.41434765217,
+        "(0, 2)": 173669.67667967125,
+        "(1, 2)": 173705.46289373253,
+        "(1, 3)": 139796.76963585903,
+        "(0, 3)": 295049.22883997357
+      },
+      "mounts_remaining": [
+        14,
+        0
+      ],
+      "transport_log": [
+        {
+          "unit_id": 0,
+          "hero": true,
+          "time": 96.0,
+          "returning": false,
+          "direct": true,
+          "destination": 32
+        },
+        {
+          "unit_id": 1,
+          "hero": true,
+          "time": 96.0,
+          "returning": false,
+          "direct": true,
+          "destination": 32
+        },
+        {
+          "unit_id": 2,
+          "hero": true,
+          "time": 96.0,
+          "returning": false,
+          "direct": true,
+          "destination": 32
+        },
+        {
+          "unit_id": 3,
+          "hero": true,
+          "time": 96.0,
+          "returning": false,
+          "direct": true,
+          "destination": 32
+        },
+        {
+          "unit_id": 4,
+          "hero": false,
+          "time": 96.0,
+          "returning": false,
+          "direct": true,
+          "destination": 32
+        },
+        {
+          "unit_id": 5,
+          "hero": false,
+          "time": 96.0,
+          "returning": false,
+          "direct": true,
+          "destination": 32
+        },
+        {
+          "unit_id": 6,
+          "hero": false,
+          "time": 96.0,
+          "returning": false,
+          "direct": true,
+          "destination": 32
+        },
+        {
+          "unit_id": 7,
+          "hero": false,
+          "time": 96.0,
+          "returning": false,
+          "direct": true,
+          "destination": 32
+        },
+        {
+          "unit_id": 8,
+          "hero": false,
+          "time": 96.0,
+          "returning": false,
+          "direct": true,
+          "destination": 32
+        },
+        {
+          "unit_id": 9,
+          "hero": false,
+          "time": 96.0,
+          "returning": false,
+          "direct": true,
+          "destination": 32
+        },
+        {
+          "unit_id": 10,
+          "hero": false,
+          "time": 96.0,
+          "returning": false,
+          "direct": true,
+          "destination": 32
+        },
+        {
+          "unit_id": 11,
+          "hero": false,
+          "time": 96.0,
+          "returning": false,
+          "direct": true,
+          "destination": 32
+        }
+      ],
+      "operation_timeline": [
+        {
+          "launch": 90.0,
+          "entry": 96.0,
+          "objective": 143.0,
+          "exit": 174.0,
+          "target_id": 32,
+          "target_kind": "cruiser",
+          "target_wreck_at": 464.0,
+          "observed_survival_after_entry": 368.0,
+          "units": [
+            {
+              "id": 0,
+              "kind": "melee",
+              "state": "aboard",
+              "hp": 395.46065527343745
+            },
+            {
+              "id": 1,
+              "kind": "ranged",
+              "state": "aboard",
+              "hp": 363.17265527343756
+            },
+            {
+              "id": 2,
+              "kind": "support",
+              "state": "aboard",
+              "hp": 363.17265527343756
+            },
+            {
+              "id": 3,
+              "kind": "commander",
+              "state": "aboard",
+              "hp": 424.7726552734375
+            },
+            {
+              "id": 4,
+              "kind": "soldier",
+              "state": "aboard",
+              "hp": 58.5726552734375
+            },
+            {
+              "id": 5,
+              "kind": "soldier",
+              "state": "aboard",
+              "hp": 58.5726552734375
+            },
+            {
+              "id": 6,
+              "kind": "soldier",
+              "state": "aboard",
+              "hp": 58.5726552734375
+            },
+            {
+              "id": 7,
+              "kind": "soldier",
+              "state": "aboard",
+              "hp": 58.5726552734375
+            },
+            {
+              "id": 8,
+              "kind": "soldier",
+              "state": "aboard",
+              "hp": 58.5726552734375
+            },
+            {
+              "id": 9,
+              "kind": "soldier",
+              "state": "aboard",
+              "hp": 58.5726552734375
+            },
+            {
+              "id": 10,
+              "kind": "soldier",
+              "state": "aboard",
+              "hp": 58.5726552734375
+            },
+            {
+              "id": 11,
+              "kind": "soldier",
+              "state": "aboard",
+              "hp": 58.5726552734375
+            }
+          ]
+        }
+      ],
+      "target_survival_after_entry": 368.0,
+      "target_wreck_before_exit": false,
+      "case": "active_6",
+      "enemy_weapon_disabled": true
+    },
+    {
+      "seed": 930000,
+      "seconds": 1218.0,
+      "main_seconds": 970.0,
+      "first_loss_seconds": 55.0,
+      "winner": 1,
+      "outcome": "defeat",
+      "remaining_cost": [
+        0,
+        25
+      ],
+      "initial_cost": [
+        100,
+        100
+      ],
+      "initial_heroes": [
+        10,
+        10
+      ],
+      "initial_fighters": [
+        40,
+        40
+      ],
+      "fighter_package_cost": [
+        [
+          1200,
+          240,
+          0
+        ],
+        [
+          1200,
+          240,
+          0
+        ]
+      ],
+      "hero_states": {
+        "0:dead": 10,
+        "1:aboard": 2,
+        "1:dead": 8
+      },
+      "metrics": {
+        "fighter_losses": 80.0,
+        "shots_launched": 29864.0,
+        "pd_damage_missile": 10848.0,
+        "facility_destroyed": 402.0,
+        "repair_resource_0": 806.1297493290535,
+        "repair_resource_1": 62.76390887021092,
+        "repair_resource_2": 1.9896093750000048,
+        "repair_work": 17693.49255309505,
+        "explosions": 65.0,
+        "repair_hull_hp": 7584.0,
+        "wreck_hull": 44.0,
+        "hero_repair_hp": 4523.007500000011,
+        "operations_launched": 1.0,
+        "entry_at": 96.0,
+        "launch_to_entry": 6.0,
+        "entered_heroes": 4.0,
+        "entered_soldiers": 8.0,
+        "hero_heal": 0.0,
+        "objectives": 1.0,
+        "entry_to_objective": 31.0,
+        "hero_wreck_deaths": 17.0,
+        "returned_heroes": 4.0,
+        "returned_soldiers": 6.0,
+        "entry_to_exit": 59.0,
+        "escaped_cost_0": 0.0
+      },
+      "damage_by_target_size": {
+        "(1, 1)": 135157.25522832788,
+        "(0, 1)": 138024.03657046845,
+        "(0, 2)": 177057.7412881082,
+        "(1, 2)": 174194.5983894476,
+        "(0, 3)": 280981.39605038916,
+        "(1, 3)": 294816.954800918
+      },
+      "mounts_remaining": [
+        0,
+        10
+      ],
+      "transport_log": [
+        {
+          "unit_id": 0,
+          "hero": true,
+          "time": 96.0,
+          "returning": false,
+          "direct": true,
+          "destination": 32
+        },
+        {
+          "unit_id": 1,
+          "hero": true,
+          "time": 96.0,
+          "returning": false,
+          "direct": true,
+          "destination": 32
+        },
+        {
+          "unit_id": 2,
+          "hero": true,
+          "time": 96.0,
+          "returning": false,
+          "direct": true,
+          "destination": 32
+        },
+        {
+          "unit_id": 3,
+          "hero": true,
+          "time": 96.0,
+          "returning": false,
+          "direct": true,
+          "destination": 32
+        },
+        {
+          "unit_id": 4,
+          "hero": false,
+          "time": 96.0,
+          "returning": false,
+          "direct": true,
+          "destination": 32
+        },
+        {
+          "unit_id": 5,
+          "hero": false,
+          "time": 96.0,
+          "returning": false,
+          "direct": true,
+          "destination": 32
+        },
+        {
+          "unit_id": 6,
+          "hero": false,
+          "time": 96.0,
+          "returning": false,
+          "direct": true,
+          "destination": 32
+        },
+        {
+          "unit_id": 7,
+          "hero": false,
+          "time": 96.0,
+          "returning": false,
+          "direct": true,
+          "destination": 32
+        },
+        {
+          "unit_id": 8,
+          "hero": false,
+          "time": 96.0,
+          "returning": false,
+          "direct": true,
+          "destination": 32
+        },
+        {
+          "unit_id": 9,
+          "hero": false,
+          "time": 96.0,
+          "returning": false,
+          "direct": true,
+          "destination": 32
+        },
+        {
+          "unit_id": 10,
+          "hero": false,
+          "time": 96.0,
+          "returning": false,
+          "direct": true,
+          "destination": 32
+        },
+        {
+          "unit_id": 11,
+          "hero": false,
+          "time": 96.0,
+          "returning": false,
+          "direct": true,
+          "destination": 32
+        }
+      ],
+      "operation_timeline": [
+        {
+          "launch": 90.0,
+          "entry": 96.0,
+          "objective": 127.0,
+          "exit": 155.0,
+          "target_id": 32,
+          "target_kind": "cruiser",
+          "target_wreck_at": 585.0,
+          "observed_survival_after_entry": 489.0,
+          "units": [
+            {
+              "id": 0,
+              "kind": "melee",
+              "state": "dead",
+              "hp": 0
+            },
+            {
+              "id": 1,
+              "kind": "ranged",
+              "state": "dead",
+              "hp": 0
+            },
+            {
+              "id": 2,
+              "kind": "support",
+              "state": "dead",
+              "hp": 0
+            },
+            {
+              "id": 3,
+              "kind": "commander",
+              "state": "dead",
+              "hp": 0
+            },
+            {
+              "id": 4,
+              "kind": "soldier",
+              "state": "dead",
+              "hp": 0
+            },
+            {
+              "id": 5,
+              "kind": "soldier",
+              "state": "dead",
+              "hp": 0
+            },
+            {
+              "id": 6,
+              "kind": "soldier",
+              "state": "dead",
+              "hp": 0
+            },
+            {
+              "id": 7,
+              "kind": "soldier",
+              "state": "dead",
+              "hp": 0
+            },
+            {
+              "id": 8,
+              "kind": "soldier",
+              "state": "dead",
+              "hp": 0
+            },
+            {
+              "id": 9,
+              "kind": "soldier",
+              "state": "dead",
+              "hp": 0
+            },
+            {
+              "id": 10,
+              "kind": "soldier",
+              "state": "dead",
+              "hp": 0
+            },
+            {
+              "id": 11,
+              "kind": "soldier",
+              "state": "dead",
+              "hp": 0
+            }
+          ]
+        }
+      ],
+      "target_survival_after_entry": 489.0,
+      "target_wreck_before_exit": false,
+      "case": "active_10",
+      "enemy_weapon_disabled": false
+    },
+    {
+      "seed": 930001,
+      "seconds": 1121.0,
+      "main_seconds": 1027.0,
+      "first_loss_seconds": 36.0,
+      "winner": 0,
+      "outcome": "victory",
+      "remaining_cost": [
+        50,
+        0
+      ],
+      "initial_cost": [
+        100,
+        100
+      ],
+      "initial_heroes": [
+        10,
+        10
+      ],
+      "initial_fighters": [
+        40,
+        40
+      ],
+      "fighter_package_cost": [
+        [
+          1200,
+          240,
+          0
+        ],
+        [
+          1200,
+          240,
+          0
+        ]
+      ],
+      "hero_states": {
+        "0:aboard": 2,
+        "0:officer": 1,
+        "0:dead": 7,
+        "1:dead": 10
+      },
+      "metrics": {
+        "fighter_losses": 80.0,
+        "shots_launched": 30107.0,
+        "pd_damage_missile": 13200.0,
+        "repair_resource_0": 508.48562470963213,
+        "repair_resource_1": 37.11848191036578,
+        "repair_resource_2": 2.0083957219251403,
+        "repair_work": 9444.715305973179,
+        "facility_destroyed": 399.0,
+        "explosions": 66.0,
+        "repair_hull_hp": 3744.0,
+        "wreck_hull": 47.0,
+        "wreck_core": 1.0,
+        "operations_launched": 1.0,
+        "entry_at": 96.0,
+        "launch_to_entry": 6.0,
+        "entered_heroes": 4.0,
+        "entered_soldiers": 8.0,
+        "hero_heal": 215.1,
+        "catalysts_used": 2.0,
+        "hero_wreck_deaths": 16.0,
+        "objectives": 1.0,
+        "entry_to_objective": 47.0,
+        "returned_heroes": 4.0,
+        "returned_soldiers": 8.0,
+        "entry_to_exit": 78.0,
+        "hero_repair_hp": 4560.480000000014,
+        "wreck_explosion": 1.0,
+        "escaped_cost_1": 0.0
+      },
+      "damage_by_target_size": {
+        "(1, 1)": 136657.2210335817,
+        "(0, 1)": 141453.85868690285,
+        "(1, 2)": 173224.47478036734,
+        "(0, 2)": 175578.82396691645,
+        "(0, 3)": 295098.3301052434,
+        "(1, 3)": 204528.39883037333
+      },
+      "mounts_remaining": [
+        14,
+        0
+      ],
+      "transport_log": [
+        {
+          "unit_id": 0,
+          "hero": true,
+          "time": 96.0,
+          "returning": false,
+          "direct": true,
+          "destination": 32
+        },
+        {
+          "unit_id": 1,
+          "hero": true,
+          "time": 96.0,
+          "returning": false,
+          "direct": true,
+          "destination": 32
+        },
+        {
+          "unit_id": 2,
+          "hero": true,
+          "time": 96.0,
+          "returning": false,
+          "direct": true,
+          "destination": 32
+        },
+        {
+          "unit_id": 3,
+          "hero": true,
+          "time": 96.0,
+          "returning": false,
+          "direct": true,
+          "destination": 32
+        },
+        {
+          "unit_id": 4,
+          "hero": false,
+          "time": 96.0,
+          "returning": false,
+          "direct": true,
+          "destination": 32
+        },
+        {
+          "unit_id": 5,
+          "hero": false,
+          "time": 96.0,
+          "returning": false,
+          "direct": true,
+          "destination": 32
+        },
+        {
+          "unit_id": 6,
+          "hero": false,
+          "time": 96.0,
+          "returning": false,
+          "direct": true,
+          "destination": 32
+        },
+        {
+          "unit_id": 7,
+          "hero": false,
+          "time": 96.0,
+          "returning": false,
+          "direct": true,
+          "destination": 32
+        },
+        {
+          "unit_id": 8,
+          "hero": false,
+          "time": 96.0,
+          "returning": false,
+          "direct": true,
+          "destination": 32
+        },
+        {
+          "unit_id": 9,
+          "hero": false,
+          "time": 96.0,
+          "returning": false,
+          "direct": true,
+          "destination": 32
+        },
+        {
+          "unit_id": 10,
+          "hero": false,
+          "time": 96.0,
+          "returning": false,
+          "direct": true,
+          "destination": 32
+        },
+        {
+          "unit_id": 11,
+          "hero": false,
+          "time": 96.0,
+          "returning": false,
+          "direct": true,
+          "destination": 32
+        }
+      ],
+      "operation_timeline": [
+        {
+          "launch": 90.0,
+          "entry": 96.0,
+          "objective": 143.0,
+          "exit": 174.0,
+          "target_id": 32,
+          "target_kind": "cruiser",
+          "target_wreck_at": 519.0,
+          "observed_survival_after_entry": 423.0,
+          "units": [
+            {
+              "id": 0,
+              "kind": "melee",
+              "state": "dead",
+              "hp": 0
+            },
+            {
+              "id": 1,
+              "kind": "ranged",
+              "state": "dead",
+              "hp": 0
+            },
+            {
+              "id": 2,
+              "kind": "support",
+              "state": "dead",
+              "hp": 0
+            },
+            {
+              "id": 3,
+              "kind": "commander",
+              "state": "dead",
+              "hp": 0
+            },
+            {
+              "id": 4,
+              "kind": "soldier",
+              "state": "dead",
+              "hp": 0
+            },
+            {
+              "id": 5,
+              "kind": "soldier",
+              "state": "dead",
+              "hp": 0
+            },
+            {
+              "id": 6,
+              "kind": "soldier",
+              "state": "dead",
+              "hp": 0
+            },
+            {
+              "id": 7,
+              "kind": "soldier",
+              "state": "dead",
+              "hp": 0
+            },
+            {
+              "id": 8,
+              "kind": "soldier",
+              "state": "dead",
+              "hp": 0
+            },
+            {
+              "id": 9,
+              "kind": "soldier",
+              "state": "dead",
+              "hp": 0
+            },
+            {
+              "id": 10,
+              "kind": "soldier",
+              "state": "dead",
+              "hp": 0
+            },
+            {
+              "id": 11,
+              "kind": "soldier",
+              "state": "dead",
+              "hp": 0
+            }
+          ]
+        }
+      ],
+      "target_survival_after_entry": 423.0,
+      "target_wreck_before_exit": false,
+      "case": "active_10",
+      "enemy_weapon_disabled": true
+    },
+    {
+      "seed": 930002,
+      "seconds": 1155.0,
+      "main_seconds": 959.0,
+      "first_loss_seconds": 61.0,
+      "winner": 0,
+      "outcome": "victory",
+      "remaining_cost": [
+        50,
+        0
+      ],
+      "initial_cost": [
+        100,
+        100
+      ],
+      "initial_heroes": [
+        10,
+        10
+      ],
+      "initial_fighters": [
+        40,
+        40
+      ],
+      "fighter_package_cost": [
+        [
+          1200,
+          240,
+          0
+        ],
+        [
+          1200,
+          240,
+          0
+        ]
+      ],
+      "hero_states": {
+        "0:aboard": 2,
+        "0:officer": 1,
+        "0:dead": 7,
+        "1:dead": 10
+      },
+      "metrics": {
+        "fighter_losses": 80.0,
+        "shots_launched": 32051.0,
+        "pd_damage_missile": 16008.0,
+        "facility_destroyed": 388.0,
+        "explosions": 67.0,
+        "repair_resource_0": 518.9783187689051,
+        "repair_resource_1": 18.83087691032781,
+        "repair_resource_2": 1.5371760053893302,
+        "repair_work": 10908.888835538497,
+        "repair_hull_hp": 4288.0,
+        "wreck_hull": 48.0,
+        "operations_launched": 1.0,
+        "entry_at": 96.0,
+        "launch_to_entry": 6.0,
+        "entered_heroes": 4.0,
+        "entered_soldiers": 8.0,
+        "hero_heal": 0.0,
+        "objectives": 1.0,
+        "entry_to_objective": 8.0,
+        "returned_heroes": 4.0,
+        "returned_soldiers": 8.0,
+        "entry_to_exit": 17.0,
+        "hero_repair_hp": 3620.5537387499185,
+        "hero_wreck_deaths": 16.0,
+        "escaped_cost_1": 0.0
+      },
+      "damage_by_target_size": {
+        "(0, 1)": 137377.39898771458,
+        "(1, 1)": 139520.4381530776,
+        "(1, 2)": 173360.76658281396,
+        "(0, 2)": 174491.0094605623,
+        "(0, 3)": 294403.26488665846,
+        "(1, 3)": 248009.8083723017
+      },
+      "mounts_remaining": [
+        14,
+        0
+      ],
+      "transport_log": [
+        {
+          "unit_id": 0,
+          "hero": true,
+          "time": 96.0,
+          "returning": false,
+          "direct": true,
+          "destination": 30
+        },
+        {
+          "unit_id": 1,
+          "hero": true,
+          "time": 96.0,
+          "returning": false,
+          "direct": true,
+          "destination": 30
+        },
+        {
+          "unit_id": 2,
+          "hero": true,
+          "time": 96.0,
+          "returning": false,
+          "direct": true,
+          "destination": 30
+        },
+        {
+          "unit_id": 3,
+          "hero": true,
+          "time": 96.0,
+          "returning": false,
+          "direct": true,
+          "destination": 30
+        },
+        {
+          "unit_id": 4,
+          "hero": false,
+          "time": 96.0,
+          "returning": false,
+          "direct": true,
+          "destination": 30
+        },
+        {
+          "unit_id": 5,
+          "hero": false,
+          "time": 96.0,
+          "returning": false,
+          "direct": true,
+          "destination": 30
+        },
+        {
+          "unit_id": 6,
+          "hero": false,
+          "time": 96.0,
+          "returning": false,
+          "direct": true,
+          "destination": 30
+        },
+        {
+          "unit_id": 7,
+          "hero": false,
+          "time": 96.0,
+          "returning": false,
+          "direct": true,
+          "destination": 30
+        },
+        {
+          "unit_id": 8,
+          "hero": false,
+          "time": 96.0,
+          "returning": false,
+          "direct": true,
+          "destination": 30
+        },
+        {
+          "unit_id": 9,
+          "hero": false,
+          "time": 96.0,
+          "returning": false,
+          "direct": true,
+          "destination": 30
+        },
+        {
+          "unit_id": 10,
+          "hero": false,
+          "time": 96.0,
+          "returning": false,
+          "direct": true,
+          "destination": 30
+        },
+        {
+          "unit_id": 11,
+          "hero": false,
+          "time": 96.0,
+          "returning": false,
+          "direct": true,
+          "destination": 30
+        }
+      ],
+      "operation_timeline": [
+        {
+          "launch": 90.0,
+          "entry": 96.0,
+          "objective": 104.0,
+          "exit": 113.0,
+          "target_id": 30,
+          "target_kind": "vector",
+          "target_wreck_at": 284.0,
+          "observed_survival_after_entry": 188.0,
+          "units": [
+            {
+              "id": 0,
+              "kind": "melee",
+              "state": "dead",
+              "hp": 0
+            },
+            {
+              "id": 1,
+              "kind": "ranged",
+              "state": "dead",
+              "hp": 0
+            },
+            {
+              "id": 2,
+              "kind": "support",
+              "state": "dead",
+              "hp": 0
+            },
+            {
+              "id": 3,
+              "kind": "commander",
+              "state": "dead",
+              "hp": 0
+            },
+            {
+              "id": 4,
+              "kind": "soldier",
+              "state": "dead",
+              "hp": 0
+            },
+            {
+              "id": 5,
+              "kind": "soldier",
+              "state": "dead",
+              "hp": 0
+            },
+            {
+              "id": 6,
+              "kind": "soldier",
+              "state": "dead",
+              "hp": 0
+            },
+            {
+              "id": 7,
+              "kind": "soldier",
+              "state": "dead",
+              "hp": 0
+            },
+            {
+              "id": 8,
+              "kind": "soldier",
+              "state": "dead",
+              "hp": 0
+            },
+            {
+              "id": 9,
+              "kind": "soldier",
+              "state": "dead",
+              "hp": 0
+            },
+            {
+              "id": 10,
+              "kind": "soldier",
+              "state": "dead",
+              "hp": 0
+            },
+            {
+              "id": 11,
+              "kind": "soldier",
+              "state": "dead",
+              "hp": 0
+            }
+          ]
+        }
+      ],
+      "target_survival_after_entry": 188.0,
+      "target_wreck_before_exit": false,
+      "case": "active_10",
+      "enemy_weapon_disabled": true
+    },
+    {
+      "seed": 930003,
+      "seconds": 1174.0,
+      "main_seconds": 948.0,
+      "first_loss_seconds": 39.0,
+      "winner": 0,
+      "outcome": "victory",
+      "remaining_cost": [
+        25,
+        0
+      ],
+      "initial_cost": [
+        100,
+        100
+      ],
+      "initial_heroes": [
+        10,
+        10
+      ],
+      "initial_fighters": [
+        40,
+        40
+      ],
+      "fighter_package_cost": [
+        [
+          1200,
+          240,
+          0
+        ],
+        [
+          1200,
+          240,
+          0
+        ]
+      ],
+      "hero_states": {
+        "0:aboard": 2,
+        "0:dead": 8,
+        "1:dead": 10
+      },
+      "metrics": {
+        "fighter_losses": 80.0,
+        "shots_launched": 31476.0,
+        "pd_damage_missile": 14076.0,
+        "repair_resource_0": 544.1525321128252,
+        "repair_resource_1": 33.15257372810646,
+        "repair_resource_2": 2.019161333347264,
+        "repair_work": 11567.539909765408,
+        "facility_destroyed": 397.0,
+        "explosions": 64.0,
+        "repair_hull_hp": 5472.0,
+        "wreck_hull": 41.0,
+        "operations_launched": 1.0,
+        "entry_at": 96.0,
+        "launch_to_entry": 6.0,
+        "entered_heroes": 4.0,
+        "entered_soldiers": 8.0,
+        "hero_heal": 0.0,
+        "objectives": 1.0,
+        "entry_to_objective": 30.0,
+        "returned_heroes": 4.0,
+        "returned_soldiers": 8.0,
+        "entry_to_exit": 46.0,
+        "hero_wreck_deaths": 17.0,
+        "hero_repair_hp": 4581.9538062500105,
+        "wreck_explosion": 1.0,
+        "escaped_cost_1": 0.0
+      },
+      "damage_by_target_size": {
+        "(0, 1)": 137270.7455377581,
+        "(1, 1)": 141537.11980357388,
+        "(0, 2)": 170750.681961449,
+        "(1, 2)": 174441.92875225982,
+        "(0, 3)": 295195.3649153462,
+        "(1, 3)": 265786.83822437644
+      },
+      "mounts_remaining": [
+        10,
+        0
+      ],
+      "transport_log": [
+        {
+          "unit_id": 0,
+          "hero": true,
+          "time": 96.0,
+          "returning": false,
+          "direct": true,
+          "destination": 30
+        },
+        {
+          "unit_id": 1,
+          "hero": true,
+          "time": 96.0,
+          "returning": false,
+          "direct": true,
+          "destination": 30
+        },
+        {
+          "unit_id": 2,
+          "hero": true,
+          "time": 96.0,
+          "returning": false,
+          "direct": true,
+          "destination": 30
+        },
+        {
+          "unit_id": 3,
+          "hero": true,
+          "time": 96.0,
+          "returning": false,
+          "direct": true,
+          "destination": 30
+        },
+        {
+          "unit_id": 4,
+          "hero": false,
+          "time": 96.0,
+          "returning": false,
+          "direct": true,
+          "destination": 30
+        },
+        {
+          "unit_id": 5,
+          "hero": false,
+          "time": 96.0,
+          "returning": false,
+          "direct": true,
+          "destination": 30
+        },
+        {
+          "unit_id": 6,
+          "hero": false,
+          "time": 96.0,
+          "returning": false,
+          "direct": true,
+          "destination": 30
+        },
+        {
+          "unit_id": 7,
+          "hero": false,
+          "time": 96.0,
+          "returning": false,
+          "direct": true,
+          "destination": 30
+        },
+        {
+          "unit_id": 8,
+          "hero": false,
+          "time": 96.0,
+          "returning": false,
+          "direct": true,
+          "destination": 30
+        },
+        {
+          "unit_id": 9,
+          "hero": false,
+          "time": 96.0,
+          "returning": false,
+          "direct": true,
+          "destination": 30
+        },
+        {
+          "unit_id": 10,
+          "hero": false,
+          "time": 96.0,
+          "returning": false,
+          "direct": true,
+          "destination": 30
+        },
+        {
+          "unit_id": 11,
+          "hero": false,
+          "time": 96.0,
+          "returning": false,
+          "direct": true,
+          "destination": 30
+        }
+      ],
+      "operation_timeline": [
+        {
+          "launch": 90.0,
+          "entry": 96.0,
+          "objective": 126.0,
+          "exit": 142.0,
+          "target_id": 30,
+          "target_kind": "vector",
+          "target_wreck_at": null,
+          "observed_survival_after_entry": 1078.0,
+          "units": [
+            {
+              "id": 0,
+              "kind": "melee",
+              "state": "dead",
+              "hp": 0
+            },
+            {
+              "id": 1,
+              "kind": "ranged",
+              "state": "dead",
+              "hp": 0
+            },
+            {
+              "id": 2,
+              "kind": "support",
+              "state": "dead",
+              "hp": 0
+            },
+            {
+              "id": 3,
+              "kind": "commander",
+              "state": "dead",
+              "hp": 0
+            },
+            {
+              "id": 4,
+              "kind": "soldier",
+              "state": "dead",
+              "hp": 0
+            },
+            {
+              "id": 5,
+              "kind": "soldier",
+              "state": "dead",
+              "hp": 0
+            },
+            {
+              "id": 6,
+              "kind": "soldier",
+              "state": "dead",
+              "hp": 0
+            },
+            {
+              "id": 7,
+              "kind": "soldier",
+              "state": "dead",
+              "hp": 0
+            },
+            {
+              "id": 8,
+              "kind": "soldier",
+              "state": "dead",
+              "hp": 0
+            },
+            {
+              "id": 9,
+              "kind": "soldier",
+              "state": "dead",
+              "hp": 0
+            },
+            {
+              "id": 10,
+              "kind": "soldier",
+              "state": "dead",
+              "hp": 0
+            },
+            {
+              "id": 11,
+              "kind": "soldier",
+              "state": "dead",
+              "hp": 0
+            }
+          ]
+        }
+      ],
+      "target_survival_after_entry": null,
+      "target_wreck_before_exit": false,
+      "case": "active_10",
+      "enemy_weapon_disabled": true
+    },
+    {
+      "seed": 930004,
+      "seconds": 1068.0,
+      "main_seconds": 940.0,
+      "first_loss_seconds": 49.0,
+      "winner": 0,
+      "outcome": "victory",
+      "remaining_cost": [
+        50,
+        0
+      ],
+      "initial_cost": [
+        100,
+        100
+      ],
+      "initial_heroes": [
+        10,
+        10
+      ],
+      "initial_fighters": [
+        40,
+        40
+      ],
+      "fighter_package_cost": [
+        [
+          1200,
+          240,
+          0
+        ],
+        [
+          1200,
+          240,
+          0
+        ]
+      ],
+      "hero_states": {
+        "0:aboard": 2,
+        "0:officer": 1,
+        "0:dead": 7,
+        "1:dead": 10
+      },
+      "metrics": {
+        "fighter_losses": 80.0,
+        "shots_launched": 29419.0,
+        "pd_damage_missile": 11352.0,
+        "repair_resource_0": 320.34881769191765,
+        "repair_resource_1": 21.26970427389722,
+        "repair_resource_2": 2.0118067555147188,
+        "repair_work": 5325.325701997287,
+        "facility_destroyed": 394.0,
+        "explosions": 64.0,
+        "repair_hull_hp": 2240.0,
+        "wreck_hull": 46.0,
+        "wreck_core": 2.0,
+        "hero_repair_hp": 4283.134625000031,
+        "operations_launched": 1.0,
+        "entry_at": 96.0,
+        "launch_to_entry": 6.0,
+        "entered_heroes": 4.0,
+        "entered_soldiers": 8.0,
+        "hero_heal": 354.2,
+        "catalysts_used": 2.0,
+        "objectives": 1.0,
+        "entry_to_objective": 40.0,
+        "returned_heroes": 4.0,
+        "returned_soldiers": 8.0,
+        "entry_to_exit": 60.0,
+        "hero_wreck_deaths": 12.0,
+        "escaped_cost_1": 0.0
+      },
+      "damage_by_target_size": {
+        "(0, 1)": 141249.17281759362,
+        "(1, 1)": 130197.05144819106,
+        "(0, 2)": 174053.48265687027,
+        "(1, 2)": 173443.6668348585,
+        "(1, 3)": 194926.7937537785,
+        "(0, 3)": 295167.6380026587
+      },
+      "mounts_remaining": [
+        14,
+        0
+      ],
+      "transport_log": [
+        {
+          "unit_id": 0,
+          "hero": true,
+          "time": 96.0,
+          "returning": false,
+          "direct": true,
+          "destination": 33
+        },
+        {
+          "unit_id": 1,
+          "hero": true,
+          "time": 96.0,
+          "returning": false,
+          "direct": true,
+          "destination": 33
+        },
+        {
+          "unit_id": 2,
+          "hero": true,
+          "time": 96.0,
+          "returning": false,
+          "direct": true,
+          "destination": 33
+        },
+        {
+          "unit_id": 3,
+          "hero": true,
+          "time": 96.0,
+          "returning": false,
+          "direct": true,
+          "destination": 33
+        },
+        {
+          "unit_id": 4,
+          "hero": false,
+          "time": 96.0,
+          "returning": false,
+          "direct": true,
+          "destination": 33
+        },
+        {
+          "unit_id": 5,
+          "hero": false,
+          "time": 96.0,
+          "returning": false,
+          "direct": true,
+          "destination": 33
+        },
+        {
+          "unit_id": 6,
+          "hero": false,
+          "time": 96.0,
+          "returning": false,
+          "direct": true,
+          "destination": 33
+        },
+        {
+          "unit_id": 7,
+          "hero": false,
+          "time": 96.0,
+          "returning": false,
+          "direct": true,
+          "destination": 33
+        },
+        {
+          "unit_id": 8,
+          "hero": false,
+          "time": 96.0,
+          "returning": false,
+          "direct": true,
+          "destination": 33
+        },
+        {
+          "unit_id": 9,
+          "hero": false,
+          "time": 96.0,
+          "returning": false,
+          "direct": true,
+          "destination": 33
+        },
+        {
+          "unit_id": 10,
+          "hero": false,
+          "time": 96.0,
+          "returning": false,
+          "direct": true,
+          "destination": 33
+        },
+        {
+          "unit_id": 11,
+          "hero": false,
+          "time": 96.0,
+          "returning": false,
+          "direct": true,
+          "destination": 33
+        }
+      ],
+      "operation_timeline": [
+        {
+          "launch": 90.0,
+          "entry": 96.0,
+          "objective": 136.0,
+          "exit": 156.0,
+          "target_id": 33,
+          "target_kind": "cruiser",
+          "target_wreck_at": 460.0,
+          "observed_survival_after_entry": 364.0,
+          "units": [
+            {
+              "id": 0,
+              "kind": "melee",
+              "state": "dead",
+              "hp": 0
+            },
+            {
+              "id": 1,
+              "kind": "ranged",
+              "state": "dead",
+              "hp": 0
+            },
+            {
+              "id": 2,
+              "kind": "support",
+              "state": "dead",
+              "hp": 0
+            },
+            {
+              "id": 3,
+              "kind": "commander",
+              "state": "dead",
+              "hp": 0
+            },
+            {
+              "id": 4,
+              "kind": "soldier",
+              "state": "dead",
+              "hp": 0
+            },
+            {
+              "id": 5,
+              "kind": "soldier",
+              "state": "dead",
+              "hp": 0
+            },
+            {
+              "id": 6,
+              "kind": "soldier",
+              "state": "dead",
+              "hp": 0
+            },
+            {
+              "id": 7,
+              "kind": "soldier",
+              "state": "dead",
+              "hp": 0
+            },
+            {
+              "id": 8,
+              "kind": "soldier",
+              "state": "dead",
+              "hp": 0
+            },
+            {
+              "id": 9,
+              "kind": "soldier",
+              "state": "dead",
+              "hp": 0
+            },
+            {
+              "id": 10,
+              "kind": "soldier",
+              "state": "dead",
+              "hp": 0
+            },
+            {
+              "id": 11,
+              "kind": "soldier",
+              "state": "dead",
+              "hp": 0
+            }
+          ]
+        }
+      ],
+      "target_survival_after_entry": 364.0,
+      "target_wreck_before_exit": false,
+      "case": "active_10",
+      "enemy_weapon_disabled": true
+    },
+    {
+      "seed": 930005,
+      "seconds": 1094.0,
+      "main_seconds": 951.0,
+      "first_loss_seconds": 36.0,
+      "winner": 0,
+      "outcome": "victory",
+      "remaining_cost": [
+        25,
+        0
+      ],
+      "initial_cost": [
+        100,
+        100
+      ],
+      "initial_heroes": [
+        10,
+        10
+      ],
+      "initial_fighters": [
+        40,
+        40
+      ],
+      "fighter_package_cost": [
+        [
+          1200,
+          240,
+          0
+        ],
+        [
+          1200,
+          240,
+          0
+        ]
+      ],
+      "hero_states": {
+        "0:aboard": 2,
+        "0:dead": 8,
+        "1:dead": 10
+      },
+      "metrics": {
+        "fighter_losses": 80.0,
+        "shots_launched": 30474.0,
+        "pd_damage_missile": 14568.0,
+        "repair_resource_0": 609.9296118321442,
+        "repair_resource_1": 38.650997479317766,
+        "repair_resource_2": 1.7319689700529348,
+        "repair_work": 13054.978567606897,
+        "facility_destroyed": 387.0,
+        "explosions": 59.0,
+        "wreck_hull": 44.0,
+        "repair_hull_hp": 5728.0,
+        "hero_repair_hp": 4009.10077226559,
+        "operations_launched": 1.0,
+        "entry_at": 96.0,
+        "launch_to_entry": 6.0,
+        "entered_heroes": 4.0,
+        "entered_soldiers": 8.0,
+        "hero_heal": 433.4429328867187,
+        "catalysts_used": 4.0,
+        "hero_wreck_deaths": 13.0,
+        "objectives": 1.0,
+        "entry_to_objective": 48.0,
+        "returned_heroes": 4.0,
+        "returned_soldiers": 8.0,
+        "entry_to_exit": 79.0,
+        "escaped_cost_1": 0.0
+      },
+      "damage_by_target_size": {
+        "(1, 2)": 168264.93191868954,
+        "(0, 1)": 137120.73053361746,
+        "(1, 1)": 131489.53315732756,
+        "(0, 2)": 175563.33323770447,
+        "(0, 3)": 295054.86869653675,
+        "(1, 3)": 284635.694101121
+      },
+      "mounts_remaining": [
+        10,
+        0
+      ],
+      "transport_log": [
+        {
+          "unit_id": 0,
+          "hero": true,
+          "time": 96.0,
+          "returning": false,
+          "direct": true,
+          "destination": 32
+        },
+        {
+          "unit_id": 1,
+          "hero": true,
+          "time": 96.0,
+          "returning": false,
+          "direct": true,
+          "destination": 32
+        },
+        {
+          "unit_id": 2,
+          "hero": true,
+          "time": 96.0,
+          "returning": false,
+          "direct": true,
+          "destination": 32
+        },
+        {
+          "unit_id": 3,
+          "hero": true,
+          "time": 96.0,
+          "returning": false,
+          "direct": true,
+          "destination": 32
+        },
+        {
+          "unit_id": 4,
+          "hero": false,
+          "time": 96.0,
+          "returning": false,
+          "direct": true,
+          "destination": 32
+        },
+        {
+          "unit_id": 5,
+          "hero": false,
+          "time": 96.0,
+          "returning": false,
+          "direct": true,
+          "destination": 32
+        },
+        {
+          "unit_id": 6,
+          "hero": false,
+          "time": 96.0,
+          "returning": false,
+          "direct": true,
+          "destination": 32
+        },
+        {
+          "unit_id": 7,
+          "hero": false,
+          "time": 96.0,
+          "returning": false,
+          "direct": true,
+          "destination": 32
+        },
+        {
+          "unit_id": 8,
+          "hero": false,
+          "time": 96.0,
+          "returning": false,
+          "direct": true,
+          "destination": 32
+        },
+        {
+          "unit_id": 9,
+          "hero": false,
+          "time": 96.0,
+          "returning": false,
+          "direct": true,
+          "destination": 32
+        },
+        {
+          "unit_id": 10,
+          "hero": false,
+          "time": 96.0,
+          "returning": false,
+          "direct": true,
+          "destination": 32
+        },
+        {
+          "unit_id": 11,
+          "hero": false,
+          "time": 96.0,
+          "returning": false,
+          "direct": true,
+          "destination": 32
+        }
+      ],
+      "operation_timeline": [
+        {
+          "launch": 90.0,
+          "entry": 96.0,
+          "objective": 144.0,
+          "exit": 175.0,
+          "target_id": 32,
+          "target_kind": "cruiser",
+          "target_wreck_at": 414.0,
+          "observed_survival_after_entry": 318.0,
+          "units": [
+            {
+              "id": 0,
+              "kind": "melee",
+              "state": "dead",
+              "hp": 0
+            },
+            {
+              "id": 1,
+              "kind": "ranged",
+              "state": "dead",
+              "hp": 0
+            },
+            {
+              "id": 2,
+              "kind": "support",
+              "state": "dead",
+              "hp": 0
+            },
+            {
+              "id": 3,
+              "kind": "commander",
+              "state": "dead",
+              "hp": 0
+            },
+            {
+              "id": 4,
+              "kind": "soldier",
+              "state": "dead",
+              "hp": 0
+            },
+            {
+              "id": 5,
+              "kind": "soldier",
+              "state": "dead",
+              "hp": 0
+            },
+            {
+              "id": 6,
+              "kind": "soldier",
+              "state": "dead",
+              "hp": 0
+            },
+            {
+              "id": 7,
+              "kind": "soldier",
+              "state": "dead",
+              "hp": 0
+            },
+            {
+              "id": 8,
+              "kind": "soldier",
+              "state": "dead",
+              "hp": 0
+            },
+            {
+              "id": 9,
+              "kind": "soldier",
+              "state": "dead",
+              "hp": 0
+            },
+            {
+              "id": 10,
+              "kind": "soldier",
+              "state": "dead",
+              "hp": 0
+            },
+            {
+              "id": 11,
+              "kind": "soldier",
+              "state": "dead",
+              "hp": 0
+            }
+          ]
+        }
+      ],
+      "target_survival_after_entry": 318.0,
+      "target_wreck_before_exit": false,
+      "case": "active_10",
+      "enemy_weapon_disabled": true
+    },
+    {
+      "seed": 930006,
+      "seconds": 1044.0,
+      "main_seconds": 952.0,
+      "first_loss_seconds": 34.0,
+      "winner": 0,
+      "outcome": "victory",
+      "remaining_cost": [
+        50,
+        0
+      ],
+      "initial_cost": [
+        100,
+        100
+      ],
+      "initial_heroes": [
+        10,
+        10
+      ],
+      "initial_fighters": [
+        40,
+        40
+      ],
+      "fighter_package_cost": [
+        [
+          1200,
+          240,
+          0
+        ],
+        [
+          1200,
+          240,
+          0
+        ]
+      ],
+      "hero_states": {
+        "0:aboard": 2,
+        "0:officer": 1,
+        "0:dead": 7,
+        "1:dead": 10
+      },
+      "metrics": {
+        "fighter_losses": 80.0,
+        "shots_launched": 30013.0,
+        "pd_damage_missile": 17196.0,
+        "repair_resource_0": 458.5765126868043,
+        "repair_resource_1": 24.22408950540276,
+        "repair_resource_2": 1.9921185661764775,
+        "repair_work": 8941.899912273157,
+        "facility_destroyed": 401.0,
+        "explosions": 68.0,
+        "repair_hull_hp": 4448.0,
+        "wreck_hull": 44.0,
+        "operations_launched": 1.0,
+        "entry_at": 96.0,
+        "launch_to_entry": 6.0,
+        "entered_heroes": 4.0,
+        "entered_soldiers": 8.0,
+        "hero_heal": 0.0,
+        "objectives": 1.0,
+        "entry_to_objective": 15.0,
+        "returned_heroes": 4.0,
+        "returned_soldiers": 8.0,
+        "entry_to_exit": 29.0,
+        "hero_repair_hp": 4528.012500000013,
+        "hero_wreck_deaths": 13.0,
+        "escaped_cost_1": 0.0
+      },
+      "damage_by_target_size": {
+        "(0, 1)": 138813.33303963157,
+        "(1, 1)": 135639.97734874804,
+        "(0, 2)": 173746.8030527711,
+        "(1, 2)": 173490.18027122915,
+        "(1, 3)": 149245.6418852751,
+        "(0, 3)": 295095.8086996592
+      },
+      "mounts_remaining": [
+        14,
+        0
+      ],
+      "transport_log": [
+        {
+          "unit_id": 0,
+          "hero": true,
+          "time": 96.0,
+          "returning": false,
+          "direct": true,
+          "destination": 31
+        },
+        {
+          "unit_id": 1,
+          "hero": true,
+          "time": 96.0,
+          "returning": false,
+          "direct": true,
+          "destination": 31
+        },
+        {
+          "unit_id": 2,
+          "hero": true,
+          "time": 96.0,
+          "returning": false,
+          "direct": true,
+          "destination": 31
+        },
+        {
+          "unit_id": 3,
+          "hero": true,
+          "time": 96.0,
+          "returning": false,
+          "direct": true,
+          "destination": 31
+        },
+        {
+          "unit_id": 4,
+          "hero": false,
+          "time": 96.0,
+          "returning": false,
+          "direct": true,
+          "destination": 31
+        },
+        {
+          "unit_id": 5,
+          "hero": false,
+          "time": 96.0,
+          "returning": false,
+          "direct": true,
+          "destination": 31
+        },
+        {
+          "unit_id": 6,
+          "hero": false,
+          "time": 96.0,
+          "returning": false,
+          "direct": true,
+          "destination": 31
+        },
+        {
+          "unit_id": 7,
+          "hero": false,
+          "time": 96.0,
+          "returning": false,
+          "direct": true,
+          "destination": 31
+        },
+        {
+          "unit_id": 8,
+          "hero": false,
+          "time": 96.0,
+          "returning": false,
+          "direct": true,
+          "destination": 31
+        },
+        {
+          "unit_id": 9,
+          "hero": false,
+          "time": 96.0,
+          "returning": false,
+          "direct": true,
+          "destination": 31
+        },
+        {
+          "unit_id": 10,
+          "hero": false,
+          "time": 96.0,
+          "returning": false,
+          "direct": true,
+          "destination": 31
+        },
+        {
+          "unit_id": 11,
+          "hero": false,
+          "time": 96.0,
+          "returning": false,
+          "direct": true,
+          "destination": 31
+        }
+      ],
+      "operation_timeline": [
+        {
+          "launch": 90.0,
+          "entry": 96.0,
+          "objective": 111.0,
+          "exit": 125.0,
+          "target_id": 31,
+          "target_kind": "bastion",
+          "target_wreck_at": 492.0,
+          "observed_survival_after_entry": 396.0,
+          "units": [
+            {
+              "id": 0,
+              "kind": "melee",
+              "state": "dead",
+              "hp": 0
+            },
+            {
+              "id": 1,
+              "kind": "ranged",
+              "state": "dead",
+              "hp": 0
+            },
+            {
+              "id": 2,
+              "kind": "support",
+              "state": "dead",
+              "hp": 0
+            },
+            {
+              "id": 3,
+              "kind": "commander",
+              "state": "dead",
+              "hp": 0
+            },
+            {
+              "id": 4,
+              "kind": "soldier",
+              "state": "dead",
+              "hp": 0
+            },
+            {
+              "id": 5,
+              "kind": "soldier",
+              "state": "dead",
+              "hp": 0
+            },
+            {
+              "id": 6,
+              "kind": "soldier",
+              "state": "dead",
+              "hp": 0
+            },
+            {
+              "id": 7,
+              "kind": "soldier",
+              "state": "dead",
+              "hp": 0
+            },
+            {
+              "id": 8,
+              "kind": "soldier",
+              "state": "dead",
+              "hp": 0
+            },
+            {
+              "id": 9,
+              "kind": "soldier",
+              "state": "dead",
+              "hp": 0
+            },
+            {
+              "id": 10,
+              "kind": "soldier",
+              "state": "dead",
+              "hp": 0
+            },
+            {
+              "id": 11,
+              "kind": "soldier",
+              "state": "dead",
+              "hp": 0
+            }
+          ]
+        }
+      ],
+      "target_survival_after_entry": 396.0,
+      "target_wreck_before_exit": false,
+      "case": "active_10",
+      "enemy_weapon_disabled": true
+    },
+    {
+      "seed": 930007,
+      "seconds": 1156.0,
+      "main_seconds": 1127.0,
+      "first_loss_seconds": 31.0,
+      "winner": 0,
+      "outcome": "victory",
+      "remaining_cost": [
+        51,
+        0
+      ],
+      "initial_cost": [
+        100,
+        100
+      ],
+      "initial_heroes": [
+        10,
+        10
+      ],
+      "initial_fighters": [
+        40,
+        40
+      ],
+      "fighter_package_cost": [
+        [
+          1200,
+          240,
+          0
+        ],
+        [
+          1200,
+          240,
+          0
+        ]
+      ],
+      "hero_states": {
+        "0:aboard": 6,
+        "0:officer": 1,
+        "0:dead": 3,
+        "1:dead": 10
+      },
+      "metrics": {
+        "fighter_losses": 80.0,
+        "shots_launched": 30678.0,
+        "pd_damage_missile": 14808.0,
+        "facility_destroyed": 378.0,
+        "repair_resource_0": 631.7045565317901,
+        "repair_resource_1": 39.597565243047,
+        "repair_resource_2": 1.7406001790712624,
+        "repair_work": 13658.299885037964,
+        "explosions": 61.0,
+        "wreck_core": 1.0,
+        "repair_hull_hp": 4928.0,
+        "wreck_hull": 46.0,
+        "hero_wreck_deaths": 12.0,
+        "operations_launched": 1.0,
+        "entry_at": 96.0,
+        "launch_to_entry": 6.0,
+        "entered_heroes": 4.0,
+        "entered_soldiers": 8.0,
+        "hero_heal": 177.1,
+        "catalysts_used": 1.0,
+        "objectives": 1.0,
+        "entry_to_objective": 37.0,
+        "returned_heroes": 4.0,
+        "returned_soldiers": 8.0,
+        "entry_to_exit": 54.0,
+        "hero_repair_hp": 4026.31715718748,
+        "escaped_cost_1": 0.0
+      },
+      "damage_by_target_size": {
+        "(0, 1)": 141046.67166483385,
+        "(1, 1)": 128453.48413320255,
+        "(1, 2)": 174275.95507436214,
+        "(0, 2)": 173668.7314978826,
+        "(0, 3)": 294837.985974251,
+        "(1, 3)": 257286.9161800656
+      },
+      "mounts_remaining": [
+        14,
+        0
+      ],
+      "transport_log": [
+        {
+          "unit_id": 0,
+          "hero": true,
+          "time": 96.0,
+          "returning": false,
+          "direct": true,
+          "destination": 30
+        },
+        {
+          "unit_id": 1,
+          "hero": true,
+          "time": 96.0,
+          "returning": false,
+          "direct": true,
+          "destination": 30
+        },
+        {
+          "unit_id": 2,
+          "hero": true,
+          "time": 96.0,
+          "returning": false,
+          "direct": true,
+          "destination": 30
+        },
+        {
+          "unit_id": 3,
+          "hero": true,
+          "time": 96.0,
+          "returning": false,
+          "direct": true,
+          "destination": 30
+        },
+        {
+          "unit_id": 4,
+          "hero": false,
+          "time": 96.0,
+          "returning": false,
+          "direct": true,
+          "destination": 30
+        },
+        {
+          "unit_id": 5,
+          "hero": false,
+          "time": 96.0,
+          "returning": false,
+          "direct": true,
+          "destination": 30
+        },
+        {
+          "unit_id": 6,
+          "hero": false,
+          "time": 96.0,
+          "returning": false,
+          "direct": true,
+          "destination": 30
+        },
+        {
+          "unit_id": 7,
+          "hero": false,
+          "time": 96.0,
+          "returning": false,
+          "direct": true,
+          "destination": 30
+        },
+        {
+          "unit_id": 8,
+          "hero": false,
+          "time": 96.0,
+          "returning": false,
+          "direct": true,
+          "destination": 30
+        },
+        {
+          "unit_id": 9,
+          "hero": false,
+          "time": 96.0,
+          "returning": false,
+          "direct": true,
+          "destination": 30
+        },
+        {
+          "unit_id": 10,
+          "hero": false,
+          "time": 96.0,
+          "returning": false,
+          "direct": true,
+          "destination": 30
+        },
+        {
+          "unit_id": 11,
+          "hero": false,
+          "time": 96.0,
+          "returning": false,
+          "direct": true,
+          "destination": 30
+        }
+      ],
+      "operation_timeline": [
+        {
+          "launch": 90.0,
+          "entry": 96.0,
+          "objective": 133.0,
+          "exit": 150.0,
+          "target_id": 30,
+          "target_kind": "vector",
+          "target_wreck_at": 307.0,
+          "observed_survival_after_entry": 211.0,
+          "units": [
+            {
+              "id": 0,
+              "kind": "melee",
+              "state": "aboard",
+              "hp": 293.63520199999994
+            },
+            {
+              "id": 1,
+              "kind": "ranged",
+              "state": "aboard",
+              "hp": 327.45901000000003
+            },
+            {
+              "id": 2,
+              "kind": "support",
+              "state": "aboard",
+              "hp": 368.98125000000005
+            },
+            {
+              "id": 3,
+              "kind": "commander",
+              "state": "aboard",
+              "hp": 430.58125
+            },
+            {
+              "id": 4,
+              "kind": "soldier",
+              "state": "aboard",
+              "hp": 64.38125
+            },
+            {
+              "id": 5,
+              "kind": "soldier",
+              "state": "aboard",
+              "hp": 64.38125
+            },
+            {
+              "id": 6,
+              "kind": "soldier",
+              "state": "aboard",
+              "hp": 64.38125
+            },
+            {
+              "id": 7,
+              "kind": "soldier",
+              "state": "aboard",
+              "hp": 64.38125
+            },
+            {
+              "id": 8,
+              "kind": "soldier",
+              "state": "aboard",
+              "hp": 64.38125
+            },
+            {
+              "id": 9,
+              "kind": "soldier",
+              "state": "aboard",
+              "hp": 64.38125
+            },
+            {
+              "id": 10,
+              "kind": "soldier",
+              "state": "aboard",
+              "hp": 64.38125
+            },
+            {
+              "id": 11,
+              "kind": "soldier",
+              "state": "aboard",
+              "hp": 64.38125
+            }
+          ]
+        }
+      ],
+      "target_survival_after_entry": 211.0,
+      "target_wreck_before_exit": false,
+      "case": "active_10",
+      "enemy_weapon_disabled": true
+    },
+    {
+      "seed": 930000,
+      "seconds": 1066.0,
+      "main_seconds": 1022.0,
+      "first_loss_seconds": 60.0,
+      "winner": 0,
+      "outcome": "victory",
+      "remaining_cost": [
+        50,
+        0
+      ],
+      "initial_cost": [
+        100,
+        100
+      ],
+      "initial_heroes": [
+        15,
+        15
+      ],
+      "initial_fighters": [
+        40,
+        40
+      ],
+      "fighter_package_cost": [
+        [
+          1200,
+          240,
+          0
+        ],
+        [
+          1200,
+          240,
+          0
+        ]
+      ],
+      "hero_states": {
+        "0:aboard": 2,
+        "0:officer": 1,
+        "0:dead": 12,
+        "1:dead": 15
+      },
+      "metrics": {
+        "fighter_losses": 80.0,
+        "shots_launched": 31573.0,
+        "pd_damage_missile": 15732.0,
+        "repair_resource_0": 604.4604199430722,
+        "repair_resource_1": 36.21398524909124,
+        "repair_resource_2": 2.020743874315892,
+        "repair_work": 11763.973781359859,
+        "facility_destroyed": 402.0,
+        "explosions": 64.0,
+        "hero_repair_hp": 5297.710697968763,
+        "repair_hull_hp": 5664.0,
+        "wreck_hull": 45.0,
+        "hero_wreck_deaths": 26.0,
+        "wreck_core": 2.0,
+        "operations_launched": 1.0,
+        "entry_at": 96.0,
+        "launch_to_entry": 6.0,
+        "entered_heroes": 4.0,
+        "entered_soldiers": 8.0,
+        "hero_heal": 177.1,
+        "catalysts_used": 1.0,
+        "objectives": 1.0,
+        "entry_to_objective": 26.0,
+        "returned_heroes": 4.0,
+        "returned_soldiers": 8.0,
+        "entry_to_exit": 44.0,
+        "escaped_cost_1": 0.0
+      },
+      "damage_by_target_size": {
+        "(0, 1)": 139152.07172111163,
+        "(1, 1)": 136768.3802584021,
+        "(0, 2)": 173303.0077397085,
+        "(1, 2)": 174584.66097297065,
+        "(1, 3)": 195842.50597701684,
+        "(0, 3)": 295332.76400227303
+      },
+      "mounts_remaining": [
+        14,
+        0
+      ],
+      "transport_log": [
+        {
+          "unit_id": 0,
+          "hero": true,
+          "time": 96.0,
+          "returning": false,
+          "direct": true,
+          "destination": 30
+        },
+        {
+          "unit_id": 1,
+          "hero": true,
+          "time": 96.0,
+          "returning": false,
+          "direct": true,
+          "destination": 30
+        },
+        {
+          "unit_id": 2,
+          "hero": true,
+          "time": 96.0,
+          "returning": false,
+          "direct": true,
+          "destination": 30
+        },
+        {
+          "unit_id": 3,
+          "hero": true,
+          "time": 96.0,
+          "returning": false,
+          "direct": true,
+          "destination": 30
+        },
+        {
+          "unit_id": 4,
+          "hero": false,
+          "time": 96.0,
+          "returning": false,
+          "direct": true,
+          "destination": 30
+        },
+        {
+          "unit_id": 5,
+          "hero": false,
+          "time": 96.0,
+          "returning": false,
+          "direct": true,
+          "destination": 30
+        },
+        {
+          "unit_id": 6,
+          "hero": false,
+          "time": 96.0,
+          "returning": false,
+          "direct": true,
+          "destination": 30
+        },
+        {
+          "unit_id": 7,
+          "hero": false,
+          "time": 96.0,
+          "returning": false,
+          "direct": true,
+          "destination": 30
+        },
+        {
+          "unit_id": 8,
+          "hero": false,
+          "time": 96.0,
+          "returning": false,
+          "direct": true,
+          "destination": 30
+        },
+        {
+          "unit_id": 9,
+          "hero": false,
+          "time": 96.0,
+          "returning": false,
+          "direct": true,
+          "destination": 30
+        },
+        {
+          "unit_id": 10,
+          "hero": false,
+          "time": 96.0,
+          "returning": false,
+          "direct": true,
+          "destination": 30
+        },
+        {
+          "unit_id": 11,
+          "hero": false,
+          "time": 96.0,
+          "returning": false,
+          "direct": true,
+          "destination": 30
+        }
+      ],
+      "operation_timeline": [
+        {
+          "launch": 90.0,
+          "entry": 96.0,
+          "objective": 122.0,
+          "exit": 140.0,
+          "target_id": 30,
+          "target_kind": "vector",
+          "target_wreck_at": null,
+          "observed_survival_after_entry": 970.0,
+          "units": [
+            {
+              "id": 0,
+              "kind": "melee",
+              "state": "dead",
+              "hp": 0
+            },
+            {
+              "id": 1,
+              "kind": "ranged",
+              "state": "dead",
+              "hp": 0
+            },
+            {
+              "id": 2,
+              "kind": "support",
+              "state": "dead",
+              "hp": 0
+            },
+            {
+              "id": 3,
+              "kind": "commander",
+              "state": "dead",
+              "hp": 0
+            },
+            {
+              "id": 4,
+              "kind": "soldier",
+              "state": "dead",
+              "hp": 0
+            },
+            {
+              "id": 5,
+              "kind": "soldier",
+              "state": "dead",
+              "hp": 0
+            },
+            {
+              "id": 6,
+              "kind": "soldier",
+              "state": "dead",
+              "hp": 0
+            },
+            {
+              "id": 7,
+              "kind": "soldier",
+              "state": "dead",
+              "hp": 0
+            },
+            {
+              "id": 8,
+              "kind": "soldier",
+              "state": "dead",
+              "hp": 0
+            },
+            {
+              "id": 9,
+              "kind": "soldier",
+              "state": "dead",
+              "hp": 0
+            },
+            {
+              "id": 10,
+              "kind": "soldier",
+              "state": "dead",
+              "hp": 0
+            },
+            {
+              "id": 11,
+              "kind": "soldier",
+              "state": "dead",
+              "hp": 0
+            }
+          ]
+        }
+      ],
+      "target_survival_after_entry": null,
+      "target_wreck_before_exit": false,
+      "case": "active_15",
+      "enemy_weapon_disabled": true
+    },
+    {
+      "seed": 930001,
+      "seconds": 1132.0,
+      "main_seconds": 973.0,
+      "first_loss_seconds": 46.0,
+      "winner": 0,
+      "outcome": "victory",
+      "remaining_cost": [
+        25,
+        0
+      ],
+      "initial_cost": [
+        100,
+        100
+      ],
+      "initial_heroes": [
+        15,
+        15
+      ],
+      "initial_fighters": [
+        40,
+        40
+      ],
+      "fighter_package_cost": [
+        [
+          1200,
+          240,
+          0
+        ],
+        [
+          1200,
+          240,
+          0
+        ]
+      ],
+      "hero_states": {
+        "0:aboard": 2,
+        "0:dead": 13,
+        "1:dead": 15
+      },
+      "metrics": {
+        "fighter_losses": 80.0,
+        "shots_launched": 31815.0,
+        "pd_damage_missile": 14100.0,
+        "repair_resource_0": 803.5897925685583,
+        "repair_resource_1": 60.064816041816464,
+        "repair_resource_2": 1.800474922083898,
+        "hero_repair_hp": 4684.01005193184,
+        "facility_destroyed": 398.0,
+        "explosions": 62.0,
+        "repair_work": 16674.221613233836,
+        "repair_hull_hp": 6880.0,
+        "hero_wreck_deaths": 27.0,
+        "wreck_hull": 51.0,
+        "operations_launched": 1.0,
+        "entry_at": 96.0,
+        "launch_to_entry": 6.0,
+        "entered_heroes": 4.0,
+        "entered_soldiers": 8.0,
+        "hero_heal": 215.1,
+        "catalysts_used": 2.0,
+        "objectives": 1.0,
+        "entry_to_objective": 47.0,
+        "returned_heroes": 4.0,
+        "returned_soldiers": 8.0,
+        "entry_to_exit": 78.0,
+        "escaped_cost_1": 0.0
+      },
+      "damage_by_target_size": {
+        "(1, 1)": 141862.3291900542,
+        "(0, 1)": 142118.1536754688,
+        "(1, 2)": 173627.33534109103,
+        "(0, 2)": 177727.4195050652,
+        "(0, 3)": 294682.9778195296,
+        "(1, 3)": 238835.74214028893
+      },
+      "mounts_remaining": [
+        10,
+        0
+      ],
+      "transport_log": [
+        {
+          "unit_id": 0,
+          "hero": true,
+          "time": 96.0,
+          "returning": false,
+          "direct": true,
+          "destination": 32
+        },
+        {
+          "unit_id": 1,
+          "hero": true,
+          "time": 96.0,
+          "returning": false,
+          "direct": true,
+          "destination": 32
+        },
+        {
+          "unit_id": 2,
+          "hero": true,
+          "time": 96.0,
+          "returning": false,
+          "direct": true,
+          "destination": 32
+        },
+        {
+          "unit_id": 3,
+          "hero": true,
+          "time": 96.0,
+          "returning": false,
+          "direct": true,
+          "destination": 32
+        },
+        {
+          "unit_id": 4,
+          "hero": false,
+          "time": 96.0,
+          "returning": false,
+          "direct": true,
+          "destination": 32
+        },
+        {
+          "unit_id": 5,
+          "hero": false,
+          "time": 96.0,
+          "returning": false,
+          "direct": true,
+          "destination": 32
+        },
+        {
+          "unit_id": 6,
+          "hero": false,
+          "time": 96.0,
+          "returning": false,
+          "direct": true,
+          "destination": 32
+        },
+        {
+          "unit_id": 7,
+          "hero": false,
+          "time": 96.0,
+          "returning": false,
+          "direct": true,
+          "destination": 32
+        },
+        {
+          "unit_id": 8,
+          "hero": false,
+          "time": 96.0,
+          "returning": false,
+          "direct": true,
+          "destination": 32
+        },
+        {
+          "unit_id": 9,
+          "hero": false,
+          "time": 96.0,
+          "returning": false,
+          "direct": true,
+          "destination": 32
+        },
+        {
+          "unit_id": 10,
+          "hero": false,
+          "time": 96.0,
+          "returning": false,
+          "direct": true,
+          "destination": 32
+        },
+        {
+          "unit_id": 11,
+          "hero": false,
+          "time": 96.0,
+          "returning": false,
+          "direct": true,
+          "destination": 32
+        }
+      ],
+      "operation_timeline": [
+        {
+          "launch": 90.0,
+          "entry": 96.0,
+          "objective": 143.0,
+          "exit": 174.0,
+          "target_id": 32,
+          "target_kind": "cruiser",
+          "target_wreck_at": 465.0,
+          "observed_survival_after_entry": 369.0,
+          "units": [
+            {
+              "id": 0,
+              "kind": "melee",
+              "state": "dead",
+              "hp": 0
+            },
+            {
+              "id": 1,
+              "kind": "ranged",
+              "state": "dead",
+              "hp": 0
+            },
+            {
+              "id": 2,
+              "kind": "support",
+              "state": "dead",
+              "hp": 0
+            },
+            {
+              "id": 3,
+              "kind": "commander",
+              "state": "dead",
+              "hp": 0
+            },
+            {
+              "id": 4,
+              "kind": "soldier",
+              "state": "dead",
+              "hp": 0
+            },
+            {
+              "id": 5,
+              "kind": "soldier",
+              "state": "dead",
+              "hp": 0
+            },
+            {
+              "id": 6,
+              "kind": "soldier",
+              "state": "dead",
+              "hp": 0
+            },
+            {
+              "id": 7,
+              "kind": "soldier",
+              "state": "dead",
+              "hp": 0
+            },
+            {
+              "id": 8,
+              "kind": "soldier",
+              "state": "dead",
+              "hp": 0
+            },
+            {
+              "id": 9,
+              "kind": "soldier",
+              "state": "dead",
+              "hp": 0
+            },
+            {
+              "id": 10,
+              "kind": "soldier",
+              "state": "dead",
+              "hp": 0
+            },
+            {
+              "id": 11,
+              "kind": "soldier",
+              "state": "dead",
+              "hp": 0
+            }
+          ]
+        }
+      ],
+      "target_survival_after_entry": 369.0,
+      "target_wreck_before_exit": false,
+      "case": "active_15",
+      "enemy_weapon_disabled": true
+    },
+    {
+      "seed": 930002,
+      "seconds": 1067.0,
+      "main_seconds": 989.0,
+      "first_loss_seconds": 51.0,
+      "winner": 0,
+      "outcome": "victory",
+      "remaining_cost": [
+        25,
+        0
+      ],
+      "initial_cost": [
+        100,
+        100
+      ],
+      "initial_heroes": [
+        15,
+        15
+      ],
+      "initial_fighters": [
+        40,
+        40
+      ],
+      "fighter_package_cost": [
+        [
+          1200,
+          240,
+          0
+        ],
+        [
+          1200,
+          240,
+          0
+        ]
+      ],
+      "hero_states": {
+        "0:aboard": 2,
+        "0:dead": 13,
+        "1:dead": 15
+      },
+      "metrics": {
+        "fighter_losses": 80.0,
+        "shots_launched": 31213.0,
+        "pd_damage_missile": 17328.0,
+        "facility_destroyed": 396.0,
+        "repair_resource_0": 598.1556008949576,
+        "repair_resource_1": 44.620848627570545,
+        "repair_resource_2": 1.9921185661764778,
+        "hero_repair_hp": 5207.017500000011,
+        "explosions": 67.0,
+        "repair_work": 11350.711998482207,
+        "repair_hull_hp": 2848.0,
+        "hero_wreck_deaths": 23.0,
+        "wreck_hull": 48.0,
+        "operations_launched": 1.0,
+        "entry_at": 96.0,
+        "launch_to_entry": 6.0,
+        "entered_heroes": 4.0,
+        "entered_soldiers": 8.0,
+        "hero_heal": 0.0,
+        "entry_to_objective": 8.0,
+        "returned_heroes": 4.0,
+        "returned_soldiers": 8.0,
+        "entry_to_exit": 17.0,
+        "escaped_cost_1": 0.0
+      },
+      "damage_by_target_size": {
+        "(0, 1)": 139142.18286348012,
+        "(1, 1)": 138706.18650345225,
+        "(0, 2)": 163954.11757172304,
+        "(1, 2)": 174085.52766790474,
+        "(0, 3)": 295132.9482992539,
+        "(1, 3)": 191690.9737219963
+      },
+      "mounts_remaining": [
+        10,
+        0
+      ],
+      "transport_log": [
+        {
+          "unit_id": 0,
+          "hero": true,
+          "time": 96.0,
+          "returning": false,
+          "direct": true,
+          "destination": 30
+        },
+        {
+          "unit_id": 1,
+          "hero": true,
+          "time": 96.0,
+          "returning": false,
+          "direct": true,
+          "destination": 30
+        },
+        {
+          "unit_id": 2,
+          "hero": true,
+          "time": 96.0,
+          "returning": false,
+          "direct": true,
+          "destination": 30
+        },
+        {
+          "unit_id": 3,
+          "hero": true,
+          "time": 96.0,
+          "returning": false,
+          "direct": true,
+          "destination": 30
+        },
+        {
+          "unit_id": 4,
+          "hero": false,
+          "time": 96.0,
+          "returning": false,
+          "direct": true,
+          "destination": 30
+        },
+        {
+          "unit_id": 5,
+          "hero": false,
+          "time": 96.0,
+          "returning": false,
+          "direct": true,
+          "destination": 30
+        },
+        {
+          "unit_id": 6,
+          "hero": false,
+          "time": 96.0,
+          "returning": false,
+          "direct": true,
+          "destination": 30
+        },
+        {
+          "unit_id": 7,
+          "hero": false,
+          "time": 96.0,
+          "returning": false,
+          "direct": true,
+          "destination": 30
+        },
+        {
+          "unit_id": 8,
+          "hero": false,
+          "time": 96.0,
+          "returning": false,
+          "direct": true,
+          "destination": 30
+        },
+        {
+          "unit_id": 9,
+          "hero": false,
+          "time": 96.0,
+          "returning": false,
+          "direct": true,
+          "destination": 30
+        },
+        {
+          "unit_id": 10,
+          "hero": false,
+          "time": 96.0,
+          "returning": false,
+          "direct": true,
+          "destination": 30
+        },
+        {
+          "unit_id": 11,
+          "hero": false,
+          "time": 96.0,
+          "returning": false,
+          "direct": true,
+          "destination": 30
+        }
+      ],
+      "operation_timeline": [
+        {
+          "launch": 90.0,
+          "entry": 96.0,
+          "objective": 104.0,
+          "exit": 113.0,
+          "target_id": 30,
+          "target_kind": "vector",
+          "target_wreck_at": null,
+          "observed_survival_after_entry": 971.0,
+          "units": [
+            {
+              "id": 0,
+              "kind": "melee",
+              "state": "dead",
+              "hp": 0
+            },
+            {
+              "id": 1,
+              "kind": "ranged",
+              "state": "dead",
+              "hp": 0
+            },
+            {
+              "id": 2,
+              "kind": "support",
+              "state": "dead",
+              "hp": 0
+            },
+            {
+              "id": 3,
+              "kind": "commander",
+              "state": "dead",
+              "hp": 0
+            },
+            {
+              "id": 4,
+              "kind": "soldier",
+              "state": "dead",
+              "hp": 0
+            },
+            {
+              "id": 5,
+              "kind": "soldier",
+              "state": "dead",
+              "hp": 0
+            },
+            {
+              "id": 6,
+              "kind": "soldier",
+              "state": "dead",
+              "hp": 0
+            },
+            {
+              "id": 7,
+              "kind": "soldier",
+              "state": "dead",
+              "hp": 0
+            },
+            {
+              "id": 8,
+              "kind": "soldier",
+              "state": "dead",
+              "hp": 0
+            },
+            {
+              "id": 9,
+              "kind": "soldier",
+              "state": "dead",
+              "hp": 0
+            },
+            {
+              "id": 10,
+              "kind": "soldier",
+              "state": "dead",
+              "hp": 0
+            },
+            {
+              "id": 11,
+              "kind": "soldier",
+              "state": "dead",
+              "hp": 0
+            }
+          ]
+        }
+      ],
+      "target_survival_after_entry": null,
+      "target_wreck_before_exit": false,
+      "case": "active_15",
+      "enemy_weapon_disabled": true
+    },
+    {
+      "seed": 930003,
+      "seconds": 991.0,
+      "main_seconds": 974.0,
+      "first_loss_seconds": 33.0,
+      "winner": 1,
+      "outcome": "defeat",
+      "remaining_cost": [
+        0,
+        50
+      ],
+      "initial_cost": [
+        100,
+        100
+      ],
+      "initial_heroes": [
+        15,
+        15
+      ],
+      "initial_fighters": [
+        40,
+        40
+      ],
+      "fighter_package_cost": [
+        [
+          1200,
+          240,
+          0
+        ],
+        [
+          1200,
+          240,
+          0
+        ]
+      ],
+      "hero_states": {
+        "0:dead": 15,
+        "1:aboard": 2,
+        "1:officer": 1,
+        "1:dead": 12
+      },
+      "metrics": {
+        "fighter_losses": 80.0,
+        "shots_launched": 30453.0,
+        "pd_damage_missile": 17208.0,
+        "repair_resource_0": 626.5450025073403,
+        "repair_resource_1": 38.70857088396374,
+        "repair_resource_2": 1.9730819730844986,
+        "repair_work": 13000.538127475638,
+        "facility_destroyed": 386.0,
+        "explosions": 62.0,
+        "hero_repair_hp": 4972.242912198913,
+        "hero_wreck_deaths": 22.0,
+        "wreck_hull": 44.0,
+        "repair_hull_hp": 5920.0,
+        "operations_launched": 1.0,
+        "entry_at": 96.0,
+        "launch_to_entry": 6.0,
+        "entered_heroes": 4.0,
+        "entered_soldiers": 8.0,
+        "hero_heal": 0.0,
+        "objectives": 1.0,
+        "entry_to_objective": 35.0,
+        "returned_heroes": 4.0,
+        "returned_soldiers": 8.0,
+        "entry_to_exit": 51.0,
+        "escaped_cost_0": 0.0
+      },
+      "damage_by_target_size": {
+        "(0, 1)": 141391.1385832971,
+        "(1, 1)": 135955.4097433587,
+        "(1, 2)": 174126.48823795366,
+        "(0, 2)": 170880.3224629343,
+        "(1, 3)": 295238.1909596062,
+        "(0, 3)": 170918.13195232302
+      },
+      "mounts_remaining": [
+        0,
+        14
+      ],
+      "transport_log": [
+        {
+          "unit_id": 0,
+          "hero": true,
+          "time": 96.0,
+          "returning": false,
+          "direct": true,
+          "destination": 30
+        },
+        {
+          "unit_id": 1,
+          "hero": true,
+          "time": 96.0,
+          "returning": false,
+          "direct": true,
+          "destination": 30
+        },
+        {
+          "unit_id": 2,
+          "hero": true,
+          "time": 96.0,
+          "returning": false,
+          "direct": true,
+          "destination": 30
+        },
+        {
+          "unit_id": 3,
+          "hero": true,
+          "time": 96.0,
+          "returning": false,
+          "direct": true,
+          "destination": 30
+        },
+        {
+          "unit_id": 4,
+          "hero": false,
+          "time": 96.0,
+          "returning": false,
+          "direct": true,
+          "destination": 30
+        },
+        {
+          "unit_id": 5,
+          "hero": false,
+          "time": 96.0,
+          "returning": false,
+          "direct": true,
+          "destination": 30
+        },
+        {
+          "unit_id": 6,
+          "hero": false,
+          "time": 96.0,
+          "returning": false,
+          "direct": true,
+          "destination": 30
+        },
+        {
+          "unit_id": 7,
+          "hero": false,
+          "time": 96.0,
+          "returning": false,
+          "direct": true,
+          "destination": 30
+        },
+        {
+          "unit_id": 8,
+          "hero": false,
+          "time": 96.0,
+          "returning": false,
+          "direct": true,
+          "destination": 30
+        },
+        {
+          "unit_id": 9,
+          "hero": false,
+          "time": 96.0,
+          "returning": false,
+          "direct": true,
+          "destination": 30
+        },
+        {
+          "unit_id": 10,
+          "hero": false,
+          "time": 96.0,
+          "returning": false,
+          "direct": true,
+          "destination": 30
+        },
+        {
+          "unit_id": 11,
+          "hero": false,
+          "time": 96.0,
+          "returning": false,
+          "direct": true,
+          "destination": 30
+        }
+      ],
+      "operation_timeline": [
+        {
+          "launch": 90.0,
+          "entry": 96.0,
+          "objective": 131.0,
+          "exit": 147.0,
+          "target_id": 30,
+          "target_kind": "vector",
+          "target_wreck_at": null,
+          "observed_survival_after_entry": 895.0,
+          "units": [
+            {
+              "id": 0,
+              "kind": "melee",
+              "state": "dead",
+              "hp": 0
+            },
+            {
+              "id": 1,
+              "kind": "ranged",
+              "state": "dead",
+              "hp": 0
+            },
+            {
+              "id": 2,
+              "kind": "support",
+              "state": "dead",
+              "hp": 0
+            },
+            {
+              "id": 3,
+              "kind": "commander",
+              "state": "dead",
+              "hp": 0
+            },
+            {
+              "id": 4,
+              "kind": "soldier",
+              "state": "dead",
+              "hp": 0
+            },
+            {
+              "id": 5,
+              "kind": "soldier",
+              "state": "dead",
+              "hp": 0
+            },
+            {
+              "id": 6,
+              "kind": "soldier",
+              "state": "dead",
+              "hp": 0
+            },
+            {
+              "id": 7,
+              "kind": "soldier",
+              "state": "dead",
+              "hp": 0
+            },
+            {
+              "id": 8,
+              "kind": "soldier",
+              "state": "dead",
+              "hp": 0
+            },
+            {
+              "id": 9,
+              "kind": "soldier",
+              "state": "dead",
+              "hp": 0
+            },
+            {
+              "id": 10,
+              "kind": "soldier",
+              "state": "dead",
+              "hp": 0
+            },
+            {
+              "id": 11,
+              "kind": "soldier",
+              "state": "dead",
+              "hp": 0
+            }
+          ]
+        }
+      ],
+      "target_survival_after_entry": null,
+      "target_wreck_before_exit": false,
+      "case": "active_15",
+      "enemy_weapon_disabled": false
+    },
+    {
+      "seed": 930004,
+      "seconds": 1091.0,
+      "main_seconds": 1041.0,
+      "first_loss_seconds": 62.0,
+      "winner": 0,
+      "outcome": "victory",
+      "remaining_cost": [
+        51,
+        0
+      ],
+      "initial_cost": [
+        100,
+        100
+      ],
+      "initial_heroes": [
+        15,
+        15
+      ],
+      "initial_fighters": [
+        40,
+        40
+      ],
+      "fighter_package_cost": [
+        [
+          1200,
+          240,
+          0
+        ],
+        [
+          1200,
+          240,
+          0
+        ]
+      ],
+      "hero_states": {
+        "0:aboard": 6,
+        "0:officer": 1,
+        "0:dead": 8,
+        "1:dead": 15
+      },
+      "metrics": {
+        "fighter_losses": 80.0,
+        "shots_launched": 30962.0,
+        "repair_resource_0": 483.3728752788034,
+        "repair_resource_1": 30.46163002993816,
+        "repair_resource_2": 2.0172015165441235,
+        "repair_work": 8686.029816093898,
+        "facility_destroyed": 385.0,
+        "pd_damage_missile": 13752.0,
+        "hero_repair_hp": 5332.896625000009,
+        "explosions": 69.0,
+        "repair_hull_hp": 4256.0,
+        "wreck_hull": 50.0,
+        "hero_wreck_deaths": 22.0,
+        "operations_launched": 1.0,
+        "entry_at": 96.0,
+        "launch_to_entry": 6.0,
+        "entered_heroes": 4.0,
+        "entered_soldiers": 8.0,
+        "hero_heal": 354.2,
+        "catalysts_used": 2.0,
+        "objectives": 1.0,
+        "entry_to_objective": 37.0,
+        "returned_heroes": 4.0,
+        "returned_soldiers": 8.0,
+        "entry_to_exit": 58.0,
+        "escaped_cost_1": 0.0
+      },
+      "damage_by_target_size": {
+        "(1, 1)": 136479.8931828511,
+        "(0, 1)": 138245.37746114063,
+        "(1, 2)": 174272.8201174739,
+        "(0, 2)": 173511.5743394219,
+        "(0, 3)": 294771.4186109498,
+        "(1, 3)": 203014.65414644443
+      },
+      "mounts_remaining": [
+        14,
+        0
+      ],
+      "transport_log": [
+        {
+          "unit_id": 0,
+          "hero": true,
+          "time": 96.0,
+          "returning": false,
+          "direct": true,
+          "destination": 32
+        },
+        {
+          "unit_id": 1,
+          "hero": true,
+          "time": 96.0,
+          "returning": false,
+          "direct": true,
+          "destination": 32
+        },
+        {
+          "unit_id": 2,
+          "hero": true,
+          "time": 96.0,
+          "returning": false,
+          "direct": true,
+          "destination": 32
+        },
+        {
+          "unit_id": 3,
+          "hero": true,
+          "time": 96.0,
+          "returning": false,
+          "direct": true,
+          "destination": 32
+        },
+        {
+          "unit_id": 4,
+          "hero": false,
+          "time": 96.0,
+          "returning": false,
+          "direct": true,
+          "destination": 32
+        },
+        {
+          "unit_id": 5,
+          "hero": false,
+          "time": 96.0,
+          "returning": false,
+          "direct": true,
+          "destination": 32
+        },
+        {
+          "unit_id": 6,
+          "hero": false,
+          "time": 96.0,
+          "returning": false,
+          "direct": true,
+          "destination": 32
+        },
+        {
+          "unit_id": 7,
+          "hero": false,
+          "time": 96.0,
+          "returning": false,
+          "direct": true,
+          "destination": 32
+        },
+        {
+          "unit_id": 8,
+          "hero": false,
+          "time": 96.0,
+          "returning": false,
+          "direct": true,
+          "destination": 32
+        },
+        {
+          "unit_id": 9,
+          "hero": false,
+          "time": 96.0,
+          "returning": false,
+          "direct": true,
+          "destination": 32
+        },
+        {
+          "unit_id": 10,
+          "hero": false,
+          "time": 96.0,
+          "returning": false,
+          "direct": true,
+          "destination": 32
+        },
+        {
+          "unit_id": 11,
+          "hero": false,
+          "time": 96.0,
+          "returning": false,
+          "direct": true,
+          "destination": 32
+        }
+      ],
+      "operation_timeline": [
+        {
+          "launch": 90.0,
+          "entry": 96.0,
+          "objective": 133.0,
+          "exit": 154.0,
+          "target_id": 32,
+          "target_kind": "cruiser",
+          "target_wreck_at": 529.0,
+          "observed_survival_after_entry": 433.0,
+          "units": [
+            {
+              "id": 0,
+              "kind": "melee",
+              "state": "aboard",
+              "hp": 253.09042992187466
+            },
+            {
+              "id": 1,
+              "kind": "ranged",
+              "state": "aboard",
+              "hp": 356.54093085937507
+            },
+            {
+              "id": 2,
+              "kind": "support",
+              "state": "aboard",
+              "hp": 355.13842992187506
+            },
+            {
+              "id": 3,
+              "kind": "commander",
+              "state": "aboard",
+              "hp": 416.738429921875
+            },
+            {
+              "id": 4,
+              "kind": "soldier",
+              "state": "aboard",
+              "hp": 51.94093085937499
+            },
+            {
+              "id": 5,
+              "kind": "soldier",
+              "state": "aboard",
+              "hp": 51.94093085937499
+            },
+            {
+              "id": 6,
+              "kind": "soldier",
+              "state": "aboard",
+              "hp": 51.94093085937499
+            },
+            {
+              "id": 7,
+              "kind": "soldier",
+              "state": "aboard",
+              "hp": 51.94093085937499
+            },
+            {
+              "id": 8,
+              "kind": "soldier",
+              "state": "aboard",
+              "hp": 51.94093085937499
+            },
+            {
+              "id": 9,
+              "kind": "soldier",
+              "state": "aboard",
+              "hp": 51.94093085937499
+            },
+            {
+              "id": 10,
+              "kind": "soldier",
+              "state": "aboard",
+              "hp": 51.94093085937499
+            },
+            {
+              "id": 11,
+              "kind": "soldier",
+              "state": "aboard",
+              "hp": 51.94093085937499
+            }
+          ]
+        }
+      ],
+      "target_survival_after_entry": 433.0,
+      "target_wreck_before_exit": false,
+      "case": "active_15",
+      "enemy_weapon_disabled": true
+    },
+    {
+      "seed": 930005,
+      "seconds": 1049.0,
+      "main_seconds": 938.0,
+      "first_loss_seconds": 46.0,
+      "winner": 0,
+      "outcome": "victory",
+      "remaining_cost": [
+        51,
+        0
+      ],
+      "initial_cost": [
+        100,
+        100
+      ],
+      "initial_heroes": [
+        15,
+        15
+      ],
+      "initial_fighters": [
+        40,
+        40
+      ],
+      "fighter_package_cost": [
+        [
+          1200,
+          240,
+          0
+        ],
+        [
+          1200,
+          240,
+          0
+        ]
+      ],
+      "hero_states": {
+        "0:aboard": 6,
+        "0:officer": 1,
+        "0:dead": 8,
+        "1:dead": 15
+      },
+      "metrics": {
+        "fighter_losses": 80.0,
+        "shots_launched": 31349.0,
+        "pd_damage_missile": 13692.0,
+        "repair_resource_0": 463.32189306289564,
+        "repair_resource_1": 33.26225029883507,
+        "repair_resource_2": 1.998207727925389,
+        "repair_work": 8490.920228732419,
+        "facility_destroyed": 401.0,
+        "explosions": 66.0,
+        "repair_hull_hp": 3488.0,
+        "wreck_hull": 46.0,
+        "hero_repair_hp": 5269.496597968505,
+        "hero_wreck_deaths": 22.0,
+        "operations_launched": 1.0,
+        "entry_at": 98.0,
+        "launch_to_entry": 8.0,
+        "entered_heroes": 4.0,
+        "entered_soldiers": 8.0,
+        "hero_heal": 177.1,
+        "catalysts_used": 1.0,
+        "objectives": 1.0,
+        "entry_to_objective": 48.0,
+        "returned_heroes": 4.0,
+        "returned_soldiers": 8.0,
+        "entry_to_exit": 80.0,
+        "escaped_cost_1": 0.0
+      },
+      "damage_by_target_size": {
+        "(0, 1)": 140612.80633151156,
+        "(1, 2)": 174606.67341051725,
+        "(1, 1)": 136955.61160896832,
+        "(0, 2)": 174121.2514103364,
+        "(1, 3)": 199403.5876099319,
+        "(0, 3)": 293779.4791541827
+      },
+      "mounts_remaining": [
+        14,
+        0
+      ],
+      "transport_log": [
+        {
+          "unit_id": 0,
+          "hero": true,
+          "time": 98.0,
+          "returning": false,
+          "direct": true,
+          "destination": 35
+        },
+        {
+          "unit_id": 1,
+          "hero": true,
+          "time": 98.0,
+          "returning": false,
+          "direct": true,
+          "destination": 35
+        },
+        {
+          "unit_id": 2,
+          "hero": true,
+          "time": 98.0,
+          "returning": false,
+          "direct": true,
+          "destination": 35
+        },
+        {
+          "unit_id": 3,
+          "hero": true,
+          "time": 98.0,
+          "returning": false,
+          "direct": true,
+          "destination": 35
+        },
+        {
+          "unit_id": 4,
+          "hero": false,
+          "time": 98.0,
+          "returning": false,
+          "direct": true,
+          "destination": 35
+        },
+        {
+          "unit_id": 5,
+          "hero": false,
+          "time": 98.0,
+          "returning": false,
+          "direct": true,
+          "destination": 35
+        },
+        {
+          "unit_id": 6,
+          "hero": false,
+          "time": 98.0,
+          "returning": false,
+          "direct": true,
+          "destination": 35
+        },
+        {
+          "unit_id": 7,
+          "hero": false,
+          "time": 98.0,
+          "returning": false,
+          "direct": true,
+          "destination": 35
+        },
+        {
+          "unit_id": 8,
+          "hero": false,
+          "time": 98.0,
+          "returning": false,
+          "direct": true,
+          "destination": 35
+        },
+        {
+          "unit_id": 9,
+          "hero": false,
+          "time": 98.0,
+          "returning": false,
+          "direct": true,
+          "destination": 35
+        },
+        {
+          "unit_id": 10,
+          "hero": false,
+          "time": 98.0,
+          "returning": false,
+          "direct": true,
+          "destination": 35
+        },
+        {
+          "unit_id": 11,
+          "hero": false,
+          "time": 98.0,
+          "returning": false,
+          "direct": true,
+          "destination": 35
+        }
+      ],
+      "operation_timeline": [
+        {
+          "launch": 90.0,
+          "entry": 98.0,
+          "objective": 146.0,
+          "exit": 178.0,
+          "target_id": 35,
+          "target_kind": "radar",
+          "target_wreck_at": 344.0,
+          "observed_survival_after_entry": 246.0,
+          "units": [
+            {
+              "id": 0,
+              "kind": "melee",
+              "state": "aboard",
+              "hp": 182.45454141601584
+            },
+            {
+              "id": 1,
+              "kind": "ranged",
+              "state": "aboard",
+              "hp": 304.8525414160159
+            },
+            {
+              "id": 2,
+              "kind": "support",
+              "state": "aboard",
+              "hp": 304.8525414160159
+            },
+            {
+              "id": 3,
+              "kind": "commander",
+              "state": "aboard",
+              "hp": 305.25254141601584
+            },
+            {
+              "id": 4,
+              "kind": "soldier",
+              "state": "aboard",
+              "hp": 0.25254141601561697
+            },
+            {
+              "id": 5,
+              "kind": "soldier",
+              "state": "aboard",
+              "hp": 0.25254141601561697
+            },
+            {
+              "id": 6,
+              "kind": "soldier",
+              "state": "aboard",
+              "hp": 0.25254141601561697
+            },
+            {
+              "id": 7,
+              "kind": "soldier",
+              "state": "aboard",
+              "hp": 0.25254141601561697
+            },
+            {
+              "id": 8,
+              "kind": "soldier",
+              "state": "aboard",
+              "hp": 0.25254141601561697
+            },
+            {
+              "id": 9,
+              "kind": "soldier",
+              "state": "aboard",
+              "hp": 0.25254141601561697
+            },
+            {
+              "id": 10,
+              "kind": "soldier",
+              "state": "aboard",
+              "hp": 0.25254141601561697
+            },
+            {
+              "id": 11,
+              "kind": "soldier",
+              "state": "aboard",
+              "hp": 0.25254141601561697
+            }
+          ]
+        }
+      ],
+      "target_survival_after_entry": 246.0,
+      "target_wreck_before_exit": false,
+      "case": "active_15",
+      "enemy_weapon_disabled": true
+    },
+    {
+      "seed": 930006,
+      "seconds": 1025.0,
+      "main_seconds": 1012.0,
+      "first_loss_seconds": 29.0,
+      "winner": 0,
+      "outcome": "victory",
+      "remaining_cost": [
+        51,
+        0
+      ],
+      "initial_cost": [
+        100,
+        100
+      ],
+      "initial_heroes": [
+        15,
+        15
+      ],
+      "initial_fighters": [
+        40,
+        40
+      ],
+      "fighter_package_cost": [
+        [
+          1200,
+          240,
+          0
+        ],
+        [
+          1200,
+          240,
+          0
+        ]
+      ],
+      "hero_states": {
+        "0:aboard": 6,
+        "0:officer": 1,
+        "0:dead": 8,
+        "1:dead": 15
+      },
+      "metrics": {
+        "fighter_losses": 80.0,
+        "shots_launched": 30367.0,
+        "pd_damage_missile": 14604.0,
+        "repair_resource_0": 689.1395208376183,
+        "repair_resource_1": 50.316357973167456,
+        "repair_resource_2": 2.024999999999999,
+        "repair_work": 13764.958608257502,
+        "repair_hull_hp": 3744.0,
+        "facility_destroyed": 383.0,
+        "explosions": 59.0,
+        "wreck_hull": 44.0,
+        "hero_repair_hp": 4830.191749999997,
+        "hero_wreck_deaths": 22.0,
+        "wreck_core": 1.0,
+        "operations_launched": 1.0,
+        "entry_at": 96.0,
+        "launch_to_entry": 6.0,
+        "entered_heroes": 4.0,
+        "entered_soldiers": 8.0,
+        "hero_heal": 0.0,
+        "objectives": 1.0,
+        "entry_to_objective": 15.0,
+        "returned_heroes": 4.0,
+        "returned_soldiers": 8.0,
+        "entry_to_exit": 30.0,
+        "escaped_cost_1": 0.0
+      },
+      "damage_by_target_size": {
+        "(0, 1)": 131524.37224428108,
+        "(1, 1)": 131072.85406683147,
+        "(0, 2)": 174570.457168543,
+        "(1, 2)": 174795.20972607308,
+        "(1, 3)": 173413.4875703143,
+        "(0, 3)": 295178.83924275014
+      },
+      "mounts_remaining": [
+        14,
+        0
+      ],
+      "transport_log": [
+        {
+          "unit_id": 0,
+          "hero": true,
+          "time": 96.0,
+          "returning": false,
+          "direct": true,
+          "destination": 33
+        },
+        {
+          "unit_id": 1,
+          "hero": true,
+          "time": 96.0,
+          "returning": false,
+          "direct": true,
+          "destination": 33
+        },
+        {
+          "unit_id": 2,
+          "hero": true,
+          "time": 96.0,
+          "returning": false,
+          "direct": true,
+          "destination": 33
+        },
+        {
+          "unit_id": 3,
+          "hero": true,
+          "time": 96.0,
+          "returning": false,
+          "direct": true,
+          "destination": 33
+        },
+        {
+          "unit_id": 4,
+          "hero": false,
+          "time": 96.0,
+          "returning": false,
+          "direct": true,
+          "destination": 33
+        },
+        {
+          "unit_id": 5,
+          "hero": false,
+          "time": 96.0,
+          "returning": false,
+          "direct": true,
+          "destination": 33
+        },
+        {
+          "unit_id": 6,
+          "hero": false,
+          "time": 96.0,
+          "returning": false,
+          "direct": true,
+          "destination": 33
+        },
+        {
+          "unit_id": 7,
+          "hero": false,
+          "time": 96.0,
+          "returning": false,
+          "direct": true,
+          "destination": 33
+        },
+        {
+          "unit_id": 8,
+          "hero": false,
+          "time": 96.0,
+          "returning": false,
+          "direct": true,
+          "destination": 33
+        },
+        {
+          "unit_id": 9,
+          "hero": false,
+          "time": 96.0,
+          "returning": false,
+          "direct": true,
+          "destination": 33
+        },
+        {
+          "unit_id": 10,
+          "hero": false,
+          "time": 96.0,
+          "returning": false,
+          "direct": true,
+          "destination": 33
+        },
+        {
+          "unit_id": 11,
+          "hero": false,
+          "time": 96.0,
+          "returning": false,
+          "direct": true,
+          "destination": 33
+        }
+      ],
+      "operation_timeline": [
+        {
+          "launch": 90.0,
+          "entry": 96.0,
+          "objective": 111.0,
+          "exit": 126.0,
+          "target_id": 33,
+          "target_kind": "cruiser",
+          "target_wreck_at": 490.0,
+          "observed_survival_after_entry": 394.0,
+          "units": [
+            {
+              "id": 0,
+              "kind": "melee",
+              "state": "aboard",
+              "hp": 248.1216191406251
+            },
+            {
+              "id": 1,
+              "kind": "ranged",
+              "state": "aboard",
+              "hp": 329.1616191406252
+            },
+            {
+              "id": 2,
+              "kind": "support",
+              "state": "aboard",
+              "hp": 329.1616191406252
+            },
+            {
+              "id": 3,
+              "kind": "commander",
+              "state": "aboard",
+              "hp": 390.76161914062516
+            },
+            {
+              "id": 4,
+              "kind": "soldier",
+              "state": "aboard",
+              "hp": 24.56161914062498
+            },
+            {
+              "id": 5,
+              "kind": "soldier",
+              "state": "aboard",
+              "hp": 24.56161914062498
+            },
+            {
+              "id": 6,
+              "kind": "soldier",
+              "state": "aboard",
+              "hp": 24.56161914062498
+            },
+            {
+              "id": 7,
+              "kind": "soldier",
+              "state": "aboard",
+              "hp": 24.56161914062498
+            },
+            {
+              "id": 8,
+              "kind": "soldier",
+              "state": "aboard",
+              "hp": 24.56161914062498
+            },
+            {
+              "id": 9,
+              "kind": "soldier",
+              "state": "aboard",
+              "hp": 24.56161914062498
+            },
+            {
+              "id": 10,
+              "kind": "soldier",
+              "state": "aboard",
+              "hp": 24.56161914062498
+            },
+            {
+              "id": 11,
+              "kind": "soldier",
+              "state": "aboard",
+              "hp": 24.56161914062498
+            }
+          ]
+        }
+      ],
+      "target_survival_after_entry": 394.0,
+      "target_wreck_before_exit": false,
+      "case": "active_15",
+      "enemy_weapon_disabled": true
+    },
+    {
+      "seed": 930007,
+      "seconds": 1074.0,
+      "main_seconds": 1014.0,
+      "first_loss_seconds": 51.0,
+      "winner": 1,
+      "outcome": "defeat",
+      "remaining_cost": [
+        0,
+        25
+      ],
+      "initial_cost": [
+        100,
+        100
+      ],
+      "initial_heroes": [
+        15,
+        15
+      ],
+      "initial_fighters": [
+        40,
+        40
+      ],
+      "fighter_package_cost": [
+        [
+          1200,
+          240,
+          0
+        ],
+        [
+          1200,
+          240,
+          0
+        ]
+      ],
+      "hero_states": {
+        "0:dead": 15,
+        "1:aboard": 2,
+        "1:dead": 13
+      },
+      "metrics": {
+        "fighter_losses": 80.0,
+        "shots_launched": 30327.0,
+        "pd_damage_missile": 14544.0,
+        "repair_resource_0": 352.59293001858333,
+        "repair_resource_1": 22.03573343199022,
+        "repair_resource_2": 1.8650771742093168,
+        "repair_work": 5835.632632261681,
+        "facility_destroyed": 389.0,
+        "explosions": 67.0,
+        "hero_repair_hp": 4711.128946718688,
+        "repair_hull_hp": 2656.0,
+        "wreck_hull": 49.0,
+        "hero_wreck_deaths": 23.0,
+        "operations_launched": 1.0,
+        "entry_at": 96.0,
+        "launch_to_entry": 6.0,
+        "entered_heroes": 4.0,
+        "entered_soldiers": 8.0,
+        "hero_heal": 397.67323758789064,
+        "catalysts_used": 3.0,
+        "objectives": 1.0,
+        "entry_to_objective": 45.0,
+        "returned_heroes": 4.0,
+        "returned_soldiers": 8.0,
+        "entry_to_exit": 73.0,
+        "escaped_cost_0": 0.0
+      },
+      "damage_by_target_size": {
+        "(1, 1)": 135137.94732115205,
+        "(0, 1)": 140885.71460026177,
+        "(1, 2)": 173643.37892454313,
+        "(0, 2)": 173348.0605930595,
+        "(0, 3)": 243286.73760854642,
+        "(1, 3)": 294989.6320973901
+      },
+      "mounts_remaining": [
+        0,
+        10
+      ],
+      "transport_log": [
+        {
+          "unit_id": 0,
+          "hero": true,
+          "time": 96.0,
+          "returning": false,
+          "direct": true,
+          "destination": 34
+        },
+        {
+          "unit_id": 1,
+          "hero": true,
+          "time": 96.0,
+          "returning": false,
+          "direct": true,
+          "destination": 34
+        },
+        {
+          "unit_id": 2,
+          "hero": true,
+          "time": 96.0,
+          "returning": false,
+          "direct": true,
+          "destination": 34
+        },
+        {
+          "unit_id": 3,
+          "hero": true,
+          "time": 96.0,
+          "returning": false,
+          "direct": true,
+          "destination": 34
+        },
+        {
+          "unit_id": 4,
+          "hero": false,
+          "time": 96.0,
+          "returning": false,
+          "direct": true,
+          "destination": 34
+        },
+        {
+          "unit_id": 5,
+          "hero": false,
+          "time": 96.0,
+          "returning": false,
+          "direct": true,
+          "destination": 34
+        },
+        {
+          "unit_id": 6,
+          "hero": false,
+          "time": 96.0,
+          "returning": false,
+          "direct": true,
+          "destination": 34
+        },
+        {
+          "unit_id": 7,
+          "hero": false,
+          "time": 96.0,
+          "returning": false,
+          "direct": true,
+          "destination": 34
+        },
+        {
+          "unit_id": 8,
+          "hero": false,
+          "time": 96.0,
+          "returning": false,
+          "direct": true,
+          "destination": 34
+        },
+        {
+          "unit_id": 9,
+          "hero": false,
+          "time": 96.0,
+          "returning": false,
+          "direct": true,
+          "destination": 34
+        },
+        {
+          "unit_id": 10,
+          "hero": false,
+          "time": 96.0,
+          "returning": false,
+          "direct": true,
+          "destination": 34
+        },
+        {
+          "unit_id": 11,
+          "hero": false,
+          "time": 96.0,
+          "returning": false,
+          "direct": true,
+          "destination": 34
+        }
+      ],
+      "operation_timeline": [
+        {
+          "launch": 90.0,
+          "entry": 96.0,
+          "objective": 141.0,
+          "exit": 169.0,
+          "target_id": 34,
+          "target_kind": "air_defense",
+          "target_wreck_at": 490.0,
+          "observed_survival_after_entry": 394.0,
+          "units": [
+            {
+              "id": 0,
+              "kind": "melee",
+              "state": "dead",
+              "hp": 0
+            },
+            {
+              "id": 1,
+              "kind": "ranged",
+              "state": "dead",
+              "hp": 0
+            },
+            {
+              "id": 2,
+              "kind": "support",
+              "state": "dead",
+              "hp": 0
+            },
+            {
+              "id": 3,
+              "kind": "commander",
+              "state": "dead",
+              "hp": 0
+            },
+            {
+              "id": 4,
+              "kind": "soldier",
+              "state": "dead",
+              "hp": 0
+            },
+            {
+              "id": 5,
+              "kind": "soldier",
+              "state": "dead",
+              "hp": 0
+            },
+            {
+              "id": 6,
+              "kind": "soldier",
+              "state": "dead",
+              "hp": 0
+            },
+            {
+              "id": 7,
+              "kind": "soldier",
+              "state": "dead",
+              "hp": 0
+            },
+            {
+              "id": 8,
+              "kind": "soldier",
+              "state": "dead",
+              "hp": 0
+            },
+            {
+              "id": 9,
+              "kind": "soldier",
+              "state": "dead",
+              "hp": 0
+            },
+            {
+              "id": 10,
+              "kind": "soldier",
+              "state": "dead",
+              "hp": 0
+            },
+            {
+              "id": 11,
+              "kind": "soldier",
+              "state": "dead",
+              "hp": 0
+            }
+          ]
+        }
+      ],
+      "target_survival_after_entry": 394.0,
+      "target_wreck_before_exit": false,
+      "case": "active_15",
+      "enemy_weapon_disabled": false
+    },
+    {
+      "seed": 930000,
+      "seconds": 1800.0,
+      "main_seconds": null,
+      "first_loss_seconds": 116.0,
+      "winner": null,
+      "outcome": "timeout",
+      "remaining_cost": [
+        90,
+        100
+      ],
+      "initial_cost": [
+        100,
+        100
+      ],
+      "initial_heroes": [
+        15,
+        15
+      ],
+      "initial_fighters": [
+        40,
+        40
+      ],
+      "fighter_package_cost": [
+        [
+          1200,
+          240,
+          0
+        ],
+        [
+          1200,
+          240,
+          0
+        ]
+      ],
+      "hero_states": {
+        "0:aboard": 2,
+        "0:officer": 9,
+        "0:dead": 4,
+        "1:aboard": 2,
+        "1:officer": 13
+      },
+      "metrics": {
+        "fighter_losses": 80.0,
+        "shots_launched": 11359.0,
+        "weapon_only_damage": 37380.0,
+        "pd_damage_missile": 6528.0,
+        "weapons_destroyed": 71.0,
+        "repair_resource_0": 1748.1835143894573,
+        "repair_resource_1": 132.00584585782295,
+        "repair_resource_2": 3.4126557543152205,
+        "repair_work": 50015.743173058676,
+        "repair_hull_hp": 32146.400000000056,
+        "hero_repair_hp": 3425.8336250000125,
+        "facility_destroyed": 105.0,
+        "explosions": 16.0,
+        "wreck_hull": 7.0,
+        "hero_wreck_deaths": 4.0
+      },
+      "damage_by_target_size": {
+        "(0, 1)": 17273.771132414076,
+        "(1, 1)": 76224.15445947617,
+        "(0, 2)": 26813.95974271558,
+        "(1, 2)": 22564.440325768763,
+        "(0, 3)": 36672.27917181162
+      },
+      "mounts_remaining": [
+        51,
+        0
+      ],
+      "transport_log": [],
+      "operation_timeline": [],
+      "target_survival_after_entry": null,
+      "target_wreck_before_exit": false,
+      "case": "left_weapon_order",
+      "enemy_weapon_disabled": true
+    },
+    {
+      "seed": 930001,
+      "seconds": 1800.0,
+      "main_seconds": null,
+      "first_loss_seconds": 24.0,
+      "winner": null,
+      "outcome": "timeout",
+      "remaining_cost": [
+        93,
+        100
+      ],
+      "initial_cost": [
+        100,
+        100
+      ],
+      "initial_heroes": [
+        15,
+        15
+      ],
+      "initial_fighters": [
+        40,
+        40
+      ],
+      "fighter_package_cost": [
+        [
+          1200,
+          240,
+          0
+        ],
+        [
+          1200,
+          240,
+          0
+        ]
+      ],
+      "hero_states": {
+        "0:aboard": 2,
+        "0:officer": 12,
+        "0:dead": 1,
+        "1:aboard": 2,
+        "1:officer": 13
+      },
+      "metrics": {
+        "fighter_losses": 80.0,
+        "shots_launched": 12022.0,
+        "pd_damage_missile": 7236.0,
+        "repair_resource_0": 985.9261176715235,
+        "repair_resource_1": 88.14002906364327,
+        "repair_resource_2": 4.620747309844788,
+        "hero_repair_hp": 3313.685750000028,
+        "repair_work": 29524.750808819113,
+        "weapon_only_damage": 37380.0,
+        "weapons_destroyed": 71.0,
+        "facility_destroyed": 78.0,
+        "explosions": 17.0,
+        "wreck_core": 1.0,
+        "repair_hull_hp": 17995.200000000044,
+        "wreck_hull": 4.0,
+        "hero_wreck_deaths": 1.0
+      },
+      "damage_by_target_size": {
+        "(1, 1)": 71662.6272289686,
+        "(0, 1)": 19111.07551203911,
+        "(0, 2)": 23836.20869716557,
+        "(1, 2)": 27862.311221484844,
+        "(0, 3)": 40416.88408427316
+      },
+      "mounts_remaining": [
+        57,
+        0
+      ],
+      "transport_log": [],
+      "operation_timeline": [],
+      "target_survival_after_entry": null,
+      "target_wreck_before_exit": false,
+      "case": "left_weapon_order",
+      "enemy_weapon_disabled": true
+    },
+    {
+      "seed": 930002,
+      "seconds": 1800.0,
+      "main_seconds": null,
+      "first_loss_seconds": 73.0,
+      "winner": null,
+      "outcome": "timeout",
+      "remaining_cost": [
+        91,
+        99
+      ],
+      "initial_cost": [
+        100,
+        100
+      ],
+      "initial_heroes": [
+        15,
+        15
+      ],
+      "initial_fighters": [
+        40,
+        40
+      ],
+      "fighter_package_cost": [
+        [
+          1200,
+          240,
+          0
+        ],
+        [
+          1200,
+          240,
+          0
+        ]
+      ],
+      "hero_states": {
+        "0:aboard": 2,
+        "0:officer": 12,
+        "0:dead": 1,
+        "1:aboard": 2,
+        "1:officer": 13
+      },
+      "metrics": {
+        "fighter_losses": 80.0,
+        "shots_launched": 11362.0,
+        "weapon_only_damage": 37380.0,
+        "pd_damage_missile": 6828.0,
+        "repair_resource_0": 1664.0257749142684,
+        "repair_resource_1": 101.21200729182755,
+        "repair_resource_2": 5.223727854471818,
+        "hero_repair_hp": 3077.80015659386,
+        "weapons_destroyed": 71.0,
+        "facility_destroyed": 99.0,
+        "explosions": 16.0,
+        "repair_work": 49002.56024859012,
+        "repair_hull_hp": 34424.80000000008,
+        "wreck_hull": 5.0,
+        "hero_wreck_deaths": 1.0
+      },
+      "damage_by_target_size": {
+        "(1, 1)": 82429.78757883565,
+        "(0, 1)": 20330.831926539016,
+        "(0, 2)": 26129.476425882163,
+        "(1, 2)": 14897.039631346845,
+        "(0, 3)": 44744.93888137407
+      },
+      "mounts_remaining": [
+        53,
+        0
+      ],
+      "transport_log": [],
+      "operation_timeline": [],
+      "target_survival_after_entry": null,
+      "target_wreck_before_exit": false,
+      "case": "left_weapon_order",
+      "enemy_weapon_disabled": true
+    },
+    {
+      "seed": 930003,
+      "seconds": 1800.0,
+      "main_seconds": null,
+      "first_loss_seconds": 66.0,
+      "winner": null,
+      "outcome": "timeout",
+      "remaining_cost": [
+        90,
+        99
+      ],
+      "initial_cost": [
+        100,
+        100
+      ],
+      "initial_heroes": [
+        15,
+        15
+      ],
+      "initial_fighters": [
+        40,
+        40
+      ],
+      "fighter_package_cost": [
+        [
+          1200,
+          240,
+          0
+        ],
+        [
+          1200,
+          240,
+          0
+        ]
+      ],
+      "hero_states": {
+        "0:aboard": 2,
+        "0:officer": 12,
+        "0:dead": 1,
+        "1:aboard": 2,
+        "1:officer": 13
+      },
+      "metrics": {
+        "fighter_losses": 80.0,
+        "shots_launched": 11406.0,
+        "pd_damage_missile": 7392.0,
+        "repair_resource_0": 2284.191847388465,
+        "repair_resource_1": 259.76246473086167,
+        "repair_resource_2": 5.487529422119205,
+        "repair_work": 61805.61621163196,
+        "hero_repair_hp": 3301.7553121500523,
+        "weapon_only_damage": 37380.0,
+        "weapons_destroyed": 71.0,
+        "facility_destroyed": 93.0,
+        "explosions": 16.0,
+        "repair_hull_hp": 46362.39999999991,
+        "wreck_hull": 4.0,
+        "hero_wreck_deaths": 1.0
+      },
+      "damage_by_target_size": {
+        "(1, 1)": 76746.07876460052,
+        "(0, 1)": 17975.79897140628,
+        "(1, 2)": 31520.712135742095,
+        "(0, 2)": 24513.760450369133,
+        "(0, 3)": 39425.58137735345
+      },
+      "mounts_remaining": [
+        51,
+        0
+      ],
+      "transport_log": [],
+      "operation_timeline": [],
+      "target_survival_after_entry": null,
+      "target_wreck_before_exit": false,
+      "case": "left_weapon_order",
+      "enemy_weapon_disabled": true
+    },
+    {
+      "seed": 930004,
+      "seconds": 1800.0,
+      "main_seconds": null,
+      "first_loss_seconds": 35.0,
+      "winner": null,
+      "outcome": "timeout",
+      "remaining_cost": [
+        91,
+        99
+      ],
+      "initial_cost": [
+        100,
+        100
+      ],
+      "initial_heroes": [
+        15,
+        15
+      ],
+      "initial_fighters": [
+        40,
+        40
+      ],
+      "fighter_package_cost": [
+        [
+          1200,
+          240,
+          0
+        ],
+        [
+          1200,
+          240,
+          0
+        ]
+      ],
+      "hero_states": {
+        "0:aboard": 2,
+        "0:officer": 10,
+        "0:dead": 3,
+        "1:aboard": 2,
+        "1:officer": 13
+      },
+      "metrics": {
+        "fighter_losses": 80.0,
+        "shots_launched": 10536.0,
+        "weapon_only_damage": 37380.0,
+        "facility_destroyed": 109.0,
+        "repair_resource_0": 1704.868859611468,
+        "repair_resource_1": 117.17236498640196,
+        "repair_resource_2": 4.9655476362578,
+        "repair_work": 49621.09334398073,
+        "pd_damage_missile": 6768.0,
+        "hero_repair_hp": 2854.9683749999995,
+        "weapons_destroyed": 71.0,
+        "explosions": 20.0,
+        "wreck_hull": 7.0,
+        "repair_hull_hp": 32296.800000000072,
+        "hero_wreck_deaths": 3.0
+      },
+      "damage_by_target_size": {
+        "(1, 1)": 84725.25632847616,
+        "(0, 1)": 15975.39237429693,
+        "(0, 2)": 26797.271032686585,
+        "(1, 2)": 13949.768584292615,
+        "(0, 3)": 39904.09803819153
+      },
+      "mounts_remaining": [
+        53,
+        0
+      ],
+      "transport_log": [],
+      "operation_timeline": [],
+      "target_survival_after_entry": null,
+      "target_wreck_before_exit": false,
+      "case": "left_weapon_order",
+      "enemy_weapon_disabled": true
+    },
+    {
+      "seed": 930005,
+      "seconds": 1800.0,
+      "main_seconds": null,
+      "first_loss_seconds": 76.0,
+      "winner": null,
+      "outcome": "timeout",
+      "remaining_cost": [
+        93,
+        99
+      ],
+      "initial_cost": [
+        100,
+        100
+      ],
+      "initial_heroes": [
+        15,
+        15
+      ],
+      "initial_fighters": [
+        40,
+        40
+      ],
+      "fighter_package_cost": [
+        [
+          1200,
+          240,
+          0
+        ],
+        [
+          1200,
+          240,
+          0
+        ]
+      ],
+      "hero_states": {
+        "0:aboard": 2,
+        "0:officer": 10,
+        "0:dead": 3,
+        "1:aboard": 2,
+        "1:officer": 13
+      },
+      "metrics": {
+        "fighter_losses": 80.0,
+        "shots_launched": 11326.0,
+        "pd_damage_missile": 6816.0,
+        "facility_destroyed": 84.0,
+        "weapon_only_damage": 37380.0,
+        "repair_resource_0": 1788.0398171351435,
+        "repair_resource_1": 139.90254994416685,
+        "repair_resource_2": 1.9174448413913323,
+        "repair_work": 47391.15094715372,
+        "weapons_destroyed": 71.0,
+        "explosions": 14.0,
+        "hero_repair_hp": 3067.821945450748,
+        "repair_hull_hp": 26730.400000000005,
+        "hero_wreck_deaths": 3.0,
+        "wreck_hull": 5.0
+      },
+      "damage_by_target_size": {
+        "(0, 1)": 21221.52362291408,
+        "(1, 2)": 46560.75778839378,
+        "(1, 1)": 61553.921053726306,
+        "(0, 2)": 31966.290904378984,
+        "(0, 3)": 35217.40637671956
+      },
+      "mounts_remaining": [
+        57,
+        0
+      ],
+      "transport_log": [],
+      "operation_timeline": [],
+      "target_survival_after_entry": null,
+      "target_wreck_before_exit": false,
+      "case": "left_weapon_order",
+      "enemy_weapon_disabled": true
+    },
+    {
+      "seed": 930006,
+      "seconds": 1800.0,
+      "main_seconds": null,
+      "first_loss_seconds": 48.0,
+      "winner": null,
+      "outcome": "timeout",
+      "remaining_cost": [
+        89,
+        100
+      ],
+      "initial_cost": [
+        100,
+        100
+      ],
+      "initial_heroes": [
+        15,
+        15
+      ],
+      "initial_fighters": [
+        40,
+        40
+      ],
+      "fighter_package_cost": [
+        [
+          1200,
+          240,
+          0
+        ],
+        [
+          1200,
+          240,
+          0
+        ]
+      ],
+      "hero_states": {
+        "0:aboard": 2,
+        "0:officer": 10,
+        "0:dead": 3,
+        "1:aboard": 2,
+        "1:officer": 13
+      },
+      "metrics": {
+        "fighter_losses": 80.0,
+        "shots_launched": 11571.0,
+        "pd_damage_missile": 7176.0,
+        "weapon_only_damage": 37380.0,
+        "facility_destroyed": 123.0,
+        "repair_resource_0": 1090.4798876022362,
+        "repair_resource_1": 97.04405516971664,
+        "repair_resource_2": 6.065988765281491,
+        "repair_work": 34921.493012487335,
+        "weapons_destroyed": 71.0,
+        "explosions": 21.0,
+        "hero_repair_hp": 2819.4570000000003,
+        "repair_hull_hp": 23082.40000000009,
+        "wreck_hull": 8.0,
+        "hero_wreck_deaths": 3.0,
+        "wreck_core": 1.0
+      },
+      "damage_by_target_size": {
+        "(0, 1)": 20520.399126703123,
+        "(1, 1)": 91375.25388478849,
+        "(1, 2)": 22606.54440706251,
+        "(0, 2)": 23997.336262894765,
+        "(0, 3)": 50899.47194939341
+      },
+      "mounts_remaining": [
+        51,
+        0
+      ],
+      "transport_log": [],
+      "operation_timeline": [],
+      "target_survival_after_entry": null,
+      "target_wreck_before_exit": false,
+      "case": "left_weapon_order",
+      "enemy_weapon_disabled": true
+    },
+    {
+      "seed": 930007,
+      "seconds": 1800.0,
+      "main_seconds": null,
+      "first_loss_seconds": 69.0,
+      "winner": null,
+      "outcome": "timeout",
+      "remaining_cost": [
+        95,
+        100
+      ],
+      "initial_cost": [
+        100,
+        100
+      ],
+      "initial_heroes": [
+        15,
+        15
+      ],
+      "initial_fighters": [
+        40,
+        40
+      ],
+      "fighter_package_cost": [
+        [
+          1200,
+          240,
+          0
+        ],
+        [
+          1200,
+          240,
+          0
+        ]
+      ],
+      "hero_states": {
+        "0:aboard": 2,
+        "0:officer": 12,
+        "0:dead": 1,
+        "1:aboard": 2,
+        "1:officer": 13
+      },
+      "metrics": {
+        "fighter_losses": 80.0,
+        "shots_launched": 10634.0,
+        "pd_damage_missile": 6108.0,
+        "repair_resource_0": 1880.1392139250331,
+        "repair_resource_1": 158.4204094102466,
+        "repair_resource_2": 3.825621651785249,
+        "repair_work": 51569.141506300526,
+        "weapon_only_damage": 37380.0,
+        "facility_destroyed": 67.0,
+        "repair_hull_hp": 32970.40000000006,
+        "explosions": 15.0,
+        "weapons_destroyed": 71.0,
+        "hero_repair_hp": 3242.308322599532,
+        "hero_wreck_deaths": 1.0,
+        "wreck_hull": 2.0
+      },
+      "damage_by_target_size": {
+        "(1, 1)": 46628.728818343654,
+        "(0, 1)": 19523.574899562518,
+        "(0, 2)": 19969.398636155252,
+        "(1, 2)": 48096.524079768744,
+        "(0, 3)": 36461.14365126999
+      },
+      "mounts_remaining": [
+        61,
+        0
+      ],
+      "transport_log": [],
+      "operation_timeline": [],
+      "target_survival_after_entry": null,
+      "target_wreck_before_exit": false,
+      "case": "left_weapon_order",
+      "enemy_weapon_disabled": true
+    },
+    {
+      "seed": 930000,
+      "seconds": 1078.0,
+      "main_seconds": 988.0,
+      "first_loss_seconds": 59.0,
+      "winner": 0,
+      "outcome": "victory",
+      "remaining_cost": [
+        25,
+        0
+      ],
+      "initial_cost": [
+        100,
+        100
+      ],
+      "initial_heroes": [
+        15,
+        15
+      ],
+      "initial_fighters": [
+        40,
+        40
+      ],
+      "fighter_package_cost": [
+        [
+          1200,
+          240,
+          0
+        ],
+        [
+          1200,
+          240,
+          0
+        ]
+      ],
+      "hero_states": {
+        "0:aboard": 2,
+        "0:dead": 13,
+        "1:dead": 15
+      },
+      "metrics": {
+        "fighter_losses": 80.0,
+        "shots_launched": 30433.0,
+        "pd_damage_missile": 17316.0,
+        "repair_resource_0": 688.7155404424286,
+        "repair_resource_1": 48.24299530617755,
+        "repair_resource_2": 2.024999999999999,
+        "repair_work": 13686.928400654328,
+        "facility_destroyed": 388.0,
+        "explosions": 66.0,
+        "repair_hull_hp": 5696.0,
+        "hero_repair_hp": 5390.999999999995,
+        "wreck_hull": 44.0,
+        "hero_wreck_deaths": 28.0,
+        "escaped_cost_1": 0.0
+      },
+      "damage_by_target_size": {
+        "(1, 1)": 135566.6911521402,
+        "(0, 1)": 133490.5090439375,
+        "(1, 2)": 174728.07522228383,
+        "(0, 2)": 175608.1016993899,
+        "(0, 3)": 295361.5692766805,
+        "(1, 3)": 208932.55035816832
+      },
+      "mounts_remaining": [
+        10,
+        0
+      ],
+      "transport_log": [],
+      "operation_timeline": [],
+      "target_survival_after_entry": null,
+      "target_wreck_before_exit": false,
+      "case": "left_hull_order",
+      "enemy_weapon_disabled": true
+    },
+    {
+      "seed": 930001,
+      "seconds": 1203.0,
+      "main_seconds": 1013.0,
+      "first_loss_seconds": 82.0,
+      "winner": 1,
+      "outcome": "defeat",
+      "remaining_cost": [
+        0,
+        25
+      ],
+      "initial_cost": [
+        100,
+        100
+      ],
+      "initial_heroes": [
+        15,
+        15
+      ],
+      "initial_fighters": [
+        40,
+        40
+      ],
+      "fighter_package_cost": [
+        [
+          1200,
+          240,
+          0
+        ],
+        [
+          1200,
+          240,
+          0
+        ]
+      ],
+      "hero_states": {
+        "0:dead": 15,
+        "1:aboard": 2,
+        "1:dead": 13
+      },
+      "metrics": {
+        "fighter_losses": 80.0,
+        "shots_launched": 31805.0,
+        "pd_damage_missile": 15864.0,
+        "repair_resource_0": 370.61130935732604,
+        "repair_resource_1": 19.51691034425142,
+        "repair_resource_2": 1.4846677389705953,
+        "hero_repair_hp": 4296.565500000018,
+        "facility_destroyed": 396.0,
+        "explosions": 66.0,
+        "repair_work": 6598.022939268702,
+        "repair_hull_hp": 2368.0,
+        "hero_wreck_deaths": 28.0,
+        "wreck_hull": 48.0,
+        "escaped_cost_0": 0.0
+      },
+      "damage_by_target_size": {
+        "(1, 1)": 141410.48903464834,
+        "(0, 1)": 138917.78589752605,
+        "(1, 2)": 173875.54534039256,
+        "(0, 2)": 173989.81902684417,
+        "(1, 3)": 292784.1067634252,
+        "(0, 3)": 269251.5256716447
+      },
+      "mounts_remaining": [
+        0,
+        10
+      ],
+      "transport_log": [],
+      "operation_timeline": [],
+      "target_survival_after_entry": null,
+      "target_wreck_before_exit": false,
+      "case": "left_hull_order",
+      "enemy_weapon_disabled": false
+    },
+    {
+      "seed": 930002,
+      "seconds": 1164.0,
+      "main_seconds": 1102.0,
+      "first_loss_seconds": 48.0,
+      "winner": 0,
+      "outcome": "victory",
+      "remaining_cost": [
+        50,
+        0
+      ],
+      "initial_cost": [
+        100,
+        100
+      ],
+      "initial_heroes": [
+        15,
+        15
+      ],
+      "initial_fighters": [
+        40,
+        40
+      ],
+      "fighter_package_cost": [
+        [
+          1200,
+          240,
+          0
+        ],
+        [
+          1200,
+          240,
+          0
+        ]
+      ],
+      "hero_states": {
+        "0:aboard": 2,
+        "0:officer": 1,
+        "0:dead": 12,
+        "1:dead": 15
+      },
+      "metrics": {
+        "fighter_losses": 80.0,
+        "shots_launched": 31233.0,
+        "pd_damage_missile": 15372.0,
+        "facility_destroyed": 392.0,
+        "explosions": 61.0,
+        "repair_resource_0": 535.0353263147061,
+        "repair_resource_1": 34.69804441087077,
+        "repair_resource_2": 2.0094857536764827,
+        "hero_repair_hp": 5273.324000000018,
+        "repair_work": 10379.953194347334,
+        "repair_hull_hp": 3072.0,
+        "wreck_hull": 51.0,
+        "hero_wreck_deaths": 27.0,
+        "wreck_core": 1.0,
+        "escaped_cost_1": 0.0
+      },
+      "damage_by_target_size": {
+        "(0, 1)": 142256.71950628152,
+        "(1, 1)": 139624.74854381997,
+        "(0, 2)": 173783.06620202182,
+        "(1, 2)": 174309.69834450562,
+        "(1, 3)": 251966.48378833866,
+        "(0, 3)": 295120.5763124967
+      },
+      "mounts_remaining": [
+        14,
+        0
+      ],
+      "transport_log": [],
+      "operation_timeline": [],
+      "target_survival_after_entry": null,
+      "target_wreck_before_exit": false,
+      "case": "left_hull_order",
+      "enemy_weapon_disabled": true
+    },
+    {
+      "seed": 930003,
+      "seconds": 1071.0,
+      "main_seconds": 904.0,
+      "first_loss_seconds": 32.0,
+      "winner": 1,
+      "outcome": "defeat",
+      "remaining_cost": [
+        0,
+        50
+      ],
+      "initial_cost": [
+        100,
+        100
+      ],
+      "initial_heroes": [
+        15,
+        15
+      ],
+      "initial_fighters": [
+        40,
+        40
+      ],
+      "fighter_package_cost": [
+        [
+          1200,
+          240,
+          0
+        ],
+        [
+          1200,
+          240,
+          0
+        ]
+      ],
+      "hero_states": {
+        "0:dead": 15,
+        "1:aboard": 2,
+        "1:officer": 1,
+        "1:dead": 12
+      },
+      "metrics": {
+        "fighter_losses": 80.0,
+        "shots_launched": 30740.0,
+        "pd_damage_missile": 12984.0,
+        "repair_resource_0": 420.31093649777955,
+        "repair_resource_1": 24.834697186021028,
+        "repair_resource_2": 1.9194554227941347,
+        "repair_work": 7306.135901232878,
+        "hero_repair_hp": 5194.4921250000325,
+        "facility_destroyed": 392.0,
+        "explosions": 65.0,
+        "hero_wreck_deaths": 27.0,
+        "wreck_hull": 48.0,
+        "repair_hull_hp": 3424.0,
+        "wreck_core": 1.0,
+        "escaped_cost_0": 0.0
+      },
+      "damage_by_target_size": {
+        "(0, 1)": 142142.3851290124,
+        "(1, 1)": 139430.89923343714,
+        "(1, 2)": 173468.1897167221,
+        "(0, 2)": 173822.50873073444,
+        "(1, 3)": 295125.3393051663,
+        "(0, 3)": 249173.18276530676
+      },
+      "mounts_remaining": [
+        0,
+        14
+      ],
+      "transport_log": [],
+      "operation_timeline": [],
+      "target_survival_after_entry": null,
+      "target_wreck_before_exit": false,
+      "case": "left_hull_order",
+      "enemy_weapon_disabled": false
+    },
+    {
+      "seed": 930004,
+      "seconds": 1150.0,
+      "main_seconds": 1050.0,
+      "first_loss_seconds": 46.0,
+      "winner": 0,
+      "outcome": "victory",
+      "remaining_cost": [
+        50,
+        0
+      ],
+      "initial_cost": [
+        100,
+        100
+      ],
+      "initial_heroes": [
+        15,
+        15
+      ],
+      "initial_fighters": [
+        40,
+        40
+      ],
+      "fighter_package_cost": [
+        [
+          1200,
+          240,
+          0
+        ],
+        [
+          1200,
+          240,
+          0
+        ]
+      ],
+      "hero_states": {
+        "0:aboard": 2,
+        "0:officer": 1,
+        "0:dead": 12,
+        "1:dead": 15
+      },
+      "metrics": {
+        "fighter_losses": 80.0,
+        "shots_launched": 31033.0,
+        "repair_resource_0": 460.2093622010298,
+        "repair_resource_1": 24.38073657583672,
+        "repair_resource_2": 1.6871703181139495,
+        "repair_work": 8943.160033304182,
+        "facility_destroyed": 376.0,
+        "pd_damage_missile": 13068.0,
+        "hero_repair_hp": 4661.902269531291,
+        "explosions": 63.0,
+        "repair_hull_hp": 2944.0,
+        "hero_wreck_deaths": 27.0,
+        "wreck_hull": 49.0,
+        "escaped_cost_1": 0.0
+      },
+      "damage_by_target_size": {
+        "(1, 1)": 142822.73375843305,
+        "(0, 1)": 132939.3367923358,
+        "(1, 2)": 174207.9630850853,
+        "(0, 2)": 174480.57096060243,
+        "(1, 3)": 246833.10333817016,
+        "(0, 3)": 293815.9316738165
+      },
+      "mounts_remaining": [
+        14,
+        0
+      ],
+      "transport_log": [],
+      "operation_timeline": [],
+      "target_survival_after_entry": null,
+      "target_wreck_before_exit": false,
+      "case": "left_hull_order",
+      "enemy_weapon_disabled": true
+    },
+    {
+      "seed": 930005,
+      "seconds": 1057.0,
+      "main_seconds": 996.0,
+      "first_loss_seconds": 42.0,
+      "winner": 1,
+      "outcome": "defeat",
+      "remaining_cost": [
+        0,
+        50
+      ],
+      "initial_cost": [
+        100,
+        100
+      ],
+      "initial_heroes": [
+        15,
+        15
+      ],
+      "initial_fighters": [
+        40,
+        40
+      ],
+      "fighter_package_cost": [
+        [
+          1200,
+          240,
+          0
+        ],
+        [
+          1200,
+          240,
+          0
+        ]
+      ],
+      "hero_states": {
+        "0:dead": 15,
+        "1:aboard": 2,
+        "1:officer": 1,
+        "1:dead": 12
+      },
+      "metrics": {
+        "fighter_losses": 80.0,
+        "shots_launched": 30619.0,
+        "pd_damage_missile": 15504.0,
+        "repair_resource_0": 686.28621104229,
+        "repair_resource_1": 46.75215049374247,
+        "repair_resource_2": 1.5814039133522466,
+        "repair_work": 14445.223060988474,
+        "facility_destroyed": 394.0,
+        "explosions": 67.0,
+        "hero_repair_hp": 4431.924047499946,
+        "wreck_hull": 49.0,
+        "repair_hull_hp": 5632.0,
+        "hero_wreck_deaths": 27.0,
+        "wreck_explosion": 2.0,
+        "escaped_cost_0": 0.0
+      },
+      "damage_by_target_size": {
+        "(0, 1)": 140827.85893617175,
+        "(1, 2)": 174367.18871133935,
+        "(1, 1)": 141355.49216577344,
+        "(0, 2)": 174669.40935003085,
+        "(0, 3)": 211014.784779806,
+        "(1, 3)": 295211.8765753456
+      },
+      "mounts_remaining": [
+        0,
+        14
+      ],
+      "transport_log": [],
+      "operation_timeline": [],
+      "target_survival_after_entry": null,
+      "target_wreck_before_exit": false,
+      "case": "left_hull_order",
+      "enemy_weapon_disabled": false
+    },
+    {
+      "seed": 930006,
+      "seconds": 1033.0,
+      "main_seconds": 980.0,
+      "first_loss_seconds": 38.0,
+      "winner": 0,
+      "outcome": "victory",
+      "remaining_cost": [
+        50,
+        0
+      ],
+      "initial_cost": [
+        100,
+        100
+      ],
+      "initial_heroes": [
+        15,
+        15
+      ],
+      "initial_fighters": [
+        40,
+        40
+      ],
+      "fighter_package_cost": [
+        [
+          1200,
+          240,
+          0
+        ],
+        [
+          1200,
+          240,
+          0
+        ]
+      ],
+      "hero_states": {
+        "0:aboard": 2,
+        "0:officer": 1,
+        "0:dead": 12,
+        "1:dead": 15
+      },
+      "metrics": {
+        "fighter_losses": 80.0,
+        "shots_launched": 31665.0,
+        "pd_damage_missile": 17556.0,
+        "repair_resource_0": 607.2920746615478,
+        "repair_resource_1": 31.485973630731756,
+        "repair_resource_2": 2.024999999999999,
+        "repair_work": 11892.795772974667,
+        "repair_hull_hp": 4992.0,
+        "facility_destroyed": 392.0,
+        "explosions": 62.0,
+        "hero_repair_hp": 5303.270499999994,
+        "wreck_hull": 48.0,
+        "hero_wreck_deaths": 27.0,
+        "escaped_cost_1": 0.0
+      },
+      "damage_by_target_size": {
+        "(0, 1)": 138066.0781711551,
+        "(1, 1)": 140500.91796121837,
+        "(0, 2)": 174141.04217080856,
+        "(1, 2)": 174480.70771902424,
+        "(1, 3)": 221169.65145959597,
+        "(0, 3)": 295244.0472544904
+      },
+      "mounts_remaining": [
+        14,
+        0
+      ],
+      "transport_log": [],
+      "operation_timeline": [],
+      "target_survival_after_entry": null,
+      "target_wreck_before_exit": false,
+      "case": "left_hull_order",
+      "enemy_weapon_disabled": true
+    },
+    {
+      "seed": 930007,
+      "seconds": 996.0,
+      "main_seconds": 947.0,
+      "first_loss_seconds": 76.0,
+      "winner": 1,
+      "outcome": "defeat",
+      "remaining_cost": [
+        0,
+        50
+      ],
+      "initial_cost": [
+        100,
+        100
+      ],
+      "initial_heroes": [
+        15,
+        15
+      ],
+      "initial_fighters": [
+        40,
+        40
+      ],
+      "fighter_package_cost": [
+        [
+          1200,
+          240,
+          0
+        ],
+        [
+          1200,
+          240,
+          0
+        ]
+      ],
+      "hero_states": {
+        "0:dead": 15,
+        "1:aboard": 2,
+        "1:officer": 1,
+        "1:dead": 12
+      },
+      "metrics": {
+        "fighter_losses": 80.0,
+        "shots_launched": 31460.0,
+        "pd_damage_missile": 17892.0,
+        "repair_resource_0": 901.6200601120728,
+        "repair_resource_1": 81.24533277675208,
+        "repair_resource_2": 2.526428571428572,
+        "repair_work": 19798.274087137383,
+        "facility_destroyed": 384.0,
+        "explosions": 66.0,
+        "hero_repair_hp": 5371.985749999993,
+        "repair_hull_hp": 7488.0,
+        "hero_wreck_deaths": 27.0,
+        "wreck_core": 1.0,
+        "wreck_hull": 45.0,
+        "escaped_cost_0": 0.0
+      },
+      "damage_by_target_size": {
+        "(1, 1)": 133062.2900784536,
+        "(0, 1)": 138641.2748060232,
+        "(1, 2)": 174079.89145716082,
+        "(0, 2)": 176689.66557359498,
+        "(0, 3)": 199514.98855273024,
+        "(1, 3)": 295108.8527396373
+      },
+      "mounts_remaining": [
+        0,
+        14
+      ],
+      "transport_log": [],
+      "operation_timeline": [],
+      "target_survival_after_entry": null,
+      "target_wreck_before_exit": false,
+      "case": "left_hull_order",
+      "enemy_weapon_disabled": false
+    }
+  ],
+  "hashes": {
+    "model.py": "c41581e721a4a022bf134206fcf5d2dbafd407e1ec1c9fa717b24d42aad72891",
+    "indoor.py": "a59869faa14dc48a9886956c836e1cf7120920fc027a82b9063301a802ee319b",
+    "profile.json": "639f0a233a3c0ed6bf97edc407754c304c3a4ff8499f1b75ec383a78d5f60d4b",
+    "supplement.py": "8197f04d7f251a670b2b4013536b77ddea4ba22df0003b4161d7690e0a7c4f12"
+  }
+}

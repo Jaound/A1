@@ -1,6 +1,6 @@
 # Campaign economy/workload model
 
-이 폴더는 UE 게임 코드가 아니라2026-11-16 기획 검토용 Python 모형이다. [한국어 분석 보고서](../../docs/CAMPAIGN_SIMULATION.md)를 먼저 읽는다. `completion`은 가정된 임무 작업량 충족이며 전투 승리 확률이 아니다.
+이 폴더는 UE 게임 코드가 아니라2026-11-16 기획 검토용 Python 모형이다. [한국어 분석 보고서](../../docs/archive/analysis/CAMPAIGN_SIMULATION.md)를 먼저 읽는다. `completion`은 가정된 임무 작업량 충족이며 전투 승리 확률이 아니다.
 
 ```bash
 python reference/CampaignSimulation/simulate.py --seeds 10 --plan six

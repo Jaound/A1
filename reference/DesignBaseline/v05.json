@@ -1,0 +1,860 @@
+{
+  "version": "design-v0.5",
+  "status": "Design baseline only; no battle simulations or UE changes in this revision",
+  "source_profile": "reference/BoardingReview/profile.json",
+  "repair": {
+    "base_min_hp_per_second": 64,
+    "base_fraction_hp_per_second": 0.001,
+    "field_speed_multiplier": 0.5,
+    "field_cost_multiplier": 1.5,
+    "material_cargo_volume": 5000,
+    "resource_volume": [
+      1,
+      3,
+      8
+    ],
+    "standard_material_load": [
+      2400,
+      600,
+      80
+    ],
+    "link_range_surface_m": 120,
+    "link_setup_seconds": 3,
+    "supply_range_m": 60,
+    "supply_setup_seconds": 5,
+    "max_targets_per_ship": 1,
+    "max_repair_links_per_target": 1,
+    "destroyed_facility_restart_fraction": 0.25,
+    "jobs": {
+      "hull": {
+        "base_cost_fraction": 0.3,
+        "work_fraction": 1.0
+      },
+      "armor": {
+        "base_cost_fraction": 0.08,
+        "work_fraction": 0.25
+      },
+      "facilities": {
+        "base_cost_fraction": 0.12,
+        "work_fraction": 0.35
+      },
+      "external_weapons": {
+        "base_cost_fraction": 0.05,
+        "work_fraction": 0.15
+      }
+    },
+    "hero_repair_stacks": false,
+    "supply_volume_per_second": 100,
+    "internal_resource_precision": 0.001,
+    "hull_emergency_fraction": 0.35
+  },
+  "heroes": {
+    "command_cost_each": 1,
+    "max_active": 15,
+    "capacity_scope": "faction_global",
+    "capacity_tiers": [
+      3,
+      6,
+      10,
+      15
+    ],
+    "roster_max_owned": 30,
+    "level_max": 20,
+    "hp_growth_per_level": 0.06,
+    "attack_growth_per_level": 0.08,
+    "xp_next": {
+      "base": 120,
+      "linear": 40,
+      "quadratic": 10
+    },
+    "skill_unlock_levels": [
+      1,
+      5,
+      10,
+      15
+    ],
+    "skill_point_levels": [
+      3,
+      6,
+      9,
+      12,
+      15,
+      18
+    ],
+    "skill_max_rank": 3,
+    "base_xp_victory": 600,
+    "base_xp_defeat": 300,
+    "active_xp_per_minute": 100,
+    "active_xp_minutes_cap": 12,
+    "objective_xp_max": [
+      200,
+      300,
+      400
+    ],
+    "academy_xp_per_minute": 75,
+    "academy_level_caps": [
+      3,
+      5,
+      8,
+      10
+    ],
+    "academy_training_cost_per_minute": [
+      30,
+      5,
+      0
+    ],
+    "hero_slots_by_ship_size": [
+      1,
+      2,
+      4,
+      6
+    ],
+    "officer_slots_by_ship_size": [
+      1,
+      2,
+      3,
+      4
+    ],
+    "assault_passenger_capacity": 12,
+    "assault_hero_capacity": 4,
+    "assault_regular_passengers_example": 8,
+    "max_heroes_per_assault_team": 4,
+    "officer_handover_seconds": 3,
+    "medkit_refill_cost": [
+      8,
+      2,
+      0
+    ],
+    "medkit_refill_seconds": 5,
+    "medkit_charges": 4,
+    "medical_trigger_hp_fraction": 0.5,
+    "healing_cap_hp_fraction": 1,
+    "indoor_reduction_cap": 0.65,
+    "officer_accuracy_bonus_cap": 0.08,
+    "ship_fire_rate_bonus_cap": 0.3,
+    "movement_bonus_cap": 0.2,
+    "skill_reset_at_battle_end": false,
+    "classes": {
+      "melee": {
+        "name": "근거리형",
+        "hp": 300,
+        "damage": 25,
+        "period": 1.0,
+        "range": 1.8,
+        "speed": 3.6,
+        "armor": 0.18,
+        "evasion": 0.08
+      },
+      "ranged": {
+        "name": "원거리형",
+        "hp": 240,
+        "damage": 28,
+        "period": 1.2,
+        "range": 18,
+        "speed": 3.0,
+        "armor": 0.1,
+        "evasion": 0.12
+      },
+      "support": {
+        "name": "지원형",
+        "hp": 240,
+        "damage": 12,
+        "period": 1.4,
+        "range": 11,
+        "speed": 3.0,
+        "armor": 0.08,
+        "evasion": 0.1,
+        "medkit_heal_by_rank": [
+          85,
+          100,
+          115
+        ],
+        "medkit_cooldown_by_rank": [
+          6,
+          5.5,
+          5
+        ]
+      },
+      "commander": {
+        "name": "지휘형",
+        "hp": 280,
+        "damage": 22,
+        "period": 1.25,
+        "range": 10,
+        "speed": 3.1,
+        "armor": 0.15,
+        "evasion": 0.1,
+        "aura_damage_by_rank": [
+          0.12,
+          0.15,
+          0.18
+        ]
+      }
+    },
+    "command_upgrades": [
+      {
+        "tier": 1,
+        "cap": 3,
+        "cost": [
+          0,
+          0,
+          0
+        ],
+        "seconds": 0,
+        "requires_core": 1,
+        "requires_academy": 0
+      },
+      {
+        "tier": 2,
+        "cap": 6,
+        "cost": [
+          900,
+          150,
+          0
+        ],
+        "seconds": 240,
+        "requires_core": 2,
+        "requires_academy": 2
+      },
+      {
+        "tier": 3,
+        "cap": 10,
+        "cost": [
+          2600,
+          500,
+          40
+        ],
+        "seconds": 360,
+        "requires_core": 3,
+        "requires_academy": 3
+      },
+      {
+        "tier": 4,
+        "cap": 15,
+        "cost": [
+          7000,
+          1500,
+          150
+        ],
+        "seconds": 600,
+        "requires_core": 4,
+        "requires_academy": 4
+      }
+    ],
+    "recruitment": [
+      {
+        "academy": 1,
+        "level": 1,
+        "cost": [
+          600,
+          100,
+          0
+        ],
+        "seconds": 60
+      },
+      {
+        "academy": 2,
+        "level": 2,
+        "cost": [
+          900,
+          160,
+          0
+        ],
+        "seconds": 90
+      },
+      {
+        "academy": 3,
+        "level": 4,
+        "cost": [
+          1400,
+          260,
+          10
+        ],
+        "seconds": 120
+      },
+      {
+        "academy": 4,
+        "level": 6,
+        "cost": [
+          2200,
+          400,
+          30
+        ],
+        "seconds": 180
+      }
+    ],
+    "safe_reserve_return_seconds": 30,
+    "equipment_bonus_total_cap": 0.4,
+    "base_medical_hp_per_second_fraction": 0.05,
+    "field_medical_hp_per_second_fraction": 0.02,
+    "starting_heroes": 1,
+    "starting_level": 1,
+    "trauma_recovery_seconds": 180,
+    "trauma_trigger_hp_fraction": 0.25,
+    "trauma_hp_penalty": 0.1,
+    "trauma_attack_penalty": 0.1,
+    "room_combat_capacity": {
+      "small": {
+        "front": 2,
+        "back": 2
+      },
+      "standard": {
+        "front": 2,
+        "back": 4
+      },
+      "large": {
+        "front": 3,
+        "back": 5
+      },
+      "corridor": {
+        "front": 1,
+        "back": 1
+      }
+    },
+    "skill_ranks_follow_level_growth": false,
+    "consumable_heal_scales_with_hp_growth": true,
+    "base_medical_cost_per_full_hp": [
+      6,
+      1,
+      0
+    ],
+    "field_medical_cost_per_full_hp": [
+      9,
+      1.5,
+      0
+    ],
+    "medical_no_hit_seconds": 30,
+    "max_teams_per_target": 2,
+    "same_target_launch_interval": 30,
+    "squad_people": 4,
+    "gear_tiers": {
+      "weapon_attack": [
+        0.05,
+        0.1,
+        0.15,
+        0.2
+      ],
+      "armor_hp": [
+        0.05,
+        0.1,
+        0.15,
+        0.2
+      ],
+      "armor_reduction": [
+        0,
+        0.02,
+        0.04,
+        0.06
+      ],
+      "tactical": [
+        0.05,
+        0.08,
+        0.11,
+        0.14
+      ]
+    },
+    "skills": {
+      "melee1": {
+        "unlock": 1,
+        "extra_reduction": [
+          0.2,
+          0.25,
+          0.3
+        ],
+        "duration": 4,
+        "cooldown": 16,
+        "display_name": "역장 방어"
+      },
+      "melee2": {
+        "unlock": 5,
+        "radius": 3,
+        "ally_reduction": [
+          0.08,
+          0.1,
+          0.12
+        ],
+        "display_name": "역장 엄호"
+      },
+      "melee3": {
+        "unlock": 10,
+        "range": [
+          6,
+          7,
+          8
+        ],
+        "speed_multiplier": 1.5,
+        "max_duration": 2,
+        "attack_bonus": [
+          0.2,
+          0.3,
+          0.4
+        ],
+        "cooldown": 30,
+        "display_name": "강화 돌입"
+      },
+      "melee4": {
+        "unlock": 15,
+        "trigger_hp": 0.25,
+        "rearm_hp": 0.4,
+        "extra_reduction": [
+          0.1,
+          0.15,
+          0.2
+        ],
+        "duration": 3,
+        "cooldown": 120,
+        "display_name": "생존 한계 해방"
+      },
+      "ranged1": {
+        "unlock": 1,
+        "attack_multiplier": [
+          2,
+          2.25,
+          2.5
+        ],
+        "cooldown": 12,
+        "officer_accuracy": [
+          0.02,
+          0.03,
+          0.04
+        ],
+        "display_name": "초감각 조준"
+      },
+      "ranged2": {
+        "unlock": 5,
+        "ignore_reduction": [
+          0.08,
+          0.12,
+          0.16
+        ],
+        "display_name": "약점 감지"
+      },
+      "ranged3": {
+        "unlock": 10,
+        "shots": 3,
+        "shot_multiplier": 0.5,
+        "duration": 0.6,
+        "slow": [
+          0.2,
+          0.25,
+          0.3
+        ],
+        "slow_duration": 4,
+        "cooldown": 30,
+        "officer_fire_rate": [
+          0.15,
+          0.2,
+          0.25
+        ],
+        "officer_duration": 8,
+        "officer_cooldown": 60,
+        "display_name": "전자기 제압"
+      },
+      "ranged4": {
+        "unlock": 15,
+        "aim_seconds": 4,
+        "attack_bonus": [
+          0.1,
+          0.15,
+          0.2
+        ],
+        "display_name": "인지 가속"
+      },
+      "support1": {
+        "unlock": 1,
+        "heal": [
+          85,
+          100,
+          115
+        ],
+        "cooldown": [
+          6,
+          5.5,
+          5
+        ],
+        "charges": 1,
+        "display_name": "생체 재구성"
+      },
+      "support2": {
+        "unlock": 5,
+        "hazard_reduction": [
+          0.15,
+          0.225,
+          0.3
+        ],
+        "display_name": "생존장 전개"
+      },
+      "support3": {
+        "unlock": 10,
+        "heal_fraction_per_second": [
+          0.02,
+          0.03,
+          0.04
+        ],
+        "duration": 5,
+        "radius": 6,
+        "charges": 2,
+        "cooldown": 90,
+        "officer_hull_fraction": [
+          0.005,
+          0.0075,
+          0.01
+        ],
+        "officer_duration": 10,
+        "officer_tool_charges": 2,
+        "tool_restock_seconds": 30,
+        "display_name": "재생 공명장"
+      },
+      "support4": {
+        "unlock": 15,
+        "extra_medkits": [
+          1,
+          2,
+          3
+        ],
+        "display_name": "촉매 동조"
+      },
+      "commander1": {
+        "unlock": 1,
+        "damage_bonus": [
+          0.12,
+          0.15,
+          0.18
+        ],
+        "radius": 14,
+        "officer_speed_turn": [
+          0.05,
+          0.07,
+          0.09
+        ],
+        "display_name": "신경 공명"
+      },
+      "commander2": {
+        "unlock": 5,
+        "occupation_bonus": [
+          0.1,
+          0.15,
+          0.2
+        ],
+        "display_name": "신경 접속"
+      },
+      "commander3": {
+        "unlock": 10,
+        "attack_speed": [
+          0.1,
+          0.125,
+          0.15
+        ],
+        "duration": 8,
+        "radius": 14,
+        "cooldown": 60,
+        "officer_turn_bonus": [
+          0.1,
+          0.15,
+          0.2
+        ],
+        "officer_duration": 10,
+        "display_name": "전투 동조"
+      },
+      "commander4": {
+        "unlock": 15,
+        "retreat_speed": [
+          0.05,
+          0.075,
+          0.1
+        ],
+        "display_name": "집단 기동 예지"
+      }
+    },
+    "academy_upgrades": [
+      {
+        "tier": 1,
+        "cost": [
+          700,
+          100,
+          0
+        ],
+        "seconds": 150
+      },
+      {
+        "tier": 2,
+        "cost": [
+          1100,
+          200,
+          0
+        ],
+        "seconds": 120
+      },
+      {
+        "tier": 3,
+        "cost": [
+          2800,
+          600,
+          40
+        ],
+        "seconds": 240
+      },
+      {
+        "tier": 4,
+        "cost": [
+          7000,
+          1600,
+          100
+        ],
+        "seconds": 360
+      }
+    ],
+    "assault_regular_people_rule": "total12 minus assigned heroes, heroes<=4",
+    "gear_cost_by_tier": [
+      [
+        120,
+        20,
+        0
+      ],
+      [
+        300,
+        60,
+        0
+      ],
+      [
+        700,
+        180,
+        20
+      ],
+      [
+        1600,
+        400,
+        80
+      ]
+    ],
+    "gear_craft_seconds": [
+      30,
+      60,
+      120,
+      180
+    ],
+    "gear_equip_seconds_per_slot": 15,
+    "academy_research": {
+      "hp_per_rank": 0.02,
+      "attack_per_rank": 0.02,
+      "max_rank": 5,
+      "cost_per_rank_multiplier": [
+        300,
+        60,
+        0
+      ],
+      "seconds_per_rank_multiplier": 90
+    },
+    "equipment_research_cost_by_tier": [
+      [
+        400,
+        80,
+        0
+      ],
+      [
+        900,
+        180,
+        0
+      ],
+      [
+        2200,
+        500,
+        40
+      ],
+      [
+        5000,
+        1200,
+        150
+      ]
+    ],
+    "equipment_research_seconds": [
+      120,
+      180,
+      300,
+      480
+    ],
+    "initial_support_medkits": 4,
+    "initial_engineering_charges_on_unlock": 0,
+    "concept": {
+      "identity": "초능력자·강화인간",
+      "origins": [
+        "초능력",
+        "신체·사이버네틱 강화",
+        "복합"
+      ],
+      "origin_policy": "설명용 원천; 유형/임무 독립, 원천별 추가 스탯 없음",
+      "consumable_labels": {
+        "medkit": "재생 촉매",
+        "officer_tool": "정비 증폭기 충전"
+      },
+      "equipment_labels": {
+        "weapon": "능력 초점 장비",
+        "armor": "강화 외피",
+        "tactical": "보조 증폭 장치"
+      }
+    }
+  },
+  "hulls": {
+    "corvette": {
+      "name": "초계함",
+      "hp": 5400,
+      "build_cost": [
+        450,
+        0,
+        0
+      ],
+      "size": 1
+    },
+    "frigate": {
+      "name": "호위함",
+      "hp": 8400,
+      "build_cost": [
+        600,
+        0,
+        0
+      ],
+      "size": 1
+    },
+    "vector": {
+      "name": "백터급 구축함",
+      "hp": 21252,
+      "build_cost": [
+        1600,
+        180,
+        0
+      ],
+      "size": 2
+    },
+    "bastion": {
+      "name": "바스티온급 구축함",
+      "hp": 34188,
+      "build_cost": [
+        2600,
+        420,
+        0
+      ],
+      "size": 2
+    },
+    "cruiser": {
+      "name": "순양함",
+      "hp": 36960,
+      "build_cost": [
+        2400,
+        350,
+        0
+      ],
+      "size": 2
+    },
+    "air_defense": {
+      "name": "방공함",
+      "hp": 25410,
+      "build_cost": [
+        2200,
+        300,
+        0
+      ],
+      "size": 2
+    },
+    "radar": {
+      "name": "레이더함",
+      "hp": 19404,
+      "build_cost": [
+        2000,
+        300,
+        0
+      ],
+      "size": 2
+    },
+    "battleship": {
+      "name": "전함",
+      "hp": 158400,
+      "build_cost": [
+        7200,
+        1200,
+        100
+      ],
+      "size": 3
+    },
+    "carrier": {
+      "name": "항공모함",
+      "hp": 134640,
+      "build_cost": [
+        8000,
+        1500,
+        150
+      ],
+      "size": 3
+    },
+    "missile_ship": {
+      "name": "전략 미사일함",
+      "hp": 130680,
+      "build_cost": [
+        7600,
+        1400,
+        120
+      ],
+      "size": 3
+    },
+    "dreadnought": {
+      "name": "구축전함",
+      "hp": 825000,
+      "build_cost": [
+        28800,
+        6000,
+        800
+      ],
+      "size": 4
+    },
+    "battlecarrier": {
+      "name": "항공순양함",
+      "hp": 693000,
+      "build_cost": [
+        32000,
+        7000,
+        1000
+      ],
+      "size": 4
+    },
+    "repair": {
+      "name": "보급수리함",
+      "hp": 10164,
+      "build_cost": [
+        400,
+        0,
+        0
+      ],
+      "size": 1
+    },
+    "mining": {
+      "name": "채굴선",
+      "hp": 6600,
+      "build_cost": [
+        300,
+        0,
+        0
+      ],
+      "size": 1
+    },
+    "transport": {
+      "name": "수송선",
+      "hp": 7920,
+      "build_cost": [
+        650,
+        50,
+        0
+      ],
+      "size": 1
+    },
+    "assault": {
+      "name": "강습선",
+      "hp": 10560,
+      "build_cost": [
+        900,
+        150,
+        0
+      ],
+      "size": 1
+    }
+  },
+  "price_notes": "Mining matches base draft300; transport650/50/0 and assault900/150/0 are new proposal package prices. Fleet command cost unchanged."
+}

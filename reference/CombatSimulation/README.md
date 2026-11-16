@@ -1,6 +1,6 @@
 # CombatSimulation — 전투 수치 검토용 축소 모형
 
-[수치](../../docs/COMBAT_BALANCE.md)와 [결과/한계](../../docs/COMBAT_SIMULATION.md)를 먼저 읽는다. UE 구현이나 최신 Godot Web ZIP을 실행한 프로그램이 아니다. Python 3.10+ 표준 라이브러리만 사용한다.
+[수치](../../docs/archive/balance/COMBAT_BALANCE.md)와 [결과/한계](../../docs/archive/analysis/COMBAT_SIMULATION.md)를 먼저 읽는다. UE 구현이나 최신 Godot Web ZIP을 실행한 프로그램이 아니다. Python 3.10+ 표준 라이브러리만 사용한다.
 
 ```bash
 python -m unittest discover -s reference/CombatSimulation -p 'test_*.py' -v

@@ -1,0 +1,4084 @@
+{
+  "profile_sha256": "44b0a276801310624027b7cb0ae873ab2173bf0843c76cc0079a3067769a6eb5",
+  "indoor_engine_sha256": "2d753dd1930b430e34c99e1e1a66ddf1f78e34195aaa0e974c0bffd5b198afdb",
+  "indoor_profile_sha256": "769a3e47af6de19de77dd241d421a48679f3de035e15aadbc538580146e71897",
+  "scope": "Indoor-only; base coupled fleet trials do not deploy defender heroes",
+  "summary": {
+    "none": {
+      "n": 32,
+      "attacker_wins": 32,
+      "median_seconds": 10.7,
+      "mean_attacker_survivors": 4
+    },
+    "melee": {
+      "n": 32,
+      "attacker_wins": 32,
+      "median_seconds": 16.6,
+      "mean_attacker_survivors": 3.96875
+    },
+    "ranged": {
+      "n": 32,
+      "attacker_wins": 32,
+      "median_seconds": 15.5,
+      "mean_attacker_survivors": 3.9375
+    },
+    "support": {
+      "n": 32,
+      "attacker_wins": 32,
+      "median_seconds": 18.9,
+      "mean_attacker_survivors": 4
+    },
+    "commander": {
+      "n": 32,
+      "attacker_wins": 32,
+      "median_seconds": 15.5,
+      "mean_attacker_survivors": 3.90625
+    },
+    "two_front_guards": {
+      "n": 32,
+      "attacker_wins": 0,
+      "median_seconds": 25.45,
+      "mean_attacker_survivors": 0
+    },
+    "two_support_guards": {
+      "n": 32,
+      "attacker_wins": 5,
+      "median_seconds": 34.650000000000006,
+      "mean_attacker_survivors": 0.1875
+    }
+  },
+  "trials": [
+    {
+      "defender": "none",
+      "seed": 101000,
+      "winner": 0,
+      "seconds": 10.7,
+      "survivors": [
+        4,
+        0
+      ],
+      "remaining_hp": [
+        1040.04,
+        0
+      ],
+      "healing": [
+        139.55999999999986,
+        0.0
+      ]
+    },
+    {
+      "defender": "none",
+      "seed": 101001,
+      "winner": 0,
+      "seconds": 12.3,
+      "survivors": [
+        4,
+        0
+      ],
+      "remaining_hp": [
+        1007.24,
+        0
+      ],
+      "healing": [
+        149.47999999999988,
+        0.0
+      ]
+    },
+    {
+      "defender": "none",
+      "seed": 101002,
+      "winner": 0,
+      "seconds": 10.7,
+      "survivors": [
+        4,
+        0
+      ],
+      "remaining_hp": [
+        1060.0,
+        0
+      ],
+      "healing": [
+        113.91999999999979,
+        0.0
+      ]
+    },
+    {
+      "defender": "none",
+      "seed": 101003,
+      "winner": 0,
+      "seconds": 10.7,
+      "survivors": [
+        4,
+        0
+      ],
+      "remaining_hp": [
+        1053.44,
+        0
+      ],
+      "healing": [
+        120.31999999999982,
+        0.0
+      ]
+    },
+    {
+      "defender": "none",
+      "seed": 101004,
+      "winner": 0,
+      "seconds": 12.7,
+      "survivors": [
+        4,
+        0
+      ],
+      "remaining_hp": [
+        1028.36,
+        0
+      ],
+      "healing": [
+        139.55999999999986,
+        0.0
+      ]
+    },
+    {
+      "defender": "none",
+      "seed": 101005,
+      "winner": 0,
+      "seconds": 10.7,
+      "survivors": [
+        4,
+        0
+      ],
+      "remaining_hp": [
+        1060.0,
+        0
+      ],
+      "healing": [
+        130.2399999999998,
+        0.0
+      ]
+    },
+    {
+      "defender": "none",
+      "seed": 101006,
+      "winner": 0,
+      "seconds": 10.8,
+      "survivors": [
+        4,
+        0
+      ],
+      "remaining_hp": [
+        1043.08,
+        0
+      ],
+      "healing": [
+        144.51999999999987,
+        0.0
+      ]
+    },
+    {
+      "defender": "none",
+      "seed": 101007,
+      "winner": 0,
+      "seconds": 10.7,
+      "survivors": [
+        4,
+        0
+      ],
+      "remaining_hp": [
+        1041.48,
+        0
+      ],
+      "healing": [
+        159.3999999999999,
+        0.0
+      ]
+    },
+    {
+      "defender": "none",
+      "seed": 101008,
+      "winner": 0,
+      "seconds": 11.9,
+      "survivors": [
+        4,
+        0
+      ],
+      "remaining_hp": [
+        1046.6,
+        0
+      ],
+      "healing": [
+        139.55999999999986,
+        0.0
+      ]
+    },
+    {
+      "defender": "none",
+      "seed": 101009,
+      "winner": 0,
+      "seconds": 11.9,
+      "survivors": [
+        4,
+        0
+      ],
+      "remaining_hp": [
+        1034.92,
+        0
+      ],
+      "healing": [
+        144.51999999999987,
+        0.0
+      ]
+    },
+    {
+      "defender": "none",
+      "seed": 101010,
+      "winner": 0,
+      "seconds": 10.9,
+      "survivors": [
+        4,
+        0
+      ],
+      "remaining_hp": [
+        1060.0,
+        0
+      ],
+      "healing": [
+        148.3199999999998,
+        0.0
+      ]
+    },
+    {
+      "defender": "none",
+      "seed": 101011,
+      "winner": 0,
+      "seconds": 10.7,
+      "survivors": [
+        4,
+        0
+      ],
+      "remaining_hp": [
+        1053.44,
+        0
+      ],
+      "healing": [
+        128.6399999999998,
+        0.0
+      ]
+    },
+    {
+      "defender": "none",
+      "seed": 101012,
+      "winner": 0,
+      "seconds": 10.7,
+      "survivors": [
+        4,
+        0
+      ],
+      "remaining_hp": [
+        1053.44,
+        0
+      ],
+      "healing": [
+        141.7599999999998,
+        0.0
+      ]
+    },
+    {
+      "defender": "none",
+      "seed": 101013,
+      "winner": 0,
+      "seconds": 10.7,
+      "survivors": [
+        4,
+        0
+      ],
+      "remaining_hp": [
+        1046.6,
+        0
+      ],
+      "healing": [
+        144.51999999999987,
+        0.0
+      ]
+    },
+    {
+      "defender": "none",
+      "seed": 101014,
+      "winner": 0,
+      "seconds": 10.7,
+      "survivors": [
+        4,
+        0
+      ],
+      "remaining_hp": [
+        1053.44,
+        0
+      ],
+      "healing": [
+        135.1999999999998,
+        0.0
+      ]
+    },
+    {
+      "defender": "none",
+      "seed": 101015,
+      "winner": 0,
+      "seconds": 10.7,
+      "survivors": [
+        4,
+        0
+      ],
+      "remaining_hp": [
+        1053.44,
+        0
+      ],
+      "healing": [
+        128.47999999999985,
+        0.0
+      ]
+    },
+    {
+      "defender": "none",
+      "seed": 101016,
+      "winner": 0,
+      "seconds": 10.7,
+      "survivors": [
+        4,
+        0
+      ],
+      "remaining_hp": [
+        1053.44,
+        0
+      ],
+      "healing": [
+        141.75999999999976,
+        0.0
+      ]
+    },
+    {
+      "defender": "none",
+      "seed": 101017,
+      "winner": 0,
+      "seconds": 11.9,
+      "survivors": [
+        4,
+        0
+      ],
+      "remaining_hp": [
+        1036.52,
+        0
+      ],
+      "healing": [
+        144.51999999999987,
+        0.0
+      ]
+    },
+    {
+      "defender": "none",
+      "seed": 101018,
+      "winner": 0,
+      "seconds": 10.7,
+      "survivors": [
+        4,
+        0
+      ],
+      "remaining_hp": [
+        1053.16,
+        0
+      ],
+      "healing": [
+        144.51999999999987,
+        0.0
+      ]
+    },
+    {
+      "defender": "none",
+      "seed": 101019,
+      "winner": 0,
+      "seconds": 10.7,
+      "survivors": [
+        4,
+        0
+      ],
+      "remaining_hp": [
+        1048.04,
+        0
+      ],
+      "healing": [
+        149.47999999999988,
+        0.0
+      ]
+    },
+    {
+      "defender": "none",
+      "seed": 101020,
+      "winner": 0,
+      "seconds": 10.7,
+      "survivors": [
+        4,
+        0
+      ],
+      "remaining_hp": [
+        1053.44,
+        0
+      ],
+      "healing": [
+        141.75999999999976,
+        0.0
+      ]
+    },
+    {
+      "defender": "none",
+      "seed": 101021,
+      "winner": 0,
+      "seconds": 10.7,
+      "survivors": [
+        4,
+        0
+      ],
+      "remaining_hp": [
+        1053.44,
+        0
+      ],
+      "healing": [
+        136.79999999999978,
+        0.0
+      ]
+    },
+    {
+      "defender": "none",
+      "seed": 101022,
+      "winner": 0,
+      "seconds": 10.7,
+      "survivors": [
+        4,
+        0
+      ],
+      "remaining_hp": [
+        1053.44,
+        0
+      ],
+      "healing": [
+        136.6399999999999,
+        0.0
+      ]
+    },
+    {
+      "defender": "none",
+      "seed": 101023,
+      "winner": 0,
+      "seconds": 11.9,
+      "survivors": [
+        4,
+        0
+      ],
+      "remaining_hp": [
+        1029.96,
+        0
+      ],
+      "healing": [
+        149.47999999999988,
+        0.0
+      ]
+    },
+    {
+      "defender": "none",
+      "seed": 101024,
+      "winner": 0,
+      "seconds": 12.3,
+      "survivors": [
+        4,
+        0
+      ],
+      "remaining_hp": [
+        1040.32,
+        0
+      ],
+      "healing": [
+        143.1999999999999,
+        0.0
+      ]
+    },
+    {
+      "defender": "none",
+      "seed": 101025,
+      "winner": 0,
+      "seconds": 10.7,
+      "survivors": [
+        4,
+        0
+      ],
+      "remaining_hp": [
+        1053.44,
+        0
+      ],
+      "healing": [
+        148.31999999999982,
+        0.0
+      ]
+    },
+    {
+      "defender": "none",
+      "seed": 101026,
+      "winner": 0,
+      "seconds": 10.7,
+      "survivors": [
+        4,
+        0
+      ],
+      "remaining_hp": [
+        1053.44,
+        0
+      ],
+      "healing": [
+        141.75999999999982,
+        0.0
+      ]
+    },
+    {
+      "defender": "none",
+      "seed": 101027,
+      "winner": 0,
+      "seconds": 11.7,
+      "survivors": [
+        4,
+        0
+      ],
+      "remaining_hp": [
+        1046.88,
+        0
+      ],
+      "healing": [
+        133.2799999999999,
+        0.0
+      ]
+    },
+    {
+      "defender": "none",
+      "seed": 101028,
+      "winner": 0,
+      "seconds": 11.9,
+      "survivors": [
+        4,
+        0
+      ],
+      "remaining_hp": [
+        1020.36,
+        0
+      ],
+      "healing": [
+        149.47999999999988,
+        0.0
+      ]
+    },
+    {
+      "defender": "none",
+      "seed": 101029,
+      "winner": 0,
+      "seconds": 10.7,
+      "survivors": [
+        4,
+        0
+      ],
+      "remaining_hp": [
+        1053.44,
+        0
+      ],
+      "healing": [
+        131.8399999999998,
+        0.0
+      ]
+    },
+    {
+      "defender": "none",
+      "seed": 101030,
+      "winner": 0,
+      "seconds": 10.9,
+      "survivors": [
+        4,
+        0
+      ],
+      "remaining_hp": [
+        1040.04,
+        0
+      ],
+      "healing": [
+        144.51999999999987,
+        0.0
+      ]
+    },
+    {
+      "defender": "none",
+      "seed": 101031,
+      "winner": 0,
+      "seconds": 10.7,
+      "survivors": [
+        4,
+        0
+      ],
+      "remaining_hp": [
+        1053.44,
+        0
+      ],
+      "healing": [
+        135.19999999999982,
+        0.0
+      ]
+    },
+    {
+      "defender": "melee",
+      "seed": 101000,
+      "winner": 0,
+      "seconds": 16.6,
+      "survivors": [
+        4,
+        0
+      ],
+      "remaining_hp": [
+        854.24,
+        0
+      ],
+      "healing": [
+        210.2999999999999,
+        0.0
+      ]
+    },
+    {
+      "defender": "melee",
+      "seed": 101001,
+      "winner": 0,
+      "seconds": 16.6,
+      "survivors": [
+        4,
+        0
+      ],
+      "remaining_hp": [
+        889.5,
+        0
+      ],
+      "healing": [
+        215.25999999999988,
+        0.0
+      ]
+    },
+    {
+      "defender": "melee",
+      "seed": 101002,
+      "winner": 0,
+      "seconds": 17.0,
+      "survivors": [
+        4,
+        0
+      ],
+      "remaining_hp": [
+        862.32,
+        0
+      ],
+      "healing": [
+        220.21999999999986,
+        0.0
+      ]
+    },
+    {
+      "defender": "melee",
+      "seed": 101003,
+      "winner": 0,
+      "seconds": 19.0,
+      "survivors": [
+        4,
+        0
+      ],
+      "remaining_hp": [
+        816.2,
+        0
+      ],
+      "healing": [
+        220.21999999999986,
+        0.0
+      ]
+    },
+    {
+      "defender": "melee",
+      "seed": 101004,
+      "winner": 0,
+      "seconds": 16.6,
+      "survivors": [
+        4,
+        0
+      ],
+      "remaining_hp": [
+        914.18,
+        0
+      ],
+      "healing": [
+        219.59999999999985,
+        0.0
+      ]
+    },
+    {
+      "defender": "melee",
+      "seed": 101005,
+      "winner": 0,
+      "seconds": 17.8,
+      "survivors": [
+        4,
+        0
+      ],
+      "remaining_hp": [
+        863.76,
+        0
+      ],
+      "healing": [
+        225.17999999999984,
+        0.0
+      ]
+    },
+    {
+      "defender": "melee",
+      "seed": 101006,
+      "winner": 0,
+      "seconds": 18.8,
+      "survivors": [
+        4,
+        0
+      ],
+      "remaining_hp": [
+        877.2,
+        0
+      ],
+      "healing": [
+        244.3999999999999,
+        0.0
+      ]
+    },
+    {
+      "defender": "melee",
+      "seed": 101007,
+      "winner": 0,
+      "seconds": 15.4,
+      "survivors": [
+        4,
+        0
+      ],
+      "remaining_hp": [
+        925.38,
+        0
+      ],
+      "healing": [
+        220.21999999999986,
+        0.0
+      ]
+    },
+    {
+      "defender": "melee",
+      "seed": 101008,
+      "winner": 0,
+      "seconds": 18.0,
+      "survivors": [
+        4,
+        0
+      ],
+      "remaining_hp": [
+        846.94,
+        0
+      ],
+      "healing": [
+        215.25999999999988,
+        0.0
+      ]
+    },
+    {
+      "defender": "melee",
+      "seed": 101009,
+      "winner": 0,
+      "seconds": 16.6,
+      "survivors": [
+        4,
+        0
+      ],
+      "remaining_hp": [
+        883.6,
+        0
+      ],
+      "healing": [
+        220.21999999999986,
+        0.0
+      ]
+    },
+    {
+      "defender": "melee",
+      "seed": 101010,
+      "winner": 0,
+      "seconds": 18.9,
+      "survivors": [
+        4,
+        0
+      ],
+      "remaining_hp": [
+        860.52,
+        0
+      ],
+      "healing": [
+        220.21999999999986,
+        0.0
+      ]
+    },
+    {
+      "defender": "melee",
+      "seed": 101011,
+      "winner": 0,
+      "seconds": 16.6,
+      "survivors": [
+        4,
+        0
+      ],
+      "remaining_hp": [
+        897.54,
+        0
+      ],
+      "healing": [
+        220.21999999999986,
+        0.0
+      ]
+    },
+    {
+      "defender": "melee",
+      "seed": 101012,
+      "winner": 0,
+      "seconds": 16.6,
+      "survivors": [
+        4,
+        0
+      ],
+      "remaining_hp": [
+        868.72,
+        0
+      ],
+      "healing": [
+        225.17999999999984,
+        0.0
+      ]
+    },
+    {
+      "defender": "melee",
+      "seed": 101013,
+      "winner": 0,
+      "seconds": 17.8,
+      "survivors": [
+        4,
+        0
+      ],
+      "remaining_hp": [
+        885.36,
+        0
+      ],
+      "healing": [
+        220.21999999999986,
+        0.0
+      ]
+    },
+    {
+      "defender": "melee",
+      "seed": 101014,
+      "winner": 0,
+      "seconds": 15.6,
+      "survivors": [
+        4,
+        0
+      ],
+      "remaining_hp": [
+        870.1,
+        0
+      ],
+      "healing": [
+        149.47999999999988,
+        0.0
+      ]
+    },
+    {
+      "defender": "melee",
+      "seed": 101015,
+      "winner": 0,
+      "seconds": 16.6,
+      "survivors": [
+        4,
+        0
+      ],
+      "remaining_hp": [
+        877.82,
+        0
+      ],
+      "healing": [
+        225.17999999999984,
+        0.0
+      ]
+    },
+    {
+      "defender": "melee",
+      "seed": 101016,
+      "winner": 0,
+      "seconds": 16.6,
+      "survivors": [
+        4,
+        0
+      ],
+      "remaining_hp": [
+        878.64,
+        0
+      ],
+      "healing": [
+        215.25999999999988,
+        0.0
+      ]
+    },
+    {
+      "defender": "melee",
+      "seed": 101017,
+      "winner": 0,
+      "seconds": 16.6,
+      "survivors": [
+        4,
+        0
+      ],
+      "remaining_hp": [
+        955.92,
+        0
+      ],
+      "healing": [
+        240.05999999999995,
+        0.0
+      ]
+    },
+    {
+      "defender": "melee",
+      "seed": 101018,
+      "winner": 0,
+      "seconds": 16.6,
+      "survivors": [
+        4,
+        0
+      ],
+      "remaining_hp": [
+        846.12,
+        0
+      ],
+      "healing": [
+        220.21999999999986,
+        0.0
+      ]
+    },
+    {
+      "defender": "melee",
+      "seed": 101019,
+      "winner": 0,
+      "seconds": 18.1,
+      "survivors": [
+        3,
+        0
+      ],
+      "remaining_hp": [
+        732.8,
+        0
+      ],
+      "healing": [
+        135.21999999999986,
+        0.0
+      ]
+    },
+    {
+      "defender": "melee",
+      "seed": 101020,
+      "winner": 0,
+      "seconds": 16.6,
+      "survivors": [
+        4,
+        0
+      ],
+      "remaining_hp": [
+        926.2,
+        0
+      ],
+      "healing": [
+        220.21999999999986,
+        0.0
+      ]
+    },
+    {
+      "defender": "melee",
+      "seed": 101021,
+      "winner": 0,
+      "seconds": 17.0,
+      "survivors": [
+        4,
+        0
+      ],
+      "remaining_hp": [
+        860.56,
+        0
+      ],
+      "healing": [
+        225.17999999999984,
+        0.0
+      ]
+    },
+    {
+      "defender": "melee",
+      "seed": 101022,
+      "winner": 0,
+      "seconds": 16.6,
+      "survivors": [
+        4,
+        0
+      ],
+      "remaining_hp": [
+        917.66,
+        0
+      ],
+      "healing": [
+        244.3999999999999,
+        0.0
+      ]
+    },
+    {
+      "defender": "melee",
+      "seed": 101023,
+      "winner": 0,
+      "seconds": 16.6,
+      "survivors": [
+        4,
+        0
+      ],
+      "remaining_hp": [
+        936.4,
+        0
+      ],
+      "healing": [
+        234.47999999999988,
+        0.0
+      ]
+    },
+    {
+      "defender": "melee",
+      "seed": 101024,
+      "winner": 0,
+      "seconds": 17.8,
+      "survivors": [
+        4,
+        0
+      ],
+      "remaining_hp": [
+        833.16,
+        0
+      ],
+      "healing": [
+        230.13999999999993,
+        0.0
+      ]
+    },
+    {
+      "defender": "melee",
+      "seed": 101025,
+      "winner": 0,
+      "seconds": 15.4,
+      "survivors": [
+        4,
+        0
+      ],
+      "remaining_hp": [
+        954.78,
+        0
+      ],
+      "healing": [
+        210.2999999999999,
+        0.0
+      ]
+    },
+    {
+      "defender": "melee",
+      "seed": 101026,
+      "winner": 0,
+      "seconds": 16.6,
+      "survivors": [
+        4,
+        0
+      ],
+      "remaining_hp": [
+        894.18,
+        0
+      ],
+      "healing": [
+        225.17999999999984,
+        0.0
+      ]
+    },
+    {
+      "defender": "melee",
+      "seed": 101027,
+      "winner": 0,
+      "seconds": 15.4,
+      "survivors": [
+        4,
+        0
+      ],
+      "remaining_hp": [
+        933.78,
+        0
+      ],
+      "healing": [
+        215.25999999999988,
+        0.0
+      ]
+    },
+    {
+      "defender": "melee",
+      "seed": 101028,
+      "winner": 0,
+      "seconds": 16.7,
+      "survivors": [
+        4,
+        0
+      ],
+      "remaining_hp": [
+        851.74,
+        0
+      ],
+      "healing": [
+        220.21999999999986,
+        0.0
+      ]
+    },
+    {
+      "defender": "melee",
+      "seed": 101029,
+      "winner": 0,
+      "seconds": 16.6,
+      "survivors": [
+        4,
+        0
+      ],
+      "remaining_hp": [
+        857.36,
+        0
+      ],
+      "healing": [
+        215.25999999999988,
+        0.0
+      ]
+    },
+    {
+      "defender": "melee",
+      "seed": 101030,
+      "winner": 0,
+      "seconds": 16.6,
+      "survivors": [
+        4,
+        0
+      ],
+      "remaining_hp": [
+        877.16,
+        0
+      ],
+      "healing": [
+        220.21999999999986,
+        0.0
+      ]
+    },
+    {
+      "defender": "melee",
+      "seed": 101031,
+      "winner": 0,
+      "seconds": 16.6,
+      "survivors": [
+        4,
+        0
+      ],
+      "remaining_hp": [
+        912.42,
+        0
+      ],
+      "healing": [
+        225.17999999999984,
+        0.0
+      ]
+    },
+    {
+      "defender": "ranged",
+      "seed": 101000,
+      "winner": 0,
+      "seconds": 15.3,
+      "survivors": [
+        4,
+        0
+      ],
+      "remaining_hp": [
+        924.8,
+        0
+      ],
+      "healing": [
+        229.52000000000004,
+        0.0
+      ]
+    },
+    {
+      "defender": "ranged",
+      "seed": 101001,
+      "winner": 0,
+      "seconds": 15.4,
+      "survivors": [
+        4,
+        0
+      ],
+      "remaining_hp": [
+        877.84,
+        0
+      ],
+      "healing": [
+        217.11999999999992,
+        0.0
+      ]
+    },
+    {
+      "defender": "ranged",
+      "seed": 101002,
+      "winner": 0,
+      "seconds": 15.5,
+      "survivors": [
+        4,
+        0
+      ],
+      "remaining_hp": [
+        790.88,
+        0
+      ],
+      "healing": [
+        215.92000000000002,
+        0.0
+      ]
+    },
+    {
+      "defender": "ranged",
+      "seed": 101003,
+      "winner": 0,
+      "seconds": 14.3,
+      "survivors": [
+        4,
+        0
+      ],
+      "remaining_hp": [
+        897.76,
+        0
+      ],
+      "healing": [
+        170.0,
+        0.0
+      ]
+    },
+    {
+      "defender": "ranged",
+      "seed": 101004,
+      "winner": 0,
+      "seconds": 17.8,
+      "survivors": [
+        4,
+        0
+      ],
+      "remaining_hp": [
+        783.84,
+        0
+      ],
+      "healing": [
+        247.5199999999999,
+        0.0
+      ]
+    },
+    {
+      "defender": "ranged",
+      "seed": 101005,
+      "winner": 0,
+      "seconds": 19.1,
+      "survivors": [
+        3,
+        0
+      ],
+      "remaining_hp": [
+        712.4,
+        0
+      ],
+      "healing": [
+        224.4,
+        0.0
+      ]
+    },
+    {
+      "defender": "ranged",
+      "seed": 101006,
+      "winner": 0,
+      "seconds": 17.4,
+      "survivors": [
+        4,
+        0
+      ],
+      "remaining_hp": [
+        786.8,
+        0
+      ],
+      "healing": [
+        215.92000000000002,
+        0.0
+      ]
+    },
+    {
+      "defender": "ranged",
+      "seed": 101007,
+      "winner": 0,
+      "seconds": 14.3,
+      "survivors": [
+        4,
+        0
+      ],
+      "remaining_hp": [
+        856.4,
+        0
+      ],
+      "healing": [
+        215.92000000000002,
+        0.0
+      ]
+    },
+    {
+      "defender": "ranged",
+      "seed": 101008,
+      "winner": 0,
+      "seconds": 16.5,
+      "survivors": [
+        4,
+        0
+      ],
+      "remaining_hp": [
+        811.68,
+        0
+      ],
+      "healing": [
+        234.48000000000005,
+        0.0
+      ]
+    },
+    {
+      "defender": "ranged",
+      "seed": 101009,
+      "winner": 0,
+      "seconds": 15.1,
+      "survivors": [
+        4,
+        0
+      ],
+      "remaining_hp": [
+        852.48,
+        0
+      ],
+      "healing": [
+        215.92000000000002,
+        0.0
+      ]
+    },
+    {
+      "defender": "ranged",
+      "seed": 101010,
+      "winner": 0,
+      "seconds": 14.3,
+      "survivors": [
+        4,
+        0
+      ],
+      "remaining_hp": [
+        923.88,
+        0
+      ],
+      "healing": [
+        154.43999999999986,
+        0.0
+      ]
+    },
+    {
+      "defender": "ranged",
+      "seed": 101011,
+      "winner": 0,
+      "seconds": 15.5,
+      "survivors": [
+        4,
+        0
+      ],
+      "remaining_hp": [
+        809.92,
+        0
+      ],
+      "healing": [
+        215.92000000000002,
+        0.0
+      ]
+    },
+    {
+      "defender": "ranged",
+      "seed": 101012,
+      "winner": 0,
+      "seconds": 14.3,
+      "survivors": [
+        4,
+        0
+      ],
+      "remaining_hp": [
+        803.08,
+        0
+      ],
+      "healing": [
+        142.03999999999985,
+        0.0
+      ]
+    },
+    {
+      "defender": "ranged",
+      "seed": 101013,
+      "winner": 0,
+      "seconds": 16.6,
+      "survivors": [
+        4,
+        0
+      ],
+      "remaining_hp": [
+        825.88,
+        0
+      ],
+      "healing": [
+        255.0,
+        0.0
+      ]
+    },
+    {
+      "defender": "ranged",
+      "seed": 101014,
+      "winner": 0,
+      "seconds": 15.1,
+      "survivors": [
+        4,
+        0
+      ],
+      "remaining_hp": [
+        871.56,
+        0
+      ],
+      "healing": [
+        255.0,
+        0.0
+      ]
+    },
+    {
+      "defender": "ranged",
+      "seed": 101015,
+      "winner": 0,
+      "seconds": 18.5,
+      "survivors": [
+        3,
+        0
+      ],
+      "remaining_hp": [
+        760.0,
+        0
+      ],
+      "healing": [
+        217.6,
+        0.0
+      ]
+    },
+    {
+      "defender": "ranged",
+      "seed": 101016,
+      "winner": 0,
+      "seconds": 16.7,
+      "survivors": [
+        4,
+        0
+      ],
+      "remaining_hp": [
+        819.28,
+        0
+      ],
+      "healing": [
+        217.1199999999999,
+        0.0
+      ]
+    },
+    {
+      "defender": "ranged",
+      "seed": 101017,
+      "winner": 0,
+      "seconds": 15.3,
+      "survivors": [
+        4,
+        0
+      ],
+      "remaining_hp": [
+        848.8,
+        0
+      ],
+      "healing": [
+        212.7999999999999,
+        0.0
+      ]
+    },
+    {
+      "defender": "ranged",
+      "seed": 101018,
+      "winner": 0,
+      "seconds": 15.1,
+      "survivors": [
+        4,
+        0
+      ],
+      "remaining_hp": [
+        915.48,
+        0
+      ],
+      "healing": [
+        255.0,
+        0.0
+      ]
+    },
+    {
+      "defender": "ranged",
+      "seed": 101019,
+      "winner": 0,
+      "seconds": 15.5,
+      "survivors": [
+        4,
+        0
+      ],
+      "remaining_hp": [
+        873.28,
+        0
+      ],
+      "healing": [
+        239.43999999999986,
+        0.0
+      ]
+    },
+    {
+      "defender": "ranged",
+      "seed": 101020,
+      "winner": 0,
+      "seconds": 15.5,
+      "survivors": [
+        4,
+        0
+      ],
+      "remaining_hp": [
+        887.32,
+        0
+      ],
+      "healing": [
+        255.0,
+        0.0
+      ]
+    },
+    {
+      "defender": "ranged",
+      "seed": 101021,
+      "winner": 0,
+      "seconds": 17.3,
+      "survivors": [
+        4,
+        0
+      ],
+      "remaining_hp": [
+        786.8,
+        0
+      ],
+      "healing": [
+        215.92000000000002,
+        0.0
+      ]
+    },
+    {
+      "defender": "ranged",
+      "seed": 101022,
+      "winner": 0,
+      "seconds": 15.7,
+      "survivors": [
+        4,
+        0
+      ],
+      "remaining_hp": [
+        825.28,
+        0
+      ],
+      "healing": [
+        222.07999999999987,
+        0.0
+      ]
+    },
+    {
+      "defender": "ranged",
+      "seed": 101023,
+      "winner": 0,
+      "seconds": 15.5,
+      "survivors": [
+        4,
+        0
+      ],
+      "remaining_hp": [
+        811.6,
+        0
+      ],
+      "healing": [
+        215.92000000000002,
+        0.0
+      ]
+    },
+    {
+      "defender": "ranged",
+      "seed": 101024,
+      "winner": 0,
+      "seconds": 16.6,
+      "survivors": [
+        4,
+        0
+      ],
+      "remaining_hp": [
+        812.88,
+        0
+      ],
+      "healing": [
+        236.95999999999995,
+        0.0
+      ]
+    },
+    {
+      "defender": "ranged",
+      "seed": 101025,
+      "winner": 0,
+      "seconds": 15.5,
+      "survivors": [
+        4,
+        0
+      ],
+      "remaining_hp": [
+        810.88,
+        0
+      ],
+      "healing": [
+        215.92000000000002,
+        0.0
+      ]
+    },
+    {
+      "defender": "ranged",
+      "seed": 101026,
+      "winner": 0,
+      "seconds": 15.3,
+      "survivors": [
+        4,
+        0
+      ],
+      "remaining_hp": [
+        879.0,
+        0
+      ],
+      "healing": [
+        255.0,
+        0.0
+      ]
+    },
+    {
+      "defender": "ranged",
+      "seed": 101027,
+      "winner": 0,
+      "seconds": 18.6,
+      "survivors": [
+        4,
+        0
+      ],
+      "remaining_hp": [
+        805.44,
+        0
+      ],
+      "healing": [
+        251.83999999999992,
+        0.0
+      ]
+    },
+    {
+      "defender": "ranged",
+      "seed": 101028,
+      "winner": 0,
+      "seconds": 15.4,
+      "survivors": [
+        4,
+        0
+      ],
+      "remaining_hp": [
+        892.56,
+        0
+      ],
+      "healing": [
+        239.43999999999986,
+        0.0
+      ]
+    },
+    {
+      "defender": "ranged",
+      "seed": 101029,
+      "winner": 0,
+      "seconds": 15.3,
+      "survivors": [
+        4,
+        0
+      ],
+      "remaining_hp": [
+        870.56,
+        0
+      ],
+      "healing": [
+        215.92000000000002,
+        0.0
+      ]
+    },
+    {
+      "defender": "ranged",
+      "seed": 101030,
+      "winner": 0,
+      "seconds": 16.1,
+      "survivors": [
+        4,
+        0
+      ],
+      "remaining_hp": [
+        917.0,
+        0
+      ],
+      "healing": [
+        255.0,
+        0.0
+      ]
+    },
+    {
+      "defender": "ranged",
+      "seed": 101031,
+      "winner": 0,
+      "seconds": 17.5,
+      "survivors": [
+        4,
+        0
+      ],
+      "remaining_hp": [
+        806.56,
+        0
+      ],
+      "healing": [
+        215.92000000000002,
+        0.0
+      ]
+    },
+    {
+      "defender": "support",
+      "seed": 101000,
+      "winner": 0,
+      "seconds": 18.0,
+      "survivors": [
+        4,
+        0
+      ],
+      "remaining_hp": [
+        989.68,
+        0
+      ],
+      "healing": [
+        234.47999999999993,
+        185.47200000000004
+      ]
+    },
+    {
+      "defender": "support",
+      "seed": 101001,
+      "winner": 0,
+      "seconds": 17.9,
+      "survivors": [
+        4,
+        0
+      ],
+      "remaining_hp": [
+        935.28,
+        0
+      ],
+      "healing": [
+        214.63999999999987,
+        214.32320000000004
+      ]
+    },
+    {
+      "defender": "support",
+      "seed": 101002,
+      "winner": 0,
+      "seconds": 18.4,
+      "survivors": [
+        4,
+        0
+      ],
+      "remaining_hp": [
+        960.4,
+        0
+      ],
+      "healing": [
+        212.15999999999985,
+        214.32320000000004
+      ]
+    },
+    {
+      "defender": "support",
+      "seed": 101003,
+      "winner": 0,
+      "seconds": 20.2,
+      "survivors": [
+        4,
+        0
+      ],
+      "remaining_hp": [
+        909.44,
+        0
+      ],
+      "healing": [
+        212.15999999999985,
+        186.52800000000002
+      ]
+    },
+    {
+      "defender": "support",
+      "seed": 101004,
+      "winner": 0,
+      "seconds": 18.1,
+      "survivors": [
+        4,
+        0
+      ],
+      "remaining_hp": [
+        1022.24,
+        0
+      ],
+      "healing": [
+        229.51999999999992,
+        220.50560000000004
+      ]
+    },
+    {
+      "defender": "support",
+      "seed": 101005,
+      "winner": 0,
+      "seconds": 20.3,
+      "survivors": [
+        4,
+        0
+      ],
+      "remaining_hp": [
+        930.72,
+        0
+      ],
+      "healing": [
+        217.11999999999986,
+        213.2144
+      ]
+    },
+    {
+      "defender": "support",
+      "seed": 101006,
+      "winner": 0,
+      "seconds": 17.6,
+      "survivors": [
+        4,
+        0
+      ],
+      "remaining_hp": [
+        991.52,
+        0
+      ],
+      "healing": [
+        217.11999999999986,
+        188.56320000000002
+      ]
+    },
+    {
+      "defender": "support",
+      "seed": 101007,
+      "winner": 0,
+      "seconds": 18.4,
+      "survivors": [
+        4,
+        0
+      ],
+      "remaining_hp": [
+        930.8,
+        0
+      ],
+      "healing": [
+        212.15999999999985,
+        185.47200000000004
+      ]
+    },
+    {
+      "defender": "support",
+      "seed": 101008,
+      "winner": 0,
+      "seconds": 19.1,
+      "survivors": [
+        4,
+        0
+      ],
+      "remaining_hp": [
+        926.32,
+        0
+      ],
+      "healing": [
+        214.63999999999987,
+        171.79680000000002
+      ]
+    },
+    {
+      "defender": "support",
+      "seed": 101009,
+      "winner": 0,
+      "seconds": 20.3,
+      "survivors": [
+        4,
+        0
+      ],
+      "remaining_hp": [
+        970.96,
+        0
+      ],
+      "healing": [
+        212.15999999999985,
+        180.32000000000002
+      ]
+    },
+    {
+      "defender": "support",
+      "seed": 101010,
+      "winner": 0,
+      "seconds": 20.0,
+      "survivors": [
+        4,
+        0
+      ],
+      "remaining_hp": [
+        962.8,
+        0
+      ],
+      "healing": [
+        212.15999999999985,
+        146.55200000000002
+      ]
+    },
+    {
+      "defender": "support",
+      "seed": 101011,
+      "winner": 0,
+      "seconds": 17.9,
+      "survivors": [
+        4,
+        0
+      ],
+      "remaining_hp": [
+        940.0,
+        0
+      ],
+      "healing": [
+        212.15999999999985,
+        185.2624
+      ]
+    },
+    {
+      "defender": "support",
+      "seed": 101012,
+      "winner": 0,
+      "seconds": 20.3,
+      "survivors": [
+        4,
+        0
+      ],
+      "remaining_hp": [
+        901.12,
+        0
+      ],
+      "healing": [
+        217.11999999999983,
+        188.99200000000002
+      ]
+    },
+    {
+      "defender": "support",
+      "seed": 101013,
+      "winner": 0,
+      "seconds": 18.8,
+      "survivors": [
+        4,
+        0
+      ],
+      "remaining_hp": [
+        904.88,
+        0
+      ],
+      "healing": [
+        212.15999999999985,
+        185.47200000000004
+      ]
+    },
+    {
+      "defender": "support",
+      "seed": 101014,
+      "winner": 0,
+      "seconds": 18.1,
+      "survivors": [
+        4,
+        0
+      ],
+      "remaining_hp": [
+        941.44,
+        0
+      ],
+      "healing": [
+        212.15999999999985,
+        208.14080000000004
+      ]
+    },
+    {
+      "defender": "support",
+      "seed": 101015,
+      "winner": 0,
+      "seconds": 19.0,
+      "survivors": [
+        4,
+        0
+      ],
+      "remaining_hp": [
+        950.56,
+        0
+      ],
+      "healing": [
+        217.11999999999983,
+        192.68480000000002
+      ]
+    },
+    {
+      "defender": "support",
+      "seed": 101016,
+      "winner": 0,
+      "seconds": 17.9,
+      "survivors": [
+        4,
+        0
+      ],
+      "remaining_hp": [
+        961.52,
+        0
+      ],
+      "healing": [
+        236.9599999999999,
+        211.4592
+      ]
+    },
+    {
+      "defender": "support",
+      "seed": 101017,
+      "winner": 0,
+      "seconds": 19.6,
+      "survivors": [
+        4,
+        0
+      ],
+      "remaining_hp": [
+        946.64,
+        0
+      ],
+      "healing": [
+        239.43999999999994,
+        199.0944
+      ]
+    },
+    {
+      "defender": "support",
+      "seed": 101018,
+      "winner": 0,
+      "seconds": 17.9,
+      "survivors": [
+        4,
+        0
+      ],
+      "remaining_hp": [
+        951.76,
+        0
+      ],
+      "healing": [
+        212.15999999999985,
+        208.14080000000004
+      ]
+    },
+    {
+      "defender": "support",
+      "seed": 101019,
+      "winner": 0,
+      "seconds": 17.9,
+      "survivors": [
+        4,
+        0
+      ],
+      "remaining_hp": [
+        938.96,
+        0
+      ],
+      "healing": [
+        212.15999999999985,
+        198.86720000000003
+      ]
+    },
+    {
+      "defender": "support",
+      "seed": 101020,
+      "winner": 0,
+      "seconds": 18.4,
+      "survivors": [
+        4,
+        0
+      ],
+      "remaining_hp": [
+        960.4,
+        0
+      ],
+      "healing": [
+        212.15999999999985,
+        214.32320000000004
+      ]
+    },
+    {
+      "defender": "support",
+      "seed": 101021,
+      "winner": 0,
+      "seconds": 20.2,
+      "survivors": [
+        4,
+        0
+      ],
+      "remaining_hp": [
+        895.52,
+        0
+      ],
+      "healing": [
+        217.11999999999986,
+        146.55200000000002
+      ]
+    },
+    {
+      "defender": "support",
+      "seed": 101022,
+      "winner": 0,
+      "seconds": 19.6,
+      "survivors": [
+        4,
+        0
+      ],
+      "remaining_hp": [
+        925.28,
+        0
+      ],
+      "healing": [
+        212.15999999999985,
+        159.71200000000002
+      ]
+    },
+    {
+      "defender": "support",
+      "seed": 101023,
+      "winner": 0,
+      "seconds": 20.3,
+      "survivors": [
+        4,
+        0
+      ],
+      "remaining_hp": [
+        918.64,
+        0
+      ],
+      "healing": [
+        217.11999999999986,
+        176.51200000000003
+      ]
+    },
+    {
+      "defender": "support",
+      "seed": 101024,
+      "winner": 0,
+      "seconds": 18.8,
+      "survivors": [
+        4,
+        0
+      ],
+      "remaining_hp": [
+        992.08,
+        0
+      ],
+      "healing": [
+        239.43999999999994,
+        205.04960000000003
+      ]
+    },
+    {
+      "defender": "support",
+      "seed": 101025,
+      "winner": 0,
+      "seconds": 20.8,
+      "survivors": [
+        4,
+        0
+      ],
+      "remaining_hp": [
+        937.6,
+        0
+      ],
+      "healing": [
+        249.35999999999996,
+        284.0944
+      ]
+    },
+    {
+      "defender": "support",
+      "seed": 101026,
+      "winner": 0,
+      "seconds": 17.7,
+      "survivors": [
+        4,
+        0
+      ],
+      "remaining_hp": [
+        938.96,
+        0
+      ],
+      "healing": [
+        217.11999999999986,
+        189.59360000000004
+      ]
+    },
+    {
+      "defender": "support",
+      "seed": 101027,
+      "winner": 0,
+      "seconds": 18.9,
+      "survivors": [
+        4,
+        0
+      ],
+      "remaining_hp": [
+        963.44,
+        0
+      ],
+      "healing": [
+        236.9599999999999,
+        205.47840000000002
+      ]
+    },
+    {
+      "defender": "support",
+      "seed": 101028,
+      "winner": 0,
+      "seconds": 19.1,
+      "survivors": [
+        4,
+        0
+      ],
+      "remaining_hp": [
+        899.92,
+        0
+      ],
+      "healing": [
+        212.15999999999985,
+        214.32320000000004
+      ]
+    },
+    {
+      "defender": "support",
+      "seed": 101029,
+      "winner": 0,
+      "seconds": 18.9,
+      "survivors": [
+        4,
+        0
+      ],
+      "remaining_hp": [
+        939.04,
+        0
+      ],
+      "healing": [
+        214.63999999999987,
+        199.0944
+      ]
+    },
+    {
+      "defender": "support",
+      "seed": 101030,
+      "winner": 0,
+      "seconds": 22.6,
+      "survivors": [
+        4,
+        0
+      ],
+      "remaining_hp": [
+        934.76,
+        0
+      ],
+      "healing": [
+        297.15999999999985,
+        298.0128
+      ]
+    },
+    {
+      "defender": "support",
+      "seed": 101031,
+      "winner": 0,
+      "seconds": 20.3,
+      "survivors": [
+        4,
+        0
+      ],
+      "remaining_hp": [
+        902.16,
+        0
+      ],
+      "healing": [
+        217.11999999999986,
+        232.776
+      ]
+    },
+    {
+      "defender": "commander",
+      "seed": 101000,
+      "winner": 0,
+      "seconds": 14.6,
+      "survivors": [
+        4,
+        0
+      ],
+      "remaining_hp": [
+        946.59,
+        0
+      ],
+      "healing": [
+        213.05280000000005,
+        0.0
+      ]
+    },
+    {
+      "defender": "commander",
+      "seed": 101001,
+      "winner": 0,
+      "seconds": 15.4,
+      "survivors": [
+        4,
+        0
+      ],
+      "remaining_hp": [
+        900.84,
+        0
+      ],
+      "healing": [
+        218.6080000000001,
+        0.0
+      ]
+    },
+    {
+      "defender": "commander",
+      "seed": 101002,
+      "winner": 0,
+      "seconds": 14.4,
+      "survivors": [
+        4,
+        0
+      ],
+      "remaining_hp": [
+        956.67,
+        0
+      ],
+      "healing": [
+        224.1632000000001,
+        0.0
+      ]
+    },
+    {
+      "defender": "commander",
+      "seed": 101003,
+      "winner": 0,
+      "seconds": 20.6,
+      "survivors": [
+        3,
+        0
+      ],
+      "remaining_hp": [
+        753.2,
+        0
+      ],
+      "healing": [
+        179.96320000000017,
+        0.0
+      ]
+    },
+    {
+      "defender": "commander",
+      "seed": 101004,
+      "winner": 0,
+      "seconds": 16.4,
+      "survivors": [
+        4,
+        0
+      ],
+      "remaining_hp": [
+        943.7,
+        0
+      ],
+      "healing": [
+        222.77440000000004,
+        0.0
+      ]
+    },
+    {
+      "defender": "commander",
+      "seed": 101005,
+      "winner": 0,
+      "seconds": 17.4,
+      "survivors": [
+        4,
+        0
+      ],
+      "remaining_hp": [
+        866.88,
+        0
+      ],
+      "healing": [
+        229.71840000000012,
+        0.0
+      ]
+    },
+    {
+      "defender": "commander",
+      "seed": 101006,
+      "winner": 0,
+      "seconds": 16.8,
+      "survivors": [
+        4,
+        0
+      ],
+      "remaining_hp": [
+        888.2,
+        0
+      ],
+      "healing": [
+        229.71840000000012,
+        0.0
+      ]
+    },
+    {
+      "defender": "commander",
+      "seed": 101007,
+      "winner": 0,
+      "seconds": 15.4,
+      "survivors": [
+        4,
+        0
+      ],
+      "remaining_hp": [
+        911.65,
+        0
+      ],
+      "healing": [
+        214.4416000000001,
+        0.0
+      ]
+    },
+    {
+      "defender": "commander",
+      "seed": 101008,
+      "winner": 0,
+      "seconds": 16.2,
+      "survivors": [
+        4,
+        0
+      ],
+      "remaining_hp": [
+        852.69,
+        0
+      ],
+      "healing": [
+        218.6080000000001,
+        0.0
+      ]
+    },
+    {
+      "defender": "commander",
+      "seed": 101009,
+      "winner": 0,
+      "seconds": 15.5,
+      "survivors": [
+        4,
+        0
+      ],
+      "remaining_hp": [
+        933.27,
+        0
+      ],
+      "healing": [
+        218.6080000000001,
+        0.0
+      ]
+    },
+    {
+      "defender": "commander",
+      "seed": 101010,
+      "winner": 0,
+      "seconds": 17.6,
+      "survivors": [
+        4,
+        0
+      ],
+      "remaining_hp": [
+        840.43,
+        0
+      ],
+      "healing": [
+        214.4416000000001,
+        0.0
+      ]
+    },
+    {
+      "defender": "commander",
+      "seed": 101011,
+      "winner": 0,
+      "seconds": 15.4,
+      "survivors": [
+        4,
+        0
+      ],
+      "remaining_hp": [
+        949.1,
+        0
+      ],
+      "healing": [
+        218.6080000000001,
+        0.0
+      ]
+    },
+    {
+      "defender": "commander",
+      "seed": 101012,
+      "winner": 0,
+      "seconds": 15.5,
+      "survivors": [
+        4,
+        0
+      ],
+      "remaining_hp": [
+        915.08,
+        0
+      ],
+      "healing": [
+        224.1632000000001,
+        0.0
+      ]
+    },
+    {
+      "defender": "commander",
+      "seed": 101013,
+      "winner": 0,
+      "seconds": 15.4,
+      "survivors": [
+        4,
+        0
+      ],
+      "remaining_hp": [
+        906.61,
+        0
+      ],
+      "healing": [
+        218.6080000000001,
+        0.0
+      ]
+    },
+    {
+      "defender": "commander",
+      "seed": 101014,
+      "winner": 0,
+      "seconds": 15.6,
+      "survivors": [
+        4,
+        0
+      ],
+      "remaining_hp": [
+        913.07,
+        0
+      ],
+      "healing": [
+        224.1632000000001,
+        0.0
+      ]
+    },
+    {
+      "defender": "commander",
+      "seed": 101015,
+      "winner": 0,
+      "seconds": 15.5,
+      "survivors": [
+        4,
+        0
+      ],
+      "remaining_hp": [
+        875.53,
+        0
+      ],
+      "healing": [
+        224.1632000000001,
+        0.0
+      ]
+    },
+    {
+      "defender": "commander",
+      "seed": 101016,
+      "winner": 0,
+      "seconds": 15.5,
+      "survivors": [
+        4,
+        0
+      ],
+      "remaining_hp": [
+        901.12,
+        0
+      ],
+      "healing": [
+        157.21760000000017,
+        0.0
+      ]
+    },
+    {
+      "defender": "commander",
+      "seed": 101017,
+      "winner": 0,
+      "seconds": 15.0,
+      "survivors": [
+        4,
+        0
+      ],
+      "remaining_hp": [
+        849.12,
+        0
+      ],
+      "healing": [
+        128.05280000000005,
+        0.0
+      ]
+    },
+    {
+      "defender": "commander",
+      "seed": 101018,
+      "winner": 0,
+      "seconds": 15.5,
+      "survivors": [
+        4,
+        0
+      ],
+      "remaining_hp": [
+        886.82,
+        0
+      ],
+      "healing": [
+        224.1632000000001,
+        0.0
+      ]
+    },
+    {
+      "defender": "commander",
+      "seed": 101019,
+      "winner": 0,
+      "seconds": 18.0,
+      "survivors": [
+        3,
+        0
+      ],
+      "remaining_hp": [
+        746.4,
+        0
+      ],
+      "healing": [
+        186.76320000000018,
+        0.0
+      ]
+    },
+    {
+      "defender": "commander",
+      "seed": 101020,
+      "winner": 0,
+      "seconds": 14.3,
+      "survivors": [
+        4,
+        0
+      ],
+      "remaining_hp": [
+        913.19,
+        0
+      ],
+      "healing": [
+        139.1632000000001,
+        0.0
+      ]
+    },
+    {
+      "defender": "commander",
+      "seed": 101021,
+      "winner": 0,
+      "seconds": 16.2,
+      "survivors": [
+        4,
+        0
+      ],
+      "remaining_hp": [
+        915.22,
+        0
+      ],
+      "healing": [
+        229.71840000000012,
+        0.0
+      ]
+    },
+    {
+      "defender": "commander",
+      "seed": 101022,
+      "winner": 0,
+      "seconds": 15.4,
+      "survivors": [
+        4,
+        0
+      ],
+      "remaining_hp": [
+        883.48,
+        0
+      ],
+      "healing": [
+        224.1632000000001,
+        0.0
+      ]
+    },
+    {
+      "defender": "commander",
+      "seed": 101023,
+      "winner": 0,
+      "seconds": 15.5,
+      "survivors": [
+        4,
+        0
+      ],
+      "remaining_hp": [
+        915.61,
+        0
+      ],
+      "healing": [
+        229.71840000000012,
+        0.0
+      ]
+    },
+    {
+      "defender": "commander",
+      "seed": 101024,
+      "winner": 0,
+      "seconds": 15.4,
+      "survivors": [
+        4,
+        0
+      ],
+      "remaining_hp": [
+        898.87,
+        0
+      ],
+      "healing": [
+        166.93920000000014,
+        0.0
+      ]
+    },
+    {
+      "defender": "commander",
+      "seed": 101025,
+      "winner": 0,
+      "seconds": 16.4,
+      "survivors": [
+        4,
+        0
+      ],
+      "remaining_hp": [
+        886.04,
+        0
+      ],
+      "healing": [
+        213.05280000000005,
+        0.0
+      ]
+    },
+    {
+      "defender": "commander",
+      "seed": 101026,
+      "winner": 0,
+      "seconds": 15.5,
+      "survivors": [
+        4,
+        0
+      ],
+      "remaining_hp": [
+        926.56,
+        0
+      ],
+      "healing": [
+        229.71840000000012,
+        0.0
+      ]
+    },
+    {
+      "defender": "commander",
+      "seed": 101027,
+      "winner": 0,
+      "seconds": 16.4,
+      "survivors": [
+        4,
+        0
+      ],
+      "remaining_hp": [
+        905.61,
+        0
+      ],
+      "healing": [
+        213.05280000000005,
+        0.0
+      ]
+    },
+    {
+      "defender": "commander",
+      "seed": 101028,
+      "winner": 0,
+      "seconds": 17.9,
+      "survivors": [
+        3,
+        0
+      ],
+      "remaining_hp": [
+        732.8,
+        0
+      ],
+      "healing": [
+        139.1632000000001,
+        0.0
+      ]
+    },
+    {
+      "defender": "commander",
+      "seed": 101029,
+      "winner": 0,
+      "seconds": 15.4,
+      "survivors": [
+        4,
+        0
+      ],
+      "remaining_hp": [
+        928.34,
+        0
+      ],
+      "healing": [
+        218.6080000000001,
+        0.0
+      ]
+    },
+    {
+      "defender": "commander",
+      "seed": 101030,
+      "winner": 0,
+      "seconds": 17.4,
+      "survivors": [
+        4,
+        0
+      ],
+      "remaining_hp": [
+        853.03,
+        0
+      ],
+      "healing": [
+        224.1632000000001,
+        0.0
+      ]
+    },
+    {
+      "defender": "commander",
+      "seed": 101031,
+      "winner": 0,
+      "seconds": 16.7,
+      "survivors": [
+        4,
+        0
+      ],
+      "remaining_hp": [
+        909.74,
+        0
+      ],
+      "healing": [
+        229.71840000000012,
+        0.0
+      ]
+    },
+    {
+      "defender": "two_front_guards",
+      "seed": 101000,
+      "winner": 1,
+      "seconds": 34.5,
+      "survivors": [
+        0,
+        3
+      ],
+      "remaining_hp": [
+        0,
+        316.8
+      ],
+      "healing": [
+        329.39999999999986,
+        0.0
+      ]
+    },
+    {
+      "defender": "two_front_guards",
+      "seed": 101001,
+      "winner": 1,
+      "seconds": 26.1,
+      "survivors": [
+        0,
+        5
+      ],
+      "remaining_hp": [
+        0,
+        473.4
+      ],
+      "healing": [
+        208.43999999999986,
+        0.0
+      ]
+    },
+    {
+      "defender": "two_front_guards",
+      "seed": 101002,
+      "winner": 1,
+      "seconds": 25.9,
+      "survivors": [
+        0,
+        7
+      ],
+      "remaining_hp": [
+        0,
+        603.4
+      ],
+      "healing": [
+        189.80000000000013,
+        0.0
+      ]
+    },
+    {
+      "defender": "two_front_guards",
+      "seed": 101003,
+      "winner": 1,
+      "seconds": 23.8,
+      "survivors": [
+        0,
+        7
+      ],
+      "remaining_hp": [
+        0,
+        576.8
+      ],
+      "healing": [
+        186.11999999999986,
+        0.0
+      ]
+    },
+    {
+      "defender": "two_front_guards",
+      "seed": 101004,
+      "winner": 1,
+      "seconds": 21.6,
+      "survivors": [
+        0,
+        9
+      ],
+      "remaining_hp": [
+        0,
+        706.8
+      ],
+      "healing": [
+        215.92000000000002,
+        0.0
+      ]
+    },
+    {
+      "defender": "two_front_guards",
+      "seed": 101005,
+      "winner": 1,
+      "seconds": 24.9,
+      "survivors": [
+        0,
+        8
+      ],
+      "remaining_hp": [
+        0,
+        641.8
+      ],
+      "healing": [
+        198.92000000000013,
+        0.0
+      ]
+    },
+    {
+      "defender": "two_front_guards",
+      "seed": 101006,
+      "winner": 1,
+      "seconds": 24.5,
+      "survivors": [
+        0,
+        8
+      ],
+      "remaining_hp": [
+        0,
+        641.8
+      ],
+      "healing": [
+        182.44000000000003,
+        0.0
+      ]
+    },
+    {
+      "defender": "two_front_guards",
+      "seed": 101007,
+      "winner": 1,
+      "seconds": 27.3,
+      "survivors": [
+        0,
+        4
+      ],
+      "remaining_hp": [
+        0,
+        435.0
+      ],
+      "healing": [
+        239.92000000000007,
+        0.0
+      ]
+    },
+    {
+      "defender": "two_front_guards",
+      "seed": 101008,
+      "winner": 1,
+      "seconds": 23.2,
+      "survivors": [
+        0,
+        7
+      ],
+      "remaining_hp": [
+        0,
+        630.0
+      ],
+      "healing": [
+        234.48000000000005,
+        0.0
+      ]
+    },
+    {
+      "defender": "two_front_guards",
+      "seed": 101009,
+      "winner": 1,
+      "seconds": 22.5,
+      "survivors": [
+        0,
+        8
+      ],
+      "remaining_hp": [
+        0,
+        668.4
+      ],
+      "healing": [
+        249.35999999999984,
+        0.0
+      ]
+    },
+    {
+      "defender": "two_front_guards",
+      "seed": 101010,
+      "winner": 1,
+      "seconds": 39.3,
+      "survivors": [
+        0,
+        1
+      ],
+      "remaining_hp": [
+        0,
+        164.4
+      ],
+      "healing": [
+        269.0000000000001,
+        0.0
+      ]
+    },
+    {
+      "defender": "two_front_guards",
+      "seed": 101011,
+      "winner": 1,
+      "seconds": 24.0,
+      "survivors": [
+        0,
+        6
+      ],
+      "remaining_hp": [
+        0,
+        565.0
+      ],
+      "healing": [
+        182.4400000000001,
+        0.0
+      ]
+    },
+    {
+      "defender": "two_front_guards",
+      "seed": 101012,
+      "winner": 1,
+      "seconds": 24.5,
+      "survivors": [
+        0,
+        7
+      ],
+      "remaining_hp": [
+        0,
+        603.4
+      ],
+      "healing": [
+        252.47999999999996,
+        0.0
+      ]
+    },
+    {
+      "defender": "two_front_guards",
+      "seed": 101013,
+      "winner": 1,
+      "seconds": 23.1,
+      "survivors": [
+        0,
+        8
+      ],
+      "remaining_hp": [
+        0,
+        668.4
+      ],
+      "healing": [
+        255.0,
+        0.0
+      ]
+    },
+    {
+      "defender": "two_front_guards",
+      "seed": 101014,
+      "winner": 1,
+      "seconds": 27.3,
+      "survivors": [
+        0,
+        5
+      ],
+      "remaining_hp": [
+        0,
+        473.4
+      ],
+      "healing": [
+        221.52,
+        0.0
+      ]
+    },
+    {
+      "defender": "two_front_guards",
+      "seed": 101015,
+      "winner": 1,
+      "seconds": 26.1,
+      "survivors": [
+        0,
+        7
+      ],
+      "remaining_hp": [
+        0,
+        603.4
+      ],
+      "healing": [
+        211.48000000000005,
+        0.0
+      ]
+    },
+    {
+      "defender": "two_front_guards",
+      "seed": 101016,
+      "winner": 1,
+      "seconds": 24.5,
+      "survivors": [
+        0,
+        7
+      ],
+      "remaining_hp": [
+        0,
+        576.8
+      ],
+      "healing": [
+        219.68000000000015,
+        0.0
+      ]
+    },
+    {
+      "defender": "two_front_guards",
+      "seed": 101017,
+      "winner": 1,
+      "seconds": 27.3,
+      "survivors": [
+        0,
+        5
+      ],
+      "remaining_hp": [
+        0,
+        500.0
+      ],
+      "healing": [
+        238.0000000000001,
+        0.0
+      ]
+    },
+    {
+      "defender": "two_front_guards",
+      "seed": 101018,
+      "winner": 1,
+      "seconds": 26.3,
+      "survivors": [
+        0,
+        5
+      ],
+      "remaining_hp": [
+        0,
+        473.4
+      ],
+      "healing": [
+        205.96000000000006,
+        0.0
+      ]
+    },
+    {
+      "defender": "two_front_guards",
+      "seed": 101019,
+      "winner": 1,
+      "seconds": 27.6,
+      "survivors": [
+        0,
+        4
+      ],
+      "remaining_hp": [
+        0,
+        408.4
+      ],
+      "healing": [
+        196.03999999999996,
+        0.0
+      ]
+    },
+    {
+      "defender": "two_front_guards",
+      "seed": 101020,
+      "winner": 1,
+      "seconds": 28.6,
+      "survivors": [
+        0,
+        3
+      ],
+      "remaining_hp": [
+        0,
+        370.0
+      ],
+      "healing": [
+        222.52,
+        0.0
+      ]
+    },
+    {
+      "defender": "two_front_guards",
+      "seed": 101021,
+      "winner": 1,
+      "seconds": 23.3,
+      "survivors": [
+        0,
+        8
+      ],
+      "remaining_hp": [
+        0,
+        668.4
+      ],
+      "healing": [
+        255.0,
+        0.0
+      ]
+    },
+    {
+      "defender": "two_front_guards",
+      "seed": 101022,
+      "winner": 1,
+      "seconds": 27.3,
+      "survivors": [
+        0,
+        5
+      ],
+      "remaining_hp": [
+        0,
+        500.0
+      ],
+      "healing": [
+        254.6400000000001,
+        0.0
+      ]
+    },
+    {
+      "defender": "two_front_guards",
+      "seed": 101023,
+      "winner": 1,
+      "seconds": 25.9,
+      "survivors": [
+        0,
+        6
+      ],
+      "remaining_hp": [
+        0,
+        538.4
+      ],
+      "healing": [
+        182.44000000000003,
+        0.0
+      ]
+    },
+    {
+      "defender": "two_front_guards",
+      "seed": 101024,
+      "winner": 1,
+      "seconds": 24.9,
+      "survivors": [
+        0,
+        6
+      ],
+      "remaining_hp": [
+        0,
+        511.8
+      ],
+      "healing": [
+        214.16000000000008,
+        0.0
+      ]
+    },
+    {
+      "defender": "two_front_guards",
+      "seed": 101025,
+      "winner": 1,
+      "seconds": 25.0,
+      "survivors": [
+        0,
+        6
+      ],
+      "remaining_hp": [
+        0,
+        565.0
+      ],
+      "healing": [
+        159.20000000000022,
+        0.0
+      ]
+    },
+    {
+      "defender": "two_front_guards",
+      "seed": 101026,
+      "winner": 1,
+      "seconds": 24.9,
+      "survivors": [
+        0,
+        7
+      ],
+      "remaining_hp": [
+        0,
+        576.8
+      ],
+      "healing": [
+        182.44000000000003,
+        0.0
+      ]
+    },
+    {
+      "defender": "two_front_guards",
+      "seed": 101027,
+      "winner": 1,
+      "seconds": 28.5,
+      "survivors": [
+        0,
+        4
+      ],
+      "remaining_hp": [
+        0,
+        408.4
+      ],
+      "healing": [
+        221.52,
+        0.0
+      ]
+    },
+    {
+      "defender": "two_front_guards",
+      "seed": 101028,
+      "winner": 1,
+      "seconds": 27.3,
+      "survivors": [
+        0,
+        5
+      ],
+      "remaining_hp": [
+        0,
+        446.8
+      ],
+      "healing": [
+        255.0,
+        0.0
+      ]
+    },
+    {
+      "defender": "two_front_guards",
+      "seed": 101029,
+      "winner": 1,
+      "seconds": 23.1,
+      "survivors": [
+        0,
+        8
+      ],
+      "remaining_hp": [
+        0,
+        695.0
+      ],
+      "healing": [
+        255.0,
+        0.0
+      ]
+    },
+    {
+      "defender": "two_front_guards",
+      "seed": 101030,
+      "winner": 1,
+      "seconds": 26.1,
+      "survivors": [
+        0,
+        7
+      ],
+      "remaining_hp": [
+        0,
+        576.8
+      ],
+      "healing": [
+        255.0,
+        0.0
+      ]
+    },
+    {
+      "defender": "two_front_guards",
+      "seed": 101031,
+      "winner": 1,
+      "seconds": 24.9,
+      "survivors": [
+        0,
+        6
+      ],
+      "remaining_hp": [
+        0,
+        565.0
+      ],
+      "healing": [
+        247.2800000000001,
+        0.0
+      ]
+    },
+    {
+      "defender": "two_support_guards",
+      "seed": 101000,
+      "winner": 1,
+      "seconds": 34.6,
+      "survivors": [
+        0,
+        6
+      ],
+      "remaining_hp": [
+        0,
+        512.64
+      ],
+      "healing": [
+        321.8272000000002,
+        228.34399999999997
+      ]
+    },
+    {
+      "defender": "two_support_guards",
+      "seed": 101001,
+      "winner": 1,
+      "seconds": 30.5,
+      "survivors": [
+        0,
+        7
+      ],
+      "remaining_hp": [
+        0,
+        551.04
+      ],
+      "healing": [
+        324.6368000000003,
+        241.42399999999995
+      ]
+    },
+    {
+      "defender": "two_support_guards",
+      "seed": 101002,
+      "winner": 1,
+      "seconds": 40.3,
+      "survivors": [
+        0,
+        4
+      ],
+      "remaining_hp": [
+        0,
+        356.04
+      ],
+      "healing": [
+        316.2000000000001,
+        236.54399999999998
+      ]
+    },
+    {
+      "defender": "two_support_guards",
+      "seed": 101003,
+      "winner": 1,
+      "seconds": 29.1,
+      "survivors": [
+        0,
+        8
+      ],
+      "remaining_hp": [
+        0,
+        641.8
+      ],
+      "healing": [
+        218.38880000000023,
+        252.31199999999998
+      ]
+    },
+    {
+      "defender": "two_support_guards",
+      "seed": 101004,
+      "winner": 1,
+      "seconds": 27.5,
+      "survivors": [
+        0,
+        8
+      ],
+      "remaining_hp": [
+        0,
+        642.64
+      ],
+      "healing": [
+        211.93120000000025,
+        245.472
+      ]
+    },
+    {
+      "defender": "two_support_guards",
+      "seed": 101005,
+      "winner": 1,
+      "seconds": 30.3,
+      "survivors": [
+        0,
+        7
+      ],
+      "remaining_hp": [
+        0,
+        603.4
+      ],
+      "healing": [
+        238.66400000000027,
+        282.76800000000003
+      ]
+    },
+    {
+      "defender": "two_support_guards",
+      "seed": 101006,
+      "winner": 1,
+      "seconds": 48.7,
+      "survivors": [
+        0,
+        2
+      ],
+      "remaining_hp": [
+        0,
+        92.0
+      ],
+      "healing": [
+        252.51360000000028,
+        217.928
+      ]
+    },
+    {
+      "defender": "two_support_guards",
+      "seed": 101007,
+      "winner": 0,
+      "seconds": 50.3,
+      "survivors": [
+        1,
+        0
+      ],
+      "remaining_hp": [
+        114.0,
+        0
+      ],
+      "healing": [
+        337.1440000000001,
+        230.272
+      ]
+    },
+    {
+      "defender": "two_support_guards",
+      "seed": 101008,
+      "winner": 1,
+      "seconds": 33.3,
+      "survivors": [
+        0,
+        7
+      ],
+      "remaining_hp": [
+        0,
+        526.12
+      ],
+      "healing": [
+        284.59680000000026,
+        215.58399999999995
+      ]
+    },
+    {
+      "defender": "two_support_guards",
+      "seed": 101009,
+      "winner": 1,
+      "seconds": 37.2,
+      "survivors": [
+        0,
+        6
+      ],
+      "remaining_hp": [
+        0,
+        320.08
+      ],
+      "healing": [
+        289.6736000000002,
+        219.384
+      ]
+    },
+    {
+      "defender": "two_support_guards",
+      "seed": 101010,
+      "winner": 1,
+      "seconds": 40.1,
+      "survivors": [
+        0,
+        3
+      ],
+      "remaining_hp": [
+        0,
+        344.24
+      ],
+      "healing": [
+        323.5744000000002,
+        237.11199999999997
+      ]
+    },
+    {
+      "defender": "two_support_guards",
+      "seed": 101011,
+      "winner": 1,
+      "seconds": 27.7,
+      "survivors": [
+        0,
+        8
+      ],
+      "remaining_hp": [
+        0,
+        669.24
+      ],
+      "healing": [
+        208.6464000000003,
+        244.712
+      ]
+    },
+    {
+      "defender": "two_support_guards",
+      "seed": 101012,
+      "winner": 1,
+      "seconds": 27.5,
+      "survivors": [
+        0,
+        8
+      ],
+      "remaining_hp": [
+        0,
+        642.64
+      ],
+      "healing": [
+        239.9200000000001,
+        267.512
+      ]
+    },
+    {
+      "defender": "two_support_guards",
+      "seed": 101013,
+      "winner": 0,
+      "seconds": 34.7,
+      "survivors": [
+        2,
+        0
+      ],
+      "remaining_hp": [
+        446.88,
+        0
+      ],
+      "healing": [
+        312.5168000000002,
+        222.488
+      ]
+    },
+    {
+      "defender": "two_support_guards",
+      "seed": 101014,
+      "winner": 1,
+      "seconds": 48.5,
+      "survivors": [
+        0,
+        1
+      ],
+      "remaining_hp": [
+        0,
+        162.72
+      ],
+      "healing": [
+        328.6064000000001,
+        256.11199999999997
+      ]
+    },
+    {
+      "defender": "two_support_guards",
+      "seed": 101015,
+      "winner": 1,
+      "seconds": 39.9,
+      "survivors": [
+        0,
+        6
+      ],
+      "remaining_hp": [
+        0,
+        306.56
+      ],
+      "healing": [
+        310.19200000000023,
+        231.512
+      ]
+    },
+    {
+      "defender": "two_support_guards",
+      "seed": 101016,
+      "winner": 1,
+      "seconds": 45.7,
+      "survivors": [
+        0,
+        1
+      ],
+      "remaining_hp": [
+        0,
+        214.24
+      ],
+      "healing": [
+        284.6464000000003,
+        255.392
+      ]
+    },
+    {
+      "defender": "two_support_guards",
+      "seed": 101017,
+      "winner": 1,
+      "seconds": 26.3,
+      "survivors": [
+        0,
+        10
+      ],
+      "remaining_hp": [
+        0,
+        799.24
+      ],
+      "healing": [
+        249.68480000000025,
+        249.81599999999997
+      ]
+    },
+    {
+      "defender": "two_support_guards",
+      "seed": 101018,
+      "winner": 1,
+      "seconds": 34.5,
+      "survivors": [
+        0,
+        6
+      ],
+      "remaining_hp": [
+        0,
+        460.28
+      ],
+      "healing": [
+        298.7360000000002,
+        252.19999999999996
+      ]
+    },
+    {
+      "defender": "two_support_guards",
+      "seed": 101019,
+      "winner": 1,
+      "seconds": 26.3,
+      "survivors": [
+        0,
+        8
+      ],
+      "remaining_hp": [
+        0,
+        695.0
+      ],
+      "healing": [
+        251.5792000000003,
+        256.11199999999997
+      ]
+    },
+    {
+      "defender": "two_support_guards",
+      "seed": 101020,
+      "winner": 1,
+      "seconds": 49.8,
+      "survivors": [
+        0,
+        1
+      ],
+      "remaining_hp": [
+        0,
+        85.44
+      ],
+      "healing": [
+        274.4464000000003,
+        262.384
+      ]
+    },
+    {
+      "defender": "two_support_guards",
+      "seed": 101021,
+      "winner": 1,
+      "seconds": 33.2,
+      "survivors": [
+        0,
+        6
+      ],
+      "remaining_hp": [
+        0,
+        487.72
+      ],
+      "healing": [
+        292.0064000000003,
+        217.49599999999998
+      ]
+    },
+    {
+      "defender": "two_support_guards",
+      "seed": 101022,
+      "winner": 1,
+      "seconds": 40.3,
+      "survivors": [
+        0,
+        4
+      ],
+      "remaining_hp": [
+        0,
+        195.4
+      ],
+      "healing": [
+        339.71680000000015,
+        240.27200000000002
+      ]
+    },
+    {
+      "defender": "two_support_guards",
+      "seed": 101023,
+      "winner": 0,
+      "seconds": 49.1,
+      "survivors": [
+        1,
+        0
+      ],
+      "remaining_hp": [
+        186.0,
+        0
+      ],
+      "healing": [
+        281.4560000000003,
+        245.35999999999999
+      ]
+    },
+    {
+      "defender": "two_support_guards",
+      "seed": 101024,
+      "winner": 1,
+      "seconds": 29.1,
+      "survivors": [
+        0,
+        7
+      ],
+      "remaining_hp": [
+        0,
+        604.24
+      ],
+      "healing": [
+        217.00000000000026,
+        255.99999999999997
+      ]
+    },
+    {
+      "defender": "two_support_guards",
+      "seed": 101025,
+      "winner": 1,
+      "seconds": 24.8,
+      "survivors": [
+        0,
+        10
+      ],
+      "remaining_hp": [
+        0,
+        799.24
+      ],
+      "healing": [
+        222.92480000000032,
+        267.512
+      ]
+    },
+    {
+      "defender": "two_support_guards",
+      "seed": 101026,
+      "winner": 0,
+      "seconds": 49.1,
+      "survivors": [
+        1,
+        0
+      ],
+      "remaining_hp": [
+        207.6,
+        0
+      ],
+      "healing": [
+        276.0416000000003,
+        205.464
+      ]
+    },
+    {
+      "defender": "two_support_guards",
+      "seed": 101027,
+      "winner": 1,
+      "seconds": 27.7,
+      "survivors": [
+        0,
+        8
+      ],
+      "remaining_hp": [
+        0,
+        642.64
+      ],
+      "healing": [
+        224.68480000000034,
+        256.11199999999997
+      ]
+    },
+    {
+      "defender": "two_support_guards",
+      "seed": 101028,
+      "winner": 1,
+      "seconds": 37.5,
+      "survivors": [
+        0,
+        5
+      ],
+      "remaining_hp": [
+        0,
+        473.4
+      ],
+      "healing": [
+        326.4000000000001,
+        245.35999999999999
+      ]
+    },
+    {
+      "defender": "two_support_guards",
+      "seed": 101029,
+      "winner": 1,
+      "seconds": 49.9,
+      "survivors": [
+        0,
+        1
+      ],
+      "remaining_hp": [
+        0,
+        188.48
+      ],
+      "healing": [
+        269.5136000000003,
+        198.47199999999998
+      ]
+    },
+    {
+      "defender": "two_support_guards",
+      "seed": 101030,
+      "winner": 1,
+      "seconds": 33.3,
+      "survivors": [
+        0,
+        8
+      ],
+      "remaining_hp": [
+        0,
+        450.08
+      ],
+      "healing": [
+        289.6416000000002,
+        233.352
+      ]
+    },
+    {
+      "defender": "two_support_guards",
+      "seed": 101031,
+      "winner": 0,
+      "seconds": 47.9,
+      "survivors": [
+        1,
+        0
+      ],
+      "remaining_hp": [
+        110.4,
+        0
+      ],
+      "healing": [
+        277.2864000000003,
+        234.72
+      ]
+    }
+  ]
+}
