@@ -21,7 +21,7 @@
 
 [현재 구현 상태](docs/03_development/IMPLEMENTATION_STATUS.md) → [제작 순서](docs/03_development/IMPLEMENTATION_PLAN.md) → [2단계/2B 계획](docs/03_development/PHASE2_PLAN.md) → [UE5 공통 기준](docs/03_development/UE5_IMPLEMENTATION_CONTRACT.md)을 읽습니다.
 
-기획은 `work`, 게임 코드는 `codex/phase1-playground`에서 관리합니다. 2026-11-16 확인한 코드 최신은 `be544d7`(2A 조작 보완)입니다. 사용자 조작 확인 후 2B 진행이 요청됐으며 실제 전투 완료 기록은 아직 없습니다. 새 커밋이 생기면 소스와 증거를 확인해 상태를 갱신합니다.
+기획은 `work`, 게임 코드는 `codex/phase1-playground`에서 관리합니다. D118 재점검의 원격 코드는 `ca6e8e5`이며2B 기본 전투 구현·빌드/API 기록이 있습니다. 다음 작업은 [2B-R 개정 계획](docs/03_development/PHASE2_PLAN.md)과 [로컬 실행 프롬프트](docs/03_development/PHASE2B_REVISION_PROMPT.md)로 최신 규칙/데이터를 반영하는 것입니다. 직접 입력 미검증과 후속 기능은 [구현 상태](docs/03_development/IMPLEMENTATION_STATUS.md)에서 구분합니다.
 
 ## 검토·참조·과거 기록
 

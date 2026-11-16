@@ -10,6 +10,10 @@
 
 [통합 수치v0.6](02_balance/INTEGRATED_COMBAT_BALANCE.md)·[결과](04_analysis/INTEGRATED_COMBAT_RESULTS.md)에서 새 쉴드/강습 보호·무장 무력화·관측 정보·함재기 연구/개조를 검토한다. 영웅/수리의 기본 수치는 v0.5를 계승하고 D116의 변경 필드는 v0.6 시험 프로필이 덮어쓴다. v0.3/v0.4 통계는 과거 비교다. 이번에는 사용자 요청으로 시뮬레이션 보류를 해제했으며 UE 완료를 뜻하지 않는다.
 
+## D118 UE 작업 재개
+
+현재 확인한 원격2B는 ca6e8e5이며 최초 제작을 반복하지 않는다. [구현 상태](03_development/IMPLEMENTATION_STATUS.md) → [2B-R v1](03_development/PHASE2_PLAN.md) → [로컬 실행 프롬프트](03_development/PHASE2B_REVISION_PROMPT.md)를 사용한다. D116확정 정책·시험 수치·D117환경 초안을 구분해 이번 적용/후속 범위를 정했다.
+
 ## 읽기 순서
 
 1. [GDD](00_overview/GDD.md)로 게임의 정체성과 플레이 순환을 파악한다.

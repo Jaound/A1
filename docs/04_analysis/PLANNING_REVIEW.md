@@ -1,5 +1,11 @@
 # 기획 통합 검토와 정리 이력
 
+## D118 — 실제2B 소스와 제작 문서 최신화
+
+D117 이후 사용자 요청으로 원격2B ca6e8e5와 기획을 대조했다. 실제 검증 구현3cdda73/적용 기획cac0a6f, 자동31/2A57/2B50과 직접 입력 미검증을 [상태](../03_development/IMPLEMENTATION_STATUS.md)에 반영했다.31개는 저장된 검증 기록이며 두PIE JSON의 실제 체크 수/오류0도 확인했다. 이 환경에서UE를 재실행하지 않았다.
+
+구현 상태/최초 제작 순서·17개 회귀만 적힌 계획, 공통 기준의 비전투 완충 검사·고정20대, README의 be544d7최신 표기를 교체했다. [2B-R 개정](../03_development/PHASE2_PLAN.md)과 [실행 프롬프트](../03_development/PHASE2B_REVISION_PROMPT.md)에 실제 차이·시험 프로필·선택 이식 필드·후속 범위·증거/체크포인트를 정리했다. Python4개 결함을UE 결함으로 일괄 복사하지 않는다. 환경4종은 세부 효과 초안이며 이번2B-R에서 구현하지 않는다.
+
 ## D116 — 통합 전투·정보·연구와 실제 모형 검토
 
 사용자의9개 응답을 담당 명세에 반영하고, [v0.6 통합 기준](../02_balance/INTEGRATED_COMBAT_BALANCE.md)·[결과](INTEGRATED_COMBAT_RESULTS.md)·[재현/검증](../../reference/IntegratedCombat/VALIDATION.md)을 추가했다. 쉴드 무지연/승무원 효율, 아군 강습 대상 보호와 무장 무력화 명령, 임시 배치→에셋별 재설계, 함재기 연구/개조, 미공개 적 정보/비대칭 전력 조건을 구분한다.

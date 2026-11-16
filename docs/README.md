@@ -10,7 +10,7 @@
 | `01_design/strategy/` | 입체 기지·성계·자원·경영·우주 환경 | [기지](01_design/strategy/BASE_SYSTEMS.md), [전략/경제](01_design/strategy/STRATEGY_ECONOMY.md), [환경](01_design/strategy/SPACE_ENVIRONMENTS.md) |
 | `01_design/interface/` | 화면·조작·정보 표시 | [UI](01_design/interface/UI_SYSTEMS.md) |
 | `02_balance/` | 여러 시스템을 가로지르는 현행 수치 기준안·생산/연구 표 | [기지/생산](02_balance/BASE_BALANCE_DRAFT.md), [통합 전투](02_balance/INTEGRATED_COMBAT_BALANCE.md) |
-| `03_development/` | 구현 순서·실제 완료 상태·UE 기준·회귀 체크 | [구현 상태](03_development/IMPLEMENTATION_STATUS.md), [제작 순서](03_development/IMPLEMENTATION_PLAN.md) |
+| `03_development/` | 구현 순서·실제 완료 상태·UE 기준·회귀 체크 | [구현 상태](03_development/IMPLEMENTATION_STATUS.md), [제작 순서](03_development/IMPLEMENTATION_PLAN.md), [2B-R 프롬프트](03_development/PHASE2B_REVISION_PROMPT.md) |
 | `04_analysis/` | 현재도 참고하는 분석 결과·한계·정리 근거 | [강습 공방 검토](04_analysis/BOARDING_REVIEW.md), [장기전 결과](04_analysis/FLEET_ENDURANCE_RESULTS.md) |
 | `05_references/` | 다른 프로토타입의 관측·이식 자료 | [조작 이식](05_references/PLAY_GAME_3_CONTROLS.md), [업데이트 보고](05_references/PROTOTYPE_FBX_UPDATE_RECORD.md) |
 | `archive/` | 대체된 수치·과거 구현 시점·기획 원문 | [구 전투 수치](archive/balance/COMBAT_BALANCE.md), [구 캠페인 분석](archive/analysis/CAMPAIGN_SIMULATION.md) |
