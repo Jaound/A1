@@ -196,6 +196,42 @@ bool OVCalibration::Start(UOVCombatSubsystem& Combat, const TArray<AOVShip*>& Sh
     return true;
 }
 
+bool OVCalibration::ConfigureHull(UOVCombatSubsystem& Combat, AOVShip& Ship, FName HullId, bool Friendly, FVector Position, double Scale)
+{
+    const FHull* Hull=FindHull(HullId);
+    if(!Hull || !Combat.Settings) return false;
+    UShipLayoutDataAsset* Layout=MakeLayout(&Ship,*Hull);
+    if(!Layout) return false;
+    auto Install=[&](EOVFacilityType Type, int32 Count) {
+        int32 Existing=0;
+        for(const auto& S:Layout->Slots) if(S.Facility==Type)++Existing;
+        for(auto& S:Layout->Slots) if(Existing<Count && S.Facility==EOVFacilityType::None) {
+            S.Facility=Type; S.AllowedFacilities.AddUnique(Type); S.MaxFacilityHP=100; S.RequiredCrew=10; ++Existing;
+        }
+    };
+    Install(EOVFacilityType::Interception,1);
+    Install(EOVFacilityType::Boarding,1);
+    if(HullId==TEXT("carrier")) { Install(EOVFacilityType::Hangar,2); Install(EOVFacilityType::FighterControl,1); }
+    for(int32 I=0;I<Hull->PD;++I) {
+        auto& M=Layout->WeaponMounts.AddDefaulted_GetRef(); M.WeaponId=FName(*FString::Printf(TEXT("PD_%d"),I));
+        M.Type=EOVWeaponType::Interception; M.Tier=Layout->WeaponTier; M.MaxHP=100;
+        M.LocalPosition=FVector(FMath::Lerp(-.7,.7,(I+.5)/Hull->PD)*Layout->LocalHalfExtent.X,
+            (I%2?1:-1)*Layout->LocalHalfExtent.Y*.8,Layout->LocalHalfExtent.Z+8);
+    }
+    Ship.Configure(HullId.ToString().ToUpper(),Friendly,Hull->Speed,Hull->Turn,FVector(Scale),Friendly?FLinearColor(.12f,.65f,1):FLinearColor(1,.15f,.08f));
+    Ship.SetCalibrationHull(&Layout->LocalHalfExtent);
+    auto& S=*Ship.Systems;
+    S.Tuning=GetDefault<UOVShipSystemsComponent>()->Tuning; S.Tuning.ShieldBase=Hull->Shield;
+    S.Tuning.ShieldRegenFraction=ShieldCombat; S.Tuning.ShieldNonCombatRegenFraction=ShieldNonCombat;
+    S.Tuning.NoHitRecoveryInterval=ShieldTransition; S.Tuning.ShieldRecoveryDelay=ShieldDelay; S.Tuning.CrewDamageCoefficient=CrewInjury;
+    S.FactionId=Friendly?0:1; S.Initialize(Layout);
+    Ship.SetActorHiddenInGame(false); Ship.SetActorEnableCollision(true);
+    Ship.SetActorLocationAndRotation(Position,FRotator(0,Friendly?0:180,0)); Ship.DebugResetMotion(); Ship.SetAutomation(false,false);
+    Combat.RegisterShip(&Ship,Hull->RadarTier,false,Hull->Size);
+    for(int32 I=0;I<Hull->MountCount;++I) Combat.SetWeaponProfile(&Ship,Layout->WeaponMounts[I].WeaponId,ProfileId(Weapons[Hull->Mounts[I].Weapon],Hull->Mounts[I].Tier));
+    return true;
+}
+
 #if WITH_DEV_AUTOMATION_TESTS
 IMPLEMENT_SIMPLE_AUTOMATION_TEST(FOVD116CatalogTest, "OrbitalVanguard.Revision.D116CandidateCatalog",
     EAutomationTestFlags::EditorContext | EAutomationTestFlags::EngineFilter)

@@ -1,3 +1,6 @@
+#include "OVCarrierSubsystem.h"
+#include "OVTransportSubsystem.h"
+#include "OVPointDefenseSubsystem.h"
 #include "OVCombatSubsystem.h"
 #include "OVShip.h"
 #include "OVShipSystemsComponent.h"
@@ -401,6 +404,11 @@ void UOVCombatSubsystem::Step(float Delta)
     }
     if (AOVController* Controller = Cast<AOVController>(GetWorld()->GetFirstPlayerController()))
         Controller->ResolveContacts(Delta);
+    // One game clock: aircraft/transport positions, PD opportunities, then surviving ordnance.
+    GetWorld()->GetSubsystem<UOVCarrierSubsystem>()->Simulate(Delta);
+    GetWorld()->GetSubsystem<UOVTransportSubsystem>()->Simulate(Delta);
+    GetWorld()->GetSubsystem<UOVPointDefenseSubsystem>()->Step(Delta);
+    if(auto* PC=Cast<AOVController>(GetWorld()->GetFirstPlayerController())) PC->AdvancePhase2C(Delta);
     AdvanceAttacks(Delta);
     for (FOVCombatShipState& State : Ships)
     {
@@ -507,6 +515,8 @@ void UOVCombatSubsystem::Launch(FOVCombatShipState& State, FOVCombatMountState& 
     Attack.FactionId = State.Ship->Systems->FactionId;
     Attack.LaunchTime = GameTime; Attack.TrackingLifetime = Settings->GuidedTrackingSeconds;
     Attack.WeaponId = Mount.MountId; Attack.Weapon = Mount.Profile;
+    Attack.InterceptHP = (Attack.Weapon.Kind == EOVAttackKind::Missile || Attack.Weapon.Kind == EOVAttackKind::GuidedMissile)
+        ? FMath::Max(0.f, Attack.Weapon.ProjectileHP) : 0;
     Attack.Target = State.Ship->AttackTarget;
     Attack.Origin = Attack.Position = MountOrigin(State, *Def);
     Attack.Accuracy = Ready.Accuracy;
@@ -639,6 +649,26 @@ bool UOVCombatSubsystem::ResolveImpact(FOVAttackState& Attack, AOVShip* HitShip,
     Attack.ArmorId = Systems->LastArmorSection; Attack.SlotId = Systems->LastDamageSlot;
     Attack.HullDamage = Systems->LastHullDamage; Attack.Explosions = Systems->LastExplosionCount;
     ++HitCount;
+    return true;
+}
+
+bool UOVCombatSubsystem::ApplyInterceptionDamage(int32 AttackId, float Damage)
+{
+    if (!bEnabled || !FMath::IsFinite(Damage) || Damage <= 0 || ResolvedAttackIds.Contains(AttackId)) return false;
+    const int32 Index = Attacks.IndexOfByPredicate([AttackId](const FOVAttackState& A) { return A.AttackId == AttackId; });
+    if (!Attacks.IsValidIndex(Index)) return false;
+    FOVAttackState& Attack = Attacks[Index];
+    if (Attack.Result != EOVAttackResult::Flying || Attack.InterceptHP <= 0
+        || (Attack.Weapon.Kind != EOVAttackKind::Missile && Attack.Weapon.Kind != EOVAttackKind::GuidedMissile)) return false;
+    Attack.InterceptHP = FMath::Max(0.f, Attack.InterceptHP - Damage);
+    if (Attack.InterceptHP <= 0)
+    {
+        Attack.Result = EOVAttackResult::Intercepted;
+        Attack.ResolvedAt = GameTime;
+        RecordEvent(Attack);
+        // Remove before the next sweep; RecordEvent also rejects stale copied attack impacts.
+        Attacks.RemoveAt(Index);
+    }
     return true;
 }
 

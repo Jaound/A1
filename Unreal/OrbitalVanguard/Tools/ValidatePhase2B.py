@@ -109,6 +109,8 @@ def custom_profile(combat, ship, index=1, **values):
 
 
 def run_common(pc, world):
+    pc.set_editor_property('developer_mode', True)
+    pc.get_hud().set_details_open(True)
     camera_profile = p(pc, 'play_game3')
     combat, a, support, target = fixture(pc)
     sa, st = p(a, 'systems'), p(target, 'systems')

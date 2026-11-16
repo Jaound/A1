@@ -33,7 +33,7 @@ public:
  UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Control Range") EOVInputMode InputMode=EOVInputMode::None;
  UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Control Range") TArray<TObjectPtr<AOVShip>> Selection;
  UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Control Range") bool bFollow=false;
- UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Debug") bool bDeveloperMode=true;
+ UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Debug") bool bDeveloperMode=false;
  UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Debug") int32 ViewedDeck=0;
  UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Debug") int32 SelectedSlot=0;
  UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Debug") int32 SelectedArmor=0;
@@ -69,6 +69,14 @@ public:
  UFUNCTION(BlueprintCallable, Category="Combat") void StartCombatRange();
  UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Combat") int32 CalibrationScenario=-1;
  UFUNCTION(BlueprintCallable, Category="Combat") bool StartCalibrationRange(int32 Scenario=0);
+ UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Combat") int32 Phase2CScenario=-1;
+ UFUNCTION(BlueprintCallable, Category="Combat") bool StartPhase2CRange(int32 Scenario=0);
+ UFUNCTION(BlueprintCallable, Category="Camera") void FrameEngagement();
+ UFUNCTION(BlueprintPure, Category="Combat") FString GetScenarioLabel() const;
+ UFUNCTION(BlueprintCallable, Category="Combat") void ResetPhase2C();
+ UFUNCTION(BlueprintCallable) void AdvancePhase2C(float GameDelta);
+ UPROPERTY(VisibleAnywhere, BlueprintReadOnly) TMap<AOVShip*,float> TrialFTLRemaining;
+ bool Phase2CAction(FName Name);
  void ResolveContacts(float SimDelta);
  FOVOrderInput OrderInput;
 private:

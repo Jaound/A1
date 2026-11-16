@@ -12,11 +12,13 @@ inline constexpr double XYLimit = 180000;
 inline constexpr double MinZ = -45000;
 inline constexpr double MaxZ = 60000;
 inline constexpr double GridStep = 15000;
-inline constexpr double StartZoom = 135000;
+inline constexpr double StartZoom = 100000;
 inline constexpr double MaxZoom = 420000;
 inline constexpr double RayLength = 1500000;
 inline constexpr double AltitudeScale = 20;
 
 // Returns false before initializing any runtime profile if the requested roster is invalid.
 bool Start(UOVCombatSubsystem& Combat, const TArray<AOVShip*>& Ships, int32 Scenario);
+// Candidate data reuse for 2C. Does not alter stored inventory or reload profiles.
+bool ConfigureHull(UOVCombatSubsystem& Combat, AOVShip& Ship, FName HullId, bool Friendly, FVector Position, double Scale);
 }

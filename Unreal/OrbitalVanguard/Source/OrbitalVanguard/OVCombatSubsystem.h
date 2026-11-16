@@ -11,7 +11,7 @@ UENUM(BlueprintType)
 enum class EOVAttackKind : uint8 { Beam, Cannon, Missile, GuidedMissile };
 
 UENUM(BlueprintType)
-enum class EOVAttackResult : uint8 { Flying, Hit, Miss, Expired, TargetWrecked, TargetDeparted, TrackingExpired };
+enum class EOVAttackResult : uint8 { Flying, Hit, Miss, Expired, TargetWrecked, TargetDeparted, TrackingExpired, Intercepted };
 
 /** Values here are the explicitly provisional 2B test profile, in cm and game seconds. */
 USTRUCT(BlueprintType)
@@ -38,6 +38,9 @@ struct ORBITALVANGUARD_API FOVWeaponProfile
     UPROPERTY(EditAnywhere, BlueprintReadWrite) float SalvoInterval = 0.18f;
     UPROPERTY(EditAnywhere, BlueprintReadWrite) float Lifetime = 15;
     UPROPERTY(EditAnywhere, BlueprintReadWrite) float GuidanceTurnRate = 75;
+    // 2C candidate projectile body, independent of the launcher mount HP and attack damage.
+    UPROPERTY(EditAnywhere, BlueprintReadWrite) float ProjectileHP = 24;
+    UPROPERTY(EditAnywhere, BlueprintReadWrite) float InterceptionEvasion = .25f;
 };
 
 USTRUCT(BlueprintType)
@@ -165,6 +168,7 @@ struct ORBITALVANGUARD_API FOVAttackState
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly) float Damage = 0;
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly) float Accuracy = 0;
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly) EOVAttackResult Result = EOVAttackResult::Flying;
+    UPROPERTY(VisibleAnywhere, BlueprintReadOnly) float InterceptHP = 0;
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly) FName HitShipId;
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly) FName ImpactWeaponId;
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly) FName ArmorId;
@@ -204,6 +208,7 @@ public:
     UFUNCTION(BlueprintPure) FOVDetectionInfo GetDetection(AOVShip* Ship, AOVShip* Target) const;
     UFUNCTION(BlueprintPure) FOVFireReadiness GetReadiness(AOVShip* Ship, FName MountId) const;
     UFUNCTION(BlueprintPure) bool IsDeparted(AOVShip* Ship) const;
+    UFUNCTION(BlueprintCallable) bool ApplyInterceptionDamage(int32 AttackId, float Damage);
     // Reuses immutable damage metadata; resolved attacks cannot deliver damage twice.
     bool ResolveImpact(FOVAttackState& Attack, AOVShip* HitShip, FVector Point, FVector Normal, FName HitWeaponId = NAME_None);
     static bool SegmentBox(FVector Start, FVector End, const FTransform& Transform,

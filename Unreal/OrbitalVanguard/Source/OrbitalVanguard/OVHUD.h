@@ -16,11 +16,14 @@ public:
  void CancelPointerDrag() { bDragging=false; bResizing=false; }
  void OpenDetails() { bDetailsOpen=true; bMinimized=false; }
  UFUNCTION(BlueprintCallable, Category="UI") bool HandlePointer(float X,float Y,bool Pressed,bool Down,float Wheel,bool Orbit,float DX,float DY);
- UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="UI") bool bDetailsOpen=true;
+ UFUNCTION(BlueprintCallable, Category="UI") void SetDetailsOpen(bool Open) { bDetailsOpen=Open; bMinimized=false; }
+ UFUNCTION(BlueprintPure, Category="UI") FVector2D GetActionCenter(FName Action) const;
+ UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="UI") bool bDetailsOpen=false;
  UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="UI") bool bMinimized=false;
  UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="UI") FVector2D WindowPosition=FVector2D(840,76);
  UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="UI") FVector2D WindowSize=FVector2D(424,550);
 private:
+ TMap<FName,FVector2D> ActionCenters;
  float UIScale=1.f;
  FVector2D ViewportPixels=FVector2D(1280,740);
  bool bDragging=false,bResizing=false;
@@ -30,6 +33,9 @@ private:
  float PreviewZoom=1;
  void DrawDetails();
  void DrawCombat();
+ void DrawPlayHUD();
+ void DrawWorldIndicators();
+ void DrawPhase2C();
  void DrawExternal(float X,float Y,float W);
  void Button(FName Name,const FString& Label,float X,float Y,float W,bool Active=false);
 };

@@ -36,6 +36,8 @@ def run(pc, ships, world):
     a, b, target = ships
     sa, sb, st = [p(s, 'systems') for s in ships]
     hud = pc.get_hud()
+    pc.set_editor_property('developer_mode', True)
+    hud.set_details_open(True)
     check('DataAsset layouts loaded, 14/26/38 independent armor',
           [len(p(s, 'armor_sections')) for s in (sa, sb, st)] == [14, 26, 38]
           and all(p(s, 'layout').get_path_name().startswith('/Game/Layouts/') for s in (sa, sb, st)))

@@ -14,6 +14,7 @@ FString Facility(EOVFacilityType T) { return StaticEnum<EOVFacilityType>()->GetN
 }
 void AOVHUD::Button(FName N,const FString& L,float X,float Y,float W,bool Active)
 {
+ ActionCenters.Add(N,FVector2D(X+W*.5f,Y+13.5f));
  DrawRect(Active?FLinearColor(.03f,.4f,.55f,.95f):FLinearColor(.04f,.08f,.13f,.98f),X,Y,W,27);
  DrawText(L,Active?FLinearColor::White:Ink,X+6,Y+5,GEngine->GetSmallFont());
  AddHitBox(FVector2D(X,Y)*UIScale,FVector2D(W,27)*UIScale,N,true,bDrawingDetails?110:10);
@@ -29,8 +30,12 @@ bool AOVHUD::IsOverPanel(float X,float Y) const
  const auto* PC=Cast<AOVController>(PlayerOwner); if(!PC) return false;
  const FVector2D P(X/UIScale,Y/UIScale);
  if(bDragging||bResizing) return true;
- if(PC->Combat && PC->Combat->bEnabled && PC->Selected && (PC->Selected->bFriendly||PC->bDeveloperMode) && P.X>=10 && P.X<=440 && P.Y>=216 && P.Y<=560) return true;
- if(P.Y<55 || (PC->Selected&&P.Y>ViewportPixels.Y/UIScale-88) || (P.X<200&&P.Y<210)) return true;
+ if(!PC->bDeveloperMode) {
+  if(P.Y<96 || P.Y>ViewportPixels.Y/UIScale-126 || (P.X<204 && P.Y<100+PC->Ships.Num()*36) || (PC->Phase2CScenario>=0 && P.X<258 && P.Y>=300 && P.Y<=600)) return true;
+  for(const FHUDHitBox& Hit:HitBoxMap) if(Hit.GetName().ToString().StartsWith(TEXT("Pick_")) && Hit.Contains(FVector2D(X,Y))) return true;
+ }
+ if(PC->bDeveloperMode && PC->Combat && PC->Combat->bEnabled && PC->Selected && (PC->Selected->bFriendly||PC->bDeveloperMode) && P.X>=10 && P.X<=440 && P.Y>=216 && P.Y<=560) return true;
+ if(PC->bDeveloperMode && (P.Y<55 || (PC->Selected&&P.Y>ViewportPixels.Y/UIScale-88) || (P.X<200&&P.Y<210))) return true;
  return PC->Selected&&bDetailsOpen&&P.X>=WindowPosition.X&&P.X<=WindowPosition.X+WindowSize.X&&P.Y>=WindowPosition.Y&&P.Y<=WindowPosition.Y+(bMinimized?32:WindowSize.Y);
 }
 bool AOVHUD::HasOrbitPreview() const
@@ -192,11 +197,13 @@ void AOVHUD::DrawDetails()
 }
 void AOVHUD::DrawHUD()
 {
+ ActionCenters.Reset();
  Super::DrawHUD();auto* PC=Cast<AOVController>(PlayerOwner);if(!PC||!Canvas||PC->Ships.Num()<3)return;
  ViewportPixels=FVector2D(Canvas->SizeX,Canvas->SizeY);
  UIScale=FMath::Max(.25f,FMath::Min(1.f,FMath::Min(Canvas->SizeX/1280.f,Canvas->SizeY/740.f)));
  Canvas->Canvas->PushRelativeTransform(FScaleMatrix(FVector(UIScale,UIScale,1)));
  const float Width=Canvas->SizeX/UIScale,Height=Canvas->SizeY/UIScale;
+ if(!PC->bDeveloperMode) { DrawPlayHUD(); DrawWorldIndicators(); DrawPhase2C(); DrawDetails(); Canvas->Canvas->PopTransform(); return; }
  const bool CombatOn=PC->Combat&&PC->Combat->bEnabled;
  DrawRect(Panel,10,10,Width-20,40);if(PC->CalibrationScenario<0)DrawText(CombatOn?TEXT("ORBITAL VANGUARD / 2B COMBAT RANGE"):TEXT("ORBITAL VANGUARD / 2A TEST RANGE"),Accent,20,22,GEngine->GetSmallFont());
  Button(TEXT("Pause"),PC->bSimulationPaused?TEXT("F1 RESUME"):TEXT("F1 PAUSE"),380,16,100,PC->bSimulationPaused);
@@ -207,7 +214,7 @@ void AOVHUD::DrawHUD()
  if(PC->CalibrationScenario>=0)
  {
   const TCHAR* Scenario[]={TEXT("DUEL"),TEXT("WING"),TEXT("MISSILES")};
-  DrawText(FString::Printf(TEXT("D116 CANDIDATE / %s"),Scenario[PC->CalibrationScenario]),Accent,20,22,GEngine->GetSmallFont());
+  DrawText(FString::Printf(TEXT("D116 CANDIDATE / %s"),Scenario[FMath::Clamp(PC->CalibrationScenario,0,2)]),Accent,20,22,GEngine->GetSmallFont());
  }
  Button(TEXT("CombatRange"),PC->CalibrationScenario>=0?TEXT("F5 LEGACY BATTLE"):CombatOn?TEXT("F5 RESET BATTLE"):TEXT("F5 COMBAT RANGE"),1092,16,158);
  for(int32 I=0;I<PC->Ships.Num();++I)if((PC->Ships[I]->bFriendly||PC->bDeveloperMode) && !(CombatOn&&PC->Combat->IsDeparted(PC->Ships[I])))Button(FName(*FString::Printf(TEXT("Ship%d"),I+1)),PC->Ships[I]->ShipName.Left(24),12,72+I*36,182,PC->Selected==PC->Ships[I]);
@@ -228,7 +235,7 @@ void AOVHUD::DrawHUD()
    DrawRect(Health(Ship->Systems->HullHP/FMath::Max(1.f,Ship->Systems->MaxHullHP)),P.X,P.Y+16,100*Ship->Systems->HullHP/FMath::Max(1.f,Ship->Systems->MaxHullHP),3);
   }
  }
- DrawCombat(); DrawDetails();
+ DrawCombat(); DrawPhase2C(); DrawDetails();
  Canvas->Canvas->PopTransform();
 }
 void AOVHUD::DrawCombat()
