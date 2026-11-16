@@ -1,5 +1,7 @@
 # 전투 수치v0.2 — 함대·영웅·강습 연동 모형 분석
 
+> **과거 분석:** 현재 장기전/전 함종 검토는 [v0.3 결과](FLEET_ENDURANCE_RESULTS.md)를 따른다.
+
 > 1,136회 평가 시행과 해상도 비교24회. **Python 축소 모형 실행 결과이며 UE/최신 Godot Web ZIP의 플레이 결과가 아니다.** [수치표](COMBAT_BALANCE.md) · [재현 안내](../reference/CombatSimulation/README.md) · [전체 입력/원시 결과](../reference/CombatSimulation/results.json).
 
 ## 무엇을 시험했는가

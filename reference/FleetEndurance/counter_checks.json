@@ -1,0 +1,1270 @@
+{
+  "profile_sha256": "44b0a276801310624027b7cb0ae873ab2173bf0843c76cc0079a3067769a6eb5",
+  "model_sha256": "cc75fab57fbb62dff9b096649de360b43310843c4c18aed662fdd849417b11de",
+  "trials": [
+    {
+      "budget": 100,
+      "case": "carrier_vs_light",
+      "seed": 90000,
+      "winner": 0,
+      "seconds": 1217,
+      "first_loss": 49,
+      "main_end": 963,
+      "remaining_cost": [
+        100,
+        0
+      ],
+      "damage_by_size": {
+        "0:3": 1050624.0,
+        "1:1": 1042902.12
+      },
+      "incoming_by_size": {
+        "1:1": 1050624.0,
+        "0:3": 1042902.12
+      },
+      "shots": 96459.0,
+      "fighter_losses": 160.0
+    },
+    {
+      "budget": 100,
+      "case": "carrier_vs_light",
+      "seed": 90001,
+      "winner": 0,
+      "seconds": 1226,
+      "first_loss": 20,
+      "main_end": 997,
+      "remaining_cost": [
+        100,
+        0
+      ],
+      "damage_by_size": {
+        "0:3": 1051768.0,
+        "1:1": 1046642.33
+      },
+      "incoming_by_size": {
+        "1:1": 1051768.0,
+        "0:3": 1046642.33
+      },
+      "fighter_losses": 160.0,
+      "shots": 96860.0
+    },
+    {
+      "budget": 100,
+      "case": "carrier_vs_light",
+      "seed": 90002,
+      "winner": 0,
+      "seconds": 1204,
+      "first_loss": 74,
+      "main_end": 930,
+      "remaining_cost": [
+        100,
+        0
+      ],
+      "damage_by_size": {
+        "0:3": 1049216.0,
+        "1:1": 1037033.3
+      },
+      "incoming_by_size": {
+        "1:1": 1049216.0,
+        "0:3": 1037033.3
+      },
+      "shots": 94699.0,
+      "fighter_losses": 160.0
+    },
+    {
+      "budget": 100,
+      "case": "carrier_vs_light",
+      "seed": 90003,
+      "winner": 0,
+      "seconds": 1238,
+      "first_loss": 30,
+      "main_end": 988,
+      "remaining_cost": [
+        100,
+        0
+      ],
+      "damage_by_size": {
+        "0:3": 1056696.0,
+        "1:1": 1072776.28
+      },
+      "incoming_by_size": {
+        "1:1": 1056696.0,
+        "0:3": 1072776.28
+      },
+      "shots": 100309.0,
+      "fighter_losses": 160.0
+    },
+    {
+      "budget": 100,
+      "case": "carrier_vs_light",
+      "seed": 90004,
+      "winner": 0,
+      "seconds": 1203,
+      "first_loss": 34,
+      "main_end": 889,
+      "remaining_cost": [
+        100,
+        0
+      ],
+      "damage_by_size": {
+        "0:3": 1041384.0,
+        "1:1": 1009597.27
+      },
+      "incoming_by_size": {
+        "1:1": 1041384.0,
+        "0:3": 1009597.27
+      },
+      "shots": 94944.0,
+      "fighter_losses": 160.0
+    },
+    {
+      "budget": 100,
+      "case": "carrier_vs_light",
+      "seed": 90005,
+      "winner": 0,
+      "seconds": 1250,
+      "first_loss": 61,
+      "main_end": 1012,
+      "remaining_cost": [
+        100,
+        0
+      ],
+      "damage_by_size": {
+        "0:3": 1063736.0,
+        "1:1": 1082313.37
+      },
+      "incoming_by_size": {
+        "1:1": 1063736.0,
+        "0:3": 1082313.37
+      },
+      "shots": 100180.0,
+      "fighter_losses": 160.0
+    },
+    {
+      "budget": 100,
+      "case": "carrier_vs_light",
+      "seed": 90006,
+      "winner": 0,
+      "seconds": 1204,
+      "first_loss": 39,
+      "main_end": 924,
+      "remaining_cost": [
+        100,
+        0
+      ],
+      "damage_by_size": {
+        "0:3": 1036456.0,
+        "1:1": 996997.36
+      },
+      "incoming_by_size": {
+        "1:1": 1036456.0,
+        "0:3": 996997.36
+      },
+      "shots": 91872.0,
+      "fighter_losses": 160.0
+    },
+    {
+      "budget": 100,
+      "case": "carrier_vs_light",
+      "seed": 90007,
+      "winner": 0,
+      "seconds": 1208,
+      "first_loss": 30,
+      "main_end": 895,
+      "remaining_cost": [
+        100,
+        0
+      ],
+      "damage_by_size": {
+        "0:3": 1043672.0,
+        "1:1": 985794.13
+      },
+      "incoming_by_size": {
+        "1:1": 1043672.0,
+        "0:3": 985794.13
+      },
+      "shots": 88893.0,
+      "fighter_losses": 160.0
+    },
+    {
+      "budget": 100,
+      "case": "mixed_anti_screen",
+      "seed": 90000,
+      "winner": 1,
+      "seconds": 965,
+      "first_loss": 39,
+      "main_end": 963,
+      "remaining_cost": [
+        0,
+        67
+      ],
+      "damage_by_size": {
+        "0:3": 458695.13,
+        "0:2": 153916.2,
+        "0:1": 72107.02,
+        "1:1": 1153006.33
+      },
+      "incoming_by_size": {
+        "1:1": 684718.35,
+        "0:1": 201352.33,
+        "0:2": 259974.0,
+        "0:3": 691680.0
+      },
+      "shots": 110036.0,
+      "fighter_losses": 80.0,
+      "repair_hp": 4296.32725,
+      "missile_intercepts": 276.0
+    },
+    {
+      "budget": 100,
+      "case": "mixed_anti_screen",
+      "seed": 90001,
+      "winner": 1,
+      "seconds": 1014,
+      "first_loss": 26,
+      "main_end": 1006,
+      "remaining_cost": [
+        0,
+        62
+      ],
+      "damage_by_size": {
+        "0:3": 472275.5,
+        "0:2": 152964.24,
+        "0:1": 74065.28,
+        "1:1": 1169224.36
+      },
+      "incoming_by_size": {
+        "1:1": 699305.03,
+        "0:1": 201950.36,
+        "0:2": 275594.0,
+        "0:3": 691680.0
+      },
+      "fighter_losses": 80.0,
+      "shots": 111552.0,
+      "repair_hp": 4190.3565,
+      "missile_intercepts": 291.0
+    },
+    {
+      "budget": 100,
+      "case": "mixed_anti_screen",
+      "seed": 90002,
+      "winner": 1,
+      "seconds": 920,
+      "first_loss": 86,
+      "main_end": 909,
+      "remaining_cost": [
+        0,
+        67
+      ],
+      "damage_by_size": {
+        "0:3": 454979.12,
+        "0:2": 143276.0,
+        "0:1": 67997.38,
+        "1:1": 1124742.33
+      },
+      "incoming_by_size": {
+        "1:1": 666252.49,
+        "0:1": 199488.33,
+        "0:2": 259974.0,
+        "0:3": 665280.0
+      },
+      "shots": 106717.0,
+      "fighter_losses": 80.0,
+      "repair_hp": 3840.3272500000003,
+      "missile_intercepts": 270.0
+    },
+    {
+      "budget": 100,
+      "case": "mixed_anti_screen",
+      "seed": 90003,
+      "winner": 1,
+      "seconds": 877,
+      "first_loss": 41,
+      "main_end": 865,
+      "remaining_cost": [
+        0,
+        71
+      ],
+      "damage_by_size": {
+        "0:3": 437293.77,
+        "0:2": 147925.26,
+        "0:1": 70069.17,
+        "1:1": 1100708.36
+      },
+      "incoming_by_size": {
+        "1:1": 655288.2,
+        "0:1": 201854.36,
+        "0:2": 259974.0,
+        "0:3": 638880.0
+      },
+      "shots": 107938.0,
+      "fighter_losses": 80.0,
+      "repair_hp": 4094.3565,
+      "missile_intercepts": 276.0
+    },
+    {
+      "budget": 100,
+      "case": "mixed_anti_screen",
+      "seed": 90004,
+      "winner": 1,
+      "seconds": 983,
+      "first_loss": 52,
+      "main_end": 965,
+      "remaining_cost": [
+        0,
+        64
+      ],
+      "damage_by_size": {
+        "0:3": 464435.1,
+        "0:2": 151443.45,
+        "0:1": 67653.46,
+        "1:1": 1156900.36
+      },
+      "incoming_by_size": {
+        "1:1": 683532.01,
+        "0:1": 199086.36,
+        "0:2": 266134.0,
+        "0:3": 691680.0
+      },
+      "shots": 109773.0,
+      "fighter_losses": 80.0,
+      "repair_hp": 4142.3565,
+      "missile_intercepts": 288.0
+    },
+    {
+      "budget": 100,
+      "case": "mixed_anti_screen",
+      "seed": 90005,
+      "winner": 1,
+      "seconds": 952,
+      "first_loss": 36,
+      "main_end": 944,
+      "remaining_cost": [
+        0,
+        68
+      ],
+      "damage_by_size": {
+        "0:3": 459246.01,
+        "0:2": 146892.89,
+        "0:1": 68987.7,
+        "1:1": 1157039.54
+      },
+      "incoming_by_size": {
+        "1:1": 675126.6,
+        "0:1": 200105.54,
+        "0:2": 265254.0,
+        "0:3": 691680.0
+      },
+      "shots": 110113.0,
+      "fighter_losses": 80.0,
+      "repair_hp": 3753.5371071428563,
+      "missile_intercepts": 273.0
+    },
+    {
+      "budget": 100,
+      "case": "mixed_anti_screen",
+      "seed": 90006,
+      "winner": 1,
+      "seconds": 1058,
+      "first_loss": 26,
+      "main_end": 1046,
+      "remaining_cost": [
+        0,
+        58
+      ],
+      "damage_by_size": {
+        "0:3": 487924.11,
+        "0:2": 160079.48,
+        "0:1": 73563.69,
+        "1:1": 1170510.33
+      },
+      "incoming_by_size": {
+        "1:1": 721567.28,
+        "0:1": 201256.33,
+        "0:2": 277574.0,
+        "0:3": 691680.0
+      },
+      "shots": 111888.0,
+      "fighter_losses": 80.0,
+      "repair_hp": 4200.32725,
+      "missile_intercepts": 309.0
+    },
+    {
+      "budget": 100,
+      "case": "mixed_anti_screen",
+      "seed": 90007,
+      "winner": 1,
+      "seconds": 934,
+      "first_loss": 36,
+      "main_end": 901,
+      "remaining_cost": [
+        0,
+        69
+      ],
+      "damage_by_size": {
+        "0:3": 451540.1,
+        "0:2": 150976.39,
+        "0:1": 73093.36,
+        "1:1": 1133410.7
+      },
+      "incoming_by_size": {
+        "1:1": 675609.85,
+        "0:1": 201996.7,
+        "0:2": 266134.0,
+        "0:3": 665280.0
+      },
+      "shots": 108675.0,
+      "fighter_losses": 80.0,
+      "repair_hp": 4236.699678571429,
+      "missile_intercepts": 276.0
+    },
+    {
+      "budget": 200,
+      "case": "carrier_vs_light",
+      "seed": 90000,
+      "winner": 0,
+      "seconds": 1226,
+      "first_loss": 65,
+      "main_end": 999,
+      "remaining_cost": [
+        200,
+        0
+      ],
+      "damage_by_size": {
+        "0:3": 2109344.0,
+        "1:1": 2145045.29
+      },
+      "incoming_by_size": {
+        "1:1": 2109344.0,
+        "0:3": 2145045.29
+      },
+      "shots": 200470.0,
+      "fighter_losses": 320.0
+    },
+    {
+      "budget": 200,
+      "case": "carrier_vs_light",
+      "seed": 90001,
+      "winner": 0,
+      "seconds": 1201,
+      "first_loss": 9,
+      "main_end": 928,
+      "remaining_cost": [
+        200,
+        0
+      ],
+      "damage_by_size": {
+        "0:3": 2084528.0,
+        "1:1": 2036326.79
+      },
+      "incoming_by_size": {
+        "1:1": 2084528.0,
+        "0:3": 2036326.79
+      },
+      "fighter_losses": 320.0,
+      "shots": 188466.0
+    },
+    {
+      "budget": 200,
+      "case": "carrier_vs_light",
+      "seed": 90002,
+      "winner": 0,
+      "seconds": 1233,
+      "first_loss": 17,
+      "main_end": 1004,
+      "remaining_cost": [
+        200,
+        0
+      ],
+      "damage_by_size": {
+        "0:3": 2115152.0,
+        "1:1": 2136899.25
+      },
+      "incoming_by_size": {
+        "1:1": 2115152.0,
+        "0:3": 2136899.25
+      },
+      "shots": 195894.0,
+      "fighter_losses": 320.0
+    },
+    {
+      "budget": 200,
+      "case": "carrier_vs_light",
+      "seed": 90003,
+      "winner": 0,
+      "seconds": 1221,
+      "first_loss": 15,
+      "main_end": 960,
+      "remaining_cost": [
+        200,
+        0
+      ],
+      "damage_by_size": {
+        "0:3": 2099312.0,
+        "1:1": 2139121.77
+      },
+      "incoming_by_size": {
+        "1:1": 2099312.0,
+        "0:3": 2139121.77
+      },
+      "shots": 198864.0,
+      "fighter_losses": 320.0
+    },
+    {
+      "budget": 200,
+      "case": "carrier_vs_light",
+      "seed": 90004,
+      "winner": 0,
+      "seconds": 1201,
+      "first_loss": 26,
+      "main_end": 927,
+      "remaining_cost": [
+        200,
+        0
+      ],
+      "damage_by_size": {
+        "0:3": 2081096.0,
+        "1:1": 2039742.65
+      },
+      "incoming_by_size": {
+        "1:1": 2081096.0,
+        "0:3": 2039742.65
+      },
+      "shots": 189910.0,
+      "fighter_losses": 320.0
+    },
+    {
+      "budget": 200,
+      "case": "carrier_vs_light",
+      "seed": 90005,
+      "winner": 0,
+      "seconds": 1228,
+      "first_loss": 41,
+      "main_end": 993,
+      "remaining_cost": [
+        200,
+        0
+      ],
+      "damage_by_size": {
+        "0:3": 2102920.0,
+        "1:1": 2161661.78
+      },
+      "incoming_by_size": {
+        "1:1": 2102920.0,
+        "0:3": 2161661.78
+      },
+      "shots": 202341.0,
+      "fighter_losses": 320.0
+    },
+    {
+      "budget": 200,
+      "case": "carrier_vs_light",
+      "seed": 90006,
+      "winner": 0,
+      "seconds": 1219,
+      "first_loss": 59,
+      "main_end": 966,
+      "remaining_cost": [
+        200,
+        0
+      ],
+      "damage_by_size": {
+        "0:3": 2098256.0,
+        "1:1": 2141166.9
+      },
+      "incoming_by_size": {
+        "1:1": 2098256.0,
+        "0:3": 2141166.9
+      },
+      "shots": 199107.0,
+      "fighter_losses": 320.0
+    },
+    {
+      "budget": 200,
+      "case": "carrier_vs_light",
+      "seed": 90007,
+      "winner": 0,
+      "seconds": 1220,
+      "first_loss": 44,
+      "main_end": 941,
+      "remaining_cost": [
+        200,
+        0
+      ],
+      "damage_by_size": {
+        "0:3": 2093416.0,
+        "1:1": 2055893.59
+      },
+      "incoming_by_size": {
+        "1:1": 2093416.0,
+        "0:3": 2055893.59
+      },
+      "shots": 187031.0,
+      "fighter_losses": 320.0
+    },
+    {
+      "budget": 200,
+      "case": "mixed_anti_screen",
+      "seed": 90000,
+      "winner": 1,
+      "seconds": 808,
+      "first_loss": 47,
+      "main_end": 784,
+      "remaining_cost": [
+        0,
+        170
+      ],
+      "damage_by_size": {
+        "0:3": 640781.41,
+        "0:2": 330729.61,
+        "0:1": 47145.01,
+        "1:1": 2137738.0
+      },
+      "incoming_by_size": {
+        "1:1": 1018656.03,
+        "0:1": 186536.0,
+        "0:2": 669042.0,
+        "0:3": 1282160.0
+      },
+      "shots": 214052.0,
+      "fighter_losses": 80.0,
+      "repair_hp": 3120.0,
+      "missile_intercepts": 3048.0
+    },
+    {
+      "budget": 200,
+      "case": "mixed_anti_screen",
+      "seed": 90001,
+      "winner": 1,
+      "seconds": 799,
+      "first_loss": 70,
+      "main_end": 780,
+      "remaining_cost": [
+        0,
+        175
+      ],
+      "damage_by_size": {
+        "0:3": 647299.64,
+        "0:2": 333111.15,
+        "0:1": 47714.85,
+        "1:1": 2141466.0
+      },
+      "incoming_by_size": {
+        "1:1": 1028125.64,
+        "0:1": 190264.0,
+        "0:2": 669042.0,
+        "0:3": 1282160.0
+      },
+      "fighter_losses": 80.0,
+      "shots": 214624.0,
+      "repair_hp": 2976.0,
+      "missile_intercepts": 2997.0
+    },
+    {
+      "budget": 200,
+      "case": "mixed_anti_screen",
+      "seed": 90002,
+      "winner": 1,
+      "seconds": 774,
+      "first_loss": 44,
+      "main_end": 744,
+      "remaining_cost": [
+        0,
+        176
+      ],
+      "damage_by_size": {
+        "0:3": 624482.43,
+        "0:2": 332440.15,
+        "0:1": 46935.04,
+        "1:1": 2061886.0
+      },
+      "incoming_by_size": {
+        "1:1": 1003857.63,
+        "0:1": 187684.0,
+        "0:2": 669042.0,
+        "0:3": 1205160.0
+      },
+      "shots": 210559.0,
+      "fighter_losses": 80.0,
+      "repair_hp": 2376.0,
+      "missile_intercepts": 2931.0
+    },
+    {
+      "budget": 200,
+      "case": "mixed_anti_screen",
+      "seed": 90003,
+      "winner": 1,
+      "seconds": 818,
+      "first_loss": 64,
+      "main_end": 784,
+      "remaining_cost": [
+        0,
+        167
+      ],
+      "damage_by_size": {
+        "0:3": 640162.86,
+        "0:2": 335288.04,
+        "0:1": 46793.01,
+        "1:1": 2167642.33
+      },
+      "incoming_by_size": {
+        "1:1": 1022243.91,
+        "0:1": 185640.33,
+        "0:2": 669042.0,
+        "0:3": 1312960.0
+      },
+      "shots": 215869.0,
+      "fighter_losses": 80.0,
+      "repair_hp": 2928.3272500000003,
+      "missile_intercepts": 2958.0
+    },
+    {
+      "budget": 200,
+      "case": "mixed_anti_screen",
+      "seed": 90004,
+      "winner": 1,
+      "seconds": 816,
+      "first_loss": 39,
+      "main_end": 792,
+      "remaining_cost": [
+        0,
+        172
+      ],
+      "damage_by_size": {
+        "0:3": 652702.83,
+        "0:2": 333767.3,
+        "0:1": 47845.93,
+        "1:1": 2171044.96
+      },
+      "incoming_by_size": {
+        "1:1": 1034316.05,
+        "0:1": 189042.96,
+        "0:2": 669042.0,
+        "0:3": 1312960.0
+      },
+      "shots": 216188.0,
+      "fighter_losses": 80.0,
+      "repair_hp": 2898.961428571428,
+      "missile_intercepts": 3000.0
+    },
+    {
+      "budget": 200,
+      "case": "mixed_anti_screen",
+      "seed": 90005,
+      "winner": 1,
+      "seconds": 811,
+      "first_loss": 9,
+      "main_end": 788,
+      "remaining_cost": [
+        0,
+        174
+      ],
+      "damage_by_size": {
+        "0:3": 656598.59,
+        "0:2": 333702.27,
+        "0:1": 48134.54,
+        "1:1": 2168498.0
+      },
+      "incoming_by_size": {
+        "1:1": 1038435.4,
+        "0:1": 186496.0,
+        "0:2": 669042.0,
+        "0:3": 1312960.0
+      },
+      "shots": 216511.0,
+      "fighter_losses": 80.0,
+      "repair_hp": 2640.0,
+      "missile_intercepts": 3075.0
+    },
+    {
+      "budget": 200,
+      "case": "mixed_anti_screen",
+      "seed": 90006,
+      "winner": 1,
+      "seconds": 783,
+      "first_loss": 68,
+      "main_end": 756,
+      "remaining_cost": [
+        0,
+        174
+      ],
+      "damage_by_size": {
+        "0:3": 627425.45,
+        "0:2": 334717.3,
+        "0:1": 50043.34,
+        "1:1": 2087426.0
+      },
+      "incoming_by_size": {
+        "1:1": 1012186.1,
+        "0:1": 189024.0,
+        "0:2": 669042.0,
+        "0:3": 1229360.0
+      },
+      "shots": 211868.0,
+      "fighter_losses": 80.0,
+      "repair_hp": 2880.0,
+      "missile_intercepts": 2961.0
+    },
+    {
+      "budget": 200,
+      "case": "mixed_anti_screen",
+      "seed": 90007,
+      "winner": 1,
+      "seconds": 807,
+      "first_loss": 58,
+      "main_end": 783,
+      "remaining_cost": [
+        0,
+        167
+      ],
+      "damage_by_size": {
+        "0:3": 646825.93,
+        "0:2": 335394.38,
+        "0:1": 43334.97,
+        "1:1": 2167532.96
+      },
+      "incoming_by_size": {
+        "1:1": 1025555.27,
+        "0:1": 185530.96,
+        "0:2": 669042.0,
+        "0:3": 1312960.0
+      },
+      "shots": 215401.0,
+      "fighter_losses": 80.0,
+      "repair_hp": 3258.961428571428,
+      "missile_intercepts": 2904.0
+    },
+    {
+      "budget": 300,
+      "case": "carrier_vs_light",
+      "seed": 90000,
+      "winner": 0,
+      "seconds": 1224,
+      "first_loss": 53,
+      "main_end": 995,
+      "remaining_cost": [
+        300,
+        0
+      ],
+      "damage_by_size": {
+        "0:3": 3159264.0,
+        "1:1": 3207781.51
+      },
+      "incoming_by_size": {
+        "1:1": 3159264.0,
+        "0:3": 3207781.51
+      },
+      "shots": 301511.0,
+      "fighter_losses": 480.0
+    },
+    {
+      "budget": 300,
+      "case": "carrier_vs_light",
+      "seed": 90001,
+      "winner": 0,
+      "seconds": 1216,
+      "first_loss": 43,
+      "main_end": 904,
+      "remaining_cost": [
+        300,
+        0
+      ],
+      "damage_by_size": {
+        "0:3": 3134888.0,
+        "1:1": 3100222.79
+      },
+      "incoming_by_size": {
+        "1:1": 3134888.0,
+        "0:3": 3100222.79
+      },
+      "fighter_losses": 480.0,
+      "shots": 289028.0
+    },
+    {
+      "budget": 300,
+      "case": "carrier_vs_light",
+      "seed": 90002,
+      "winner": 0,
+      "seconds": 1226,
+      "first_loss": 21,
+      "main_end": 960,
+      "remaining_cost": [
+        300,
+        0
+      ],
+      "damage_by_size": {
+        "0:3": 3149144.0,
+        "1:1": 3131592.54
+      },
+      "incoming_by_size": {
+        "1:1": 3149144.0,
+        "0:3": 3131592.54
+      },
+      "shots": 290984.0,
+      "fighter_losses": 480.0
+    },
+    {
+      "budget": 300,
+      "case": "carrier_vs_light",
+      "seed": 90003,
+      "winner": 0,
+      "seconds": 1237,
+      "first_loss": 50,
+      "main_end": 990,
+      "remaining_cost": [
+        300,
+        0
+      ],
+      "damage_by_size": {
+        "0:3": 3179152.0,
+        "1:1": 3245284.51
+      },
+      "incoming_by_size": {
+        "1:1": 3179152.0,
+        "0:3": 3245284.51
+      },
+      "shots": 306722.0,
+      "fighter_losses": 480.0
+    },
+    {
+      "budget": 300,
+      "case": "carrier_vs_light",
+      "seed": 90004,
+      "winner": 0,
+      "seconds": 1235,
+      "first_loss": 32,
+      "main_end": 971,
+      "remaining_cost": [
+        300,
+        0
+      ],
+      "damage_by_size": {
+        "0:3": 3180648.0,
+        "1:1": 3194551.01
+      },
+      "incoming_by_size": {
+        "1:1": 3180648.0,
+        "0:3": 3194551.01
+      },
+      "shots": 293008.0,
+      "fighter_losses": 480.0
+    },
+    {
+      "budget": 300,
+      "case": "carrier_vs_light",
+      "seed": 90005,
+      "winner": 0,
+      "seconds": 1234,
+      "first_loss": 36,
+      "main_end": 987,
+      "remaining_cost": [
+        300,
+        0
+      ],
+      "damage_by_size": {
+        "0:3": 3175896.0,
+        "1:1": 3237192.25
+      },
+      "incoming_by_size": {
+        "1:1": 3175896.0,
+        "0:3": 3237192.25
+      },
+      "shots": 302174.0,
+      "fighter_losses": 480.0
+    },
+    {
+      "budget": 300,
+      "case": "carrier_vs_light",
+      "seed": 90006,
+      "winner": 0,
+      "seconds": 1238,
+      "first_loss": 38,
+      "main_end": 967,
+      "remaining_cost": [
+        300,
+        0
+      ],
+      "damage_by_size": {
+        "0:3": 3179592.0,
+        "1:1": 3239114.47
+      },
+      "incoming_by_size": {
+        "1:1": 3179592.0,
+        "0:3": 3239114.47
+      },
+      "shots": 301940.0,
+      "fighter_losses": 480.0
+    },
+    {
+      "budget": 300,
+      "case": "carrier_vs_light",
+      "seed": 90007,
+      "winner": 0,
+      "seconds": 1206,
+      "first_loss": 50,
+      "main_end": 926,
+      "remaining_cost": [
+        300,
+        0
+      ],
+      "damage_by_size": {
+        "0:3": 3122832.0,
+        "1:1": 3066514.03
+      },
+      "incoming_by_size": {
+        "1:1": 3122832.0,
+        "0:3": 3066514.03
+      },
+      "shots": 287599.0,
+      "fighter_losses": 480.0
+    },
+    {
+      "budget": 300,
+      "case": "mixed_anti_screen",
+      "seed": 90000,
+      "winner": null,
+      "seconds": 1500,
+      "first_loss": 12,
+      "main_end": null,
+      "remaining_cost": [
+        125,
+        277
+      ],
+      "damage_by_size": {
+        "0:3": 479696.79,
+        "0:4": 309268.32,
+        "0:2": 109664.31,
+        "0:1": 34260.31,
+        "1:1": 4408924.56
+      },
+      "incoming_by_size": {
+        "1:1": 932889.71,
+        "0:1": 222450.36,
+        "0:2": 364188.0,
+        "0:3": 1097360.0,
+        "0:4": 2724926.2
+      },
+      "shots": 584439.0,
+      "fighter_losses": 73.0,
+      "repair_hp": 1502.3564999999999,
+      "missile_intercepts": 1785.0
+    },
+    {
+      "budget": 300,
+      "case": "mixed_anti_screen",
+      "seed": 90001,
+      "winner": null,
+      "seconds": 1500,
+      "first_loss": 41,
+      "main_end": null,
+      "remaining_cost": [
+        125,
+        279
+      ],
+      "damage_by_size": {
+        "0:3": 482027.36,
+        "0:4": 291137.17,
+        "0:2": 110643.79,
+        "0:1": 35214.74,
+        "1:1": 4414169.91
+      },
+      "incoming_by_size": {
+        "1:1": 919023.06,
+        "0:1": 222580.0,
+        "0:2": 364188.0,
+        "0:3": 1097360.0,
+        "0:4": 2730041.91
+      },
+      "shots": 590019.0,
+      "fighter_losses": 74.0,
+      "repair_hp": 1632.0,
+      "missile_intercepts": 1779.0
+    },
+    {
+      "budget": 300,
+      "case": "mixed_anti_screen",
+      "seed": 90002,
+      "winner": null,
+      "seconds": 1500,
+      "first_loss": 41,
+      "main_end": null,
+      "remaining_cost": [
+        125,
+        279
+      ],
+      "damage_by_size": {
+        "0:3": 491208.29,
+        "0:4": 274234.05,
+        "0:2": 110120.26,
+        "0:1": 35908.05,
+        "1:1": 4414542.31
+      },
+      "incoming_by_size": {
+        "1:1": 911470.65,
+        "0:1": 222532.0,
+        "0:2": 364188.0,
+        "0:3": 1097360.0,
+        "0:4": 2730462.31
+      },
+      "shots": 589438.0,
+      "fighter_losses": 76.0,
+      "repair_hp": 1584.0,
+      "missile_intercepts": 1815.0
+    },
+    {
+      "budget": 300,
+      "case": "mixed_anti_screen",
+      "seed": 90003,
+      "winner": null,
+      "seconds": 1500,
+      "first_loss": 35,
+      "main_end": null,
+      "remaining_cost": [
+        125,
+        279
+      ],
+      "damage_by_size": {
+        "0:3": 487052.29,
+        "0:2": 109022.3,
+        "0:1": 36589.64,
+        "1:1": 4414586.73,
+        "0:4": 295073.98
+      },
+      "incoming_by_size": {
+        "1:1": 927738.22,
+        "0:1": 222652.0,
+        "0:2": 364188.0,
+        "0:4": 2730386.73,
+        "0:3": 1097360.0
+      },
+      "shots": 589933.0,
+      "fighter_losses": 75.0,
+      "repair_hp": 1704.0,
+      "missile_intercepts": 1827.0
+    },
+    {
+      "budget": 300,
+      "case": "mixed_anti_screen",
+      "seed": 90004,
+      "winner": null,
+      "seconds": 1500,
+      "first_loss": 12,
+      "main_end": null,
+      "remaining_cost": [
+        125,
+        273
+      ],
+      "damage_by_size": {
+        "0:3": 486644.61,
+        "0:4": 277270.84,
+        "0:2": 112327.33,
+        "0:1": 35647.34,
+        "1:1": 4400728.89
+      },
+      "incoming_by_size": {
+        "1:1": 911890.12,
+        "0:1": 222772.0,
+        "0:2": 369468.0,
+        "0:4": 2711128.89,
+        "0:3": 1097360.0
+      },
+      "shots": 580478.0,
+      "fighter_losses": 75.0,
+      "repair_hp": 1824.0,
+      "missile_intercepts": 1809.0
+    },
+    {
+      "budget": 300,
+      "case": "mixed_anti_screen",
+      "seed": 90005,
+      "winner": null,
+      "seconds": 1500,
+      "first_loss": 34,
+      "main_end": null,
+      "remaining_cost": [
+        125,
+        274
+      ],
+      "damage_by_size": {
+        "0:3": 488949.01,
+        "0:2": 112261.57,
+        "0:1": 35527.61,
+        "1:1": 4398906.75,
+        "0:4": 270577.37
+      },
+      "incoming_by_size": {
+        "1:1": 907315.56,
+        "0:1": 222436.0,
+        "0:2": 364188.0,
+        "0:3": 1097360.0,
+        "0:4": 2714922.75
+      },
+      "shots": 581882.0,
+      "fighter_losses": 74.0,
+      "repair_hp": 1488.0,
+      "missile_intercepts": 1812.0
+    },
+    {
+      "budget": 300,
+      "case": "mixed_anti_screen",
+      "seed": 90006,
+      "winner": null,
+      "seconds": 1500,
+      "first_loss": 19,
+      "main_end": null,
+      "remaining_cost": [
+        125,
+        272
+      ],
+      "damage_by_size": {
+        "0:3": 479793.99,
+        "0:4": 311053.65,
+        "0:2": 108877.49,
+        "0:1": 35342.01,
+        "1:1": 4403065.39
+      },
+      "incoming_by_size": {
+        "1:1": 935067.15,
+        "0:1": 222508.0,
+        "0:3": 1097360.0,
+        "0:2": 364188.0,
+        "0:4": 2719009.39
+      },
+      "shots": 583737.0,
+      "fighter_losses": 73.0,
+      "repair_hp": 1560.0,
+      "missile_intercepts": 1746.0
+    },
+    {
+      "budget": 300,
+      "case": "mixed_anti_screen",
+      "seed": 90007,
+      "winner": null,
+      "seconds": 1500,
+      "first_loss": 14,
+      "main_end": null,
+      "remaining_cost": [
+        125,
+        279
+      ],
+      "damage_by_size": {
+        "0:3": 489605.64,
+        "0:4": 283245.31,
+        "0:2": 108113.04,
+        "0:1": 36633.78,
+        "1:1": 4407205.29
+      },
+      "incoming_by_size": {
+        "1:1": 917597.78,
+        "0:2": 364188.0,
+        "0:1": 222652.0,
+        "0:3": 1097360.0,
+        "0:4": 2723005.29
+      },
+      "shots": 584024.0,
+      "fighter_losses": 75.0,
+      "repair_hp": 1704.0,
+      "missile_intercepts": 1830.0
+    }
+  ]
+}

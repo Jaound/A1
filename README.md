@@ -41,3 +41,5 @@
 현행 구축함은 **백터급(Vector DD)·바스티온급(Bastion DD)** 두 함체이며 구 단일 구축함 항목/가격은 현행 기획에서 대체했습니다. [함대 명세](docs/FLEET_COMBAT.md)와 [R31](docs/OPEN_QUESTIONS.md#r31)을 확인합니다. 캠페인 모형은 구입력의 역사 분석입니다. 최신WebZIP 실물 분석은32MiB전송상한으로 보류되어 [접근 상태](docs/PROTOTYPE_FBX_UPDATE_RECORD.md)를 구분해 기록했습니다.
 
 [전투 수치v0.2](docs/COMBAT_BALANCE.md) · [함대/영웅/강습 연동 모형 분석](docs/COMBAT_SIMULATION.md) · [재현 도구](reference/CombatSimulation/README.md): 신규 전투 프로필의 반복 검토 자료다. UE 적용·최신WebZIP 실행·전체 캠페인 완성 검증이 아니다.
+
+현재 외부전 목표는 **1배속10~15분**이다. [장기전 수치v0.3](docs/FLEET_ENDURANCE_BALANCE.md) · [전 함종/코스트100·200·300 분석](docs/FLEET_ENDURANCE_RESULTS.md) · [재현 도구](reference/FleetEndurance/README.md)를 따른다. 이전v0.2는 비교/선내 영웅 출발값이며 새 함대 시간 기준을 덮어쓰지 않는다.
