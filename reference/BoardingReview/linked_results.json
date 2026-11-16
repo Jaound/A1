@@ -1,0 +1,6286 @@
+{
+  "study_sha256": "95bfc83b14db52ff35e22d84b7a3f0a29074c5692e298dc2855c5cbd5d7c39f4",
+  "profile_sha256": "f37c3e43c38e72018f88a67fe82998c2bed6f781a9211f56a22f7d54ae64ed81",
+  "note": "4heroes+6soldiers, survivors regroup before combat, defenders6soldiers+2/4/6heroes. Actual pod IDs/roles preserved. No external shelling or return flight.",
+  "trials": [
+    {
+      "pd": 12,
+      "defender_heroes": 2,
+      "seed": 260000,
+      "attacker_roles": [
+        "melee",
+        "ranged",
+        "support",
+        "commander",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier"
+      ],
+      "hero_rescue": 0,
+      "soldier_dead": 0,
+      "winner": 0,
+      "seconds": 15.4,
+      "survivors": [
+        9,
+        0
+      ],
+      "remaining_hp": [
+        1126.2,
+        0
+      ],
+      "healing": [
+        132.11999999999992,
+        0.0
+      ]
+    },
+    {
+      "pd": 12,
+      "defender_heroes": 2,
+      "seed": 260001,
+      "attacker_roles": [
+        "melee",
+        "ranged",
+        "support",
+        "commander",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier"
+      ],
+      "hero_rescue": 0,
+      "soldier_dead": 0,
+      "winner": 0,
+      "seconds": 16.0,
+      "survivors": [
+        9,
+        0
+      ],
+      "remaining_hp": [
+        1126.2,
+        0
+      ],
+      "healing": [
+        132.11999999999992,
+        0.0
+      ]
+    },
+    {
+      "pd": 12,
+      "defender_heroes": 2,
+      "seed": 260002,
+      "attacker_roles": [
+        "melee",
+        "ranged",
+        "support",
+        "commander",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier"
+      ],
+      "hero_rescue": 0,
+      "soldier_dead": 0,
+      "winner": 0,
+      "seconds": 14.8,
+      "survivors": [
+        10,
+        0
+      ],
+      "remaining_hp": [
+        1276.3,
+        0
+      ],
+      "healing": [
+        246.88000000000008,
+        0.0
+      ]
+    },
+    {
+      "pd": 12,
+      "defender_heroes": 2,
+      "seed": 260003,
+      "attacker_roles": [
+        "melee",
+        "ranged",
+        "support",
+        "commander",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier"
+      ],
+      "hero_rescue": 0,
+      "soldier_dead": 0,
+      "winner": 0,
+      "seconds": 15.4,
+      "survivors": [
+        10,
+        0
+      ],
+      "remaining_hp": [
+        1204.08,
+        0
+      ],
+      "healing": [
+        219.59999999999994,
+        0.0
+      ]
+    },
+    {
+      "pd": 12,
+      "defender_heroes": 2,
+      "seed": 260004,
+      "attacker_roles": [
+        "melee",
+        "ranged",
+        "support",
+        "commander",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier"
+      ],
+      "hero_rescue": 0,
+      "soldier_dead": 0,
+      "winner": 0,
+      "seconds": 16.6,
+      "survivors": [
+        9,
+        0
+      ],
+      "remaining_hp": [
+        1150.0,
+        0
+      ],
+      "healing": [
+        241.4,
+        0.0
+      ]
+    },
+    {
+      "pd": 12,
+      "defender_heroes": 2,
+      "seed": 260005,
+      "attacker_roles": [
+        "melee",
+        "ranged",
+        "support",
+        "commander",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier"
+      ],
+      "hero_rescue": 0,
+      "soldier_dead": 0,
+      "winner": 0,
+      "seconds": 15.4,
+      "survivors": [
+        10,
+        0
+      ],
+      "remaining_hp": [
+        1237.98,
+        0
+      ],
+      "healing": [
+        217.7599999999999,
+        0.0
+      ]
+    },
+    {
+      "pd": 12,
+      "defender_heroes": 2,
+      "seed": 260006,
+      "attacker_roles": [
+        "melee",
+        "ranged",
+        "support",
+        "commander",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier"
+      ],
+      "hero_rescue": 0,
+      "soldier_dead": 0,
+      "winner": 0,
+      "seconds": 14.9,
+      "survivors": [
+        9,
+        0
+      ],
+      "remaining_hp": [
+        1150.0,
+        0
+      ],
+      "healing": [
+        157.56,
+        0.0
+      ]
+    },
+    {
+      "pd": 12,
+      "defender_heroes": 2,
+      "seed": 260007,
+      "attacker_roles": [
+        "melee",
+        "ranged",
+        "support",
+        "commander",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier"
+      ],
+      "hero_rescue": 0,
+      "soldier_dead": 0,
+      "winner": 0,
+      "seconds": 15.4,
+      "survivors": [
+        10,
+        0
+      ],
+      "remaining_hp": [
+        1224.54,
+        0
+      ],
+      "healing": [
+        252.48000000000002,
+        0.0
+      ]
+    },
+    {
+      "pd": 12,
+      "defender_heroes": 2,
+      "seed": 260008,
+      "attacker_roles": [
+        "melee",
+        "ranged",
+        "support",
+        "commander",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier"
+      ],
+      "hero_rescue": 0,
+      "soldier_dead": 0,
+      "winner": 0,
+      "seconds": 13.9,
+      "survivors": [
+        10,
+        0
+      ],
+      "remaining_hp": [
+        1198.38,
+        0
+      ],
+      "healing": [
+        166.8400000000001,
+        0.0
+      ]
+    },
+    {
+      "pd": 12,
+      "defender_heroes": 2,
+      "seed": 260009,
+      "attacker_roles": [
+        "melee",
+        "ranged",
+        "support",
+        "commander",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier"
+      ],
+      "hero_rescue": 0,
+      "soldier_dead": 0,
+      "winner": 0,
+      "seconds": 14.9,
+      "survivors": [
+        9,
+        0
+      ],
+      "remaining_hp": [
+        1126.2,
+        0
+      ],
+      "healing": [
+        156.92000000000004,
+        0.0
+      ]
+    },
+    {
+      "pd": 12,
+      "defender_heroes": 2,
+      "seed": 260010,
+      "attacker_roles": [
+        "melee",
+        "ranged",
+        "support",
+        "commander",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier"
+      ],
+      "hero_rescue": 0,
+      "soldier_dead": 0,
+      "winner": 0,
+      "seconds": 14.4,
+      "survivors": [
+        9,
+        0
+      ],
+      "remaining_hp": [
+        1150.0,
+        0
+      ],
+      "healing": [
+        166.84000000000006,
+        0.0
+      ]
+    },
+    {
+      "pd": 12,
+      "defender_heroes": 2,
+      "seed": 260011,
+      "attacker_roles": [
+        "melee",
+        "ranged",
+        "support",
+        "commander",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier"
+      ],
+      "hero_rescue": 0,
+      "soldier_dead": 0,
+      "winner": 0,
+      "seconds": 15.5,
+      "survivors": [
+        9,
+        0
+      ],
+      "remaining_hp": [
+        1150.0,
+        0
+      ],
+      "healing": [
+        204.51999999999992,
+        0.0
+      ]
+    },
+    {
+      "pd": 12,
+      "defender_heroes": 2,
+      "seed": 260012,
+      "attacker_roles": [
+        "melee",
+        "ranged",
+        "support",
+        "commander",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier"
+      ],
+      "hero_rescue": 0,
+      "soldier_dead": 0,
+      "winner": 0,
+      "seconds": 16.1,
+      "survivors": [
+        10,
+        0
+      ],
+      "remaining_hp": [
+        1233.14,
+        0
+      ],
+      "healing": [
+        246.88000000000005,
+        0.0
+      ]
+    },
+    {
+      "pd": 12,
+      "defender_heroes": 2,
+      "seed": 260013,
+      "attacker_roles": [
+        "melee",
+        "ranged",
+        "support",
+        "commander",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier"
+      ],
+      "hero_rescue": 0,
+      "soldier_dead": 0,
+      "winner": 0,
+      "seconds": 15.6,
+      "survivors": [
+        9,
+        0
+      ],
+      "remaining_hp": [
+        1065.0,
+        0
+      ],
+      "healing": [
+        193.6800000000001,
+        0.0
+      ]
+    },
+    {
+      "pd": 12,
+      "defender_heroes": 2,
+      "seed": 260014,
+      "attacker_roles": [
+        "melee",
+        "ranged",
+        "support",
+        "commander",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier"
+      ],
+      "hero_rescue": 0,
+      "soldier_dead": 0,
+      "winner": 0,
+      "seconds": 15.4,
+      "survivors": [
+        9,
+        0
+      ],
+      "remaining_hp": [
+        1150.0,
+        0
+      ],
+      "healing": [
+        166.84000000000006,
+        0.0
+      ]
+    },
+    {
+      "pd": 12,
+      "defender_heroes": 2,
+      "seed": 260015,
+      "attacker_roles": [
+        "melee",
+        "ranged",
+        "support",
+        "commander",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier"
+      ],
+      "hero_rescue": 0,
+      "soldier_dead": 0,
+      "winner": 0,
+      "seconds": 15.0,
+      "survivors": [
+        10,
+        0
+      ],
+      "remaining_hp": [
+        1248.84,
+        0
+      ],
+      "healing": [
+        252.48000000000002,
+        0.0
+      ]
+    },
+    {
+      "pd": 12,
+      "defender_heroes": 2,
+      "seed": 260016,
+      "attacker_roles": [
+        "melee",
+        "ranged",
+        "support",
+        "commander",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier"
+      ],
+      "hero_rescue": 0,
+      "soldier_dead": 0,
+      "winner": 0,
+      "seconds": 15.5,
+      "survivors": [
+        10,
+        0
+      ],
+      "remaining_hp": [
+        1218.62,
+        0
+      ],
+      "healing": [
+        234.48000000000005,
+        0.0
+      ]
+    },
+    {
+      "pd": 12,
+      "defender_heroes": 2,
+      "seed": 260017,
+      "attacker_roles": [
+        "melee",
+        "ranged",
+        "support",
+        "commander",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier"
+      ],
+      "hero_rescue": 0,
+      "soldier_dead": 0,
+      "winner": 0,
+      "seconds": 14.2,
+      "survivors": [
+        9,
+        0
+      ],
+      "remaining_hp": [
+        1150.0,
+        0
+      ],
+      "healing": [
+        166.84000000000006,
+        0.0
+      ]
+    },
+    {
+      "pd": 12,
+      "defender_heroes": 2,
+      "seed": 260018,
+      "attacker_roles": [
+        "melee",
+        "ranged",
+        "support",
+        "commander",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier"
+      ],
+      "hero_rescue": 0,
+      "soldier_dead": 0,
+      "winner": 0,
+      "seconds": 16.8,
+      "survivors": [
+        9,
+        0
+      ],
+      "remaining_hp": [
+        1102.4,
+        0
+      ],
+      "healing": [
+        235.1200000000001,
+        0.0
+      ]
+    },
+    {
+      "pd": 12,
+      "defender_heroes": 2,
+      "seed": 260019,
+      "attacker_roles": [
+        "melee",
+        "ranged",
+        "support",
+        "commander",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier"
+      ],
+      "hero_rescue": 0,
+      "soldier_dead": 0,
+      "winner": 0,
+      "seconds": 16.3,
+      "survivors": [
+        10,
+        0
+      ],
+      "remaining_hp": [
+        1212.16,
+        0
+      ],
+      "healing": [
+        246.88000000000008,
+        0.0
+      ]
+    },
+    {
+      "pd": 12,
+      "defender_heroes": 2,
+      "seed": 260020,
+      "attacker_roles": [
+        "melee",
+        "ranged",
+        "support",
+        "commander",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier"
+      ],
+      "hero_rescue": 0,
+      "soldier_dead": 0,
+      "winner": 0,
+      "seconds": 16.9,
+      "survivors": [
+        9,
+        0
+      ],
+      "remaining_hp": [
+        1150.0,
+        0
+      ],
+      "healing": [
+        209.4800000000001,
+        0.0
+      ]
+    },
+    {
+      "pd": 12,
+      "defender_heroes": 2,
+      "seed": 260021,
+      "attacker_roles": [
+        "melee",
+        "ranged",
+        "support",
+        "commander",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier"
+      ],
+      "hero_rescue": 0,
+      "soldier_dead": 0,
+      "winner": 0,
+      "seconds": 15.4,
+      "survivors": [
+        10,
+        0
+      ],
+      "remaining_hp": [
+        1275.86,
+        0
+      ],
+      "healing": [
+        252.48000000000002,
+        0.0
+      ]
+    },
+    {
+      "pd": 12,
+      "defender_heroes": 2,
+      "seed": 260022,
+      "attacker_roles": [
+        "melee",
+        "ranged",
+        "support",
+        "commander",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier"
+      ],
+      "hero_rescue": 0,
+      "soldier_dead": 0,
+      "winner": 0,
+      "seconds": 16.0,
+      "survivors": [
+        10,
+        0
+      ],
+      "remaining_hp": [
+        1190.18,
+        0
+      ],
+      "healing": [
+        217.11999999999992,
+        0.0
+      ]
+    },
+    {
+      "pd": 12,
+      "defender_heroes": 2,
+      "seed": 260023,
+      "attacker_roles": [
+        "melee",
+        "ranged",
+        "support",
+        "commander",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier"
+      ],
+      "hero_rescue": 0,
+      "soldier_dead": 0,
+      "winner": 0,
+      "seconds": 16.3,
+      "survivors": [
+        10,
+        0
+      ],
+      "remaining_hp": [
+        1192.14,
+        0
+      ],
+      "healing": [
+        215.92000000000002,
+        0.0
+      ]
+    },
+    {
+      "pd": 12,
+      "defender_heroes": 2,
+      "seed": 260024,
+      "attacker_roles": [
+        "melee",
+        "ranged",
+        "support",
+        "commander",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier"
+      ],
+      "hero_rescue": 0,
+      "soldier_dead": 0,
+      "winner": 0,
+      "seconds": 14.5,
+      "survivors": [
+        10,
+        0
+      ],
+      "remaining_hp": [
+        1248.0,
+        0
+      ],
+      "healing": [
+        255.0,
+        0.0
+      ]
+    },
+    {
+      "pd": 12,
+      "defender_heroes": 2,
+      "seed": 260025,
+      "attacker_roles": [
+        "melee",
+        "ranged",
+        "support",
+        "commander",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier"
+      ],
+      "hero_rescue": 0,
+      "soldier_dead": 0,
+      "winner": 0,
+      "seconds": 15.3,
+      "survivors": [
+        9,
+        0
+      ],
+      "remaining_hp": [
+        1150.0,
+        0
+      ],
+      "healing": [
+        202.32000000000002,
+        0.0
+      ]
+    },
+    {
+      "pd": 12,
+      "defender_heroes": 2,
+      "seed": 260026,
+      "attacker_roles": [
+        "melee",
+        "ranged",
+        "support",
+        "commander",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier"
+      ],
+      "hero_rescue": 0,
+      "soldier_dead": 0,
+      "winner": 0,
+      "seconds": 15.4,
+      "survivors": [
+        9,
+        0
+      ],
+      "remaining_hp": [
+        986.8,
+        0
+      ],
+      "healing": [
+        115.4800000000001,
+        0.0
+      ]
+    },
+    {
+      "pd": 12,
+      "defender_heroes": 2,
+      "seed": 260027,
+      "attacker_roles": [
+        "melee",
+        "ranged",
+        "support",
+        "commander",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier"
+      ],
+      "hero_rescue": 0,
+      "soldier_dead": 0,
+      "winner": 0,
+      "seconds": 14.2,
+      "survivors": [
+        9,
+        0
+      ],
+      "remaining_hp": [
+        1150.0,
+        0
+      ],
+      "healing": [
+        166.8400000000001,
+        0.0
+      ]
+    },
+    {
+      "pd": 12,
+      "defender_heroes": 2,
+      "seed": 260028,
+      "attacker_roles": [
+        "melee",
+        "ranged",
+        "support",
+        "commander",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier"
+      ],
+      "hero_rescue": 0,
+      "soldier_dead": 0,
+      "winner": 0,
+      "seconds": 15.4,
+      "survivors": [
+        9,
+        0
+      ],
+      "remaining_hp": [
+        1150.0,
+        0
+      ],
+      "healing": [
+        241.4,
+        0.0
+      ]
+    },
+    {
+      "pd": 12,
+      "defender_heroes": 2,
+      "seed": 260029,
+      "attacker_roles": [
+        "melee",
+        "ranged",
+        "support",
+        "commander",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier"
+      ],
+      "hero_rescue": 0,
+      "soldier_dead": 0,
+      "winner": 0,
+      "seconds": 15.4,
+      "survivors": [
+        9,
+        0
+      ],
+      "remaining_hp": [
+        1150.0,
+        0
+      ],
+      "healing": [
+        217.6,
+        0.0
+      ]
+    },
+    {
+      "pd": 12,
+      "defender_heroes": 2,
+      "seed": 260030,
+      "attacker_roles": [
+        "melee",
+        "ranged",
+        "support",
+        "commander",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier"
+      ],
+      "hero_rescue": 0,
+      "soldier_dead": 0,
+      "winner": 0,
+      "seconds": 15.1,
+      "survivors": [
+        10,
+        0
+      ],
+      "remaining_hp": [
+        1286.9,
+        0
+      ],
+      "healing": [
+        246.88000000000008,
+        0.0
+      ]
+    },
+    {
+      "pd": 12,
+      "defender_heroes": 2,
+      "seed": 260031,
+      "attacker_roles": [
+        "melee",
+        "ranged",
+        "support",
+        "commander",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier"
+      ],
+      "hero_rescue": 0,
+      "soldier_dead": 0,
+      "winner": 0,
+      "seconds": 14.2,
+      "survivors": [
+        10,
+        0
+      ],
+      "remaining_hp": [
+        1173.84,
+        0
+      ],
+      "healing": [
+        161.88000000000005,
+        0.0
+      ]
+    },
+    {
+      "pd": 12,
+      "defender_heroes": 4,
+      "seed": 260000,
+      "attacker_roles": [
+        "melee",
+        "ranged",
+        "support",
+        "commander",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier"
+      ],
+      "hero_rescue": 0,
+      "soldier_dead": 0,
+      "winner": 0,
+      "seconds": 37.0,
+      "survivors": [
+        2,
+        0
+      ],
+      "remaining_hp": [
+        278.4,
+        0
+      ],
+      "healing": [
+        217.21919999999997,
+        184.03040000000001
+      ]
+    },
+    {
+      "pd": 12,
+      "defender_heroes": 4,
+      "seed": 260001,
+      "attacker_roles": [
+        "melee",
+        "ranged",
+        "support",
+        "commander",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier"
+      ],
+      "hero_rescue": 0,
+      "soldier_dead": 0,
+      "winner": 1,
+      "seconds": 42.9,
+      "survivors": [
+        0,
+        1
+      ],
+      "remaining_hp": [
+        0,
+        139.2
+      ],
+      "healing": [
+        212.59040000000005,
+        217.84000000000006
+      ]
+    },
+    {
+      "pd": 12,
+      "defender_heroes": 4,
+      "seed": 260002,
+      "attacker_roles": [
+        "melee",
+        "ranged",
+        "support",
+        "commander",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier"
+      ],
+      "hero_rescue": 0,
+      "soldier_dead": 0,
+      "winner": 0,
+      "seconds": 45.4,
+      "survivors": [
+        1,
+        0
+      ],
+      "remaining_hp": [
+        114.0,
+        0
+      ],
+      "healing": [
+        187.41920000000005,
+        206.37120000000013
+      ]
+    },
+    {
+      "pd": 12,
+      "defender_heroes": 4,
+      "seed": 260003,
+      "attacker_roles": [
+        "melee",
+        "ranged",
+        "support",
+        "commander",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier"
+      ],
+      "hero_rescue": 0,
+      "soldier_dead": 0,
+      "winner": 0,
+      "seconds": 43.0,
+      "survivors": [
+        1,
+        0
+      ],
+      "remaining_hp": [
+        63.6,
+        0
+      ],
+      "healing": [
+        190.6128000000001,
+        217.21919999999997
+      ]
+    },
+    {
+      "pd": 12,
+      "defender_heroes": 4,
+      "seed": 260004,
+      "attacker_roles": [
+        "melee",
+        "ranged",
+        "support",
+        "commander",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier"
+      ],
+      "hero_rescue": 0,
+      "soldier_dead": 0,
+      "winner": 1,
+      "seconds": 39.3,
+      "survivors": [
+        0,
+        1
+      ],
+      "remaining_hp": [
+        0,
+        189.6
+      ],
+      "healing": [
+        236.976,
+        173.01440000000017
+      ]
+    },
+    {
+      "pd": 12,
+      "defender_heroes": 4,
+      "seed": 260005,
+      "attacker_roles": [
+        "melee",
+        "ranged",
+        "support",
+        "commander",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier"
+      ],
+      "hero_rescue": 0,
+      "soldier_dead": 0,
+      "winner": 1,
+      "seconds": 47.9,
+      "survivors": [
+        0,
+        1
+      ],
+      "remaining_hp": [
+        0,
+        63.6
+      ],
+      "healing": [
+        230.4432000000002,
+        236.24000000000004
+      ]
+    },
+    {
+      "pd": 12,
+      "defender_heroes": 4,
+      "seed": 260006,
+      "attacker_roles": [
+        "melee",
+        "ranged",
+        "support",
+        "commander",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier"
+      ],
+      "hero_rescue": 0,
+      "soldier_dead": 0,
+      "winner": 0,
+      "seconds": 31.0,
+      "survivors": [
+        6,
+        0
+      ],
+      "remaining_hp": [
+        565.0,
+        0
+      ],
+      "healing": [
+        262.1968000000001,
+        267.84800000000007
+      ]
+    },
+    {
+      "pd": 12,
+      "defender_heroes": 4,
+      "seed": 260007,
+      "attacker_roles": [
+        "melee",
+        "ranged",
+        "support",
+        "commander",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier"
+      ],
+      "hero_rescue": 0,
+      "soldier_dead": 0,
+      "winner": 1,
+      "seconds": 33.3,
+      "survivors": [
+        0,
+        5
+      ],
+      "remaining_hp": [
+        0,
+        500.0
+      ],
+      "healing": [
+        289.44000000000005,
+        288.4288
+      ]
+    },
+    {
+      "pd": 12,
+      "defender_heroes": 4,
+      "seed": 260008,
+      "attacker_roles": [
+        "melee",
+        "ranged",
+        "support",
+        "commander",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier"
+      ],
+      "hero_rescue": 0,
+      "soldier_dead": 0,
+      "winner": 1,
+      "seconds": 41.7,
+      "survivors": [
+        0,
+        1
+      ],
+      "remaining_hp": [
+        0,
+        164.4
+      ],
+      "healing": [
+        217.21919999999997,
+        255.0
+      ]
+    },
+    {
+      "pd": 12,
+      "defender_heroes": 4,
+      "seed": 260009,
+      "attacker_roles": [
+        "melee",
+        "ranged",
+        "support",
+        "commander",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier"
+      ],
+      "hero_rescue": 0,
+      "soldier_dead": 0,
+      "winner": 0,
+      "seconds": 44.2,
+      "survivors": [
+        1,
+        0
+      ],
+      "remaining_hp": [
+        63.6,
+        0
+      ],
+      "healing": [
+        254.3568000000001,
+        240.82880000000006
+      ]
+    },
+    {
+      "pd": 12,
+      "defender_heroes": 4,
+      "seed": 260010,
+      "attacker_roles": [
+        "melee",
+        "ranged",
+        "support",
+        "commander",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier"
+      ],
+      "hero_rescue": 0,
+      "soldier_dead": 0,
+      "winner": 0,
+      "seconds": 38.2,
+      "survivors": [
+        2,
+        0
+      ],
+      "remaining_hp": [
+        278.4,
+        0
+      ],
+      "healing": [
+        243.60000000000005,
+        220.20640000000006
+      ]
+    },
+    {
+      "pd": 12,
+      "defender_heroes": 4,
+      "seed": 260011,
+      "attacker_roles": [
+        "melee",
+        "ranged",
+        "support",
+        "commander",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier"
+      ],
+      "hero_rescue": 0,
+      "soldier_dead": 0,
+      "winner": 1,
+      "seconds": 41.8,
+      "survivors": [
+        0,
+        1
+      ],
+      "remaining_hp": [
+        0,
+        88.8
+      ],
+      "healing": [
+        240.82880000000006,
+        217.6
+      ]
+    },
+    {
+      "pd": 12,
+      "defender_heroes": 4,
+      "seed": 260012,
+      "attacker_roles": [
+        "melee",
+        "ranged",
+        "support",
+        "commander",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier"
+      ],
+      "hero_rescue": 0,
+      "soldier_dead": 0,
+      "winner": 0,
+      "seconds": 43.0,
+      "survivors": [
+        1,
+        0
+      ],
+      "remaining_hp": [
+        63.6,
+        0
+      ],
+      "healing": [
+        243.60000000000005,
+        217.21919999999997
+      ]
+    },
+    {
+      "pd": 12,
+      "defender_heroes": 4,
+      "seed": 260013,
+      "attacker_roles": [
+        "melee",
+        "ranged",
+        "support",
+        "commander",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier"
+      ],
+      "hero_rescue": 0,
+      "soldier_dead": 0,
+      "winner": 1,
+      "seconds": 35.1,
+      "survivors": [
+        0,
+        4
+      ],
+      "remaining_hp": [
+        0,
+        435.0
+      ],
+      "healing": [
+        262.8192,
+        272.3600000000001
+      ]
+    },
+    {
+      "pd": 12,
+      "defender_heroes": 4,
+      "seed": 260014,
+      "attacker_roles": [
+        "melee",
+        "ranged",
+        "support",
+        "commander",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier"
+      ],
+      "hero_rescue": 0,
+      "soldier_dead": 0,
+      "winner": 1,
+      "seconds": 39.3,
+      "survivors": [
+        0,
+        1
+      ],
+      "remaining_hp": [
+        0,
+        214.8
+      ],
+      "healing": [
+        232.56000000000006,
+        250.96000000000006
+      ]
+    },
+    {
+      "pd": 12,
+      "defender_heroes": 4,
+      "seed": 260015,
+      "attacker_roles": [
+        "melee",
+        "ranged",
+        "support",
+        "commander",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier"
+      ],
+      "hero_rescue": 0,
+      "soldier_dead": 0,
+      "winner": 1,
+      "seconds": 46.5,
+      "survivors": [
+        0,
+        1
+      ],
+      "remaining_hp": [
+        0,
+        88.8
+      ],
+      "healing": [
+        255.0,
+        221.43040000000002
+      ]
+    },
+    {
+      "pd": 12,
+      "defender_heroes": 4,
+      "seed": 260016,
+      "attacker_roles": [
+        "melee",
+        "ranged",
+        "support",
+        "commander",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier"
+      ],
+      "hero_rescue": 0,
+      "soldier_dead": 0,
+      "winner": 0,
+      "seconds": 43.1,
+      "survivors": [
+        1,
+        0
+      ],
+      "remaining_hp": [
+        88.8,
+        0
+      ],
+      "healing": [
+        250.96000000000006,
+        247.10080000000008
+      ]
+    },
+    {
+      "pd": 12,
+      "defender_heroes": 4,
+      "seed": 260017,
+      "attacker_roles": [
+        "melee",
+        "ranged",
+        "support",
+        "commander",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier"
+      ],
+      "hero_rescue": 0,
+      "soldier_dead": 0,
+      "winner": 0,
+      "seconds": 39.4,
+      "survivors": [
+        1,
+        0
+      ],
+      "remaining_hp": [
+        139.2,
+        0
+      ],
+      "healing": [
+        255.0,
+        212.59040000000005
+      ]
+    },
+    {
+      "pd": 12,
+      "defender_heroes": 4,
+      "seed": 260018,
+      "attacker_roles": [
+        "melee",
+        "ranged",
+        "support",
+        "commander",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier"
+      ],
+      "hero_rescue": 0,
+      "soldier_dead": 0,
+      "winner": 1,
+      "seconds": 41.7,
+      "survivors": [
+        0,
+        1
+      ],
+      "remaining_hp": [
+        0,
+        214.8
+      ],
+      "healing": [
+        187.41920000000005,
+        255.0
+      ]
+    },
+    {
+      "pd": 12,
+      "defender_heroes": 4,
+      "seed": 260019,
+      "attacker_roles": [
+        "melee",
+        "ranged",
+        "support",
+        "commander",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier"
+      ],
+      "hero_rescue": 0,
+      "soldier_dead": 0,
+      "winner": 1,
+      "seconds": 33.3,
+      "survivors": [
+        0,
+        3
+      ],
+      "remaining_hp": [
+        0,
+        343.4
+      ],
+      "healing": [
+        217.21919999999997,
+        219.7840000000001
+      ]
+    },
+    {
+      "pd": 12,
+      "defender_heroes": 4,
+      "seed": 260020,
+      "attacker_roles": [
+        "melee",
+        "ranged",
+        "support",
+        "commander",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier"
+      ],
+      "hero_rescue": 0,
+      "soldier_dead": 0,
+      "winner": 0,
+      "seconds": 43.1,
+      "survivors": [
+        1,
+        0
+      ],
+      "remaining_hp": [
+        31.2,
+        0
+      ],
+      "healing": [
+        247.28000000000003,
+        196.95520000000005
+      ]
+    },
+    {
+      "pd": 12,
+      "defender_heroes": 4,
+      "seed": 260021,
+      "attacker_roles": [
+        "melee",
+        "ranged",
+        "support",
+        "commander",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier"
+      ],
+      "hero_rescue": 0,
+      "soldier_dead": 0,
+      "winner": 0,
+      "seconds": 43.0,
+      "survivors": [
+        1,
+        0
+      ],
+      "remaining_hp": [
+        164.4,
+        0
+      ],
+      "healing": [
+        247.11520000000016,
+        250.96000000000006
+      ]
+    },
+    {
+      "pd": 12,
+      "defender_heroes": 4,
+      "seed": 260022,
+      "attacker_roles": [
+        "melee",
+        "ranged",
+        "support",
+        "commander",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier"
+      ],
+      "hero_rescue": 0,
+      "soldier_dead": 0,
+      "winner": 0,
+      "seconds": 38.2,
+      "survivors": [
+        2,
+        0
+      ],
+      "remaining_hp": [
+        278.4,
+        0
+      ],
+      "healing": [
+        172.1376000000002,
+        217.21919999999997
+      ]
+    },
+    {
+      "pd": 12,
+      "defender_heroes": 4,
+      "seed": 260023,
+      "attacker_roles": [
+        "melee",
+        "ranged",
+        "support",
+        "commander",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier"
+      ],
+      "hero_rescue": 0,
+      "soldier_dead": 0,
+      "winner": 1,
+      "seconds": 41.9,
+      "survivors": [
+        0,
+        1
+      ],
+      "remaining_hp": [
+        0,
+        114.0
+      ],
+      "healing": [
+        210.48480000000015,
+        243.60000000000005
+      ]
+    },
+    {
+      "pd": 12,
+      "defender_heroes": 4,
+      "seed": 260024,
+      "attacker_roles": [
+        "melee",
+        "ranged",
+        "support",
+        "commander",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier"
+      ],
+      "hero_rescue": 0,
+      "soldier_dead": 0,
+      "winner": 0,
+      "seconds": 44.2,
+      "survivors": [
+        1,
+        0
+      ],
+      "remaining_hp": [
+        38.4,
+        0
+      ],
+      "healing": [
+        228.88000000000002,
+        212.59040000000005
+      ]
+    },
+    {
+      "pd": 12,
+      "defender_heroes": 4,
+      "seed": 260025,
+      "attacker_roles": [
+        "melee",
+        "ranged",
+        "support",
+        "commander",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier"
+      ],
+      "hero_rescue": 0,
+      "soldier_dead": 0,
+      "winner": 1,
+      "seconds": 37.2,
+      "survivors": [
+        0,
+        2
+      ],
+      "remaining_hp": [
+        0,
+        251.8
+      ],
+      "healing": [
+        221.43040000000002,
+        203.66880000000012
+      ]
+    },
+    {
+      "pd": 12,
+      "defender_heroes": 4,
+      "seed": 260026,
+      "attacker_roles": [
+        "melee",
+        "ranged",
+        "support",
+        "commander",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier"
+      ],
+      "hero_rescue": 0,
+      "soldier_dead": 0,
+      "winner": 1,
+      "seconds": 41.7,
+      "survivors": [
+        0,
+        1
+      ],
+      "remaining_hp": [
+        0,
+        38.4
+      ],
+      "healing": [
+        239.92000000000007,
+        217.21919999999997
+      ]
+    },
+    {
+      "pd": 12,
+      "defender_heroes": 4,
+      "seed": 260027,
+      "attacker_roles": [
+        "melee",
+        "ranged",
+        "support",
+        "commander",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier"
+      ],
+      "hero_rescue": 0,
+      "soldier_dead": 0,
+      "winner": 1,
+      "seconds": 35.9,
+      "survivors": [
+        0,
+        2
+      ],
+      "remaining_hp": [
+        0,
+        278.4
+      ],
+      "healing": [
+        217.21919999999997,
+        217.21919999999997
+      ]
+    },
+    {
+      "pd": 12,
+      "defender_heroes": 4,
+      "seed": 260028,
+      "attacker_roles": [
+        "melee",
+        "ranged",
+        "support",
+        "commander",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier"
+      ],
+      "hero_rescue": 0,
+      "soldier_dead": 0,
+      "winner": 0,
+      "seconds": 33.2,
+      "survivors": [
+        6,
+        0
+      ],
+      "remaining_hp": [
+        511.8,
+        0
+      ],
+      "healing": [
+        297.4480000000001,
+        212.59040000000005
+      ]
+    },
+    {
+      "pd": 12,
+      "defender_heroes": 4,
+      "seed": 260029,
+      "attacker_roles": [
+        "melee",
+        "ranged",
+        "support",
+        "commander",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier"
+      ],
+      "hero_rescue": 0,
+      "soldier_dead": 0,
+      "winner": 0,
+      "seconds": 39.2,
+      "survivors": [
+        4,
+        0
+      ],
+      "remaining_hp": [
+        408.4,
+        0
+      ],
+      "healing": [
+        284.22400000000016,
+        263.77600000000007
+      ]
+    },
+    {
+      "pd": 12,
+      "defender_heroes": 4,
+      "seed": 260030,
+      "attacker_roles": [
+        "melee",
+        "ranged",
+        "support",
+        "commander",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier"
+      ],
+      "hero_rescue": 0,
+      "soldier_dead": 0,
+      "winner": 1,
+      "seconds": 42.9,
+      "survivors": [
+        0,
+        1
+      ],
+      "remaining_hp": [
+        0,
+        63.6
+      ],
+      "healing": [
+        217.21919999999997,
+        220.19360000000012
+      ]
+    },
+    {
+      "pd": 12,
+      "defender_heroes": 4,
+      "seed": 260031,
+      "attacker_roles": [
+        "melee",
+        "ranged",
+        "support",
+        "commander",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier"
+      ],
+      "hero_rescue": 0,
+      "soldier_dead": 0,
+      "winner": 0,
+      "seconds": 46.6,
+      "survivors": [
+        1,
+        0
+      ],
+      "remaining_hp": [
+        63.6,
+        0
+      ],
+      "healing": [
+        214.16000000000008,
+        255.0
+      ]
+    },
+    {
+      "pd": 12,
+      "defender_heroes": 6,
+      "seed": 260000,
+      "attacker_roles": [
+        "melee",
+        "ranged",
+        "support",
+        "commander",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier"
+      ],
+      "hero_rescue": 0,
+      "soldier_dead": 0,
+      "winner": 1,
+      "seconds": 18.6,
+      "survivors": [
+        0,
+        11
+      ],
+      "remaining_hp": [
+        0,
+        1418.62
+      ],
+      "healing": [
+        220.4752,
+        211.73919999999993
+      ]
+    },
+    {
+      "pd": 12,
+      "defender_heroes": 6,
+      "seed": 260001,
+      "attacker_roles": [
+        "melee",
+        "ranged",
+        "support",
+        "commander",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier"
+      ],
+      "hero_rescue": 0,
+      "soldier_dead": 0,
+      "winner": 1,
+      "seconds": 18.9,
+      "survivors": [
+        0,
+        11
+      ],
+      "remaining_hp": [
+        0,
+        1454.03
+      ],
+      "healing": [
+        225.98560000000003,
+        255.0
+      ]
+    },
+    {
+      "pd": 12,
+      "defender_heroes": 6,
+      "seed": 260002,
+      "attacker_roles": [
+        "melee",
+        "ranged",
+        "support",
+        "commander",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier"
+      ],
+      "hero_rescue": 0,
+      "soldier_dead": 0,
+      "winner": 1,
+      "seconds": 20.1,
+      "survivors": [
+        0,
+        11
+      ],
+      "remaining_hp": [
+        0,
+        1486.26
+      ],
+      "healing": [
+        247.7728,
+        285.7183999999999
+      ]
+    },
+    {
+      "pd": 12,
+      "defender_heroes": 6,
+      "seed": 260003,
+      "attacker_roles": [
+        "melee",
+        "ranged",
+        "support",
+        "commander",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier"
+      ],
+      "hero_rescue": 0,
+      "soldier_dead": 0,
+      "winner": 1,
+      "seconds": 15.9,
+      "survivors": [
+        0,
+        11
+      ],
+      "remaining_hp": [
+        0,
+        1617.56
+      ],
+      "healing": [
+        100.41919999999998,
+        213.86400000000003
+      ]
+    },
+    {
+      "pd": 12,
+      "defender_heroes": 6,
+      "seed": 260004,
+      "attacker_roles": [
+        "melee",
+        "ranged",
+        "support",
+        "commander",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier"
+      ],
+      "hero_rescue": 0,
+      "soldier_dead": 0,
+      "winner": 1,
+      "seconds": 18.8,
+      "survivors": [
+        0,
+        11
+      ],
+      "remaining_hp": [
+        0,
+        1555.24
+      ],
+      "healing": [
+        165.6256,
+        221.43040000000002
+      ]
+    },
+    {
+      "pd": 12,
+      "defender_heroes": 6,
+      "seed": 260005,
+      "attacker_roles": [
+        "melee",
+        "ranged",
+        "support",
+        "commander",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier"
+      ],
+      "hero_rescue": 0,
+      "soldier_dead": 0,
+      "winner": 1,
+      "seconds": 20.6,
+      "survivors": [
+        0,
+        11
+      ],
+      "remaining_hp": [
+        0,
+        1492.98
+      ],
+      "healing": [
+        227.7024,
+        327.92
+      ]
+    },
+    {
+      "pd": 12,
+      "defender_heroes": 6,
+      "seed": 260006,
+      "attacker_roles": [
+        "melee",
+        "ranged",
+        "support",
+        "commander",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier"
+      ],
+      "hero_rescue": 0,
+      "soldier_dead": 0,
+      "winner": 1,
+      "seconds": 19.0,
+      "survivors": [
+        0,
+        11
+      ],
+      "remaining_hp": [
+        0,
+        1393.75
+      ],
+      "healing": [
+        191.04160000000002,
+        255.0
+      ]
+    },
+    {
+      "pd": 12,
+      "defender_heroes": 6,
+      "seed": 260007,
+      "attacker_roles": [
+        "melee",
+        "ranged",
+        "support",
+        "commander",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier"
+      ],
+      "hero_rescue": 0,
+      "soldier_dead": 0,
+      "winner": 1,
+      "seconds": 18.9,
+      "survivors": [
+        0,
+        11
+      ],
+      "remaining_hp": [
+        0,
+        1482.64
+      ],
+      "healing": [
+        247.1456,
+        200.71839999999992
+      ]
+    },
+    {
+      "pd": 12,
+      "defender_heroes": 6,
+      "seed": 260008,
+      "attacker_roles": [
+        "melee",
+        "ranged",
+        "support",
+        "commander",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier"
+      ],
+      "hero_rescue": 0,
+      "soldier_dead": 0,
+      "winner": 1,
+      "seconds": 18.9,
+      "survivors": [
+        0,
+        11
+      ],
+      "remaining_hp": [
+        0,
+        1519.16
+      ],
+      "healing": [
+        220.4752,
+        235.59999999999997
+      ]
+    },
+    {
+      "pd": 12,
+      "defender_heroes": 6,
+      "seed": 260009,
+      "attacker_roles": [
+        "melee",
+        "ranged",
+        "support",
+        "commander",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier"
+      ],
+      "hero_rescue": 0,
+      "soldier_dead": 0,
+      "winner": 1,
+      "seconds": 18.0,
+      "survivors": [
+        0,
+        11
+      ],
+      "remaining_hp": [
+        0,
+        1525.72
+      ],
+      "healing": [
+        199.7216,
+        211.3456
+      ]
+    },
+    {
+      "pd": 12,
+      "defender_heroes": 6,
+      "seed": 260010,
+      "attacker_roles": [
+        "melee",
+        "ranged",
+        "support",
+        "commander",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier"
+      ],
+      "hero_rescue": 0,
+      "soldier_dead": 0,
+      "winner": 1,
+      "seconds": 18.1,
+      "survivors": [
+        0,
+        11
+      ],
+      "remaining_hp": [
+        0,
+        1495.32
+      ],
+      "healing": [
+        161.41439999999997,
+        195.9952
+      ]
+    },
+    {
+      "pd": 12,
+      "defender_heroes": 6,
+      "seed": 260011,
+      "attacker_roles": [
+        "melee",
+        "ranged",
+        "support",
+        "commander",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier"
+      ],
+      "hero_rescue": 0,
+      "soldier_dead": 0,
+      "winner": 1,
+      "seconds": 15.3,
+      "survivors": [
+        0,
+        11
+      ],
+      "remaining_hp": [
+        0,
+        1690.0
+      ],
+      "healing": [
+        100.88959999999997,
+        217.86080000000004
+      ]
+    },
+    {
+      "pd": 12,
+      "defender_heroes": 6,
+      "seed": 260012,
+      "attacker_roles": [
+        "melee",
+        "ranged",
+        "support",
+        "commander",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier"
+      ],
+      "hero_rescue": 0,
+      "soldier_dead": 0,
+      "winner": 1,
+      "seconds": 18.1,
+      "survivors": [
+        0,
+        11
+      ],
+      "remaining_hp": [
+        0,
+        1662.88
+      ],
+      "healing": [
+        226.792,
+        220.66080000000005
+      ]
+    },
+    {
+      "pd": 12,
+      "defender_heroes": 6,
+      "seed": 260013,
+      "attacker_roles": [
+        "melee",
+        "ranged",
+        "support",
+        "commander",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier"
+      ],
+      "hero_rescue": 0,
+      "soldier_dead": 0,
+      "winner": 1,
+      "seconds": 19.3,
+      "survivors": [
+        0,
+        11
+      ],
+      "remaining_hp": [
+        0,
+        1439.04
+      ],
+      "healing": [
+        228.3296,
+        202.51040000000003
+      ]
+    },
+    {
+      "pd": 12,
+      "defender_heroes": 6,
+      "seed": 260014,
+      "attacker_roles": [
+        "melee",
+        "ranged",
+        "support",
+        "commander",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier"
+      ],
+      "hero_rescue": 0,
+      "soldier_dead": 0,
+      "winner": 1,
+      "seconds": 16.5,
+      "survivors": [
+        0,
+        11
+      ],
+      "remaining_hp": [
+        0,
+        1565.32
+      ],
+      "healing": [
+        97.22719999999997,
+        255.0
+      ]
+    },
+    {
+      "pd": 12,
+      "defender_heroes": 6,
+      "seed": 260015,
+      "attacker_roles": [
+        "melee",
+        "ranged",
+        "support",
+        "commander",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier"
+      ],
+      "hero_rescue": 0,
+      "soldier_dead": 0,
+      "winner": 1,
+      "seconds": 17.1,
+      "survivors": [
+        0,
+        11
+      ],
+      "remaining_hp": [
+        0,
+        1486.88
+      ],
+      "healing": [
+        207.304,
+        191.53439999999995
+      ]
+    },
+    {
+      "pd": 12,
+      "defender_heroes": 6,
+      "seed": 260016,
+      "attacker_roles": [
+        "melee",
+        "ranged",
+        "support",
+        "commander",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier"
+      ],
+      "hero_rescue": 0,
+      "soldier_dead": 0,
+      "winner": 1,
+      "seconds": 17.7,
+      "survivors": [
+        0,
+        11
+      ],
+      "remaining_hp": [
+        0,
+        1588.04
+      ],
+      "healing": [
+        194.1328,
+        239.81600000000006
+      ]
+    },
+    {
+      "pd": 12,
+      "defender_heroes": 6,
+      "seed": 260017,
+      "attacker_roles": [
+        "melee",
+        "ranged",
+        "support",
+        "commander",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier"
+      ],
+      "hero_rescue": 0,
+      "soldier_dead": 0,
+      "winner": 1,
+      "seconds": 16.5,
+      "survivors": [
+        0,
+        11
+      ],
+      "remaining_hp": [
+        0,
+        1479.8
+      ],
+      "healing": [
+        117.9136,
+        182.3504
+      ]
+    },
+    {
+      "pd": 12,
+      "defender_heroes": 6,
+      "seed": 260018,
+      "attacker_roles": [
+        "melee",
+        "ranged",
+        "support",
+        "commander",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier"
+      ],
+      "hero_rescue": 0,
+      "soldier_dead": 0,
+      "winner": 1,
+      "seconds": 21.7,
+      "survivors": [
+        0,
+        10
+      ],
+      "remaining_hp": [
+        0,
+        1318.6
+      ],
+      "healing": [
+        187.54719999999998,
+        264.81919999999997
+      ]
+    },
+    {
+      "pd": 12,
+      "defender_heroes": 6,
+      "seed": 260019,
+      "attacker_roles": [
+        "melee",
+        "ranged",
+        "support",
+        "commander",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier"
+      ],
+      "hero_rescue": 0,
+      "soldier_dead": 0,
+      "winner": 1,
+      "seconds": 18.9,
+      "survivors": [
+        0,
+        11
+      ],
+      "remaining_hp": [
+        0,
+        1477.88
+      ],
+      "healing": [
+        191.80319999999998,
+        240.71679999999995
+      ]
+    },
+    {
+      "pd": 12,
+      "defender_heroes": 6,
+      "seed": 260020,
+      "attacker_roles": [
+        "melee",
+        "ranged",
+        "support",
+        "commander",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier"
+      ],
+      "hero_rescue": 0,
+      "soldier_dead": 0,
+      "winner": 1,
+      "seconds": 18.5,
+      "survivors": [
+        0,
+        11
+      ],
+      "remaining_hp": [
+        0,
+        1524.76
+      ],
+      "healing": [
+        228.32959999999997,
+        212.65760000000003
+      ]
+    },
+    {
+      "pd": 12,
+      "defender_heroes": 6,
+      "seed": 260021,
+      "attacker_roles": [
+        "melee",
+        "ranged",
+        "support",
+        "commander",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier"
+      ],
+      "hero_rescue": 0,
+      "soldier_dead": 0,
+      "winner": 1,
+      "seconds": 18.5,
+      "survivors": [
+        0,
+        11
+      ],
+      "remaining_hp": [
+        0,
+        1554.28
+      ],
+      "healing": [
+        221.7296,
+        229.04
+      ]
+    },
+    {
+      "pd": 12,
+      "defender_heroes": 6,
+      "seed": 260022,
+      "attacker_roles": [
+        "melee",
+        "ranged",
+        "support",
+        "commander",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier"
+      ],
+      "hero_rescue": 0,
+      "soldier_dead": 0,
+      "winner": 1,
+      "seconds": 18.7,
+      "survivors": [
+        0,
+        11
+      ],
+      "remaining_hp": [
+        0,
+        1434.12
+      ],
+      "healing": [
+        227.7024,
+        217.21919999999997
+      ]
+    },
+    {
+      "pd": 12,
+      "defender_heroes": 6,
+      "seed": 260023,
+      "attacker_roles": [
+        "melee",
+        "ranged",
+        "support",
+        "commander",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier"
+      ],
+      "hero_rescue": 0,
+      "soldier_dead": 0,
+      "winner": 1,
+      "seconds": 18.1,
+      "survivors": [
+        0,
+        11
+      ],
+      "remaining_hp": [
+        0,
+        1485.4
+      ],
+      "healing": [
+        194.13280000000003,
+        215.92
+      ]
+    },
+    {
+      "pd": 12,
+      "defender_heroes": 6,
+      "seed": 260024,
+      "attacker_roles": [
+        "melee",
+        "ranged",
+        "support",
+        "commander",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier"
+      ],
+      "hero_rescue": 0,
+      "soldier_dead": 0,
+      "winner": 1,
+      "seconds": 17.8,
+      "survivors": [
+        0,
+        11
+      ],
+      "remaining_hp": [
+        0,
+        1463.4
+      ],
+      "healing": [
+        186.4384,
+        202.0304
+      ]
+    },
+    {
+      "pd": 12,
+      "defender_heroes": 6,
+      "seed": 260025,
+      "attacker_roles": [
+        "melee",
+        "ranged",
+        "support",
+        "commander",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier"
+      ],
+      "hero_rescue": 0,
+      "soldier_dead": 0,
+      "winner": 1,
+      "seconds": 18.9,
+      "survivors": [
+        0,
+        11
+      ],
+      "remaining_hp": [
+        0,
+        1457.7
+      ],
+      "healing": [
+        223.85760000000005,
+        217.21919999999997
+      ]
+    },
+    {
+      "pd": 12,
+      "defender_heroes": 6,
+      "seed": 260026,
+      "attacker_roles": [
+        "melee",
+        "ranged",
+        "support",
+        "commander",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier"
+      ],
+      "hero_rescue": 0,
+      "soldier_dead": 0,
+      "winner": 1,
+      "seconds": 17.7,
+      "survivors": [
+        0,
+        11
+      ],
+      "remaining_hp": [
+        0,
+        1568.36
+      ],
+      "healing": [
+        185.4192,
+        208.30880000000005
+      ]
+    },
+    {
+      "pd": 12,
+      "defender_heroes": 6,
+      "seed": 260027,
+      "attacker_roles": [
+        "melee",
+        "ranged",
+        "support",
+        "commander",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier"
+      ],
+      "hero_rescue": 0,
+      "soldier_dead": 0,
+      "winner": 1,
+      "seconds": 18.8,
+      "survivors": [
+        0,
+        11
+      ],
+      "remaining_hp": [
+        0,
+        1516.65
+      ],
+      "healing": [
+        228.32959999999997,
+        217.21919999999997
+      ]
+    },
+    {
+      "pd": 12,
+      "defender_heroes": 6,
+      "seed": 260028,
+      "attacker_roles": [
+        "melee",
+        "ranged",
+        "support",
+        "commander",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier"
+      ],
+      "hero_rescue": 0,
+      "soldier_dead": 0,
+      "winner": 1,
+      "seconds": 19.2,
+      "survivors": [
+        0,
+        11
+      ],
+      "remaining_hp": [
+        0,
+        1532.68
+      ],
+      "healing": [
+        194.1328,
+        225.18880000000001
+      ]
+    },
+    {
+      "pd": 12,
+      "defender_heroes": 6,
+      "seed": 260029,
+      "attacker_roles": [
+        "melee",
+        "ranged",
+        "support",
+        "commander",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier"
+      ],
+      "hero_rescue": 0,
+      "soldier_dead": 0,
+      "winner": 1,
+      "seconds": 18.9,
+      "survivors": [
+        0,
+        11
+      ],
+      "remaining_hp": [
+        0,
+        1544.44
+      ],
+      "healing": [
+        186.4384,
+        222.47999999999996
+      ]
+    },
+    {
+      "pd": 12,
+      "defender_heroes": 6,
+      "seed": 260030,
+      "attacker_roles": [
+        "melee",
+        "ranged",
+        "support",
+        "commander",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier"
+      ],
+      "hero_rescue": 0,
+      "soldier_dead": 0,
+      "winner": 1,
+      "seconds": 17.7,
+      "survivors": [
+        0,
+        11
+      ],
+      "remaining_hp": [
+        0,
+        1519.16
+      ],
+      "healing": [
+        144.584,
+        190.05599999999998
+      ]
+    },
+    {
+      "pd": 12,
+      "defender_heroes": 6,
+      "seed": 260031,
+      "attacker_roles": [
+        "melee",
+        "ranged",
+        "support",
+        "commander",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier"
+      ],
+      "hero_rescue": 0,
+      "soldier_dead": 0,
+      "winner": 1,
+      "seconds": 17.9,
+      "survivors": [
+        0,
+        11
+      ],
+      "remaining_hp": [
+        0,
+        1503.49
+      ],
+      "healing": [
+        201.032,
+        217.21919999999997
+      ]
+    },
+    {
+      "pd": 24,
+      "defender_heroes": 2,
+      "seed": 260000,
+      "attacker_roles": [
+        "ranged",
+        "support",
+        "commander",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier"
+      ],
+      "hero_rescue": 1,
+      "soldier_dead": 0,
+      "winner": 0,
+      "seconds": 17.8,
+      "survivors": [
+        7,
+        0
+      ],
+      "remaining_hp": [
+        752.64,
+        0
+      ],
+      "healing": [
+        156.4,
+        0.0
+      ]
+    },
+    {
+      "pd": 24,
+      "defender_heroes": 2,
+      "seed": 260001,
+      "attacker_roles": [
+        "melee",
+        "ranged",
+        "support",
+        "commander",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier"
+      ],
+      "hero_rescue": 0,
+      "soldier_dead": 0,
+      "winner": 0,
+      "seconds": 16.0,
+      "survivors": [
+        9,
+        0
+      ],
+      "remaining_hp": [
+        1126.2,
+        0
+      ],
+      "healing": [
+        132.11999999999992,
+        0.0
+      ]
+    },
+    {
+      "pd": 24,
+      "defender_heroes": 2,
+      "seed": 260002,
+      "attacker_roles": [
+        "melee",
+        "ranged",
+        "support",
+        "commander",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier"
+      ],
+      "hero_rescue": 0,
+      "soldier_dead": 0,
+      "winner": 0,
+      "seconds": 14.8,
+      "survivors": [
+        10,
+        0
+      ],
+      "remaining_hp": [
+        1276.3,
+        0
+      ],
+      "healing": [
+        246.88000000000008,
+        0.0
+      ]
+    },
+    {
+      "pd": 24,
+      "defender_heroes": 2,
+      "seed": 260003,
+      "attacker_roles": [
+        "melee",
+        "ranged",
+        "support",
+        "commander",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier"
+      ],
+      "hero_rescue": 0,
+      "soldier_dead": 0,
+      "winner": 0,
+      "seconds": 15.4,
+      "survivors": [
+        10,
+        0
+      ],
+      "remaining_hp": [
+        1204.08,
+        0
+      ],
+      "healing": [
+        219.59999999999994,
+        0.0
+      ]
+    },
+    {
+      "pd": 24,
+      "defender_heroes": 2,
+      "seed": 260004,
+      "attacker_roles": [
+        "ranged",
+        "support",
+        "commander",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier"
+      ],
+      "hero_rescue": 1,
+      "soldier_dead": 0,
+      "winner": 0,
+      "seconds": 23.6,
+      "survivors": [
+        8,
+        0
+      ],
+      "remaining_hp": [
+        726.0,
+        0
+      ],
+      "healing": [
+        272.1600000000001,
+        0.0
+      ]
+    },
+    {
+      "pd": 24,
+      "defender_heroes": 2,
+      "seed": 260005,
+      "attacker_roles": [
+        "ranged",
+        "support",
+        "commander",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier"
+      ],
+      "hero_rescue": 1,
+      "soldier_dead": 0,
+      "winner": 0,
+      "seconds": 19.8,
+      "survivors": [
+        8,
+        0
+      ],
+      "remaining_hp": [
+        717.8,
+        0
+      ],
+      "healing": [
+        197.4400000000001,
+        0.0
+      ]
+    },
+    {
+      "pd": 24,
+      "defender_heroes": 2,
+      "seed": 260006,
+      "attacker_roles": [
+        "ranged",
+        "support",
+        "commander",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier"
+      ],
+      "hero_rescue": 1,
+      "soldier_dead": 0,
+      "winner": 0,
+      "seconds": 19.0,
+      "survivors": [
+        8,
+        0
+      ],
+      "remaining_hp": [
+        755.44,
+        0
+      ],
+      "healing": [
+        211.60000000000005,
+        0.0
+      ]
+    },
+    {
+      "pd": 24,
+      "defender_heroes": 2,
+      "seed": 260007,
+      "attacker_roles": [
+        "ranged",
+        "support",
+        "commander",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier"
+      ],
+      "hero_rescue": 1,
+      "soldier_dead": 0,
+      "winner": 0,
+      "seconds": 19.0,
+      "survivors": [
+        8,
+        0
+      ],
+      "remaining_hp": [
+        788.56,
+        0
+      ],
+      "healing": [
+        204.24000000000004,
+        0.0
+      ]
+    },
+    {
+      "pd": 24,
+      "defender_heroes": 2,
+      "seed": 260008,
+      "attacker_roles": [
+        "melee",
+        "ranged",
+        "support",
+        "commander",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier"
+      ],
+      "hero_rescue": 0,
+      "soldier_dead": 0,
+      "winner": 0,
+      "seconds": 13.9,
+      "survivors": [
+        10,
+        0
+      ],
+      "remaining_hp": [
+        1198.38,
+        0
+      ],
+      "healing": [
+        166.8400000000001,
+        0.0
+      ]
+    },
+    {
+      "pd": 24,
+      "defender_heroes": 2,
+      "seed": 260009,
+      "attacker_roles": [
+        "ranged",
+        "support",
+        "commander",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier"
+      ],
+      "hero_rescue": 1,
+      "soldier_dead": 0,
+      "winner": 0,
+      "seconds": 17.8,
+      "survivors": [
+        7,
+        0
+      ],
+      "remaining_hp": [
+        778.4,
+        0
+      ],
+      "healing": [
+        203.88000000000002,
+        0.0
+      ]
+    },
+    {
+      "pd": 24,
+      "defender_heroes": 2,
+      "seed": 260010,
+      "attacker_roles": [
+        "melee",
+        "ranged",
+        "support",
+        "commander",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier"
+      ],
+      "hero_rescue": 0,
+      "soldier_dead": 0,
+      "winner": 0,
+      "seconds": 14.4,
+      "survivors": [
+        9,
+        0
+      ],
+      "remaining_hp": [
+        1150.0,
+        0
+      ],
+      "healing": [
+        166.84000000000006,
+        0.0
+      ]
+    },
+    {
+      "pd": 24,
+      "defender_heroes": 2,
+      "seed": 260011,
+      "attacker_roles": [
+        "ranged",
+        "support",
+        "commander",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier"
+      ],
+      "hero_rescue": 1,
+      "soldier_dead": 0,
+      "winner": 0,
+      "seconds": 17.6,
+      "survivors": [
+        7,
+        0
+      ],
+      "remaining_hp": [
+        805.0,
+        0
+      ],
+      "healing": [
+        215.28,
+        0.0
+      ]
+    },
+    {
+      "pd": 24,
+      "defender_heroes": 2,
+      "seed": 260012,
+      "attacker_roles": [
+        "melee",
+        "ranged",
+        "support",
+        "commander",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier"
+      ],
+      "hero_rescue": 0,
+      "soldier_dead": 0,
+      "winner": 0,
+      "seconds": 16.1,
+      "survivors": [
+        10,
+        0
+      ],
+      "remaining_hp": [
+        1233.14,
+        0
+      ],
+      "healing": [
+        246.88000000000005,
+        0.0
+      ]
+    },
+    {
+      "pd": 24,
+      "defender_heroes": 2,
+      "seed": 260013,
+      "attacker_roles": [
+        "ranged",
+        "support",
+        "commander",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier"
+      ],
+      "hero_rescue": 1,
+      "soldier_dead": 0,
+      "winner": 0,
+      "seconds": 21.7,
+      "survivors": [
+        7,
+        0
+      ],
+      "remaining_hp": [
+        716.56,
+        0
+      ],
+      "healing": [
+        303.96000000000004,
+        0.0
+      ]
+    },
+    {
+      "pd": 24,
+      "defender_heroes": 2,
+      "seed": 260014,
+      "attacker_roles": [
+        "melee",
+        "ranged",
+        "support",
+        "commander",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier"
+      ],
+      "hero_rescue": 0,
+      "soldier_dead": 0,
+      "winner": 0,
+      "seconds": 15.4,
+      "survivors": [
+        9,
+        0
+      ],
+      "remaining_hp": [
+        1150.0,
+        0
+      ],
+      "healing": [
+        166.84000000000006,
+        0.0
+      ]
+    },
+    {
+      "pd": 24,
+      "defender_heroes": 2,
+      "seed": 260015,
+      "attacker_roles": [
+        "ranged",
+        "support",
+        "commander",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier"
+      ],
+      "hero_rescue": 1,
+      "soldier_dead": 0,
+      "winner": 0,
+      "seconds": 14.2,
+      "survivors": [
+        9,
+        0
+      ],
+      "remaining_hp": [
+        880.55,
+        0
+      ],
+      "healing": [
+        156.4,
+        0.0
+      ]
+    },
+    {
+      "pd": 24,
+      "defender_heroes": 2,
+      "seed": 260016,
+      "attacker_roles": [
+        "melee",
+        "ranged",
+        "support",
+        "commander",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier"
+      ],
+      "hero_rescue": 0,
+      "soldier_dead": 0,
+      "winner": 0,
+      "seconds": 15.5,
+      "survivors": [
+        10,
+        0
+      ],
+      "remaining_hp": [
+        1218.62,
+        0
+      ],
+      "healing": [
+        234.48000000000005,
+        0.0
+      ]
+    },
+    {
+      "pd": 24,
+      "defender_heroes": 2,
+      "seed": 260017,
+      "attacker_roles": [
+        "melee",
+        "ranged",
+        "support",
+        "commander",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier"
+      ],
+      "hero_rescue": 0,
+      "soldier_dead": 0,
+      "winner": 0,
+      "seconds": 14.2,
+      "survivors": [
+        9,
+        0
+      ],
+      "remaining_hp": [
+        1150.0,
+        0
+      ],
+      "healing": [
+        166.84000000000006,
+        0.0
+      ]
+    },
+    {
+      "pd": 24,
+      "defender_heroes": 2,
+      "seed": 260018,
+      "attacker_roles": [
+        "ranged",
+        "support",
+        "commander",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier"
+      ],
+      "hero_rescue": 1,
+      "soldier_dead": 0,
+      "winner": 0,
+      "seconds": 19.0,
+      "survivors": [
+        7,
+        0
+      ],
+      "remaining_hp": [
+        753.48,
+        0
+      ],
+      "healing": [
+        173.08,
+        0.0
+      ]
+    },
+    {
+      "pd": 24,
+      "defender_heroes": 2,
+      "seed": 260019,
+      "attacker_roles": [
+        "melee",
+        "ranged",
+        "support",
+        "commander",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier"
+      ],
+      "hero_rescue": 0,
+      "soldier_dead": 0,
+      "winner": 0,
+      "seconds": 16.3,
+      "survivors": [
+        10,
+        0
+      ],
+      "remaining_hp": [
+        1212.16,
+        0
+      ],
+      "healing": [
+        246.88000000000008,
+        0.0
+      ]
+    },
+    {
+      "pd": 24,
+      "defender_heroes": 2,
+      "seed": 260020,
+      "attacker_roles": [
+        "melee",
+        "ranged",
+        "support",
+        "commander",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier"
+      ],
+      "hero_rescue": 0,
+      "soldier_dead": 0,
+      "winner": 0,
+      "seconds": 16.9,
+      "survivors": [
+        9,
+        0
+      ],
+      "remaining_hp": [
+        1150.0,
+        0
+      ],
+      "healing": [
+        209.4800000000001,
+        0.0
+      ]
+    },
+    {
+      "pd": 24,
+      "defender_heroes": 2,
+      "seed": 260021,
+      "attacker_roles": [
+        "ranged",
+        "support",
+        "commander",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier"
+      ],
+      "hero_rescue": 1,
+      "soldier_dead": 0,
+      "winner": 0,
+      "seconds": 27.4,
+      "survivors": [
+        4,
+        0
+      ],
+      "remaining_hp": [
+        514.68,
+        0
+      ],
+      "healing": [
+        250.39999999999998,
+        0.0
+      ]
+    },
+    {
+      "pd": 24,
+      "defender_heroes": 2,
+      "seed": 260022,
+      "attacker_roles": [
+        "melee",
+        "ranged",
+        "support",
+        "commander",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier"
+      ],
+      "hero_rescue": 0,
+      "soldier_dead": 0,
+      "winner": 0,
+      "seconds": 16.0,
+      "survivors": [
+        10,
+        0
+      ],
+      "remaining_hp": [
+        1190.18,
+        0
+      ],
+      "healing": [
+        217.11999999999992,
+        0.0
+      ]
+    },
+    {
+      "pd": 24,
+      "defender_heroes": 2,
+      "seed": 260023,
+      "attacker_roles": [
+        "ranged",
+        "support",
+        "commander",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier"
+      ],
+      "hero_rescue": 1,
+      "soldier_dead": 0,
+      "winner": 0,
+      "seconds": 21.4,
+      "survivors": [
+        7,
+        0
+      ],
+      "remaining_hp": [
+        664.68,
+        0
+      ],
+      "healing": [
+        200.5600000000001,
+        0.0
+      ]
+    },
+    {
+      "pd": 24,
+      "defender_heroes": 2,
+      "seed": 260024,
+      "attacker_roles": [
+        "ranged",
+        "support",
+        "commander",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier"
+      ],
+      "hero_rescue": 1,
+      "soldier_dead": 0,
+      "winner": 0,
+      "seconds": 17.6,
+      "survivors": [
+        7,
+        0
+      ],
+      "remaining_hp": [
+        764.04,
+        0
+      ],
+      "healing": [
+        207.92,
+        0.0
+      ]
+    },
+    {
+      "pd": 24,
+      "defender_heroes": 2,
+      "seed": 260025,
+      "attacker_roles": [
+        "support",
+        "commander",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier"
+      ],
+      "hero_rescue": 2,
+      "soldier_dead": 0,
+      "winner": 1,
+      "seconds": 30.5,
+      "survivors": [
+        0,
+        3
+      ],
+      "remaining_hp": [
+        0,
+        335.8
+      ],
+      "healing": [
+        201.71000000000015,
+        0.0
+      ]
+    },
+    {
+      "pd": 24,
+      "defender_heroes": 2,
+      "seed": 260026,
+      "attacker_roles": [
+        "melee",
+        "ranged",
+        "support",
+        "commander",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier"
+      ],
+      "hero_rescue": 0,
+      "soldier_dead": 0,
+      "winner": 0,
+      "seconds": 15.4,
+      "survivors": [
+        9,
+        0
+      ],
+      "remaining_hp": [
+        986.8,
+        0
+      ],
+      "healing": [
+        115.4800000000001,
+        0.0
+      ]
+    },
+    {
+      "pd": 24,
+      "defender_heroes": 2,
+      "seed": 260027,
+      "attacker_roles": [
+        "ranged",
+        "support",
+        "commander",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier"
+      ],
+      "hero_rescue": 1,
+      "soldier_dead": 0,
+      "winner": 0,
+      "seconds": 18.9,
+      "survivors": [
+        8,
+        0
+      ],
+      "remaining_hp": [
+        732.52,
+        0
+      ],
+      "healing": [
+        184.1200000000001,
+        0.0
+      ]
+    },
+    {
+      "pd": 24,
+      "defender_heroes": 2,
+      "seed": 260028,
+      "attacker_roles": [
+        "ranged",
+        "support",
+        "commander",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier"
+      ],
+      "hero_rescue": 1,
+      "soldier_dead": 0,
+      "winner": 0,
+      "seconds": 20.4,
+      "survivors": [
+        7,
+        0
+      ],
+      "remaining_hp": [
+        694.96,
+        0
+      ],
+      "healing": [
+        207.92,
+        0.0
+      ]
+    },
+    {
+      "pd": 24,
+      "defender_heroes": 2,
+      "seed": 260029,
+      "attacker_roles": [
+        "melee",
+        "ranged",
+        "support",
+        "commander",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier"
+      ],
+      "hero_rescue": 0,
+      "soldier_dead": 0,
+      "winner": 0,
+      "seconds": 15.4,
+      "survivors": [
+        9,
+        0
+      ],
+      "remaining_hp": [
+        1150.0,
+        0
+      ],
+      "healing": [
+        217.6,
+        0.0
+      ]
+    },
+    {
+      "pd": 24,
+      "defender_heroes": 2,
+      "seed": 260030,
+      "attacker_roles": [
+        "ranged",
+        "support",
+        "commander",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier"
+      ],
+      "hero_rescue": 1,
+      "soldier_dead": 0,
+      "winner": 0,
+      "seconds": 19.8,
+      "survivors": [
+        7,
+        0
+      ],
+      "remaining_hp": [
+        727.72,
+        0
+      ],
+      "healing": [
+        187.80000000000004,
+        0.0
+      ]
+    },
+    {
+      "pd": 24,
+      "defender_heroes": 2,
+      "seed": 260031,
+      "attacker_roles": [
+        "ranged",
+        "support",
+        "commander",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier"
+      ],
+      "hero_rescue": 1,
+      "soldier_dead": 0,
+      "winner": 0,
+      "seconds": 15.4,
+      "survivors": [
+        8,
+        0
+      ],
+      "remaining_hp": [
+        843.4,
+        0
+      ],
+      "healing": [
+        185.79999999999998,
+        0.0
+      ]
+    },
+    {
+      "pd": 24,
+      "defender_heroes": 4,
+      "seed": 260000,
+      "attacker_roles": [
+        "ranged",
+        "support",
+        "commander",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier"
+      ],
+      "hero_rescue": 1,
+      "soldier_dead": 0,
+      "winner": 1,
+      "seconds": 20.7,
+      "survivors": [
+        0,
+        9
+      ],
+      "remaining_hp": [
+        0,
+        956.2
+      ],
+      "healing": [
+        204.61600000000007,
+        282.63040000000007
+      ]
+    },
+    {
+      "pd": 24,
+      "defender_heroes": 4,
+      "seed": 260001,
+      "attacker_roles": [
+        "melee",
+        "ranged",
+        "support",
+        "commander",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier"
+      ],
+      "hero_rescue": 0,
+      "soldier_dead": 0,
+      "winner": 1,
+      "seconds": 42.9,
+      "survivors": [
+        0,
+        1
+      ],
+      "remaining_hp": [
+        0,
+        139.2
+      ],
+      "healing": [
+        212.59040000000005,
+        217.84000000000006
+      ]
+    },
+    {
+      "pd": 24,
+      "defender_heroes": 4,
+      "seed": 260002,
+      "attacker_roles": [
+        "melee",
+        "ranged",
+        "support",
+        "commander",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier"
+      ],
+      "hero_rescue": 0,
+      "soldier_dead": 0,
+      "winner": 0,
+      "seconds": 45.4,
+      "survivors": [
+        1,
+        0
+      ],
+      "remaining_hp": [
+        114.0,
+        0
+      ],
+      "healing": [
+        187.41920000000005,
+        206.37120000000013
+      ]
+    },
+    {
+      "pd": 24,
+      "defender_heroes": 4,
+      "seed": 260003,
+      "attacker_roles": [
+        "melee",
+        "ranged",
+        "support",
+        "commander",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier"
+      ],
+      "hero_rescue": 0,
+      "soldier_dead": 0,
+      "winner": 0,
+      "seconds": 43.0,
+      "survivors": [
+        1,
+        0
+      ],
+      "remaining_hp": [
+        63.6,
+        0
+      ],
+      "healing": [
+        190.6128000000001,
+        217.21919999999997
+      ]
+    },
+    {
+      "pd": 24,
+      "defender_heroes": 4,
+      "seed": 260004,
+      "attacker_roles": [
+        "ranged",
+        "support",
+        "commander",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier"
+      ],
+      "hero_rescue": 1,
+      "soldier_dead": 0,
+      "winner": 1,
+      "seconds": 20.7,
+      "survivors": [
+        0,
+        9
+      ],
+      "remaining_hp": [
+        0,
+        1095.6
+      ],
+      "healing": [
+        220.00799999999998,
+        323.0
+      ]
+    },
+    {
+      "pd": 24,
+      "defender_heroes": 4,
+      "seed": 260005,
+      "attacker_roles": [
+        "ranged",
+        "support",
+        "commander",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier"
+      ],
+      "hero_rescue": 1,
+      "soldier_dead": 0,
+      "winner": 1,
+      "seconds": 20.6,
+      "survivors": [
+        0,
+        9
+      ],
+      "remaining_hp": [
+        0,
+        1007.2
+      ],
+      "healing": [
+        203.216,
+        214.2
+      ]
+    },
+    {
+      "pd": 24,
+      "defender_heroes": 4,
+      "seed": 260006,
+      "attacker_roles": [
+        "ranged",
+        "support",
+        "commander",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier"
+      ],
+      "hero_rescue": 1,
+      "soldier_dead": 0,
+      "winner": 1,
+      "seconds": 20.4,
+      "survivors": [
+        0,
+        9
+      ],
+      "remaining_hp": [
+        0,
+        973.2
+      ],
+      "healing": [
+        200.416,
+        255.0
+      ]
+    },
+    {
+      "pd": 24,
+      "defender_heroes": 4,
+      "seed": 260007,
+      "attacker_roles": [
+        "ranged",
+        "support",
+        "commander",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier"
+      ],
+      "hero_rescue": 1,
+      "soldier_dead": 0,
+      "winner": 1,
+      "seconds": 19.1,
+      "survivors": [
+        0,
+        9
+      ],
+      "remaining_hp": [
+        0,
+        1102.4
+      ],
+      "healing": [
+        135.008,
+        206.30080000000007
+      ]
+    },
+    {
+      "pd": 24,
+      "defender_heroes": 4,
+      "seed": 260008,
+      "attacker_roles": [
+        "melee",
+        "ranged",
+        "support",
+        "commander",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier"
+      ],
+      "hero_rescue": 0,
+      "soldier_dead": 0,
+      "winner": 1,
+      "seconds": 41.7,
+      "survivors": [
+        0,
+        1
+      ],
+      "remaining_hp": [
+        0,
+        164.4
+      ],
+      "healing": [
+        217.21919999999997,
+        255.0
+      ]
+    },
+    {
+      "pd": 24,
+      "defender_heroes": 4,
+      "seed": 260009,
+      "attacker_roles": [
+        "ranged",
+        "support",
+        "commander",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier"
+      ],
+      "hero_rescue": 1,
+      "soldier_dead": 0,
+      "winner": 1,
+      "seconds": 20.8,
+      "survivors": [
+        0,
+        9
+      ],
+      "remaining_hp": [
+        0,
+        925.6
+      ],
+      "healing": [
+        218.168,
+        187.43040000000008
+      ]
+    },
+    {
+      "pd": 24,
+      "defender_heroes": 4,
+      "seed": 260010,
+      "attacker_roles": [
+        "melee",
+        "ranged",
+        "support",
+        "commander",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier"
+      ],
+      "hero_rescue": 0,
+      "soldier_dead": 0,
+      "winner": 0,
+      "seconds": 38.2,
+      "survivors": [
+        2,
+        0
+      ],
+      "remaining_hp": [
+        278.4,
+        0
+      ],
+      "healing": [
+        243.60000000000005,
+        220.20640000000006
+      ]
+    },
+    {
+      "pd": 24,
+      "defender_heroes": 4,
+      "seed": 260011,
+      "attacker_roles": [
+        "ranged",
+        "support",
+        "commander",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier"
+      ],
+      "hero_rescue": 1,
+      "soldier_dead": 0,
+      "winner": 1,
+      "seconds": 20.6,
+      "survivors": [
+        0,
+        9
+      ],
+      "remaining_hp": [
+        0,
+        1003.8
+      ],
+      "healing": [
+        201.03200000000004,
+        275.01919999999996
+      ]
+    },
+    {
+      "pd": 24,
+      "defender_heroes": 4,
+      "seed": 260012,
+      "attacker_roles": [
+        "melee",
+        "ranged",
+        "support",
+        "commander",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier"
+      ],
+      "hero_rescue": 0,
+      "soldier_dead": 0,
+      "winner": 0,
+      "seconds": 43.0,
+      "survivors": [
+        1,
+        0
+      ],
+      "remaining_hp": [
+        63.6,
+        0
+      ],
+      "healing": [
+        243.60000000000005,
+        217.21919999999997
+      ]
+    },
+    {
+      "pd": 24,
+      "defender_heroes": 4,
+      "seed": 260013,
+      "attacker_roles": [
+        "ranged",
+        "support",
+        "commander",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier"
+      ],
+      "hero_rescue": 1,
+      "soldier_dead": 0,
+      "winner": 1,
+      "seconds": 20.0,
+      "survivors": [
+        0,
+        9
+      ],
+      "remaining_hp": [
+        0,
+        1126.2
+      ],
+      "healing": [
+        226.392,
+        219.18400000000008
+      ]
+    },
+    {
+      "pd": 24,
+      "defender_heroes": 4,
+      "seed": 260014,
+      "attacker_roles": [
+        "melee",
+        "ranged",
+        "support",
+        "commander",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier"
+      ],
+      "hero_rescue": 0,
+      "soldier_dead": 0,
+      "winner": 1,
+      "seconds": 39.3,
+      "survivors": [
+        0,
+        1
+      ],
+      "remaining_hp": [
+        0,
+        214.8
+      ],
+      "healing": [
+        232.56000000000006,
+        250.96000000000006
+      ]
+    },
+    {
+      "pd": 24,
+      "defender_heroes": 4,
+      "seed": 260015,
+      "attacker_roles": [
+        "ranged",
+        "support",
+        "commander",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier"
+      ],
+      "hero_rescue": 1,
+      "soldier_dead": 0,
+      "winner": 1,
+      "seconds": 17.9,
+      "survivors": [
+        0,
+        9
+      ],
+      "remaining_hp": [
+        0,
+        1126.2
+      ],
+      "healing": [
+        131.04000000000002,
+        214.2
+      ]
+    },
+    {
+      "pd": 24,
+      "defender_heroes": 4,
+      "seed": 260016,
+      "attacker_roles": [
+        "melee",
+        "ranged",
+        "support",
+        "commander",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier"
+      ],
+      "hero_rescue": 0,
+      "soldier_dead": 0,
+      "winner": 0,
+      "seconds": 43.1,
+      "survivors": [
+        1,
+        0
+      ],
+      "remaining_hp": [
+        88.8,
+        0
+      ],
+      "healing": [
+        250.96000000000006,
+        247.10080000000008
+      ]
+    },
+    {
+      "pd": 24,
+      "defender_heroes": 4,
+      "seed": 260017,
+      "attacker_roles": [
+        "melee",
+        "ranged",
+        "support",
+        "commander",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier"
+      ],
+      "hero_rescue": 0,
+      "soldier_dead": 0,
+      "winner": 0,
+      "seconds": 39.4,
+      "survivors": [
+        1,
+        0
+      ],
+      "remaining_hp": [
+        139.2,
+        0
+      ],
+      "healing": [
+        255.0,
+        212.59040000000005
+      ]
+    },
+    {
+      "pd": 24,
+      "defender_heroes": 4,
+      "seed": 260018,
+      "attacker_roles": [
+        "ranged",
+        "support",
+        "commander",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier"
+      ],
+      "hero_rescue": 1,
+      "soldier_dead": 0,
+      "winner": 1,
+      "seconds": 20.6,
+      "survivors": [
+        0,
+        9
+      ],
+      "remaining_hp": [
+        0,
+        1020.8
+      ],
+      "healing": [
+        151.51360000000003,
+        278.41920000000005
+      ]
+    },
+    {
+      "pd": 24,
+      "defender_heroes": 4,
+      "seed": 260019,
+      "attacker_roles": [
+        "melee",
+        "ranged",
+        "support",
+        "commander",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier"
+      ],
+      "hero_rescue": 0,
+      "soldier_dead": 0,
+      "winner": 1,
+      "seconds": 33.3,
+      "survivors": [
+        0,
+        3
+      ],
+      "remaining_hp": [
+        0,
+        343.4
+      ],
+      "healing": [
+        217.21919999999997,
+        219.7840000000001
+      ]
+    },
+    {
+      "pd": 24,
+      "defender_heroes": 4,
+      "seed": 260020,
+      "attacker_roles": [
+        "melee",
+        "ranged",
+        "support",
+        "commander",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier"
+      ],
+      "hero_rescue": 0,
+      "soldier_dead": 0,
+      "winner": 0,
+      "seconds": 43.1,
+      "survivors": [
+        1,
+        0
+      ],
+      "remaining_hp": [
+        31.2,
+        0
+      ],
+      "healing": [
+        247.28000000000003,
+        196.95520000000005
+      ]
+    },
+    {
+      "pd": 24,
+      "defender_heroes": 4,
+      "seed": 260021,
+      "attacker_roles": [
+        "ranged",
+        "support",
+        "commander",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier"
+      ],
+      "hero_rescue": 1,
+      "soldier_dead": 0,
+      "winner": 1,
+      "seconds": 20.7,
+      "survivors": [
+        0,
+        9
+      ],
+      "remaining_hp": [
+        0,
+        1085.4
+      ],
+      "healing": [
+        150.92000000000002,
+        340.0
+      ]
+    },
+    {
+      "pd": 24,
+      "defender_heroes": 4,
+      "seed": 260022,
+      "attacker_roles": [
+        "melee",
+        "ranged",
+        "support",
+        "commander",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier"
+      ],
+      "hero_rescue": 0,
+      "soldier_dead": 0,
+      "winner": 0,
+      "seconds": 38.2,
+      "survivors": [
+        2,
+        0
+      ],
+      "remaining_hp": [
+        278.4,
+        0
+      ],
+      "healing": [
+        172.1376000000002,
+        217.21919999999997
+      ]
+    },
+    {
+      "pd": 24,
+      "defender_heroes": 4,
+      "seed": 260023,
+      "attacker_roles": [
+        "ranged",
+        "support",
+        "commander",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier"
+      ],
+      "hero_rescue": 1,
+      "soldier_dead": 0,
+      "winner": 1,
+      "seconds": 19.2,
+      "survivors": [
+        0,
+        9
+      ],
+      "remaining_hp": [
+        0,
+        1078.6
+      ],
+      "healing": [
+        127.51200000000003,
+        217.12320000000003
+      ]
+    },
+    {
+      "pd": 24,
+      "defender_heroes": 4,
+      "seed": 260024,
+      "attacker_roles": [
+        "ranged",
+        "support",
+        "commander",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier"
+      ],
+      "hero_rescue": 1,
+      "soldier_dead": 0,
+      "winner": 1,
+      "seconds": 20.7,
+      "survivors": [
+        0,
+        9
+      ],
+      "remaining_hp": [
+        0,
+        966.4
+      ],
+      "healing": [
+        136.072,
+        224.40000000000003
+      ]
+    },
+    {
+      "pd": 24,
+      "defender_heroes": 4,
+      "seed": 260025,
+      "attacker_roles": [
+        "support",
+        "commander",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier"
+      ],
+      "hero_rescue": 2,
+      "soldier_dead": 0,
+      "winner": 1,
+      "seconds": 16.5,
+      "survivors": [
+        0,
+        10
+      ],
+      "remaining_hp": [
+        0,
+        1323.69
+      ],
+      "healing": [
+        226.392,
+        221.38560000000007
+      ]
+    },
+    {
+      "pd": 24,
+      "defender_heroes": 4,
+      "seed": 260026,
+      "attacker_roles": [
+        "melee",
+        "ranged",
+        "support",
+        "commander",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier"
+      ],
+      "hero_rescue": 0,
+      "soldier_dead": 0,
+      "winner": 1,
+      "seconds": 41.7,
+      "survivors": [
+        0,
+        1
+      ],
+      "remaining_hp": [
+        0,
+        38.4
+      ],
+      "healing": [
+        239.92000000000007,
+        217.21919999999997
+      ]
+    },
+    {
+      "pd": 24,
+      "defender_heroes": 4,
+      "seed": 260027,
+      "attacker_roles": [
+        "ranged",
+        "support",
+        "commander",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier"
+      ],
+      "hero_rescue": 1,
+      "soldier_dead": 0,
+      "winner": 1,
+      "seconds": 17.9,
+      "survivors": [
+        0,
+        9
+      ],
+      "remaining_hp": [
+        0,
+        993.6
+      ],
+      "healing": [
+        106.51200000000001,
+        180.63040000000007
+      ]
+    },
+    {
+      "pd": 24,
+      "defender_heroes": 4,
+      "seed": 260028,
+      "attacker_roles": [
+        "ranged",
+        "support",
+        "commander",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier"
+      ],
+      "hero_rescue": 1,
+      "soldier_dead": 0,
+      "winner": 1,
+      "seconds": 20.2,
+      "survivors": [
+        0,
+        9
+      ],
+      "remaining_hp": [
+        0,
+        1054.8
+      ],
+      "healing": [
+        226.392,
+        251.6
+      ]
+    },
+    {
+      "pd": 24,
+      "defender_heroes": 4,
+      "seed": 260029,
+      "attacker_roles": [
+        "melee",
+        "ranged",
+        "support",
+        "commander",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier"
+      ],
+      "hero_rescue": 0,
+      "soldier_dead": 0,
+      "winner": 0,
+      "seconds": 39.2,
+      "survivors": [
+        4,
+        0
+      ],
+      "remaining_hp": [
+        408.4,
+        0
+      ],
+      "healing": [
+        284.22400000000016,
+        263.77600000000007
+      ]
+    },
+    {
+      "pd": 24,
+      "defender_heroes": 4,
+      "seed": 260030,
+      "attacker_roles": [
+        "ranged",
+        "support",
+        "commander",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier"
+      ],
+      "hero_rescue": 1,
+      "soldier_dead": 0,
+      "winner": 1,
+      "seconds": 19.7,
+      "survivors": [
+        0,
+        9
+      ],
+      "remaining_hp": [
+        0,
+        1020.8
+      ],
+      "healing": [
+        194.704,
+        173.01919999999998
+      ]
+    },
+    {
+      "pd": 24,
+      "defender_heroes": 4,
+      "seed": 260031,
+      "attacker_roles": [
+        "ranged",
+        "support",
+        "commander",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier"
+      ],
+      "hero_rescue": 1,
+      "soldier_dead": 0,
+      "winner": 1,
+      "seconds": 19.4,
+      "survivors": [
+        0,
+        9
+      ],
+      "remaining_hp": [
+        0,
+        1014.0
+      ],
+      "healing": [
+        191.512,
+        179.8192
+      ]
+    },
+    {
+      "pd": 24,
+      "defender_heroes": 6,
+      "seed": 260000,
+      "attacker_roles": [
+        "ranged",
+        "support",
+        "commander",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier"
+      ],
+      "hero_rescue": 1,
+      "soldier_dead": 0,
+      "winner": 1,
+      "seconds": 12.4,
+      "survivors": [
+        0,
+        12
+      ],
+      "remaining_hp": [
+        0,
+        1768.45
+      ],
+      "healing": [
+        106.51200000000001,
+        136.43040000000002
+      ]
+    },
+    {
+      "pd": 24,
+      "defender_heroes": 6,
+      "seed": 260001,
+      "attacker_roles": [
+        "melee",
+        "ranged",
+        "support",
+        "commander",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier"
+      ],
+      "hero_rescue": 0,
+      "soldier_dead": 0,
+      "winner": 1,
+      "seconds": 18.9,
+      "survivors": [
+        0,
+        11
+      ],
+      "remaining_hp": [
+        0,
+        1454.03
+      ],
+      "healing": [
+        225.98560000000003,
+        255.0
+      ]
+    },
+    {
+      "pd": 24,
+      "defender_heroes": 6,
+      "seed": 260002,
+      "attacker_roles": [
+        "melee",
+        "ranged",
+        "support",
+        "commander",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier"
+      ],
+      "hero_rescue": 0,
+      "soldier_dead": 0,
+      "winner": 1,
+      "seconds": 20.1,
+      "survivors": [
+        0,
+        11
+      ],
+      "remaining_hp": [
+        0,
+        1486.26
+      ],
+      "healing": [
+        247.7728,
+        285.7183999999999
+      ]
+    },
+    {
+      "pd": 24,
+      "defender_heroes": 6,
+      "seed": 260003,
+      "attacker_roles": [
+        "melee",
+        "ranged",
+        "support",
+        "commander",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier"
+      ],
+      "hero_rescue": 0,
+      "soldier_dead": 0,
+      "winner": 1,
+      "seconds": 15.9,
+      "survivors": [
+        0,
+        11
+      ],
+      "remaining_hp": [
+        0,
+        1617.56
+      ],
+      "healing": [
+        100.41919999999998,
+        213.86400000000003
+      ]
+    },
+    {
+      "pd": 24,
+      "defender_heroes": 6,
+      "seed": 260004,
+      "attacker_roles": [
+        "ranged",
+        "support",
+        "commander",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier"
+      ],
+      "hero_rescue": 1,
+      "soldier_dead": 0,
+      "winner": 1,
+      "seconds": 13.7,
+      "survivors": [
+        0,
+        12
+      ],
+      "remaining_hp": [
+        0,
+        1740.17
+      ],
+      "healing": [
+        109.70400000000001,
+        170.0
+      ]
+    },
+    {
+      "pd": 24,
+      "defender_heroes": 6,
+      "seed": 260005,
+      "attacker_roles": [
+        "ranged",
+        "support",
+        "commander",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier"
+      ],
+      "hero_rescue": 1,
+      "soldier_dead": 0,
+      "winner": 1,
+      "seconds": 14.9,
+      "survivors": [
+        0,
+        11
+      ],
+      "remaining_hp": [
+        0,
+        1601.44
+      ],
+      "healing": [
+        112.89600000000002,
+        130.92
+      ]
+    },
+    {
+      "pd": 24,
+      "defender_heroes": 6,
+      "seed": 260006,
+      "attacker_roles": [
+        "ranged",
+        "support",
+        "commander",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier"
+      ],
+      "hero_rescue": 1,
+      "soldier_dead": 0,
+      "winner": 1,
+      "seconds": 12.4,
+      "survivors": [
+        0,
+        12
+      ],
+      "remaining_hp": [
+        0,
+        1784.09
+      ],
+      "healing": [
+        111.01440000000002,
+        169.7168000000001
+      ]
+    },
+    {
+      "pd": 24,
+      "defender_heroes": 6,
+      "seed": 260007,
+      "attacker_roles": [
+        "ranged",
+        "support",
+        "commander",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier"
+      ],
+      "hero_rescue": 1,
+      "soldier_dead": 0,
+      "winner": 1,
+      "seconds": 12.4,
+      "survivors": [
+        0,
+        12
+      ],
+      "remaining_hp": [
+        0,
+        1781.88
+      ],
+      "healing": [
+        112.89600000000002,
+        170.0
+      ]
+    },
+    {
+      "pd": 24,
+      "defender_heroes": 6,
+      "seed": 260008,
+      "attacker_roles": [
+        "melee",
+        "ranged",
+        "support",
+        "commander",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier"
+      ],
+      "hero_rescue": 0,
+      "soldier_dead": 0,
+      "winner": 1,
+      "seconds": 18.9,
+      "survivors": [
+        0,
+        11
+      ],
+      "remaining_hp": [
+        0,
+        1519.16
+      ],
+      "healing": [
+        220.4752,
+        235.59999999999997
+      ]
+    },
+    {
+      "pd": 24,
+      "defender_heroes": 6,
+      "seed": 260009,
+      "attacker_roles": [
+        "ranged",
+        "support",
+        "commander",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier"
+      ],
+      "hero_rescue": 1,
+      "soldier_dead": 0,
+      "winner": 1,
+      "seconds": 13.2,
+      "survivors": [
+        0,
+        11
+      ],
+      "remaining_hp": [
+        0,
+        1690.0
+      ],
+      "healing": [
+        133.168,
+        136.43040000000002
+      ]
+    },
+    {
+      "pd": 24,
+      "defender_heroes": 6,
+      "seed": 260010,
+      "attacker_roles": [
+        "melee",
+        "ranged",
+        "support",
+        "commander",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier"
+      ],
+      "hero_rescue": 0,
+      "soldier_dead": 0,
+      "winner": 1,
+      "seconds": 18.1,
+      "survivors": [
+        0,
+        11
+      ],
+      "remaining_hp": [
+        0,
+        1495.32
+      ],
+      "healing": [
+        161.41439999999997,
+        195.9952
+      ]
+    },
+    {
+      "pd": 24,
+      "defender_heroes": 6,
+      "seed": 260011,
+      "attacker_roles": [
+        "ranged",
+        "support",
+        "commander",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier"
+      ],
+      "hero_rescue": 1,
+      "soldier_dead": 0,
+      "winner": 1,
+      "seconds": 13.0,
+      "survivors": [
+        0,
+        11
+      ],
+      "remaining_hp": [
+        0,
+        1690.0
+      ],
+      "healing": [
+        144.584,
+        132.21919999999997
+      ]
+    },
+    {
+      "pd": 24,
+      "defender_heroes": 6,
+      "seed": 260012,
+      "attacker_roles": [
+        "melee",
+        "ranged",
+        "support",
+        "commander",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier"
+      ],
+      "hero_rescue": 0,
+      "soldier_dead": 0,
+      "winner": 1,
+      "seconds": 18.1,
+      "survivors": [
+        0,
+        11
+      ],
+      "remaining_hp": [
+        0,
+        1662.88
+      ],
+      "healing": [
+        226.792,
+        220.66080000000005
+      ]
+    },
+    {
+      "pd": 24,
+      "defender_heroes": 6,
+      "seed": 260013,
+      "attacker_roles": [
+        "ranged",
+        "support",
+        "commander",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier"
+      ],
+      "hero_rescue": 1,
+      "soldier_dead": 0,
+      "winner": 1,
+      "seconds": 13.0,
+      "survivors": [
+        0,
+        12
+      ],
+      "remaining_hp": [
+        0,
+        1752.23
+      ],
+      "healing": [
+        112.89600000000002,
+        136.43040000000002
+      ]
+    },
+    {
+      "pd": 24,
+      "defender_heroes": 6,
+      "seed": 260014,
+      "attacker_roles": [
+        "melee",
+        "ranged",
+        "support",
+        "commander",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier"
+      ],
+      "hero_rescue": 0,
+      "soldier_dead": 0,
+      "winner": 1,
+      "seconds": 16.5,
+      "survivors": [
+        0,
+        11
+      ],
+      "remaining_hp": [
+        0,
+        1565.32
+      ],
+      "healing": [
+        97.22719999999997,
+        255.0
+      ]
+    },
+    {
+      "pd": 24,
+      "defender_heroes": 6,
+      "seed": 260015,
+      "attacker_roles": [
+        "ranged",
+        "support",
+        "commander",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier"
+      ],
+      "hero_rescue": 1,
+      "soldier_dead": 0,
+      "winner": 1,
+      "seconds": 11.8,
+      "survivors": [
+        0,
+        12
+      ],
+      "remaining_hp": [
+        0,
+        1771.39
+      ],
+      "healing": [
+        133.168,
+        170.0
+      ]
+    },
+    {
+      "pd": 24,
+      "defender_heroes": 6,
+      "seed": 260016,
+      "attacker_roles": [
+        "melee",
+        "ranged",
+        "support",
+        "commander",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier"
+      ],
+      "hero_rescue": 0,
+      "soldier_dead": 0,
+      "winner": 1,
+      "seconds": 17.7,
+      "survivors": [
+        0,
+        11
+      ],
+      "remaining_hp": [
+        0,
+        1588.04
+      ],
+      "healing": [
+        194.1328,
+        239.81600000000006
+      ]
+    },
+    {
+      "pd": 24,
+      "defender_heroes": 6,
+      "seed": 260017,
+      "attacker_roles": [
+        "melee",
+        "ranged",
+        "support",
+        "commander",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier"
+      ],
+      "hero_rescue": 0,
+      "soldier_dead": 0,
+      "winner": 1,
+      "seconds": 16.5,
+      "survivors": [
+        0,
+        11
+      ],
+      "remaining_hp": [
+        0,
+        1479.8
+      ],
+      "healing": [
+        117.9136,
+        182.3504
+      ]
+    },
+    {
+      "pd": 24,
+      "defender_heroes": 6,
+      "seed": 260018,
+      "attacker_roles": [
+        "ranged",
+        "support",
+        "commander",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier"
+      ],
+      "hero_rescue": 1,
+      "soldier_dead": 0,
+      "winner": 1,
+      "seconds": 14.5,
+      "survivors": [
+        0,
+        12
+      ],
+      "remaining_hp": [
+        0,
+        1775.73
+      ],
+      "healing": [
+        138.2,
+        255.0
+      ]
+    },
+    {
+      "pd": 24,
+      "defender_heroes": 6,
+      "seed": 260019,
+      "attacker_roles": [
+        "melee",
+        "ranged",
+        "support",
+        "commander",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier"
+      ],
+      "hero_rescue": 0,
+      "soldier_dead": 0,
+      "winner": 1,
+      "seconds": 18.9,
+      "survivors": [
+        0,
+        11
+      ],
+      "remaining_hp": [
+        0,
+        1477.88
+      ],
+      "healing": [
+        191.80319999999998,
+        240.71679999999995
+      ]
+    },
+    {
+      "pd": 24,
+      "defender_heroes": 6,
+      "seed": 260020,
+      "attacker_roles": [
+        "melee",
+        "ranged",
+        "support",
+        "commander",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier"
+      ],
+      "hero_rescue": 0,
+      "soldier_dead": 0,
+      "winner": 1,
+      "seconds": 18.5,
+      "survivors": [
+        0,
+        11
+      ],
+      "remaining_hp": [
+        0,
+        1524.76
+      ],
+      "healing": [
+        228.32959999999997,
+        212.65760000000003
+      ]
+    },
+    {
+      "pd": 24,
+      "defender_heroes": 6,
+      "seed": 260021,
+      "attacker_roles": [
+        "ranged",
+        "support",
+        "commander",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier"
+      ],
+      "hero_rescue": 1,
+      "soldier_dead": 0,
+      "winner": 1,
+      "seconds": 13.0,
+      "survivors": [
+        0,
+        12
+      ],
+      "remaining_hp": [
+        0,
+        1749.23
+      ],
+      "healing": [
+        106.51200000000001,
+        170.0
+      ]
+    },
+    {
+      "pd": 24,
+      "defender_heroes": 6,
+      "seed": 260022,
+      "attacker_roles": [
+        "melee",
+        "ranged",
+        "support",
+        "commander",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier"
+      ],
+      "hero_rescue": 0,
+      "soldier_dead": 0,
+      "winner": 1,
+      "seconds": 18.7,
+      "survivors": [
+        0,
+        11
+      ],
+      "remaining_hp": [
+        0,
+        1434.12
+      ],
+      "healing": [
+        227.7024,
+        217.21919999999997
+      ]
+    },
+    {
+      "pd": 24,
+      "defender_heroes": 6,
+      "seed": 260023,
+      "attacker_roles": [
+        "ranged",
+        "support",
+        "commander",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier"
+      ],
+      "hero_rescue": 1,
+      "soldier_dead": 0,
+      "winner": 1,
+      "seconds": 15.4,
+      "survivors": [
+        0,
+        11
+      ],
+      "remaining_hp": [
+        0,
+        1621.12
+      ],
+      "healing": [
+        136.36,
+        170.0
+      ]
+    },
+    {
+      "pd": 24,
+      "defender_heroes": 6,
+      "seed": 260024,
+      "attacker_roles": [
+        "ranged",
+        "support",
+        "commander",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier"
+      ],
+      "hero_rescue": 1,
+      "soldier_dead": 0,
+      "winner": 1,
+      "seconds": 13.0,
+      "survivors": [
+        0,
+        12
+      ],
+      "remaining_hp": [
+        0,
+        1727.9
+      ],
+      "healing": [
+        106.51200000000001,
+        170.0
+      ]
+    },
+    {
+      "pd": 24,
+      "defender_heroes": 6,
+      "seed": 260025,
+      "attacker_roles": [
+        "support",
+        "commander",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier"
+      ],
+      "hero_rescue": 2,
+      "soldier_dead": 0,
+      "winner": 1,
+      "seconds": 11.7,
+      "survivors": [
+        0,
+        12
+      ],
+      "remaining_hp": [
+        0,
+        1916.99
+      ],
+      "healing": [
+        117.93600000000002,
+        136.38560000000007
+      ]
+    },
+    {
+      "pd": 24,
+      "defender_heroes": 6,
+      "seed": 260026,
+      "attacker_roles": [
+        "melee",
+        "ranged",
+        "support",
+        "commander",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier"
+      ],
+      "hero_rescue": 0,
+      "soldier_dead": 0,
+      "winner": 1,
+      "seconds": 17.7,
+      "survivors": [
+        0,
+        11
+      ],
+      "remaining_hp": [
+        0,
+        1568.36
+      ],
+      "healing": [
+        185.4192,
+        208.30880000000005
+      ]
+    },
+    {
+      "pd": 24,
+      "defender_heroes": 6,
+      "seed": 260027,
+      "attacker_roles": [
+        "ranged",
+        "support",
+        "commander",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier"
+      ],
+      "hero_rescue": 1,
+      "soldier_dead": 0,
+      "winner": 1,
+      "seconds": 12.7,
+      "survivors": [
+        0,
+        12
+      ],
+      "remaining_hp": [
+        0,
+        1727.34
+      ],
+      "healing": [
+        137.67040000000003,
+        136.43040000000002
+      ]
+    },
+    {
+      "pd": 24,
+      "defender_heroes": 6,
+      "seed": 260028,
+      "attacker_roles": [
+        "ranged",
+        "support",
+        "commander",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier"
+      ],
+      "hero_rescue": 1,
+      "soldier_dead": 0,
+      "winner": 1,
+      "seconds": 14.2,
+      "survivors": [
+        0,
+        11
+      ],
+      "remaining_hp": [
+        0,
+        1690.0
+      ],
+      "healing": [
+        143.80800000000002,
+        161.38400000000007
+      ]
+    },
+    {
+      "pd": 24,
+      "defender_heroes": 6,
+      "seed": 260029,
+      "attacker_roles": [
+        "melee",
+        "ranged",
+        "support",
+        "commander",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier"
+      ],
+      "hero_rescue": 0,
+      "soldier_dead": 0,
+      "winner": 1,
+      "seconds": 18.9,
+      "survivors": [
+        0,
+        11
+      ],
+      "remaining_hp": [
+        0,
+        1544.44
+      ],
+      "healing": [
+        186.4384,
+        222.47999999999996
+      ]
+    },
+    {
+      "pd": 24,
+      "defender_heroes": 6,
+      "seed": 260030,
+      "attacker_roles": [
+        "ranged",
+        "support",
+        "commander",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier"
+      ],
+      "hero_rescue": 1,
+      "soldier_dead": 0,
+      "winner": 1,
+      "seconds": 13.9,
+      "survivors": [
+        0,
+        12
+      ],
+      "remaining_hp": [
+        0,
+        1723.52
+      ],
+      "healing": [
+        134.57920000000001,
+        132.21919999999997
+      ]
+    },
+    {
+      "pd": 24,
+      "defender_heroes": 6,
+      "seed": 260031,
+      "attacker_roles": [
+        "ranged",
+        "support",
+        "commander",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier",
+        "soldier"
+      ],
+      "hero_rescue": 1,
+      "soldier_dead": 0,
+      "winner": 1,
+      "seconds": 13.8,
+      "survivors": [
+        0,
+        11
+      ],
+      "remaining_hp": [
+        0,
+        1644.08
+      ],
+      "healing": [
+        112.89600000000002,
+        102.97919999999993
+      ]
+    }
+  ]
+}

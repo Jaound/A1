@@ -1,3 +1,5 @@
+> **후속D113:** 초대형 화력은 유지한다. 강습선 소형/공격0/PD1·개인별 포드는 [현행 재검토](BOARDING_REVIEW.md)가 대체한다. 아래 강습선PD2/일괄 포드·PD가 강습선에 가한 피해는 이전 모형 입력이며 새 규칙의 검증 결과가 아니다.
+
 # 장기 함대전 수치안 v0.3
 
 > 현재 전투 시간/함대 구성 설계의 수치 후보. 사용자가 정한 코스트와10~15분 목표는 확정 방향이고 HP·관통·PD 국소화·추적 보정은 시험 제안이다. [결과](FLEET_ENDURANCE_RESULTS.md) · [원본](../reference/FleetEndurance/profile.json) · [재현](../reference/FleetEndurance/README.md). v0.2는 과거 비교 자료다. UE 적용/실제XYZ·시설전 검증은 별도다.

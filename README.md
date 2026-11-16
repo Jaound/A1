@@ -43,3 +43,5 @@
 [전투 수치v0.2](docs/COMBAT_BALANCE.md) · [함대/영웅/강습 연동 모형 분석](docs/COMBAT_SIMULATION.md) · [재현 도구](reference/CombatSimulation/README.md): 신규 전투 프로필의 반복 검토 자료다. UE 적용·최신WebZIP 실행·전체 캠페인 완성 검증이 아니다.
 
 현재 외부전 목표는 **1배속10~15분**이다. [장기전 수치v0.3](docs/FLEET_ENDURANCE_BALANCE.md) · [전 함종/코스트100·200·300 분석](docs/FLEET_ENDURANCE_RESULTS.md) · [재현 도구](reference/FleetEndurance/README.md)를 따른다. 이전v0.2는 비교/선내 영웅 출발값이며 새 함대 시간 기준을 덮어쓰지 않는다.
+
+[D113 강습·영웅 수·코스트 시간 재검토](docs/BOARDING_REVIEW.md): 초대형 화력 유지, 개인별1포드, 강습선 공격0/PD1 확정과 이전 모형의PD/방어 영웅 가정을 정정한다.
