@@ -16,10 +16,13 @@ USTRUCT(BlueprintType)
 struct ORBITALVANGUARD_API FOVDamageTuning
 {
     GENERATED_BODY()
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Provisional") float AdditionalShieldCapacity = .5f;
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Provisional") float CrewDamageCoefficient = .20f;
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Provisional") float ShieldBase = 300;
-    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Provisional") float ShieldRegenFraction = 0.03f;
-    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Provisional") float ShieldNonCombatRegenFraction = 0.06f;
-    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Provisional") float ShieldRecoveryDelay = 6.5f;
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Provisional") float ShieldRegenFraction = 0.006f;
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Provisional") float ShieldNonCombatRegenFraction = 0.018f;
+    // Legacy serialized field ignored under D116.
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Provisional") float ShieldRecoveryDelay = 0.f;
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Provisional") float NoHitRecoveryInterval = 15;
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Provisional") EOVShieldRecoveryPolicy RecoveryPolicy = EOVShieldRecoveryPolicy::Gradual;
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Provisional") bool bAllowManualShieldToggle = false;
@@ -79,6 +82,7 @@ public:
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Systems") float Shield = 0;
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Systems") float MaxShield = 0;
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Systems") float ShieldRegen = 0;
+    UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Systems") float ShieldCrewEfficiency = 0;
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Systems") float ShieldRecoveryRemaining = 0;
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Systems") float TimeSinceExternalHit = 0;
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Systems") bool bShieldActive = false;
@@ -121,9 +125,9 @@ public:
     UFUNCTION(BlueprintPure, Category="Systems") float GetRadarAccuracyMultiplier() const;
     UFUNCTION(BlueprintPure, Category="Systems") FOVFacilityState GetSlotState(FName SlotId) const;
     UFUNCTION(BlueprintPure, Category="Systems") FString GetSlotStatus(FName SlotId) const;
-    UFUNCTION(BlueprintCallable, Category="Damage") void ApplyWorldHit(FVector WorldPoint, FVector WorldNormal, float Damage, EOVDamageCause Cause);
+    UFUNCTION(BlueprintCallable, Category="Damage") void ApplyWorldHit(FVector WorldPoint, FVector WorldNormal, float Damage, EOVDamageCause Cause, bool bCombatAttack = false);
     /** D089: the external shield protects mounts; remaining damage never spills into the hull. */
-    UFUNCTION(BlueprintCallable, Category="Damage") void ApplyWorldWeaponHit(FName WeaponMountId, FVector WorldPoint, FVector WorldNormal, float Damage);
+    UFUNCTION(BlueprintCallable, Category="Damage") void ApplyWorldWeaponHit(FName WeaponMountId, FVector WorldPoint, FVector WorldNormal, float Damage, bool bCombatAttack = false);
     UFUNCTION(BlueprintCallable, Category="Debug") void DebugDestroySlot(FName SlotId, EOVDamageCause Cause);
     UFUNCTION(BlueprintCallable, Category="Debug") void DebugRepairSlot(FName SlotId);
     UFUNCTION(BlueprintCallable, Category="Debug") void DebugSetCrew(FName SlotId, float Crew);
@@ -135,7 +139,10 @@ public:
     UFUNCTION(BlueprintCallable, Category="Debug") bool SetShieldManualOff(bool bOff);
     UFUNCTION(BlueprintCallable, Category="Debug") void RefreshDerivedState();
 
+    void NotifyCombatParticipation();
+
 private:
+    bool bProcessingCombatDamage = false;
     bool IsOperational(int32 Index) const;
     bool CanAct() const;
     void MarkWrecked();

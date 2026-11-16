@@ -527,6 +527,7 @@ void UOVCombatSubsystem::Launch(FOVCombatShipState& State, FOVCombatMountState& 
         Attack.VLSDuration = FMath::Max(.01f, float(Length / Attack.Weapon.Speed));
         Attack.Direction = LaunchUp;
     }
+    State.Ship->Systems->NotifyCombatParticipation();
     ++Mount.ShotsFired;
     const float Efficiency = State.Ship->Systems->GetEfficiency(EOVFacilityType::WeaponControl)
         * State.Ship->Systems->GetEfficiency(SupplyFor(Def->Type));
@@ -613,8 +614,8 @@ bool UOVCombatSubsystem::ResolveImpact(FOVAttackState& Attack, AOVShip* HitShip,
     Systems->IncomingFactionId = Attack.FactionId;
     Systems->IncomingWeaponId = Attack.WeaponId;
     Attack.ImpactWeaponId = HitWeaponId;
-    if (!HitWeaponId.IsNone()) Systems->ApplyWorldWeaponHit(HitWeaponId, Point, Normal, Attack.Damage);
-    else Systems->ApplyWorldHit(Point, Normal, Attack.Damage, EOVDamageCause::External);
+    if (!HitWeaponId.IsNone()) Systems->ApplyWorldWeaponHit(HitWeaponId, Point, Normal, Attack.Damage, true);
+    else Systems->ApplyWorldHit(Point, Normal, Attack.Damage, EOVDamageCause::External, true);
     Attack.ArmorId = Systems->LastArmorSection; Attack.SlotId = Systems->LastDamageSlot;
     Attack.HullDamage = Systems->LastHullDamage; Attack.Explosions = Systems->LastExplosionCount;
     ++HitCount;

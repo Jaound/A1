@@ -29,9 +29,9 @@ bool FOVShieldTest::RunTest(const FString&)
 {
  auto* S=OVTest::Make();const FVector Point(0,0,30);const float Max=S->MaxShield;
  OVTest::Hit(S,Point,Max);TestTrue(TEXT("Exact break causes no hull loss"),!S->bShieldActive&&S->Shield==0&&S->LastHullDamage==0);
- S->Tuning.NoHitRecoveryInterval=100;S->Simulate(6);TestEqual(TEXT("Recovery delay"),S->Shield,0.f);
- S->Simulate(1);TestTrue(TEXT("Only post-delay half second"),FMath::IsNearlyEqual(S->Shield,Max*.03f*.5f,.001f));
- S->Simulate(16.166667f);TestTrue(TEXT("50 percent auto reactivate"),S->bShieldActive&&FMath::IsNearlyEqual(S->Shield,Max*.5f,.01f));
+ S->Tuning.NoHitRecoveryInterval=1000;S->Tuning.ShieldRecoveryDelay=999;
+ S->Simulate(1);TestTrue(TEXT("D116 ignores legacy delay and immediately recovers"),FMath::IsNearlyEqual(S->Shield,Max*.006f,.001f));
+ S->Simulate(90);TestTrue(TEXT("50 percent auto reactivate"),S->bShieldActive&&FMath::IsNearlyEqual(S->Shield,Max*.5f,.01f));
  const float Half=S->Shield;S->Simulate(2);TestEqual(TEXT("Active combat no regen"),S->Shield,Half);
  S->Tuning.NoHitRecoveryInterval=15;S->Simulate(100);TestEqual(TEXT("D083 active shield never regenerates, including non-combat"),S->Shield,Half);
  S->Tuning.RecoveryPolicy=EOVShieldRecoveryPolicy::FullAfterNoHitInterval;
@@ -148,13 +148,15 @@ bool FOVShieldCapacityTransitionTest::RunTest(const FString&)
 {
     auto* Systems = OVTest::Make();
     Systems->Tuning.NoHitRecoveryInterval = 100;
+    Systems->Tuning.ShieldRegenFraction = .03f;
+    Systems->RefreshDerivedState();
     const auto Controls = OVTest::Find(Systems, EOVFacilityType::ShieldControl);
     TestEqual(TEXT("Three control-room fixture"), Controls.Num(), 3);
     Systems->DebugSetOccupation(Systems->Slots[Controls[2]].SlotId, 1);
     TestEqual(TEXT("Two controllers provide 450 capacity"), Systems->MaxShield, 450.f);
     OVTest::Hit(Systems, FVector(0, 0, 30), Systems->Shield);
     TestTrue(TEXT("Initial break remains inactive at zero charge"), !Systems->bShieldActive && Systems->Shield == 0);
-    Systems->Simulate(Systems->Tuning.ShieldRecoveryDelay + 180.f / Systems->ShieldRegen);
+    Systems->Simulate(180.f / Systems->ShieldRegen);
     TestTrue(TEXT("180/450 recovery remains below reactivation threshold"), !Systems->bShieldActive && FMath::IsNearlyEqual(Systems->Shield, 180.f, .001f));
     Systems->DebugSetOccupation(Systems->Slots[Controls[1]].SlotId, 1);
     TestTrue(TEXT("Capacity loss immediately activates existing 180/300 charge"), Systems->bShieldActive && Systems->MaxShield == 300.f);
@@ -184,4 +186,52 @@ bool FOVInvalidRuntimeLayoutTest::RunTest(const FString&)
     TestEqual(TEXT("Invalid-design simulation and hits remain inert"), Systems->HitEventId, 0);
     return true;
 }
+
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(FOVD116ShieldCrewTest,"OrbitalVanguard.Systems.D116NoDelayCrewAndDamage",EAutomationTestFlags::EditorContext|EAutomationTestFlags::EngineFilter)
+bool FOVD116ShieldCrewTest::RunTest(const FString&)
+{
+ auto* S=OVTest::Make();const auto Controls=OVTest::Find(S,EOVFacilityType::ShieldControl);
+ for(int32 N=1;N<Controls.Num();++N)S->DebugSetOccupation(S->Slots[Controls[N]].SlotId,1);
+ const int32 C=Controls[0];const FName Id=S->Slots[C].SlotId;const float Crew=S->Layout->Slots[C].RequiredCrew;
+ const float Max=S->MaxShield;
+ S->Shield=0;S->bShieldActive=false;S->DebugSetCrew(Id,Crew*.5f);
+ TestEqual(TEXT("Half crew preserves nominal maximum"),S->MaxShield,Max);
+ S->Tuning.ShieldRecoveryDelay=999;S->Simulate(1);
+ TestTrue(TEXT("Crew applied exactly once"),FMath::IsNearlyEqual(S->Shield,Max*.006f*.5f,.001f));
+ const float Before=S->Shield;S->NotifyCombatParticipation();S->Simulate(1);
+ TestTrue(TEXT("Repeated participation never resets recovery delay"),FMath::IsNearlyEqual(S->Shield-Before,Max*.003f,.001f));
+ S->TimeSinceExternalHit=20;S->Simulate(1);
+ TestTrue(TEXT("Half crew noncombat rate"),FMath::IsNearlyEqual(S->Shield-Before,Max*(.003f+.009f),.001f));
+ S->DebugSetCrew(Id,0);TestTrue(TEXT("Zero crew removes shield"),S->MaxShield==0&&S->Shield==0);
+ S->DebugSetCrew(Id,Crew);TestEqual(TEXT("Restoring personnel grants no free charge"),S->Shield,0.f);
+ float TotalBefore=0;for(const auto& Slot:S->Slots)TotalBefore+=Slot.Crew;
+ S->TimeSinceExternalHit=30;
+ FVector CrewHitPoint=FVector::ZeroVector,CrewHitNormal=FVector::UpVector;
+ bool FoundCrewFace=false;
+ for(const auto& A:S->Layout->ArmorSections) {
+  FVector N;
+  switch(A.Face) {
+   case EOVArmorFace::Front:N=FVector::ForwardVector;break;
+   case EOVArmorFace::Rear:N=-FVector::ForwardVector;break;
+   case EOVArmorFace::Left:N=-FVector::RightVector;break;
+   case EOVArmorFace::Right:N=FVector::RightVector;break;
+   case EOVArmorFace::Top:N=FVector::UpVector;break;
+   default:N=-FVector::UpVector;break;
+  }
+  const int32 AI=S->Layout->ResolveArmor(A.LocalCenter,N);
+  const int32 SI=S->Layout->MapArmorToSlot(AI,A.LocalCenter);
+  if(S->Slots.IsValidIndex(SI)&&S->Slots[SI].Crew>0) {CrewHitPoint=A.LocalCenter;CrewHitNormal=N;FoundCrewFace=true;break;}
+ }
+ TestTrue(TEXT("Fixture exposes a staffed facility face"),FoundCrewFace);
+ S->ApplyWorldHit(CrewHitPoint,CrewHitNormal,10,EOVDamageCause::External,true);
+ float TotalAfter=0;for(const auto& Slot:S->Slots)TotalAfter+=Slot.Crew;
+ TestTrue(TEXT("Actual combat facility hit removes partial crew"),TotalAfter<TotalBefore&&TotalAfter>0);
+ TestEqual(TEXT("Combat hit resets participation clock"),S->TimeSinceExternalHit,0.f);
+ const FName Damaged=S->LastDamageSlot;const float DamagedCrew=S->GetSlotState(Damaged).Crew;
+ S->DebugRepairSlot(Damaged);TestEqual(TEXT("Physical repair never restores crew"),S->GetSlotState(Damaged).Crew,DamagedCrew);
+ S->TimeSinceExternalHit=20;S->ApplyWorldHit(FVector(0,0,30),FVector::UpVector,1,EOVDamageCause::External);
+ TestEqual(TEXT("DEV hit does not mark combat participation"),S->TimeSinceExternalHit,20.f);
+ return true;
+}
+
 #endif

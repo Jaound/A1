@@ -139,8 +139,15 @@ void UOVShipSystemsComponent::RefreshDerivedState()
     float CrewTotal = 0;
     for (const FOVFacilityState& State : Slots) CrewTotal += State.Crew;
     bNeutral = !bWrecked && CrewTotal <= 0;
-    MaxShield = FMath::Max(0.f, Tuning.ShieldBase) * GetEfficiency(EOVFacilityType::ShieldControl);
-    ShieldRegen = MaxShield * FMath::Max(0.f, Tuning.ShieldRegenFraction);
+    int32 OperationalControls = 0;
+    for (int32 Index = 0; Index < Slots.Num(); ++Index)
+        if (Layout->Slots[Index].Facility == EOVFacilityType::ShieldControl && IsOperational(Index)) ++OperationalControls;
+    // Partial staffing does not shrink nominal capacity. Multiple-room capacity remains a provisional rule.
+    const float CapacityFactor = OperationalControls > 0 ? 1.f + (OperationalControls - 1) * FMath::Max(0.f, Tuning.AdditionalShieldCapacity) : 0.f;
+    const float NominalCrewEfficiency = OperationalControls > 0 ? .5f * (OperationalControls + 1) : 0.f;
+    ShieldCrewEfficiency = NominalCrewEfficiency > 0 ? GetEfficiency(EOVFacilityType::ShieldControl) / NominalCrewEfficiency : 0.f;
+    MaxShield = FMath::Max(0.f, Tuning.ShieldBase) * CapacityFactor;
+    ShieldRegen = MaxShield * FMath::Max(0.f, Tuning.ShieldRegenFraction) * ShieldCrewEfficiency;
     Shield = FMath::Clamp(Shield, 0.f, MaxShield);
     if (MaxShield <= 0 || bWrecked || bShieldManualOff || Shield <= 0) bShieldActive = false;
     else if (!bShieldActive && Shield >= MaxShield * 0.5f)
@@ -157,16 +164,15 @@ void UOVShipSystemsComponent::Simulate(float SimDelta)
     RefreshDerivedState();
     if (bWrecked) return;
     TimeSinceExternalHit += SimDelta;
-    const float DelayBefore = ShieldRecoveryRemaining;
-    ShieldRecoveryRemaining = FMath::Max(0.f, ShieldRecoveryRemaining - SimDelta);
+    ShieldRecoveryRemaining = 0; // D116: even legacy nonzero settings cannot delay recovery.
     // D083: active shields never recharge, including outside combat. Legacy RecoveryPolicy is ignored.
     if (MaxShield <= 0 || bShieldManualOff || bShieldActive) return;
-    const float RecoverTime = FMath::Max(0.f, SimDelta - DelayBefore);
+    const float RecoverTime = SimDelta;
     const float RecoveryStart = TimeSinceExternalHit - RecoverTime;
     const float CombatTime = FMath::Clamp(Tuning.NoHitRecoveryInterval - RecoveryStart, 0.f, RecoverTime);
     const float NonCombatTime = RecoverTime - CombatTime;
     const float Recovery = ShieldRegen * CombatTime
-        + MaxShield * FMath::Max(0.f, Tuning.ShieldNonCombatRegenFraction) * NonCombatTime;
+        + MaxShield * FMath::Max(0.f, Tuning.ShieldNonCombatRegenFraction) * ShieldCrewEfficiency * NonCombatTime;
     const float Half = 0.5f * MaxShield;
     Shield = FMath::Min(Half, Shield + Recovery);
     if (Shield + UE_KINDA_SMALL_NUMBER >= Half) { Shield = Half; bShieldActive = true; }
@@ -196,10 +202,14 @@ void UOVShipSystemsComponent::BeginDamageEvent(EOVDamageCause Cause, FName Sourc
     LastWeaponMount = NAME_None; LastHullDamage = 0; LastExplosionCount = 0;
 }
 
-float UOVShipSystemsComponent::AbsorbExternalDamage(float Damage)
+void UOVShipSystemsComponent::NotifyCombatParticipation()
 {
     TimeSinceExternalHit = 0;
-    ShieldRecoveryRemaining = FMath::Max(0.f, Tuning.ShieldRecoveryDelay);
+}
+
+float UOVShipSystemsComponent::AbsorbExternalDamage(float Damage)
+{
+    ShieldRecoveryRemaining = 0;
     if (!bShieldActive || Shield <= 0) return Damage;
     const float Overflow = FMath::Max(0.f, Damage - Shield);
     Shield = FMath::Max(0.f, Shield - Damage);
@@ -207,11 +217,12 @@ float UOVShipSystemsComponent::AbsorbExternalDamage(float Damage)
     return Overflow * FMath::Clamp(Tuning.ShieldOverflowFraction, 0.f, 1.f);
 }
 
-void UOVShipSystemsComponent::ApplyWorldWeaponHit(FName WeaponMountId, FVector WorldPoint, FVector WorldNormal, float Damage)
+void UOVShipSystemsComponent::ApplyWorldWeaponHit(FName WeaponMountId, FVector WorldPoint, FVector WorldNormal, float Damage, bool bCombatAttack)
 {
     if (!Layout || bWrecked || !FMath::IsFinite(Damage) || Damage <= 0 || WorldPoint.ContainsNaN() || WorldNormal.ContainsNaN()) return;
     FOVWeaponMountState* Mount = WeaponMountStates.FindByPredicate([WeaponMountId](const FOVWeaponMountState& State) { return State.WeaponMountId == WeaponMountId; });
     if (!Mount || Mount->HP <= 0) return;
+    if (bCombatAttack) NotifyCombatParticipation();
     BeginDamageEvent(EOVDamageCause::External, IncomingSourceId.IsNone() ? FName(TEXT("WorldWeaponHit")) : IncomingSourceId);
     const FTransform Transform = GetOwner() ? GetOwner()->GetActorTransform() : FTransform::Identity;
     LastWorldHit = WorldPoint; LastLocalHit = Transform.InverseTransformPosition(WorldPoint);
@@ -220,7 +231,7 @@ void UOVShipSystemsComponent::ApplyWorldWeaponHit(FName WeaponMountId, FVector W
     Mount->HP = FMath::Max(0.f, Mount->HP - AbsorbExternalDamage(Damage));
 }
 
-void UOVShipSystemsComponent::ApplyWorldHit(FVector WorldPoint, FVector WorldNormal, float Damage, EOVDamageCause Cause)
+void UOVShipSystemsComponent::ApplyWorldHit(FVector WorldPoint, FVector WorldNormal, float Damage, EOVDamageCause Cause, bool bCombatAttack)
 {
     if (!Layout || bWrecked || !FMath::IsFinite(Damage) || Damage <= 0 || WorldPoint.ContainsNaN() || WorldNormal.ContainsNaN()) return;
     const FTransform Transform = GetOwner() ? GetOwner()->GetActorTransform() : FTransform::Identity;
@@ -230,6 +241,8 @@ void UOVShipSystemsComponent::ApplyWorldHit(FVector WorldPoint, FVector WorldNor
     if (!ArmorSections.IsValidIndex(ArmorIndex)) return;
     int32 SlotIndex = Layout->MapArmorToSlot(ArmorIndex, LocalPoint);
     if (!Slots.IsValidIndex(SlotIndex)) return;
+    TGuardValue<bool> CombatDamageScope(bProcessingCombatDamage, bCombatAttack);
+    if (bCombatAttack) NotifyCombatParticipation();
     BeginDamageEvent(Cause, IncomingSourceId.IsNone() ? FName(TEXT("WorldHit")) : IncomingSourceId);
     LastWorldHit = WorldPoint; LastLocalHit = LocalPoint; LastLocalNormal = LocalNormal;
     LastDamageIndex = SlotIndex; LastDamageSlot = Slots[SlotIndex].SlotId;
@@ -317,6 +330,13 @@ void UOVShipSystemsComponent::ProcessDamage(int32 SlotIndex, int32 ArmorIndex, f
         const bool bAliveFacility = Layout->Slots[Hit.Slot].Facility != EOVFacilityType::None && Slot.HP > 0;
         if (!Hit.Direct && bAliveFacility)
         {
+            if (bProcessingCombatDamage && !Unmanned(Layout->Slots[Hit.Slot].Facility))
+            {
+                const auto& Def = Layout->Slots[Hit.Slot];
+                const float Loss = Def.RequiredCrew * FMath::Clamp(Delivered / FMath::Max(1.f, Def.MaxFacilityHP), 0.f, 1.f)
+                    * FMath::Max(0.f, Tuning.CrewDamageCoefficient);
+                Slot.Crew = FMath::Max(0.f, Slot.Crew - Loss);
+            }
             Slot.HP = FMath::Max(0.f, Slot.HP - Delivered);
             if (Slot.HP <= 0) DestroyFacility(Hit.Slot, Hit.Cause, ExplosionQueue);
         }
