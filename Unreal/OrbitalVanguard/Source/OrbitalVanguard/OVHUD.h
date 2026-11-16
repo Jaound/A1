@@ -9,6 +9,7 @@ public:
  virtual void DrawHUD() override;
  virtual void NotifyHitBoxClick(FName BoxName) override;
  UFUNCTION(BlueprintPure, Category="UI") bool IsOverPanel(float X,float Y) const;
+ UFUNCTION(BlueprintPure, Category="UI") FName GetHitActionAtCanvasPoint(FVector2D Point) const;
  bool HasOrbitPreview() const;
  bool IsOverOrbitPreview(FVector2D Cursor) const;
  void OrbitPreview(FVector2D Delta);
@@ -23,6 +24,7 @@ private:
  float UIScale=1.f;
  FVector2D ViewportPixels=FVector2D(1280,740);
  bool bDragging=false,bResizing=false;
+ bool bDrawingDetails=false;
  FVector2D DragOffset=FVector2D::ZeroVector;
  FRotator PreviewRotation=FRotator(-25,35,0);
  float PreviewZoom=1;

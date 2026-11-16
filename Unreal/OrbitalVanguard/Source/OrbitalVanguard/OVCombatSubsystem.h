@@ -117,6 +117,7 @@ struct ORBITALVANGUARD_API FOVCombatShipState
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly) FName ShipId;
     UPROPERTY(EditAnywhere, BlueprintReadWrite) int32 RadarTier = 1;
     UPROPERTY(EditAnywhere, BlueprintReadWrite) bool bRadarSupport = false;
+    UPROPERTY(VisibleAnywhere, BlueprintReadOnly) int32 WeaponTierCap = 1;
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly) bool bDeparted = false;
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly) TArray<FOVCombatMountState> Mounts;
 };
@@ -167,7 +168,7 @@ public:
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly) TArray<FOVAttackState> RecentEvents;
     UFUNCTION(BlueprintCallable) void EnableCombat(const TArray<AOVShip*>& InShips, int32 Seed = 260112);
     UFUNCTION(BlueprintCallable) void DisableCombat();
-    UFUNCTION(BlueprintCallable) void RegisterShip(AOVShip* Ship, int32 RadarTier = 1, bool bRadarSupport = false);
+    UFUNCTION(BlueprintCallable) void RegisterShip(AOVShip* Ship, int32 RadarTier = 1, bool bRadarSupport = false, int32 WeaponTierCap = 0);
     UFUNCTION(BlueprintCallable) void Simulate(float GameDelta);
     UFUNCTION(BlueprintCallable) bool SetTarget(AOVShip* Ship, AOVShip* Target);
     UFUNCTION(BlueprintCallable) bool RequestFire(AOVShip* Ship, FName MountId = NAME_None);

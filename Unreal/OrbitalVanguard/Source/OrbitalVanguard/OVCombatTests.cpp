@@ -426,13 +426,25 @@ bool FOVCombatProfilesTest::RunTest(const FString&)
     TestTrue(TEXT("Same-tier heavy beam is a separate kind profile"), R.Combat->SetWeaponProfile(R.A, R.Gun().MountId, TEXT("BeamHeavy_T1")));
     const FOVWeaponProfile Heavy = R.Gun().Profile;
     TestTrue(TEXT("Weapon kind changes interval and damage within a tier"), Heavy.Tier == Rapid.Tier && Heavy.Interval != Rapid.Interval && Heavy.Damage != Rapid.Damage);
-    TestTrue(TEXT("Higher-tier profile applies within hull cap"), R.Combat->SetWeaponProfile(R.A, R.Gun().MountId, TEXT("BeamHeavy_T2")));
+    TestFalse(TEXT("Changing profile cannot silently change authored loadout tier"), R.Combat->SetWeaponProfile(R.A, R.Gun().MountId, TEXT("BeamHeavy_T2")));
+    auto* TierTwoLayout = UShipLayoutDataAsset::MakeTestLayout(R.A, 3);
+    TierTwoLayout->WeaponTier = 2;
+    for (auto& M : TierTwoLayout->WeaponMounts) M.Tier = 2;
+    R.A->Systems->Initialize(TierTwoLayout); R.Enable();
+    TestTrue(TEXT("Higher-tier authored loadout accepts matching profile"), R.Combat->SetWeaponProfile(R.A, R.Gun().MountId, TEXT("BeamHeavy_T2")));
     TestTrue(TEXT("Tier changes performance independently of kind"), R.Gun().Profile.Damage != Heavy.Damage && R.Gun().Profile.Tier == 2);
     TestFalse(TEXT("Profile cannot change a beam mount into a cannon"), R.Combat->SetWeaponProfile(R.A, R.Gun().MountId, TEXT("CannonRapid_T1")));
     R.A->Systems->Initialize(UShipLayoutDataAsset::MakeTestLayout(R.A, 1));
     R.Enable();
     TestFalse(TEXT("Small hull cannot install tier 2"), R.Combat->SetWeaponProfile(R.A, R.Gun().MountId, TEXT("BeamRapid_T2")));
     TestTrue(TEXT("Small hull retains valid tier 1"), R.Gun().Profile.Tier == 1);
+    auto* TierFourLayout = UShipLayoutDataAsset::MakeTestLayout(R.A, 3);
+    TierFourLayout->WeaponTier = 4;
+    for (auto& M : TierFourLayout->WeaponMounts) M.Tier = 4;
+    R.A->Systems->Initialize(TierFourLayout); R.Enable();
+    TestFalse(TEXT("Three decks alone do not authorize extra-large tier 4"), R.Combat->GetReadiness(R.A, R.Gun().MountId).bReady);
+    R.Combat->RegisterShip(R.A, 1, false, 4);
+    TestTrue(TEXT("Explicit extra-large authoring permits tier 4"), R.Combat->GetReadiness(R.A, R.Gun().MountId).bReady);
     return true;
 }
 #endif

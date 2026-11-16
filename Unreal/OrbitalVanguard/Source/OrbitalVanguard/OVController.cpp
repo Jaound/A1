@@ -71,6 +71,7 @@ void AOVController::StartCombatRange()
   Ship->DebugResetMotion();
   Ship->bFriendly=I!=2;
   Ship->SetActorHiddenInGame(false);
+  Ship->SetActorEnableCollision(true);
   Ship->SetActorLocationAndRotation(Positions[I],FRotator(0,I==2?180:0,0));
   Ship->bManual=I!=2;
  }
@@ -80,6 +81,8 @@ void AOVController::StartCombatRange()
  Combat->SetWeaponProfile(Ships[1],TEXT("Weapon_3"),TEXT("GuidedMissile_T2"));
  bSimulationPaused=true; SimulationSpeed=1; SimulationSeconds=0;
  SelectShip(Ships[1]); SelectedWeapon=1;
+ // Frame the wider combat fixture; profile gains and all subsequent controls stay unchanged.
+ CameraFocus=FVector(0,0,300); CameraDistance=6500; UpdateCamera();
  LastAction=TEXT("2B ready (paused). T + enemy selects only; B fires chosen mount; L fires all; AUTO engages. F1 resumes.");
  UE_LOG(LogTemp,Display,TEXT("OV2B: Combat range reset, seed=260112, paused"));
 }
@@ -113,6 +116,7 @@ void AOVController::SelectAdditional(AOVShip* Ship)
 }
 void AOVController::SetTarget(AOVShip* Ship)
 {
+ if(Combat && Combat->bEnabled && Combat->IsDeparted(Ship)) return;
  if(Selected && Ship && Ship!=Selected && Ship->bFriendly!=Selected->bFriendly && !Ship->Systems->bWrecked) {
   for(AOVShip* Vessel:Selection) if(Vessel->bFriendly && Vessel->Systems->CanCommand()) {
    if(Combat && Combat->bEnabled) Combat->SetTarget(Vessel,Ship); else Vessel->AttackTarget=Ship;
@@ -142,7 +146,7 @@ void AOVController::Action(FName Name)
   return;
  }
  if(Name==TEXT("Move") || Name==TEXT("Stop") || Name==TEXT("Auto") ||
-    Name==TEXT("Target") || Name==TEXT("Heading") || Name==TEXT("Cancel"))
+    Name==TEXT("AutoFree") || Name==TEXT("Target") || Name==TEXT("Heading") || Name==TEXT("Cancel"))
  {
   CancelRightMove();
  }
@@ -158,6 +162,12 @@ void AOVController::Action(FName Name)
  if(Selected && Selected->bFriendly && Selected->Systems->CanCommand() && !(Combat&&Combat->bEnabled&&Combat->IsDeparted(Selected))) {
   if(Name==TEXT("Manual")) { Selected->bManual=true; LastAction=TEXT("MANUAL - persists until AUTO is clicked"); }
   if(Name==TEXT("Auto")) { Selected->bManual=false; bPlacing=false; InputMode=EOVInputMode::None; LastAction=TEXT("AUTO / Hold and manual attitude preserved")+(Combat&&Combat->bEnabled?FString(TEXT(" / automatic engagement")):FString(TEXT("; combat deferred"))); }
+  if(Name==TEXT("AutoFree") && Combat && Combat->bEnabled) {
+   Selected->bManual=false;
+   if(!Selected->bHasDestination && !Selected->bFTLCharging && !Selected->bManualAttitude) Selected->bHold=false;
+   bPlacing=false; InputMode=EOVInputMode::None;
+   LastAction=TEXT("AUTO FREE / release Hold only; existing destination, manual attitude and FTL remain authoritative");
+  }
   if(Name==TEXT("NextWeapon") && Selected->Systems->WeaponMountStates.Num()>0) SelectedWeapon=(SelectedWeapon+1)%Selected->Systems->WeaponMountStates.Num();
   if((Name==TEXT("Fire") || Name==TEXT("FireAll")) && Combat && Combat->bEnabled) {
    const auto& Mounts=Selected->Systems->WeaponMountStates;
@@ -453,7 +463,7 @@ void AOVController::StepSimulation(float DeltaTime)
 {
  if(bSimulationPaused || DeltaTime<=0 || !FMath::IsFinite(DeltaTime)) return;
  float Remaining=DeltaTime*SimulationSpeed; SimulationSeconds+=Remaining;
- if(Combat && Combat->bEnabled) { Combat->Simulate(Remaining); return; }
+ if(Combat && Combat->bEnabled) { Combat->Simulate(Remaining); if(Selected&&Combat->IsDeparted(Selected)) ClearSelection(); return; }
  while(Remaining>UE_SMALL_NUMBER) {
   const float Dt=FMath::Min(Remaining,1.f/60.f); Remaining-=Dt;
   for(AOVShip* Ship:Ships) {
@@ -633,7 +643,7 @@ void AOVController::PlayerTick(float DeltaTime)
   DrawDebugLine(GetWorld(),FVector(P.X,P.Y,0),P,Ship->bFriendly?FColor(30,80,110):FColor(140,30,30),false,-1,0,2);
   if(Ship->bSelected) { FVector Center,Extent; Ship->GetActorBounds(false,Center,Extent); DrawDebugBox(GetWorld(),Center,Extent+FVector(25),FColor::Cyan,false,-1,0,3); }
   if(Ship->bHasDestination) { DrawDebugLine(GetWorld(),P,Ship->Destination,FColor(90,200,140),false,-1,0,3); DrawDebugSphere(GetWorld(),Ship->Destination,70,12,FColor(90,200,140),false,-1,0,2); }
-  if(Ship->AttackTarget&&!Ship->AttackTarget->Systems->bWrecked) { DrawDebugLine(GetWorld(),P,Ship->AttackTarget->GetActorLocation(),FColor::Red,false,-1,0,2); DrawDebugSphere(GetWorld(),Ship->AttackTarget->GetActorLocation(),150,12,FColor::Red,false,-1,0,2); }
+  if(Ship->AttackTarget&&!Ship->AttackTarget->Systems->bWrecked&&!(Combat&&Combat->bEnabled&&Combat->IsDeparted(Ship->AttackTarget))) { DrawDebugLine(GetWorld(),P,Ship->AttackTarget->GetActorLocation(),FColor::Red,false,-1,0,2); DrawDebugSphere(GetWorld(),Ship->AttackTarget->GetActorLocation(),150,12,FColor::Red,false,-1,0,2); }
  }
  if(Selected&&Selected->Systems->Layout) {
   auto* S=Selected->Systems.Get(); const auto* L=S->Layout.Get(); const FTransform Transform=Selected->GetActorTransform();

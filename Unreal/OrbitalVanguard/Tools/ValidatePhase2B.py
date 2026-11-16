@@ -49,6 +49,16 @@ def frames(pc, number, dt=1/60):
         pc.step_simulation(dt)
 
 
+def move_window(pc, x, y):
+    hud = pc.get_hud()
+    width, height = pc.get_viewport_size()
+    scale = max(.25, min(1, width/1280, height/740))
+    position = p(hud, 'window_position')
+    hud.handle_pointer((position.x+12)*scale, (position.y+15)*scale, True, True, 0, False, 0, 0)
+    hud.handle_pointer((x+12)*scale, (y+15)*scale, False, True, 0, False, 0, 0)
+    hud.handle_pointer((x+12)*scale, (y+15)*scale, False, False, 0, False, 0, 0)
+
+
 def mount(combat, ship, index=1):
     return p(combat.get_ship_state(ship), 'mounts')[index]
 
@@ -166,6 +176,18 @@ def run_common(pc, world):
     p(a, 'systems').debug_hit_weapon(weapon_id(combat, a), 9999)
     pc.action('Fire'); frames(pc, 30)
     check('Individual mount HP blocks actual firing', p(combat, 'shot_count') == 0 and 'MOUNT' in p(combat.get_readiness(a, weapon_id(combat, a)), 'reason'))
+    combat, a, support, target = fixture(pc)
+    pc.action('AutoFree')
+    check('Explicit AUTO FREE releases Hold without altering camera or movement stats', not p(a, 'hold') and not p(a, 'manual') and p(pc, 'play_game3') == camera_profile)
+    a.stop_movement(); a.set_manual_attitude(unreal.Rotator(0, 0, 20))
+    pc.action('AutoFree')
+    check('AUTO FREE respects a deliberate manual hull posture', p(a, 'hold') and p(a, 'has_manual_attitude'))
+    combat, a, support, target = fixture(pc)
+    target.set_actor_location(a.get_actor_location()+unreal.Vector(1,0,0), False, False)
+    pc.select_ship(target)
+    before_pos = a.get_actor_location()
+    combat.notify_ftl_departure(target); frames(pc, 3)
+    check('FTL departure removes selection and contact influence', p(pc, 'selected') is None and (a.get_actor_location()-before_pos).length() < .001 and combat.is_departed(target))
     # Fixed seeds and fixed combat time through the real controller speed controls.
     samples = []
     for speed in (1, 2, 3):
@@ -256,9 +278,18 @@ def tick(dt):
             check('Rendered detail/HUD observes paused combat without extra shots', p(state['combat'], 'shot_count') == state['shots'] and p(state['combat'], 'game_time') == state['clock'])
             pc = state['pc']; pc.start_combat_range()
             pc.set_target(p(pc, 'ships')[2]); pc.action('External')
+            move_window(pc, 10, 216)
             state.update(phase=4, at=time.monotonic())
             return
         if state['phase'] == 4:
+            if time.monotonic()-state['at'] < 1:
+                return
+            hud = state['pc'].get_hud()
+            check('Foreground detail window consumes clicks over underlying FIRE button', str(hud.get_hit_action_at_canvas_point(unreal.Vector2D(22,352))) == 'WindowBackground')
+            move_window(state['pc'], 840, 76)
+            state.update(phase=5, at=time.monotonic())
+            return
+        if state['phase'] == 5:
             if time.monotonic()-state['at'] < 1:
                 return
             unreal.SystemLibrary.execute_console_command(state['world'], 'Shot SHOWUI', state['pc'])

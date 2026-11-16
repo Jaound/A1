@@ -1,5 +1,9 @@
 # Codex 진행 기록
 
+## 2026-11-16 중단 복구와 최신 기획 비교
+
+27개 자동·57개 2A PIE 통과 이후 HUD 차단 검사에서 Python 읽기 전용 속성 쓰기 오류로 2B 검사가 중단됨을 확인했다(39개 통과, 전체 실패). 이를 기존 HandlePointer 드래그 API로 수정했다. 미커밋 소스/가이드/증거를 보존 후 최신 work `cac0a6f`와 비교했다. 새 D083~D102의 확정된 2B 변경만 이어서 구현한다. WORK_STATUS의 재개 항목이 현재 기준이며 이전 성공을 새 규칙 완료로 취급하지 않는다.
+
 ## 2026-11-12 2B 실제 함대 전투
 
 사용자가 2A 직접 조작을 확인하고 다음 단계를 승인했다. 깨끗한 `be544d7`에서 시작, 코드·기획 원격 fetch 결과 이후 변경 없음 (`work=bca769f`). DECISIONS/FLEET_COMBAT/SHIP_SYSTEMS/PHASE2_PLAN/UE5_IMPLEMENTATION_CONTRACT/PLANNING_REVIEW 및 2A 가이드·검증 기록을 실제 소스와 대조했다.

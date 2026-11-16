@@ -70,7 +70,7 @@
     {
       "name": "XYZ accelerated arrival stops",
       "passed": true,
-      "detail": "<Struct 'Vector' (0x000001DF92D27F30) {x: -200.000000, y: 1600.000000, z: 1400.000000}>"
+      "detail": "<Struct 'Vector' (0x00000142A86E7F30) {x: -200.000000, y: 1600.000000, z: 1400.000000}>"
     },
     {
       "name": "Manual pitch roll turn target",
@@ -120,7 +120,7 @@
     {
       "name": "Same game-time motion and shield at 1/2/3x",
       "passed": true,
-      "detail": "[(<Struct 'Vector' (0x000001DF92D27F30) {x: 8000.000000, y: -4000.000000, z: 300.000000}>, 31.500213623046875), (<Struct 'Vector' (0x000001DF92CAE590) {x: 8000.000000, y: -4000.000000, z: 300.000000}>, 31.500213623046875), (<Struct 'Vector' (0x000001DF92CFC4C0) {x: 8000.000000, y: -4000.000000, z: 300.000000}>, 31.500213623046875)]"
+      "detail": "[(<Struct 'Vector' (0x00000142A86E7F30) {x: 8000.000000, y: -4000.000000, z: 300.000000}>, 31.500213623046875), (<Struct 'Vector' (0x00000142A866E590) {x: 8000.000000, y: -4000.000000, z: 300.000000}>, 31.500213623046875), (<Struct 'Vector' (0x00000142A86BC4C0) {x: 8000.000000, y: -4000.000000, z: 300.000000}>, 31.500213623046875)]"
     },
     {
       "name": "Overlapping pair hard separates once",
@@ -255,12 +255,12 @@
     {
       "name": "RMB press does not issue orders",
       "passed": true,
-      "detail": "(<Struct 'Vector' (0x000001DF92D27F30) {x: 907.494566, y: 904.078985, z: 300.000000}>, <Struct 'Vector2D' (0x000001DF92D39CE0) {x: 635.233643, y: 351.992920}>, False)"
+      "detail": "(<Struct 'Vector' (0x00000142A86E7F30) {x: 907.494566, y: 904.078985, z: 300.000000}>, <Struct 'Vector2D' (0x00000142A86F9EA0) {x: 635.233643, y: 351.992920}>, False)"
     },
     {
       "name": "RMB release issues fixed XY and dragged Z",
       "passed": true,
-      "detail": "(<Struct 'Vector' (0x000001DF92D27F30) {x: 907.494566, y: 904.078985, z: 300.000000}>, <Struct 'Vector' (0x000001DFC2EAE898) {x: 907.494566, y: 904.078985, z: 454.000000}>)"
+      "detail": "(<Struct 'Vector' (0x00000142A86E7F30) {x: 907.494566, y: 904.078985, z: 300.000000}>, <Struct 'Vector' (0x00000142EEECE898) {x: 907.494566, y: 904.078985, z: 454.000000}>)"
     },
     {
       "name": "Repeated RMB release cannot issue a second order",

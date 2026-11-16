@@ -16,7 +16,13 @@ void AOVHUD::Button(FName N,const FString& L,float X,float Y,float W,bool Active
 {
  DrawRect(Active?FLinearColor(.03f,.4f,.55f,.95f):FLinearColor(.04f,.08f,.13f,.98f),X,Y,W,27);
  DrawText(L,Active?FLinearColor::White:Ink,X+6,Y+5,GEngine->GetSmallFont());
- AddHitBox(FVector2D(X,Y)*UIScale,FVector2D(W,27)*UIScale,N,true,10);
+ AddHitBox(FVector2D(X,Y)*UIScale,FVector2D(W,27)*UIScale,N,true,bDrawingDetails?110:10);
+}
+FName AOVHUD::GetHitActionAtCanvasPoint(FVector2D Point) const
+{
+ for(const FHUDHitBox& Hit:HitBoxMap)
+  if(Hit.ConsumesInput() && Hit.Contains(Point*UIScale)) return Hit.GetName();
+ return NAME_None;
 }
 bool AOVHUD::IsOverPanel(float X,float Y) const
 {
@@ -74,6 +80,7 @@ bool AOVHUD::HandlePointer(float X,float Y,bool Pressed,bool Down,float Wheel,bo
 }
 void AOVHUD::NotifyHitBoxClick(FName N)
 {
+ if(N==TEXT("WindowBackground")) return;
  if(N==TEXT("WindowClose")) { bDetailsOpen=false;return; }
  if(N==TEXT("WindowMin")) { bMinimized=!bMinimized;return; }
  if(N==TEXT("WindowMax")) { WindowPosition=FVector2D(210,60);WindowSize=WindowSize.X>500?FVector2D(424,550):FVector2D(650,620);return; }
@@ -116,7 +123,7 @@ void AOVHUD::DrawExternal(float X,float Y,float W)
   for(int32 J=0;J<4;++J) Line(P[J],P[(J+1)%4],Color);
   const FVector2D C=Project(D.LocalCenter);
   if(!Inside(C)) continue;
-  AddHitBox((C-FVector2D(10,8))*UIScale,FVector2D(20,16)*UIScale,FName(*FString::Printf(TEXT("Armor_%d"),Face.Index)),true,20);
+  AddHitBox((C-FVector2D(10,8))*UIScale,FVector2D(20,16)*UIScale,FName(*FString::Printf(TEXT("Armor_%d"),Face.Index)),true,120);
   DrawRect(Color,C.X-4,C.Y-4,8,8);
  }
  for(int32 I=0;I<L->WeaponMounts.Num();++I) {
@@ -128,7 +135,7 @@ void AOVHUD::DrawExternal(float X,float Y,float W)
     Line(P,Project(M.LocalPosition+Mount->LocalAim.Vector()*60),Accent);
   }
   DrawRect(I==PC->SelectedWeapon?Accent:Health(S->WeaponMountStates[I].HP/M.MaxHP),P.X-6,P.Y-6,12,12);
-  AddHitBox((P-FVector2D(7,7))*UIScale,FVector2D(14,14)*UIScale,FName(*FString::Printf(TEXT("Weapon_%d"),I)),true,30);
+  AddHitBox((P-FVector2D(7,7))*UIScale,FVector2D(14,14)*UIScale,FName(*FString::Printf(TEXT("Weapon_%d"),I)),true,130);
  }
  DrawText(TEXT("READ ONLY 3D | MMB orbit / wheel zoom"),Ink,X+8,Y+174,GEngine->GetSmallFont());
 }
@@ -136,7 +143,10 @@ void AOVHUD::DrawDetails()
 {
  auto* PC=Cast<AOVController>(PlayerOwner);if(!PC->Selected||!bDetailsOpen)return;
  const auto* S=PC->Selected->Systems.Get();const auto* L=S->Layout.Get();if(!L)return;
+ TGuardValue<bool> DetailLayer(bDrawingDetails,true);
  const float X=WindowPosition.X,Y=WindowPosition.Y,W=WindowSize.X;
+ // The foreground window consumes blank-area clicks too, including over fire buttons.
+ AddHitBox(WindowPosition*UIScale,FVector2D(W,bMinimized?32:WindowSize.Y)*UIScale,TEXT("WindowBackground"),true,100);
  DrawRect(Panel,X,Y,W,bMinimized?32:WindowSize.Y);
  DrawText(PC->Selected->ShipName,Accent,X+10,Y+8,GEngine->GetSmallFont());
  Button(TEXT("WindowMin"),bMinimized?TEXT("+"):TEXT("_"),X+W-90,Y+2,26);Button(TEXT("WindowMax"),TEXT("[]"),X+W-60,Y+2,26);Button(TEXT("WindowClose"),TEXT("X"),X+W-30,Y+2,26);
@@ -239,6 +249,7 @@ void AOVHUD::DrawCombat()
  Button(TEXT("Fire"),TEXT("B FIRE"),20,351,90);
  Button(TEXT("FireAll"),TEXT("L FIRE ALL"),118,351,105);
  Button(TEXT("NextWeapon"),TEXT("N NEXT GUN"),231,351,110);
+ Button(TEXT("AutoFree"),TEXT("AUTO FREE"),349,351,81);
  DrawText(FString::Printf(TEXT("Shots %d / hits %d / flying %d"),C->ShotCount,C->HitCount,C->Attacks.Num()),Ink,20,386,GEngine->GetSmallFont());
  if(C->RecentEvents.Num()) {
   const auto& E=C->RecentEvents.Last();

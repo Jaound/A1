@@ -118,15 +118,19 @@ int32 UOVCombatSubsystem::FindMount(const FOVCombatShipState& State, FName Id) c
     return State.Mounts.IndexOfByPredicate([Id](const FOVCombatMountState& Mount) { return Mount.MountId == Id; });
 }
 
-void UOVCombatSubsystem::RegisterShip(AOVShip* Ship, int32 RadarTier, bool bRadarSupport)
+void UOVCombatSubsystem::RegisterShip(AOVShip* Ship, int32 RadarTier, bool bRadarSupport, int32 WeaponTierCap)
 {
     if (!IsValid(Ship) || !Ship->Systems || !Ship->Systems->Layout || !Settings) return;
+    // Deck count alone cannot distinguish large from extra-large. T4 is explicit.
+    const int32 DefaultCap = Ship->Systems->Layout->bSmallHull ? 1 : Ship->Systems->Layout->DeckCount < 3 ? 2 : 3;
+    const int32 Cap = WeaponTierCap > 0 ? FMath::Clamp(WeaponTierCap, 1, 4) : DefaultCap;
     const int32 Existing = FindShip(Ship);
     if (Existing != INDEX_NONE)
-    { Ships[Existing].RadarTier = RadarTier; Ships[Existing].bRadarSupport = bRadarSupport; return; }
+    { Ships[Existing].RadarTier = FMath::Clamp(RadarTier, 1, 4); Ships[Existing].bRadarSupport = bRadarSupport; Ships[Existing].WeaponTierCap = Cap; return; }
     FOVCombatShipState State;
     State.Ship = Ship; State.ShipId = Ship->GetFName();
     State.RadarTier = FMath::Clamp(RadarTier, 1, 4); State.bRadarSupport = bRadarSupport;
+    State.WeaponTierCap = Cap;
     for (const FOVWeaponMountDefinition& Def : Ship->Systems->Layout->WeaponMounts)
     {
         if (Def.Type == EOVWeaponType::Interception) continue;
@@ -194,9 +198,9 @@ bool UOVCombatSubsystem::SetWeaponProfile(AOVShip* Ship, FName MountId, FName Pr
     const FOVWeaponProfile* Profile = Settings->Weapons.FindByPredicate(
         [ProfileId](const FOVWeaponProfile& P) { return P.ProfileId == ProfileId; });
     if (!Def || !Profile || MountIndex == INDEX_NONE || Profile->Family != Def->Type) return false;
-    // Fixture layouts encode only small vs deck count. Three-deck test hulls permit T4.
-    const int32 Cap = Ship->Systems->Layout->bSmallHull ? 1 : Ship->Systems->Layout->DeckCount < 3 ? 2 : 4;
-    if (Profile->Tier > Cap) return false;
+    // Changing kind is supported. Re-equipping a different tier requires a new authored
+    // loadout, keeping the existing storage-explosion tier data authoritative.
+    if (Profile->Tier > Ships[Index].WeaponTierCap || Profile->Tier != FMath::RoundToInt(Def->Tier)) return false;
     FOVCombatMountState& Mount = Ships[Index].Mounts[MountIndex];
     Mount.Profile = *Profile; Mount.SalvoRemaining = 0; Mount.bFireRequested = false;
     return true;
@@ -209,6 +213,7 @@ void UOVCombatSubsystem::NotifyFTLDeparture(AOVShip* Ship)
     Ships[Index].bDeparted = true;
     Ship->StopMovement(); Ship->AttackTarget = nullptr;
     Ship->SetActorHiddenInGame(true);
+    Ship->SetActorEnableCollision(false);
 }
 
 FOVDetectionInfo UOVCombatSubsystem::GetDetection(AOVShip* Ship, AOVShip* Target) const
@@ -261,8 +266,8 @@ FOVFireReadiness UOVCombatSubsystem::Evaluate(const FOVCombatShipState& State, c
     if (Systems->bNeutral) return Block(TEXT("NEUTRAL"));
     const FOVWeaponMountDefinition* Def = MountDefinition(State, Mount.MountId);
     if (!Def || Mount.Profile.ProfileId.IsNone()) return Block(TEXT("PROFILE UNAVAILABLE"));
-    const int32 TierCap = Systems->Layout->bSmallHull ? 1 : Systems->Layout->DeckCount < 3 ? 2 : 4;
-    if (Mount.Profile.Tier > TierCap) return Block(TEXT("TIER LIMIT"));
+    if (Mount.Profile.Tier > State.WeaponTierCap) return Block(TEXT("TIER LIMIT"));
+    if (Mount.Profile.Tier != FMath::RoundToInt(Def->Tier)) return Block(TEXT("LOADOUT TIER MISMATCH"));
     if (!FMath::IsFinite(Mount.Profile.Range) || Mount.Profile.Range <= 0
         || !FMath::IsFinite(Mount.Profile.Damage) || Mount.Profile.Damage <= 0
         || !FMath::IsFinite(Mount.Profile.Interval) || Mount.Profile.Interval <= 0
@@ -282,6 +287,9 @@ FOVFireReadiness UOVCombatSubsystem::Evaluate(const FOVCombatShipState& State, c
     if (R.Distance > Mount.Profile.Range) return Block(TEXT("OUT OF RANGE"));
     R.Detection = GetDetection(Ship, Target);
     if (!R.Detection.bDetected) return Block(TEXT("NO DETECTION"));
+    const float ControlBonus = Settings->ControlAccuracyBonus * (Systems->GetEfficiency(EOVFacilityType::WeaponControl) - 1.f);
+    R.Accuracy = FMath::Clamp(Mount.Profile.Accuracy + R.Detection.AccuracyBonus + ControlBonus, 0.f,
+        Mount.Profile.Kind == EOVAttackKind::Beam ? 0.995f : 1.f);
     const FVector LocalDirection = Ship->GetActorQuat().UnrotateVector(Offset).GetSafeNormal();
     const float Elevation = LocalDirection.Rotation().Pitch;
     if ((Def->LocalPosition.Z >= 0 && Elevation < -NeutralElevation)
@@ -290,9 +298,6 @@ FOVFireReadiness UOVCombatSubsystem::Evaluate(const FOVCombatShipState& State, c
         FVector::DotProduct(Mount.LocalAim.Vector(), LocalDirection), -1.0, 1.0)));
     if (R.AimError > Mount.Profile.FireTolerance) return Block(TEXT("TURRET ALIGNING"));
     if (FindBlockingFriend(Ship, Target, Origin)) return Block(TEXT("FRIENDLY IN LINE"));
-    const float ControlBonus = Settings->ControlAccuracyBonus * (Systems->GetEfficiency(EOVFacilityType::WeaponControl) - 1.f);
-    R.Accuracy = FMath::Clamp(Mount.Profile.Accuracy + R.Detection.AccuracyBonus + ControlBonus, 0.f,
-        Mount.Profile.Kind == EOVAttackKind::Beam ? 0.995f : 1.f);
     if (!bIgnoreCooldown && R.Cooldown > UE_KINDA_SMALL_NUMBER) return Block(TEXT("COOLDOWN"));
     R.bReady = true; R.Reason = TEXT("READY"); return R;
 }
