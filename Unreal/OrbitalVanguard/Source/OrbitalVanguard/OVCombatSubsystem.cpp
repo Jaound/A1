@@ -2,6 +2,8 @@
 #include "OVTransportSubsystem.h"
 #include "OVPointDefenseSubsystem.h"
 #include "OVCombatSubsystem.h"
+#include "ProfilingDebugging/CsvProfiler.h"
+#include "ProfilingDebugging/CpuProfilerTrace.h"
 #include "OVShip.h"
 #include "OVShipSystemsComponent.h"
 #include "OVController.h"
@@ -680,6 +682,8 @@ bool UOVCombatSubsystem::ApplyInterceptionDamage(int32 AttackId, float Damage)
 
 void UOVCombatSubsystem::AdvanceAttacks(float Delta)
 {
+    CSV_SCOPED_TIMING_STAT_EXCLUSIVE(OV_CombatCollision);
+    TRACE_CPUPROFILER_EVENT_SCOPE(OV_CombatCollision);
     for (FOVAttackState& Attack : Attacks)
     {
         Attack.Age += Delta;

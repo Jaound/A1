@@ -2,6 +2,7 @@
 #include "OVCombatSubsystem.h"
 #include "OVShip.h"
 #include "OVShipSystemsComponent.h"
+#include "OVPerformance.h"
 #include "Engine/World.h"
 
 namespace
@@ -43,6 +44,7 @@ void UOVCarrierSubsystem::Reset(int32 Seed)
 {
     Hangars.Reset(); Aircraft.Reset(); Bolts.Reset(); RecentEvents.Reset(); Carriers.Reset();
     Profile = FOVAircraftProfile();
+    ManeuverProfile = FOVAircraftManeuverProfile();
     GameTime = Accumulator = 0;
     ShotCount = HitCount = LossCount = DeveloperRepairCount = 0;
     NextAircraftId = NextHangarId = NextBoltId = 1;
@@ -133,6 +135,9 @@ int32 UOVCarrierSubsystem::Launch(AOVShip* Ship)
         const auto* Hangar = Hangars.FindByPredicate([&Craft](const FOVHangarState& H) { return H.HangarId == Craft.HangarId; });
         if (!Hangar || Hangar->Mode != EOVHangarMode::Aircraft || !IsHangarOperational(*Hangar)) continue;
         Craft.State = EOVAircraftState::Sortie; Craft.Leg = EOVAircraftLeg::Ingress;
+        Craft.Maneuver = EOVAircraftManeuver::Approach; Craft.StrikeTarget.Reset();
+        Craft.InterceptTargetId = 0; Craft.DefensiveRemaining = Craft.RejoinRemaining = 0;
+        Craft.AttackDelay = ((Craft.AircraftId - 1) % FMath::Max(1, ManeuverProfile.SectionSize)) * ManeuverProfile.SectionDelay;
         Craft.FactionId = Ship->Systems->FactionId;
         const double Angle = PatternOffset + Craft.AircraftId * 2.399963229728653;
         const FVector Offset(400 * FMath::Cos(Angle), 400 * FMath::Sin(Angle), 120 * (Craft.AircraftId % 5));
@@ -286,7 +291,12 @@ void UOVCarrierSubsystem::Step(float Delta)
             State.LastFaction = Ship->Systems->FactionId;
             State.bAbandonOutstanding = false;
             for (auto& Craft : Aircraft)
-                if (Craft.Carrier == Ship && Craft.State != EOVAircraftState::Wrecked) Craft.FactionId = State.LastFaction;
+                if (Craft.Carrier == Ship && Craft.State != EOVAircraftState::Wrecked)
+                {
+                    Craft.FactionId = State.LastFaction; Craft.StrikeTarget.Reset(); Craft.InterceptTargetId = 0;
+                    Craft.Maneuver = EOVAircraftManeuver::Approach; Craft.Leg = EOVAircraftLeg::Ingress;
+                    Craft.DefensiveRemaining = 0; Craft.RejoinRemaining = 0;
+                }
             // Launched Bolts intentionally retain their immutable previous faction.
         }
         if (!LivingShip(Ship)) continue;
@@ -307,6 +317,8 @@ void UOVCarrierSubsystem::Step(float Delta)
 
 void UOVCarrierSubsystem::AdvanceAircraft(FOVAircraftRecord& Craft, float Delta)
 {
+    CSV_SCOPED_TIMING_STAT_EXCLUSIVE(OV_Carrier);
+    TRACE_CPUPROFILER_EVENT_SCOPE(OV_Carrier);
     if (Craft.State == EOVAircraftState::Wrecked) return;
     auto* Ship = Craft.Carrier.Get();
     auto* Hangar = Hangars.FindByPredicate([&Craft](const FOVHangarState& H) { return H.HangarId == Craft.HangarId; });
@@ -344,60 +356,196 @@ void UOVCarrierSubsystem::AdvanceAircraft(FOVAircraftRecord& Craft, float Delta)
         return;
     }
 
+    AOVShip* Target = SelectStrikeTarget(Craft);
+    if (Target != Craft.StrikeTarget.Get())
+    {
+        Craft.StrikeTarget = Target; Craft.InterceptTargetId = 0;
+        Craft.DefensiveRemaining = 0; Craft.Maneuver = EOVAircraftManeuver::Approach;
+        Craft.Leg = EOVAircraftLeg::Ingress;
+    }
+    Craft.AttackDelay = FMath::Max(0.f, Craft.AttackDelay - Delta);
+    const auto* AirTarget = SelectAirTarget(Craft, Target, Delta);
+    if (AirTarget) AdvanceDogfight(Craft, *AirTarget, Delta);
+    else if (Target) AdvanceStrike(Craft, Target, Delta);
+    else
+    {
+        Craft.Maneuver = EOVAircraftManeuver::Patrol;
+        const double Angle = PatternOffset + Craft.AircraftId * 2.399963229728653 + GameTime * .45;
+        Craft.StrikeCenter = Ship->GetActorLocation();
+        Craft.AllowedRadius = 0;
+        FlyToward(Craft, Craft.StrikeCenter + FVector(FMath::Cos(Angle), FMath::Sin(Angle), .3) * Profile.AttackRange * .6, Delta, false);
+    }
+}
+
+AOVShip* UOVCarrierSubsystem::SelectStrikeTarget(const FOVAircraftRecord& Craft) const
+{
+    CSV_SCOPED_TIMING_STAT_EXCLUSIVE(OV_CarrierTargeting);
+    TRACE_CPUPROFILER_EVENT_SCOPE(OV_CarrierTargeting);
     const auto* Combat = GetWorld()->GetSubsystem<UOVCombatSubsystem>();
-    AOVShip* Target = nullptr;
-    double Best = TNumericLimits<double>::Max();
-    for (const auto& S : Combat->Ships)
+    auto Eligible = [&](AOVShip* Candidate)
     {
-        if (!LivingShip(S.Ship) || S.bDeparted || S.Ship->Systems->FactionId == Craft.FactionId
-            || Combat->IsTargetProtected(Ship, S.Ship) || !Combat->GetDetection(Ship, S.Ship).bDetected) continue;
-        const double D = FVector::DistSquared(Craft.Position, S.Ship->GetActorLocation());
-        if (D < Best) { Target = S.Ship; Best = D; }
-    }
-    // Nearby opposing aircraft are valid dogfight targets; normal ship weapons never see this array.
-    const FOVAircraftRecord* AirTarget = nullptr;
-    double BestAir = FMath::Square(double(Profile.AttackRange));
-    for (const auto& Other : Aircraft)
-    {
-        if (Other.AircraftId == Craft.AircraftId || Other.FactionId == Craft.FactionId || !IsAirborneState(Other.State)) continue;
-        const double D = FVector::DistSquared(Craft.Position, Other.Position);
-        if (D < BestAir) { AirTarget = &Other; BestAir = D; }
-    }
-    const bool bHasTarget = AirTarget || Target;
-    const FVector Center = AirTarget ? AirTarget->Position : Target ? Target->GetActorLocation() : Ship->GetActorLocation();
-    const double Side = Craft.AircraftId % 2 == 0 ? 1.0 : -1.0;
-    const double Radius = 5500 + (Craft.AircraftId % 7) * 500;
-    const double Angle = PatternOffset + Craft.AircraftId * 2.399963229728653;
-    const FVector Offset(FMath::Cos(Angle) * Radius, FMath::Sin(Angle) * Radius, Side * (1200 + Craft.AircraftId % 5 * 450));
-    if (Craft.Leg == EOVAircraftLeg::Ingress)
-    {
-        Craft.Waypoint = bHasTarget ? Center + Offset * .12 : Center + Offset;
-        if (bHasTarget && FVector::DistSquared(Craft.Position, Center) <= FMath::Square(Profile.AttackRange) && Craft.Cooldown <= 0)
+        return LivingShip(Candidate) && !Combat->IsDeparted(Candidate) && Candidate->Systems->FactionId != Craft.FactionId
+            && !Combat->IsTargetProtected(Craft.Carrier.Get(), Candidate)
+            && Combat->GetDetection(Craft.Carrier.Get(), Candidate).bDetected;
+    };
+    // The carrier's explicit target wins; otherwise keep a valid mission, not a new nearest ship each frame.
+    if (Eligible(Craft.Carrier->AttackTarget)) return Craft.Carrier->AttackTarget;
+    if (Eligible(Craft.StrikeTarget.Get())) return Craft.StrikeTarget.Get();
+    AOVShip* Best = nullptr; double Distance = TNumericLimits<double>::Max();
+    for (const auto& State : Combat->Ships)
+        if (Eligible(State.Ship))
         {
-            const FVector Aim = AirTarget ? LeadPoint(Craft.Position, Center, AirTarget->Velocity, Profile.BoltSpeed, Profile.BoltLifetime) : Center;
-            if (Fire(Craft, Aim, AirTarget ? FName(*FString::Printf(TEXT("Aircraft_%d"), AirTarget->AircraftId)) : FName(*Target->ShipName)))
+            const double D = FVector::DistSquared(Craft.Position, State.Ship->GetActorLocation());
+            if (D < Distance) { Best = State.Ship; Distance = D; }
+        }
+    return Best;
+}
+
+const FOVAircraftRecord* UOVCarrierSubsystem::SelectAirTarget(FOVAircraftRecord& Craft, AOVShip* StrikeTarget, float Delta)
+{
+    CSV_SCOPED_TIMING_STAT_EXCLUSIVE(OV_CarrierTargeting);
+    TRACE_CPUPROFILER_EVENT_SCOPE(OV_CarrierTargeting);
+    Craft.RejoinRemaining = FMath::Max(0.f, Craft.RejoinRemaining - Delta);
+    Craft.DefensiveRemaining = FMath::Max(0.f, Craft.DefensiveRemaining - Delta);
+    const double HullRadius = StrikeTarget ? (StrikeTarget->Systems->Layout->LocalHalfExtent * StrikeTarget->GetActorScale3D()).Size() : 0;
+    const double TurnRadius = Profile.Speed / FMath::DegreesToRadians(FMath::Max(1.f, ManeuverProfile.TurnDegreesPerSecond));
+    const double Leash = HullRadius + Profile.AttackRange + TurnRadius * 2;
+    const bool HadIntercept = Craft.InterceptTargetId != 0;
+    const FOVAircraftRecord* Best = nullptr;
+    double Distance = FMath::Square(double(Profile.AttackRange * (StrikeTarget ? ManeuverProfile.DefensiveRangeFraction : 1.5f)));
+    if (!StrikeTarget || Craft.RejoinRemaining <= 0)
+    {
+        for (const auto& Other : Aircraft)
+        {
+            if (Other.AircraftId == Craft.AircraftId || Other.FactionId == Craft.FactionId || !IsAirborneState(Other.State)) continue;
+            if (StrikeTarget && (FVector::DistSquared(Other.Position, StrikeTarget->GetActorLocation()) > Leash * Leash
+                || FVector::DistSquared(Craft.Position, StrikeTarget->GetActorLocation()) > Leash * Leash)) continue;
+            const double D = FVector::DistSquared(Craft.Position, Other.Position);
+            if (Other.AircraftId == Craft.InterceptTargetId && (!StrikeTarget || Craft.DefensiveRemaining > 0)) return &Other;
+            if (!HadIntercept && D < Distance) { Best = &Other; Distance = D; }
+        }
+    }
+    if (HadIntercept)
+    {
+        Craft.InterceptTargetId = 0;
+        if (StrikeTarget)
+        {
+            Craft.RejoinRemaining = ManeuverProfile.RejoinSeconds;
+            Craft.Maneuver = EOVAircraftManeuver::Regroup; Craft.Leg = EOVAircraftLeg::Regroup;
+        }
+        return nullptr;
+    }
+    if (Best)
+    {
+        Craft.InterceptTargetId = Best->AircraftId; Craft.DefensiveRemaining = ManeuverProfile.DefensiveSeconds;
+    }
+    return Best;
+}
+
+void UOVCarrierSubsystem::FlyToward(FOVAircraftRecord& Craft, FVector Point, float Delta, bool bFiniteTurn)
+{
+    Craft.Waypoint = Point;
+    const FVector V = Point - Craft.Position;
+    FVector Desired = V.GetSafeNormal();
+    if (Desired.IsNearlyZero()) return;
+    if (bFiniteTurn && Craft.StrikeTarget.IsValid())
+    {
+        const auto* Target = Craft.StrikeTarget.Get();
+        const double HullRadius = (Target->Systems->Layout->LocalHalfExtent * Target->GetActorScale3D()).Size();
+        const FVector Radial = Craft.Position - Target->GetActorLocation();
+        const double Guard = HullRadius + ManeuverProfile.HullClearance + Craft.TurnRadius;
+        if (Radial.Size() < Guard && FVector::DotProduct(Desired, Radial) < 0)
+        {
+            FVector Tangent = FVector::CrossProduct(FVector::UpVector, Radial.GetSafeNormal()).GetSafeNormal();
+            if (Craft.AircraftId % 2) Tangent *= -1;
+            Desired = (Tangent + Radial.GetSafeNormal() * .9).GetSafeNormal();
+        }
+    }
+    const FVector Current = Craft.Direction.GetSafeNormal();
+    if (bFiniteTurn && !Current.IsNearlyZero())
+    {
+        const double Angle = FMath::Acos(FMath::Clamp(FVector::DotProduct(Current, Desired), -1., 1.));
+        const double Limit = FMath::DegreesToRadians(FMath::Max(1.f, ManeuverProfile.TurnDegreesPerSecond)) * Delta;
+        Craft.Direction = Angle > Limit ? FQuat::Slerp(FQuat::Identity, FQuat::FindBetweenNormals(Current, Desired), Limit / Angle).RotateVector(Current).GetSafeNormal() : Desired;
+    }
+    else Craft.Direction = Desired;
+    Craft.Position += Craft.Direction * FMath::Min(double(Profile.Speed * Delta), V.Size());
+}
+
+void UOVCarrierSubsystem::AdvanceStrike(FOVAircraftRecord& Craft, AOVShip* Target, float Delta)
+{
+    Craft.StrikeCenter = Target->GetActorLocation();
+    Craft.TurnRadius = Profile.Speed / FMath::DegreesToRadians(FMath::Max(1.f, ManeuverProfile.TurnDegreesPerSecond));
+    const double HullRadius = (Target->Systems->Layout->LocalHalfExtent * Target->GetActorScale3D()).Size();
+    const double AttackRadius = FMath::Max(HullRadius + ManeuverProfile.HullClearance + Craft.TurnRadius * .45,
+        double(Profile.AttackRange * FMath::Clamp(ManeuverProfile.AttackRangeFraction, .1f, .9f)));
+    const int32 Section = (Craft.AircraftId - 1) / FMath::Max(1, ManeuverProfile.SectionSize);
+    const int32 Lane = (Craft.AircraftId - 1) % FMath::Max(1, ManeuverProfile.SectionSize);
+    const double Angle = PatternOffset + Section * 2.399963229728653 + Lane * .13;
+    const double Side = Section % 2 == 0 ? 1. : -1.;
+    auto Offset = [&](double Heading, double Radius)
+    {
+        return Target->GetActorRotation().RotateVector(FVector(FMath::Cos(Heading), FMath::Sin(Heading), Side * (.18 + Lane * .04)).GetSafeNormal() * Radius);
+    };
+    const double EgressRadius = AttackRadius + Profile.Speed * FMath::Max(.05f, ManeuverProfile.EgressSeconds);
+    const double RegroupRadius = AttackRadius + Craft.TurnRadius * FMath::Max(.5f, ManeuverProfile.RegroupTurnRadii);
+    Craft.ApproachPoint = Craft.StrikeCenter + Offset(Angle, AttackRadius);
+    Craft.EgressPoint = Craft.StrikeCenter + Offset(Angle + Side * .5, EgressRadius);
+    Craft.RegroupPoint = Craft.StrikeCenter + Offset(Angle + Side * 1.1, RegroupRadius);
+    // Includes turn/exit space; it is a steering guard, never a teleport/clamp of position.
+    Craft.AllowedRadius = FMath::Max(EgressRadius, RegroupRadius) + 2 * Craft.TurnRadius + Profile.Speed * .1;
+    if (Craft.Maneuver == EOVAircraftManeuver::Dogfight || Craft.Maneuver == EOVAircraftManeuver::Patrol)
+        Craft.Maneuver = EOVAircraftManeuver::Regroup;
+    const double CaptureDistance = FMath::Max(double(Profile.Speed * Delta + 120), double(Craft.TurnRadius * 1.15));
+    if (Craft.Maneuver == EOVAircraftManeuver::Approach && FVector::DistSquared(Craft.Position, Craft.StrikeCenter) <= FMath::Square(double(Profile.AttackRange)))
+        Craft.Maneuver = EOVAircraftManeuver::AttackRun;
+    if (Craft.Maneuver == EOVAircraftManeuver::AttackRun)
+    {
+        Craft.Leg = EOVAircraftLeg::Ingress;
+        if (Craft.Cooldown <= 0 && Craft.AttackDelay <= 0 && FVector::DistSquared(Craft.Position, Craft.StrikeCenter) <= FMath::Square(double(Profile.AttackRange)))
+        {
+            const FVector Aim = LeadPoint(Craft.Position, Craft.StrikeCenter, Target->Velocity, Profile.BoltSpeed, Profile.BoltLifetime);
+            if (Fire(Craft, Aim, FName(*Target->ShipName)))
             {
-                Craft.Leg = EOVAircraftLeg::Egress;
-                Craft.Waypoint = Center + Offset;
+                ++Craft.AttackPasses; Craft.LegRemaining = ManeuverProfile.EgressSeconds;
+                Craft.Maneuver = EOVAircraftManeuver::ShortEgress; Craft.Leg = EOVAircraftLeg::Egress;
             }
         }
     }
-    else if (FVector::DistSquared(Craft.Position, Craft.Waypoint) < FMath::Square(double(Profile.Speed * Delta + 120)))
+    if (Craft.Maneuver == EOVAircraftManeuver::ShortEgress)
     {
-        if (Craft.Leg == EOVAircraftLeg::Egress)
-        {
-            Craft.Leg = EOVAircraftLeg::Regroup;
-            Craft.Waypoint = Center + FVector(-Offset.Y * Side, Offset.X * Side, Offset.Z);
-        }
-        else Craft.Leg = EOVAircraftLeg::Ingress;
+        Craft.LegRemaining = FMath::Max(0.f, Craft.LegRemaining - Delta);
+        if (Craft.LegRemaining <= 0 || FVector::DistSquared(Craft.Position, Craft.EgressPoint) < CaptureDistance * CaptureDistance)
+        { Craft.Maneuver = EOVAircraftManeuver::Regroup; Craft.Leg = EOVAircraftLeg::Regroup; }
     }
-    const FVector V = Craft.Waypoint - Craft.Position;
-    Craft.Direction = V.GetSafeNormal();
-    Craft.Position += Craft.Direction * FMath::Min(double(Profile.Speed * Delta), V.Size());
+    if (Craft.Maneuver == EOVAircraftManeuver::Regroup && FVector::DistSquared(Craft.Position, Craft.RegroupPoint) < CaptureDistance * CaptureDistance)
+    { Craft.Maneuver = EOVAircraftManeuver::Approach; Craft.Leg = EOVAircraftLeg::Ingress; }
+    FVector Point = Craft.Maneuver == EOVAircraftManeuver::ShortEgress ? Craft.EgressPoint
+        : Craft.Maneuver == EOVAircraftManeuver::Regroup ? Craft.RegroupPoint : Craft.ApproachPoint;
+    if (FVector::DistSquared(Craft.Position, Craft.StrikeCenter) > FMath::Square(double(Craft.AllowedRadius)))
+    {
+        Craft.Maneuver = EOVAircraftManeuver::Approach; Craft.Leg = EOVAircraftLeg::Ingress;
+        Point = Craft.ApproachPoint;
+    }
+    FlyToward(Craft, Point, Delta, true);
+}
+
+void UOVCarrierSubsystem::AdvanceDogfight(FOVAircraftRecord& Craft, const FOVAircraftRecord& Target, float Delta)
+{
+    // Independent pursuit: a ship mission has a bounded defensive excursion; pure dogfight has no ship leash.
+    Craft.Maneuver = EOVAircraftManeuver::Dogfight;
+    const FVector Aim = LeadPoint(Craft.Position, Target.Position, Target.Velocity, Profile.BoltSpeed, Profile.BoltLifetime);
+    if (Craft.Cooldown <= 0 && FVector::DistSquared(Craft.Position, Target.Position) <= FMath::Square(double(Profile.AttackRange)))
+        Fire(Craft, Aim, FName(*FString::Printf(TEXT("Aircraft_%d"), Target.AircraftId)));
+    const double Side = Craft.AircraftId % 2 ? -1 : 1;
+    const FVector Offset(0, Side * Profile.CollisionRadius * 3, ((Craft.AircraftId % 3)-1) * Profile.CollisionRadius * 2);
+    FlyToward(Craft, Aim + Offset, Delta, false);
 }
 
 bool UOVCarrierSubsystem::Fire(FOVAircraftRecord& Craft, FVector AimPoint, FName TargetId)
 {
+    CSV_SCOPED_TIMING_STAT_EXCLUSIVE(OV_CarrierFriendlyFire);
+    TRACE_CPUPROFILER_EVENT_SCOPE(OV_CarrierFriendlyFire);
     // Block a known friendly line before launch. Later crossing/capture never rewrites a bolt.
     const auto* Combat = GetWorld()->GetSubsystem<UOVCombatSubsystem>();
     for (const auto& S : Combat->Ships)
@@ -426,6 +574,8 @@ bool UOVCarrierSubsystem::Fire(FOVAircraftRecord& Craft, FVector AimPoint, FName
 
 void UOVCarrierSubsystem::AdvanceBolts(float Delta)
 {
+    CSV_SCOPED_TIMING_STAT_EXCLUSIVE(OV_CarrierCollision);
+    TRACE_CPUPROFILER_EVENT_SCOPE(OV_CarrierCollision);
     const auto* Combat = GetWorld()->GetSubsystem<UOVCombatSubsystem>();
     for (auto& Bolt : Bolts)
     {

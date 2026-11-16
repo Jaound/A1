@@ -11,6 +11,8 @@ enum class EOVAircraftState : uint8 { Stored, Sortie, Returning, DockWaiting, Co
 UENUM(BlueprintType)
 enum class EOVAircraftLeg : uint8 { Ingress, Egress, Regroup };
 UENUM(BlueprintType)
+enum class EOVAircraftManeuver : uint8 { Approach, AttackRun, ShortEgress, Regroup, Dogfight, Patrol };
+UENUM(BlueprintType)
 enum class EOVHangarMode : uint8 { Aircraft, SmallShip };
 
 /** D116 fighter candidate, not an economic/production implementation. All distances are cm. */
@@ -32,6 +34,24 @@ struct ORBITALVANGUARD_API FOVAircraftProfile
     UPROPERTY(EditAnywhere, BlueprintReadWrite) float BoltLifetime = 3;
     UPROPERTY(EditAnywhere, BlueprintReadWrite) float CollisionRadius = 100;
     UPROPERTY(EditAnywhere, BlueprintReadWrite) float DockSeconds = 1;
+};
+
+/** R16 시험 기동값. 화력/속도 프로필과 분리하며 이동 위치는 순간 보정하지 않는다. */
+USTRUCT(BlueprintType)
+struct ORBITALVANGUARD_API FOVAircraftManeuverProfile
+{
+    GENERATED_BODY()
+    UPROPERTY(EditAnywhere, BlueprintReadWrite) FName ProfileId = TEXT("Trial_StrikeManeuver_v1");
+    UPROPERTY(EditAnywhere, BlueprintReadWrite) float TurnDegreesPerSecond = 300;
+    UPROPERTY(EditAnywhere, BlueprintReadWrite) float AttackRangeFraction = .50f;
+    UPROPERTY(EditAnywhere, BlueprintReadWrite) float EgressSeconds = .30f;
+    UPROPERTY(EditAnywhere, BlueprintReadWrite) float RegroupTurnRadii = 1.15f;
+    UPROPERTY(EditAnywhere, BlueprintReadWrite) float HullClearance = 400;
+    UPROPERTY(EditAnywhere, BlueprintReadWrite) int32 SectionSize = 4;
+    UPROPERTY(EditAnywhere, BlueprintReadWrite) float SectionDelay = .12f;
+    UPROPERTY(EditAnywhere, BlueprintReadWrite) float DefensiveRangeFraction = .55f;
+    UPROPERTY(EditAnywhere, BlueprintReadWrite) float DefensiveSeconds = 2.5f;
+    UPROPERTY(EditAnywhere, BlueprintReadWrite) float RejoinSeconds = 3;
 };
 
 USTRUCT(BlueprintType)
@@ -68,6 +88,20 @@ struct ORBITALVANGUARD_API FOVAircraftRecord
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly) float Cooldown = 0;
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly) float DockRemaining = 0;
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly) int32 ShotsFired = 0;
+    UPROPERTY(VisibleAnywhere, BlueprintReadOnly) EOVAircraftManeuver Maneuver = EOVAircraftManeuver::Approach;
+    UPROPERTY(VisibleAnywhere, BlueprintReadOnly) TWeakObjectPtr<AOVShip> StrikeTarget;
+    UPROPERTY(VisibleAnywhere, BlueprintReadOnly) int32 InterceptTargetId = 0;
+    UPROPERTY(VisibleAnywhere, BlueprintReadOnly) FVector StrikeCenter = FVector::ZeroVector;
+    UPROPERTY(VisibleAnywhere, BlueprintReadOnly) FVector ApproachPoint = FVector::ZeroVector;
+    UPROPERTY(VisibleAnywhere, BlueprintReadOnly) FVector EgressPoint = FVector::ZeroVector;
+    UPROPERTY(VisibleAnywhere, BlueprintReadOnly) FVector RegroupPoint = FVector::ZeroVector;
+    UPROPERTY(VisibleAnywhere, BlueprintReadOnly) float AllowedRadius = 0;
+    UPROPERTY(VisibleAnywhere, BlueprintReadOnly) float TurnRadius = 0;
+    UPROPERTY(VisibleAnywhere, BlueprintReadOnly) float LegRemaining = 0;
+    UPROPERTY(VisibleAnywhere, BlueprintReadOnly) float DefensiveRemaining = 0;
+    UPROPERTY(VisibleAnywhere, BlueprintReadOnly) float RejoinRemaining = 0;
+    UPROPERTY(VisibleAnywhere, BlueprintReadOnly) float AttackDelay = 0;
+    UPROPERTY(VisibleAnywhere, BlueprintReadOnly) int32 AttackPasses = 0;
 };
 
 /** Launch attribution is copied, not resolved through the carrier after capture/destruction. */
@@ -113,6 +147,7 @@ class ORBITALVANGUARD_API UOVCarrierSubsystem : public UWorldSubsystem
     GENERATED_BODY()
 public:
     UPROPERTY(EditAnywhere, BlueprintReadWrite) FOVAircraftProfile Profile;
+    UPROPERTY(EditAnywhere, BlueprintReadWrite) FOVAircraftManeuverProfile ManeuverProfile;
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly) TArray<FOVHangarState> Hangars;
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly) TArray<FOVAircraftRecord> Aircraft;
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly) TArray<FOVAircraftBolt> Bolts;
@@ -153,6 +188,11 @@ private:
     FOVHangarState* FindDock(FOVAircraftRecord& Craft);
     void Step(float Delta);
     void AdvanceAircraft(FOVAircraftRecord& Craft, float Delta);
+    AOVShip* SelectStrikeTarget(const FOVAircraftRecord& Craft) const;
+    const FOVAircraftRecord* SelectAirTarget(FOVAircraftRecord& Craft, AOVShip* StrikeTarget, float Delta);
+    void AdvanceStrike(FOVAircraftRecord& Craft, AOVShip* Target, float Delta);
+    void AdvanceDogfight(FOVAircraftRecord& Craft, const FOVAircraftRecord& Target, float Delta);
+    void FlyToward(FOVAircraftRecord& Craft, FVector Point, float Delta, bool bFiniteTurn);
     void AdvanceBolts(float Delta);
     bool Fire(FOVAircraftRecord& Craft, FVector AimPoint, FName TargetId);
     void DestroyAircraft(FOVAircraftRecord& Craft);

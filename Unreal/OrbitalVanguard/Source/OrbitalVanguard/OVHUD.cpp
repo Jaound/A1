@@ -1,4 +1,6 @@
 #include "OVHUD.h"
+#include "ProfilingDebugging/CsvProfiler.h"
+#include "ProfilingDebugging/CpuProfilerTrace.h"
 #include "OVController.h"
 #include "OVShip.h"
 #include "OVShipSystemsComponent.h"
@@ -198,6 +200,8 @@ void AOVHUD::DrawDetails()
 }
 void AOVHUD::DrawHUD()
 {
+    CSV_SCOPED_TIMING_STAT_EXCLUSIVE(OV_HUD);
+    TRACE_CPUPROFILER_EVENT_SCOPE(OV_HUD);
  ActionCenters.Reset();
  Super::DrawHUD();auto* PC=Cast<AOVController>(PlayerOwner);if(!PC||!Canvas||PC->Ships.Num()<3)return;
  ViewportPixels=FVector2D(Canvas->SizeX,Canvas->SizeY);

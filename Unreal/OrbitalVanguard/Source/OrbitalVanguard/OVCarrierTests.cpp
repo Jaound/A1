@@ -1,5 +1,6 @@
 #include "OVCarrierSubsystem.h"
 #include "OVCombatSubsystem.h"
+#include "OVCalibration.h"
 #include "OVShip.h"
 #include "OVShipSystemsComponent.h"
 #include "Engine/World.h"
@@ -254,6 +255,156 @@ bool FOVCarrierAlternateDockTest::RunTest(const FString&)
     TestEqual(TEXT("Other operational hangar recovers actual surviving records"), R.Fleet->CountAircraft(R.Carrier, EOVAircraftState::Stored), Count);
     TestTrue(TEXT("Every returned craft records its new storage hangar"),
         !R.Fleet->Aircraft.ContainsByPredicate([H0](const FOVAircraftRecord& C) { return C.HangarId == H0; }));
+    return true;
+}
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(FOVCarrierStrikeEnvelopeTest, "OrbitalVanguard.Carrier.StrikeMovingHullEnvelope", EAutomationTestFlags::EditorContext | EAutomationTestFlags::EngineFilter)
+bool FOVCarrierStrikeEnvelopeTest::RunTest(const FString&)
+{
+    for (const float Scale : {6.f, 13.f, 22.f})
+    {
+        OVCarrierTest::FRange R(4);
+        R.Enemy->SetActorScale3D(FVector(Scale));
+        R.Enemy->Systems->Shield = R.Enemy->Systems->MaxShield = 10000000;
+        R.Carrier->AttackTarget = R.Enemy;
+        R.Fleet->Launch(R.Carrier);
+        float LargestExcursion = 0; int32 Passes = 0; float Allowed = 0;
+        FVector Previous = R.Fleet->Aircraft[0].Position;
+        for (int32 I = 0; I < 3600; ++I)
+        {
+            const float Time = I / 60.f;
+            R.Enemy->SetActorLocation(FVector(16000 + 700 * Time, 2500 * FMath::Sin(Time * .12f), 1000));
+            R.Enemy->SetActorRotation(FRotator(0, Time * 4, 0));
+            R.Enemy->Velocity = FVector(700, 300 * FMath::Cos(Time * .12f), 0);
+            R.Fleet->Simulate(1.f / 60);
+            const auto& C = R.Fleet->Aircraft[0];
+            TestTrue(TEXT("목표 이동은 기체 순간이동을 일으키지 않는다"), FVector::Dist(C.Position, Previous) <= R.Fleet->Profile.Speed / 60 + .1f);
+            Previous = C.Position;
+            if (Time > 10)
+            {
+                LargestExcursion = FMath::Max(LargestExcursion, float(FVector::Dist(C.Position, R.Enemy->GetActorLocation())));
+                Allowed = C.AllowedRadius + C.TurnRadius;
+            }
+            Passes = C.AttackPasses;
+        }
+        TestTrue(TEXT("이동·선회 표적에서 반복 사격이 실제 유지된다"), Passes >= 3 && R.Fleet->HitCount > 0);
+        TestTrue(TEXT("정상 공격 구간은 함체·선회 기반 허용 공간에 머문다"), LargestExcursion <= Allowed);
+    }
+    // 기하만 바꾼 비교 시험과 별개로 실제 후보 함종/시설/기동 값을 사용한다.
+    const FName Hulls[] = {TEXT("corvette"), TEXT("vector"), TEXT("carrier")};
+    const float Scales[] = {6, 13, 22};
+    for (int32 HullIndex = 0; HullIndex < 3; ++HullIndex)
+        for (const bool Moving : {false, true})
+        {
+            OVCarrierTest::FRange R(4);
+            R.Combat->Ships.Reset();
+            R.Combat->RegisterShip(R.Carrier, 3, false, 3);
+            TestTrue(TEXT("실제 후보 함종 등록"), OVCalibration::ConfigureHull(*R.Combat, *R.Enemy, Hulls[HullIndex], false, FVector(16000, 0, 1000), Scales[HullIndex]));
+            R.Combat->Settings->GuaranteedRange = 200000;
+            const float BeforeHP = R.Enemy->Systems->HullHP + R.Enemy->Systems->Shield;
+            const FVector InitialPosition = R.Enemy->GetActorLocation();
+            const FRotator InitialRotation = R.Enemy->GetActorRotation();
+            if (Moving) R.Enemy->SetDestination(FVector(70000, 28000, 4000));
+            R.Carrier->AttackTarget = R.Enemy;
+            R.Fleet->Launch(R.Carrier);
+            TArray<float> Distances;
+            double TotalDistance = 0;
+            for (int32 I = 0; I < 1800; ++I)
+            {
+                R.Enemy->Simulate(1.f / 60);
+                R.Fleet->Simulate(1.f / 60);
+                if (I >= 480)
+                    for (const auto& C : R.Fleet->Aircraft)
+                    {
+                        const float Distance = FVector::Dist(C.Position, R.Enemy->GetActorLocation());
+                        Distances.Add(Distance); TotalDistance += Distance;
+                    }
+            }
+            const float Damage = BeforeHP - R.Enemy->Systems->HullHP - R.Enemy->Systems->Shield;
+            TestTrue(TEXT("실제 후보 대상에 사격·물리 명중·쉴드/선체 피해 연결"), R.Fleet->ShotCount > 4 && R.Fleet->HitCount > 0 && Damage > 0);
+            TestFalse(TEXT("기동 검사 중 실제 후보 표적이 조기 완파되지 않는다"), R.Enemy->Systems->bWrecked);
+            if (Moving)
+            {
+                TestTrue(TEXT("후보별 실제 이동 성능으로 위치 변화"), FVector::Dist(InitialPosition, R.Enemy->GetActorLocation()) > 1000);
+                TestFalse(TEXT("후보별 실제 선회가 적용됨"), InitialRotation.Equals(R.Enemy->GetActorRotation(), 1));
+            }
+            else TestTrue(TEXT("정지 표적 위치 보존"), InitialPosition.Equals(R.Enemy->GetActorLocation(), .01));
+            Distances.Sort();
+            const float P95 = Distances[FMath::Min(Distances.Num()-1, FMath::FloorToInt(Distances.Num() * .95))];
+            const float Allowed = R.Fleet->Aircraft[0].AllowedRadius + R.Fleet->Aircraft[0].TurnRadius;
+            TestTrue(TEXT("실제 소형/중형/대형 정상 공격 p95가 유한 허용 공간 안에 있음"), P95 <= Allowed);
+            AddInfo(FString::Printf(TEXT("실함종=%s 이동=%d 구간=8~30게임초 거리평균=%.2fm p95=%.2fm 최대=%.2fm 전체발사=%d 전체명중=%d 전체피해=%.2f"),
+                *Hulls[HullIndex].ToString(), Moving, TotalDistance/Distances.Num()/100, P95/100, Distances.Last()/100,
+                R.Fleet->ShotCount, R.Fleet->HitCount, Damage));
+        }
+    return true;
+}
+
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(FOVCarrierStrikeInterruptTest, "OrbitalVanguard.Carrier.StrikeDefensiveRejoinAndInvalidation", EAutomationTestFlags::EditorContext | EAutomationTestFlags::EngineFilter)
+bool FOVCarrierStrikeInterruptTest::RunTest(const FString&)
+{
+    OVCarrierTest::FRange R(2);
+    R.Fleet->RegisterCarrier(R.Enemy, 2);
+    R.Carrier->AttackTarget = R.Enemy;
+    R.Fleet->Launch(R.Carrier); R.Fleet->Launch(R.Enemy);
+    for (auto& C : R.Fleet->Aircraft)
+    {
+        C.Position = FVector(6000, C.FactionId == 0 ? -400 : 400, 10000);
+        C.HP = C.Shield = 100000;
+    }
+    R.Advance(.1f);
+    TestEqual(TEXT("대함 임무 중 인접 적기에는 제한적인 방어 공중전 진입"), R.Fleet->Aircraft[0].Maneuver, EOVAircraftManeuver::Dogfight);
+    R.Advance(R.Fleet->ManeuverProfile.DefensiveSeconds + .2f);
+    TestTrue(TEXT("방어 추격 시간 뒤 대함 임무로 복귀하고 즉시 재추격하지 않는다"),
+        R.Fleet->Aircraft[0].Maneuver != EOVAircraftManeuver::Dogfight && R.Fleet->Aircraft[0].RejoinRemaining > 0);
+    R.Enemy->Systems->SetInteriorPresence(0, true, false, true);
+    R.Advance(.1f);
+    TestFalse(TEXT("보호 활성화는 대함 표적을 즉시 무효화한다"), R.Fleet->Aircraft[0].StrikeTarget.IsValid());
+    R.Enemy->Systems->SetInteriorPresence(0, false, false, true);
+    R.Advance(.1f);
+    TestEqual(TEXT("보호 해제 후 유효한 대함 임무 재선정"), R.Fleet->Aircraft[0].StrikeTarget.Get(), R.Enemy);
+    R.Enemy->Systems->bWrecked = true; R.Advance(.1f);
+    TestFalse(TEXT("완파 표적은 다음 기동 단계에서 해제된다"), R.Fleet->Aircraft[0].StrikeTarget.IsValid());
+    R.Enemy->Systems->bWrecked = false; R.Advance(.1f);
+    R.Combat->NotifyFTLDeparture(R.Enemy); R.Advance(.1f);
+    TestFalse(TEXT("이탈한 목표의 오래된 공격 구역은 유지하지 않는다"), R.Fleet->Aircraft[0].StrikeTarget.IsValid());
+    R.Fleet->Recall(R.Carrier); R.Advance(5);
+    TestEqual(TEXT("명시 복귀는 대함 기동과 방어 추격보다 우선한다"), R.Fleet->CountAircraft(R.Carrier, EOVAircraftState::Stored), 2);
+    return true;
+}
+
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(FOVCarrierMultipleSectionsTest, "OrbitalVanguard.Carrier.MultipleCarrierSectionsAndPureDogfight", EAutomationTestFlags::EditorContext | EAutomationTestFlags::EngineFilter)
+bool FOVCarrierMultipleSectionsTest::RunTest(const FString&)
+{
+    OVCarrierTest::FRange R(8);
+    auto* Second = R.Make(TEXT("Second"), 0, FVector(-2000, 1000, 0));
+    R.Combat->RegisterShip(Second, 3, false, 3);
+    R.Fleet->RegisterCarrier(Second, 8);
+    R.Carrier->AttackTarget = Second->AttackTarget = R.Enemy;
+    R.Enemy->Systems->Shield = R.Enemy->Systems->MaxShield = 10000000;
+    R.Fleet->Launch(R.Carrier); R.Fleet->Launch(Second); R.Advance(4);
+    TSet<int32> Ids; TArray<FVector> Approaches;
+    bool FirstFired = false, SecondFired = false;
+    for (const auto& C : R.Fleet->Aircraft)
+    {
+        Ids.Add(C.AircraftId); Approaches.Add(C.ApproachPoint);
+        if (C.Carrier == R.Carrier && C.ShotsFired > 0) FirstFired = true;
+        if (C.Carrier == Second && C.ShotsFired > 0) SecondFired = true;
+    }
+    TestEqual(TEXT("다중 항모 기체 ID는 유일하다"), Ids.Num(), R.Fleet->Aircraft.Num());
+    TestTrue(TEXT("같은 목표에 다중 항모의 실제 사격이 연결된다"), FirstFired && SecondFired);
+    TestTrue(TEXT("소편대가 같은 접근점 하나를 공유하지 않는다"), FVector::Dist(Approaches[0], Approaches[8]) > 500);
+
+    // No registered hostile ship: the same independent dogfight code can fight far from a mother ship.
+    R.Enemy->SetActorScale3D(FVector(1)); R.Fleet->RegisterCarrier(R.Enemy, 2); R.Fleet->Launch(R.Enemy);
+    R.Combat->Ships.Reset(); R.Carrier->AttackTarget = Second->AttackTarget = nullptr;
+    for (auto& C : R.Fleet->Aircraft)
+    {
+        C.StrikeTarget.Reset(); C.InterceptTargetId = 0;
+        C.Position = FVector(100000, C.FactionId == 0 ? 0 : 600, 12000 + C.AircraftId * 100);
+    }
+    R.Advance(.5f);
+    TestEqual(TEXT("독립 공중전에 대함 목표 반경 제한을 적용하지 않는다"), R.Fleet->Aircraft[0].Maneuver, EOVAircraftManeuver::Dogfight);
+    TestTrue(TEXT("독립 공중전을 모함 위치로 강제 복귀시키지 않는다"), R.Fleet->Aircraft[0].Position.X > 80000);
     return true;
 }
 #endif

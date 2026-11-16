@@ -18,6 +18,8 @@
 #include "Camera/CameraActor.h"
 #include "Camera/CameraComponent.h"
 #include "DrawDebugHelpers.h"
+#include "ProfilingDebugging/CsvProfiler.h"
+#include "ProfilingDebugging/CpuProfilerTrace.h"
 #include "Engine/World.h"
 #include "InputCoreTypes.h"
 #include "Kismet/GameplayStatics.h"
@@ -726,6 +728,8 @@ void AOVController::PlayerTick(float DeltaTime)
   }
  }
  StepSimulation(DeltaTime);
+ CSV_SCOPED_TIMING_STAT_EXCLUSIVE(OV_WorldEffects);
+ TRACE_CPUPROFILER_EVENT_SCOPE(OV_WorldEffects);
  if(Combat && Combat->bEnabled) {
   // Presentation reads resolved events. It never requests fire or applies damage.
   const float FX=CalibrationScenario>=0?20.f:1.f;

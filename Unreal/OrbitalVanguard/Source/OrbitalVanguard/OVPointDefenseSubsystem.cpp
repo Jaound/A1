@@ -1,4 +1,6 @@
 #include "OVPointDefenseSubsystem.h"
+#include "ProfilingDebugging/CsvProfiler.h"
+#include "ProfilingDebugging/CpuProfilerTrace.h"
 
 #include "OVCombatSubsystem.h"
 #include "OVCarrierSubsystem.h"
@@ -19,6 +21,8 @@ struct FTarget
 
 void GatherTargets(UWorld* World, TArray<FTarget>& Out)
 {
+    CSV_SCOPED_TIMING_STAT_EXCLUSIVE(OV_PDGather);
+    TRACE_CPUPROFILER_EVENT_SCOPE(OV_PDGather);
     Out.Reset();
     if (const auto* Combat = World->GetSubsystem<UOVCombatSubsystem>())
         for (const FOVAttackState& Attack : Combat->Attacks)
@@ -149,6 +153,8 @@ FString UOVPointDefenseSubsystem::GetReadiness(AOVShip* Ship) const
 
 void UOVPointDefenseSubsystem::Step(float GameDelta)
 {
+    CSV_SCOPED_TIMING_STAT_EXCLUSIVE(OV_PD);
+    TRACE_CPUPROFILER_EVENT_SCOPE(OV_PD);
     if (!bEnabled || !FMath::IsFinite(GameDelta) || GameDelta <= 0) return;
     GameTime += GameDelta;
     TArray<FTarget> Targets;
