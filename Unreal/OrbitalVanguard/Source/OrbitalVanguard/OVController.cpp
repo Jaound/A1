@@ -1,6 +1,7 @@
 #include "OVController.h"
 #include "OVShip.h"
 #include "OVHUD.h"
+#include "OVCalibration.h"
 #include "OVShipSystemsComponent.h"
 #include "OVCombatSubsystem.h"
 #include "GameFramework/InputSettings.h"
@@ -20,6 +21,7 @@ AOVController::AOVController() { bShowMouseCursor=true; bEnableClickEvents=true;
 void AOVController::BeginPlay()
 {
  Super::BeginPlay();
+ LegacyTraceDistance=HitResultTraceDistance;
  Combat=GetWorld()->GetSubsystem<UOVCombatSubsystem>();
  FInputModeGameAndUI Mode; Mode.SetHideCursorDuringCapture(false); Mode.SetLockMouseToViewportBehavior(EMouseLockMode::DoNotLock); SetInputMode(Mode);
  RangeCamera=GetWorld()->SpawnActor<ACameraActor>();
@@ -53,9 +55,21 @@ void AOVController::StartCombatRange()
  if(!Combat || Ships.Num()!=3) return;
  Action(TEXT("Cancel")); OrbitGesture={}; Groups.Reset();
  Combat->DisableCombat();
+ const bool bRestoreLegacy = CalibrationScenario >= 0;
+ CalibrationScenario = -1;
+ HitResultTraceDistance = LegacyTraceDistance;
  const FVector Positions[]={FVector(-1400,-700,300),FVector(-1600,800,300),FVector(1600,0,300)};
  for(int32 I=0;I<Ships.Num();++I) {
   AOVShip* Ship=Ships[I];
+  if (bRestoreLegacy)
+  {
+   const TCHAR* Names[] = {TEXT("01 / KESTREL - Escort"), TEXT("02 / ATLAS - Cruiser"), TEXT("03 / RED SIGNAL - Target")};
+   const float Speeds[] = {850,420,0}, Turns[] = {90,24,0}, Scales[] = {1.4f,2.5f,1.8f};
+   const FLinearColor Colors[] = {{.1f,.8f,1},{.3f,.5f,1},{1,.12f,.08f}};
+   Ship->Configure(Names[I],I!=2,Speeds[I],Turns[I],FVector(Scales[I]),Colors[I]);
+   Ship->SetCalibrationHull(nullptr);
+   Ship->Systems->Tuning=GetDefault<UOVShipSystemsComponent>()->Tuning;
+  }
   // Transient per-run fixture. Authored 2A Content assets are never modified.
   UShipLayoutDataAsset* Layout=UShipLayoutDataAsset::MakeTestLayout(this,I+1);
   if(I==0) { Layout->WeaponMounts.RemoveAt(2); Layout->MissileSlots=0; }
@@ -86,6 +100,35 @@ void AOVController::StartCombatRange()
  LastAction=TEXT("2B ready (paused). T + enemy selects only; B fires chosen mount; L fires all; AUTO engages. F1 resumes.");
  UE_LOG(LogTemp,Display,TEXT("OV2B: Combat range reset, seed=260112, paused"));
 }
+bool AOVController::StartCalibrationRange(int32 Scenario)
+{
+ if (!Combat) return false;
+ TArray<AOVShip*> Combatants;
+ for (AOVShip* Ship : Ships) Combatants.Add(Ship);
+ if (!OVCalibration::Start(*Combat, Combatants, Scenario)) return false;
+
+ Action(TEXT("Cancel"));
+ OrbitGesture={};
+ Groups.Reset();
+ CalibrationScenario=Scenario;
+ HitResultTraceDistance=OVCalibration::RayLength;
+ bSimulationPaused=true;
+ SimulationSpeed=1;
+ SimulationSeconds=0;
+ SelectShip(Ships[0]);
+ CameraFocus=FVector(0,0,2000);
+ CameraDistance=OVCalibration::StartZoom;
+ UpdateCamera();
+ LastAction=TEXT("D116 candidate. F6 cycles duel / wing / missile. F5 returns to legacy battle.");
+ return true;
+}
+
+double AOVController::CommandXY() const { return CalibrationScenario>=0 ? OVCalibration::XYLimit : 6000; }
+double AOVController::CommandMinZ() const { return CalibrationScenario>=0 ? OVCalibration::MinZ : -1500; }
+double AOVController::CommandMaxZ() const { return CalibrationScenario>=0 ? OVCalibration::MaxZ : 4000; }
+double AOVController::CommandRayLength() const { return CalibrationScenario>=0 ? OVCalibration::RayLength : 100000; }
+double AOVController::AltitudeScale() const { return CalibrationScenario>=0 ? OVCalibration::AltitudeScale : 1; }
+
 void AOVController::SelectShip(AOVShip* Ship)
 {
  CancelRightMove();
@@ -136,6 +179,7 @@ bool AOVController::ActionPressed(FName Name) const
 }
 void AOVController::Action(FName Name)
 {
+ if(Name==TEXT("CalibrationRange")) { StartCalibrationRange((CalibrationScenario+1)%3); return; }
  if(Name==TEXT("CombatRange")) { StartCombatRange(); return; }
  if(Name==TEXT("CameraProfile"))
  {
@@ -204,8 +248,8 @@ void AOVController::Action(FName Name)
    LastAction=Accepted?TEXT("Fire requested (one salvo). Awaiting live gates / simulation."):TEXT("Fire request rejected: check target, ownership and weapon state");
   }
   if(Name==TEXT("Move")) { bPlacing=true; InputMode=EOVInputMode::Move; Preview=Selected->GetActorLocation(); PlacementPlaneZ=Preview.Z; OrderInput.Reset(); LastAction=(bPlayGame3?TEXT("Cursor XY; hold Shift + drag Z; LMB/Enter confirms"):TEXT("Cursor XY; hold Shift/RMB + drag Z; LMB/Enter confirms")); }
-  if(Name==TEXT("Up") && bPlacing) Preview.Z=FMath::Min(Preview.Z+250,4000.0);
-  if(Name==TEXT("Down") && bPlacing) Preview.Z=FMath::Max(Preview.Z-250,-1500.0);
+  if(Name==TEXT("Up") && bPlacing) Preview.Z=FMath::Min(Preview.Z+250*AltitudeScale(),CommandMaxZ());
+  if(Name==TEXT("Down") && bPlacing) Preview.Z=FMath::Max(Preview.Z-250*AltitudeScale(),CommandMinZ());
   if(Name==TEXT("Confirm")) ConfirmMove();
   if(Name==TEXT("Stop")) { for(AOVShip* Ship:Selection) Ship->StopMovement(); bPlacing=false; InputMode=EOVInputMode::None; LastAction=TEXT("Braking to persistent HOLD"); }
   if(Name==TEXT("Target")) { bPlacing=false; InputMode=EOVInputMode::Target; LastAction=TEXT("Click enemy: target selection does not fire or change mode"); }
@@ -265,8 +309,8 @@ void AOVController::UpdatePreview()
 }
 void AOVController::SampleOrderCursor(FVector Origin,FVector Direction,float MouseY,bool Altitude,bool Blocked)
 {
- FVector Raw=Preview; const bool Valid=!Blocked&&FOVOrderInput::Project(Origin,Direction,PlacementPlaneZ,Raw,ProjectionNearDistance);
- OrderInput.Sample(Preview,Raw,MouseY,Altitude,Blocked||!Valid,AltitudeUnitsPerPixel);
+ FVector Raw=Preview; const bool Valid=!Blocked&&FOVOrderInput::Project(Origin,Direction,PlacementPlaneZ,Raw,ProjectionNearDistance,CommandRayLength());
+ OrderInput.Sample(Preview,Raw,MouseY,Altitude,Blocked||!Valid,static_cast<float>(AltitudeUnitsPerPixel*AltitudeScale()),CommandXY(),CommandMinZ(),CommandMaxZ());
 }
 void AOVController::IssueHeading(FVector Point)
 {
@@ -288,7 +332,7 @@ void AOVController::ResetCameraProfile()
  CameraFocus=FVector::ZeroVector;
  CameraYaw=bPlayGame3?32.f:-45.f;
  CameraPitch=bPlayGame3?-38.f:-48.f;
- CameraDistance=bPlayGame3?FOVPlayGame3Profile::InitialDistance:6500.f;
+ CameraDistance=CalibrationScenario>=0 ? OVCalibration::StartZoom : (bPlayGame3?FOVPlayGame3Profile::InitialDistance:6500.f);
  UpdateCamera();
 }
 
@@ -313,12 +357,20 @@ void AOVController::ApplyCameraInput(FVector2D OrbitDelta, FVector LocalPan, flo
    }
    Multiplier=Wheel>0?FMath::Pow(.88,Wheel):FMath::Pow(1.13,-Wheel);
   }
+  if (CalibrationScenario>=0)
+  {
+   MaxDistance=OVCalibration::MaxZoom;
+   MinDistance=3000;
+   if (Selected && Selected->Systems->Layout)
+    MinDistance=FMath::Max(MinDistance, float(1.45*(Selected->Systems->Layout->LocalHalfExtent*Selected->GetActorScale3D()).Size()));
+  }
   CameraDistance=FMath::Clamp(CameraDistance*Multiplier,double(MinDistance),double(MaxDistance));
  }
  if(!LocalPan.IsNearlyZero())
  {
   bFollow=false;
-  const double Speed=bPlayGame3?FOVPlayGame3Profile::PanSpeed(CameraDistance):CameraDistance*.45;
+  const double Speed=CalibrationScenario>=0 ? (bPlayGame3?FOVPlayGame3Profile::PanSpeed(CameraDistance/20)*20:CameraDistance*.45)
+   : (bPlayGame3?FOVPlayGame3Profile::PanSpeed(CameraDistance):CameraDistance*.45);
   CameraFocus+=FRotator(0,CameraYaw,0).RotateVector(LocalPan.GetClampedToMaxSize(1))*Speed*Dt;
  }
  if(bFollow)
@@ -385,7 +437,7 @@ void AOVController::UpdateOrbit(FVector2D Cursor)
 
 void AOVController::UpdateRightMove(FVector2D Cursor)
 {
- Preview=RightMove.Sample(Cursor);
+ Preview=RightMove.Sample(Cursor,AltitudeScale(),CommandMinZ(),CommandMaxZ());
  OrderInput.bShowAltitude=!bRightHeading && RightMove.MaxTravelSquared>=FMath::Square(8.0);
  if(bRightHeading) Preview.Z=RightMove.Anchor.Z;
 }
@@ -413,9 +465,9 @@ void AOVController::HandleRightMove(bool Pressed, FVector2D Cursor, bool InWorld
   PlacementPlaneZ=Selected->GetActorLocation().Z;
   FVector Origin,Direction,Point=Selected->GetActorLocation();
   const bool Valid=DeprojectScreenPositionToWorld(Cursor.X,Cursor.Y,Origin,Direction) &&
-   FOVOrderInput::Project(Origin,Direction,PlacementPlaneZ,Point,ProjectionNearDistance);
-  Point.X=FMath::Clamp(Point.X,-6000.0,6000.0);
-  Point.Y=FMath::Clamp(Point.Y,-6000.0,6000.0);
+   FOVOrderInput::Project(Origin,Direction,PlacementPlaneZ,Point,ProjectionNearDistance,CommandRayLength());
+  Point.X=FMath::Clamp(Point.X,-CommandXY(),CommandXY());
+  Point.Y=FMath::Clamp(Point.Y,-CommandXY(),CommandXY());
   RightMove.Begin(Cursor,Point,Valid);
   UpdateRightMove(Cursor);
   LastAction=TEXT("RMB: fixed XY; drag Z and release");
@@ -511,7 +563,12 @@ void AOVController::ResolveContacts(float SimDelta)
   AOVShip* A=Ships[I]; AOVShip* B=Ships[J];
   if(A->Systems->bWrecked||B->Systems->bWrecked) continue;
   if(Combat && Combat->bEnabled && (Combat->IsDeparted(A)||Combat->IsDeparted(B))) continue;
-  const float RadiusA=100*A->GetActorScale3D().GetMax(); const float RadiusB=100*B->GetActorScale3D().GetMax();
+  const auto ContactRadius=[this](const AOVShip* Ship) {
+   if (CalibrationScenario>=0 && Ship->Systems->Layout)
+    return (Ship->Systems->Layout->LocalHalfExtent * Ship->GetActorScale3D()).Size();
+   return 100*Ship->GetActorScale3D().GetMax();
+  };
+  const double RadiusA=ContactRadius(A), RadiusB=ContactRadius(B);
   FVector Delta=B->GetActorLocation()-A->GetActorLocation(); const double Distance=Delta.Size();
   const FVector Normal=Distance>0.001?Delta/Distance:FVector::RightVector;
   const bool MoveA=A->Systems->CanMove()&&!A->bFTLCharging;
@@ -589,13 +646,14 @@ void AOVController::PlayerTick(float DeltaTime)
  if(OrbitGesture.Surface==EOVOrbitSurface::Preview) CameraWheel=0;
  if(!bPlayGame3 && bPlacing && CameraWheel)
  {
-  Preview.Z=FMath::Clamp(Preview.Z+CameraWheel*250,-1500.0,4000.0);
+  Preview.Z=FMath::Clamp(Preview.Z+CameraWheel*250*AltitudeScale(),CommandMinZ(),CommandMaxZ());
   OrderInput.bShowAltitude=true;
   OrderInput.bReanchor=true;
   CameraWheel=0;
  }
  ApplyCameraInput(FVector2D::ZeroVector,Pan,YawAxis,CameraWheel,FApp::GetDeltaTime());
  if(ActionPressed(TEXT("OVCameraProfile"))) Action(TEXT("CameraProfile"));
+ if(Focused && ActionPressed(TEXT("OVCalibrationRange"))) Action(TEXT("CalibrationRange"));
  if(Focused && ActionPressed(TEXT("OVCombatRange"))) Action(TEXT("CombatRange"));
  if(WasInputKeyJustPressed(EKeys::F9)) UE_LOG(LogTemp,Display,TEXT("OV VERIFY: camera=%s yaw=%.1f pitch=%.1f distance=%.1f ship=%s pos=%s manual=%d moving=%d paused=%d speed=%.0f sim=%.3f"),*CameraFocus.ToString(),CameraYaw,CameraPitch,CameraDistance,Selected?*Selected->ShipName:TEXT("none"),Selected?*Selected->GetActorLocation().ToString():TEXT("none"),Selected?Selected->bManual:0,Selected?Selected->bHasDestination:0,bSimulationPaused,SimulationSpeed,SimulationSeconds);
  if(ActionPressed(TEXT("OVPause"))) Action(TEXT("Pause"));
@@ -622,7 +680,7 @@ void AOVController::PlayerTick(float DeltaTime)
    FHitResult Hit; if(!Shift&&GetHitResultUnderCursor(ECC_Visibility,false,Hit)) {
     AOVShip* Target=Cast<AOVShip>(Hit.GetActor()); if(Target&&Selected&&Target->bFriendly!=Selected->bFriendly) RightTarget=Target;
    }
-   if(!RightTarget.IsValid()&&!bPlacing) { Action(TEXT("Move")); FVector O,D,Raw; if(DeprojectMousePositionToWorld(O,D)&&FOVOrderInput::Project(O,D,PlacementPlaneZ,Raw,ProjectionNearDistance)) { Preview.X=Raw.X; Preview.Y=Raw.Y; } }
+   if(!RightTarget.IsValid()&&!bPlacing) { Action(TEXT("Move")); FVector O,D,Raw; if(DeprojectMousePositionToWorld(O,D)&&FOVOrderInput::Project(O,D,PlacementPlaneZ,Raw,ProjectionNearDistance,CommandRayLength())) { Preview.X=FMath::Clamp(Raw.X,-CommandXY(),CommandXY()); Preview.Y=FMath::Clamp(Raw.Y,-CommandXY(),CommandXY()); } }
   }
  }
  if(bRightGesture&&WasInputKeyJustReleased(EKeys::RightMouseButton)) {
@@ -634,7 +692,7 @@ void AOVController::PlayerTick(float DeltaTime)
  if(InWorld&&!RightMove.bActive&&WasInputKeyJustPressed(EKeys::Enter)) ConfirmMove();
  if(LeftPressed && InWorld && !RightMove.bActive && OrbitGesture.Surface==EOVOrbitSurface::None) {
   if(bPlacing) ConfirmMove();
-  else if(InputMode==EOVInputMode::Heading) { FVector O,D,P; if(DeprojectMousePositionToWorld(O,D)&&FOVOrderInput::Project(O,D,PlacementPlaneZ,P,ProjectionNearDistance)) IssueHeading(P); }
+  else if(InputMode==EOVInputMode::Heading) { FVector O,D,P; if(DeprojectMousePositionToWorld(O,D)&&FOVOrderInput::Project(O,D,PlacementPlaneZ,P,ProjectionNearDistance,CommandRayLength())) IssueHeading(P); }
   else { FHitResult Hit; AOVShip* Ship=nullptr; if(GetHitResultUnderCursor(ECC_Visibility,false,Hit)) Ship=Cast<AOVShip>(Hit.GetActor());
    if(InputMode==EOVInputMode::Target) { if(Ship) SetTarget(Ship); }
    else if(Shift&&Ship) SelectAdditional(Ship); else SelectShip(Ship);
@@ -661,9 +719,12 @@ void AOVController::PlayerTick(float DeltaTime)
    }
   }
  }
+ const double GridStep=CalibrationScenario>=0 ? OVCalibration::GridStep : 500;
+ const double GridExtent=CommandXY();
+ const float GridLine=CalibrationScenario>=0 ? 40.f : 2.f;
  for(int I=-12;I<=12;++I) {
-  DrawDebugLine(GetWorld(),FVector(I*500,-6000,0),FVector(I*500,6000,0),I==0?FColor(50,130,180):FColor(18,35,55),false,-1,0,2);
-  DrawDebugLine(GetWorld(),FVector(-6000,I*500,0),FVector(6000,I*500,0),I==0?FColor(180,75,60):FColor(18,35,55),false,-1,0,2);
+  DrawDebugLine(GetWorld(),FVector(I*GridStep,-GridExtent,0),FVector(I*GridStep,GridExtent,0),I==0?FColor(50,130,180):FColor(18,35,55),false,-1,0,GridLine);
+  DrawDebugLine(GetWorld(),FVector(-GridExtent,I*GridStep,0),FVector(GridExtent,I*GridStep,0),I==0?FColor(180,75,60):FColor(18,35,55),false,-1,0,GridLine);
  }
  for(AOVShip* Ship:Ships) {
   if(Combat && Combat->bEnabled && Combat->IsDeparted(Ship)) continue;

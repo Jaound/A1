@@ -198,15 +198,21 @@ void AOVHUD::DrawHUD()
  Canvas->Canvas->PushRelativeTransform(FScaleMatrix(FVector(UIScale,UIScale,1)));
  const float Width=Canvas->SizeX/UIScale,Height=Canvas->SizeY/UIScale;
  const bool CombatOn=PC->Combat&&PC->Combat->bEnabled;
- DrawRect(Panel,10,10,Width-20,40);DrawText(CombatOn?TEXT("ORBITAL VANGUARD / 2B COMBAT RANGE"):TEXT("ORBITAL VANGUARD / 2A TEST RANGE"),Accent,20,22,GEngine->GetSmallFont());
+ DrawRect(Panel,10,10,Width-20,40);if(PC->CalibrationScenario<0)DrawText(CombatOn?TEXT("ORBITAL VANGUARD / 2B COMBAT RANGE"):TEXT("ORBITAL VANGUARD / 2A TEST RANGE"),Accent,20,22,GEngine->GetSmallFont());
  Button(TEXT("Pause"),PC->bSimulationPaused?TEXT("F1 RESUME"):TEXT("F1 PAUSE"),380,16,100,PC->bSimulationPaused);
  Button(TEXT("Speed1"),TEXT("F2 1x"),488,16,68,PC->SimulationSpeed==1);Button(TEXT("Speed2"),TEXT("F3 2x"),564,16,68,PC->SimulationSpeed==2);Button(TEXT("Speed3"),TEXT("F4 3x"),640,16,68,PC->SimulationSpeed==3);
  Button(TEXT("Developer"),PC->bDeveloperMode?TEXT("DEV: ON"):TEXT("DEV: OFF"),725,16,100,PC->bDeveloperMode);
  DrawText(FString::Printf(TEXT("SIM %.1fs"),PC->SimulationSeconds),Ink,840,24,GEngine->GetSmallFont());
  Button(TEXT("CameraProfile"),PC->bPlayGame3?TEXT("P PlayGame3"):TEXT("P Legacy"),960,16,124);
- Button(TEXT("CombatRange"),CombatOn?TEXT("F5 RESET BATTLE"):TEXT("F5 COMBAT RANGE"),1092,16,158);
+ if(PC->CalibrationScenario>=0)
+ {
+  const TCHAR* Scenario[]={TEXT("DUEL"),TEXT("WING"),TEXT("MISSILES")};
+  DrawText(FString::Printf(TEXT("D116 CANDIDATE / %s"),Scenario[PC->CalibrationScenario]),Accent,20,22,GEngine->GetSmallFont());
+ }
+ Button(TEXT("CombatRange"),PC->CalibrationScenario>=0?TEXT("F5 LEGACY BATTLE"):CombatOn?TEXT("F5 RESET BATTLE"):TEXT("F5 COMBAT RANGE"),1092,16,158);
  for(int32 I=0;I<PC->Ships.Num();++I)if((PC->Ships[I]->bFriendly||PC->bDeveloperMode) && !(CombatOn&&PC->Combat->IsDeparted(PC->Ships[I])))Button(FName(*FString::Printf(TEXT("Ship%d"),I+1)),PC->Ships[I]->ShipName.Left(24),12,72+I*36,182,PC->Selected==PC->Ships[I]);
- DrawText(TEXT("Ctrl+1..9 save / 1..9 select"),Ink,14,190,GEngine->GetSmallFont());
+ Button(TEXT("CalibrationRange"),TEXT("F6 D116 CANDIDATE"),12,182,182);
+ DrawText(TEXT("Ctrl+1..9 save / 1..9 select"),Ink,206,190,GEngine->GetSmallFont());
  if(PC->Selected) {
   const float Y=Height-83;DrawRect(Panel,10,Y,Width-20,74);
   const FName Names[]={TEXT("Manual"),TEXT("Auto"),TEXT("Move"),TEXT("Stop"),TEXT("Target"),TEXT("ClearTarget"),TEXT("Heading"),TEXT("Port"),TEXT("Starboard"),TEXT("Focus"),TEXT("Details"),TEXT("Cancel"),TEXT("Deselect")};

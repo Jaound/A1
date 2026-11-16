@@ -67,9 +67,17 @@ public:
  UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Combat") TObjectPtr<UOVCombatSubsystem> Combat;
  /** Explicit test-range reset; never rewrites authored layout assets. */
  UFUNCTION(BlueprintCallable, Category="Combat") void StartCombatRange();
+ UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Combat") int32 CalibrationScenario=-1;
+ UFUNCTION(BlueprintCallable, Category="Combat") bool StartCalibrationRange(int32 Scenario=0);
  void ResolveContacts(float SimDelta);
  FOVOrderInput OrderInput;
 private:
+ float LegacyTraceDistance=0;
+ double CommandXY() const;
+ double CommandMinZ() const;
+ double CommandMaxZ() const;
+ double CommandRayLength() const;
+ double AltitudeScale() const;
  bool ActionPressed(FName Name) const;
  TMap<int32,TArray<TWeakObjectPtr<AOVShip>>> Groups;
  bool bRightGesture=false;

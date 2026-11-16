@@ -68,15 +68,15 @@ struct FOVRightMoveGesture
         Anchor = Point;
     }
 
-    FVector Sample(FVector2D Position)
+    FVector Sample(FVector2D Position, double AltitudeScale=1, double MinZ=-1500, double MaxZ=4000)
     {
         MaxTravelSquared = FMath::Max(MaxTravelSquared, (Position - Start).SizeSquared());
         FVector Destination = Anchor;
         if (MaxTravelSquared >= FMath::Square(8.0))
         {
-            const double Offset = (Start.Y - Position.Y) * 0.55 * FOVPlayGame3Profile::UnitsPerReferenceUnit;
-            constexpr double Limit = 180 * FOVPlayGame3Profile::UnitsPerReferenceUnit;
-            Destination.Z = FMath::Clamp(Anchor.Z + FMath::Clamp(Offset, -Limit, Limit), -1500.0, 4000.0);
+            const double Offset = (Start.Y - Position.Y) * 0.55 * FOVPlayGame3Profile::UnitsPerReferenceUnit * AltitudeScale;
+            const double Limit = 180 * FOVPlayGame3Profile::UnitsPerReferenceUnit * AltitudeScale;
+            Destination.Z = FMath::Clamp(Anchor.Z + FMath::Clamp(Offset, -Limit, Limit), MinZ, MaxZ);
         }
         return Destination;
     }

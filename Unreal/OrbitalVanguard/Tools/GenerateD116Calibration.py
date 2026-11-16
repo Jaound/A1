@@ -7,7 +7,7 @@ import sys
 project = Path(__file__).resolve().parents[1]
 source = project.parents[1] / "reference/IntegratedCombat/profile.json"
 output = project / "Source/OrbitalVanguard/OVCalibrationData.inl"
-raw = source.read_bytes()
+raw = source.read_bytes().replace(b"\r\n", b"\n")
 profile = json.loads(raw)
 weapons = profile["weapons"]
 integration = profile["integration"]
@@ -52,3 +52,4 @@ if "--check" in sys.argv:
         raise SystemExit("D116 data differs from source mapping")
 else:
     output.write_text(generated, encoding="utf-8")
+

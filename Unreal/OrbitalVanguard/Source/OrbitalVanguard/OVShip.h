@@ -69,6 +69,7 @@ public:
     UFUNCTION(BlueprintCallable, Category="Debug") void DebugResetMotion();
     UFUNCTION(BlueprintCallable, Category="Debug") void DebugSetFTLCharging(bool bCharging);
     void Simulate(float SimDelta);
+    void SetCalibrationHull(const FVector* LocalHalfExtent);
     void Configure(const FString& Name, bool Friendly, float Speed, float RotationRate,
         const FVector& Scale, const FLinearColor& Color);
 

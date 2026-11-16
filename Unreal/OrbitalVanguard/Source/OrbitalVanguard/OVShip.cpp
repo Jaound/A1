@@ -126,6 +126,16 @@ AOVShip::AOVShip()
     AddAccent(TEXT("StarboardEngine"), Cube.Object, FVector(-125, 75, 0), FVector(1.0, 0.35, 0.45), FRotator::ZeroRotator);
 }
 
+void AOVShip::SetCalibrationHull(const FVector* LocalHalfExtent)
+{
+    Hull->SetRelativeScale3D(LocalHalfExtent ? *LocalHalfExtent / 50.0 : FVector(3.2,1.0,.6));
+    for (UStaticMeshComponent* Part : AccentMeshes)
+    {
+        Part->SetVisibility(!LocalHalfExtent);
+        Part->SetCollisionEnabled(LocalHalfExtent ? ECollisionEnabled::NoCollision : ECollisionEnabled::QueryOnly);
+    }
+}
+
 void AOVShip::Configure(const FString& Name, bool Friendly, float Speed, float RotationRate,
     const FVector& Scale, const FLinearColor& Color)
 {
