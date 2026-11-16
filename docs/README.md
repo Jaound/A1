@@ -7,7 +7,7 @@
 | `00_overview/` | 게임 전체 개요·사용자 결정·미결정 정책 | [GDD](00_overview/GDD.md), [결정](00_overview/DECISIONS.md), [R목록](00_overview/OPEN_QUESTIONS.md) |
 | `01_design/fleet/` | 외부 함대전·함체/시설·모함·수리 물류 | [함대](01_design/fleet/FLEET_COMBAT.md), [함선](01_design/fleet/SHIP_SYSTEMS.md), [수리](01_design/fleet/REPAIR_LOGISTICS.md) |
 | `01_design/boarding/` | 영웅 정체성/성장/스킬과 선내 작전 | [영웅](01_design/boarding/HERO_SYSTEMS.md), [강습](01_design/boarding/BOARDING_COMBAT.md) |
-| `01_design/strategy/` | 입체 기지·성계·자원·경영 | [기지](01_design/strategy/BASE_SYSTEMS.md), [전략/경제](01_design/strategy/STRATEGY_ECONOMY.md) |
+| `01_design/strategy/` | 입체 기지·성계·자원·경영·우주 환경 | [기지](01_design/strategy/BASE_SYSTEMS.md), [전략/경제](01_design/strategy/STRATEGY_ECONOMY.md), [환경](01_design/strategy/SPACE_ENVIRONMENTS.md) |
 | `01_design/interface/` | 화면·조작·정보 표시 | [UI](01_design/interface/UI_SYSTEMS.md) |
 | `02_balance/` | 여러 시스템을 가로지르는 현행 수치 기준안·생산/연구 표 | [기지/생산](02_balance/BASE_BALANCE_DRAFT.md), [통합 전투](02_balance/INTEGRATED_COMBAT_BALANCE.md) |
 | `03_development/` | 구현 순서·실제 완료 상태·UE 기준·회귀 체크 | [구현 상태](03_development/IMPLEMENTATION_STATUS.md), [제작 순서](03_development/IMPLEMENTATION_PLAN.md) |

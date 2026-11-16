@@ -25,6 +25,7 @@
 | [GDD](00_overview/GDD.md) | 정체성·핵심 순환·분야 요약 | 상세 수치·판정은 담당 명세 참조 |
 | [입체 기지](01_design/strategy/BASE_SYSTEMS.md) | 코어·입체 연결·모듈·조선/접안 기능 구분 | 성계/물류는 전략, 제안 수치는 밸런스 초안 |
 | [전략·경제](01_design/strategy/STRATEGY_ECONOMY.md) | 성계·항로·기지·자원·물류·세력 AI | 함선 수리 대상/피해는 시설, 화면은 UI |
+| [우주 환경](01_design/strategy/SPACE_ENVIRONMENTS.md) | 운석·방사능·플레어·중력권, 환경 분포/대응 초안 | 피해/기동은 담당 명세, 효과 채택과 수치는R36 |
 | [함대 전투](01_design/fleet/FLEET_COMBAT.md) | 함급·명령·기동·무장·탐지·요격·FTL 전투 제약 | 피해 계산은 시설, 함재기 소유량은 모함 운용 |
 | [수리·보급](01_design/fleet/REPAIR_LOGISTICS.md) | D114 비용1.5배/속도50%·물리 복구 작업/자원·수리선 | 상태/피해는 함선, 인원/성장은 영웅 |
 | [함선 시스템](01_design/fleet/SHIP_SYSTEMS.md) | 시설·인원 효율·레이아웃·장갑·쉴드·피해·수리·완파/중립 | 실제 점령 절차는 선내 작전 |
