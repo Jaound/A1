@@ -1,6 +1,6 @@
 # BoardingReview v0.4
 
-[기획/결과](../../docs/BOARDING_REVIEW.md)를 먼저 읽는다. 전체 함대/UE 구현이 아닌 분리 진단이다.
+[기획/결과](../../docs/04_analysis/BOARDING_REVIEW.md)를 먼저 읽는다. 전체 함대/UE 구현이 아닌 분리 진단이다.
 
 ```bash
 python reference/BoardingReview/study.py

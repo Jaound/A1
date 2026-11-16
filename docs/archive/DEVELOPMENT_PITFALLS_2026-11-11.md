@@ -1,10 +1,10 @@
-> **과거 프로토타입 원문 · 현행 명세 아님.** Godot API·Y-up·상대 배율·당시 해결안은 참조 기록이다. 구현은 [문서 지도](../DESIGN_INDEX.md)의 현행 명세와 [미결정 목록](../OPEN_QUESTIONS.md)을 따른다. 아래의 ‘필수/마스터/최종’은 원문 당시 표현이다.
+> **과거 프로토타입 원문 · 현행 명세 아님.** Godot API·Y-up·상대 배율·당시 해결안은 참조 기록이다. 구현은 [문서 지도](../DESIGN_INDEX.md)의 현행 명세와 [미결정 목록](../00_overview/OPEN_QUESTIONS.md)을 따른다. 아래의 ‘필수/마스터/최종’은 원문 당시 표현이다.
 
 # 개발 시행착오 및 AI 구현 방지 가이드 (AI Implementation Guidelines & Pitfalls)
 
 > **문서 목적:** 프로토타입 제작 및 플레이 테스트 과정에서 발생한 **구현상의 오류, 조작 불일치, 물리/회전 버그, UI/UX 누락 사례**를 기록한 문서다. 본 게임(Unreal Engine 5 또는 후속 빌드)을 제작할 때 코딩 AI가 동일한 실수를 반복하지 않도록 **필수 준수 제약 조건(Hard Constraints)**으로 함께 제공한다.
 
-> **이식 주의:** 아래의 Y-up 좌표·Godot API·기존 대비 증감 수치는 원형 프로토타입 맥락이다. UE5에 복사하는 실행 지시로 해석하지 않는다. 본작의 기술 적용 기준과 미결정 충돌은 [UE5 제작 공통 기준](../UE5_IMPLEMENTATION_CONTRACT.md)과 [통합 검토](../PLANNING_REVIEW.md)에 분리했다. 프로토타입 결과는 UE5 빌드·PIE 검증 증거를 대체하지 않는다.
+> **이식 주의:** 아래의 Y-up 좌표·Godot API·기존 대비 증감 수치는 원형 프로토타입 맥락이다. UE5에 복사하는 실행 지시로 해석하지 않는다. 본작의 기술 적용 기준과 미결정 충돌은 [UE5 제작 공통 기준](../03_development/UE5_IMPLEMENTATION_CONTRACT.md)과 [통합 검토](../04_analysis/PLANNING_REVIEW.md)에 분리했다. 프로토타입 결과는 UE5 빌드·PIE 검증 증거를 대체하지 않는다.
 
 ## 1. 3D 물리, 함선 기동 및 사선(Firing Arc) 구현 주의사항
 

@@ -10,7 +10,7 @@ def key(b,policy='none',right='mixed'):return f'{b}_mixed_{right}_{policy}_new_s
 def ci(k,n):
  z=1.96;q=k/n;den=1+z*z/n;c=(q+z*z/(2*n))/den;h=z*math.sqrt(q*(1-q)/n+z*z/(4*n*n))/den
  return f'{100*(c-h):.1f}~{100*(c+h):.1f}%'
-lines=['# 장기 함대전·전 함종 코스트 시험 결과 v0.3','', '> 사용자 목표: 1배속 일반 함대전10~15분. 주 평가912회(38조건×24회), 동시드 대조72회, 시간 간격 비교18회. 핵심1002회·추가 반례48회·선내 방어224회, 경로 스트레스36회를 더해 총1310개 유효 결과이며 탐색/이전 후보를 합산하지 않았다. **통계 집계 모형 결과**이며 UE/Godot 실행 결과가 아니다. [수치](FLEET_ENDURANCE_BALANCE.md) · [재현](../reference/FleetEndurance/README.md) · [원시 데이터](../reference/FleetEndurance/results.json).','', '## 일반 혼성 함대전 시간','', '| 코스트 | 구 HP/쉴드 대조 | 새 수치 완파 종료 중앙값 | 최초 함선 완파 중앙값 | 잔여 코스트30% 시각 |','| --- | --- | --- | --- | --- |']
+lines=['# 장기 함대전·전 함종 코스트 시험 결과 v0.3','', '> 사용자 목표: 1배속 일반 함대전10~15분. 주 평가912회(38조건×24회), 동시드 대조72회, 시간 간격 비교18회. 핵심1002회·추가 반례48회·선내 방어224회, 경로 스트레스36회를 더해 총1310개 유효 결과이며 탐색/이전 후보를 합산하지 않았다. **통계 집계 모형 결과**이며 UE/Godot 실행 결과가 아니다. [수치](../02_balance/FLEET_ENDURANCE_BALANCE.md) · [재현](../../reference/FleetEndurance/README.md) · [원시 데이터](../../reference/FleetEndurance/results.json).','', '## 일반 혼성 함대전 시간','', '| 코스트 | 구 HP/쉴드 대조 | 새 수치 완파 종료 중앙값 | 최초 함선 완파 중앙값 | 잔여 코스트30% 시각 |','| --- | --- | --- | --- | --- |']
 for b in (100,200,300):
  s=sm[key(b)];o=sm[f'{b}_mixed_mixed_none_old_screen'];lines.append(f"| {b} | {o['median_seconds']/60:.2f}분 | {s['median_seconds']/60:.2f}분 | {s['median_first_loss']:.1f}초 | {s['median_main_end']/60:.2f}분 |")
 lines+=['', '새 일반 혼성전의 중앙값은 세 코스트 모두 목표10~15분 안에 있다. 개별 시행/모든 편성에10~15분을 보장하지 않는다. 완파 종료 시간을 사용했으며 잔여30%를 종료로 바꿔 목표를 맞추지 않았다. 구 대조군은 같은 새 집계 모형에 기존13함종의v0.2 HP/쉴드만 넣었다. 관통·표적AI·함재기 등의 조건은 동일하므로 과거 물리 모형이나 실제 프로토타입의 재현 결과가 아니다. 신규 임무3종에는 구 수치가 없어 새 값을 유지했다.','', '## 정확한 편성과 커버리지','', '100: 소형20·중형6·대형2. 200: 소형20·중형16·대형4. 300: 소형25·중형10·대형4·초대형1. 함재기는 항모 패키지40대/항공순양함80대다. 모든 편성은 한도와 정확히 같고100에는 초대형이 없다.','', '| 코스트 | 기본 혼성 함종:척수 |','| --- | --- |']
@@ -56,6 +56,7 @@ for budget in (100,200,300):
  for mult in (1,3):
   rr=[x for x in routes['trials'] if x['budget']==budget and x['travel_multiplier']==mult];lines.append(f"| {budget} | {mult} | {sum(x.get('objective',0)>0 for x in rr)}/6 | {sum(x.get('target_wreck_while_aboard',0)>0 for x in rr)}/6 |")
 lines+=['', '깊은 경로에서 내부 완파가 남으면 전체 전투가 길다는 이유로 영웅 생존을 보장하지 않는다. 실제 슬롯 그래프별 왕복시간과 개별 표적의 집중 피격 생존 시간을 함께 검증한다.','']
-lines[4:4]=['![장기전 결과 그래프](../reference/FleetEndurance/results.png)','']
-Path('docs/FLEET_ENDURANCE_RESULTS.md').write_text('\n'.join(lines))
+lines[4:4]=['![장기전 결과 그래프](../../reference/FleetEndurance/results.png)','']
+lines[2:2]=['> **적용 범위:** 아래는 당시 v0.3 모형 결과다. 현재 [영웅 v0.5](../01_design/boarding/HERO_SYSTEMS.md)·[수리 v0.5](../01_design/fleet/REPAIR_LOGISTICS.md) 및 [D113 강습 재검토](BOARDING_REVIEW.md)의 새 조건을 모두 통합한 검증 결과가 아니다.', '']
+Path('docs/04_analysis/FLEET_ENDURANCE_RESULTS.md').write_text('\n'.join(lines))
 print('Report generated')

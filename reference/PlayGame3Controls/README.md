@@ -20,4 +20,4 @@ godot --headless --path "<원본 Play Game 폴더>" --script "<저장소>/refere
 
 원본 프로젝트의 GameManager와 카메라를 사용한다. 실행 결과의 `CAMERA_PROBE_JSON`에 일반 검사와 관찰된 경계 문제가 따로 기록된다. `passed=12`는 원본 전체 게임·OS 마우스 입력·UE5 이식이 성공했다는 뜻이 아니다. 프로젝트 원래 엔진 표기는 Godot 4.3이고 이번 검사는 설치된 4.6.3으로 수행했다.
 
-이 자료를 실제 작업에 적용할 때는 [조작 이식안](../../docs/PLAY_GAME_3_CONTROLS.md)과 [2A 검토](../../docs/PHASE2A_REVIEW.md)를 읽는다.
+이 자료를 실제 작업에 적용할 때는 [조작 이식안](../../docs/05_references/PLAY_GAME_3_CONTROLS.md)과 [2A 검토](../../docs/archive/analysis/PHASE2A_REVIEW.md)를 읽는다.

@@ -362,7 +362,8 @@
           0.3
         ],
         "duration": 4,
-        "cooldown": 16
+        "cooldown": 16,
+        "display_name": "역장 방어"
       },
       "melee2": {
         "unlock": 5,
@@ -371,7 +372,8 @@
           0.08,
           0.1,
           0.12
-        ]
+        ],
+        "display_name": "역장 엄호"
       },
       "melee3": {
         "unlock": 10,
@@ -387,7 +389,8 @@
           0.3,
           0.4
         ],
-        "cooldown": 30
+        "cooldown": 30,
+        "display_name": "강화 돌입"
       },
       "melee4": {
         "unlock": 15,
@@ -399,7 +402,8 @@
           0.2
         ],
         "duration": 3,
-        "cooldown": 120
+        "cooldown": 120,
+        "display_name": "생존 한계 해방"
       },
       "ranged1": {
         "unlock": 1,
@@ -413,7 +417,8 @@
           0.02,
           0.03,
           0.04
-        ]
+        ],
+        "display_name": "초감각 조준"
       },
       "ranged2": {
         "unlock": 5,
@@ -421,7 +426,8 @@
           0.08,
           0.12,
           0.16
-        ]
+        ],
+        "display_name": "약점 감지"
       },
       "ranged3": {
         "unlock": 10,
@@ -441,7 +447,8 @@
           0.25
         ],
         "officer_duration": 8,
-        "officer_cooldown": 60
+        "officer_cooldown": 60,
+        "display_name": "전자기 제압"
       },
       "ranged4": {
         "unlock": 15,
@@ -450,7 +457,8 @@
           0.1,
           0.15,
           0.2
-        ]
+        ],
+        "display_name": "인지 가속"
       },
       "support1": {
         "unlock": 1,
@@ -464,7 +472,8 @@
           5.5,
           5
         ],
-        "charges": 1
+        "charges": 1,
+        "display_name": "생체 재구성"
       },
       "support2": {
         "unlock": 5,
@@ -472,7 +481,8 @@
           0.15,
           0.225,
           0.3
-        ]
+        ],
+        "display_name": "생존장 전개"
       },
       "support3": {
         "unlock": 10,
@@ -492,7 +502,8 @@
         ],
         "officer_duration": 10,
         "officer_tool_charges": 2,
-        "tool_restock_seconds": 30
+        "tool_restock_seconds": 30,
+        "display_name": "재생 공명장"
       },
       "support4": {
         "unlock": 15,
@@ -500,7 +511,8 @@
           1,
           2,
           3
-        ]
+        ],
+        "display_name": "촉매 동조"
       },
       "commander1": {
         "unlock": 1,
@@ -514,7 +526,8 @@
           0.05,
           0.07,
           0.09
-        ]
+        ],
+        "display_name": "신경 공명"
       },
       "commander2": {
         "unlock": 5,
@@ -522,7 +535,8 @@
           0.1,
           0.15,
           0.2
-        ]
+        ],
+        "display_name": "신경 접속"
       },
       "commander3": {
         "unlock": 10,
@@ -539,7 +553,8 @@
           0.15,
           0.2
         ],
-        "officer_duration": 10
+        "officer_duration": 10,
+        "display_name": "전투 동조"
       },
       "commander4": {
         "unlock": 15,
@@ -547,7 +562,8 @@
           0.05,
           0.075,
           0.1
-        ]
+        ],
+        "display_name": "집단 기동 예지"
       }
     },
     "academy_upgrades": [
@@ -658,7 +674,25 @@
       480
     ],
     "initial_support_medkits": 4,
-    "initial_engineering_charges_on_unlock": 0
+    "initial_engineering_charges_on_unlock": 0,
+    "concept": {
+      "identity": "초능력자·강화인간",
+      "origins": [
+        "초능력",
+        "신체·사이버네틱 강화",
+        "복합"
+      ],
+      "origin_policy": "설명용 원천; 유형/임무 독립, 원천별 추가 스탯 없음",
+      "consumable_labels": {
+        "medkit": "재생 촉매",
+        "officer_tool": "정비 증폭기 충전"
+      },
+      "equipment_labels": {
+        "weapon": "능력 초점 장비",
+        "armor": "강화 외피",
+        "tactical": "보조 증폭 장치"
+      }
+    }
   },
   "hulls": {
     "corvette": {

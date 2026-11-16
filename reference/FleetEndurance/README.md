@@ -1,6 +1,6 @@
 # FleetEndurance v0.3
 
-[수치 명세](../../docs/FLEET_ENDURANCE_BALANCE.md) · [결과](../../docs/FLEET_ENDURANCE_RESULTS.md)
+[수치 명세](../../docs/02_balance/FLEET_ENDURANCE_BALANCE.md) · [결과](../../docs/04_analysis/FLEET_ENDURANCE_RESULTS.md)
 
 Python3.10+ 표준 라이브러리만으로 코스트100/200/300과 전 함종을 시험하는 **집계 전투 모형**이다. XYZ 물리/함선 내부 전체 시뮬레이터가 아니다. 작은 함선용`CombatSimulation`과 별도 버전으로 보존한다.
 
