@@ -11,7 +11,7 @@ Visual Studio compiler version 14.51.36260 is newer than latest preferred versio
 Building OrbitalVanguardEditor...
 ===== Toolchain Information =====
 Using ISPC compiler (E:\UE_5.8\Engine\Source\ThirdParty\Intel\ISPC\bin\Windows\ispc.exe)
-  Intel(r) Implicit SPMD Program Compiler (Intel(r) ISPC), 1.24.0 (build commit  @ 20250404, LLVM 18.1.2) 
+  Intel(r) Implicit SPMD Program Compiler (Intel(r) ISPC), 1.24.0 (build commit  @ 20250404, LLVM 18.1.2)
 Using Visual Studio 14.51.36260 toolchain (C:\Program Files (x86)\Microsoft Visual Studio\18\BuildTools\VC\Tools\MSVC\14.51.36231) and Windows 10.0.26100.0 SDK (C:\Program Files (x86)\Windows Kits\10).
 Warning: Visual Studio compiler 14.51.36260 is not a preferred version
 [Adaptive Build] Excluded from OrbitalVanguard unity file: OrbitalVanguard.cpp, OVCalibration.cpp, OVCarrierSubsystem.cpp, OVCarrierTests.cpp, OVCombatSubsystem.cpp, OVCombatTests.cpp, OVController.cpp, OVController2C.cpp, OVControlProfileTests.cpp, OVGameMode.cpp, OVHUD.cpp, OVHUD2C.cpp, OVHUDPlay.cpp, OVOrderInputTests.cpp, OVPerformanceProbe.cpp, OVPointDefenseSubsystem.cpp, OVPointDefenseTests.cpp, OVShip.cpp, OVShipLayout.cpp, OVShipSystemsComponent.cpp, OVSystemsTests.cpp, OVTransportSubsystem.cpp, OVTransportTests.cpp

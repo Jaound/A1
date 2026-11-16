@@ -1,4 +1,4 @@
-﻿Log file open, 11/16/26 23:58:11
+Log file open, 11/16/26 23:58:11
 LogWindows: Failed to load 'aqProf.dll' (GetLastError=126)
 LogWindows: File 'aqProf.dll' does not exist
 LogProfilingDebugging: Loading WinPixEventRuntime.dll for PIX profiling (from ../../../Engine/Binaries/ThirdParty/Windows/WinPixEventRuntime/x64).
@@ -2688,15 +2688,15 @@ LogConfig: Set CVar [[r.VRS.ContrastAdaptiveShading:1]]
 [2026.11.16-14.58.41:895][685]LogSlate: InvalidateAllWidgets triggered.  All widgets were invalidated
 [2026.11.16-14.58.41:916][687]LogAutomationController: Display: Test Completed. Result={Success} Name={RestartDefenseAndLegacyPreservation} Path={OrbitalVanguard.Mission.RestartDefenseAndLegacyPreservation}
 [2026.11.16-14.58.41:917][687]LogAutomationController: BeginEvents: OrbitalVanguard.Mission.RestartDefenseAndLegacyPreservation
-[2026.11.16-14.58.41:917][687]LogAutomationController: Warning: LogSpawn: UWorld::DestroyActor: World has no context! World: Untitled, Actor: /Temp/Untitled_78.Untitled:PersistentLevel.OVShip_5 [log] 
-[2026.11.16-14.58.41:917][687]LogAutomationController: Warning: LogSpawn: UWorld::DestroyActor: World has no context! World: Untitled, Actor: /Temp/Untitled_78.Untitled:PersistentLevel.OVShip_4 [log] 
-[2026.11.16-14.58.41:917][687]LogAutomationController: Warning: LogSpawn: UWorld::DestroyActor: World has no context! World: Untitled, Actor: /Temp/Untitled_78.Untitled:PersistentLevel.OVShip_3 [log] 
-[2026.11.16-14.58.41:917][687]LogAutomationController: Warning: LogSpawn: UWorld::DestroyActor: World has no context! World: Untitled, Actor: /Temp/Untitled_78.Untitled:PersistentLevel.OVShip_8 [log] 
-[2026.11.16-14.58.41:917][687]LogAutomationController: Warning: LogSpawn: UWorld::DestroyActor: World has no context! World: Untitled, Actor: /Temp/Untitled_78.Untitled:PersistentLevel.OVShip_7 [log] 
-[2026.11.16-14.58.41:917][687]LogAutomationController: Warning: LogSpawn: UWorld::DestroyActor: World has no context! World: Untitled, Actor: /Temp/Untitled_78.Untitled:PersistentLevel.OVShip_6 [log] 
-[2026.11.16-14.58.41:917][687]LogAutomationController: Warning: LogSpawn: UWorld::DestroyActor: World has no context! World: Untitled, Actor: /Temp/Untitled_78.Untitled:PersistentLevel.OVShip_11 [log] 
-[2026.11.16-14.58.41:917][687]LogAutomationController: Warning: LogSpawn: UWorld::DestroyActor: World has no context! World: Untitled, Actor: /Temp/Untitled_78.Untitled:PersistentLevel.OVShip_10 [log] 
-[2026.11.16-14.58.41:917][687]LogAutomationController: Warning: LogSpawn: UWorld::DestroyActor: World has no context! World: Untitled, Actor: /Temp/Untitled_78.Untitled:PersistentLevel.OVShip_9 [log] 
+[2026.11.16-14.58.41:917][687]LogAutomationController: Warning: LogSpawn: UWorld::DestroyActor: World has no context! World: Untitled, Actor: /Temp/Untitled_78.Untitled:PersistentLevel.OVShip_5 [log]
+[2026.11.16-14.58.41:917][687]LogAutomationController: Warning: LogSpawn: UWorld::DestroyActor: World has no context! World: Untitled, Actor: /Temp/Untitled_78.Untitled:PersistentLevel.OVShip_4 [log]
+[2026.11.16-14.58.41:917][687]LogAutomationController: Warning: LogSpawn: UWorld::DestroyActor: World has no context! World: Untitled, Actor: /Temp/Untitled_78.Untitled:PersistentLevel.OVShip_3 [log]
+[2026.11.16-14.58.41:917][687]LogAutomationController: Warning: LogSpawn: UWorld::DestroyActor: World has no context! World: Untitled, Actor: /Temp/Untitled_78.Untitled:PersistentLevel.OVShip_8 [log]
+[2026.11.16-14.58.41:917][687]LogAutomationController: Warning: LogSpawn: UWorld::DestroyActor: World has no context! World: Untitled, Actor: /Temp/Untitled_78.Untitled:PersistentLevel.OVShip_7 [log]
+[2026.11.16-14.58.41:917][687]LogAutomationController: Warning: LogSpawn: UWorld::DestroyActor: World has no context! World: Untitled, Actor: /Temp/Untitled_78.Untitled:PersistentLevel.OVShip_6 [log]
+[2026.11.16-14.58.41:917][687]LogAutomationController: Warning: LogSpawn: UWorld::DestroyActor: World has no context! World: Untitled, Actor: /Temp/Untitled_78.Untitled:PersistentLevel.OVShip_11 [log]
+[2026.11.16-14.58.41:917][687]LogAutomationController: Warning: LogSpawn: UWorld::DestroyActor: World has no context! World: Untitled, Actor: /Temp/Untitled_78.Untitled:PersistentLevel.OVShip_10 [log]
+[2026.11.16-14.58.41:917][687]LogAutomationController: Warning: LogSpawn: UWorld::DestroyActor: World has no context! World: Untitled, Actor: /Temp/Untitled_78.Untitled:PersistentLevel.OVShip_9 [log]
 [2026.11.16-14.58.41:917][687]LogAutomationController: EndEvents: OrbitalVanguard.Mission.RestartDefenseAndLegacyPreservation
 [2026.11.16-14.58.41:918][687]LogAutomationController: Sending RunTest FacilityRangeOwnershipAndCrew to F3F843B04171BF3A9D835FBB74E4DE5B
 [2026.11.16-14.58.41:918][687]LogAutomationController: Display: Test Started. Name={FacilityRangeOwnershipAndCrew} Path={OrbitalVanguard.PointDefense.FacilityRangeOwnershipAndCrew}

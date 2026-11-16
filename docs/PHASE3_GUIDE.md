@@ -25,11 +25,11 @@
 
 ## 실제 선내 인원과 명령
 
-상단 **공격 임무 / 방어 임무 / 함대만 비교** 버튼으로 별도 임무에 진입한다. 각 세력은 항공모함25+바스티온5+강습선1, 총31코스트다. 양측 사격 자동·이동 수동으로 시작하며 플레이어가 각각 독립적으로 변경한다. 항공모함은 기존 유한 재고40기를 사용한다. 기본 공격조는 대표 영웅4명+병력6명, 목표 수비 영웅2명이다. 함교·코어·생명유지의 기본 경비는 각4명이며, 전용 강습선은12인 운송 좌석을 사용하므로 별도 무료 경비를 추가하지 않는다.
+상단 **공격 임무 / 방어 임무 / 함대만 비교** 버튼으로 별도 임무에 진입한다. 각 세력은 항공모함25+바스티온5+강습선1, 총31코스트다. 양측 항모·바스티온은 사격 자동·이동 수동으로 시작하며 각각 독립적으로 변경할 수 있다. 공격 무장이 없는 강습선은 사격 수동이다. 항공모함의 기존 유한 재고40기는 임무 시작 때 이미 출격하며, 명시 귀환 후 다시 출격할 수 있다. 기본 공격조는 대표 영웅4명+병력6명, 목표 수비 영웅2명이다. 함교·코어·생명유지의 기본 경비는 각4명이며, 전용 강습선은12인 운송 좌석을 사용하므로 별도 무료 경비를 추가하지 않는다.
 
 공격자는 실제 쉴드 비활성 구간에서 **개인 포드 투입** 또는 **강습선 투입**을 누른다. 진입 후 **쉴드실 확보 → 함교 확보 또는 철수**를 선택한다. 살아남은 인원이 실제 진입점으로 돌아가 원 운송수단으로 회수되어야 임무 회수로 집계된다. 목표를 달성하지 못하고 철수하면 철수 결과이며, 진입 전 회항을 내부 작전 성공으로 계산하지 않는다. 쉴드 재가동·보호·수송선 상실 경고를 확인한다.
 
-방어 임무는 적이 같은 실제 운송·선내 규칙으로 강습한다. 아군을 선내 지도에서 선택해 쉴드실/함교를 수호하거나 재확보한다. 적은 고정 작전 목표와 관측된 외부 상태·자기 함교 통제권 경보를 사용하며 숨은 적 영웅 수/위치를 읽지 않는다. 임무 결과가 나와도 외부 공격이나 잔존 병력을 삭제하지 않으므로 실제 재점령과 사후 손실이 이어질 수 있다. 다시 시작은 새로운 편성과 시드로 초기화하는 별도 실행이다.
+방어 임무는 적이 같은 실제 운송·선내 규칙으로 강습한다. 아군을 선내 지도에서 선택해 쉴드실/함교를 수호하거나 재확보한다. 적은 고정 작전 목표와 관측된 외부 상태·자기 함교 통제권 경보를 사용하며 숨은 적 영웅 수/위치를 읽지 않는다. 임무 결과가 나와도 외부 공격이나 잔존 병력을 삭제하지 않으므로 실제 재점령과 사후 손실이 이어질 수 있다. 다시 시작은 같은 편성과 시드로 초기화하는 별도 실행이다.
 
 DEV 승객 토큰과 실제 영웅·병력은 별도다. 실제 인원은 개인 ID와 선내 유닛 ID를 연결하며, 임무 중 사망·귀환·함선 나포로 새로 생성하지 않는다. 영웅 한도는 세력 전체15명이다. 강습 편제는 영웅4명/전체12명 한도, 임무의 상주 편제는 함급 한도를 따른다. 일반 병력은 시설 운영 승무원과 다른 인원이다.
 
@@ -47,6 +47,8 @@ DEV 승객 토큰과 실제 영웅·병력은 별도다. 실제 인원은 개인
 
 기획 기준은 `035a4fba81d26f1d67daa1f44bded0f7e8d3a434`의 [영웅](01_design/boarding/HERO_SYSTEMS.md), [선내전](01_design/boarding/BOARDING_COMBAT.md), [결정 기록](00_overview/DECISIONS.md)이다. 쉴드 활성 중 회복 없음/비활성 피격 지연 없음, 개인당 원 포드1기, PD의 일반 함선 제외, 개별 무장 피해와 기존 보호 정책을 유지한다.
 
+함체·공격 무장·레이더는 기존 `Calibration_D116_v06`을 재사용한다. 원본 Git LF SHA-256 `639f0a233a3c0ed6bf97edc407754c304c3a4ff8499f1b75ec383a78d5f60d4b`와 단위/필드 매핑은 [기존 교정 명세](PHASE2BR_D116_CALIBRATION.md)에 있으며 이 단계에서 후보 화력이나 HP를 일괄 조정하지 않았다. 새 내부 배치 버전은 `Interior_carrier_D116_v1`, `Interior_bastion_D116_v1`, `Interior_assault_D116_v1`이다. 시설/복도 ID는 함선과 배치 버전 안에서 안정적이며 최종 실내 에셋으로 교체할 때 연결성을 다시 검증한다.
+
 `Interior_D116_L1_Trial_v1`에 대표 역할 수치, 시야22m, 일반병100HP/피해8/주기1.5초/사거리12m/속도2.8m/s, 시설 피격 충격15%, 시설 파괴 재난2HP/초·20초, 나포 함교 파괴 시 영웅 피해65%를 모았다. 대표 영웅 수치와 L1 능력은 v0.5 후보를 사용하며 최종 확정 밸런스로 간주하지 않는다. 점령18초/함교36초/공작30초, 작업 시간 단축50% 상한, 공작1/3·2/3 체크포인트를 사용한다.
 
 임시 정책: 실제 함교 점령 이력이 있는 함선의 함교가 파괴되면 중립 정지한다. 원 세력이 재점령한 뒤 이 표식을 해제하는 상세는 아직 확정하지 않았다. 수호 명령으로 적 점령 시설에 실제 도착한 인원은 같은 점령 작업을 수행한다. 구조 대기·영구 부상·귀환 목적지 상실은 삭제/무료 부활로 숨기지 않는다.
@@ -59,9 +61,36 @@ R26 경계: 목표가 FTL로 이탈하면 그 함선의 내부 이동·교전·�
 
 1. 별도 플레이 창에서 아군을 선택하고 XY 이동·고도·F 추적·Home 전체 보기를 확인한다.
 2. 상세창/선내창 위 클릭과 드래그가 전장 이동·회전에 새어 나가지 않는지 확인한다. 드래그 중 창 밖 이동, 포커스 상실/복귀, Alt 선해제도 확인한다.
-3. 표적→수동 발사→사격 자동을 비교하고 이동 수동/Hold가 유지되는지 확인한다.
+3. 먼저 사격 수동으로 전환한 뒤 표적→수동 발사→사격 자동을 비교하고 이동 수동/Hold가 유지되는지 확인한다.
 4. 함재기 출격·대함 짧은 이탈·명시 귀환을 확인한다. DEV를 꺼도 발사/명중/선택/표적이 구분되어야 한다.
 5. 통합 임무에서 실제 쉴드 제거→운송→선내 목표→원 진입점 철수→생존 인원 회수를 확인한다. DEV 성공 버튼은 사용하지 않는다.
 6. 내부 아군 사격 보호, 쉴드 재가동 경고, 운송수단 상실/구조 대기, 함교 나포 후 잔존 적 소속을 확인한다.
 
 직접 조작을 수행하지 않은 API/스크린샷/렌더 프레임 증거만으로 조작감이나 타격감을 검증했다고 표현하지 않는다.
+
+## 빌드와 검사 재현
+
+저장소 루트에서 실행한다. 빌드 전 해당 프로젝트의 에디터/플레이 창을 닫는다. 새 도구 설치나 전역 설정 변경은 필요 없다.
+
+```powershell
+$ueRoot = 'E:\UE_5.8'
+$projectFile = (Resolve-Path '.\Unreal\OrbitalVanguard\OrbitalVanguard.uproject').Path
+$toolsPath = Join-Path (Split-Path $projectFile -Parent) 'Tools'
+& "$ueRoot\Engine\Build\BatchFiles\Build.bat" OrbitalVanguardEditor Win64 Development "-Project=$projectFile" -WaitMutex -NoHotReloadFromIDE
+& "$ueRoot\Engine\Binaries\Win64\UnrealEditor-Cmd.exe" $projectFile -unattended -nullrhi -nosplash '-ExecCmds=Automation RunTests OrbitalVanguard' '-TestExit=Automation Test Queue Empty'
+
+# 선내 API. 기존 회귀는 ValidatePhase2A.py / ValidateD116Calibration.py / ValidatePhase2C.py로 바꾼다.
+$env:OV_VALIDATOR = 'ValidateInterior.py'
+& "$ueRoot\Engine\Binaries\Win64\UnrealEditor.exe" $projectFile /Game/Maps/ControlRange -unattended -d3d11 "-ExecCmds=py $toolsPath/RunValidation.py"
+
+# 전체29사례: 동일편성4시드 비교, 배속, 원포드/강습선 회수
+$env:OV_MISSION_CASES = 'full'
+& "$ueRoot\Engine\Binaries\Win64\UnrealEditor.exe" $projectFile /Game/Maps/ControlRange -unattended -d3d11 "-ExecCmds=py $toolsPath/ValidateIntegratedMission.py"
+
+# 실제 렌더 측정. 다른UE/빌드를 동시에 실행하지 않고 Label을 새 값으로 지정한다.
+& "$toolsPath/MeasureIntegratedPerformance.ps1" -Mission -Seconds 600 -Label UserMission01 -Trace
+```
+
+API 결과는 `Saved/Validation`의 `Phase2AControls.json`, `Phase2BRCalibration.json`, `Phase2C.json`, `Phase3Interior.json`, `IntegratedMission.json`에 저장된다. 통합은 `완료=true`, `성공=true`, `오류=[]`를 함께 확인한다. 진행 중 파일을 최종 성공으로 오인하지 않는다. 자동69/2A57/종합79/2C77/선내36/통합316은 서로 다른 검사 묶음이며 기존2B·R1이 종합79에 포함되므로 중복 합산하지 않는다.
+
+`SummarizeIntegratedMission.py`는 통합 JSON에서 비교 집계를 만들고, `SummarizeMissionLifetime.py`는 정상 종료된 실제 렌더 폴더에서 수명/ID 요약을 만든다. 원본 CSV·utrace·개별 실행 로그는 Saved 아래에, 제출용 선별 증거는 `docs/validation`에 있다. 렌더 측정으로 직접 마우스·키보드 검사를 대체하지 않는다.
