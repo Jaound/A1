@@ -1,0 +1,4 @@
+Using Visual Studio 14.51.36260 toolchain (C:\Program Files (x86)\Microsoft Visual Studio\18\BuildTools\VC\Tools\MSVC\14.51.36231) and Windows 10.0.26100.0 SDK (C:\Program Files (x86)\Windows Kits\10).
+Warning: Visual Studio compiler 14.51.36260 is not a preferred version
+Result: Succeeded
+Total execution time: 6.81 seconds

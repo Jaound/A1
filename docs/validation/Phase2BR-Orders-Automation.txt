@@ -1,0 +1,52 @@
+[2026.11.16-08.27.47:380][  0]LogAutomationTest: Error: Condition failed
+[2026.11.16-08.27.47:380][  0]LogAutomationTest: Error: Condition failed
+[2026.11.16-08.27.47:380][  0]LogAutomationTest: Error: Condition failed
+[2026.11.16-08.27.47:380][  0]LogAutomationTest: Error: Condition failed
+[2026.11.16-08.27.47:380][  0]LogAutomationTest: Error: Condition failed
+[2026.11.16-08.27.47:380][  0]LogAutomationTest: Error: Condition failed
+[2026.11.16-08.27.47:380][  0]LogAutomationTest: Error: Condition failed
+[2026.11.16-08.27.47:380][  0]LogAutomationTest: Error: Condition failed
+[2026.11.16-08.27.47:380][  0]LogAutomationTest: Error: Condition failed
+[2026.11.16-08.27.47:380][  0]LogAutomationTest: Error: Condition failed
+[2026.11.16-08.27.47:380][  0]LogAutomationTest: Error: Condition failed
+[2026.11.16-08.27.47:380][  0]LogAutomationTest: Error: Condition failed
+[2026.11.16-08.27.47:380][  0]LogAutomationTest: Error: Condition failed
+[2026.11.16-08.27.47:380][  0]LogAutomationTest: Error: Condition failed
+[2026.11.16-08.27.47:380][  0]LogAutomationTest: Error: Condition failed
+[2026.11.16-08.27.54:920][591]LogAutomationCommandLine: Display: Found 35 automation tests based on 'OrbitalVanguard'
+[2026.11.16-08.27.54:947][593]LogAutomationController: Display: Test Completed. Result={Success} Name={DataProfilesAndTierLimits} Path={OrbitalVanguard.Combat.DataProfilesAndTierLimits}
+[2026.11.16-08.27.55:025][596]LogAutomationController: Display: Test Completed. Result={Success} Name={DetectionLossStartsLastKnownTracking} Path={OrbitalVanguard.Combat.DetectionLossStartsLastKnownTracking}
+[2026.11.16-08.27.55:090][598]LogAutomationController: Display: Test Completed. Result={Success} Name={DetectionLossWreckDepartureAndExpiry} Path={OrbitalVanguard.Combat.DetectionLossWreckDepartureAndExpiry}
+[2026.11.16-08.27.55:106][600]LogAutomationController: Display: Test Completed. Result={Success} Name={DetectionSourcesAndInvalidation} Path={OrbitalVanguard.Combat.DetectionSourcesAndInvalidation}
+[2026.11.16-08.27.55:148][603]LogAutomationController: Display: Test Completed. Result={Success} Name={FixedVLSPathAndContinuousSpread} Path={OrbitalVanguard.Combat.FixedVLSPathAndContinuousSpread}
+[2026.11.16-08.27.55:259][605]LogAutomationController: Display: Test Completed. Result={Success} Name={IndependentMovementAndAttackAutomation} Path={OrbitalVanguard.Combat.IndependentMovementAndAttackAutomation}
+[2026.11.16-08.27.55:278][608]LogAutomationController: Display: Test Completed. Result={Success} Name={LaunchedDamageChainAndSingleImpact} Path={OrbitalVanguard.Combat.LaunchedDamageChainAndSingleImpact}
+[2026.11.16-08.27.55:314][611]LogAutomationController: Display: Test Completed. Result={Success} Name={LocalArcsTraverseAndManualAttitude} Path={OrbitalVanguard.Combat.LocalArcsTraverseAndManualAttitude}
+[2026.11.16-08.27.55:380][613]LogAutomationController: Display: Test Completed. Result={Success} Name={OrdersAndFriendlyClearance} Path={OrbitalVanguard.Combat.OrdersAndFriendlyClearance}
+[2026.11.16-08.27.55:398][616]LogAutomationController: Display: Test Completed. Result={Success} Name={ReadinessAndFacilityGates} Path={OrbitalVanguard.Combat.ReadinessAndFacilityGates}
+[2026.11.16-08.27.55:423][619]LogAutomationController: Display: Test Completed. Result={Success} Name={RealMountImpactShieldThenMountOnly} Path={OrbitalVanguard.Combat.RealMountImpactShieldThenMountOnly}
+[2026.11.16-08.27.55:464][622]LogAutomationController: Display: Test Completed. Result={Success} Name={SalvoCancellationAndGeometricMiss} Path={OrbitalVanguard.Combat.SalvoCancellationAndGeometricMiss}
+[2026.11.16-08.27.55:623][625]LogAutomationController: Display: Test Completed. Result={Success} Name={SeededTimeScalePauseAndManualControl} Path={OrbitalVanguard.Combat.SeededTimeScalePauseAndManualControl}
+[2026.11.16-08.27.55:658][628]LogAutomationController: Display: Test Completed. Result={Success} Name={TrajectoryLifetimeAndLaunchOwnership} Path={OrbitalVanguard.Combat.TrajectoryLifetimeAndLaunchOwnership}
+[2026.11.16-08.27.55:676][630]LogAutomationController: Display: Test Completed. Result={Success} Name={OrbitOwnerAndReset} Path={OrbitalVanguard.Controls.OrbitOwnerAndReset}
+[2026.11.16-08.27.55:700][633]LogAutomationController: Display: Test Completed. Result={Success} Name={RightMoveAnchorAndRelease} Path={OrbitalVanguard.Controls.RightMoveAnchorAndRelease}
+[2026.11.16-08.27.55:717][635]LogAutomationController: Display: Test Completed. Result={Success} Name={AnchoredAltitudeAndUI} Path={OrbitalVanguard.Input.AnchoredAltitudeAndUI}
+[2026.11.16-08.27.55:742][638]LogAutomationController: Display: Test Completed. Result={Success} Name={ProjectionGuards} Path={OrbitalVanguard.Input.ProjectionGuards}
+[2026.11.16-08.27.55:758][640]LogAutomationController: Display: Test Completed. Result={Success} Name={RejectInvalidAuthoring} Path={OrbitalVanguard.Layout.RejectInvalidAuthoring}
+[2026.11.16-08.27.55:783][643]LogAutomationController: Display: Test Completed. Result={Success} Name={SixFacesAndBoundaryMapping} Path={OrbitalVanguard.Layout.SixFacesAndBoundaryMapping}
+[2026.11.16-08.27.55:805][645]LogAutomationController: Display: Test Completed. Result={Success} Name={DisableObservedWeapons} Path={OrbitalVanguard.Revision.DisableObservedWeapons}
+[2026.11.16-08.27.55:825][647]LogAutomationController: Display: Test Completed. Result={Success} Name={FactionProtectionAndForceScope} Path={OrbitalVanguard.Revision.FactionProtectionAndForceScope}
+[2026.11.16-08.27.55:845][649]LogAutomationController: Display: Test Completed. Result={Success} Name={ProtectionSalvoAndSurvivorBoundary} Path={OrbitalVanguard.Revision.ProtectionSalvoAndSurvivorBoundary}
+[2026.11.16-08.27.55:867][652]LogAutomationController: Display: Test Completed. Result={Success} Name={ClassTurnRates} Path={OrbitalVanguard.Ship.ClassTurnRates}
+[2026.11.16-08.27.55:892][655]LogAutomationController: Display: Test Completed. Result={Success} Name={FiniteTurnXYZArrival} Path={OrbitalVanguard.Ship.FiniteTurnXYZArrival}
+[2026.11.16-08.27.55:909][657]LogAutomationController: Display: Test Completed. Result={Success} Name={TimeScaleAndStoppedArrival} Path={OrbitalVanguard.Ship.TimeScaleAndStoppedArrival}
+[2026.11.16-08.27.55:933][660]LogAutomationController: Display: Test Completed. Result={Success} Name={ArmorCausesAndSingleHullDamage} Path={OrbitalVanguard.Systems.ArmorCausesAndSingleHullDamage}
+[2026.11.16-08.27.55:958][663]LogAutomationController: Display: Test Completed. Result={Success} Name={D116NoDelayCrewAndDamage} Path={OrbitalVanguard.Systems.D116NoDelayCrewAndDamage}
+[2026.11.16-08.27.55:983][666]LogAutomationController: Display: Test Completed. Result={Success} Name={ExplosionQueueAndWeaponIndependence} Path={OrbitalVanguard.Systems.ExplosionQueueAndWeaponIndependence}
+[2026.11.16-08.27.55:992][667]LogAutomationController: Display: Test Completed. Result={Success} Name={IndependentInstancesAndCrew} Path={OrbitalVanguard.Systems.IndependentInstancesAndCrew}
+[2026.11.16-08.27.56:009][669]LogAutomationController: Display: Test Completed. Result={Success} Name={PartialShieldCapacityTransition} Path={OrbitalVanguard.Systems.PartialShieldCapacityTransition}
+[2026.11.16-08.27.56:026][671]LogAutomationController: Display: Test Completed. Result={Success} Name={RejectInvalidRuntimeLayout} Path={OrbitalVanguard.Systems.RejectInvalidRuntimeLayout}
+[2026.11.16-08.27.56:055][674]LogAutomationController: Display: Test Completed. Result={Success} Name={ShieldStateAndTime} Path={OrbitalVanguard.Systems.ShieldStateAndTime}
+[2026.11.16-08.27.56:080][677]LogAutomationController: Display: Test Completed. Result={Success} Name={ThreeDeckDestructionFaces} Path={OrbitalVanguard.Systems.ThreeDeckDestructionFaces}
+[2026.11.16-08.27.56:089][678]LogAutomationController: Display: Test Completed. Result={Success} Name={VerticalPenetrationAndEmptySlots} Path={OrbitalVanguard.Systems.VerticalPenetrationAndEmptySlots}
+[2026.11.16-08.27.56:090][679]LogWindows: FPlatformMisc::RequestExitWithStatus(1, 0, FEngineLoop::Tick.GScopedTestExit)

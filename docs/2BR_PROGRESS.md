@@ -1,5 +1,17 @@
 # 2B-R v1 / D118 재개 기록
 
+## 최신 체크포인트: R1 명령·보호 (2026-11-16)
+
+구현 `8228f04`. 시작 HEAD `0bf763b`, 미커밋 변경 없음. work fetch 직후 고정한 SHA는 그대로 `035a4fba81d26f1d67daa1f44bded0f7e8d3a434`이며 새 기획 변경 없음. R0와 쉴드 구현을 재작성하지 않았다.
+
+완료: 선체/무장 목적, 관측 장착점에 대한 기존 조준·탄도·충돌 경로, 관측 무장 없음 대기, 세력별 내부 잔류/목표 완료 인터페이스, 세 보호 정책, 지정 공격 무장만의 강제 예외, 취소/표적 변경/자동화 변경/나포의 미발사·예외 정리. 기발사 공격의 소속/탄도를 변경하지 않는다. 소유 세력 생존자 입력으로 승무원0 중립화 경계를 연결하되 시설을 무료 가동하지 않는다. 실제 영웅/강습은 구현하지 않았다.
+
+최종 빌드6.81초 성공. 자동35/35(기존32+Revision3), PIE60/60(기존2B50+새 명령10), 2A PIE57/57 통과. 증거는 `validation/Phase2BR-Orders-*`, 원본 로그는 `Saved/Logs/RevisionR1Orders*.log`. OS 마우스/키보드는 이번에 수행하지 않았다. 한국어 엔진 자체 검사15건은 별도다.
+
+현재 범위의 한계: 임시 관측 모델은 유효 탐지 시 외장 장착점을 공개하며 개별 메시 가림/시야 판정은 없다. 시설/영웅 로스터를 관측 정보로 공개하지 않는다. 무장 선택은 관측된 살아 있는 첫 장착점부터이며 자동 선체 공격으로 전환하지 않는다. FTL 충전의 효율0 취소는 기존 시험 동작을 유지하며 물리 파괴와 인원/점령 사유를 통합된 최종 정책으로 확정하지 않았다.
+
+다음은 **R2**다. profile.json의16종 ships/7종 weapons/radar/tier_damage/integration 구조만 확인했으며 `Calibration_D116_v06`/UE 공간 변환은 미구현이다. R3 전체 비교와 새 교정 장면 검증도 남았다. R2에서는 `OVController.cpp`의 줌 범위/평면 ±6000/고도 -1500~4000 및 `OVOrderInput` 제한을 함께 확인하고, 기존 ControlRange 감도는 유지하면서 새 프리셋 공간 범위를 설정화해야 한다. Python radius를 형상으로 쓰지 않는다. 아래는 이전 쉴드 단위 기록이며 그 '다음 작업' 중 R1 명령·보호는 위 구현으로 대체되었다.
+
 기획 SHA: `035a4fba81d26f1d67daa1f44bded0f7e8d3a434`. origin/work fetch 직후 고정하고 그 SHA의 PHASE2B_REVISION_PROMPT/PHASE2_PLAN/IMPLEMENTATION_STATUS 및 DESIGN_INDEX를 git show로 읽었다. 이후 코드 fetch와 무관하게 이 SHA를 사용한다. 시작 코드 `ca6e8e5`, 브랜치 `codex/phase1-playground`, 시작 미커밋 변경 없음. 디스크 AGENTS/agent.md를 찾지 못했고 대화의 CODEX DEVELOPMENT RULES를 적용했다.
 
 ## 상태와 차이표
