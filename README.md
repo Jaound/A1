@@ -1,23 +1,32 @@
-# 오비탈 뱅가드 (가제)
+# 오비탈 뱅가드(가제)
 
-3D 우주 함대전과 2D 선내 전술을 결합한 싱글플레이 지속형 RTS의 작업 저장소입니다.
+싱글플레이 지속형 우주 세력 RTS. 3D 함대전과 2D 선내 작전, 기지·함대·영웅 성장을 연결합니다.
 
-## 기획 문서
+## 기획을 읽을 때
 
-- [게임 기획 요약](docs/GDD.md): 게임의 정체성, 시스템, 플레이 흐름
-- [결정 및 미결정 사항](docs/DECISIONS.md): 확정된 방향과 아직 선택해야 할 규칙
-- [함대 전투 설계안](docs/FLEET_COMBAT.md): 함급과 전투 역할에 대한 검토용 초안
-- [함선 내부 시설](docs/SHIP_SYSTEMS.md): 기본·특화 시설과 파괴 효과
-- [영웅·강습 시스템](docs/HERO_SYSTEMS.md): 영웅의 임무·유형, 시설 점령과 함선 지원
-- [선내 자동 전투·점령 기본안](docs/BOARDING_COMBAT.md): 경로·교전·점령·후퇴의 첫 검증용 설계
-- [UI·UX 시스템](docs/UI_SYSTEMS.md): 플로팅 창, 실시간 3D 뷰어, 입력·HUD·전술 정보
-- [프로토타입 통합 개선안](docs/PROTOTYPE_IMPROVEMENT_PLAN.md): 플레이 테스트의 설계·밸런스 개선 기준
-- [개발 시행착오](docs/DEVELOPMENT_PITFALLS.md): 재발 방지 사례와 검증할 예외
-- [제작 순서와 로컬 개발 안내](docs/IMPLEMENTATION_PLAN.md): 언리얼 프로젝트 생성, 단계별 구현과 검증 기준
-- [2단계 제작 계획](docs/PHASE2_PLAN.md): 최신 기획 동기화와 다층 시설·외부 함대전 구현 순서
-- [최신 기획 통합 검토](docs/PLANNING_REVIEW.md): 정정 사항, 충돌과 미결정 규칙, 구현 영향
-- [UE5 제작 공통 기준](docs/UE5_IMPLEMENTATION_CONTRACT.md): 문서 적용 순서, 좌표·상태·UI 분리와 회귀 검사
-- [2A 완료 보고 검토](docs/PHASE2A_REVIEW.md): 보고된 완료 범위와 독립 검증이 필요한 부분
-- [Play Game 3 조작 분석·이식안](docs/PLAY_GAME_3_CONTROLS.md): 원본 카메라 수치, 입력 차이와 다음 로컬 작업 기준
+**[문서 지도·용어·관리 원칙](docs/DESIGN_INDEX.md)**에서 시작합니다. 전체 요약은 [GDD](docs/GDD.md), 변경 근거는 [결정 기록](docs/DECISIONS.md), 아직 선택할 정책은 [미결정 목록](docs/OPEN_QUESTIONS.md)에서 확인합니다.
 
-새로운 기획을 논의할 때 위 문서를 먼저 확인하고, 합의된 변경을 반영합니다. 제작을 이어갈 때는 통합 검토와 UE5 공통 기준을 읽은 뒤 2단계 계획의 현재 완료 단위를 확인합니다. 프로토타입에서 가져온 API·좌표·상대 수치와 UE5에서 실제 검증한 결과는 구분합니다.
+| 분야별 현행 명세 | 담당 범위 |
+| --- | --- |
+| [전략·경제·기지](docs/STRATEGY_ECONOMY.md) | 성계·자원·물류·전초 전문화·AI 시간 |
+| [함대 전투](docs/FLEET_COMBAT.md) | 함급·명령·기동·무장·탐지·PD·FTL |
+| [함선 시스템](docs/SHIP_SYSTEMS.md) | 시설·인원·레이아웃·장갑·쉴드·피해·수리·생존 |
+| [모함·격납고](docs/CARRIER_OPERATIONS.md) | 함재기/수납 소형함·용량·소유·출격/귀환·관제 |
+| [영웅](docs/HERO_SYSTEMS.md) | 임무·유형·보직·성장 |
+| [강습·선내 작전](docs/BOARDING_COMBAT.md) | 포드/강습선·진입·교전·점령·나포·탈출 |
+| [UI·입력](docs/UI_SYSTEMS.md) | 화면·카메라·창·조작·정보 표시 |
+
+## 제작을 이어갈 때
+
+[현재 구현 상태](docs/IMPLEMENTATION_STATUS.md) → [제작 순서](docs/IMPLEMENTATION_PLAN.md) → [2단계/2B 계획](docs/PHASE2_PLAN.md) → [UE5 공통 기준](docs/UE5_IMPLEMENTATION_CONTRACT.md)을 읽습니다.
+
+기획은 `work`, 게임 코드는 `codex/phase1-playground`에서 관리합니다. 2026-11-16 확인한 코드 최신은 `be544d7`(2A 조작 보완)입니다. 사용자 조작 확인 후 2B 진행이 요청됐으며 실제 전투 완료 기록은 아직 없습니다. 새 커밋이 생기면 소스와 증거를 확인해 상태를 갱신합니다.
+
+## 검토·참조·과거 기록
+
+- [통합 검토/충돌 수정 이력](docs/PLANNING_REVIEW.md)
+- [프로토타입 개선 기록](docs/PROTOTYPE_IMPROVEMENT_PLAN.md), [시행착오·회귀 체크](docs/DEVELOPMENT_PITFALLS.md)
+- [2A 당시 검토](docs/PHASE2A_REVIEW.md), [PlayGame3 당시 분석·이식안](docs/PLAY_GAME_3_CONTROLS.md), [카메라 참조 코드/검사](reference/PlayGame3Controls/README.md)
+- 과거 [결정1~79 원문](docs/archive/DECISIONS_2026-11-11.md), [개선안 원문](docs/archive/PROTOTYPE_IMPROVEMENT_PLAN_2026-11-11.md), [시행착오 원문](docs/archive/DEVELOPMENT_PITFALLS_2026-11-11.md)
+
+확정 기획·미결정·시험 기준값·임시 구현·검증 결과를 구분합니다. 과거 기록과 프로토타입 코드는 현행 분야 명세를 덮어쓰지 않습니다.
