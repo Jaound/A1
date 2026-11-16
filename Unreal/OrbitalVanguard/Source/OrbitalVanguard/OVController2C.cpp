@@ -120,7 +120,7 @@ bool AOVController::Phase2CAction(FName Name)
   TArray<int32> Ids;for(const auto& P:Transit->Persons)if(P.FactionId==0)Ids.Add(P.PersonId);
   Transit->DispatchShuttle(Ships[1],Ships[2],Ids);LastAction=Transit->LastMessage;return true;
  }
- if(Name==TEXT("RecallShuttle")) { Transit->RecallShuttle(Ships[1]);LastAction=TEXT("생존 강습선 회수 · 내부 승객의 진입점 복귀는 DEV 확인");return true; }
+ if(Name==TEXT("RecallShuttle")) { Transit->RecallShuttle(Ships[1]);LastAction=Transit->LastMessage;return true; }
  if(Name==TEXT("DevEntryReturn")) {
   for(const auto& P:Transit->Persons)if(P.FactionId==0)Transit->DevReturnPersonToEntry(P.PersonId);
   LastAction=TEXT("DEV: 원 진입점 도착 입력 · 선내 경로/작전 성공을 모사하지 않음");return true;

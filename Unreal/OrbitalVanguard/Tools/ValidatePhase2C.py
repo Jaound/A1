@@ -229,9 +229,15 @@ def run_carrier(pc, carrier, pd, transport):
     pc.action("RecallAircraft"); advance(pc, 8); pc.action("LaunchAircraft")
     check("2C-REDEPLOY-NO-RESURRECTION", carrier.count_aircraft(own, unreal.OVAircraftState.WRECKED) == 1
           and carrier.count_aircraft(own, unreal.OVAircraftState.SORTIE) == len(ids)-1)
+    # Establish real old-owner movement/posture/automation orders before capture.
+    own.set_destination(own.get_actor_location() + unreal.Vector(20000, 0, 2000))
+    own.set_manual_attitude(unreal.Rotator(pitch=10, yaw=90, roll=5))
+    own.set_automation(True, True)
     p(own, "systems").set_editor_property("faction_id", 2)
     advance(pc, .25)
-    check("2C-CARRIER-CAPTURE-AFFILIATION", all(p(c, "faction_id") == 2 for c in craft_for(carrier, own) if p(c, "state") != unreal.OVAircraftState.WRECKED))
+    check("2C-CARRIER-CAPTURE-AFFILIATION", all(p(c, "faction_id") == 2 for c in craft_for(carrier, own) if p(c, "state") != unreal.OVAircraftState.WRECKED)
+          and p(own, "hold") and not p(own, "has_destination") and not p(own, "has_manual_attitude")
+          and p(own, "velocity").length() < .001 and not own.is_movement_automatic() and not own.is_attack_automatic())
     ships = start(pc, 2); own = ships[0]; quiet(ships, combat, pd, carrier)
     hangar = next(h for h in p(carrier, "hangars") if p(h, "carrier") == own)
     p(own, "systems").debug_destroy_slot(p(hangar, "slot_id"), unreal.OVDamageCause.SABOTAGE)
@@ -317,8 +323,15 @@ def run_shuttle(pc, carrier, pd, transport):
     ships = start(pc, 4); quiet(ships, combat, pd, carrier)
     pc.action("DispatchShuttle"); advance(pc, 40); pc.action("DevLoseShuttle"); advance(pc, .25)
     check("2C-SHUTTLE-LOSS-AFTER-ENTRY", transport.count_state(unreal.OVPassengerState.INSIDE_TARGET) == 10)
-    pc.action("DevEntryReturn"); pc.action("RecallShuttle"); advance(pc, 5)
-    check("2C-NO-FREE-ESCAPE-PODS", not p(transport, "pods") and transport.count_state(unreal.OVPassengerState.AWAITING_RECOVERY) == 10)
+    pc.action("DevEntryReturn")
+    rejected = not transport.recall_shuttle(ships[1])
+    pc.action("RecallShuttle")
+    rejection_reported = p(pc, "last_action") == p(transport, "last_message")
+    advance(pc, 5)
+    check("2C-NO-FREE-ESCAPE-PODS", not p(transport, "pods")
+          and transport.count_state(unreal.OVPassengerState.AWAITING_RECOVERY) == 10
+          and rejected and rejection_reported
+          and p(p(transport, "shuttles")[0], "state") == unreal.OVShuttleState.LOST)
 
 
 def run_control_regressions(pc, world, carrier, pd, transport):

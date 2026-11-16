@@ -5,6 +5,7 @@
 #include "OVCombatSubsystem.h"
 #include "Engine/Canvas.h"
 #include "Engine/Engine.h"
+#include "Camera/PlayerCameraManager.h"
 
 namespace {
 const FLinearColor PlayInk(.8f,.9f,1), PlayAccent(.2f,.9f,1), PlayPanel(.008f,.02f,.04f,.94f);
@@ -93,24 +94,32 @@ void AOVHUD::DrawWorldIndicators()
   const bool Selected=PC->Selection.Contains(Ship),Target=PC->Selected&&PC->Selected->AttackTarget==Ship;
   FLinearColor Color=Ship->bFriendly?PlayAccent:FLinearColor(1,.3f,.16f);
   if(Ship->Systems->bWrecked)Color=FLinearColor::Gray;
-  const float Radius=Selected?22:16;
+  FVector2D Edge;
+  const float Extent=Ship->Systems->Layout?(Ship->Systems->Layout->LocalHalfExtent*Ship->GetActorScale3D()).Size():200;
+  float Radius=Selected?22:16;
+  if(PC->ProjectWorldLocationToScreen(Ship->GetActorLocation()+PC->PlayerCameraManager->GetCameraRotation().RotateVector(FVector::RightVector)*Extent,Edge)) Radius=FMath::Clamp(float((Edge/UIScale-P).Size()),Radius,110.f);
+  const FVector2D Label(FMath::Clamp(P.X+Radius+7,208.,Canvas->SizeX/UIScale-200.),FMath::Clamp(P.Y-Radius-20,100.,Canvas->SizeY/UIScale-155.));
   DrawLine(P.X-Radius,P.Y-Radius,P.X-Radius,P.Y+Radius,Color,Selected?3:1);
   DrawLine(P.X+Radius,P.Y-Radius,P.X+Radius,P.Y+Radius,Color,Selected?3:1);
   DrawLine(P.X-Radius,P.Y-Radius,P.X+Radius,P.Y-Radius,Color,Selected?3:1);
-  DrawText((Target?TEXT("공격 ▶ "):Selected?TEXT("선택 ▶ "):TEXT(""))+Ship->ShipName,Color,P.X+26,P.Y-23,GEngine->GetSmallFont());
+  DrawText((Target?TEXT("공격 ▶ "):Selected?TEXT("선택 ▶ "):TEXT(""))+Ship->ShipName,Color,Label.X,Label.Y,GEngine->GetSmallFont());
   const float Hull=FMath::Clamp(Ship->Systems->HullHP/FMath::Max(1.f,Ship->Systems->MaxHullHP),0.f,1.f);
-  DrawRect(FLinearColor(.06f,.08f,.12f),P.X+26,P.Y-5,86,8);
-  DrawRect(Color,P.X+26,P.Y-5,86*Hull,3);
-  DrawRect(FLinearColor(.25f,.4f,1),P.X+26,P.Y,86*Ship->Systems->Shield/FMath::Max(1.f,Ship->Systems->MaxShield),3);
-  DrawText(FString::Printf(TEXT("고도 %.0fm"),Ship->GetActorLocation().Z/100),PlayInk,P.X+26,P.Y+9,GEngine->GetSmallFont());
+  DrawRect(FLinearColor(.06f,.08f,.12f),Label.X,Label.Y+17,86,8);
+  DrawRect(Color,Label.X,Label.Y+17,86*Hull,3);
+  DrawRect(FLinearColor(.25f,.4f,1),Label.X,Label.Y+22,86*Ship->Systems->Shield/FMath::Max(1.f,Ship->Systems->MaxShield),3);
+  DrawText(FString::Printf(TEXT("고도 %.0fm"),Ship->GetActorLocation().Z/100),PlayInk,Label.X,Label.Y+29,GEngine->GetSmallFont());
   const FName Marker(*FString::Printf(TEXT("WorldPick_%d"),I));
-  AddHitBox((P-FVector2D(24,24))*UIScale,FVector2D(140,60)*UIScale,Marker,true,5);
+  AddHitBox((P-FVector2D(Radius+6,Radius+6))*UIScale,FVector2D(2*Radius+12,2*Radius+12)*UIScale,Marker,true,5);
   ActionCenters.Add(Marker,P);
   if(Selected&&Ship->bHasDestination) { FVector2D D;if(Project(Ship->Destination,D))DrawText(FString::Printf(TEXT("이동 목적지  고도 %.0fm"),Ship->Destination.Z/100),FLinearColor::Green,D.X,D.Y,GEngine->GetSmallFont()); }
  }
  if(PC->bPlacing) { FVector2D P;if(Project(PC->Preview,P))DrawText(FString::Printf(TEXT("고도 %.0fm · 해제/Enter 확정"),PC->Preview.Z/100),FLinearColor::Yellow,P.X+14,P.Y-20,GEngine->GetSmallFont()); }
- if(PC->Combat) for(const auto& E:PC->Combat->RecentEvents) {
+ TSet<FName> ShownImpacts;
+ if(PC->Combat) for(int32 I=PC->Combat->RecentEvents.Num()-1;I>=0;--I) {
+  const auto& E=PC->Combat->RecentEvents[I];
+  if(ShownImpacts.Contains(E.HitShipId))continue;
   if(PC->Combat->GameTime-E.ResolvedAt>.65 || E.Result!=EOVAttackResult::Hit)continue;
-  FVector2D P;if(Project(E.Position,P))DrawText(E.HullDamage>0?TEXT("선체 명중"):TEXT("쉴드 / 장갑 명중"),FLinearColor(1,.8f,.2f),P.X,P.Y-36,GEngine->GetSmallFont());
+  ShownImpacts.Add(E.HitShipId);
+  FVector2D P;if(Project(E.Position,P))DrawText(E.HullDamage>0?TEXT("선체 명중"):TEXT("쉴드 / 장갑 명중"),FLinearColor(1,.8f,.2f),P.X,P.Y-45,GEngine->GetSmallFont());
  }
 }

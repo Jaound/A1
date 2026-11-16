@@ -23,7 +23,7 @@ def tick(dt):
    unreal.unregister_slate_post_tick_callback(state['handle']);unreal.SystemLibrary.quit_editor();return
   pc.action('Pause');pc.step_simulation(1/12);pc.action('Pause')
   path=os.path.join(out,f'frame{state["index"]:04}.png').replace('\\','/')
-  unreal.SystemLibrary.execute_console_command(world,'Shot SHOWUI filename='+path+' nosuffix',pc)
+  unreal.SystemLibrary.execute_console_command(world,'Shot SHOWUI filename='+path+' -nosuffix',pc)
   state['index']+=1;state['at']=time.monotonic()
  except Exception:
   unreal.log_error(traceback.format_exc());unreal.unregister_slate_post_tick_callback(state['handle']);unreal.SystemLibrary.quit_editor()

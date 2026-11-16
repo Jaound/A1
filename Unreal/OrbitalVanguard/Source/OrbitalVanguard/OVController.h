@@ -51,7 +51,7 @@ public:
  UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Control Range") float CameraYaw=-45;
  UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Control Range") float CameraPitch=-48;
  UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Control Range") float CameraDistance=6500;
- FString LastAction=TEXT("Select a ship to begin");
+ UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Control Range") FString LastAction=TEXT("Select a ship to begin");
  UFUNCTION(BlueprintCallable, Category="Control Range")
  void SelectShip(AOVShip* Ship);
  UFUNCTION(BlueprintCallable, Category="Control Range") void ClearSelection();
