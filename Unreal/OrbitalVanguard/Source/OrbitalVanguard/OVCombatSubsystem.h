@@ -114,6 +114,11 @@ struct ORBITALVANGUARD_API FOVCombatMountState
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly) int32 ShotsFired = 0;
 };
 
+UENUM(BlueprintType)
+enum class EOVAttackIntent : uint8 { DestroyHull, DisableWeapons };
+UENUM(BlueprintType)
+enum class EOVProtectionPolicy : uint8 { ContinueFire, UntilObjective, UntilExit };
+
 USTRUCT(BlueprintType)
 struct ORBITALVANGUARD_API FOVCombatShipState
 {
@@ -122,6 +127,12 @@ struct ORBITALVANGUARD_API FOVCombatShipState
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly) FName ShipId;
     UPROPERTY(EditAnywhere, BlueprintReadWrite) int32 RadarTier = 1;
     UPROPERTY(EditAnywhere, BlueprintReadWrite) bool bRadarSupport = false;
+    UPROPERTY(VisibleAnywhere, BlueprintReadOnly) EOVAttackIntent Intent = EOVAttackIntent::DestroyHull;
+    UPROPERTY(VisibleAnywhere, BlueprintReadOnly) EOVProtectionPolicy Protection = EOVProtectionPolicy::UntilExit;
+    UPROPERTY(VisibleAnywhere, BlueprintReadOnly) FName ForcedMount;
+    UPROPERTY(VisibleAnywhere, BlueprintReadOnly) bool bLastAttackAutomatic = false;
+    UPROPERTY(VisibleAnywhere, BlueprintReadOnly) int32 OrderFaction = -1;
+    UPROPERTY(VisibleAnywhere, BlueprintReadOnly) int32 TargetFaction = -1;
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly) int32 WeaponTierCap = 1;
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly) bool bDeparted = false;
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly) TArray<FOVCombatMountState> Mounts;
@@ -142,6 +153,7 @@ struct ORBITALVANGUARD_API FOVAttackState
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly) FVector Origin = FVector::ZeroVector;
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly) FVector Position = FVector::ZeroVector;
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly) FVector Direction = FVector::ForwardVector;
+    UPROPERTY(VisibleAnywhere, BlueprintReadOnly) FVector TargetLocalPoint = FVector::ZeroVector;
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly) FVector AimOffset = FVector::ZeroVector;
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly) FVector FrozenAimPoint = FVector::ZeroVector;
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly) FVector VLSControlPoint = FVector::ZeroVector;
@@ -180,6 +192,11 @@ public:
     UFUNCTION(BlueprintCallable) void RegisterShip(AOVShip* Ship, int32 RadarTier = 1, bool bRadarSupport = false, int32 WeaponTierCap = 0);
     UFUNCTION(BlueprintCallable) void Simulate(float GameDelta);
     UFUNCTION(BlueprintCallable) bool SetTarget(AOVShip* Ship, AOVShip* Target);
+    UFUNCTION(BlueprintCallable) bool SetAttackIntent(AOVShip* Ship, EOVAttackIntent Intent, FName ForceMount = NAME_None);
+    UFUNCTION(BlueprintCallable) void SetProtectionPolicy(AOVShip* Ship, EOVProtectionPolicy Policy);
+    UFUNCTION(BlueprintPure) bool IsTargetProtected(AOVShip* Ship, AOVShip* Target) const;
+    UFUNCTION(BlueprintPure) FString GetOrderStatus(AOVShip* Ship) const;
+    UFUNCTION(BlueprintCallable) void CancelAttackOrder(AOVShip* Ship);
     UFUNCTION(BlueprintCallable) bool RequestFire(AOVShip* Ship, FName MountId = NAME_None);
     UFUNCTION(BlueprintCallable) bool SetWeaponProfile(AOVShip* Ship, FName MountId, FName ProfileId);
     UFUNCTION(BlueprintCallable) void NotifyFTLDeparture(AOVShip* Ship);
@@ -192,6 +209,8 @@ public:
     static bool SegmentBox(FVector Start, FVector End, const FTransform& Transform,
         FVector HalfExtent, float& HitFraction, FVector& HitNormal);
 private:
+    bool ResolveAimPoint(const FOVCombatShipState& State, AOVShip* Target, FVector& Point) const;
+    void ClearPending(FOVCombatShipState& State);
     double Accumulator = 0;
     FRandomStream Random;
     int32 FindShip(AOVShip* Ship) const;

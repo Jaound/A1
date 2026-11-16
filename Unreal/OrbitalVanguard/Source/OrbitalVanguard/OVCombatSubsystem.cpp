@@ -158,7 +158,7 @@ void UOVCombatSubsystem::RegisterShip(AOVShip* Ship, int32 RadarTier, bool bRada
     if (Existing != INDEX_NONE)
     { Ships[Existing].RadarTier = FMath::Clamp(RadarTier, 1, 4); Ships[Existing].bRadarSupport = bRadarSupport; Ships[Existing].WeaponTierCap = Cap; return; }
     FOVCombatShipState State;
-    State.Ship = Ship; State.ShipId = Ship->GetFName();
+    State.Ship = Ship; State.ShipId = Ship->GetFName(); State.OrderFaction=Ship->Systems->FactionId; State.bLastAttackAutomatic=Ship->IsAttackAutomatic();
     State.RadarTier = FMath::Clamp(RadarTier, 1, 4); State.bRadarSupport = bRadarSupport;
     State.WeaponTierCap = Cap;
     for (const FOVWeaponMountDefinition& Def : Ship->Systems->Layout->WeaponMounts)
@@ -202,6 +202,7 @@ bool UOVCombatSubsystem::SetTarget(AOVShip* Ship, AOVShip* Target)
         || (Target && !IsValidTarget(Ship, Target))) return false;
     const bool bChangedTarget = Ship->AttackTarget != Target;
     Ship->AttackTarget = Target;
+    auto& Order=Ships[FindShip(Ship)]; Order.ForcedMount=NAME_None; Order.TargetFaction=Target?Target->Systems->FactionId:-1;
     // A change of target cannot carry a queued volley to a new recipient.
     for (FOVCombatMountState& Mount : Ships[FindShip(Ship)].Mounts)
     {
@@ -247,6 +248,7 @@ void UOVCombatSubsystem::NotifyFTLDeparture(AOVShip* Ship)
     const int32 Index = FindShip(Ship);
     if (!Ships.IsValidIndex(Index)) return;
     Ships[Index].bDeparted = true;
+    ClearPending(Ships[FindShip(Ship)]);
     Ship->StopMovement(); Ship->AttackTarget = nullptr;
     Ship->SetActorHiddenInGame(true);
     Ship->SetActorEnableCollision(false);
@@ -318,7 +320,10 @@ FOVFireReadiness UOVCombatSubsystem::Evaluate(const FOVCombatShipState& State, c
     AOVShip* Target = Ship->AttackTarget;
     if (!IsValidTarget(Ship, Target)) return Block(TEXT("NO VALID TARGET"));
     const FVector Origin = MountOrigin(State, *Def);
-    const FVector Offset = Target->GetActorLocation() - Origin;
+    if (IsTargetProtected(Ship, Target) && !(State.Intent==EOVAttackIntent::DisableWeapons && State.ForcedMount==Mount.MountId)) return Block(TEXT("INTERIOR ALLY HOLD"));
+    FVector AimPoint;
+    if (!ResolveAimPoint(State,Target,AimPoint)) return Block(GetDetection(Ship,Target).bDetected?TEXT("NO OBSERVED WEAPONS - WAIT"):TEXT("NO DETECTION"));
+    const FVector Offset = AimPoint - Origin;
     R.Distance = Offset.Size();
     if (R.Distance > Mount.Profile.Range) return Block(TEXT("OUT OF RANGE"));
     R.Detection = GetDetection(Ship, Target);
@@ -342,19 +347,21 @@ FOVFireReadiness UOVCombatSubsystem::Evaluate(const FOVCombatShipState& State, c
 
 AOVShip* UOVCombatSubsystem::FindBlockingFriend(AOVShip* Ship, AOVShip* Target, FVector Origin) const
 {
+    FVector Endpoint; const int32 SI=FindShip(Ship);
+    if(SI==INDEX_NONE || !ResolveAimPoint(Ships[SI],Target,Endpoint)) return nullptr;
     for (const FOVCombatShipState& Other : Ships)
     {
         AOVShip* Friend = Other.Ship;
         if (!IsValid(Friend) || Friend == Ship || Friend == Target || !Friend->Systems || !Friend->Systems->Layout
             || Friend->Systems->bWrecked || Other.bDeparted || Friend->Systems->FactionId != Ship->Systems->FactionId) continue;
         float Fraction; FVector Normal;
-        if (SegmentBox(Origin, Target->GetActorLocation(), Friend->GetActorTransform(),
+        if (SegmentBox(Origin, Endpoint, Friend->GetActorTransform(),
             Friend->Systems->Layout->LocalHalfExtent, Fraction, Normal)) return Friend;
         for (const FOVWeaponMountDefinition& Mount : Friend->Systems->Layout->WeaponMounts)
         {
             const FOVWeaponMountState* Health = Friend->Systems->WeaponMountStates.FindByPredicate(
                 [&](const FOVWeaponMountState& H) { return H.WeaponMountId == Mount.WeaponId; });
-            if (Health && Health->HP > 0 && SegmentMount(Origin, Target->GetActorLocation(), Friend->GetActorTransform(),
+            if (Health && Health->HP > 0 && SegmentMount(Origin, Endpoint, Friend->GetActorTransform(),
                 Mount.LocalPosition, Settings->MountCollisionRadius, Fraction, Normal)) return Friend;
         }
     }
@@ -379,6 +386,12 @@ void UOVCombatSubsystem::Step(float Delta)
     {
         AOVShip* Ship = State.Ship;
         if (!IsValid(Ship) || !Ship->Systems || State.bDeparted) continue;
+        if(State.OrderFaction!=Ship->Systems->FactionId || (Ship->AttackTarget && State.TargetFaction>=0 && State.TargetFaction!=Ship->AttackTarget->Systems->FactionId)) {
+            ClearPending(State); State.Intent=EOVAttackIntent::DestroyHull; Ship->AttackTarget=nullptr; State.TargetFaction=-1;
+        }
+        if(State.bLastAttackAutomatic!=Ship->IsAttackAutomatic()) { ClearPending(State); State.bLastAttackAutomatic=Ship->IsAttackAutomatic(); }
+        State.OrderFaction=Ship->Systems->FactionId;
+        if(Ship->Systems->bWrecked || (Ship->AttackTarget && !IsValidTarget(Ship,Ship->AttackTarget))) { ClearPending(State); Ship->AttackTarget=nullptr; }
         Ship->Systems->Simulate(Delta);
         Ship->bFriendly = Ship->Systems->FactionId == 0;
         if (Ship->Systems->GetEfficiency(EOVFacilityType::Engine) <= 0) Ship->bFTLCharging = false;
@@ -394,13 +407,15 @@ void UOVCombatSubsystem::Step(float Delta)
         AOVShip* Ship = State.Ship;
         if (!IsValid(Ship) || !Ship->Systems || State.bDeparted || Ship->Systems->bWrecked || Ship->Systems->bNeutral) continue;
         const bool bAutomatic = Ship->IsAttackAutomatic() || !Ship->Systems->CanCommand();
-        if (bAutomatic && (!IsValidTarget(Ship, Ship->AttackTarget) || !GetDetection(Ship, Ship->AttackTarget).bDetected))
+        if (bAutomatic && (!IsValidTarget(Ship, Ship->AttackTarget) || !GetDetection(Ship, Ship->AttackTarget).bDetected || (IsTargetProtected(Ship,Ship->AttackTarget) && State.ForcedMount.IsNone())))
         {
             AOVShip* Best = nullptr; double BestDistance = TNumericLimits<double>::Max();
             for (const FOVCombatShipState& Candidate : Ships)
             {
                 AOVShip* Target = Candidate.Ship;
                 if (!IsValidTarget(Ship, Target) || !GetDetection(Ship, Target).bDetected) continue;
+                FVector CandidateAim;
+                if(IsTargetProtected(Ship,Target) || !ResolveAimPoint(State,Target,CandidateAim)) continue;
                 const double Distance = FVector::DistSquared(Ship->GetActorLocation(), Target->GetActorLocation());
                 if (Distance < BestDistance) { Best = Target; BestDistance = Distance; }
             }
@@ -408,6 +423,7 @@ void UOVCombatSubsystem::Step(float Delta)
             {
                 for (FOVCombatMountState& Mount : State.Mounts)
                 { Mount.SalvoRemaining = 0; Mount.bFireRequested = false; Mount.RequestedTarget.Reset(); Mount.SalvoTarget.Reset(); }
+                State.ForcedMount=NAME_None; State.TargetFaction=Best?Best->Systems->FactionId:-1;
                 Ship->AttackTarget = Best;
             }
         }
@@ -444,6 +460,7 @@ void UOVCombatSubsystem::Step(float Delta)
             const FOVFireReadiness Ready = Evaluate(State, Mount, false);
             if (!Ready.bReady)
             {
+                if(IsTargetProtected(Ship,Ship->AttackTarget) && State.ForcedMount!=Mount.MountId) { Mount.bFireRequested=false; Mount.RequestedTarget.Reset(); }
                 // Cooldown is a timer, not a failed salvo gate. Each remaining round rechecks all other gates.
                 if (Mount.SalvoRemaining > 0 && !Evaluate(State, Mount, true).bReady)
                 { Mount.SalvoRemaining = 0; Mount.SalvoTarget.Reset(); }
@@ -461,10 +478,11 @@ void UOVCombatSubsystem::UpdateAim(FOVCombatShipState& State, FOVCombatMountStat
     const FOVWeaponMountDefinition* Def = MountDefinition(State, Mount.MountId);
     if (!Def) return;
     AOVShip* Ship = State.Ship;
-    const bool bDetected = IsValidTarget(Ship, Ship->AttackTarget) && GetDetection(Ship, Ship->AttackTarget).bDetected;
+    FVector ObservedPoint;
+    const bool bDetected = ResolveAimPoint(State,Ship->AttackTarget,ObservedPoint);
     if (bDetected)
     {
-        Mount.LastTrackedWorldPoint = Ship->AttackTarget->GetActorLocation();
+        Mount.LastTrackedWorldPoint = ObservedPoint;
         Mount.TrackingRemaining = 0;
     }
     else if (Mount.bHadDetection) Mount.TrackingRemaining = LostDetectionTracking;
@@ -493,7 +511,9 @@ void UOVCombatSubsystem::Launch(FOVCombatShipState& State, FOVCombatMountState& 
     Attack.Origin = Attack.Position = MountOrigin(State, *Def);
     Attack.Accuracy = Ready.Accuracy;
     Attack.Damage = Mount.Profile.Damage * State.Ship->Systems->GetEfficiency(SupplyFor(Def->Type));
-    FVector AimPoint = Attack.Target->GetActorLocation();
+    FVector AimPoint;
+    if (!ResolveAimPoint(State,Attack.Target.Get(),AimPoint)) return;
+    Attack.TargetLocalPoint=Attack.Target->GetActorTransform().InverseTransformPosition(AimPoint);
     const FVector Sight = (AimPoint - Attack.Position).GetSafeNormal();
     FVector Side, Up; Sight.FindBestAxisVectors(Side, Up);
     if (Attack.Weapon.Kind == EOVAttackKind::Beam && Random.FRand() > Ready.Accuracy)
@@ -636,7 +656,7 @@ void UOVCombatSubsystem::AdvanceAttacks(float Delta)
             else if (Attack.Age >= Attack.TrackingLifetime) Attack.Result = EOVAttackResult::TrackingExpired;
             else
             {
-                const FVector Desired = (Target->GetActorLocation() + Attack.AimOffset - Attack.Position).GetSafeNormal();
+                const FVector Desired = (Target->GetActorTransform().TransformPosition(Attack.TargetLocalPoint) + Attack.AimOffset - Attack.Position).GetSafeNormal();
                 const FQuat Before = Attack.Direction.ToOrientationQuat();
                 const FQuat Wanted = Desired.ToOrientationQuat();
                 const double Angle = Before.AngularDistance(Wanted);
@@ -673,4 +693,55 @@ void UOVCombatSubsystem::RecordEvent(const FOVAttackState& Attack)
     UE_LOG(LogTemp, Log, TEXT("OVCombat attack=%d source=%s faction=%d weapon=%s result=%d target=%s mount=%s hull=%.2f explosions=%d"),
         Attack.AttackId, *Attack.AttackerId.ToString(), Attack.FactionId, *Attack.WeaponId.ToString(),
         int32(Attack.Result), *Attack.HitShipId.ToString(), *Attack.ImpactWeaponId.ToString(), Attack.HullDamage, Attack.Explosions);
+}
+
+void UOVCombatSubsystem::ClearPending(FOVCombatShipState& State)
+{
+ State.ForcedMount=NAME_None;
+ for(auto& M:State.Mounts) {M.bFireRequested=false;M.RequestedTarget.Reset();M.SalvoRemaining=0;M.SalvoTarget.Reset();M.TrackingRemaining=0;M.bHadDetection=false;}
+}
+void UOVCombatSubsystem::CancelAttackOrder(AOVShip* Ship)
+{
+ const int32 I=FindShip(Ship);if(I==INDEX_NONE)return;
+ ClearPending(Ships[I]);Ship->AttackTarget=nullptr;Ships[I].TargetFaction=-1;
+}
+bool UOVCombatSubsystem::SetAttackIntent(AOVShip* Ship,EOVAttackIntent Intent,FName ForceMount)
+{
+ const int32 I=FindShip(Ship);if(I==INDEX_NONE||!Ship->Systems->CanCommand()||IsDeparted(Ship))return false;
+ auto& S=Ships[I];
+ if(!ForceMount.IsNone() && (Intent!=EOVAttackIntent::DisableWeapons||FindMount(S,ForceMount)==INDEX_NONE||!IsValidTarget(Ship,Ship->AttackTarget)))return false;
+ ClearPending(S);S.Intent=Intent;S.ForcedMount=ForceMount;return true;
+}
+void UOVCombatSubsystem::SetProtectionPolicy(AOVShip* Ship,EOVProtectionPolicy Policy)
+{
+ const int32 I=FindShip(Ship);if(I==INDEX_NONE||!Ship->Systems->CanCommand())return;
+ ClearPending(Ships[I]);Ships[I].Protection=Policy;
+}
+bool UOVCombatSubsystem::IsTargetProtected(AOVShip* Ship,AOVShip* Target) const
+{
+ const int32 I=FindShip(Ship);if(I==INDEX_NONE||!IsValid(Target)||!Target->Systems)return false;
+ const int32 F=Ship->Systems->FactionId;
+ if(!Target->Systems->HasInteriorPresence(F))return false;
+ const auto Policy=Ships[I].Protection;
+ return Policy==EOVProtectionPolicy::UntilExit || (Policy==EOVProtectionPolicy::UntilObjective&&!Target->Systems->IsInteriorObjectiveComplete(F));
+}
+bool UOVCombatSubsystem::ResolveAimPoint(const FOVCombatShipState& State,AOVShip* Target,FVector& Point) const
+{
+ if(!IsValidTarget(State.Ship,Target)||!GetDetection(State.Ship,Target).bDetected)return false;
+ if(State.Intent==EOVAttackIntent::DestroyHull) {Point=Target->GetActorLocation();return true;}
+ // Prototype observation: detection exposes exterior mounting points only, never interior roster/state.
+ for(const auto& Def:Target->Systems->Layout->WeaponMounts) {
+  const auto* HP=Target->Systems->WeaponMountStates.FindByPredicate([&](const auto& H){return H.WeaponMountId==Def.WeaponId;});
+  if(HP&&HP->HP>0) {Point=Target->GetActorTransform().TransformPosition(Def.LocalPosition);return true;}
+ }
+ return false;
+}
+FString UOVCombatSubsystem::GetOrderStatus(AOVShip* Ship) const
+{
+ const int32 I=FindShip(Ship);if(I==INDEX_NONE)return TEXT("NO ORDER");
+ const auto& S=Ships[I];
+ if(!IsValidTarget(Ship,Ship->AttackTarget))return TEXT("WAIT TARGET");
+ if(IsTargetProtected(Ship,Ship->AttackTarget))return S.ForcedMount.IsNone()?TEXT("HOLD: INTERIOR ALLY"):TEXT("FORCE GUN: HULL HIT RISK");
+ FVector P;if(!ResolveAimPoint(S,Ship->AttackTarget,P))return GetDetection(Ship,Ship->AttackTarget).bDetected?TEXT("WAIT: NO OBSERVED GUNS"):TEXT("WAIT: DETECTION");
+ return S.Intent==EOVAttackIntent::DisableWeapons?TEXT("DISABLE OBSERVED GUNS"):TEXT("DESTROY HULL");
 }

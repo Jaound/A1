@@ -586,4 +586,68 @@ bool FOVCombatFixedPathTest::RunTest(const FString&)
     TestTrue(TEXT("D085 cannon aim samples continuous spread instead of binary hit/miss offsets"), Radii.Num() > 3);
     return true;
 }
+
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(FOVDisableOrderTest,"OrbitalVanguard.Revision.DisableObservedWeapons",EAutomationTestFlags::EditorContext|EAutomationTestFlags::EngineFilter)
+bool FOVDisableOrderTest::RunTest(const FString&)
+{
+ OVCombatTest::FRange R;R.Exact();
+ auto* L=R.B->Systems->Layout.Get();L->WeaponMounts[0].LocalPosition=FVector(-210,0,8);R.B->Systems->Initialize(L);
+ R.DisableFacility(R.B,EOVFacilityType::ShieldControl);
+ const float Hull=R.B->Systems->HullHP,HP=R.B->Systems->WeaponMountStates[0].HP;
+ TestTrue(TEXT("Accept intent without firing"),R.Combat->SetAttackIntent(R.A,EOVAttackIntent::DisableWeapons));
+ R.Combat->Simulate(.5f);TestEqual(TEXT("Intent is not fire request"),R.Combat->ShotCount,0);
+ R.Fire();TestTrue(TEXT("Actual launch hits observed mount"),R.B->Systems->WeaponMountStates[0].HP<HP);
+ TestEqual(TEXT("Mount hit never transfers hull damage"),R.B->Systems->HullHP,Hull);
+ for(auto& H:R.B->Systems->WeaponMountStates)H.HP=0;
+ R.Combat->RequestFire(R.A,R.Gun().MountId);const int32 Shots=R.Combat->ShotCount;R.Combat->Simulate(1);
+ TestEqual(TEXT("No guns never falls back to hull"),R.Combat->ShotCount,Shots);
+ TestTrue(TEXT("Wait status explicit"),R.Combat->GetOrderStatus(R.A).Contains(TEXT("NO OBSERVED")));
+ return true;
+}
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(FOVInteriorProtectionTest,"OrbitalVanguard.Revision.FactionProtectionAndForceScope",EAutomationTestFlags::EditorContext|EAutomationTestFlags::EngineFilter)
+bool FOVInteriorProtectionTest::RunTest(const FString&)
+{
+ OVCombatTest::FRange R;R.Exact();
+ R.B->Systems->SetInteriorPresence(1,true,false,true);
+ TestFalse(TEXT("Enemy residents do not protect target from us"),R.Combat->IsTargetProtected(R.A,R.B));
+ R.B->Systems->SetInteriorPresence(0,true,false,true);
+ TestTrue(TEXT("Default until exit protects own residents"),R.Combat->IsTargetProtected(R.A,R.B));
+ R.Fire();TestEqual(TEXT("Protected explicit manual request cannot launch"),R.Combat->ShotCount,0);
+ R.Combat->SetProtectionPolicy(R.A,EOVProtectionPolicy::UntilObjective);
+ TestTrue(TEXT("Incomplete objective holds"),R.Combat->IsTargetProtected(R.A,R.B));
+ R.B->Systems->SetInteriorPresence(0,true,true,true);
+ TestFalse(TEXT("Completed objective releases until-goal"),R.Combat->IsTargetProtected(R.A,R.B));
+ R.Combat->SetProtectionPolicy(R.A,EOVProtectionPolicy::UntilExit);
+ TestTrue(TEXT("Completed objective still holds until exit"),R.Combat->IsTargetProtected(R.A,R.B));
+ R.Combat->SetProtectionPolicy(R.A,EOVProtectionPolicy::ContinueFire);
+ TestFalse(TEXT("Continue policy explicitly releases"),R.Combat->IsTargetProtected(R.A,R.B));
+ R.Combat->SetProtectionPolicy(R.A,EOVProtectionPolicy::UntilExit);
+ R.Combat->SetAttackIntent(R.A,EOVAttackIntent::DisableWeapons,R.Gun().MountId);
+ TestFalse(TEXT("Force exception never covers other firing mounts"),R.Combat->GetReadiness(R.A,R.Gun(0).MountId).bReady);
+ R.Fire();TestTrue(TEXT("Named forced gun launches through ordinary physics"),R.Combat->ShotCount>0);
+ R.Combat->SetTarget(R.A,R.B);TestTrue(TEXT("Explicit target order removes force"),R.State(R.A).ForcedMount.IsNone());
+ R.Combat->SetAttackIntent(R.A,EOVAttackIntent::DisableWeapons,R.Gun().MountId);R.Combat->CancelAttackOrder(R.A);
+ TestTrue(TEXT("Cancel clears target and force"),!R.A->AttackTarget&&R.State(R.A).ForcedMount.IsNone());
+ R.Combat->SetTarget(R.A,R.B);R.Combat->SetAttackIntent(R.A,EOVAttackIntent::DisableWeapons,R.Gun().MountId);
+ R.B->Systems->FactionId=0;R.Combat->Simulate(.02f);
+ TestTrue(TEXT("Capture clears force and target"),R.State(R.A).ForcedMount.IsNone()&&!R.A->AttackTarget);
+ return true;
+}
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(FOVProtectionLifetimeTest,"OrbitalVanguard.Revision.ProtectionSalvoAndSurvivorBoundary",EAutomationTestFlags::EditorContext|EAutomationTestFlags::EngineFilter)
+bool FOVProtectionLifetimeTest::RunTest(const FString&)
+{
+ OVCombatTest::FRange R;R.Exact(0);R.Gun(0).Profile.Salvo=3;R.Gun(0).Profile.SalvoInterval=.2f;
+ R.Fire(0,.02f);TestEqual(TEXT("First projectile launched"),R.Combat->ShotCount,1);
+ R.B->Systems->SetInteriorPresence(0,true,false,true);R.Combat->Simulate(.3f);
+ TestEqual(TEXT("Protection cancels unlaunched salvo rounds"),R.Combat->ShotCount,1);
+ TestTrue(TEXT("Already launched projectile remains or resolves"),R.Combat->Attacks.Num()+R.Combat->RecentEvents.Num()>0);
+ R.Combat->Simulate(1);TestTrue(TEXT("Already launched projectile still impacts protected target"),R.Combat->HitCount>0);
+ R.A->SetAutomation(false,true);R.Combat->Simulate(.1f);TestTrue(TEXT("All protected targets cause auto wait"),!R.A->AttackTarget);
+ R.B->Systems->SetInteriorPresence(1,true,false,false);
+ for(const auto& Def:R.B->Systems->Layout->Slots)R.B->Systems->DebugSetCrew(Def.SlotId,0);
+ TestFalse(TEXT("Owner survivors prevent crew-zero neutralization"),R.B->Systems->bNeutral);
+ TestFalse(TEXT("Survivors do not operate uncrewed facilities"),R.B->Systems->CanFireBeams());
+ R.B->Systems->SetInteriorPresence(1,false,false,false);TestTrue(TEXT("No owner survivors restores neutral rule"),R.B->Systems->bNeutral);
+ return true;
+}
 #endif

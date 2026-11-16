@@ -177,6 +177,25 @@ void AOVController::Action(FName Name)
    bPlacing=false; InputMode=EOVInputMode::None;
    LastAction=TEXT("AUTO FREE / release Hold only; existing destination, manual attitude and FTL remain authoritative");
   }
+  if(Combat && Combat->bEnabled) {
+   const auto Order=Combat->GetShipState(Selected);
+   if(!Order.ForcedMount.IsNone() && (Name==TEXT("Cancel") || Name==TEXT("Move") || Name==TEXT("Stop") || Name==TEXT("Heading") || Name==TEXT("Manual") || Name==TEXT("Auto") || Name==TEXT("AutoFree") || Name==TEXT("FireAuto") || Name==TEXT("MoveAuto")))
+    Combat->SetAttackIntent(Selected,Order.Intent);
+   if(Name==TEXT("HullIntent")) Combat->SetAttackIntent(Selected,EOVAttackIntent::DestroyHull);
+   if(Name==TEXT("GunIntent")) Combat->SetAttackIntent(Selected,EOVAttackIntent::DisableWeapons);
+   if(Name==TEXT("CancelAttack")) Combat->CancelAttackOrder(Selected);
+   if(Name==TEXT("Protection")) Combat->SetProtectionPolicy(Selected,static_cast<EOVProtectionPolicy>((static_cast<int32>(Order.Protection)+1)%3));
+   if(Name==TEXT("ForceGun") && Selected->Systems->WeaponMountStates.IsValidIndex(SelectedWeapon)) {
+    const FName M=Selected->Systems->WeaponMountStates[SelectedWeapon].WeaponMountId;
+    if(Combat->SetAttackIntent(Selected,EOVAttackIntent::DisableWeapons,M)) Combat->RequestFire(Selected,M);
+    LastAction=TEXT("Forced gun attack requested: missed shots can hit hull / interior ally risk");
+   }
+   if(bDeveloperMode && Selected->AttackTarget) {
+    auto* TargetSystems=Selected->AttackTarget->Systems.Get();const int32 F=Selected->Systems->FactionId;
+    if(Name==TEXT("DevInterior")) TargetSystems->SetInteriorPresence(F,!TargetSystems->HasInteriorPresence(F),false,true);
+    if(Name==TEXT("DevObjective")) TargetSystems->SetInteriorPresence(F,true,!TargetSystems->IsInteriorObjectiveComplete(F),true);
+   }
+  }
   if(Name==TEXT("NextWeapon") && Selected->Systems->WeaponMountStates.Num()>0) SelectedWeapon=(SelectedWeapon+1)%Selected->Systems->WeaponMountStates.Num();
   if((Name==TEXT("Fire") || Name==TEXT("FireAll")) && Combat && Combat->bEnabled) {
    const auto& Mounts=Selected->Systems->WeaponMountStates;

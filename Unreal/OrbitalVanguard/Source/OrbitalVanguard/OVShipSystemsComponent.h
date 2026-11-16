@@ -140,8 +140,16 @@ public:
     UFUNCTION(BlueprintCallable, Category="Debug") void RefreshDerivedState();
 
     void NotifyCombatParticipation();
+    // Authoritative faction-specific adapter for future interior operations. No roster is synthesized.
+    UFUNCTION(BlueprintCallable) void SetInteriorPresence(int32 Faction, bool bPresent, bool bObjectiveComplete, bool bDeveloperInput = false);
+    UFUNCTION(BlueprintPure) bool HasInteriorPresence(int32 Faction) const;
+    UFUNCTION(BlueprintPure) bool IsInteriorObjectiveComplete(int32 Faction) const;
+    UFUNCTION(BlueprintPure) bool IsInteriorDeveloperInput(int32 Faction) const;
+
 
 private:
+    TMap<int32, bool> InteriorObjectives;
+    TSet<int32> InteriorDeveloperInputs;
     bool bProcessingCombatDamage = false;
     bool IsOperational(int32 Index) const;
     bool CanAct() const;

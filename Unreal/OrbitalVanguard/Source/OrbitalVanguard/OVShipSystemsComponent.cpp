@@ -36,6 +36,7 @@ void UOVShipSystemsComponent::Initialize(UShipLayoutDataAsset* InLayout)
 void UOVShipSystemsComponent::ResetState()
 {
     Slots.Reset(); ArmorSections.Reset(); WeaponMountStates.Reset();
+    InteriorObjectives.Reset(); InteriorDeveloperInputs.Reset();
     bWrecked = false; bNeutral = false; bShieldActive = false; bShieldManualOff = false;
     WreckEventCount = 0; LastExplosionCount = 0; LastDamageIndex = INDEX_NONE;
     LastDamageSlot = NAME_None; LastArmorSection = NAME_None; LastWeaponMount = NAME_None;
@@ -138,7 +139,7 @@ void UOVShipSystemsComponent::RefreshDerivedState()
     if (Slots.IsValidIndex(Core) && Slots[Core].HP <= 0) MarkWrecked();
     float CrewTotal = 0;
     for (const FOVFacilityState& State : Slots) CrewTotal += State.Crew;
-    bNeutral = !bWrecked && CrewTotal <= 0;
+    bNeutral = !bWrecked && CrewTotal <= 0 && !HasInteriorPresence(FactionId);
     int32 OperationalControls = 0;
     for (int32 Index = 0; Index < Slots.Num(); ++Index)
         if (Layout->Slots[Index].Facility == EOVFacilityType::ShieldControl && IsOperational(Index)) ++OperationalControls;
@@ -458,3 +459,14 @@ bool UOVShipSystemsComponent::SetShieldManualOff(bool bOff)
     if (!bOff && MaxShield > 0 && Shield >= MaxShield * 0.5f) bShieldActive = true;
     return true;
 }
+
+void UOVShipSystemsComponent::SetInteriorPresence(int32 Faction, bool bPresent, bool bObjectiveComplete, bool bDeveloperInput)
+{
+    if (Faction < 0 || bWrecked) return;
+    if (bPresent) InteriorObjectives.Add(Faction, bObjectiveComplete); else InteriorObjectives.Remove(Faction);
+    if (bPresent && bDeveloperInput) InteriorDeveloperInputs.Add(Faction); else InteriorDeveloperInputs.Remove(Faction);
+    RefreshDerivedState();
+}
+bool UOVShipSystemsComponent::HasInteriorPresence(int32 Faction) const { return !bWrecked && InteriorObjectives.Contains(Faction); }
+bool UOVShipSystemsComponent::IsInteriorObjectiveComplete(int32 Faction) const { const bool* Value=InteriorObjectives.Find(Faction); return Value && *Value; }
+bool UOVShipSystemsComponent::IsInteriorDeveloperInput(int32 Faction) const { return InteriorDeveloperInputs.Contains(Faction); }

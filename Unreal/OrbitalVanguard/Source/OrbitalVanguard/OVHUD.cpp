@@ -29,7 +29,7 @@ bool AOVHUD::IsOverPanel(float X,float Y) const
  const auto* PC=Cast<AOVController>(PlayerOwner); if(!PC) return false;
  const FVector2D P(X/UIScale,Y/UIScale);
  if(bDragging||bResizing) return true;
- if(PC->Combat && PC->Combat->bEnabled && PC->Selected && (PC->Selected->bFriendly||PC->bDeveloperMode) && P.X>=10 && P.X<=440 && P.Y>=216 && P.Y<=448) return true;
+ if(PC->Combat && PC->Combat->bEnabled && PC->Selected && (PC->Selected->bFriendly||PC->bDeveloperMode) && P.X>=10 && P.X<=440 && P.Y>=216 && P.Y<=560) return true;
  if(P.Y<55 || (PC->Selected&&P.Y>ViewportPixels.Y/UIScale-88) || (P.X<200&&P.Y<210)) return true;
  return PC->Selected&&bDetailsOpen&&P.X>=WindowPosition.X&&P.X<=WindowPosition.X+WindowSize.X&&P.Y>=WindowPosition.Y&&P.Y<=WindowPosition.Y+(bMinimized?32:WindowSize.Y);
 }
@@ -232,7 +232,7 @@ void AOVHUD::DrawCombat()
  if(!PC->Selected->bFriendly && !PC->bDeveloperMode) return;
  const auto* C=PC->Combat.Get(); const auto* Ship=PC->Selected.Get();
  const FOVCombatShipState State=C->GetShipState(PC->Selected);
- DrawRect(Panel,10,216,430,232);
+ DrawRect(Panel,10,216,430,344);
  DrawText(TEXT("2B / LIVE FIRE CONTROL"),Accent,20,226,GEngine->GetSmallFont());
  DrawText((TEXT("Target: ")+(Ship->AttackTarget?Ship->AttackTarget->ShipName:TEXT("NONE"))).Left(58),Ink,20,247,GEngine->GetSmallFont());
  const FOVDetectionInfo Detection=C->GetDetection(PC->Selected,Ship->AttackTarget);
@@ -256,6 +256,19 @@ void AOVHUD::DrawCombat()
   const auto& E=C->RecentEvents.Last();
   DrawText(FString::Printf(TEXT("#%d %s / hull -%.1f / blasts %d"),E.AttackId,*StaticEnum<EOVAttackResult>()->GetNameStringByValue(static_cast<int64>(E.Result)),E.HullDamage,E.Explosions),Accent,20,407,GEngine->GetSmallFont());
  }
+ DrawText(C->GetOrderStatus(PC->Selected),FLinearColor::Yellow,20,454,GEngine->GetSmallFont());
+ Button(TEXT("HullIntent"),TEXT("HULL"),20,475,62);
+ Button(TEXT("GunIntent"),TEXT("GUNS"),88,475,62);
+ Button(TEXT("ForceGun"),TEXT("FORCE GUN!"),156,475,108);
+ Button(TEXT("CancelAttack"),TEXT("CANCEL FIRE"),270,475,160);
+ const TCHAR* Policies[]={TEXT("CONTINUE"),TEXT("UNTIL GOAL"),TEXT("UNTIL EXIT")};
+ Button(TEXT("Protection"),FString(TEXT("HOLD: "))+Policies[static_cast<int32>(State.Protection)],20,507,165);
+ if(PC->bDeveloperMode) {
+  Button(TEXT("DevInterior"),TEXT("DEV INSIDE"),191,507,117);
+  Button(TEXT("DevObjective"),TEXT("DEV GOAL"),314,507,116);
+ }
+ if(Ship->AttackTarget && Ship->AttackTarget->Systems->IsInteriorDeveloperInput(Ship->Systems->FactionId))
+  DrawText(TEXT("DEV injected own-faction interior state"),FLinearColor::Yellow,20,539,GEngine->GetSmallFont());
  Button(TEXT("MoveAuto"),Ship->IsMovementAutomatic()?TEXT("MOVE: AUTO"):TEXT("MOVE: MANUAL"),20,422,195,Ship->IsMovementAutomatic());
  Button(TEXT("FireAuto"),Ship->IsAttackAutomatic()?TEXT("FIRE: AUTO"):TEXT("FIRE: MANUAL"),223,422,207,Ship->IsAttackAutomatic());
 }
