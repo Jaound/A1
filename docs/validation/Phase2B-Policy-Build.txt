@@ -1,0 +1,8 @@
+Using Visual Studio 14.51.36260 toolchain (C:\Program Files (x86)\Microsoft Visual Studio\18\BuildTools\VC\Tools\MSVC\14.51.36231) and Windows 10.0.26100.0 SDK (C:\Program Files (x86)\Windows Kits\10).
+Warning: Visual Studio compiler 14.51.36260 is not a preferred version
+[1/5] Compile [x64] OVCombatTests.cpp
+[2/5] Compile [x64] OVCombatSubsystem.cpp
+[3/5] Link [x64] UnrealEditor-OrbitalVanguard.lib
+[4/5] Link [x64] UnrealEditor-OrbitalVanguard.dll
+Result: Succeeded
+Total execution time: 6.01 seconds

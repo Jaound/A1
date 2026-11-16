@@ -6,9 +6,12 @@
 - D083 비활성 쉴드만 회복, D084 탐지 상실 후 3.5초 기억, D085 연속 조준 분산, D088 고정 VLS, D089 실제 외장 무장 충돌, D090 공유 보정 0/80%, D101 독립 이동/사격 자동화를 구현했다. 혼합 자동 모드에서 탐지 상실 후 숨은 위치를 바라보는 문제도 차단했다.
 - 관련 소스: `OVCombatSubsystem.*`, `OVShip.*`, `OVShipSystemsComponent.*`, `OVController.cpp`, `OVHUD.cpp`, `DefaultGame.ini`. 기존 2A 조작/시설/레이아웃 자산과 빌드 스모크 프로젝트 보존. 2C/3단계/경제/새 밸런스 후보 이식은 제외했다.
 - 최신 Win64 Development Editor 빌드 성공: `Saved/Logs/CombatPolicyFinalBuild.log`, 6.01초. MSVC 14.51.36260 / SDK 10.0.26100.0. 앞선 전체 정책 빌드도 80.60초 성공.
-- 검증 진행 중: 자동 31개(기존 17 + 전투 14), 기존 2A PIE 57개, 확대 2B PIE. 새 규칙 적용 후의 성공 수는 아직 확정하지 않는다. 이전 창 검사 실패는 `HandlePointer` 드래그로 수정했다.
-- 다음: `CombatPolicyAutomation.log` 결과 확인 → 필요한 실패 수정 → `ValidatePhase2A.py` 및 `ValidatePhase2B.py` 실제 PIE → 직접 입력 시도/실패 시 체크리스트 → 최종 증거와 문서 갱신 → 코드 브랜치만 push. 명령은 `PHASE2B_GUIDE.md`.
+- 검증한 소스 체크포인트 **`3cdda73`**. 자동 **31/31**(기존 17 + 전투 14), 기존 2A PIE **57/57**, 2B PIE **50/50** 성공. 2026-11-16 13:28~13:31 KST. 증거는 `docs/validation/Phase2B-Policy-*`, 상세는 `PHASE2B_VALIDATION.md`.
+- 직접 입력 **미검증**: Windows 화면 캡처 `FrameArrived timed out`, 창 재선택·활성화 재시도도 `window capture timed out`. OS 클릭/키를 주입하지 않았다. 에디터 엔진 스크린샷은 확인했다. 현재 2B PIE를 일시정지·새 전투 상태로 남겼다.
+- 완료 수준: 2B 요청 구현·빌드·자동/PIE API 검증 완료. 다음은 사용자의 실제 입력 확인과 조작감 피드백 반영이다. 2C/3단계로 자동 확장하지 않는다. 새 오류가 없으면 동일 검사를 근거 없이 반복할 필요 없다.
+- 재실행: `Tools/Build.ps1`, `Tools/RunEditor.ps1`, 맵 `/Game/Maps/ControlRange` Play→F5. 자동 검사와 별도 PIE 명령·직접 체크리스트는 `PHASE2B_GUIDE.md`. 제출 대상은 현재 코드 브랜치만이며 `work`는 변경하지 않는다.
 - 남은 미결정 시험값: 유도 추적 8초, 무장 충돌 구 18cm/파괴 시 제거, 조준 분포·수치, 쉴드 전투/비전투 판정과 회복 수치. 확정 정책과 구분하며 가이드에 기록했다.
+- 미해결 환경 항목: 한국어 엔진 자체 검사 15건, 최신 권장보다 새 MSVC 경고, Visual Studio SDK 부재 경고. 프로젝트 빌드/31개 자동 성공과 구분했다. 임의 설치나 설정 변경은 하지 않았다.
 
 ## 재개 체크포인트 — 2026-11-16
 
