@@ -274,13 +274,30 @@ void UOVShipSystemsComponent::ApplyWorldHit(FVector WorldPoint, FVector WorldNor
     ProcessDamage(SlotIndex, ArmorIndex, Damage, Cause, bBypassArmor, bDirectHull);
 }
 
+float UOVShipSystemsComponent::GetExplosionDamage(int32 SlotIndex) const
+{
+    return Layout && Layout->Slots.IsValidIndex(SlotIndex) ? ExplosionDamage(SlotIndex) : 0.f;
+}
+
 float UOVShipSystemsComponent::ExplosionDamage(int32 SlotIndex) const
 {
     const EOVFacilityType Type = Layout->Slots[SlotIndex].Facility;
     const int32 Mounts = Type == EOVFacilityType::Ammo ? Layout->CannonSlots
         : Type == EOVFacilityType::Capacitor ? Layout->BeamSlots
         : Type == EOVFacilityType::MissileStorage ? Layout->MissileSlots : 0;
-    return FMath::Max(0.f, Tuning.ExplosionBase) * Mounts * FMath::Max(0.f, Layout->WeaponTier) * FMath::Max(0.f, Tuning.ExplosionTierCoefficient);
+    const EOVWeaponType Family = Type == EOVFacilityType::Ammo ? EOVWeaponType::Cannon
+        : Type == EOVFacilityType::Capacitor ? EOVWeaponType::Beam : EOVWeaponType::Missile;
+    float CoefficientSum = 0;
+    bool bHasExplicitCoefficients = false;
+    for (const FOVWeaponMountDefinition& Mount : Layout->WeaponMounts)
+    {
+        if (Mount.Type != Family || Mounts == 0) continue;
+        bHasExplicitCoefficients |= Mount.ExplosionTierCoefficient > 0;
+        CoefficientSum += Mount.ExplosionTierCoefficient > 0 ? Mount.ExplosionTierCoefficient : FMath::Max(0.f, Mount.Tier);
+    }
+    // Serialized legacy layouts retain their original count × layout tier calculation.
+    if (!bHasExplicitCoefficients) CoefficientSum = Mounts * FMath::Max(0.f, Layout->WeaponTier);
+    return FMath::Max(0.f, Tuning.ExplosionBase) * CoefficientSum * FMath::Max(0.f, Tuning.ExplosionTierCoefficient);
 }
 
 void UOVShipSystemsComponent::DestroyFacility(int32 SlotIndex, EOVDamageCause Cause, TArray<int32>& ExplosionQueue)

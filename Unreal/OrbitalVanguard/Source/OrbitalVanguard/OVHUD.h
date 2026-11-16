@@ -3,11 +3,17 @@
 #include "GameFramework/HUD.h"
 #include "OVHUD.generated.h"
 class AOVShip;
+class UOVDevelopmentWidget;
+class UOVHeroWidget;
 UCLASS()
 class ORBITALVANGUARD_API AOVHUD : public AHUD {
  GENERATED_BODY()
 public:
+ virtual void BeginPlay() override;
  virtual void DrawHUD() override;
+ void SyncAddedUI();
+ bool IsOverAddedUI(float X,float Y) const;
+ bool IsAddedUIEditing() const;
  virtual void NotifyHitBoxClick(FName BoxName) override;
  UFUNCTION(BlueprintPure, Category="UI") bool IsOverPanel(float X,float Y) const;
  UFUNCTION(BlueprintPure, Category="UI") FName GetHitActionAtCanvasPoint(FVector2D Point) const;
@@ -34,6 +40,9 @@ public:
  UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="UI") FVector2D WindowPosition=FVector2D(840,76);
  UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="UI") FVector2D WindowSize=FVector2D(424,550);
 private:
+ UPROPERTY() TObjectPtr<UOVDevelopmentWidget> DevelopmentWidget;
+ UPROPERTY() TObjectPtr<UOVHeroWidget> HeroWidget;
+ FBox2D DevelopmentRect, HeroRect;
  TMap<FName,FVector2D> ActionCenters;
  float UIScale=1.f;
  FVector2D ViewportPixels=FVector2D(1280,740);

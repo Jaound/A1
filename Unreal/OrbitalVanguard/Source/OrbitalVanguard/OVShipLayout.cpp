@@ -391,7 +391,7 @@ bool UShipLayoutDataAsset::ValidateLayout(TArray<FString>& Errors) const
         Require(!Mount.WeaponId.IsNone() && !WeaponIds.Contains(Mount.WeaponId) && !SlotIds.Contains(Mount.WeaponId) && !ArmorIds.Contains(Mount.WeaponId), TEXT("Weapon ID must be unique and independent"));
         WeaponIds.Add(Mount.WeaponId);
         const int32 Type = static_cast<int32>(Mount.Type);
-        Require(Type >= 0 && Type < 4 && OVLayout::Finite(Mount.LocalPosition) && FMath::IsFinite(Mount.MaxHP) && Mount.MaxHP > 0 && FMath::IsFinite(Mount.Tier) && Mount.Tier > 0, TEXT("Invalid weapon mount"));
+        Require(Type >= 0 && Type < 4 && OVLayout::Finite(Mount.LocalPosition) && FMath::IsFinite(Mount.MaxHP) && Mount.MaxHP > 0 && FMath::IsFinite(Mount.Tier) && Mount.Tier > 0 && FMath::IsFinite(Mount.ExplosionTierCoefficient) && Mount.ExplosionTierCoefficient >= 0, TEXT("Invalid weapon mount"));
         if (Type >= 0 && Type < 4) ++MountCounts[Type];
     }
     Require(MountCounts[0] == CannonSlots && MountCounts[1] == BeamSlots && MountCounts[2] == MissileSlots, TEXT("Weapon count metadata must match independent mounts"));

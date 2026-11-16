@@ -122,6 +122,9 @@ public:
     // Explicit scenario reset, never called by UI refresh or profile selection.
     UFUNCTION(BlueprintCallable) void ResetScenario(const TArray<AOVShip*>& Ships);
     UFUNCTION(BlueprintCallable) void Disable();
+    UFUNCTION(BlueprintCallable) bool AddShip(AOVShip* Ship);
+    UFUNCTION(BlueprintPure) bool CanRemoveShip(AOVShip* Ship) const;
+    UFUNCTION(BlueprintCallable) bool RemoveShip(AOVShip* Ship);
     UFUNCTION(BlueprintCallable) TArray<int32> AddDevPassengers(AOVShip* Origin, int32 HeroTypes, int32 Troops);
     UFUNCTION(BlueprintCallable) int32 RegisterRuntimePassenger(AOVShip* Origin, int32 UnitId, int32 Faction, bool bHero);
     UFUNCTION(BlueprintCallable) bool ReturnRuntimePersonToEntry(int32 PersonId, int32 UnitId, AOVShip* Ship, FVector ActualLocalPoint, FName LayoutVersion);

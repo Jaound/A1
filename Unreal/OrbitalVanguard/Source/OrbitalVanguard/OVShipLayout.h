@@ -49,6 +49,8 @@ struct ORBITALVANGUARD_API FOVWeaponMountDefinition
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Weapon") FName WeaponId;
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Weapon") EOVWeaponType Type = EOVWeaponType::Cannon;
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Weapon") float Tier = 1;
+    // Optional profile-specific explosion coefficient. Zero preserves legacy tier behavior.
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Weapon") float ExplosionTierCoefficient = 0;
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Weapon") FVector LocalPosition = FVector::ZeroVector;
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Weapon") float MaxHP = 200;
 };

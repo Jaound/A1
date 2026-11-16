@@ -1,0 +1,112 @@
+"""실제 PIE GameInstance 영웅 명단과 선내 보직 API 검사. 화면 입력 검사는 별도다."""
+import json
+import os
+import time
+import traceback
+import uuid
+import unreal
+
+root = unreal.Paths.convert_relative_path_to_full(unreal.Paths.project_saved_dir())
+os.makedirs(os.path.join(root, "Validation"), exist_ok=True)
+report = {"kind": "영웅 명단·선내 보직 PIE API 검사", "checks": [], "errors": [],
+          "scope": "D114 v0.5 후보; 실제 키보드/마우스 및 장기 밸런스 검사 아님"}
+level = unreal.get_editor_subsystem(unreal.LevelEditorSubsystem)
+editor = unreal.get_editor_subsystem(unreal.UnrealEditorSubsystem)
+state = {"phase": 0, "slot": "OVHeroValidation_" + uuid.uuid4().hex}
+
+
+def p(obj, key):
+    return obj.get_editor_property(key)
+
+
+def check(name, condition, detail=""):
+    report["checks"].append({"id": name, "passed": bool(condition), "detail": str(detail)})
+    unreal.log("OVHERO " + name + " = " + str(bool(condition)) + " " + str(detail))
+    if not condition:
+        raise AssertionError(name + ": " + str(detail))
+
+
+def finish():
+    unreal.GameplayStatics.delete_game_in_slot(state["slot"], 0)
+    report["passed"] = bool(report["checks"]) and all(c["passed"] for c in report["checks"]) and not report["errors"]
+    with open(os.path.join(root, "Validation", "HeroRoster.json"), "w", encoding="utf-8") as output:
+        json.dump(report, output, ensure_ascii=False, indent=2)
+
+
+def run(pc):
+    dev, heroes = p(pc, "development"), p(pc, "heroes")
+    check("H-ROSTER-ROOM", dev.open_roster_room(), p(dev, "last_message"))
+    check("H-ACTUAL-GAMEINSTANCE-SERVICE", heroes is not None)
+    role = unreal.OVInteriorRole.COMMANDER
+    ids = [heroes.create_dev_hero(0, role, "검사 영웅 %d" % i) for i in range(16)]
+    records = list(heroes.get_heroes(0))
+    check("H-UNIQUE-16-PEOPLE", len(records) == 16 and len({str(p(h, "hero_id")) for h in records}) == 16)
+    for hero_id in ids[:15]:
+        check("H-DEPLOY-" + str(len(report["checks"])), heroes.set_deployment(hero_id, True), p(heroes, "last_message"))
+    check("H-FACTION-15-LIMIT", heroes.count_deployed(0) == 15 and not heroes.set_deployment(ids[15], True))
+    check("H-DEV-XP", heroes.grant_dev_xp(ids[0], 200000), p(heroes, "last_message"))
+    grown = heroes.get_hero(ids[0])
+    check("H-LEVEL-SKILLS", p(grown, "level") == 20 and p(grown, "skill_points") == 6 and list(p(grown, "skill_ranks")) == [1, 1, 1, 1])
+    check("H-INVEST", heroes.spend_skill_point(ids[0], 0) and list(p(heroes.get_hero(ids[0]), "skill_ranks")) == [2, 1, 1, 1])
+    check("H-SAVE", heroes.save_roster(state["slot"], 0), p(heroes, "last_message"))
+    check("H-MUTATE-AFTER-SAVE", heroes.spend_skill_point(ids[0], 0))
+    check("H-LOAD", heroes.load_roster(state["slot"], 0), p(heroes, "last_message"))
+    loaded = heroes.get_hero(ids[0])
+    check("H-SAVE-ID-AND-SKILLS", str(p(loaded, "hero_id")) == str(ids[0]) and list(p(loaded, "skill_ranks")) == [2, 1, 1, 1] and p(loaded, "skill_points") == 5)
+    for hero_id in ids[1:15]:
+        check("H-RELEASE-" + str(len(report["checks"])), heroes.set_deployment(hero_id, False))
+    mission = p(pc, "mission")
+    check("H-OWNED-MISSION", mission.start_roster_mission(pc, False, 260112, False), p(mission, "status"))
+    interior = p(pc, "interior")
+    own = p(mission, "origin")
+    bound = heroes.get_hero(ids[0]); uid = p(bound, "runtime_unit_id"); person = p(bound, "runtime_person_id")
+    check("H-RUNTIME-IDS", uid > 0 and person > 0 and str(p(interior.get_unit(uid), "hero_id")) == str(ids[0]))
+    check("H-NO-DUPLICATE-RUNTIME", interior.spawn_roster_hero(own, ids[0], "") == 0)
+    check("H-NO-SAVE-IN-COMBAT", not heroes.save_roster(state["slot"], 0))
+    bridge = next(s for s in p(p(p(own, "systems"), "layout"), "slots") if p(s, "facility") == unreal.OVFacilityType.BRIDGE)
+    bridge_id = p(bridge, "slot_id")
+    check("H-DUTY-ACCEPT", interior.set_hero_duty(uid, True, bridge_id), p(interior, "last_message"))
+    check("H-DUTY-NOT-INSTANT", not p(interior.get_unit(uid), "duty_active") and p(interior.get_duty_bonuses(own), "speed_bonus") == 0)
+    interior.simulate(30.0)
+    unit = interior.get_unit(uid)
+    check("H-DUTY-ACTUAL-ARRIVAL", p(unit, "duty_active") and p(unit, "node_id") == bridge_id, p(unit, "reason"))
+    check("H-DUTY-APPLIED", p(interior.get_duty_bonuses(own), "speed_bonus") > 0)
+    ready = p(unit, "skill3_ready_at")
+    check("H-DUTY-L10-COOLDOWN", ready > p(interior, "game_time"))
+    check("H-DUTY-RELEASE", interior.set_hero_duty(uid, False, bridge_id))
+    after = interior.get_unit(uid)
+    check("H-DUTY-EFFECT-REMOVED", p(interior.get_duty_bonuses(own), "speed_bonus") == 0 and p(after, "skill3_ready_at") == ready and p(after, "skill3_active_until") == 0)
+    if p(pc, "simulation_paused"):
+        pc.action("Pause")
+    pc.action("Speed3"); t0 = p(interior, "game_time"); pc.step_simulation(1.0); t1 = p(interior, "game_time")
+    pc.action("Speed1"); pc.step_simulation(1.0); t2 = p(interior, "game_time")
+    check("H-COOLDOWN-GAME-SPEED", abs((t1-t0)-3) < .06 and abs((t2-t1)-1) < .06 and p(interior.get_unit(uid), "skill3_ready_at") == ready,
+          "game_delta_3x=%s game_delta_1x=%s" % (t1-t0, t2-t1))
+    if not p(pc, "simulation_paused"):
+        pc.action("Pause")
+    check("H-DUTY-REASSIGN", interior.set_hero_duty(uid, True, bridge_id))
+    interior.simulate(4.0)
+    check("H-DUTY-RESTORED", p(interior.get_duty_bonuses(own), "speed_bonus") > 0)
+    p(own, "systems").debug_destroy_slot(bridge_id, unreal.OVDamageCause.EXTERNAL)
+    check("H-DESTROYED-FACILITY-NO-BONUS", p(interior.get_duty_bonuses(own), "speed_bonus") == 0)
+
+
+def tick(_dt):
+    try:
+        if state["phase"] == 0:
+            level.editor_request_begin_play(); state["phase"] = 1; return
+        world = editor.get_game_world()
+        if not world:
+            return
+        pc = unreal.GameplayStatics.get_player_controller(world, 0)
+        if not pc or not p(pc, "heroes") or not p(pc, "development"):
+            return
+        run(pc)
+    except Exception:
+        report["errors"].append(traceback.format_exc())
+        unreal.log_error(report["errors"][-1])
+    finish()
+    unreal.unregister_slate_post_tick_callback(state["handle"])
+
+
+state["handle"] = unreal.register_slate_post_tick_callback(tick)

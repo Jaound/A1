@@ -116,13 +116,12 @@ UShipLayoutDataAsset* MakeLayout(UObject* Outer, const FHull& Hull)
     for (int32 I = 0; I < Hull.MountCount; ++I)
     {
         const auto& Mount = Hull.Mounts[I];
-        // The existing explosion model has one tier per layout. Refuse unsupported loadouts.
-        if (Mount.Tier != Layout->WeaponTier) return nullptr;
         const auto& Weapon = Weapons[Mount.Weapon];
         auto& Def = Layout->WeaponMounts.AddDefaulted_GetRef();
         Def.WeaponId = FName(*FString::Printf(TEXT("Weapon_%d"), I));
         Def.Type = Family(Weapon.Kind);
         Def.Tier = Mount.Tier;
+        Def.ExplosionTierCoefficient = TierDamage[Mount.Tier - 1];
         Def.MaxHP = Weapon.HP * TierDamage[Mount.Tier - 1];
         const double X = FMath::Lerp(-.8, .8, (I + 1.0) / (Hull.MountCount + 1.0));
         Def.LocalPosition = FVector(X * Layout->LocalHalfExtent.X, 0,
@@ -138,6 +137,46 @@ UShipLayoutDataAsset* MakeLayout(UObject* Outer, const FHull& Hull)
     return nullptr;
 }
 }
+
+FString OVCalibration::GetHullName(FName HullId)
+{
+    static const TMap<FName, FString> Names = {
+        {TEXT("corvette"),TEXT("초계함")}, {TEXT("frigate"),TEXT("호위함")}, {TEXT("vector"),TEXT("백터급 구축함")},
+        {TEXT("bastion"),TEXT("바스티온급 구축함")}, {TEXT("cruiser"),TEXT("순양함")}, {TEXT("air_defense"),TEXT("방공함")},
+        {TEXT("radar"),TEXT("레이더함")}, {TEXT("battleship"),TEXT("전함")}, {TEXT("carrier"),TEXT("항공모함")},
+        {TEXT("missile_ship"),TEXT("전략 미사일함")}, {TEXT("dreadnought"),TEXT("구축전함")}, {TEXT("battlecarrier"),TEXT("항공순양함")},
+        {TEXT("repair"),TEXT("보급수리함")}, {TEXT("mining"),TEXT("채굴선")}, {TEXT("transport"),TEXT("수송선")}, {TEXT("assault"),TEXT("강습선")}
+    };
+    if (const FString* Name = Names.Find(HullId)) return *Name;
+    return FString();
+}
+
+double OVCalibration::GetHullGeometryScale(FName HullId)
+{
+    const FHull* Hull = FindHull(HullId);
+    if (!Hull) return 0;
+    // Candidate placeholder geometry; established vector/bastion scales preserved.
+    if (HullId == TEXT("bastion")) return 13;
+    switch (Hull->Size) { case 1: return 6; case 2: return 10; case 3: return 18; case 4: return 28; default: return 0; }
+}
+
+TArray<FName> OVCalibration::GetHullIds()
+{
+    TArray<FName> Result;
+    for (const FHull& Hull : Hulls) Result.Add(FName(Hull.Key));
+    return Result;
+}
+
+TArray<FName> OVCalibration::GetWeaponProfileIds()
+{
+    TArray<FName> Result;
+    for (const FWeapon& Weapon : Weapons)
+        for (int32 Tier = Weapon.MinTier; Tier <= 4; ++Tier)
+            Result.Add(ProfileId(Weapon, Tier));
+    return Result;
+}
+
+FString OVCalibration::GetSourceHash() { return SourceHash; }
 
 bool OVCalibration::Start(UOVCombatSubsystem& Combat, const TArray<AOVShip*>& Ships, int32 Scenario)
 {
@@ -170,6 +209,7 @@ bool OVCalibration::Start(UOVCombatSubsystem& Combat, const TArray<AOVShip*>& Sh
         auto& Systems = *Ship->Systems;
         Systems.Tuning = GetDefault<UOVShipSystemsComponent>()->Tuning;
         Systems.Tuning.ShieldBase = Hull.Shield;
+        Systems.Tuning.ExplosionBase = 40; // D116 provisional balance
         Systems.Tuning.ShieldRegenFraction = ShieldCombat;
         Systems.Tuning.ShieldNonCombatRegenFraction = ShieldNonCombat;
         Systems.Tuning.NoHitRecoveryInterval = ShieldTransition;
@@ -209,9 +249,11 @@ bool OVCalibration::ConfigureHull(UOVCombatSubsystem& Combat, AOVShip& Ship, FNa
             S.Facility=Type; S.AllowedFacilities.AddUnique(Type); S.MaxFacilityHP=100; S.RequiredCrew=10; ++Existing;
         }
     };
+    if (HullId == TEXT("repair") || HullId == TEXT("mining") || HullId == TEXT("transport"))
+        Install(EOVFacilityType::ResourceStorage, 1);
     Install(EOVFacilityType::Interception,1);
     Install(EOVFacilityType::Boarding,1);
-    if(HullId==TEXT("carrier")) { Install(EOVFacilityType::Hangar,2); Install(EOVFacilityType::FighterControl,1); }
+    if(HullId==TEXT("carrier") || HullId==TEXT("battlecarrier")) { Install(EOVFacilityType::Hangar,2); Install(EOVFacilityType::FighterControl,1); }
     for(int32 I=0;I<Hull->PD;++I) {
         auto& M=Layout->WeaponMounts.AddDefaulted_GetRef(); M.WeaponId=FName(*FString::Printf(TEXT("PD_%d"),I));
         M.Type=EOVWeaponType::Interception; M.Tier=Layout->WeaponTier; M.MaxHP=100;
@@ -221,7 +263,7 @@ bool OVCalibration::ConfigureHull(UOVCombatSubsystem& Combat, AOVShip& Ship, FNa
     Ship.Configure(HullId.ToString().ToUpper(),Friendly,Hull->Speed,Hull->Turn,FVector(Scale),Friendly?FLinearColor(.12f,.65f,1):FLinearColor(1,.15f,.08f));
     Ship.SetCalibrationHull(&Layout->LocalHalfExtent);
     auto& S=*Ship.Systems;
-    S.Tuning=GetDefault<UOVShipSystemsComponent>()->Tuning; S.Tuning.ShieldBase=Hull->Shield;
+    S.Tuning=GetDefault<UOVShipSystemsComponent>()->Tuning; S.Tuning.ShieldBase=Hull->Shield; S.Tuning.ExplosionBase=40; // D116 provisional balance
     S.Tuning.ShieldRegenFraction=ShieldCombat; S.Tuning.ShieldNonCombatRegenFraction=ShieldNonCombat;
     S.Tuning.NoHitRecoveryInterval=ShieldTransition; S.Tuning.ShieldRecoveryDelay=ShieldDelay; S.Tuning.CrewDamageCoefficient=CrewInjury;
     S.FactionId=Friendly?0:1; S.Initialize(Layout);
@@ -246,7 +288,30 @@ bool FOVD116CatalogTest::RunTest(const FString&)
         Vector->Decks == 1 && Vector->MountCount == 3 && Vector->PD == 2
         && Bastion->Decks == 2 && Bastion->MountCount == 5 && Bastion->PD == 4);
     TestEqual(TEXT("Extra-large hull HP remains absolute"), Dreadnought->HP, 825000.f);
-    TestNull(TEXT("Mixed-tier explosion layout is rejected"), MakeLayout(GetTransientPackage(), *Dreadnought));
+    const FHull* Battlecarrier = FindHull(TEXT("battlecarrier"));
+    for (const FHull* Hull : {Dreadnought, Battlecarrier})
+    {
+        if (!Hull) { AddError(TEXT("Missing extra-large hull")); continue; }
+        const UShipLayoutDataAsset* Layout = MakeLayout(GetTransientPackage(), *Hull);
+        TestNotNull(TEXT("Mixed-tier layout accepted"), Layout);
+        if (!Layout) continue;
+        float Sum = 0;
+        for (const FOVWeaponMountDefinition& Mount : Layout->WeaponMounts)
+            if (Mount.Type == EOVWeaponType::Cannon) Sum += Mount.ExplosionTierCoefficient;
+        const float Expected = Hull == Dreadnought ? 12 * 6.5f + 4 * 17.f : 8 * 6.5f + 4 * 17.f;
+        TestEqual(TEXT("Mixed cannon explosion coefficient sum"), Sum, Expected);
+        auto* Systems = NewObject<UOVShipSystemsComponent>();
+        Systems->Initialize(const_cast<UShipLayoutDataAsset*>(Layout));
+        Systems->Tuning.ExplosionBase = 40;
+        for (int32 Index = 0; Index < Layout->Slots.Num(); ++Index)
+            if (Layout->Slots[Index].Facility == EOVFacilityType::Ammo)
+            {
+                TestEqual(TEXT("Ammo explosion uses mixed tier coefficients"), Systems->GetExplosionDamage(Index), Expected * 40);
+                break;
+            }
+    }
+    TestEqual(TEXT("Public hull catalog matches source"), OVCalibration::GetHullIds().Num(), 16);
+    TestEqual(TEXT("Public profile catalog matches source"), OVCalibration::GetWeaponProfileIds().Num(), 25);
     auto* Settings = NewObject<UOVCombatSettings>();
     ApplyProfiles(*Settings);
     ApplyProfiles(*Settings);

@@ -93,6 +93,9 @@ public:
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly) TArray<int32> DefenderUnitIds;
     UFUNCTION(BlueprintCallable) bool StartMission(AOVController* Controller, EOVMissionMode InMode=EOVMissionMode::Attack,
         int32 InSeed=260112, int32 AttackHeroes=4, int32 DefenseHeroes=2, bool bShuttle=false);
+    UFUNCTION(BlueprintCallable) bool StartRosterMission(AOVController* Controller, bool bDefense=false, int32 InSeed=260112, bool bShuttle=false);
+    UPROPERTY(VisibleAnywhere, BlueprintReadOnly) bool bUsesOwnedRoster=false;
+    UPROPERTY(VisibleAnywhere, BlueprintReadOnly) FString BattleId;
     UFUNCTION(BlueprintCallable) void Disable();
     UFUNCTION(BlueprintCallable) void Simulate(float GameDelta);
     UFUNCTION(BlueprintCallable) bool HandleAction(FName Action);
@@ -117,6 +120,10 @@ private:
     bool bAutoBridgeOrdered=false;
     bool bDefenderRetakeOrdered=false;
     bool bStarting=false;
+    TMap<FGuid,float> HeroParticipation;
+    TMap<FGuid,int32> HeroObjectiveXP;
+    int32 LastHeroEvent=0;
+    void TrackHeroes(float Delta);
     bool IsObserved(AOVShip* Source,AOVShip* Target) const;
     void RegisterGuards(AOVShip* Ship,int32 Heroes,TArray<int32>* OutIds=nullptr);
     void RefreshMetrics();

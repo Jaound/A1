@@ -69,6 +69,28 @@ struct ORBITALVANGUARD_API FOVInteriorUnitRecord
     GENERATED_BODY()
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly) int32 UnitId = 0;
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly) int32 PersonId = 0;
+    // 영속 로스터의 개인 ID. 기존 시험용 인원은 유효하지 않은 ID를 유지한다.
+    UPROPERTY(VisibleAnywhere, BlueprintReadOnly) FGuid HeroId;
+    UPROPERTY(VisibleAnywhere, BlueprintReadOnly) TArray<int32> HeroSkillRanks;
+    UPROPERTY(VisibleAnywhere, BlueprintReadOnly) int32 HeroLevel = 1;
+    UPROPERTY(VisibleAnywhere, BlueprintReadOnly) int32 AmplifierCharges = 0;
+    UPROPERTY(VisibleAnywhere, BlueprintReadOnly) FVector DevRepairBaseCost = FVector::ZeroVector;
+    UPROPERTY(VisibleAnywhere, BlueprintReadOnly) bool bDutyRequested = false;
+    UPROPERTY(VisibleAnywhere, BlueprintReadOnly) bool bDutyActive = false;
+    UPROPERTY(VisibleAnywhere, BlueprintReadOnly) FName DutySlot;
+    UPROPERTY(VisibleAnywhere, BlueprintReadOnly) double DutyReadyAt = 0;
+    UPROPERTY(VisibleAnywhere, BlueprintReadOnly) double Skill3ReadyAt = 0;
+    UPROPERTY(VisibleAnywhere, BlueprintReadOnly) double Skill3ActiveUntil = 0;
+    UPROPERTY(VisibleAnywhere, BlueprintReadOnly) double Skill4ReadyAt = 0;
+    UPROPERTY(VisibleAnywhere, BlueprintReadOnly) double Skill4ActiveUntil = 0;
+    UPROPERTY(VisibleAnywhere, BlueprintReadOnly) bool bSkill4Armed = true;
+    UPROPERTY(VisibleAnywhere, BlueprintReadOnly) bool bRushAttack = false;
+    UPROPERTY(VisibleAnywhere, BlueprintReadOnly) int32 TrackedEnemy = 0;
+    UPROPERTY(VisibleAnywhere, BlueprintReadOnly) double TrackedSince = 0;
+    UPROPERTY(VisibleAnywhere, BlueprintReadOnly) double SlowUntil = 0;
+    UPROPERTY(VisibleAnywhere, BlueprintReadOnly) float SlowFraction = 0;
+    UPROPERTY(VisibleAnywhere, BlueprintReadOnly) int32 BurstRemaining = 0;
+    UPROPERTY(VisibleAnywhere, BlueprintReadOnly) int32 BurstTargetId = 0;
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly) int32 FactionId = -1;
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly) EOVInteriorRole Role = EOVInteriorRole::Trooper;
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly) FString Name;
@@ -113,6 +135,16 @@ struct ORBITALVANGUARD_API FOVInteriorUnitRecord
 };
 
 USTRUCT(BlueprintType)
+struct ORBITALVANGUARD_API FOVHeroDutyBonuses
+{
+    GENERATED_BODY()
+    UPROPERTY(VisibleAnywhere, BlueprintReadOnly) float AccuracyBonus = 0;
+    UPROPERTY(VisibleAnywhere, BlueprintReadOnly) float FireRateBonus = 0;
+    UPROPERTY(VisibleAnywhere, BlueprintReadOnly) float SpeedBonus = 0;
+    UPROPERTY(VisibleAnywhere, BlueprintReadOnly) float TurnBonus = 0;
+};
+
+USTRUCT(BlueprintType)
 struct ORBITALVANGUARD_API FOVInteriorOperation
 {
     GENERATED_BODY()
@@ -145,6 +177,7 @@ class ORBITALVANGUARD_API UOVInteriorSubsystem : public UWorldSubsystem
 {
     GENERATED_BODY()
 public:
+    virtual void Deinitialize() override;
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly) bool bEnabled = false;
     UPROPERTY(EditAnywhere, BlueprintReadWrite) FOVInteriorProfile Settings;
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly) double GameTime = 0;
@@ -157,7 +190,12 @@ public:
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly) int32 TotalSabotages = 0;
     UFUNCTION(BlueprintCallable) void ResetScenario(const TArray<AOVShip*>& Ships, int32 Seed = 260112);
     UFUNCTION(BlueprintCallable) void Disable();
+    UFUNCTION(BlueprintCallable) bool AddShip(AOVShip* Ship);
+    UFUNCTION(BlueprintCallable) bool RemoveShip(AOVShip* Ship);
     UFUNCTION(BlueprintCallable) int32 RegisterUnit(AOVShip* Ship, int32 Faction, EOVInteriorRole Role, FName SlotId = NAME_None);
+    UFUNCTION(BlueprintCallable) int32 SpawnRosterHero(AOVShip* Ship, FGuid HeroId, FName SlotId = NAME_None);
+    UFUNCTION(BlueprintCallable) bool SetHeroDuty(int32 UnitId, bool bEnable, FName SlotId = NAME_None);
+    UFUNCTION(BlueprintPure) FOVHeroDutyBonuses GetDutyBonuses(AOVShip* Ship) const;
     UFUNCTION(BlueprintCallable) TArray<int32> RegisterBoardingTeam(AOVShip* Origin, int32 Faction, int32 HeroCount, int32 Troops);
     UFUNCTION(BlueprintCallable) bool IssueOrder(const TArray<int32>& UnitIds, EOVInteriorOrder Order, FName TargetSlot = NAME_None);
     UFUNCTION(BlueprintCallable) void Simulate(float GameDelta);
@@ -206,4 +244,5 @@ private:
     void RefreshPresence();
     void ProcessFacilityDamage(float Delta);
     void Emit(FName Kind, const FOVInteriorUnitRecord& Unit, const FString& Message);
+    void PersistRoster(bool bDetach);
 };

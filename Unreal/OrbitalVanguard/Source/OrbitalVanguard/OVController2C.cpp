@@ -13,8 +13,8 @@
 
 void AOVController::ResetPhase2C()
 {
- GetWorld()->GetSubsystem<UOVMissionSubsystem>()->Disable();
  GetWorld()->GetSubsystem<UOVInteriorSubsystem>()->Disable();
+ GetWorld()->GetSubsystem<UOVMissionSubsystem>()->Disable();
  GetWorld()->GetSubsystem<UOVCarrierSubsystem>()->Reset();
  GetWorld()->GetSubsystem<UOVTransportSubsystem>()->Disable();
  GetWorld()->GetSubsystem<UOVPointDefenseSubsystem>()->Disable();

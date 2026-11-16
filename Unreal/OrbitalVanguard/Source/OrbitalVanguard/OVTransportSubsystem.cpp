@@ -42,6 +42,30 @@ void UOVTransportSubsystem::ResetScenario(const TArray<AOVShip*>& Ships)
     LastMessage = TEXT("DEV 승객 시험 준비");
 }
 
+bool UOVTransportSubsystem::AddShip(AOVShip* Ship)
+{
+    if(!Usable(Ship))return false;
+    ScenarioShips.AddUnique(Ship); bEnabled=true; return true;
+}
+
+bool UOVTransportSubsystem::CanRemoveShip(AOVShip* Ship) const
+{
+    for(const auto& P:Persons)
+        if(P.State!=EOVPassengerState::Dead && (P.CurrentShip==Ship || P.Shuttle==Ship))return false;
+    for(const auto& P:Pods)
+        if((OVTransport::IsFlying(P.State)||P.State==EOVPodFlightState::Queued||P.State==EOVPodFlightState::Attached) &&
+            (P.Origin==Ship||P.Target==Ship||P.ReturnDestination==Ship))return false;
+    return true;
+}
+
+bool UOVTransportSubsystem::RemoveShip(AOVShip* Ship)
+{
+    if(!CanRemoveShip(Ship))return false;
+    ScenarioShips.Remove(Ship);
+    Shuttles.RemoveAll([Ship](const auto& S){return S.Ship==Ship;});
+    return true;
+}
+
 void UOVTransportSubsystem::Disable()
 {
     for (const FPresence& Presence : OwnedPresence)

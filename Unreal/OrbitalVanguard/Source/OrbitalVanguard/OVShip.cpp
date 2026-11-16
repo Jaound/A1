@@ -1,4 +1,6 @@
 #include "OVShip.h"
+#include "OVInteriorSubsystem.h"
+#include "Engine/World.h"
 #include "OVShipSystemsComponent.h"
 #include "Components/SceneComponent.h"
 #include "Components/StaticMeshComponent.h"
@@ -238,11 +240,12 @@ void AOVShip::Simulate(float SimDelta)
         return;
     }
     const float EngineEfficiency = Systems && Systems->Layout ? Systems->GetEfficiency(EOVFacilityType::Engine) : 1.f;
+    const FOVHeroDutyBonuses Duty = GetWorld()->GetSubsystem<UOVInteriorSubsystem>()->GetDutyBonuses(this);
     FVector Position = GetActorLocation();
     FQuat Orientation = GetActorQuat();
     if (bHasDestination && !bHold)
     {
-        if (OVShipMotion::Advance(Position, Orientation, Velocity, Destination, MoveSpeed * EngineEfficiency, TurnRate * EngineEfficiency,
+        if (OVShipMotion::Advance(Position, Orientation, Velocity, Destination, MoveSpeed * EngineEfficiency * (1.f+Duty.SpeedBonus), TurnRate * EngineEfficiency * (1.f+Duty.TurnBonus),
             SimDelta, Acceleration, Braking, ArrivalRadius, bManualAttitude, ManualAttitude.Quaternion()))
         {
             bHasDestination = false;
@@ -252,7 +255,7 @@ void AOVShip::Simulate(float SimDelta)
     else
     {
         OVShipMotion::Brake(Position, Velocity, Braking, SimDelta);
-        if (bManualAttitude) OVShipMotion::Turn(Orientation, ManualAttitude.Quaternion(), TurnRate * EngineEfficiency, SimDelta);
+        if (bManualAttitude) OVShipMotion::Turn(Orientation, ManualAttitude.Quaternion(), TurnRate * EngineEfficiency * (1.f+Duty.TurnBonus), SimDelta);
     }
     SetActorLocationAndRotation(Position, Orientation, false, nullptr, ETeleportType::TeleportPhysics);
 }

@@ -3,6 +3,10 @@
 #include "OVShip.h"
 #include "OVShipSystemsComponent.h"
 #include "OVCombatSubsystem.h"
+#include "OVHeroSubsystem.h"
+#include "OVMissionSubsystem.h"
+#include "OVLogisticsSubsystem.h"
+#include "Engine/GameInstance.h"
 #include "Engine/World.h"
 
 FOVInteriorProfile::FOVInteriorProfile()
@@ -21,6 +25,8 @@ namespace OVInterior
 constexpr float Step = 1.f / 60.f;
 bool Living(const FOVInteriorUnitRecord& U) { return U.HP > 0 && U.State != EOVInteriorState::Dead; }
 bool Hero(const FOVInteriorUnitRecord& U) { return U.Role != EOVInteriorRole::Trooper; }
+int32 Rank(const FOVInteriorUnitRecord& U,int32 Index)
+{ return U.HeroSkillRanks.IsValidIndex(Index)?U.HeroSkillRanks[Index]:(Index==0?1:0); }
 float Distance(const FOVInteriorUnitRecord& A, const FOVInteriorUnitRecord& B)
 { return A.Ship.IsValid() ? ((A.LocalPosition-B.LocalPosition)*A.Ship->GetActorScale3D()).Size() : BIG_NUMBER; }
 }
@@ -34,9 +40,112 @@ const UOVInteriorSubsystem::FGraphState* UOVInteriorSubsystem::FindGraph(AOVShip
 
 void UOVInteriorSubsystem::Disable()
 {
+    PersistRoster(true);
     for (auto& G : Graphs) if (G.Ship.IsValid())
         for (int32 Faction : G.PresenceFactions) G.Ship->Systems->SetRuntimeInteriorPresence(Faction, false, false);
     Graphs.Reset(); bEnabled = false; Accumulator = 0;
+}
+
+void UOVInteriorSubsystem::Deinitialize()
+{
+    Disable();
+    Super::Deinitialize();
+}
+
+void UOVInteriorSubsystem::PersistRoster(bool bDetach)
+{
+    auto* GI=GetWorld()?GetWorld()->GetGameInstance():nullptr;
+    auto* Roster=GI?GI->GetSubsystem<UOVHeroSubsystem>():nullptr;
+    if(!Roster)return;
+    for(auto& U:Units)
+    {
+        if(!U.HeroId.IsValid())continue;
+        auto* H=Roster->FindHero(U.HeroId);
+        if(!H || H->RuntimeUnitId!=U.UnitId || H->RuntimePersonId!=U.PersonId)continue;
+        H->CurrentHP=U.HP;H->bWounded=U.bWounded;H->bSkill4Armed=U.bSkill4Armed;H->Catalysts=U.Medkits;H->AmplifierCharges=U.AmplifierCharges;
+        if(H->CooldownRemaining.Num()==4){H->CooldownRemaining[0]=FMath::Max(0.0,U.SkillReadyAt-GameTime);H->CooldownRemaining[2]=FMath::Max(0.0,U.Skill3ReadyAt-GameTime);H->CooldownRemaining[3]=FMath::Max(0.0,U.Skill4ReadyAt-GameTime);}
+        if(U.State==EOVInteriorState::Dead){H->Status=EOVHeroStatus::Dead;H->bDeploymentReserved=false;}
+        else if(U.State==EOVInteriorState::RescueWaiting)H->Status=EOVHeroStatus::RescueWaiting;
+        if(bDetach)
+        {
+            if(U.Ship.IsValid())if(auto* Logistics=GetWorld()->GetSubsystem<UOVLogisticsSubsystem>())Logistics->CancelDevRepair(U.Ship.Get(),U.HeroId);
+            const auto* Mission=GetWorld()->GetSubsystem<UOVMissionSubsystem>();
+            const bool bUnfinished=Mission && Mission->bEnabled && Mission->GameTime>0 && Mission->Result==EOVMissionResult::Ongoing;
+            if(H->Status==EOVHeroStatus::Deployed && (bUnfinished || !U.Ship.IsValid() ||
+                U.State==EOVInteriorState::InTransit || U.State==EOVInteriorState::AwaitingRecovery ||
+                U.Ship->Systems->FactionId!=U.FactionId)) H->Status=EOVHeroStatus::Missing;
+            H->RuntimeUnitId=0;H->RuntimePersonId=0;
+        }
+    }
+}
+
+int32 UOVInteriorSubsystem::SpawnRosterHero(AOVShip* Ship,FGuid HeroId,FName SlotId)
+{
+    auto* GI=GetWorld()?GetWorld()->GetGameInstance():nullptr;
+    auto* Roster=GI?GI->GetSubsystem<UOVHeroSubsystem>():nullptr;
+    auto* H=Roster?Roster->FindHero(HeroId):nullptr;
+    if(!H || !H->bDeploymentReserved || H->Status!=EOVHeroStatus::Deployed || H->RuntimeUnitId!=0 || H->RuntimePersonId!=0)
+    {LastMessage=TEXT("영웅 배치 불가: 편제, 상태 또는 기존 실행 연결 확인");return 0;}
+    const int32 Id=RegisterUnit(Ship,H->FactionId,H->Role,SlotId);
+    auto* U=FindUnit(Id);if(!U)return 0;
+    U->HeroId=HeroId;U->Name=H->Name;U->HeroSkillRanks=H->SkillRanks;U->HeroLevel=H->Level;U->AmplifierCharges=H->AmplifierCharges;U->DevRepairBaseCost=H->DevRepairBaseCost;
+    U->MaxHP*=1+.06f*(H->Level-1);U->Damage*=1+.08f*(H->Level-1);
+    U->bWounded=H->bWounded;U->bSkill4Armed=H->bSkill4Armed;if(U->bWounded)U->MaxHP*=.9f;
+    U->HP=H->CurrentHP<0?U->MaxHP:FMath::Clamp(H->CurrentHP,0.f,U->MaxHP);
+    U->Medkits=H->Catalysts;
+    if(H->CooldownRemaining.Num()==4){U->SkillReadyAt=GameTime+H->CooldownRemaining[0];U->Skill3ReadyAt=GameTime+H->CooldownRemaining[2];U->Skill4ReadyAt=GameTime+H->CooldownRemaining[3];}
+    H->RuntimeUnitId=U->UnitId;H->RuntimePersonId=U->PersonId;
+    return Id;
+}
+
+bool UOVInteriorSubsystem::SetHeroDuty(int32 UnitId,bool bEnable,FName SlotId)
+{
+    auto* U=FindUnit(UnitId);
+    if(!U || !OVInterior::Hero(*U) || !IsOnboard(*U) || U->State==EOVInteriorState::AwaitingRecovery)
+    {LastMessage=TEXT("보직 변경 불가: 탑승한 생존 영웅이 필요합니다");return false;}
+    if(!bEnable){if(U->HeroId.IsValid())GetWorld()->GetSubsystem<UOVLogisticsSubsystem>()->CancelDevRepair(U->Ship.Get(),U->HeroId);U->Skill3ActiveUntil=0;U->bDutyRequested=U->bDutyActive=false;U->DutySlot=NAME_None;U->Order=EOVInteriorOrder::Defend;U->TargetSlot=U->NodeId;return true;}
+    const auto* Layout=U->Ship->Systems->Layout.Get();const int32 Index=Layout?Layout->GetSlotIndex(SlotId):INDEX_NONE;
+    if(Index==INDEX_NONE || U->Ship->Systems->FactionId!=U->FactionId)
+    {LastMessage=TEXT("아군 함선의 유효한 보직 시설이 필요합니다");return false;}
+    const EOVFacilityType Type=Layout->Slots[Index].Facility;
+    if((U->Role==EOVInteriorRole::Ranged && Type!=EOVFacilityType::WeaponControl) ||
+       (U->Role==EOVInteriorRole::Commander && Type!=EOVFacilityType::Bridge) || Type==EOVFacilityType::None)
+    {LastMessage=TEXT("보직에 맞는 시설을 선택하세요");return false;}
+    const auto* Combat=GetWorld()->GetSubsystem<UOVCombatSubsystem>();
+    const auto* ShipState=Combat?Combat->Ships.FindByPredicate([&](const FOVCombatShipState& S){return S.Ship.Get()==U->Ship.Get();}):nullptr;
+    const int32 Limit=ShipState?FMath::Clamp(ShipState->WeaponTierCap,1,4):(Layout->bSmallHull?1:Layout->DeckCount<3?2:3);
+    int32 Count=0;for(const auto& Other:Units)if(Other.UnitId!=UnitId && Other.Ship==U->Ship && Other.bDutyRequested && OVInterior::Living(Other))++Count;
+    if(Count>=Limit){LastMessage=TEXT("함선 체급별 동시 보직 한도 초과");return false;}
+    U->Skill3ActiveUntil=0;U->bRushAttack=false;U->BurstRemaining=0;
+    U->bDutyRequested=true;U->bDutyActive=false;U->DutySlot=SlotId;U->DutyReadyAt=0;
+    U->Order=EOVInteriorOrder::None;U->Path.Reset();U->PlannedGoal=NAME_None;U->EnemyId=0;
+    LastMessage=TEXT("보직 시설 이동 및 인계 준비");return true;
+}
+
+FOVHeroDutyBonuses UOVInteriorSubsystem::GetDutyBonuses(AOVShip* Ship) const
+{
+    FOVHeroDutyBonuses B;
+    if(!IsValid(Ship) || !Ship->Systems || Ship->Systems->bWrecked || GetWorld()->GetSubsystem<UOVCombatSubsystem>()->IsDeparted(Ship))return B;
+    for(const auto& U:Units)
+    {
+        if(!U.bDutyActive || U.Ship!=Ship || U.FactionId!=Ship->Systems->FactionId || !IsOnboard(U))continue;
+        const auto State=Ship->Systems->GetSlotState(U.DutySlot);
+        if(State.HP<=0 || State.Crew<=0 || (State.OccupyingFaction>=0 && State.OccupyingFaction!=U.FactionId))continue;
+        const int32 Rank=OVInterior::Rank(U,0), SkillRank=OVInterior::Rank(U,2);
+        if(U.Role==EOVInteriorRole::Ranged)
+        {
+            B.AccuracyBonus=FMath::Max(B.AccuracyBonus,.02f+.01f*(Rank-1));
+            if(GameTime<U.Skill3ActiveUntil && SkillRank>0)B.FireRateBonus=FMath::Max(B.FireRateBonus,.15f+.05f*(SkillRank-1));
+        }
+        if(U.Role==EOVInteriorRole::Commander)
+        {
+            const float Base=.05f+.02f*(Rank-1);B.SpeedBonus=FMath::Max(B.SpeedBonus,Base);
+            const float Turn=(GameTime<U.Skill3ActiveUntil && SkillRank>0)?(.10f+.05f*(SkillRank-1)):Base;
+            B.TurnBonus=FMath::Max(B.TurnBonus,Turn);
+        }
+    }
+    B.AccuracyBonus=FMath::Min(.08f,B.AccuracyBonus);B.FireRateBonus=FMath::Min(.30f,B.FireRateBonus);
+    B.SpeedBonus=FMath::Min(.20f,B.SpeedBonus);B.TurnBonus=FMath::Min(.20f,B.TurnBonus);return B;
 }
 
 bool UOVInteriorSubsystem::ValidateInterior(AOVShip* Ship, TArray<FString>& Errors) const
@@ -60,18 +169,31 @@ void UOVInteriorSubsystem::ResetScenario(const TArray<AOVShip*>& Ships, int32 Se
     Disable(); Units.Reset(); Operations.Reset(); Events.Reset();
     GameTime = 0; TotalDeaths = TotalCaptures = TotalSabotages = 0; Random.Initialize(Seed);
     // ID counters intentionally survive resets, preventing old selection/event IDs from addressing a new person.
-    for (AOVShip* Ship : Ships)
-    {
-        TArray<FString> Errors;
-        if (!ValidateInterior(Ship, Errors)) { LastMessage=FString::Join(Errors,TEXT(" / ")); continue; }
-        FGraphState G; G.Ship=Ship; G.Version=Ship->Systems->Layout->LayoutVersion;
-        G.KnownBy.Add(Ship->Systems->FactionId);
-        for (const auto& S : Ship->Systems->Slots) G.PreviousHP.Add(S.SlotId,S.HP);
-        for (const auto& C : Ship->Systems->Layout->Connections)
-        { G.Neighbors.FindOrAdd(C.FromSlot).Add(C.ToSlot); G.Neighbors.FindOrAdd(C.ToSlot).Add(C.FromSlot); }
-        Graphs.Add(MoveTemp(G));
-    }
+    for (AOVShip* Ship : Ships) AddShip(Ship);
     bEnabled = !Graphs.IsEmpty(); LastMessage=bEnabled?TEXT("실제 선내 인원·경로 시험 준비"):TEXT("유효한 내부 배치 없음");
+}
+
+bool UOVInteriorSubsystem::AddShip(AOVShip* Ship)
+{
+    if(FindGraph(Ship))return true;
+    TArray<FString> Errors;
+    if(!ValidateInterior(Ship,Errors)){LastMessage=FString::Join(Errors,TEXT(" / "));return false;}
+    FGraphState G;G.Ship=Ship;G.Version=Ship->Systems->Layout->LayoutVersion;G.KnownBy.Add(Ship->Systems->FactionId);
+    for(const auto& S:Ship->Systems->Slots)G.PreviousHP.Add(S.SlotId,S.HP);
+    for(const auto& C:Ship->Systems->Layout->Connections)
+    {G.Neighbors.FindOrAdd(C.FromSlot).Add(C.ToSlot);G.Neighbors.FindOrAdd(C.ToSlot).Add(C.FromSlot);}
+    Graphs.Add(MoveTemp(G));bEnabled=true;return true;
+}
+
+bool UOVInteriorSubsystem::RemoveShip(AOVShip* Ship)
+{
+    auto* G=FindGraph(Ship);if(!G)return false;
+    for(const auto& U:Units)if(U.Ship==Ship && U.State!=EOVInteriorState::Dead)
+    {LastMessage=TEXT("생존 인원이 있는 함선은 선내 그래프를 제거할 수 없습니다");return false;}
+    for(int32 F:G->PresenceFactions)if(IsValid(Ship))Ship->Systems->SetRuntimeInteriorPresence(F,false,false);
+    Graphs.RemoveAll([Ship](const FGraphState& Row){return Row.Ship==Ship;});
+    Operations.RemoveAll([Ship](const FOVInteriorOperation& O){return O.Ship==Ship;});
+    bEnabled=!Graphs.IsEmpty();return true;
 }
 
 int32 UOVInteriorSubsystem::CountActiveHeroes(int32 Faction) const
@@ -175,7 +297,14 @@ bool UOVInteriorSubsystem::MovePoint(FOVInteriorUnitRecord& U,FVector Goal,float
     const FVector Scale=U.Ship->GetActorScale3D();const FVector WorldDelta=(Goal-U.LocalPosition)*Scale;
     const float Distance=WorldDelta.Size();
     if(Distance<=Settings.ArrivalTolerance) {U.LocalPosition=Goal;return true;}
-    const float Travel=FMath::Min(Distance,U.Speed*Delta);
+    float Bonus=0;
+    if(U.Order==EOVInteriorOrder::Retreat || U.Order==EOVInteriorOrder::Defend)
+        for(const auto& Friend:Units)if(!Friend.bDutyRequested && Friend.Role==EOVInteriorRole::Commander && Friend.FactionId==U.FactionId && Friend.Ship==U.Ship && Friend.NodeId==U.NodeId && IsOnboard(Friend) && OVInterior::Rank(Friend,3)>0)
+            Bonus=FMath::Max(Bonus,.05f+.025f*(OVInterior::Rank(Friend,3)-1));
+    float Speed=U.Speed*(1+FMath::Min(.20f,Bonus));
+    if(U.Role==EOVInteriorRole::Melee && GameTime<U.Skill3ActiveUntil)Speed*=1.5f;
+    if(GameTime<U.SlowUntil)Speed*=1-FMath::Clamp(U.SlowFraction,0.f,1.f);
+    const float Travel=FMath::Min(Distance,Speed*Delta);
     U.LocalPosition+=(Goal-U.LocalPosition)*(Travel/Distance);U.DistanceTravelled+=Travel;
     return Travel>=Distance;
 }
@@ -200,6 +329,8 @@ bool UOVInteriorSubsystem::IssueOrder(const TArray<int32>& Ids,EOVInteriorOrder 
         if(!OVInterior::Living(*U)||U->State==EOVInteriorState::RescueWaiting)continue;
         if(Order!=EOVInteriorOrder::Retreat && Order!=EOVInteriorOrder::None && IsOnboard(*U) && U->Ship->Systems->Layout->GetSlotIndex(Target)==INDEX_NONE)
         {U->Reason=TEXT("지정한 시설·방이 없습니다");continue;}
+        if(U->bDutyRequested){U->Skill3ActiveUntil=0;if(U->HeroId.IsValid() && U->Ship.IsValid())GetWorld()->GetSubsystem<UOVLogisticsSubsystem>()->CancelDevRepair(U->Ship.Get(),U->HeroId);}
+        U->bDutyRequested=U->bDutyActive=false;U->DutySlot=NAME_None;
         U->Order=Order;U->TargetSlot=Target;U->Progress=0;U->Path.Reset();U->PlannedGoal=NAME_None;U->EnemyId=0;
         if(Order==EOVInteriorOrder::Capture || Order==EOVInteriorOrder::Sabotage)
             if(auto* G=FindGraph(U->Ship.Get()))G->CompletedBy.Remove(U->FactionId);
@@ -243,9 +374,11 @@ void UOVInteriorSubsystem::Emit(FName Kind,const FOVInteriorUnitRecord& U,const 
 void UOVInteriorSubsystem::Kill(FOVInteriorUnitRecord& U,const FString& Reason)
 {
     if(U.State==EOVInteriorState::Dead)return;
+    if(U.HeroId.IsValid() && U.Ship.IsValid())GetWorld()->GetSubsystem<UOVLogisticsSubsystem>()->CancelDevRepair(U.Ship.Get(),U.HeroId);
     U.HP=0;U.State=EOVInteriorState::Dead;U.Order=EOVInteriorOrder::None;U.Path.Reset();U.Reason=Reason;
     ++U.DeathEvents;++TotalDeaths;
     GetWorld()->GetSubsystem<UOVTransportSubsystem>()->MarkRuntimePersonDead(U.PersonId,U.UnitId);
+    PersistRoster(false);
     Emit(TEXT("Death"),U,Reason);
 }
 
@@ -253,6 +386,8 @@ void UOVInteriorSubsystem::ApplyDamage(FOVInteriorUnitRecord& U,float Amount,con
 {
     if(!OVInterior::Living(U)||Amount<=0)return;
     U.HP=FMath::Max(0.f,U.HP-Amount);U.LastDamagedAt=GameTime;
+    if(U.HP>0 && U.Role==EOVInteriorRole::Melee && OVInterior::Rank(U,3)>0 && U.HP<U.MaxHP*.25f && U.bSkill4Armed && GameTime>=U.Skill4ReadyAt)
+    {U.Skill4ActiveUntil=GameTime+3;U.Skill4ReadyAt=GameTime+120;U.bSkill4Armed=false;++U.SkillUses;}
     if(U.HP<U.MaxHP*.25f)U.bWasCriticallyInjured=true;
     if(U.HP<=0)Kill(U,Reason);
 }
@@ -263,7 +398,7 @@ void UOVInteriorSubsystem::SyncTransport(FOVInteriorUnitRecord& U)
     const auto P=GetWorld()->GetSubsystem<UOVTransportSubsystem>()->GetPerson(U.PersonId);
     if(P.PersonId==0 || P.RuntimeUnitId!=U.UnitId){U.State=EOVInteriorState::Blocked;U.Reason=TEXT("운송 인원 ID 연결 상실");return;}
     if(P.State==EOVPassengerState::Dead){Kill(U,TEXT("운송 또는 내부 함선 완파로 사망"));return;}
-    if(P.State==EOVPassengerState::RescueWaiting){U.State=EOVInteriorState::RescueWaiting;U.Ship=nullptr;U.Reason=TEXT("우주 구조 대기 · 구조 후속 기능 미구현");return;}
+    if(P.State==EOVPassengerState::RescueWaiting){U.State=EOVInteriorState::RescueWaiting;U.Ship=nullptr;U.Reason=TEXT("우주 구조 대기 · 구조 후속 기능 미구현");PersistRoster(false);return;}
     if(P.State==EOVPassengerState::InPod || P.State==EOVPassengerState::InShuttle)
     {U.State=EOVInteriorState::InTransit;U.Ship=P.CurrentShip;U.Reason=TEXT("실제 운송 중");return;}
     if(P.State==EOVPassengerState::InsideTarget)
@@ -296,9 +431,30 @@ void UOVInteriorSubsystem::AdvanceUnit(FOVInteriorUnitRecord& U,float Delta)
 {
     if(!IsOnboard(U)||U.State==EOVInteriorState::AwaitingRecovery)return;
     if(GetWorld()->GetSubsystem<UOVCombatSubsystem>()->IsDeparted(U.Ship.Get()))
-    {U.State=EOVInteriorState::Blocked;U.Reason=TEXT("목표 초광속 이탈 · 인원 보존, 성계 밖 작전/회수 미지원");return;}
+    {if(U.HeroId.IsValid())GetWorld()->GetSubsystem<UOVLogisticsSubsystem>()->CancelDevRepair(U.Ship.Get(),U.HeroId);U.bDutyActive=false;U.State=EOVInteriorState::Blocked;U.Reason=TEXT("목표 초광속 이탈 · 인원 보존, 성계 밖 작전/회수 미지원");return;}
     const auto* L=U.Ship->Systems->Layout.Get();
     if(U.LayoutVersion!=L->LayoutVersion){U.State=EOVInteriorState::Blocked;U.Reason=TEXT("배치 버전 불일치: 이동 중지");return;}
+    if(U.HP>=U.MaxHP*.4f)U.bSkill4Armed=true;
+    if(U.bDutyRequested)
+    {
+        const auto Facility=U.Ship->Systems->GetSlotState(U.DutySlot);
+        if(U.Ship->Systems->FactionId!=U.FactionId || Facility.HP<=0 || Facility.Crew<=0 || (Facility.OccupyingFaction>=0 && Facility.OccupyingFaction!=U.FactionId))
+        {if(U.HeroId.IsValid())GetWorld()->GetSubsystem<UOVLogisticsSubsystem>()->CancelDevRepair(U.Ship.Get(),U.HeroId);U.bDutyActive=false;U.DutyReadyAt=0;U.State=EOVInteriorState::Blocked;U.Reason=TEXT("보직 시설 가동 조건 미충족");return;}
+        if(!MoveTowards(U,U.DutySlot,Delta)){U.bDutyActive=false;U.DutyReadyAt=0;U.State=EOVInteriorState::Moving;return;}
+        if(U.DutyReadyAt<=0)U.DutyReadyAt=GameTime+3;
+        if(GameTime<U.DutyReadyAt){U.State=EOVInteriorState::Operating;U.Reason=TEXT("보직 인계 중");return;}
+        U.bDutyActive=true;U.State=EOVInteriorState::Operating;U.Reason=TEXT("보직 수행 중");
+        if((U.Role==EOVInteriorRole::Ranged || U.Role==EOVInteriorRole::Commander) && OVInterior::Rank(U,2)>0 && GameTime>=U.Skill3ReadyAt)
+        {U.Skill3ReadyAt=GameTime+60;U.Skill3ActiveUntil=GameTime+(U.Role==EOVInteriorRole::Ranged?8:10);++U.SkillUses;}
+        if(U.Role==EOVInteriorRole::Support && U.HeroId.IsValid() && OVInterior::Rank(U,2)>0 && U.AmplifierCharges>0 && GameTime>=U.Skill3ReadyAt && !U.DevRepairBaseCost.IsNearlyZero())
+        {
+            const float Total=U.Ship->Systems->MaxHullHP*(.0025f+.0025f*OVInterior::Rank(U,2));
+            auto* Logistics=GetWorld()->GetSubsystem<UOVLogisticsSubsystem>();
+            if(Logistics->StartDevRepair(U.Ship.Get(),U.Ship.Get(),true,U.HeroId,U.DevRepairBaseCost,0,Total/10,10,Total))
+            {--U.AmplifierCharges;U.Skill3ReadyAt=GameTime+90;++U.SkillUses;Emit(TEXT("DutyRepair"),U,TEXT("지원 보직 수리 · 유한 자원과 충전 소모"));}
+        }
+        return;
+    }
     if(U.Order==EOVInteriorOrder::Retreat)
     {
         U.EnemyId=0;U.State=EOVInteriorState::Retreating;
@@ -311,12 +467,17 @@ void UOVInteriorSubsystem::AdvanceUnit(FOVInteriorUnitRecord& U,float Delta)
         return;
     }
     // Healing is finite and uses the same observed range/LOS as combat. Moving or returning never refills it.
+    if(U.Role==EOVInteriorRole::Support && OVInterior::Rank(U,2)>0 && U.Medkits>=2 && GameTime>=U.Skill3ReadyAt)
+    {
+        bool bNeed=false;for(const auto& Friend:Units)if(Friend.FactionId==U.FactionId && Friend.HP<Friend.MaxHP*.5f && Visible(U,Friend,600)){bNeed=true;break;}
+        if(bNeed){U.Medkits-=2;U.Skill3ReadyAt=GameTime+90;U.Skill3ActiveUntil=GameTime+5;++U.SkillUses;}
+    }
     if(U.Role==EOVInteriorRole::Support && U.Medkits>0 && GameTime>=U.SkillReadyAt)
     {
         FOVInteriorUnitRecord* Patient=nullptr;float Lowest=.50001f;
         for(auto& Friend:Units)if(Friend.FactionId==U.FactionId && Visible(U,Friend,U.Range))
             if(Friend.HP/Friend.MaxHP<Lowest){Lowest=Friend.HP/Friend.MaxHP;Patient=&Friend;}
-        if(Patient){Patient->HP=FMath::Min(Patient->MaxHP,Patient->HP+FMath::Max(0.f,Settings.SupportHeal));--U.Medkits;U.SkillReadyAt=GameTime+FMath::Max(.1f,Settings.SupportCooldown);++U.SkillUses;Emit(TEXT("Heal"),U,TEXT("생체 재구성 · 촉매 1개 소모"));}
+        if(Patient){const int32 R=OVInterior::Rank(U,0);const float Heal=(Settings.SupportHeal+15*(R-1))*(1+.06f*(U.HeroLevel-1));Patient->HP=FMath::Min(Patient->MaxHP,Patient->HP+FMath::Max(0.f,Heal));--U.Medkits;U.SkillReadyAt=GameTime+FMath::Max(.1f,Settings.SupportCooldown-.5f*(R-1));++U.SkillUses;Emit(TEXT("Heal"),U,TEXT("생체 재구성 · 촉매 1개 소모"));}
     }
     FOVInteriorUnitRecord* Enemy=nullptr;
     if(U.EnemyId>0) {auto* Existing=FindUnit(U.EnemyId);if(Existing && Existing->FactionId!=U.FactionId && Visible(U,*Existing,Settings.SightRange))Enemy=Existing;}
@@ -327,12 +488,17 @@ void UOVInteriorSubsystem::AdvanceUnit(FOVInteriorUnitRecord& U,float Delta)
         {const float D=OVInterior::Distance(U,Candidate);if(D<Nearest){Nearest=D;Enemy=&Candidate;}}
     }
     U.EnemyId=Enemy?Enemy->UnitId:0;
+    if(U.TrackedEnemy!=U.EnemyId){U.TrackedEnemy=U.EnemyId;U.TrackedSince=GameTime;U.BurstRemaining=0;}
     if(Enemy)
     {
         U.State=EOVInteriorState::Fighting;U.Reason=TEXT("관측된 적과 자동 교전");
         const float Distance=OVInterior::Distance(U,*Enemy);
+        if(U.Role==EOVInteriorRole::Commander && OVInterior::Rank(U,2)>0 && GameTime>=U.Skill3ReadyAt)
+        {U.Skill3ReadyAt=GameTime+60;U.Skill3ActiveUntil=GameTime+8;++U.SkillUses;}
         if(Distance>U.Range)
         {
+            if(U.Role==EOVInteriorRole::Melee && OVInterior::Rank(U,2)>0 && Distance<=(500+100*OVInterior::Rank(U,2)) && GameTime>=U.Skill3ReadyAt)
+            {U.Skill3ReadyAt=GameTime+30;U.Skill3ActiveUntil=GameTime+2;U.bRushAttack=true;++U.SkillUses;}
             if(U.NodeId==Enemy->NodeId)MovePoint(U,Enemy->LocalPosition,Delta);
             else MoveTowards(U,Enemy->NodeId,Delta);
             return;
@@ -340,16 +506,35 @@ void UOVInteriorSubsystem::AdvanceUnit(FOVInteriorUnitRecord& U,float Delta)
         if(U.Role==EOVInteriorRole::Melee && GameTime>=U.SkillReadyAt)
         {U.SkillReadyAt=GameTime+FMath::Max(.1f,Settings.MeleeCooldown);U.SkillActiveUntil=GameTime+FMath::Max(0.f,Settings.MeleeDuration);++U.SkillUses;Emit(TEXT("ForceField"),U,TEXT("역장 방어 가동"));}
         if(GameTime<U.AttackReadyAt)return;
-        U.AttackReadyAt=GameTime+FMath::Max(.05f,U.Period);++U.Shots;
+        if(U.Role==EOVInteriorRole::Ranged && OVInterior::Rank(U,2)>0 && U.BurstRemaining==0 && GameTime>=U.Skill3ReadyAt)
+        {U.Skill3ReadyAt=GameTime+30;U.BurstRemaining=3;U.BurstTargetId=Enemy->UnitId;++U.SkillUses;}
+        const bool bBurst=U.BurstRemaining>0 && U.BurstTargetId==Enemy->UnitId;
+        float AttackSpeed=0;
+        for(const auto& Friend:Units)if(!Friend.bDutyRequested && Friend.Role==EOVInteriorRole::Commander && Friend.FactionId==U.FactionId && GameTime<Friend.Skill3ActiveUntil && OVInterior::Rank(Friend,2)>0 && Visible(U,Friend,1400))
+            AttackSpeed=FMath::Max(AttackSpeed,.10f+.025f*(OVInterior::Rank(Friend,2)-1));
+        if(bBurst){--U.BurstRemaining;U.AttackReadyAt=GameTime+(U.BurstRemaining>0?.3f:FMath::Max(.05f,U.Period/(1+AttackSpeed)));}
+        else U.AttackReadyAt=GameTime+FMath::Max(.05f,U.Period/(1+AttackSpeed));
+        ++U.Shots;
         float Damage=U.Damage*(U.bWounded?.9f:1.f);
-        if(U.Role==EOVInteriorRole::Ranged && GameTime>=U.SkillReadyAt)
-        {Damage*=FMath::Max(1.f,Settings.RangedMultiplier);U.SkillReadyAt=GameTime+FMath::Max(.1f,Settings.RangedCooldown);++U.SkillUses;}
-        for(const auto& Friend:Units)if(Friend.FactionId==U.FactionId && Friend.Role==EOVInteriorRole::Commander && Visible(U,Friend,Settings.CommanderAuraRange))
-        {Damage*=1+FMath::Max(0.f,Settings.CommanderDamageBonus);break;}
+        if(bBurst)Damage*=.5f;
+        if(U.Role==EOVInteriorRole::Melee && U.bRushAttack){Damage*=1+.1f*(OVInterior::Rank(U,2)+1);U.bRushAttack=false;}
+        if(U.Role==EOVInteriorRole::Ranged && OVInterior::Rank(U,3)>0 && GameTime-U.TrackedSince>=4)Damage*=1+.05f*(OVInterior::Rank(U,3)+1);
+        if(!bBurst && U.Role==EOVInteriorRole::Ranged && GameTime>=U.SkillReadyAt)
+        {Damage*=FMath::Max(1.f,Settings.RangedMultiplier+.25f*(OVInterior::Rank(U,0)-1));U.SkillReadyAt=GameTime+FMath::Max(.1f,Settings.RangedCooldown);++U.SkillUses;}
+        float Aura=0;for(const auto& Friend:Units)if(!Friend.bDutyRequested && Friend.FactionId==U.FactionId && Friend.Role==EOVInteriorRole::Commander && Visible(U,Friend,Settings.CommanderAuraRange))
+        Aura=FMath::Max(Aura,Settings.CommanderDamageBonus+.03f*(OVInterior::Rank(Friend,0)-1));
+        Damage*=1+FMath::Max(0.f,Aura);
         if(Random.FRand()>=FMath::Clamp(.92f*(1-Enemy->Evasion),0.f,1.f))return;
         ++U.Hits;
-        const float Reduction=FMath::Clamp(Enemy->Armor+((Enemy->Role==EOVInteriorRole::Melee && GameTime<Enemy->SkillActiveUntil)?Settings.MeleeReduction:0.f),0.f,.65f);
-        ApplyDamage(*Enemy,Damage*(1-Reduction),TEXT("선내 교전 사망"));return;
+        const int32 Weakness=U.Role==EOVInteriorRole::Ranged?OVInterior::Rank(U,1):0;
+        const float Ignore=Weakness>0?.08f+.04f*(Weakness-1):0;
+        const float Emergency=(Enemy->Role==EOVInteriorRole::Melee && GameTime<Enemy->Skill4ActiveUntil)?(.10f+.05f*(OVInterior::Rank(*Enemy,3)-1)):0;
+        const float Reduction=FMath::Clamp(Enemy->Armor+((Enemy->Role==EOVInteriorRole::Melee && GameTime<Enemy->SkillActiveUntil)?Settings.MeleeReduction+.05f*(OVInterior::Rank(*Enemy,0)-1):0.f)+Emergency-Ignore,0.f,.65f);
+        float Cover=0;
+        for(const auto& Friend:Units)if(!Friend.bDutyRequested && Friend.UnitId!=Enemy->UnitId && Friend.FactionId==Enemy->FactionId && Friend.Role==EOVInteriorRole::Melee && OVInterior::Rank(Friend,1)>0 && Visible(*Enemy,Friend,300))
+            Cover=FMath::Max(Cover,.08f+.02f*(OVInterior::Rank(Friend,1)-1));
+        if(bBurst){if(GameTime>=Enemy->SlowUntil)Enemy->SlowFraction=0;Enemy->SlowUntil=GameTime+4;Enemy->SlowFraction=FMath::Max(Enemy->SlowFraction,.20f+.05f*(OVInterior::Rank(U,2)-1));}
+        ApplyDamage(*Enemy,Damage*(1-Reduction)*(1-Cover),TEXT("선내 교전 사망"));return;
     }
     if(U.Order==EOVInteriorOrder::None){U.State=EOVInteriorState::Defending;U.Reason=TEXT("명령 대기");return;}
     if(U.TargetSlot.IsNone()){U.State=EOVInteriorState::Blocked;U.Reason=TEXT("시설 목표를 지정하세요");return;}
@@ -392,7 +577,10 @@ void UOVInteriorSubsystem::AdvanceOperations(float Delta)
         if(!O.Ship.IsValid()||O.Ship->Systems->bWrecked)continue;
         const auto* L=O.Ship->Systems->Layout.Get();const int32 Slot=L->GetSlotIndex(O.SlotId);
         const float Duration=O.Kind==EOVInteriorOrder::Sabotage?Settings.SabotageSeconds:L->Slots[Slot].Facility==EOVFacilityType::Bridge?Settings.BridgeSeconds:Settings.CaptureSeconds;
-        const float Speed=FMath::Clamp(1+Settings.AdditionalWorkerBonus*(W->Num()-1),1.f,2.f);
+        float Command=0;
+        for(int32 Unit:*W)if(Units[Unit].Role==EOVInteriorRole::Commander && OVInterior::Rank(Units[Unit],1)>0)
+            Command+=.10f+.05f*(OVInterior::Rank(Units[Unit],1)-1);
+        const float Speed=FMath::Clamp(1+Settings.AdditionalWorkerBonus*(W->Num()-1)+Command,1.f,2.f);
         O.Progress=FMath::Min(1.f,O.Progress+Delta*Speed/FMath::Max(.1f,Duration));
         if(O.Kind==EOVInteriorOrder::Sabotage)O.Checkpoint=FMath::Min(2.f/3,FMath::FloorToFloat(O.Progress*3)/3);
         for(int32 Unit:*W){Units[Unit].Progress=O.Progress;Units[Unit].Reason=FString::Printf(TEXT("%s 진행 %.0f%%"),O.Kind==EOVInteriorOrder::Sabotage?TEXT("공작"):TEXT("점령"),100*O.Progress);}
@@ -433,7 +621,12 @@ void UOVInteriorSubsystem::ProcessFacilityDamage(float Delta)
             }
         }
         for(auto& U:Units)if(IsOnboard(U)&&U.Ship==Ship)if(const double* Until=G.Disasters.Find(U.NodeId))if(GameTime<*Until)
-            ApplyDamage(U,Settings.DisasterDamagePerSecond*Delta,TEXT("파괴 구역 재난 사망"));
+        {
+            float Protection=0;
+            for(const auto& Friend:Units)if(IsOnboard(Friend)&&Friend.Ship==Ship&&Friend.NodeId==U.NodeId&&Friend.FactionId==U.FactionId&&Friend.Role==EOVInteriorRole::Support&&OVInterior::Rank(Friend,1)>0)
+                Protection=FMath::Max(Protection,.15f+.075f*(OVInterior::Rank(Friend,1)-1));
+            ApplyDamage(U,Settings.DisasterDamagePerSecond*Delta*(1-Protection),TEXT("파괴 구역 재난 사망"));
+        }
         for(auto It=G.Disasters.CreateIterator();It;++It)if(GameTime>=It.Value())It.RemoveCurrent();
     }
 }
@@ -453,9 +646,23 @@ void UOVInteriorSubsystem::RefreshPresence()
 void UOVInteriorSubsystem::Step(float Delta)
 {
     GameTime+=Delta;
-    for(auto& U:Units){SyncTransport(U);if(U.State!=EOVInteriorState::Dead && U.Ship.IsValid() && U.Ship->Systems->bWrecked)Kill(U,TEXT("내부 잔류 함선 완파: 전원 사망"));}
+    for(auto& U:Units)
+    {
+        AOVShip* PreviousShip=U.Ship.Get();
+        SyncTransport(U);
+        if(U.HeroId.IsValid() && PreviousShip && (!IsOnboard(U) || U.Ship!=PreviousShip))
+            GetWorld()->GetSubsystem<UOVLogisticsSubsystem>()->CancelDevRepair(PreviousShip,U.HeroId);
+        if(U.State!=EOVInteriorState::Dead && U.Ship.IsValid() && U.Ship->Systems->bWrecked)Kill(U,TEXT("내부 잔류 함선 완파: 전원 사망"));
+    }
     ProcessFacilityDamage(Delta);
     for(auto& U:Units)AdvanceUnit(U,Delta);
+    for(auto& Patient:Units)if(IsOnboard(Patient))
+    {
+        float Rate=0;
+        for(const auto& Healer:Units)if(Healer.Role==EOVInteriorRole::Support && Healer.FactionId==Patient.FactionId && !Healer.bDutyActive && GameTime<Healer.Skill3ActiveUntil && OVInterior::Rank(Healer,2)>0 && Visible(Healer,Patient,600))
+            Rate=FMath::Max(Rate,.01f+.01f*OVInterior::Rank(Healer,2));
+        if(Rate>0)Patient.HP=FMath::Min(Patient.MaxHP,Patient.HP+Patient.MaxHP*Rate*Delta);
+    }
     AdvanceOperations(Delta);RefreshPresence();
 }
 

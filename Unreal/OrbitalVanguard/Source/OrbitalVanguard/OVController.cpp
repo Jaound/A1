@@ -9,6 +9,9 @@
 #include "OVTransportSubsystem.h"
 #include "OVInteriorSubsystem.h"
 #include "OVMissionSubsystem.h"
+#include "OVDevelopmentSubsystem.h"
+#include "OVHeroSubsystem.h"
+#include "Engine/GameInstance.h"
 #include "GameFramework/InputSettings.h"
 #include "Engine/LocalPlayer.h"
 #include "Engine/GameViewportClient.h"
@@ -37,6 +40,8 @@ void AOVController::BeginPlay()
  Transport=GetWorld()->GetSubsystem<UOVTransportSubsystem>();
  Interior=GetWorld()->GetSubsystem<UOVInteriorSubsystem>();
  Mission=GetWorld()->GetSubsystem<UOVMissionSubsystem>();
+ Development=GetWorld()->GetSubsystem<UOVDevelopmentSubsystem>();
+ Heroes=GetGameInstance()->GetSubsystem<UOVHeroSubsystem>();
  FInputModeGameAndUI Mode; Mode.SetHideCursorDuringCapture(false); Mode.SetLockMouseToViewportBehavior(EMouseLockMode::DoNotLock); SetInputMode(Mode);
  RangeCamera=GetWorld()->SpawnActor<ACameraActor>();
  RangeCamera->GetCameraComponent()->SetFieldOfView(55);
@@ -234,7 +239,7 @@ void AOVController::Action(FName Name)
  if(Name==TEXT("Ship2")) SelectShip(Ships[1]);
  if(Name==TEXT("Ship3")) SelectShip(Ships[2]);
  if(Name==TEXT("Deselect")) ClearSelection();
- if(Name==TEXT("Developer")) { bDeveloperMode=!bDeveloperMode; ViewedDeck=0; }
+ if(Name==TEXT("Developer")) { FlushPressedKeys(); bDeveloperMode=!bDeveloperMode; ViewedDeck=0; if(auto* HUD=Cast<AOVHUD>(GetHUD()))HUD->SyncAddedUI(); }
  if(Selected && Selected->bFriendly && Selected->Systems->CanCommand() && !(Combat&&Combat->bEnabled&&Combat->IsDeparted(Selected))) {
   if(Name==TEXT("Manual")) { Selected->SetAutomation(false,false); LastAction=TEXT("이동·사격 수동"); }
   if(Name==TEXT("Auto")) { Selected->SetAutomation(true,true); bPlacing=false; InputMode=EOVInputMode::None; LastAction=TEXT("AUTO / Hold and manual attitude preserved")+(Combat&&Combat->bEnabled?FString(TEXT(" / automatic engagement")):FString(TEXT("; combat deferred"))); }
@@ -527,6 +532,12 @@ void AOVController::HandleRightMove(bool Pressed, FVector2D Cursor, bool InWorld
 
 bool AOVController::InputKey(const FInputKeyEventArgs& Params)
 {
+ if(auto* UI=Cast<AOVHUD>(GetHUD()); UI&&UI->IsAddedUIEditing())
+ {
+  OrbitGesture={}; CancelRightMove();
+  // Text entry is owned by Slate. Do not place typing into gameplay key state.
+  return true;
+ }
  const FKey Key=Params.Key;
  const bool Pressed=Params.Event==IE_Pressed || Params.Event==IE_DoubleClick;
  const bool Released=Params.Event==IE_Released;
@@ -636,6 +647,11 @@ void AOVController::PlayerTick(float DeltaTime)
  const float MX=Cursor.X,MY=Cursor.Y;
  const bool Inside=Focused&&Pixel.X>=0&&Pixel.Y>=0&&Pixel.X<Size.X&&Pixel.Y<Size.Y;
  AOVHUD* HUD=Cast<AOVHUD>(GetHUD());
+ if(HUD&&HUD->IsAddedUIEditing())
+ {
+  OrbitGesture={};CancelRightMove();HUD->CancelPointerDrag();
+  StepSimulation(DeltaTime);UpdateCamera();return;
+ }
  const bool LeftPressed=Inside&&WasInputKeyJustPressed(EKeys::LeftMouseButton);
  const int Wheel=Focused?int(WasInputKeyJustPressed(EKeys::MouseScrollUp))-int(WasInputKeyJustPressed(EKeys::MouseScrollDown)):0;
  const bool WorldGesture=RightMove.bActive||OrbitGesture.Surface==EOVOrbitSurface::World;

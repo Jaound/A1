@@ -17,6 +17,11 @@ inline constexpr double MaxZoom = 420000;
 inline constexpr double RayLength = 1500000;
 inline constexpr double AltitudeScale = 20;
 
+TArray<FName> GetHullIds();
+FString GetHullName(FName HullId);
+double GetHullGeometryScale(FName HullId);
+TArray<FName> GetWeaponProfileIds();
+FString GetSourceHash();
 // Returns false before initializing any runtime profile if the requested roster is invalid.
 bool Start(UOVCombatSubsystem& Combat, const TArray<AOVShip*>& Ships, int32 Scenario);
 // Candidate data reuse for 2C. Does not alter stored inventory or reload profiles.

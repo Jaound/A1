@@ -1,4 +1,7 @@
 #include "OVHUD.h"
+#include "OVDevelopmentWidget.h"
+#include "OVHeroWidget.h"
+#include "Blueprint/WidgetLayoutLibrary.h"
 #include "ProfilingDebugging/CsvProfiler.h"
 #include "ProfilingDebugging/CpuProfilerTrace.h"
 #include "OVController.h"
@@ -31,6 +34,7 @@ FName AOVHUD::GetHitActionAtCanvasPoint(FVector2D Point) const
 }
 bool AOVHUD::IsOverPanel(float X,float Y) const
 {
+ if(IsOverAddedUI(X,Y)) return true;
  const auto* PC=Cast<AOVController>(PlayerOwner); if(!PC) return false;
  const FVector2D P(X/UIScale,Y/UIScale);
  if(IsOverInteriorPanel(X,Y)) return true;
@@ -209,6 +213,7 @@ void AOVHUD::DrawHUD()
 {
     CSV_SCOPED_TIMING_STAT_EXCLUSIVE(OV_HUD);
     TRACE_CPUPROFILER_EVENT_SCOPE(OV_HUD);
+ SyncAddedUI();
  ActionCenters.Reset();
  Super::DrawHUD();auto* PC=Cast<AOVController>(PlayerOwner);if(!PC||!Canvas||PC->Ships.Num()<3)return;
  ViewportPixels=FVector2D(Canvas->SizeX,Canvas->SizeY);
@@ -295,4 +300,35 @@ void AOVHUD::DrawCombat()
   DrawText(TEXT("DEV injected own-faction interior state"),FLinearColor::Yellow,20,539,GEngine->GetSmallFont());
  Button(TEXT("MoveAuto"),Ship->IsMovementAutomatic()?TEXT("MOVE: AUTO"):TEXT("MOVE: MANUAL"),20,422,195,Ship->IsMovementAutomatic());
  Button(TEXT("FireAuto"),Ship->IsAttackAutomatic()?TEXT("FIRE: AUTO"):TEXT("FIRE: MANUAL"),223,422,207,Ship->IsAttackAutomatic());
+}
+
+void AOVHUD::BeginPlay()
+{
+ Super::BeginPlay();
+ if(!PlayerOwner || !PlayerOwner->IsLocalController()) return;
+ DevelopmentWidget=CreateWidget<UOVDevelopmentWidget>(PlayerOwner,UOVDevelopmentWidget::StaticClass());
+ HeroWidget=CreateWidget<UOVHeroWidget>(PlayerOwner,UOVHeroWidget::StaticClass());
+ if(DevelopmentWidget){DevelopmentWidget->AddToViewport(20);DevelopmentWidget->SetVisibility(ESlateVisibility::Collapsed);}
+ if(HeroWidget)HeroWidget->AddToViewport(10);
+ SyncAddedUI();
+}
+void AOVHUD::SyncAddedUI()
+{
+ auto* PC=Cast<AOVController>(PlayerOwner);if(!PC)return;int32 W=0,H=0;PC->GetViewportSize(W,H);if(W<=0||H<=0)return;
+ const float Dpi=FMath::Max(.01f,UWidgetLayoutLibrary::GetViewportScale(this));
+ const FVector2D DevSize(FMath::Min(760.f,W*.8f),FMath::Min(530.f,H*.78f));
+ const FVector2D DevPos((W-DevSize.X)*.5f,(H-DevSize.Y)*.5f);DevelopmentRect=FBox2D(DevPos,DevPos+DevSize);
+ const FVector2D HeroSize(FMath::Min(310.f,W*.27f),FMath::Min(310.f,H*.48f));
+ const FVector2D HeroPos(W-HeroSize.X-12.f,100.f);HeroRect=FBox2D(HeroPos,HeroPos+HeroSize);
+ if(DevelopmentWidget){DevelopmentWidget->SetPositionInViewport(DevPos/Dpi,false);DevelopmentWidget->SetDesiredSizeInViewport(DevSize/Dpi);DevelopmentWidget->SetVisibility(PC->bDeveloperMode?ESlateVisibility::Visible:ESlateVisibility::Collapsed);}
+ if(HeroWidget){HeroWidget->SetPositionInViewport(HeroPos/Dpi,false);HeroWidget->SetDesiredSizeInViewport(HeroSize/Dpi);HeroWidget->SetVisibility(PC->bDeveloperMode?ESlateVisibility::Collapsed:ESlateVisibility::Visible);}
+}
+bool AOVHUD::IsOverAddedUI(float X,float Y) const
+{
+ const auto* PC=Cast<AOVController>(PlayerOwner);if(!PC)return false;const FVector2D P(X,Y);
+ return PC->bDeveloperMode?DevelopmentWidget&&DevelopmentRect.IsInsideOrOn(P):HeroWidget&&HeroRect.IsInsideOrOn(P);
+}
+bool AOVHUD::IsAddedUIEditing() const
+{
+ const auto* PC=Cast<AOVController>(PlayerOwner);return PC&&PC->bDeveloperMode&&DevelopmentWidget&&DevelopmentWidget->IsEditing();
 }

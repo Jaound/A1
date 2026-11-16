@@ -2,6 +2,7 @@
 #include "OVCarrierSubsystem.h"
 #include "OVTransportSubsystem.h"
 #include "OVInteriorSubsystem.h"
+#include "OVLogisticsSubsystem.h"
 #include "OVMissionSubsystem.h"
 #include "OVPointDefenseSubsystem.h"
 #include "ProfilingDebugging/CsvProfiler.h"
@@ -336,7 +337,8 @@ FOVFireReadiness UOVCombatSubsystem::Evaluate(const FOVCombatShipState& State, c
     R.Detection = GetDetection(Ship, Target);
     if (!R.Detection.bDetected) return Block(TEXT("NO DETECTION"));
     const float ControlBonus = Settings->ControlAccuracyBonus * (Systems->GetEfficiency(EOVFacilityType::WeaponControl) - 1.f);
-    R.Accuracy = FMath::Clamp(Mount.Profile.Accuracy + R.Detection.AccuracyBonus + ControlBonus, 0.f,
+    const auto Duty = GetWorld()->GetSubsystem<UOVInteriorSubsystem>()->GetDutyBonuses(State.Ship);
+    R.Accuracy = FMath::Clamp(Mount.Profile.Accuracy + R.Detection.AccuracyBonus + ControlBonus + Duty.AccuracyBonus, 0.f,
         Mount.Profile.Kind == EOVAttackKind::Beam ? 0.995f : 1.f);
     R.AimSpreadDegrees = Mount.Profile.Kind == EOVAttackKind::Beam ? 0.f
         : FMath::Clamp(Mount.Profile.AimSpreadDegrees * (1.f - R.Accuracy), 0.f, 45.f);
@@ -417,6 +419,7 @@ void UOVCombatSubsystem::Step(float Delta)
     // One game clock: aircraft/transport positions, PD opportunities, then surviving ordnance.
     GetWorld()->GetSubsystem<UOVTransportSubsystem>()->Simulate(Delta);
     GetWorld()->GetSubsystem<UOVInteriorSubsystem>()->Simulate(Delta);
+    GetWorld()->GetSubsystem<UOVLogisticsSubsystem>()->Simulate(Delta);
     GetWorld()->GetSubsystem<UOVMissionSubsystem>()->Simulate(Delta);
     GetWorld()->GetSubsystem<UOVCarrierSubsystem>()->Simulate(Delta);
     GetWorld()->GetSubsystem<UOVPointDefenseSubsystem>()->Step(Delta);
@@ -575,7 +578,8 @@ void UOVCombatSubsystem::Launch(FOVCombatShipState& State, FOVCombatMountState& 
         * State.Ship->Systems->GetEfficiency(SupplyFor(Def->Type));
     if (Mount.SalvoRemaining <= 0)
     {
-        Mount.Cooldown = FMath::Max(0.01f, Mount.Profile.Interval / FMath::Max(0.05f, Efficiency));
+        const auto Duty = GetWorld()->GetSubsystem<UOVInteriorSubsystem>()->GetDutyBonuses(State.Ship);
+        Mount.Cooldown = FMath::Max(0.01f, Mount.Profile.Interval / FMath::Max(0.05f, Efficiency * (1.f+Duty.FireRateBonus)));
         Mount.SalvoRemaining = FMath::Max(1, Mount.Profile.Salvo);
         Mount.SalvoTarget = Attack.Target; Mount.bAutomaticSalvo = bAutomatic;
     }

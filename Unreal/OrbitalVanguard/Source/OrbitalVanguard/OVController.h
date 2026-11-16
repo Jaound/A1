@@ -12,6 +12,8 @@ class UOVPointDefenseSubsystem;
 class UOVTransportSubsystem;
 class UOVInteriorSubsystem;
 class UOVMissionSubsystem;
+class UOVDevelopmentSubsystem;
+class UOVHeroSubsystem;
 UENUM(BlueprintType)
 enum class EOVInputMode : uint8 { None, Move, Target, Heading, Repair };
 UCLASS()
@@ -20,6 +22,8 @@ class ORBITALVANGUARD_API AOVController : public APlayerController
  GENERATED_BODY()
 public:
  AOVController();
+ UPROPERTY(VisibleAnywhere, BlueprintReadOnly) TObjectPtr<UOVDevelopmentSubsystem> Development;
+ UPROPERTY(VisibleAnywhere, BlueprintReadOnly) TObjectPtr<UOVHeroSubsystem> Heroes;
  UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Interior") TObjectPtr<UOVInteriorSubsystem> Interior;
  UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Mission") TObjectPtr<UOVMissionSubsystem> Mission;
  virtual void BeginPlay() override;

@@ -142,6 +142,8 @@ public:
     UFUNCTION(BlueprintCallable, Category="Debug") bool SetShieldManualOff(bool bOff);
     UFUNCTION(BlueprintCallable, Category="Debug") void RefreshDerivedState();
 
+    // Read-only estimate for a facility before damage is applied.
+    float GetExplosionDamage(int32 SlotIndex) const;
     void NotifyCombatParticipation();
     // Authoritative faction-specific adapter for future interior operations. No roster is synthesized.
     UFUNCTION(BlueprintCallable) void SetInteriorPresence(int32 Faction, bool bPresent, bool bObjectiveComplete, bool bDeveloperInput = false);

@@ -1,4 +1,6 @@
 #include "OVMissionSubsystem.h"
+#include "OVHeroSubsystem.h"
+#include "Engine/GameInstance.h"
 #include "OVController.h"
 #include "OVHUD.h"
 #include "OVShip.h"
@@ -24,6 +26,7 @@ bool Living(const FOVInteriorUnitRecord& Unit) { return Unit.UnitId>0&&Unit.HP>0
 
 void UOVMissionSubsystem::Disable()
 {
+    bUsesOwnedRoster=false;BattleId.Empty();HeroParticipation.Reset();HeroObjectiveXP.Reset();LastHeroEvent=0;
     bEnabled=false; bAutoPlayer=false; Owner.Reset(); Roster.Reset();
     Origin=Objective=Shuttle=nullptr; AttackUnitIds.Reset();DefenderUnitIds.Reset();
     LaunchedIds.Reset();EnteredIds.Reset();ReturnedIds.Reset();AutoOrderedIds.Reset();
@@ -92,6 +95,50 @@ bool UOVMissionSubsystem::StartMission(AOVController* Controller,EOVMissionMode 
     Status=TEXT("실제 교전 준비 · 쉴드 제거 후 강습 · F1 시작");Controller->LastAction=Status;
     RefreshMetrics();
     return true;
+}
+
+bool UOVMissionSubsystem::StartRosterMission(AOVController* PC,bool bDefense,int32 InSeed,bool bShuttle)
+{
+    if(!PC || !GetWorld()->GetGameInstance())return false;
+    auto* Heroes=GetWorld()->GetGameInstance()->GetSubsystem<UOVHeroSubsystem>();
+    if(!Heroes->CanChangeRoster()){Status=TEXT("먼저 비전투 편성실에서 보유 영웅을 편성하세요.");return false;}
+    TArray<FGuid> Chosen;
+    for(const auto& H:Heroes->Heroes)if(H.FactionId==0 && H.bDeploymentReserved && H.Status==EOVHeroStatus::Deployed && H.RuntimeUnitId==0)Chosen.Add(H.HeroId);
+    if(Chosen.Num()<1 || Chosen.Num()>4){Status=TEXT("이 소규모 임무는 편성 예약 영웅 1~4명이 필요합니다. 세력 전체 한도 15명은 별도로 유지됩니다.");return false;}
+    if(!StartMission(PC,bDefense?EOVMissionMode::Defense:EOVMissionMode::Attack,InSeed,bDefense?4:0,bDefense?0:2,bShuttle))return false;
+    bUsesOwnedRoster=true;BattleId=FGuid::NewGuid().ToString();
+    auto* Interior=GetWorld()->GetSubsystem<UOVInteriorSubsystem>();
+    auto* Transit=GetWorld()->GetSubsystem<UOVTransportSubsystem>();
+    AOVShip* Home=bDefense?Objective.Get():Origin.Get();
+    for(const FGuid Id:Chosen)
+    {
+        const int32 UnitId=Interior->SpawnRosterHero(Home,Id,bDefense?BridgeSlot:NAME_None);
+        if(UnitId<=0){Status=Interior->LastMessage;return false;}
+        (bDefense?DefenderUnitIds:AttackUnitIds).Add(UnitId);
+        if(!bDefense)Transit->SetRuntimeBoardingAssignment(Interior->GetUnit(UnitId).PersonId,UnitId,true);
+        HeroParticipation.Add(Id,0);HeroObjectiveXP.Add(Id,0);
+    }
+    Status=TEXT("보유 영웅 임무 준비 · 동일 ID/HP/스킬/소모품으로 실제 운송과 작전 수행");
+    return true;
+}
+
+void UOVMissionSubsystem::TrackHeroes(float Delta)
+{
+    if(!bUsesOwnedRoster || Result!=EOVMissionResult::Ongoing)return;
+    auto* Interior=GetWorld()->GetSubsystem<UOVInteriorSubsystem>();
+    for(const auto& U:Interior->Units)if(U.HeroId.IsValid() && HeroParticipation.Contains(U.HeroId) && Living(U))
+        HeroParticipation[U.HeroId]+=Delta;
+    for(const auto& E:Interior->Events)if(E.Serial>LastHeroEvent)
+    {
+        if(E.Kind==TEXT("Capture")||E.Kind==TEXT("Sabotage"))
+        {
+            const int32 Bonus=E.SlotId==BridgeSlot?400:E.Kind==TEXT("Sabotage")?300:200;
+            for(const auto& U:Interior->Units)if(U.HeroId.IsValid() && HeroParticipation.Contains(U.HeroId) && Living(U) &&
+                U.Ship==E.Ship && U.NodeId==E.SlotId && U.FactionId==E.FactionId)
+                HeroObjectiveXP.FindOrAdd(U.HeroId)=FMath::Max(HeroObjectiveXP.FindRef(U.HeroId),Bonus);
+        }
+        LastHeroEvent=FMath::Max(LastHeroEvent,E.Serial);
+    }
 }
 
 void UOVMissionSubsystem::RegisterGuards(AOVShip* Ship,int32 Heroes,TArray<int32>* OutIds)
@@ -262,13 +309,19 @@ void UOVMissionSubsystem::Finish(EOVMissionResult Outcome,const FString& Message
 {
     if(Result!=EOVMissionResult::Ongoing)return;
     Result=Outcome;Phase=EOVMissionPhase::Completed;Score.FinishedAt=GameTime;Status=Message;
+    if(bUsesOwnedRoster && GetWorld()->GetGameInstance())
+    {
+        auto* Heroes=GetWorld()->GetGameInstance()->GetSubsystem<UOVHeroSubsystem>();
+        for(const auto& Pair:HeroParticipation)if(Pair.Value>0)
+            Heroes->AwardBattleXP(Pair.Key,BattleId,Outcome==EOVMissionResult::Victory,Pair.Value,HeroObjectiveXP.FindRef(Pair.Key));
+    }
     // 결과 표시가 외부전·기발사 공격·잔존 병력을 지우거나 무료 귀환시키지 않는다.
 }
 
 void UOVMissionSubsystem::Simulate(float Delta)
 {
     if(!bEnabled||Delta<=0||!FMath::IsFinite(Delta))return;
-    GameTime+=Delta;DecisionRemaining-=Delta;if(DecisionRemaining>0)return;
+    GameTime+=Delta;TrackHeroes(Delta);DecisionRemaining-=Delta;if(DecisionRemaining>0)return;
     DecisionRemaining=FMath::Max(.01f,Settings.DecisionInterval);
     RefreshMetrics();
     if(Result!=EOVMissionResult::Ongoing)return;
