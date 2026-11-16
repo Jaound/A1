@@ -1,0 +1,274 @@
+{
+  "kind": "C 단계 PIE API·렌더 HUD 검사",
+  "seed": 230117,
+  "planning": "035a4fba81d26f1d67daa1f44bded0f7e8d3a434",
+  "physical_input": "수행하지 않음",
+  "scope": "단위 fixture이며 D 임무 완료 근거가 아님",
+  "checks": [
+    {
+      "id": "C-ACTUAL-ROSTER",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "C-ONE-ID-TRANSPORT",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "C-NO-DEV-HERO-CONVERSION",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "C-ACTUAL-POD-ENTRY",
+      "passed": true,
+      "detail": "['<OVPassengerState.INSIDE_TARGET: 2>', '<OVPassengerState.INSIDE_TARGET: 2>', '<OVPassengerState.INSIDE_TARGET: 2>', '<OVPassengerState.INSIDE_TARGET: 2>', '<OVPassengerState.INSIDE_TARGET: 2>', '<OVPassengerState.INSIDE_TARGET: 2>']"
+    },
+    {
+      "id": "C-PROTECTION-RUNTIME",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "C-STRUCTURE-AFTER-ENTRY",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "C-DEV-RETURN-REJECTED",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "C-FALSE-ENTRY-POSITION-REJECTED",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "C-FORGED-ENTRY-RETURN-REJECTED",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "C-NO-INSTANT-CAPTURE",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "C-REAL-MOVE-AND-CAPTURE",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "C-SHIELD-EXTERNAL-EFFECT",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "C-PHYSICAL-CREW-OCCUPATION-SEPARATE",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "C-OBJECTIVE-ACTUAL-RESULT",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "C-CHANGED-OBJECTIVE-CLEARS-RESULT",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "C-REAL-EXTRACTION",
+      "passed": true,
+      "detail": "['<OVPassengerState.ABOARD: 0>', '<OVPassengerState.ABOARD: 0>', '<OVPassengerState.ABOARD: 0>', '<OVPassengerState.ABOARD: 0>', '<OVPassengerState.ABOARD: 0>', '<OVPassengerState.ABOARD: 0>']"
+    },
+    {
+      "id": "C-ORIGINAL-PODS",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "C-NO-FREE-HEAL-RETURN",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "C-PROTECTION-LAST-EXIT",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "C-NO-GHOST-PRESENCE",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "C-PAUSE-1",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "C-PAUSE-2",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "C-PAUSE-3",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "C-CLOCK-123",
+      "passed": true,
+      "detail": "[{'game_time': 34.0, 'units': [('<OVInteriorState.DEFENDING: 4>', 1.0, 5058.0), ('<OVInteriorState.DEFENDING: 4>', 1.0, 5040.0), ('<OVInteriorState.DEFENDING: 4>', 1.0, 5044.7), ('<OVInteriorState.DEFENDING: 4>', 1.0, 5044.7)], 'captures': 1}, {'game_time': 34.0, 'units': [('<OVInteriorState.DEFENDING: 4>', 1.0, 5058.0), ('<OVInteriorState.DEFENDING: 4>', 1.0, 5040.0), ('<OVInteriorState.DEFENDING: 4>', 1.0, 5044.7), ('<OVInteriorState.DEFENDING: 4>', 1.0, 5044.7)], 'captures': 1}, {'game_time': 34.0, 'units': [('<OVInteriorState.DEFENDING: 4>', 1.0, 5058.0), ('<OVInteriorState.DEFENDING: 4>', 1.0, 5040.0), ('<OVInteriorState.DEFENDING: 4>', 1.0, 5044.7), ('<OVInteriorState.DEFENDING: 4>', 1.0, 5044.7)], 'captures': 1}]"
+    },
+    {
+      "id": "C-EXTERNAL-HERO-RESCUE",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "C-EXTERNAL-TROOP-DEATH",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "C-DUPLICATE-CASUALTY",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "C-HUD-STABLE-ID",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "C-HUD-CONSUMES",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "C-HUD-ACTUAL-SELECTION",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "C-HUD-CAPTURE-ACCEPTED",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "C-HUD-COMMAND-REAL-RESULT",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "C-HUD-RETREAT-REAL-RESULT",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "C-F5-RESET-DISABLE",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "C-F6-RESET-DISABLE",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "C-F7-DEV-PRESERVED",
+      "passed": true,
+      "detail": ""
+    }
+  ],
+  "errors": [],
+  "clock_samples": [
+    {
+      "speed": 1,
+      "game_time": 34.0,
+      "units": [
+        [
+          "<OVInteriorState.DEFENDING: 4>",
+          1.0,
+          5058.0
+        ],
+        [
+          "<OVInteriorState.DEFENDING: 4>",
+          1.0,
+          5040.0
+        ],
+        [
+          "<OVInteriorState.DEFENDING: 4>",
+          1.0,
+          5044.7
+        ],
+        [
+          "<OVInteriorState.DEFENDING: 4>",
+          1.0,
+          5044.7
+        ]
+      ],
+      "captures": 1
+    },
+    {
+      "speed": 2,
+      "game_time": 34.0,
+      "units": [
+        [
+          "<OVInteriorState.DEFENDING: 4>",
+          1.0,
+          5058.0
+        ],
+        [
+          "<OVInteriorState.DEFENDING: 4>",
+          1.0,
+          5040.0
+        ],
+        [
+          "<OVInteriorState.DEFENDING: 4>",
+          1.0,
+          5044.7
+        ],
+        [
+          "<OVInteriorState.DEFENDING: 4>",
+          1.0,
+          5044.7
+        ]
+      ],
+      "captures": 1
+    },
+    {
+      "speed": 3,
+      "game_time": 34.0,
+      "units": [
+        [
+          "<OVInteriorState.DEFENDING: 4>",
+          1.0,
+          5058.0
+        ],
+        [
+          "<OVInteriorState.DEFENDING: 4>",
+          1.0,
+          5040.0
+        ],
+        [
+          "<OVInteriorState.DEFENDING: 4>",
+          1.0,
+          5044.7
+        ],
+        [
+          "<OVInteriorState.DEFENDING: 4>",
+          1.0,
+          5044.7
+        ]
+      ],
+      "captures": 1
+    }
+  ],
+  "passed": true
+}

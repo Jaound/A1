@@ -7,10 +7,14 @@
 #include "OVCarrierSubsystem.h"
 #include "OVPointDefenseSubsystem.h"
 #include "OVTransportSubsystem.h"
+#include "OVInteriorSubsystem.h"
+#include "OVMissionSubsystem.h"
 #include "Engine/World.h"
 
 void AOVController::ResetPhase2C()
 {
+ GetWorld()->GetSubsystem<UOVMissionSubsystem>()->Disable();
+ GetWorld()->GetSubsystem<UOVInteriorSubsystem>()->Disable();
  GetWorld()->GetSubsystem<UOVCarrierSubsystem>()->Reset();
  GetWorld()->GetSubsystem<UOVTransportSubsystem>()->Disable();
  GetWorld()->GetSubsystem<UOVPointDefenseSubsystem>()->Disable();
@@ -22,6 +26,7 @@ void AOVController::ResetPhase2C()
 
 FString AOVController::GetScenarioLabel() const
 {
+ if(Mission && Mission->bEnabled) return Mission->Mode==EOVMissionMode::Defense?TEXT("강습 방어 임무"):Mission->Mode==EOVMissionMode::FleetOnly?TEXT("함대전 비교 임무"):TEXT("강습 통합 임무");
  static const TCHAR* Names[]={TEXT("일반 호위"),TEXT("방공함 호위"),TEXT("항공모함 교전"),TEXT("개인 포드 운송"),TEXT("강습선 운송"),TEXT("혼성 교전")};
  if(Phase2CScenario>=0&&Phase2CScenario<6) return Names[Phase2CScenario];
  if(CalibrationScenario>=0) return TEXT("후보 함체 교정 전투");

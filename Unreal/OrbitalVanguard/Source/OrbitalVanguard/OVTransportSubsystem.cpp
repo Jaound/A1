@@ -2,6 +2,7 @@
 #include "OVCombatSubsystem.h"
 #include "OVShip.h"
 #include "OVShipSystemsComponent.h"
+#include "OVInteriorSubsystem.h"
 #include "Engine/World.h"
 
 namespace OVTransport
@@ -82,6 +83,7 @@ int32 UOVTransportSubsystem::LaunchPods(AOVShip* Origin, AOVShip* Target)
         if (Pod.Origin == Origin && Pod.State == EOVPodFlightState::Queued) NextTime = FMath::Max(NextTime, Pod.ScheduledTime + Settings.LaunchInterval);
     for (const FOVPassengerToken& Person : Persons)
     {
+        if (Person.RuntimeUnitId > 0 && !Person.bBoardingAssigned) continue;
         if (Person.State != EOVPassengerState::Aboard || Person.CurrentShip != Origin || Person.FactionId != Origin->Systems->FactionId) continue;
         if (Pods.ContainsByPredicate([&](const FOVPodState& Pod) { return Pod.PersonId == Person.PersonId && Pod.State == EOVPodFlightState::Queued; })) continue;
         FOVPodState* Reusable = Pods.FindByPredicate([&](const FOVPodState& Pod) {
@@ -145,26 +147,78 @@ void UOVTransportSubsystem::RecallPods(AOVShip* Origin)
         if (Pod.State == EOVPodFlightState::Queued) Pod.State = EOVPodFlightState::Cancelled;
         else if (Pod.State == EOVPodFlightState::Outbound) BeginReturn(Pod);
     }
-    LastMessage = TEXT("비행 포드 회항. 내부 승객은 DEV 진입점 복귀 확인 필요");
+    const bool HasRuntimePassenger = Pods.ContainsByPredicate([&](const auto& Pod) {
+        const auto* P = FindPerson(Pod.PersonId); return Pod.Origin == Origin && P && P->RuntimeUnitId > 0; });
+    LastMessage = HasRuntimePassenger ? TEXT("비행 포드 회항 · 선내 인원은 원 진입점까지 실제 철수 필요") :
+        TEXT("DEV 비행 포드 회항 · 내부 토큰은 진입점 복귀 확인 필요");
 }
 
 bool UOVTransportSubsystem::DevReturnPersonToEntry(int32 PersonId)
 {
     FOVPassengerToken* Person = FindPerson(PersonId);
-    if (!bEnabled || !Person || Person->State != EOVPassengerState::InsideTarget || !Usable(Person->CurrentShip.Get())) return false;
-    if (Person->Shuttle.IsValid())
+    if (!bEnabled || !Person || Person->RuntimeUnitId != 0 || Person->State != EOVPassengerState::InsideTarget || !Usable(Person->CurrentShip.Get())) return false;
+    return ReturnPersonAtEntry(*Person);
+}
+
+int32 UOVTransportSubsystem::RegisterRuntimePassenger(AOVShip* Origin, int32 UnitId, int32 Faction, bool bHero)
+{
+    if (!bEnabled || !Usable(Origin) || UnitId <= 0 || Faction < 0 ||
+        Persons.ContainsByPredicate([UnitId](const auto& P) { return P.RuntimeUnitId == UnitId; })) return 0;
+    FOVPassengerToken Person; Person.PersonId = NextPersonId++; Person.RuntimeUnitId = UnitId;
+    Person.FactionId = Faction; Person.bRuntimeHero = bHero; Person.CurrentShip = Origin;
+    Persons.Add(Person); return Person.PersonId;
+}
+
+bool UOVTransportSubsystem::MarkRuntimePersonDead(int32 PersonId, int32 UnitId)
+{
+    FOVPassengerToken* Person = FindPerson(PersonId);
+    if (!Person || UnitId <= 0 || Person->RuntimeUnitId != UnitId || Person->State == EOVPassengerState::Dead) return false;
+    Person->State = EOVPassengerState::Dead; Person->CurrentShip = nullptr; RefreshPresence(); return true;
+}
+
+bool UOVTransportSubsystem::SetRuntimeBoardingAssignment(int32 PersonId,int32 UnitId,bool bAssigned)
+{
+    auto* P=FindPerson(PersonId);
+    if(!P || UnitId<=0 || P->RuntimeUnitId!=UnitId || P->State!=EOVPassengerState::Aboard)return false;
+    P->bBoardingAssigned=bAssigned;return true;
+}
+
+bool UOVTransportSubsystem::CancelRuntimeRecovery(int32 PersonId,int32 UnitId,AOVShip* InteriorShip)
+{
+    auto* P=FindPerson(PersonId);
+    if(!P || UnitId<=0 || P->RuntimeUnitId!=UnitId || P->State!=EOVPassengerState::AwaitingRecovery ||
+        P->CurrentShip!=InteriorShip || !Usable(InteriorShip))return false;
+    P->State=EOVPassengerState::InsideTarget;return true;
+}
+
+bool UOVTransportSubsystem::ReturnRuntimePersonToEntry(int32 PersonId, int32 UnitId, AOVShip* Ship, FVector ActualLocalPoint, FName LayoutVersion)
+{
+    FOVPassengerToken* Person = FindPerson(PersonId);
+    const auto Unit=GetWorld()->GetSubsystem<UOVInteriorSubsystem>()->GetUnit(UnitId);
+    if (!bEnabled || !Person || UnitId <= 0 || Person->RuntimeUnitId != UnitId ||
+        Unit.UnitId != UnitId || Unit.PersonId != PersonId || Unit.Ship != Ship || Unit.Order != EOVInteriorOrder::Retreat ||
+        Unit.State != EOVInteriorState::Retreating || !FVector::PointsAreNear(Unit.LocalPosition,ActualLocalPoint,.01f) ||
+        Person->State != EOVPassengerState::InsideTarget || !Usable(Ship) || Person->CurrentShip != Ship ||
+        Person->EntryLayoutVersion != LayoutVersion || Ship->Systems->Layout->LayoutVersion != LayoutVersion ||
+        ActualLocalPoint.ContainsNaN() || ((ActualLocalPoint-Person->EntryLocalPoint)*Ship->GetActorScale3D()).Size() > 40) return false;
+    return ReturnPersonAtEntry(*Person);
+}
+
+bool UOVTransportSubsystem::ReturnPersonAtEntry(FOVPassengerToken& Person)
+{
+    if (Person.Shuttle.IsValid())
     {
-        Person->State = EOVPassengerState::AwaitingRecovery;
-        LastMessage = Usable(Person->Shuttle.Get()) && Person->Shuttle->Systems->FactionId == Person->FactionId ?
-            TEXT("DEV 진입점 복귀: 생존 강습선 회수 대기") : TEXT("원 강습선 회수 불가 · 비상탈출/대체수송은 미지원");
+        Person.State = EOVPassengerState::AwaitingRecovery;
+        LastMessage = Usable(Person.Shuttle.Get()) && Person.Shuttle->Systems->FactionId == Person.FactionId ?
+            TEXT("원 진입점 도착: 생존 강습선 회수 대기") : TEXT("원 강습선 회수 불가 · 비상탈출/대체수송은 미지원");
         return true;
     }
-    FOVPodState* Pod = Pods.FindByPredicate([Person](const FOVPodState& P) { return P.PodId == Person->PodId; });
+    FOVPodState* Pod = Pods.FindByPredicate([&Person](const FOVPodState& P) { return P.PodId == Person.PodId; });
     if (!Pod || Pod->State != EOVPodFlightState::Attached) return false;
-    Pod->Position = Person->CurrentShip->GetActorTransform().TransformPosition(Person->EntryLocalPoint);
+    Pod->Position = Person.CurrentShip->GetActorTransform().TransformPosition(Person.EntryLocalPoint);
     BeginReturn(*Pod);
     RefreshPresence();
-    LastMessage = TEXT("DEV 진입점 복귀: 원래 포드로 귀환");
+    LastMessage = TEXT("원 진입점 도착: 원래 포드로 귀환");
     return true;
 }
 
@@ -175,9 +229,12 @@ void UOVTransportSubsystem::DestroyPod(FOVPodState& Pod)
     if (FOVPassengerToken* Person = FindPerson(Pod.PersonId))
     {
         Person->CurrentShip = nullptr;
-        Person->State = Person->bHeroTypeDEV ? EOVPassengerState::RescueWaiting : EOVPassengerState::Dead;
+        Person->State = (Person->bHeroTypeDEV || Person->bRuntimeHero) ? EOVPassengerState::RescueWaiting : EOVPassengerState::Dead;
     }
-    LastMessage = TEXT("포드 상실: 병력 사망 / 영웅형 DEV 토큰 구조 대기");
+    const auto* Person = FindPerson(Pod.PersonId);
+    LastMessage = Person && Person->RuntimeUnitId > 0 ?
+        (Person->bRuntimeHero ? TEXT("포드 상실: 영웅 우주 구조 대기 · 후속 구조 미지원") : TEXT("포드 상실: 일반 병력 사망")) :
+        TEXT("DEV 포드 상실: 일반 병력형 토큰 사망 / 영웅형 토큰 구조 대기");
 }
 
 bool UOVTransportSubsystem::InterceptPod(int32 Id, float Damage)
@@ -194,23 +251,27 @@ void UOVTransportSubsystem::Enter(FOVPassengerToken& Person, AOVShip* Target, FV
 {
     if (!Usable(Target) || Person.State == EOVPassengerState::InsideTarget || Person.State == EOVPassengerState::Dead) return;
     Person.CurrentShip = Target; Person.State = EOVPassengerState::InsideTarget;
+    // Entry protection is immediate even when the interior logic uses a coarser fixed step.
+    if (Person.RuntimeUnitId > 0) Target->Systems->SetRuntimeInteriorPresence(Person.FactionId, true, false);
     Person.EntryLocalPoint = Target->GetActorTransform().InverseTransformPosition(WorldPoint);
     Person.EntryLocalNormal = (Target->GetActorTransform().InverseTransformVectorNoScale(WorldNormal) * Target->GetActorScale3D()).GetSafeNormal();
     Person.EntryFace = OVTransport::Face(Person.EntryLocalNormal);
     const UShipLayoutDataAsset* Layout = Target->Systems->Layout;
+    Person.EntryLayoutVersion = Layout->LayoutVersion;
     Person.EntryDeck = FMath::Clamp(FMath::FloorToInt((Person.EntryLocalPoint.Z / FMath::Max(1., Layout->LocalHalfExtent.Z) + 1) * .5 * Layout->DeckCount) + 1, 1, Layout->DeckCount);
     if (Person.EntryFace == EOVArmorFace::Top) Person.EntryDeck = Layout->DeckCount;
     if (Person.EntryFace == EOVArmorFace::Bottom) Person.EntryDeck = 1;
     const int32 Slot = Layout->ResolveHit(Person.EntryLocalPoint, Person.EntryLocalNormal);
     if (Layout->Slots.IsValidIndex(Slot)) Person.EntrySlot = Layout->Slots[Slot].SlotId;
-    if (!OwnedPresence.ContainsByPredicate([&](const FPresence& P) { return P.Ship == Target && P.Faction == Person.FactionId; }))
-        OwnedPresence.Add({Target, Person.FactionId, Target->Systems->HasInteriorPresence(Person.FactionId),
-            Target->Systems->IsInteriorObjectiveComplete(Person.FactionId), Target->Systems->IsInteriorDeveloperInput(Person.FactionId)});
+    if (Person.RuntimeUnitId == 0 && !OwnedPresence.ContainsByPredicate([&](const FPresence& P) { return P.Ship == Target && P.Faction == Person.FactionId; }))
+        OwnedPresence.Add({Target, Person.FactionId, Target->Systems->HasLegacyInteriorPresence(Person.FactionId),
+            Target->Systems->IsLegacyInteriorObjectiveComplete(Person.FactionId), Target->Systems->IsLegacyInteriorDeveloperInput(Person.FactionId)});
     FOVTransportEntryEvent Event;
     Event.PersonId = Person.PersonId; Event.Target = Target; Event.FactionId = Person.FactionId;
     Event.LocalPoint = Person.EntryLocalPoint; Event.Face = Person.EntryFace; Event.Deck = Person.EntryDeck; Event.SlotId = Person.EntrySlot; Event.Time = GameTime;
     EntryEvents.Add(Event);
-    LastMessage = TEXT("진입 완료: DEV 승객 잔류, 선내 작전·나포는 미구현");
+    if (EntryEvents.Num() > 256) EntryEvents.RemoveAt(0, EntryEvents.Num()-256, EAllowShrinking::No);
+    LastMessage = Person.RuntimeUnitId > 0 ? TEXT("진입 완료: 선내 인원 이동·교전 시작") : TEXT("진입 완료: DEV 승객 잔류, 선내 작전·나포는 미구현");
     RefreshPresence();
 }
 
@@ -221,14 +282,14 @@ void UOVTransportSubsystem::RefreshPresence()
         AOVShip* Ship = Presence.Ship.Get();
         if (!IsValid(Ship) || !Ship->Systems) continue;
         const bool Present = Persons.ContainsByPredicate([&](const FOVPassengerToken& P) {
-            return P.FactionId == Presence.Faction && P.CurrentShip == Ship &&
+            return P.RuntimeUnitId == 0 && P.FactionId == Presence.Faction && P.CurrentShip == Ship &&
                 (P.State == EOVPassengerState::InsideTarget || P.State == EOVPassengerState::AwaitingRecovery); });
         const bool Desired = Presence.Baseline || Present;
         const bool Developer = Present || Presence.BaselineDev;
         // Transport never invents objective success, and never overwrites an external interior result.
-        const bool Objective = Desired && Ship->Systems->IsInteriorObjectiveComplete(Presence.Faction);
-        if (Ship->Systems->HasInteriorPresence(Presence.Faction) != Desired ||
-            Ship->Systems->IsInteriorDeveloperInput(Presence.Faction) != Developer)
+        const bool Objective = Desired && Ship->Systems->IsLegacyInteriorObjectiveComplete(Presence.Faction);
+        if (Ship->Systems->HasLegacyInteriorPresence(Presence.Faction) != Desired ||
+            Ship->Systems->IsLegacyInteriorDeveloperInput(Presence.Faction) != Developer)
             Ship->Systems->SetInteriorPresence(Presence.Faction, Desired, Objective, Developer);
     }
 }
@@ -309,9 +370,9 @@ bool UOVTransportSubsystem::DispatchShuttle(AOVShip* Ship, AOVShip* Target, cons
         if (Person->CurrentShip != Ship && (Person->CurrentShip != Shuttle->Home || !Usable(Shuttle->Home.Get()) ||
             FVector::Distance(Ship->GetActorLocation(), Shuttle->Home->GetActorLocation()) > Settings.PodLaunchRange))
         { LastMessage = TEXT("출발 불가 · 승객 원함이 탑승 범위 밖"); return false; }
-        Seen.Add(Id); Heroes += Person->bHeroTypeDEV ? 1 : 0;
+        Seen.Add(Id); Heroes += (Person->bHeroTypeDEV || Person->bRuntimeHero) ? 1 : 0;
     }
-    if (Heroes > Settings.ShuttleHeroCapacity) { LastMessage = TEXT("출발 불가 · 영웅형 DEV 토큰 정원 초과"); return false; }
+    if (Heroes > Settings.ShuttleHeroCapacity) { LastMessage = TEXT("출발 불가 · 영웅 탑승 정원 초과"); return false; }
     Shuttle->PassengerIds = Ids; Shuttle->Target = Target; Shuttle->FactionId = Ship->Systems->FactionId;
     Shuttle->State = EOVShuttleState::Approaching; Shuttle->Progress = 0; Shuttle->HomePosition = Ship->GetActorLocation();
     Shuttle->bManualSuspended = false;
@@ -359,7 +420,7 @@ void UOVTransportSubsystem::AdvanceShuttle(FOVShuttleRecord& Shuttle, float Delt
             if (Person && Person->State == EOVPassengerState::InShuttle)
             {
                 // R18 unresolved capture: retained affiliation, no fake prisoner success or free escape.
-                if (Destroyed) { Person->State = Person->bHeroTypeDEV ? EOVPassengerState::RescueWaiting : EOVPassengerState::Dead; Person->CurrentShip = nullptr; }
+                if (Destroyed) { Person->State = (Person->bHeroTypeDEV || Person->bRuntimeHero) ? EOVPassengerState::RescueWaiting : EOVPassengerState::Dead; Person->CurrentShip = nullptr; }
                 else Person->State = EOVPassengerState::AwaitingRecovery;
             }
         }
@@ -408,7 +469,12 @@ void UOVTransportSubsystem::AdvanceShuttle(FOVShuttleRecord& Shuttle, float Delt
     if (Shuttle.State == EOVShuttleState::Recovering)
     {
         const bool AllWaiting = Shuttle.PassengerIds.ContainsByPredicate([&](int32 Id) { const FOVPassengerToken* P = FindPerson(Id); return P && P->State == EOVPassengerState::InsideTarget; }) == false;
-        if (!AllWaiting) { Shuttle.Reason = TEXT("DEV 원 진입점 복귀 확인 대기 (선내 경로 미구현)"); return; }
+        if (!AllWaiting)
+        {
+            const bool RuntimeWaiting = Shuttle.PassengerIds.ContainsByPredicate([&](int32 Id) {
+                const auto* P = FindPerson(Id); return P && P->RuntimeUnitId > 0 && P->State == EOVPassengerState::InsideTarget; });
+            Shuttle.Reason = RuntimeWaiting ? TEXT("선내 인원의 실제 원 진입점 이동 대기") : TEXT("DEV 토큰의 원 진입점 복귀 확인 대기"); return;
+        }
     }
     Shuttle.Progress += Delta;
     if (Shuttle.Progress < Settings.DockingSeconds) return;
@@ -432,7 +498,11 @@ void UOVTransportSubsystem::AdvanceShuttle(FOVShuttleRecord& Shuttle, float Delt
     }
     Shuttle.State = Shuttle.State == EOVShuttleState::Docking ? EOVShuttleState::Delivered : EOVShuttleState::Returning;
     Shuttle.Progress = 0; RefreshPresence();
-    Shuttle.Reason = Shuttle.State == EOVShuttleState::Delivered ? TEXT("이송 완료: DEV 잔류 보호 활성") : TEXT("같은 강습선 회수 완료: 귀환 중");
+    const bool HasRuntimePassenger = Shuttle.PassengerIds.ContainsByPredicate([&](int32 Id) {
+        const auto* P = FindPerson(Id); return P && P->RuntimeUnitId > 0; });
+    Shuttle.Reason = Shuttle.State == EOVShuttleState::Delivered ?
+        (HasRuntimePassenger ? TEXT("실제 선내 이송 완료 · 내부 아군 보호 활성") : TEXT("DEV 이송 완료 · 잔류 보호 활성")) :
+        TEXT("같은 강습선 회수 완료: 귀환 중");
 }
 
 void UOVTransportSubsystem::Simulate(float GameDelta)

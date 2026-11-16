@@ -21,7 +21,7 @@ void AOVHUD::Button(FName N,const FString& L,float X,float Y,float W,bool Active
  ActionCenters.Add(N,FVector2D(X+W*.5f,Y+13.5f));
  DrawRect(Active?FLinearColor(.03f,.4f,.55f,.95f):FLinearColor(.04f,.08f,.13f,.98f),X,Y,W,27);
  DrawText(L,Active?FLinearColor::White:Ink,X+6,Y+5,GEngine->GetSmallFont());
- AddHitBox(FVector2D(X,Y)*UIScale,FVector2D(W,27)*UIScale,N,true,bDrawingDetails?110:10);
+ AddHitBox(FVector2D(X,Y)*UIScale,FVector2D(W,27)*UIScale,N,true,bDrawingInterior?210:bDrawingDetails?110:10);
 }
 FName AOVHUD::GetHitActionAtCanvasPoint(FVector2D Point) const
 {
@@ -33,6 +33,8 @@ bool AOVHUD::IsOverPanel(float X,float Y) const
 {
  const auto* PC=Cast<AOVController>(PlayerOwner); if(!PC) return false;
  const FVector2D P(X/UIScale,Y/UIScale);
+ if(IsOverInteriorPanel(X,Y)) return true;
+ if(IsOverMissionPanel(X,Y)) return true;
  if(bDragging||bResizing) return true;
  if(!PC->bDeveloperMode) {
   if(P.Y<96 || P.Y>ViewportPixels.Y/UIScale-126 || (P.X<204 && P.Y<100+PC->Ships.Num()*36) || (PC->Phase2CScenario>=0 && P.X<258 && P.Y>=300 && P.Y<=600)) return true;
@@ -50,6 +52,7 @@ bool AOVHUD::HasOrbitPreview() const
 bool AOVHUD::IsOverOrbitPreview(FVector2D Cursor) const
 {
  const FVector2D P=Cursor/UIScale-WindowPosition;
+ if(IsOverInteriorPanel(Cursor.X,Cursor.Y)) return false;
  return HasOrbitPreview() && P.X>=10 && P.X<=WindowSize.X-10 && P.Y>=72 && P.Y<=264;
 }
 
@@ -67,6 +70,8 @@ bool AOVHUD::HandlePointer(float X,float Y,bool Pressed,bool Down,float Wheel,bo
  UIScale=FMath::Max(.25f,FMath::Min(1.f,FMath::Min(ViewportPixels.X/1280.f,ViewportPixels.Y/740.f)));
  // AHUD::Canvas is cleared by the viewport after rendering. Input runs outside DrawHUD.
  const bool Over=IsOverPanel(X,Y);
+ // A drag begun in the existing window retains ownership; a new interior gesture consumes all buttons/wheel.
+ if(!bDragging&&!bResizing&&IsOverInteriorPanel(X,Y)) return true;
  if(!PC||!PC->Selected||!bDetailsOpen) { bDragging=false;bResizing=false;return Over; }
  const FVector2D P(X/UIScale,Y/UIScale);
  if(Pressed&&Over) {
@@ -88,6 +93,8 @@ bool AOVHUD::HandlePointer(float X,float Y,bool Pressed,bool Down,float Wheel,bo
 }
 void AOVHUD::NotifyHitBoxClick(FName N)
 {
+ if(HandleInteriorAction(N)) return;
+ if(N==TEXT("MissionBackground")) return;
  if(N==TEXT("WindowBackground")) return;
  if(N==TEXT("WindowClose")) { bDetailsOpen=false;return; }
  if(N==TEXT("WindowMin")) { bMinimized=!bMinimized;return; }
@@ -208,7 +215,7 @@ void AOVHUD::DrawHUD()
  UIScale=FMath::Max(.25f,FMath::Min(1.f,FMath::Min(Canvas->SizeX/1280.f,Canvas->SizeY/740.f)));
  Canvas->Canvas->PushRelativeTransform(FScaleMatrix(FVector(UIScale,UIScale,1)));
  const float Width=Canvas->SizeX/UIScale,Height=Canvas->SizeY/UIScale;
- if(!PC->bDeveloperMode) { DrawPlayHUD(); DrawWorldIndicators(); DrawPhase2C(); DrawDetails(); Canvas->Canvas->PopTransform(); return; }
+ if(!PC->bDeveloperMode) { DrawPlayHUD(); DrawWorldIndicators(); DrawPhase2C(); DrawMission(); DrawDetails(); DrawInterior(); Canvas->Canvas->PopTransform(); return; }
  const bool CombatOn=PC->Combat&&PC->Combat->bEnabled;
  DrawRect(Panel,10,10,Width-20,40);if(PC->CalibrationScenario<0)DrawText(CombatOn?TEXT("ORBITAL VANGUARD / 2B COMBAT RANGE"):TEXT("ORBITAL VANGUARD / 2A TEST RANGE"),Accent,20,22,GEngine->GetSmallFont());
  Button(TEXT("Pause"),PC->bSimulationPaused?TEXT("F1 RESUME"):TEXT("F1 PAUSE"),380,16,100,PC->bSimulationPaused);
@@ -232,7 +239,6 @@ void AOVHUD::DrawHUD()
   for(int32 I=0;I<13;++I)Button(Names[I],Labels[I],20+I*86,Y+6,80);
   DrawText(PC->LastAction.Left(130),Accent,20,Y+47,GEngine->GetSmallFont());
  }
- DrawText(PC->bPlayGame3?TEXT("WASD pan | MMB/Alt+LMB orbit | Q/E turn | RMB move | Wheel zoom"):TEXT("WASD pan | MMB/Z/C orbit | Q/E height | Wheel zoom | Backspace cancel"),Ink,210,58,GEngine->GetSmallFont());
  for(AOVShip* Ship:PC->Ships) {
   if(CombatOn&&PC->Combat->IsDeparted(Ship)) continue;
   FVector2D P;if(PC->ProjectWorldLocationToScreen(Ship->GetActorLocation()+FVector(0,0,220),P)&&!IsOverPanel(P.X,P.Y)) {
@@ -240,7 +246,7 @@ void AOVHUD::DrawHUD()
    DrawRect(Health(Ship->Systems->HullHP/FMath::Max(1.f,Ship->Systems->MaxHullHP)),P.X,P.Y+16,100*Ship->Systems->HullHP/FMath::Max(1.f,Ship->Systems->MaxHullHP),3);
   }
  }
- DrawCombat(); DrawPhase2C(); DrawDetails();
+ DrawCombat(); DrawPhase2C(); DrawMission(); DrawDetails(); DrawInterior();
  Canvas->Canvas->PopTransform();
 }
 void AOVHUD::DrawCombat()

@@ -7,6 +7,8 @@
 #include "OVCarrierSubsystem.h"
 #include "OVPointDefenseSubsystem.h"
 #include "OVTransportSubsystem.h"
+#include "OVInteriorSubsystem.h"
+#include "OVMissionSubsystem.h"
 #include "GameFramework/InputSettings.h"
 #include "Engine/LocalPlayer.h"
 #include "Engine/GameViewportClient.h"
@@ -33,6 +35,8 @@ void AOVController::BeginPlay()
  Carrier=GetWorld()->GetSubsystem<UOVCarrierSubsystem>();
  PointDefense=GetWorld()->GetSubsystem<UOVPointDefenseSubsystem>();
  Transport=GetWorld()->GetSubsystem<UOVTransportSubsystem>();
+ Interior=GetWorld()->GetSubsystem<UOVInteriorSubsystem>();
+ Mission=GetWorld()->GetSubsystem<UOVMissionSubsystem>();
  FInputModeGameAndUI Mode; Mode.SetHideCursorDuringCapture(false); Mode.SetLockMouseToViewportBehavior(EMouseLockMode::DoNotLock); SetInputMode(Mode);
  RangeCamera=GetWorld()->SpawnActor<ACameraActor>();
  RangeCamera->GetCameraComponent()->SetFieldOfView(55);
@@ -64,6 +68,9 @@ void AOVController::BeginPlay()
  if(FParse::Value(FCommandLine::Get(),TEXT("OV2CScene="),RequestedScene)&&StartPhase2CRange(RequestedScene)) {
   if(FParse::Param(FCommandLine::Get(),TEXT("OVAutoRun"))) { for(AOVShip* Ship:Ships)Ship->SetAutomation(false,true);bSimulationPaused=false; }
  }
+ int32 RequestedMission=-1;
+ if(FParse::Value(FCommandLine::Get(),TEXT("OVMission="),RequestedMission) && RequestedMission>=0 && RequestedMission<=2)
+  Mission->StartMission(this,static_cast<EOVMissionMode>(RequestedMission));
 }
 void AOVController::StartCombatRange()
 {
@@ -195,6 +202,7 @@ bool AOVController::ActionPressed(FName Name) const
 }
 void AOVController::Action(FName Name)
 {
+ if(Mission && Mission->HandleAction(Name)) return;
  if(Phase2CAction(Name)) return;
  if(Name==TEXT("Phase2C")) { StartPhase2CRange((Phase2CScenario+1)%6); return; }
  if(Name==TEXT("RestartScene")) { if(Phase2CScenario>=0) StartPhase2CRange(Phase2CScenario); else if(CalibrationScenario>=0) StartCalibrationRange(CalibrationScenario); else StartCombatRange(); return; }

@@ -1,5 +1,7 @@
 # 플레이 품질 보완 · 2C 검증 기록
 
+> 이 문서는 보존된 F7/2C 단계의 DEV 운송과 당시 검증 기록이다. 이후 승인된 실제 영웅·선내전·통합 임무는 [새 실행 안내](PHASE3_GUIDE.md), [검증](PHASE3_VALIDATION.md), [최신 진행](PHASE3_PROGRESS.md)을 따른다. 기존 DEV 승객을 실제 영웅으로 바꿔 표시하지 않는다.
+
 2026-11-16 KST. 작업 브랜치는 `codex/phase1-playground`, 기획 기준은 work를 fetch한 직후 고정한 **`035a4fba81d26f1d67daa1f44bded0f7e8d3a434`**다. 시작 코드 `15462476daad6f2d0aa0f13a06c8838376fdfdc6`와 완료된 2B-R을 보존했다. 구현 체크포인트는 `af0e395`, 품질·수명 경계 보완은 `127c6a6`이며 최종 검증 코드 SHA는 **`3d641fc344ba50bce818826b605eda0fbe8c328c`**다. 이번 2C는 사용자의 명시적 확장 요청이며 work에 게임 코드를 제출하지 않는다.
 
 ## 결과와 증거

@@ -89,6 +89,7 @@ class ORBITALVANGUARD_API UShipLayoutDataAsset : public UDataAsset
     GENERATED_BODY()
 
 public:
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Layout") FName LayoutVersion = TEXT("PrototypeInterior_v1");
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Layout") int32 DeckCount = 1;
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Layout") bool bSmallHull = true;
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Layout") FName CoreSlotId;

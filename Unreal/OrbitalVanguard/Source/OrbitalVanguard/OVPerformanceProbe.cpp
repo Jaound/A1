@@ -8,6 +8,8 @@
 #include "OVCarrierSubsystem.h"
 #include "OVPointDefenseSubsystem.h"
 #include "OVTransportSubsystem.h"
+#include "OVInteriorSubsystem.h"
+#include "OVMissionSubsystem.h"
 #include "Engine/World.h"
 #include "HAL/PlatformMemory.h"
 #include "HAL/PlatformTime.h"
@@ -25,11 +27,20 @@ namespace
 {
 const TCHAR* StageName(int32 Stage)
 {
+    if (Stage == 3) return TEXT("통합임무");
     return Stage == 0 ? TEXT("출격") : Stage == 1 ? TEXT("교전") : TEXT("귀환");
 }
-double Fraction(int32 Stage) { return Stage == 0 ? .25 : Stage == 1 ? .45 : .30; }
+double Fraction(int32 Stage) { return Stage == 3 ? 1. : Stage == 0 ? .25 : Stage == 1 ? .45 : .30; }
 int32 Objects() { return GUObjectArray.GetObjectArrayNumMinusAvailable(); }
 double MemoryMB() { return FPlatformMemory::GetStats().UsedPhysical / (1024. * 1024.); }
+// 정렬된 ID 목록의 FNV-1a. 상태/소속 변화와 무관하게 같은 개체 집합인지 비교한다.
+uint32 IdHash(TArray<int32> Ids)
+{
+    Ids.Sort(); uint32 Hash = 2166136261u;
+    for (int32 Id : Ids) for (int32 Shift = 0; Shift < 32; Shift += 8)
+        Hash = (Hash ^ ((uint32(Id) >> Shift) & 255u)) * 16777619u;
+    return Hash;
+}
 }
 
 bool UOVPerformanceProbe::ShouldCreateSubsystem(UObject* Outer) const
@@ -59,12 +70,16 @@ void UOVPerformanceProbe::BeginRun(AOVController& PC, double Now)
     int32 PairFilter = -1, SpeedFilter = 0;
     FParse::Value(FCommandLine::Get(), TEXT("OVPerfPairs="), PairFilter);
     FParse::Value(FCommandLine::Get(), TEXT("OVPerfSpeed="), SpeedFilter);
-    for (int32 Pairs : {0, 1, 3}) for (int32 Speed : {1, 3})
-        if ((PairFilter < 0 || PairFilter == Pairs) && (SpeedFilter == 0 || SpeedFilter == Speed))
-            Cases.Add(FIntPoint(Pairs, Speed));
+    bMissionRun = FParse::Param(FCommandLine::Get(), TEXT("OVPerfMission"));
+    if (bMissionRun) Cases.Add(FIntPoint(0, 1));
+    else for (int32 Pairs : {0, 1, 3}) for (int32 Speed : {1, 3})
+        if ((PairFilter < 0 || PairFilter == Pairs) && (SpeedFilter == 0 || SpeedFilter == Speed)) Cases.Add(FIntPoint(Pairs, Speed));
     if (Cases.IsEmpty()) { Failure = TEXT("지원하지 않는 편성/배속 필터"); Finish(PC); return; }
     FFileHelper::SaveStringToFile(TEXT("벽시계초,사례,단계,게임초,함선,생존함선,기체레코드,비행기체,완파기체,기체탄,대함탄,포드,승객,진입기록,기체피격기록,요격기록,대함피격기록,UObject추정개수,프로세스물리MB\n"),
         *FPaths::Combine(OutputDirectory, TEXT("상태시계열.csv")), FFileHelper::EEncodingOptions::ForceUTF8WithoutBOM);
+    if (bMissionRun)
+        FFileHelper::SaveStringToFile(TEXT("벽시계초,게임초,임무단계,임무결과,유닛,작전,이벤트,승객,포드,유닛ID해시,개인ID해시,포드ID해시,개인포드연결해시,중복유닛ID,중복개인ID,중복포드ID,초기유닛누락,초기개인누락,누적유닛ID,누적개인ID,누적포드ID,사망,점령,파괴,발사인원,진입인원,진입후회수,경로노드합,실내이동거리합,완료공격ID집합\n"),
+            *FPaths::Combine(OutputDirectory, TEXT("선내시계열.csv")), FFileHelper::EEncodingOptions::ForceUTF8WithoutBOM);
     FCsvProfiler::Get()->BeginCapture(-1, OutputDirectory, TEXT("프로파일.csv"));
     BeginCase(PC, Now);
     UE_LOG(LogTemp, Display, TEXT("OV PERF 시작: %s, 측정 %.0f초 + 사례별 준비 %.0f초"), *Label, RequestedSeconds, WarmupSeconds);
@@ -72,7 +87,9 @@ void UOVPerformanceProbe::BeginRun(AOVController& PC, double Now)
 
 void UOVPerformanceProbe::BeginCase(AOVController& PC, double Now)
 {
-    if (!PC.StartPhase2CStress(Cases[CaseIndex].X))
+    const bool Created = bMissionRun ? (PC.Mission && PC.Mission->StartMission(&PC, EOVMissionMode::Attack, 260112, 4, 2, false))
+        : PC.StartPhase2CStress(Cases[CaseIndex].X);
+    if (!Created)
     {
         Failure = TEXT("부하 측정 장면 생성 실패"); Finish(PC); return;
     }
@@ -80,8 +97,18 @@ void UOVPerformanceProbe::BeginCase(AOVController& PC, double Now)
     if (auto* HUD = Cast<AOVHUD>(PC.GetHUD())) HUD->SetDetailsOpen(false);
     PC.SimulationSpeed = Cases[CaseIndex].Y;
     PC.bSimulationPaused = false;
-    for (AOVShip* Ship : PC.Ships) Ship->SetAutomation(false, true);
-    for (const auto& Carrier : PC.Carrier->Carriers) PC.Carrier->Launch(Carrier.Carrier.Get());
+    if (bMissionRun)
+    {
+        PC.Mission->SetAutoPlayer(true);
+        for (const auto& Unit : PC.Interior->Units) InitialUnitIds.Add(Unit.UnitId);
+        for (const auto& Person : PC.Transport->Persons) InitialPersonIds.Add(Person.PersonId);
+        SeenUnitIds = InitialUnitIds; SeenPersonIds = InitialPersonIds;
+    }
+    else
+    {
+        for (AOVShip* Ship : PC.Ships) Ship->SetAutomation(false, true);
+        for (const auto& Carrier : PC.Carrier->Carriers) PC.Carrier->Launch(Carrier.Carrier.Get());
+    }
     bWarmup = true;
     CaseStarted = LastFrameAt = Now;
     Stage = 0;
@@ -127,6 +154,45 @@ void UOVPerformanceProbe::RecordCounts(AOVController& PC, double Now)
     CSV_CUSTOM_STAT(OrbitalVanguard, AttackRecords, PC.Combat->Attacks.Num(), ECsvCustomStatOp::Set);
     CSV_CUSTOM_STAT(OrbitalVanguard, UObjectEstimate, Objects(), ECsvCustomStatOp::Set);
     CSV_CUSTOM_STAT(OrbitalVanguard, PhysicalMemoryMB, float(MemoryMB()), ECsvCustomStatOp::Set);
+    if (bMissionRun) RecordMissionCounts(PC, Now);
+}
+
+void UOVPerformanceProbe::RecordMissionCounts(AOVController& PC, double Now)
+{
+    TArray<int32> UnitIds, PersonIds, PodIds, Connections;
+    TSet<int32> CurrentUnits, CurrentPersons, CurrentPods;
+    int32 PathNodes = 0; double Distance = 0;
+    for (const auto& Unit : PC.Interior->Units)
+    {
+        UnitIds.Add(Unit.UnitId); CurrentUnits.Add(Unit.UnitId); SeenUnitIds.Add(Unit.UnitId);
+        PathNodes += Unit.Path.Num(); Distance += Unit.DistanceTravelled;
+    }
+    for (const auto& Person : PC.Transport->Persons)
+    {
+        PersonIds.Add(Person.PersonId); CurrentPersons.Add(Person.PersonId); SeenPersonIds.Add(Person.PersonId);
+        // 정렬하기 전에 연결쌍 자체를 해시한다. 순서만 바뀌면 같은 값이다.
+        Connections.Add(int32(HashCombine(GetTypeHash(Person.PersonId), GetTypeHash(Person.PodId))));
+    }
+    for (const auto& Pod : PC.Transport->Pods)
+    {PodIds.Add(Pod.PodId); CurrentPods.Add(Pod.PodId); SeenPodIds.Add(Pod.PodId);}
+    int32 MissingUnits = 0, MissingPersons = 0;
+    for (int32 Id : InitialUnitIds) MissingUnits += CurrentUnits.Contains(Id) ? 0 : 1;
+    for (int32 Id : InitialPersonIds) MissingPersons += CurrentPersons.Contains(Id) ? 0 : 1;
+    const auto Score = PC.Mission->GetScore();
+    const FString Row = FString::Printf(TEXT("%.3f,%.3f,%d,%d,%d,%d,%d,%d,%d,%08x,%08x,%08x,%08x,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%.3f,%d\n"),
+        Now - RunStarted, PC.Mission->GameTime, int32(PC.Mission->Phase), int32(PC.Mission->Result),
+        UnitIds.Num(), PC.Interior->Operations.Num(), PC.Interior->Events.Num(), PersonIds.Num(), PodIds.Num(),
+        IdHash(UnitIds), IdHash(PersonIds), IdHash(PodIds), IdHash(Connections),
+        UnitIds.Num()-CurrentUnits.Num(), PersonIds.Num()-CurrentPersons.Num(), PodIds.Num()-CurrentPods.Num(),
+        MissingUnits, MissingPersons, SeenUnitIds.Num(), SeenPersonIds.Num(), SeenPodIds.Num(),
+        PC.Interior->TotalDeaths, PC.Interior->TotalCaptures, PC.Interior->TotalSabotages,
+        Score.Launched, Score.Entered, Score.ReturnedAfterEntry, PathNodes, Distance, PC.Combat->GetResolvedAttackIdCount());
+    FFileHelper::SaveStringToFile(Row, *FPaths::Combine(OutputDirectory, TEXT("선내시계열.csv")),
+        FFileHelper::EEncodingOptions::ForceUTF8WithoutBOM, &IFileManager::Get(), FILEWRITE_Append);
+    CSV_CUSTOM_STAT(OrbitalVanguard, InteriorUnits, UnitIds.Num(), ECsvCustomStatOp::Set);
+    CSV_CUSTOM_STAT(OrbitalVanguard, InteriorOperations, PC.Interior->Operations.Num(), ECsvCustomStatOp::Set);
+    CSV_CUSTOM_STAT(OrbitalVanguard, InteriorEvents, PC.Interior->Events.Num(), ECsvCustomStatOp::Set);
+    CSV_CUSTOM_STAT(OrbitalVanguard, MissionPhase, int32(PC.Mission->Phase), ECsvCustomStatOp::Set);
 }
 
 void UOVPerformanceProbe::EndStage(AOVController& PC, double Now)
@@ -172,6 +238,12 @@ void UOVPerformanceProbe::SaveReport(bool bComplete)
     FString Report = FString::Printf(TEXT("{\"종류\":\"별도 게임 창 실제 렌더/벽시계 프레임; 자동 API 시간 진행 아님\",\"완료\":%s,\"전체벽시계초\":%.3f,\"요청측정초\":%.0f,\"사례별준비초\":%.0f,\"설명\":\"같은 프로세스에서 명시 장면 재시작; 사망/손상 보존하며 무료 보충 없음. CSV는 준비/전환 포함, 구간 JSON은 준비 제외. UObject는 GUObjectArray 점유 인덱스 추정이며 GC 대기 포함. 중첩 프로파일 구간 합산 금지.\",\"오류\":\"%s\",\"구간\":[%s]}"),
         bComplete ? TEXT("true") : TEXT("false"), FPlatformTime::Seconds()-RunStarted, RequestedSeconds, WarmupSeconds,
         *Failure, *FString::Join(Results, TEXT(",\n")));
+    if (bMissionRun)
+    {
+        Report.RemoveFromEnd(TEXT("}"));
+        Report += FString::Printf(TEXT(",\"통합임무\":true,\"임무조건\":\"공격4영웅/수비2영웅/seed260112/개인포드/1배속/완료후에도실제시뮬레이션계속\",\"초기유닛\":%d,\"초기개인\":%d,\"누적유닛ID\":%d,\"누적개인ID\":%d,\"누적포드ID\":%d}"),
+            InitialUnitIds.Num(), InitialPersonIds.Num(), SeenUnitIds.Num(), SeenPersonIds.Num(), SeenPodIds.Num());
+    }
     FFileHelper::SaveStringToFile(Report, *FPaths::Combine(OutputDirectory, TEXT("성능요약.json")), FFileHelper::EEncodingOptions::ForceUTF8WithoutBOM);
 }
 
@@ -204,7 +276,7 @@ void UOVPerformanceProbe::Tick(float DeltaTime)
     if (Now-LastSampleAt >= 1) { RecordCounts(*PC, Now); LastSampleAt=Now; }
     if (bWarmup)
     {
-        if (Now-CaseStarted >= WarmupSeconds) { bWarmup=false; BeginStage(*PC, 0, Now); }
+        if (Now-CaseStarted >= WarmupSeconds) { bWarmup=false; BeginStage(*PC, bMissionRun ? 3 : 0, Now); }
         return;
     }
     FrameMilliseconds.Add((Now-LastFrameAt)*1000.);

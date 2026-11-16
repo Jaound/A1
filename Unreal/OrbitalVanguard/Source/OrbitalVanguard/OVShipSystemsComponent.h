@@ -89,6 +89,9 @@ public:
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Systems") bool bShieldManualOff = false;
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Systems") bool bWrecked = false;
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Systems") bool bNeutral = false;
+    UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Systems") bool bBridgeCaptured = false;
+    UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Systems") bool bCapturedBridgeDestroyed = false;
+    UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Systems") int32 CaptureCount = 0;
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Diagnostics") int32 WreckEventCount = 0;
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Diagnostics") int32 LastExplosionCount = 0;
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Diagnostics") int32 LastDamageIndex = INDEX_NONE;
@@ -145,11 +148,18 @@ public:
     UFUNCTION(BlueprintPure) bool HasInteriorPresence(int32 Faction) const;
     UFUNCTION(BlueprintPure) bool IsInteriorObjectiveComplete(int32 Faction) const;
     UFUNCTION(BlueprintPure) bool IsInteriorDeveloperInput(int32 Faction) const;
+    // Runtime interior authority is separate from the retained DEV/transport adapter.
+    UFUNCTION(BlueprintCallable) void SetRuntimeInteriorPresence(int32 Faction, bool bPresent, bool bObjectiveComplete);
+    UFUNCTION(BlueprintCallable) bool CompleteInteriorOperation(FName SlotId, int32 ActingFaction, bool bSabotage);
+    bool HasLegacyInteriorPresence(int32 Faction) const { return !bWrecked && InteriorObjectives.Contains(Faction); }
+    bool IsLegacyInteriorObjectiveComplete(int32 Faction) const { const bool* V=InteriorObjectives.Find(Faction); return V && *V; }
+    bool IsLegacyInteriorDeveloperInput(int32 Faction) const { return InteriorDeveloperInputs.Contains(Faction); }
 
 
 private:
     TMap<int32, bool> InteriorObjectives;
     TSet<int32> InteriorDeveloperInputs;
+    TMap<int32, bool> RuntimeInteriorObjectives;
     bool bProcessingCombatDamage = false;
     bool IsOperational(int32 Index) const;
     bool CanAct() const;

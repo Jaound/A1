@@ -1,7 +1,9 @@
+#include "OVCombatSubsystem.h"
 #include "OVCarrierSubsystem.h"
 #include "OVTransportSubsystem.h"
+#include "OVInteriorSubsystem.h"
+#include "OVMissionSubsystem.h"
 #include "OVPointDefenseSubsystem.h"
-#include "OVCombatSubsystem.h"
 #include "ProfilingDebugging/CsvProfiler.h"
 #include "ProfilingDebugging/CpuProfilerTrace.h"
 #include "OVShip.h"
@@ -414,6 +416,8 @@ void UOVCombatSubsystem::Step(float Delta)
         Controller->ResolveContacts(Delta);
     // One game clock: aircraft/transport positions, PD opportunities, then surviving ordnance.
     GetWorld()->GetSubsystem<UOVTransportSubsystem>()->Simulate(Delta);
+    GetWorld()->GetSubsystem<UOVInteriorSubsystem>()->Simulate(Delta);
+    GetWorld()->GetSubsystem<UOVMissionSubsystem>()->Simulate(Delta);
     GetWorld()->GetSubsystem<UOVCarrierSubsystem>()->Simulate(Delta);
     GetWorld()->GetSubsystem<UOVPointDefenseSubsystem>()->Step(Delta);
     if(auto* PC=Cast<AOVController>(GetWorld()->GetFirstPlayerController())) PC->AdvancePhase2C(Delta);

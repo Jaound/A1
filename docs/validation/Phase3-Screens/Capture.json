@@ -1,0 +1,45 @@
+{
+  "kind": "정상 통합 임무 API 진행·UE 렌더 캡처",
+  "physical_input": "수행하지 않음",
+  "seed": 260112,
+  "dev_shortcuts": [],
+  "screenshots": [
+    {
+      "path": "C:/Users/user/source/repos/A1/Unreal/OrbitalVanguard/Saved/Validation/IntegratedMissionCapture/01_기본_플레이.png",
+      "exists": true,
+      "view": "기본 플레이"
+    },
+    {
+      "path": "C:/Users/user/source/repos/A1/Unreal/OrbitalVanguard/Saved/Validation/IntegratedMissionCapture/02_실제_선내지도.png",
+      "exists": true,
+      "view": "선내 지도 · 미관측이면 잠김 유지"
+    }
+  ],
+  "errors": [],
+  "game_limit": 600.0,
+  "wall_limit": 240.0,
+  "scope": "정지 캡처는 조작감·임무 완주·렌더 장기 성능 검증을 대신하지 않는다.",
+  "shield_operation_achieved": true,
+  "mission_result": "<OVMissionResult.ONGOING: 0>",
+  "mission_phase": "<OVMissionPhase.INTERIOR: 3>",
+  "status": "선내 작전 · 내부 아군 보호로 사격 보류 · 쉴드실/함교/철수 선택",
+  "stop_reason": "쉴드실 실제 작전 도달",
+  "score": {
+    "game_time": 108.20000564306974,
+    "shield_break_at": 50.92500265594572,
+    "first_entry_at": 52.225002723746,
+    "shield_operation_at": 108.12500563915819,
+    "bridge_capture_at": -1.0,
+    "retreat_at": -1.0,
+    "last_return_at": -1.0,
+    "finished_at": -1.0,
+    "launched": 10,
+    "entered": 10,
+    "returned": 0,
+    "returned_after_entry": 0,
+    "shield_reactivations": 0
+  },
+  "structure_observed": true,
+  "passed": true,
+  "elapsed_wall_seconds": 11.0
+}

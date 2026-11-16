@@ -3,6 +3,8 @@
 #include "ProfilingDebugging/CpuProfilerTrace.h"
 #include "OVController.h"
 #include "OVShip.h"
+#include "OVShipSystemsComponent.h"
+#include "OVInteriorSubsystem.h"
 #include "OVCarrierSubsystem.h"
 #include "OVTransportSubsystem.h"
 #include "OVPointDefenseSubsystem.h"
@@ -15,7 +17,7 @@ void AOVHUD::DrawPhase2C()
 {
     CSV_SCOPED_TIMING_STAT_EXCLUSIVE(OV_Effects);
     TRACE_CPUPROFILER_EVENT_SCOPE(OV_Effects);
- auto* PC=Cast<AOVController>(PlayerOwner);if(PC->Phase2CScenario<0)return;
+ auto* PC=Cast<AOVController>(PlayerOwner);if(PC->Phase2CScenario<0&&!(PC->Interior&&PC->Interior->bEnabled))return;
  auto* Carrier=GetWorld()->GetSubsystem<UOVCarrierSubsystem>();
  auto* PD=GetWorld()->GetSubsystem<UOVPointDefenseSubsystem>();
  auto* Transport=GetWorld()->GetSubsystem<UOVTransportSubsystem>();
@@ -26,9 +28,12 @@ void AOVHUD::DrawPhase2C()
   FVector2D P;if(!Project(A.Position,P))continue;
   const auto Color=A.FactionId==0?Cyan:FLinearColor(1,.3f,.15f);
   DrawLine(P.X-4,P.Y+3,P.X,P.Y-5,Color,2);DrawLine(P.X,P.Y-5,P.X+4,P.Y+3,Color,2);DrawLine(P.X-4,P.Y+3,P.X+4,P.Y+3,Color,2);
-  if(A.State==EOVAircraftState::Returning)DrawText(TEXT("귀환"),Color,P.X+5,P.Y,GEngine->GetSmallFont());
-  if(A.State==EOVAircraftState::ControlLost)DrawText(TEXT("관제 상실"),Gold,P.X+5,P.Y,GEngine->GetSmallFont());
-  if(PC->bDeveloperMode && A.Carrier==PC->Selected && A.StrikeTarget.IsValid()
+  // 기체별 내부 상태는 아군 DEV에만 표시한다. 기본 화면은 선택 모함 한 줄로 요약한다.
+  if(PC->bDeveloperMode&&A.FactionId==0) {
+   if(A.State==EOVAircraftState::Returning)DrawText(TEXT("귀환"),Color,P.X+5,P.Y,GEngine->GetSmallFont());
+   if(A.State==EOVAircraftState::ControlLost)DrawText(TEXT("관제 상실"),Gold,P.X+5,P.Y,GEngine->GetSmallFont());
+  }
+  if(PC->bDeveloperMode && A.FactionId==0 && A.Carrier==PC->Selected && A.StrikeTarget.IsValid()
      && (A.AircraftId-1)%FMath::Max(1,Carrier->ManeuverProfile.SectionSize)==0) {
    const TCHAR* Names[]={TEXT("접근"),TEXT("공격"),TEXT("짧은 이탈"),TEXT("선회·재집결"),TEXT("제한 공중전"),TEXT("대기")};
    DrawText(FString::Printf(TEXT("DEV #%d %s / 통과 %d"),A.AircraftId,Names[static_cast<int32>(A.Maneuver)],A.AttackPasses),Gold,P.X+7,P.Y+9,GEngine->GetSmallFont());
@@ -60,11 +65,16 @@ void AOVHUD::DrawPhase2C()
   DrawLine(P.X,P.Y,Q.X,Q.Y,Color,E.bHit?2:1);
   if(E.bDestroyed)DrawText(TEXT("요격 성공"),Color,Q.X,Q.Y-14,GEngine->GetSmallFont());
  }
- if(!PC->Selected||!PC->Selected->bFriendly)return;
+ if(!PC->bDeveloperMode&&PC->Selected&&PC->Selected->Systems&&PC->Selected->Systems->FactionId==0
+    &&Carrier->Carriers.ContainsByPredicate([&](const auto& S){return S.Carrier==PC->Selected;}))
+  DrawText(TEXT("함재기 · ")+Carrier->GetCarrierStatus(PC->Selected).Left(44),Gold,650,Canvas->SizeY/UIScale-53,GEngine->GetSmallFont());
+ // 실제 선내 임무는 효과를 공유하지만 DEV 운송 버튼·전체 재고 요약은 가져오지 않는다.
+ if(PC->Phase2CScenario<0||!PC->Selected||!PC->Selected->Systems||PC->Selected->Systems->FactionId!=0)return;
  const float X=PC->bDeveloperMode?450:10,Y=300;
  DrawRect(FLinearColor(.008f,.02f,.04f,.94f),X,Y,246,296);
- DrawText(FString::Printf(TEXT("요격  발사 %d · 격추 %d"),PD->ShotCount,PD->KillCount),Cyan,X+10,Y+10,GEngine->GetSmallFont());
  const auto Defense=PD->GetShipState(PC->Selected);
+ int32 LocalShots=0;for(const auto& Mount:Defense.Mounts)LocalShots+=Mount.ShotCount;
+ DrawText(FString::Printf(TEXT("선택 함선 요격 · 발사 %d"),LocalShots),Cyan,X+10,Y+10,GEngine->GetSmallFont());
  FString Priority;for(const auto Kind:Defense.Priority) { if(!Priority.IsEmpty())Priority+=TEXT(" > ");Priority+=Kind==EOVPDTargetKind::Missile?TEXT("미사일"):Kind==EOVPDTargetKind::Aircraft?TEXT("함재기"):TEXT("포드"); }
  Button(TEXT("PDPriority"),Priority,X+10,Y+32,226);
  const bool HasCarrier=Carrier->Carriers.ContainsByPredicate([&](const auto& S){return S.Carrier==PC->Selected;});
@@ -82,7 +92,10 @@ void AOVHUD::DrawPhase2C()
  }
  if(PC->Phase2CScenario>=3) {
   DrawText(TEXT("DEV 승객 토큰 · 선내전 미구현"),Gold,X+10,Row,GEngine->GetSmallFont());
-  DrawText(Transport->GetSummary().Left(32),Ink,X+10,Row+20,GEngine->GetSmallFont());
+  int32 Inside=0,Dead=0,Rescue=0;for(const auto& Person:Transport->Persons)if(Person.FactionId==0) {
+   Inside+=Person.State==EOVPassengerState::InsideTarget;Dead+=Person.State==EOVPassengerState::Dead;Rescue+=Person.State==EOVPassengerState::RescueWaiting;
+  }
+  DrawText(FString::Printf(TEXT("아군 진입 %d · 사망 %d · 구조 %d"),Inside,Dead,Rescue),Ink,X+10,Row+20,GEngine->GetSmallFont());
   if(PC->Phase2CScenario==3) {
    Button(TEXT("LaunchPods"),TEXT("개인 포드 출발"),X+10,Row+46,109);Button(TEXT("RecallPods"),TEXT("비행 포드 회항"),X+127,Row+46,109);
   } else {

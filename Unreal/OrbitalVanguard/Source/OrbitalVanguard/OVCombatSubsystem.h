@@ -209,6 +209,7 @@ public:
     UFUNCTION(BlueprintPure) FOVFireReadiness GetReadiness(AOVShip* Ship, FName MountId) const;
     UFUNCTION(BlueprintPure) bool IsDeparted(AOVShip* Ship) const;
     UFUNCTION(BlueprintCallable) bool ApplyInterceptionDamage(int32 AttackId, float Damage);
+    int32 GetResolvedAttackIdCount() const { return ResolvedAttackIds.Num(); }
     // Reuses immutable damage metadata; resolved attacks cannot deliver damage twice.
     bool ResolveImpact(FOVAttackState& Attack, AOVShip* HitShip, FVector Point, FVector Normal, FName HitWeaponId = NAME_None);
     static bool SegmentBox(FVector Start, FVector End, const FTransform& Transform,

@@ -2,6 +2,7 @@
 #include "CoreMinimal.h"
 #include "GameFramework/HUD.h"
 #include "OVHUD.generated.h"
+class AOVShip;
 UCLASS()
 class ORBITALVANGUARD_API AOVHUD : public AHUD {
  GENERATED_BODY()
@@ -19,6 +20,15 @@ public:
  UFUNCTION(BlueprintCallable, Category="UI") void SetDetailsOpen(bool Open) { bDetailsOpen=Open; bMinimized=false; }
  UFUNCTION(BlueprintPure, Category="UI") FVector2D GetActionCenter(FName Action) const;
  UFUNCTION(BlueprintPure, Category="UI") bool IsOverWorldMarker(FVector2D Pixel) const;
+ UFUNCTION(BlueprintCallable, Category="UI") bool HandleInteriorAction(FName Action);
+ UFUNCTION(BlueprintPure, Category="UI") bool IsOverInteriorPanel(float X,float Y) const;
+ UFUNCTION(BlueprintPure, Category="UI") bool IsOverMissionPanel(float X,float Y) const;
+ UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="UI") bool bInteriorOpen=false;
+ UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="UI") int32 InteriorDeck=1;
+ UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="UI") TArray<int32> InteriorSelectedUnits;
+ UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="UI") FName InteriorTargetSlot;
+ UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="UI") TWeakObjectPtr<AOVShip> InteriorShip;
+ UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="UI") FString InteriorFeedback;
  UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="UI") bool bDetailsOpen=false;
  UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="UI") bool bMinimized=false;
  UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="UI") FVector2D WindowPosition=FVector2D(840,76);
@@ -29,6 +39,11 @@ private:
  FVector2D ViewportPixels=FVector2D(1280,740);
  bool bDragging=false,bResizing=false;
  bool bDrawingDetails=false;
+ bool bDrawingInterior=false;
+ int32 InteriorUnitPage=0;
+ FBox2D InteriorBounds() const;
+ void DrawInterior();
+ void DrawMission();
  FVector2D DragOffset=FVector2D::ZeroVector;
  FRotator PreviewRotation=FRotator(-25,35,0);
  float PreviewZoom=1;

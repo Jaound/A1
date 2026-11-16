@@ -1,5 +1,8 @@
 #include "OVShipSystemsComponent.h"
 #include "GameFramework/Actor.h"
+#include "OVShip.h"
+#include "OVCombatSubsystem.h"
+#include "Engine/World.h"
 
 namespace
 {
@@ -36,7 +39,8 @@ void UOVShipSystemsComponent::Initialize(UShipLayoutDataAsset* InLayout)
 void UOVShipSystemsComponent::ResetState()
 {
     Slots.Reset(); ArmorSections.Reset(); WeaponMountStates.Reset();
-    InteriorObjectives.Reset(); InteriorDeveloperInputs.Reset();
+    InteriorObjectives.Reset(); InteriorDeveloperInputs.Reset(); RuntimeInteriorObjectives.Reset();
+    bBridgeCaptured = bCapturedBridgeDestroyed = false; CaptureCount = 0;
     bWrecked = false; bNeutral = false; bShieldActive = false; bShieldManualOff = false;
     WreckEventCount = 0; LastExplosionCount = 0; LastDamageIndex = INDEX_NONE;
     LastDamageSlot = NAME_None; LastArmorSection = NAME_None; LastWeaponMount = NAME_None;
@@ -139,7 +143,7 @@ void UOVShipSystemsComponent::RefreshDerivedState()
     if (Slots.IsValidIndex(Core) && Slots[Core].HP <= 0) MarkWrecked();
     float CrewTotal = 0;
     for (const FOVFacilityState& State : Slots) CrewTotal += State.Crew;
-    bNeutral = !bWrecked && CrewTotal <= 0 && !HasInteriorPresence(FactionId);
+    bNeutral = !bWrecked && (bCapturedBridgeDestroyed || (CrewTotal <= 0 && !HasInteriorPresence(FactionId)));
     int32 OperationalControls = 0;
     for (int32 Index = 0; Index < Slots.Num(); ++Index)
         if (Layout->Slots[Index].Facility == EOVFacilityType::ShieldControl && IsOperational(Index)) ++OperationalControls;
@@ -284,6 +288,17 @@ void UOVShipSystemsComponent::DestroyFacility(int32 SlotIndex, EOVDamageCause Ca
     if (!Slots.IsValidIndex(SlotIndex) || Layout->Slots[SlotIndex].Facility == EOVFacilityType::None) return;
     FOVFacilityState& State = Slots[SlotIndex];
     State.HP = 0;
+    if (Layout->Slots[SlotIndex].Facility == EOVFacilityType::Bridge && bBridgeCaptured)
+    {
+        bCapturedBridgeDestroyed = true; FactionId = -1;
+        if (AOVShip* Ship = Cast<AOVShip>(GetOwner()))
+        {
+            Ship->bFriendly = false; Ship->bFTLCharging = false;
+            Ship->StopMovement(); Ship->Velocity = FVector::ZeroVector;
+            Ship->bManualAttitude = false; Ship->SetAutomation(false, false);
+            if (GetWorld()) GetWorld()->GetSubsystem<UOVCombatSubsystem>()->CancelAttackOrder(Ship);
+        }
+    }
     if (Cause != EOVDamageCause::Sabotage)
     {
         const int32 Deck = Layout->Slots[SlotIndex].DeckId;
@@ -467,6 +482,48 @@ void UOVShipSystemsComponent::SetInteriorPresence(int32 Faction, bool bPresent, 
     if (bPresent && bDeveloperInput) InteriorDeveloperInputs.Add(Faction); else InteriorDeveloperInputs.Remove(Faction);
     RefreshDerivedState();
 }
-bool UOVShipSystemsComponent::HasInteriorPresence(int32 Faction) const { return !bWrecked && InteriorObjectives.Contains(Faction); }
-bool UOVShipSystemsComponent::IsInteriorObjectiveComplete(int32 Faction) const { const bool* Value=InteriorObjectives.Find(Faction); return Value && *Value; }
-bool UOVShipSystemsComponent::IsInteriorDeveloperInput(int32 Faction) const { return InteriorDeveloperInputs.Contains(Faction); }
+bool UOVShipSystemsComponent::HasInteriorPresence(int32 Faction) const { return !bWrecked && (RuntimeInteriorObjectives.Contains(Faction) || InteriorObjectives.Contains(Faction)); }
+bool UOVShipSystemsComponent::IsInteriorObjectiveComplete(int32 Faction) const
+{
+    if (const bool* Runtime = RuntimeInteriorObjectives.Find(Faction)) return *Runtime;
+    const bool* Value = InteriorObjectives.Find(Faction); return Value && *Value;
+}
+bool UOVShipSystemsComponent::IsInteriorDeveloperInput(int32 Faction) const { return !RuntimeInteriorObjectives.Contains(Faction) && InteriorDeveloperInputs.Contains(Faction); }
+
+void UOVShipSystemsComponent::SetRuntimeInteriorPresence(int32 Faction, bool bPresent, bool bObjectiveComplete)
+{
+    if (Faction < 0) return;
+    if (bPresent && !bWrecked) RuntimeInteriorObjectives.Add(Faction, bObjectiveComplete);
+    else RuntimeInteriorObjectives.Remove(Faction);
+    RefreshDerivedState();
+}
+
+bool UOVShipSystemsComponent::CompleteInteriorOperation(FName SlotId, int32 ActingFaction, bool bSabotage)
+{
+    const int32 Index = Layout ? Layout->GetSlotIndex(SlotId) : INDEX_NONE;
+    if (ActingFaction < 0 || bWrecked || !Slots.IsValidIndex(Index) || Slots[Index].HP <= 0 ||
+        Layout->Slots[Index].Facility == EOVFacilityType::None) return false;
+    if (bSabotage)
+    {
+        BeginDamageEvent(EOVDamageCause::Sabotage, TEXT("InteriorSabotage"));
+        IncomingFactionId = ActingFaction;
+        LastLocalHit = Layout->Slots[Index].LocalCenter;
+        LastWorldHit = GetOwner()->GetActorTransform().TransformPosition(LastLocalHit);
+        ProcessDamage(Index, INDEX_NONE, Slots[Index].HP, EOVDamageCause::Sabotage, true, false);
+        return true;
+    }
+    Slots[Index].OccupyingFaction = ActingFaction;
+    if (Layout->Slots[Index].Facility == EOVFacilityType::Bridge && FactionId != ActingFaction)
+    {
+        FactionId = ActingFaction; bBridgeCaptured = true; bCapturedBridgeDestroyed = false; ++CaptureCount;
+        if (AOVShip* Ship = Cast<AOVShip>(GetOwner()))
+        {
+            Ship->StopMovement(); Ship->Velocity = FVector::ZeroVector;
+            Ship->bFTLCharging = false; Ship->bManualAttitude = false;
+            Ship->SetAutomation(false, false); Ship->bFriendly = ActingFaction == 0;
+            if (GetWorld()) GetWorld()->GetSubsystem<UOVCombatSubsystem>()->CancelAttackOrder(Ship);
+        }
+    }
+    RefreshDerivedState();
+    return true;
+}

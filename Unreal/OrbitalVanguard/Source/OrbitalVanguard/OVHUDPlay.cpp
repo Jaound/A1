@@ -3,6 +3,7 @@
 #include "OVShip.h"
 #include "OVShipSystemsComponent.h"
 #include "OVCombatSubsystem.h"
+#include "OVInteriorSubsystem.h"
 #include "Engine/Canvas.h"
 #include "Engine/Engine.h"
 #include "Camera/PlayerCameraManager.h"
@@ -53,7 +54,6 @@ void AOVHUD::DrawPlayHUD()
  Button(TEXT("CalibrationRange"),TEXT("F6 교정 전투"),160,55,130);
  Button(TEXT("Phase2C"),TEXT("F7 다음 2C 장면"),298,55,158);
  Button(TEXT("RestartScene"),TEXT("이 장면 재시작"),464,55,136);
- DrawText(TEXT("휠 확대 · 중클릭 회전 · 우클릭 드래그 고도 · F 추적"),PlayInk,622,62,GEngine->GetSmallFont());
  for(int32 I=0;I<FMath::Min(5,PC->Ships.Num());++I) {
   const AOVShip* Ship=PC->Ships[I];
   if(PC->Combat&&PC->Combat->bEnabled&&PC->Combat->IsDeparted(PC->Ships[I])) continue;
@@ -68,6 +68,7 @@ void AOVHUD::DrawPlayHUD()
  DrawText(TEXT("표적: ")+(Ship->AttackTarget?Ship->AttackTarget->ShipName:TEXT("없음")),PlayInk,470,Y+10,GEngine->GetSmallFont());
  Button(TEXT("Focus"),TEXT("F 추적"),W-212,Y+4,88,PC->bFollow);
  Button(TEXT("Details"),TEXT("상세 보기"),W-116,Y+4,92,bDetailsOpen);
+ if(PC->Interior&&PC->Interior->bEnabled) Button(TEXT("InteriorToggle"),TEXT("선내 작전"),W-328,Y+4,108,bInteriorOpen);
  if(Ship->bFriendly) {
   const FName Actions[]={TEXT("Move"),TEXT("Stop"),TEXT("Target"),TEXT("Fire"),TEXT("FireAll"),TEXT("NextWeapon"),TEXT("MoveAuto"),TEXT("FireAuto"),PC->Combat&&PC->Combat->GetShipState(Ship).Intent==EOVAttackIntent::DisableWeapons?FName(TEXT("HullIntent")):FName(TEXT("GunIntent")),TEXT("CancelAttack")};
   const FString Labels[]={TEXT("V 이동"),TEXT("X 정지"),TEXT("T 표적"),TEXT("B 한 무장"),TEXT("L 전 무장"),TEXT("N 무장 변경"),Ship->IsMovementAutomatic()?TEXT("이동 자동"):TEXT("이동 수동"),Ship->IsAttackAutomatic()?TEXT("사격 자동"):TEXT("사격 수동"),PC->Combat&&PC->Combat->GetShipState(Ship).Intent==EOVAttackIntent::DisableWeapons?TEXT("선체 격파로"):TEXT("무장 무력화"),TEXT("사격 취소")};

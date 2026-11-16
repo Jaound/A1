@@ -22,12 +22,14 @@ private:
     void BeginStage(AOVController& PC, int32 NextStage, double Now);
     void EndStage(AOVController& PC, double Now);
     void RecordCounts(AOVController& PC, double Now);
+    void RecordMissionCounts(AOVController& PC, double Now);
     void SaveReport(bool bComplete);
     void Finish(AOVController& PC);
 
     bool bStarted = false;
     bool bFinished = false;
     bool bWarmup = true;
+    bool bMissionRun = false;
     double RunStarted = 0;
     double CaseStarted = 0;
     double StageStarted = 0;
@@ -47,6 +49,11 @@ private:
     TArray<FIntPoint> Cases;
     TArray<double> FrameMilliseconds;
     TArray<FString> Results;
+    TSet<int32> InitialUnitIds;
+    TSet<int32> InitialPersonIds;
+    TSet<int32> SeenUnitIds;
+    TSet<int32> SeenPersonIds;
+    TSet<int32> SeenPodIds;
     FString OutputDirectory;
     FString Label;
     FString Failure;

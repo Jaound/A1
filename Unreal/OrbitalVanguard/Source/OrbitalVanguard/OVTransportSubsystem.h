@@ -40,6 +40,9 @@ struct ORBITALVANGUARD_API FOVPassengerToken
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly) int32 PersonId = 0;
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly) int32 FactionId = -1;
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly) bool bHeroTypeDEV = false;
+    UPROPERTY(VisibleAnywhere, BlueprintReadOnly) int32 RuntimeUnitId = 0;
+    UPROPERTY(VisibleAnywhere, BlueprintReadOnly) bool bRuntimeHero = false;
+    UPROPERTY(VisibleAnywhere, BlueprintReadOnly) bool bBoardingAssigned = false;
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly) EOVPassengerState State = EOVPassengerState::Aboard;
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly) TWeakObjectPtr<AOVShip> CurrentShip;
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly) int32 PodId = 0;
@@ -49,6 +52,7 @@ struct ORBITALVANGUARD_API FOVPassengerToken
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly) EOVArmorFace EntryFace = EOVArmorFace::Front;
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly) int32 EntryDeck = 1;
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly) FName EntrySlot;
+    UPROPERTY(VisibleAnywhere, BlueprintReadOnly) FName EntryLayoutVersion;
 };
 
 USTRUCT(BlueprintType)
@@ -119,6 +123,11 @@ public:
     UFUNCTION(BlueprintCallable) void ResetScenario(const TArray<AOVShip*>& Ships);
     UFUNCTION(BlueprintCallable) void Disable();
     UFUNCTION(BlueprintCallable) TArray<int32> AddDevPassengers(AOVShip* Origin, int32 HeroTypes, int32 Troops);
+    UFUNCTION(BlueprintCallable) int32 RegisterRuntimePassenger(AOVShip* Origin, int32 UnitId, int32 Faction, bool bHero);
+    UFUNCTION(BlueprintCallable) bool ReturnRuntimePersonToEntry(int32 PersonId, int32 UnitId, AOVShip* Ship, FVector ActualLocalPoint, FName LayoutVersion);
+    UFUNCTION(BlueprintCallable) bool MarkRuntimePersonDead(int32 PersonId, int32 UnitId);
+    UFUNCTION(BlueprintCallable) bool SetRuntimeBoardingAssignment(int32 PersonId, int32 UnitId, bool bAssigned);
+    UFUNCTION(BlueprintCallable) bool CancelRuntimeRecovery(int32 PersonId, int32 UnitId, AOVShip* InteriorShip);
     UFUNCTION(BlueprintCallable) int32 LaunchPods(AOVShip* Origin, AOVShip* Target);
     UFUNCTION(BlueprintCallable) void RecallPods(AOVShip* Origin);
     // DEV supplied confirmation of reaching original entry point. Interior pathfinding is not implemented.
@@ -148,5 +157,6 @@ private:
     void BeginReturn(FOVPodState& Pod);
     AOVShip* FindReturn(AOVShip* Preferred, int32 Faction, FVector Position, AOVShip* Exclude = nullptr) const;
     bool Usable(AOVShip* Ship) const;
+    bool ReturnPersonAtEntry(FOVPassengerToken& Person);
     FOVPassengerToken* FindPerson(int32 Id);
 };
