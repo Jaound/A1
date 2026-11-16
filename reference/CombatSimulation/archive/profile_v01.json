@@ -1,0 +1,958 @@
+{
+  "version": "combat-v0.1-candidate",
+  "status": "User-requested numerical design proposal; not applied to UE or extracted from latest Web ZIP",
+  "units": "meters, seconds, HP; simulation time is game time",
+  "global": {
+    "guaranteed_range": 250,
+    "shield_delay": 6.5,
+    "shield_combat_regen": 0.03,
+    "shield_noncombat_regen": 0.06,
+    "shield_restart": 0.5,
+    "noncombat_after": 15,
+    "overflow_fraction": 0.35,
+    "facility_to_hull": 0.65,
+    "armor_wear": 0.45,
+    "side_reduction": 0.45,
+    "front_reduction": 0.6,
+    "tracking_hold": 3.5,
+    "pd_interval": 0.5,
+    "pd_damage": 12,
+    "pod_hp": 80,
+    "pod_speed": 165,
+    "pod_evasion": 0.4,
+    "max_battle_seconds": 360
+  },
+  "radar": {
+    "1": {
+      "range": 700,
+      "bonus": 0.04
+    },
+    "2": {
+      "range": 1050,
+      "bonus": 0.08
+    },
+    "3": {
+      "range": 1450,
+      "bonus": 0.16
+    },
+    "4": {
+      "range": 1850,
+      "bonus": 0.2
+    }
+  },
+  "tier_damage": {
+    "1": 1,
+    "2": 2.5,
+    "3": 6.5,
+    "4": 17
+  },
+  "weapons": {
+    "beam": {
+      "name": "연발 빔포",
+      "damage": 12,
+      "period": 0.9,
+      "range": 700,
+      "speed": 0,
+      "turn": 80,
+      "hp": 180,
+      "spread_deg": 0,
+      "salvo": 1
+    },
+    "heavy_beam": {
+      "name": "거대 빔포",
+      "damage": 32,
+      "period": 2.2,
+      "range": 1000,
+      "speed": 0,
+      "turn": 25,
+      "hp": 240,
+      "spread_deg": 0,
+      "salvo": 1
+    },
+    "cannon": {
+      "name": "속사 함포",
+      "damage": 30,
+      "period": 1.8,
+      "range": 900,
+      "speed": 450,
+      "turn": 55,
+      "hp": 200,
+      "spread_deg": 0.4,
+      "salvo": 1
+    },
+    "heavy_cannon": {
+      "name": "대구경 함포",
+      "damage": 80,
+      "period": 3.8,
+      "range": 1200,
+      "speed": 380,
+      "turn": 12,
+      "hp": 300,
+      "spread_deg": 0.3,
+      "salvo": 1
+    },
+    "missile": {
+      "name": "일반 미사일",
+      "damage": 50,
+      "period": 6.5,
+      "range": 1500,
+      "speed": 120,
+      "turn": 90,
+      "hp": 160,
+      "spread_deg": 0.5,
+      "salvo": 3,
+      "projectile_hp": 24,
+      "evasion": 0.25
+    },
+    "guided": {
+      "name": "유도 미사일",
+      "damage": 65,
+      "period": 8,
+      "range": 1600,
+      "speed": 110,
+      "turn": 90,
+      "hp": 180,
+      "spread_deg": 0.4,
+      "salvo": 3,
+      "projectile_hp": 24,
+      "evasion": 0.25,
+      "guide_turn": 35,
+      "lifetime": 22
+    },
+    "spinal": {
+      "name": "초대형 전용 주포",
+      "damage": 300,
+      "period": 5.5,
+      "range": 1500,
+      "speed": 420,
+      "turn": 5,
+      "hp": 500,
+      "spread_deg": 0.25,
+      "salvo": 1,
+      "minimum_tier": 4
+    }
+  },
+  "ships": {
+    "corvette": {
+      "name": "초계함",
+      "size": 1,
+      "decks": 1,
+      "hp": 900,
+      "shield": 320,
+      "armor_cell": 80,
+      "front_armor": 160,
+      "radius": 10,
+      "speed": 48,
+      "hull_turn": 65,
+      "weapons": [
+        {
+          "kind": "cannon",
+          "tier": 1,
+          "mount": "top"
+        },
+        {
+          "kind": "beam",
+          "tier": 1,
+          "mount": "bottom"
+        }
+      ],
+      "pd": 2,
+      "pd_range_scale": 1,
+      "radar_tier": 1,
+      "build_cost": [
+        450,
+        0,
+        0
+      ],
+      "build_seconds": 120
+    },
+    "frigate": {
+      "name": "호위함",
+      "size": 1,
+      "decks": 1,
+      "hp": 1400,
+      "shield": 520,
+      "armor_cell": 100,
+      "front_armor": 200,
+      "radius": 13,
+      "speed": 34,
+      "hull_turn": 50,
+      "weapons": [
+        {
+          "kind": "cannon",
+          "tier": 1,
+          "mount": "top"
+        },
+        {
+          "kind": "cannon",
+          "tier": 1,
+          "mount": "bottom"
+        }
+      ],
+      "pd": 2,
+      "pd_range_scale": 1,
+      "radar_tier": 1,
+      "build_cost": [
+        600,
+        0,
+        0
+      ],
+      "build_seconds": 150
+    },
+    "vector": {
+      "name": "백터급 구축함",
+      "size": 2,
+      "decks": 1,
+      "hp": 4600,
+      "shield": 1500,
+      "armor_cell": 260,
+      "front_armor": 520,
+      "radius": 22,
+      "speed": 30,
+      "hull_turn": 32,
+      "weapons": [
+        {
+          "kind": "cannon",
+          "tier": 2,
+          "mount": "top"
+        },
+        {
+          "kind": "cannon",
+          "tier": 2,
+          "mount": "bottom"
+        },
+        {
+          "kind": "beam",
+          "tier": 2,
+          "mount": "top"
+        }
+      ],
+      "pd": 2,
+      "pd_range_scale": 1,
+      "radar_tier": 2,
+      "build_cost": [
+        1600,
+        180,
+        0
+      ],
+      "build_seconds": 210
+    },
+    "bastion": {
+      "name": "바스티온급 구축함",
+      "size": 2,
+      "decks": 2,
+      "hp": 7400,
+      "shield": 2400,
+      "armor_cell": 400,
+      "front_armor": 800,
+      "radius": 28.6,
+      "speed": 20,
+      "hull_turn": 18,
+      "weapons": [
+        {
+          "kind": "cannon",
+          "tier": 2,
+          "mount": "top"
+        },
+        {
+          "kind": "cannon",
+          "tier": 2,
+          "mount": "bottom"
+        },
+        {
+          "kind": "cannon",
+          "tier": 2,
+          "mount": "top"
+        },
+        {
+          "kind": "heavy_cannon",
+          "tier": 2,
+          "mount": "bottom"
+        },
+        {
+          "kind": "beam",
+          "tier": 2,
+          "mount": "top"
+        }
+      ],
+      "pd": 4,
+      "pd_range_scale": 1,
+      "radar_tier": 2,
+      "build_cost": [
+        2600,
+        420,
+        0
+      ],
+      "build_seconds": 330
+    },
+    "cruiser": {
+      "name": "순양함",
+      "size": 2,
+      "decks": 2,
+      "hp": 8000,
+      "shield": 2800,
+      "armor_cell": 440,
+      "front_armor": 880,
+      "radius": 31,
+      "speed": 22,
+      "hull_turn": 20,
+      "weapons": [
+        {
+          "kind": "cannon",
+          "tier": 2,
+          "mount": "top"
+        },
+        {
+          "kind": "cannon",
+          "tier": 2,
+          "mount": "bottom"
+        },
+        {
+          "kind": "beam",
+          "tier": 2,
+          "mount": "top"
+        },
+        {
+          "kind": "beam",
+          "tier": 2,
+          "mount": "bottom"
+        },
+        {
+          "kind": "missile",
+          "tier": 2,
+          "mount": "top"
+        }
+      ],
+      "pd": 3,
+      "pd_range_scale": 1,
+      "radar_tier": 2,
+      "build_cost": [
+        2400,
+        350,
+        0
+      ],
+      "build_seconds": 300
+    },
+    "air_defense": {
+      "name": "방공함",
+      "size": 2,
+      "decks": 2,
+      "hp": 5500,
+      "shield": 1900,
+      "armor_cell": 340,
+      "front_armor": 680,
+      "radius": 28,
+      "speed": 22,
+      "hull_turn": 20,
+      "weapons": [
+        {
+          "kind": "beam",
+          "tier": 2,
+          "mount": "top"
+        },
+        {
+          "kind": "beam",
+          "tier": 2,
+          "mount": "bottom"
+        }
+      ],
+      "pd": 11,
+      "pd_range_scale": 1.5,
+      "radar_tier": 2,
+      "build_cost": [
+        2200,
+        300,
+        0
+      ],
+      "build_seconds": 270
+    },
+    "radar": {
+      "name": "레이더함",
+      "size": 2,
+      "decks": 2,
+      "hp": 4200,
+      "shield": 1600,
+      "armor_cell": 250,
+      "front_armor": 500,
+      "radius": 30,
+      "speed": 22,
+      "hull_turn": 22,
+      "weapons": [
+        {
+          "kind": "beam",
+          "tier": 2,
+          "mount": "top"
+        }
+      ],
+      "pd": 1,
+      "pd_range_scale": 1,
+      "radar_tier": 3,
+      "build_cost": [
+        2000,
+        300,
+        0
+      ],
+      "build_seconds": 270
+    },
+    "battleship": {
+      "name": "전함",
+      "size": 3,
+      "decks": 3,
+      "hp": 40000,
+      "shield": 14000,
+      "armor_cell": 1500,
+      "front_armor": 3000,
+      "radius": 60,
+      "speed": 13,
+      "hull_turn": 10,
+      "weapons": [
+        {
+          "kind": "cannon",
+          "tier": 3,
+          "mount": "top"
+        },
+        {
+          "kind": "cannon",
+          "tier": 3,
+          "mount": "bottom"
+        },
+        {
+          "kind": "cannon",
+          "tier": 3,
+          "mount": "top"
+        },
+        {
+          "kind": "cannon",
+          "tier": 3,
+          "mount": "bottom"
+        },
+        {
+          "kind": "heavy_cannon",
+          "tier": 3,
+          "mount": "top"
+        },
+        {
+          "kind": "heavy_cannon",
+          "tier": 3,
+          "mount": "bottom"
+        },
+        {
+          "kind": "heavy_cannon",
+          "tier": 3,
+          "mount": "top"
+        },
+        {
+          "kind": "heavy_cannon",
+          "tier": 3,
+          "mount": "bottom"
+        },
+        {
+          "kind": "beam",
+          "tier": 3,
+          "mount": "top"
+        },
+        {
+          "kind": "beam",
+          "tier": 3,
+          "mount": "bottom"
+        }
+      ],
+      "pd": 5,
+      "pd_range_scale": 1,
+      "radar_tier": 3,
+      "build_cost": [
+        7200,
+        1200,
+        100
+      ],
+      "build_seconds": 480
+    },
+    "carrier": {
+      "name": "항공모함",
+      "size": 3,
+      "decks": 3,
+      "hp": 34000,
+      "shield": 12000,
+      "armor_cell": 1200,
+      "front_armor": 2400,
+      "radius": 65,
+      "speed": 12,
+      "hull_turn": 9,
+      "weapons": [
+        {
+          "kind": "beam",
+          "tier": 3,
+          "mount": "top"
+        },
+        {
+          "kind": "beam",
+          "tier": 3,
+          "mount": "bottom"
+        },
+        {
+          "kind": "cannon",
+          "tier": 3,
+          "mount": "top"
+        },
+        {
+          "kind": "cannon",
+          "tier": 3,
+          "mount": "bottom"
+        }
+      ],
+      "pd": 5,
+      "pd_range_scale": 1,
+      "radar_tier": 3,
+      "build_cost": [
+        8000,
+        1500,
+        150
+      ],
+      "build_seconds": 540,
+      "hangars": 2,
+      "fighters": 40
+    },
+    "missile_ship": {
+      "name": "전략 미사일함",
+      "size": 3,
+      "decks": 3,
+      "hp": 33000,
+      "shield": 11000,
+      "armor_cell": 1100,
+      "front_armor": 2200,
+      "radius": 60,
+      "speed": 12,
+      "hull_turn": 9,
+      "weapons": [
+        {
+          "kind": "beam",
+          "tier": 3,
+          "mount": "top"
+        },
+        {
+          "kind": "beam",
+          "tier": 3,
+          "mount": "bottom"
+        },
+        {
+          "kind": "missile",
+          "tier": 3,
+          "mount": "top"
+        },
+        {
+          "kind": "missile",
+          "tier": 3,
+          "mount": "bottom"
+        },
+        {
+          "kind": "missile",
+          "tier": 3,
+          "mount": "top"
+        },
+        {
+          "kind": "missile",
+          "tier": 3,
+          "mount": "bottom"
+        },
+        {
+          "kind": "guided",
+          "tier": 3,
+          "mount": "top"
+        },
+        {
+          "kind": "guided",
+          "tier": 3,
+          "mount": "bottom"
+        },
+        {
+          "kind": "guided",
+          "tier": 3,
+          "mount": "top"
+        },
+        {
+          "kind": "guided",
+          "tier": 3,
+          "mount": "bottom"
+        }
+      ],
+      "pd": 5,
+      "pd_range_scale": 1,
+      "radar_tier": 3,
+      "build_cost": [
+        7600,
+        1400,
+        120
+      ],
+      "build_seconds": 510
+    },
+    "dreadnought": {
+      "name": "구축전함",
+      "size": 4,
+      "decks": 3,
+      "hp": 250000,
+      "shield": 85000,
+      "armor_cell": 7000,
+      "front_armor": 14000,
+      "radius": 130,
+      "speed": 7,
+      "hull_turn": 5,
+      "weapons": [
+        {
+          "kind": "cannon",
+          "tier": 3,
+          "mount": "top"
+        },
+        {
+          "kind": "cannon",
+          "tier": 3,
+          "mount": "bottom"
+        },
+        {
+          "kind": "cannon",
+          "tier": 3,
+          "mount": "top"
+        },
+        {
+          "kind": "cannon",
+          "tier": 3,
+          "mount": "bottom"
+        },
+        {
+          "kind": "cannon",
+          "tier": 3,
+          "mount": "top"
+        },
+        {
+          "kind": "cannon",
+          "tier": 3,
+          "mount": "bottom"
+        },
+        {
+          "kind": "cannon",
+          "tier": 3,
+          "mount": "top"
+        },
+        {
+          "kind": "cannon",
+          "tier": 3,
+          "mount": "bottom"
+        },
+        {
+          "kind": "cannon",
+          "tier": 3,
+          "mount": "top"
+        },
+        {
+          "kind": "cannon",
+          "tier": 3,
+          "mount": "bottom"
+        },
+        {
+          "kind": "cannon",
+          "tier": 3,
+          "mount": "top"
+        },
+        {
+          "kind": "cannon",
+          "tier": 3,
+          "mount": "bottom"
+        },
+        {
+          "kind": "spinal",
+          "tier": 4,
+          "mount": "top"
+        },
+        {
+          "kind": "spinal",
+          "tier": 4,
+          "mount": "bottom"
+        },
+        {
+          "kind": "spinal",
+          "tier": 4,
+          "mount": "top"
+        },
+        {
+          "kind": "spinal",
+          "tier": 4,
+          "mount": "bottom"
+        }
+      ],
+      "pd": 8,
+      "pd_range_scale": 1,
+      "radar_tier": 4,
+      "build_cost": [
+        28800,
+        6000,
+        800
+      ],
+      "build_seconds": 960
+    },
+    "battlecarrier": {
+      "name": "항공순양함",
+      "size": 4,
+      "decks": 3,
+      "hp": 210000,
+      "shield": 70000,
+      "armor_cell": 6000,
+      "front_armor": 12000,
+      "radius": 130,
+      "speed": 7.5,
+      "hull_turn": 5,
+      "weapons": [
+        {
+          "kind": "cannon",
+          "tier": 3,
+          "mount": "top"
+        },
+        {
+          "kind": "cannon",
+          "tier": 3,
+          "mount": "bottom"
+        },
+        {
+          "kind": "cannon",
+          "tier": 3,
+          "mount": "top"
+        },
+        {
+          "kind": "cannon",
+          "tier": 3,
+          "mount": "bottom"
+        },
+        {
+          "kind": "cannon",
+          "tier": 3,
+          "mount": "top"
+        },
+        {
+          "kind": "cannon",
+          "tier": 3,
+          "mount": "bottom"
+        },
+        {
+          "kind": "cannon",
+          "tier": 3,
+          "mount": "top"
+        },
+        {
+          "kind": "cannon",
+          "tier": 3,
+          "mount": "bottom"
+        },
+        {
+          "kind": "spinal",
+          "tier": 4,
+          "mount": "top"
+        },
+        {
+          "kind": "spinal",
+          "tier": 4,
+          "mount": "bottom"
+        },
+        {
+          "kind": "spinal",
+          "tier": 4,
+          "mount": "top"
+        },
+        {
+          "kind": "spinal",
+          "tier": 4,
+          "mount": "bottom"
+        }
+      ],
+      "pd": 8,
+      "pd_range_scale": 1,
+      "radar_tier": 4,
+      "build_cost": [
+        32000,
+        7000,
+        1000
+      ],
+      "build_seconds": 1080,
+      "hangars": 4,
+      "fighters": 80
+    },
+    "repair": {
+      "name": "보급수리함",
+      "size": 1,
+      "decks": 1,
+      "hp": 1100,
+      "shield": 380,
+      "armor_cell": 80,
+      "front_armor": 160,
+      "radius": 12,
+      "speed": 28,
+      "hull_turn": 35,
+      "weapons": [],
+      "pd": 2,
+      "pd_range_scale": 1,
+      "radar_tier": 1,
+      "build_cost": [
+        400,
+        0,
+        0
+      ],
+      "build_seconds": 120,
+      "repair_hp_per_second": 18,
+      "resource_pool": [
+        400,
+        50,
+        0
+      ]
+    }
+  },
+  "heroes": {
+    "melee": {
+      "name": "근거리형",
+      "hp": 300,
+      "damage": 25,
+      "period": 1.0,
+      "range": 1.8,
+      "speed": 3.6,
+      "armor": 0.18,
+      "evasion": 0.08,
+      "occupation": 1.0,
+      "skill": "brace",
+      "skill_cd": 16
+    },
+    "ranged": {
+      "name": "원거리형",
+      "hp": 240,
+      "damage": 28,
+      "period": 1.2,
+      "range": 20,
+      "speed": 3.0,
+      "armor": 0.1,
+      "evasion": 0.12,
+      "occupation": 1.0,
+      "skill": "aimed_shot",
+      "skill_cd": 12
+    },
+    "support": {
+      "name": "지원형",
+      "hp": 240,
+      "damage": 12,
+      "period": 1.4,
+      "range": 11,
+      "speed": 3.0,
+      "armor": 0.08,
+      "evasion": 0.1,
+      "occupation": 1.1,
+      "skill": "medkit",
+      "skill_cd": 6,
+      "heal": 85,
+      "charges": 4
+    },
+    "commander": {
+      "name": "지휘형",
+      "hp": 280,
+      "damage": 22,
+      "period": 1.25,
+      "range": 10,
+      "speed": 3.1,
+      "armor": 0.15,
+      "evasion": 0.1,
+      "occupation": 1.2,
+      "skill": "aura",
+      "aura_damage": 0.12,
+      "aura_range": 14
+    },
+    "soldier": {
+      "name": "일반 병사",
+      "hp": 65,
+      "damage": 8,
+      "period": 1.4,
+      "range": 11,
+      "speed": 2.6,
+      "armor": 0.05,
+      "evasion": 0.05,
+      "occupation": 1.0
+    },
+    "turret": {
+      "name": "선내 보안 터렛",
+      "hp": 300,
+      "damage": 16,
+      "period": 1.2,
+      "range": 14,
+      "speed": 0,
+      "armor": 0.25,
+      "evasion": 0,
+      "occupation": 0
+    },
+    "robot": {
+      "name": "보안 로봇",
+      "hp": 180,
+      "damage": 18,
+      "period": 1.3,
+      "range": 2,
+      "speed": 2.2,
+      "armor": 0.2,
+      "evasion": 0,
+      "occupation": 0
+    }
+  },
+  "boarding": {
+    "normal_capture": 18,
+    "bridge_capture": 36,
+    "sabotage": 30,
+    "checkpoint_fractions": [
+      0.3333333333333333,
+      0.6666666666666666
+    ],
+    "max_speedup": 2,
+    "hall_edge_m": 8,
+    "floor_edge_m": 6,
+    "attach_seconds": 1.5,
+    "emergency_escape_seconds": 5,
+    "facility_hazard_fraction": 0.01,
+    "facility_hazard_duration": 10
+  },
+  "officers": {
+    "ranged_accuracy": 0.02,
+    "commander_speed": 0.05,
+    "support_repair_fraction_per_second": 0.0008,
+    "support_duration": 20,
+    "support_charges": 2,
+    "support_cooldown": 45,
+    "support_resource_cost": [
+      100,
+      20,
+      0
+    ]
+  },
+  "fighter": {
+    "hp": 160,
+    "shield": 75,
+    "evasion": 0.62,
+    "speed": 100,
+    "weapon_damage": 9,
+    "period": 1.2,
+    "return": "explicit_order",
+    "tier": 1
+  },
+  "calibration": {
+    "hero_candidate": "O",
+    "calibration_seeds": [
+      0,
+      19
+    ],
+    "evaluation_seeds_begin": 1000,
+    "note": "Hand-selected candidate from reduced-model roster tests; evaluation seeds were not used for tuning."
+  },
+  "range_convention": {
+    "guaranteed": "approximate surface separation (sphere-axis proxy); candidate, not a finalized R22 rule",
+    "weapons": "muzzle to target center",
+    "radar": "center to center",
+    "point_defense": "PD mount to projectile"
+  },
+  "untested_parameters": [
+    "fighter",
+    "ships.carrier",
+    "ships.battlecarrier",
+    "ships.repair",
+    "boarding.emergency_escape_seconds",
+    "boarding.facility_hazard_fraction",
+    "boarding.facility_hazard_duration"
+  ]
+}

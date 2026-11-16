@@ -1,0 +1,359 @@
+{
+  "purpose": "Shield-delay refresh sensitivity only, not adopted policy",
+  "engine_sha256": "2d753dd1930b430e34c99e1e1a66ddf1f78e34195aaa0e974c0bffd5b198afdb",
+  "profile_sha256": "769a3e47af6de19de77dd241d421a48679f3de035e15aadbc538580146e71897",
+  "dt": 0.1,
+  "scenario": "frigate1 vs frigate1 orbit, baseline settings",
+  "summary": {
+    "every_hit": {
+      "n": 8,
+      "median_seconds": 81.05000000000001,
+      "mean_reactivations": 0,
+      "timeouts": 0
+    },
+    "break_only": {
+      "n": 8,
+      "median_seconds": 99.94999999999999,
+      "mean_reactivations": 4.125,
+      "timeouts": 0
+    }
+  },
+  "trials": [
+    {
+      "seed": 3000,
+      "policy": "every_hit",
+      "reactivations": 0,
+      "winner": 0,
+      "seconds": 84.7,
+      "survivors": [
+        1,
+        0
+      ],
+      "remaining_hp": [
+        47.2,
+        0
+      ],
+      "shots": 188,
+      "beam_hits": 0,
+      "projectile_hits": 160,
+      "pd_kills": 0,
+      "friendly_blocks": 0,
+      "captured": 0
+    },
+    {
+      "seed": 3000,
+      "policy": "break_only",
+      "reactivations": 4,
+      "winner": 0,
+      "seconds": 99.1,
+      "survivors": [
+        1,
+        0
+      ],
+      "remaining_hp": [
+        80.81,
+        0
+      ],
+      "shots": 220,
+      "beam_hits": 0,
+      "projectile_hits": 191,
+      "pd_kills": 0,
+      "friendly_blocks": 0,
+      "captured": 0
+    },
+    {
+      "seed": 3001,
+      "policy": "every_hit",
+      "reactivations": 0,
+      "winner": 0,
+      "seconds": 84.8,
+      "survivors": [
+        1,
+        0
+      ],
+      "remaining_hp": [
+        9.63,
+        0
+      ],
+      "shots": 188,
+      "beam_hits": 0,
+      "projectile_hits": 160,
+      "pd_kills": 0,
+      "friendly_blocks": 0,
+      "captured": 0
+    },
+    {
+      "seed": 3001,
+      "policy": "break_only",
+      "reactivations": 4,
+      "winner": 0,
+      "seconds": 101.1,
+      "survivors": [
+        1,
+        0
+      ],
+      "remaining_hp": [
+        241.13,
+        0
+      ],
+      "shots": 220,
+      "beam_hits": 0,
+      "projectile_hits": 189,
+      "pd_kills": 0,
+      "friendly_blocks": 0,
+      "captured": 0
+    },
+    {
+      "seed": 3002,
+      "policy": "every_hit",
+      "reactivations": 0,
+      "winner": 0,
+      "seconds": 79.9,
+      "survivors": [
+        1,
+        0
+      ],
+      "remaining_hp": [
+        48.71,
+        0
+      ],
+      "shots": 176,
+      "beam_hits": 0,
+      "projectile_hits": 154,
+      "pd_kills": 0,
+      "friendly_blocks": 0,
+      "captured": 0
+    },
+    {
+      "seed": 3002,
+      "policy": "break_only",
+      "reactivations": 4,
+      "winner": 0,
+      "seconds": 97.9,
+      "survivors": [
+        1,
+        0
+      ],
+      "remaining_hp": [
+        19.74,
+        0
+      ],
+      "shots": 216,
+      "beam_hits": 0,
+      "projectile_hits": 192,
+      "pd_kills": 0,
+      "friendly_blocks": 0,
+      "captured": 0
+    },
+    {
+      "seed": 3003,
+      "policy": "every_hit",
+      "reactivations": 0,
+      "winner": 1,
+      "seconds": 78.6,
+      "survivors": [
+        0,
+        1
+      ],
+      "remaining_hp": [
+        0,
+        124.74
+      ],
+      "shots": 173,
+      "beam_hits": 0,
+      "projectile_hits": 156,
+      "pd_kills": 0,
+      "friendly_blocks": 0,
+      "captured": 0
+    },
+    {
+      "seed": 3003,
+      "policy": "break_only",
+      "reactivations": 4,
+      "winner": 1,
+      "seconds": 98.4,
+      "survivors": [
+        0,
+        1
+      ],
+      "remaining_hp": [
+        0,
+        21.04
+      ],
+      "shots": 217,
+      "beam_hits": 0,
+      "projectile_hits": 195,
+      "pd_kills": 0,
+      "friendly_blocks": 0,
+      "captured": 0
+    },
+    {
+      "seed": 3004,
+      "policy": "every_hit",
+      "reactivations": 0,
+      "winner": 0,
+      "seconds": 80.9,
+      "survivors": [
+        1,
+        0
+      ],
+      "remaining_hp": [
+        76.74,
+        0
+      ],
+      "shots": 180,
+      "beam_hits": 0,
+      "projectile_hits": 157,
+      "pd_kills": 0,
+      "friendly_blocks": 0,
+      "captured": 0
+    },
+    {
+      "seed": 3004,
+      "policy": "break_only",
+      "reactivations": 4,
+      "winner": 0,
+      "seconds": 98.9,
+      "survivors": [
+        1,
+        0
+      ],
+      "remaining_hp": [
+        44.97,
+        0
+      ],
+      "shots": 220,
+      "beam_hits": 0,
+      "projectile_hits": 195,
+      "pd_kills": 0,
+      "friendly_blocks": 0,
+      "captured": 0
+    },
+    {
+      "seed": 3005,
+      "policy": "every_hit",
+      "reactivations": 0,
+      "winner": 1,
+      "seconds": 81.2,
+      "survivors": [
+        0,
+        1
+      ],
+      "remaining_hp": [
+        0,
+        30.08
+      ],
+      "shots": 180,
+      "beam_hits": 0,
+      "projectile_hits": 158,
+      "pd_kills": 0,
+      "friendly_blocks": 0,
+      "captured": 0
+    },
+    {
+      "seed": 3005,
+      "policy": "break_only",
+      "reactivations": 4,
+      "winner": 1,
+      "seconds": 101.0,
+      "survivors": [
+        0,
+        1
+      ],
+      "remaining_hp": [
+        0,
+        11.43
+      ],
+      "shots": 224,
+      "beam_hits": 0,
+      "projectile_hits": 196,
+      "pd_kills": 0,
+      "friendly_blocks": 0,
+      "captured": 0
+    },
+    {
+      "seed": 3006,
+      "policy": "every_hit",
+      "reactivations": 0,
+      "winner": 1,
+      "seconds": 80.2,
+      "survivors": [
+        0,
+        1
+      ],
+      "remaining_hp": [
+        0,
+        57.71
+      ],
+      "shots": 177,
+      "beam_hits": 0,
+      "projectile_hits": 156,
+      "pd_kills": 0,
+      "friendly_blocks": 0,
+      "captured": 0
+    },
+    {
+      "seed": 3006,
+      "policy": "break_only",
+      "reactivations": 4,
+      "winner": 1,
+      "seconds": 100.8,
+      "survivors": [
+        0,
+        1
+      ],
+      "remaining_hp": [
+        0,
+        79.26
+      ],
+      "shots": 224,
+      "beam_hits": 0,
+      "projectile_hits": 192,
+      "pd_kills": 0,
+      "friendly_blocks": 0,
+      "captured": 0
+    },
+    {
+      "seed": 3007,
+      "policy": "every_hit",
+      "reactivations": 0,
+      "winner": 1,
+      "seconds": 81.4,
+      "survivors": [
+        0,
+        1
+      ],
+      "remaining_hp": [
+        0,
+        139.14
+      ],
+      "shots": 181,
+      "beam_hits": 0,
+      "projectile_hits": 156,
+      "pd_kills": 0,
+      "friendly_blocks": 0,
+      "captured": 0
+    },
+    {
+      "seed": 3007,
+      "policy": "break_only",
+      "reactivations": 5,
+      "winner": 0,
+      "seconds": 103.9,
+      "survivors": [
+        1,
+        0
+      ],
+      "remaining_hp": [
+        38.69,
+        0
+      ],
+      "shots": 223,
+      "beam_hits": 0,
+      "projectile_hits": 197,
+      "pd_kills": 0,
+      "friendly_blocks": 0,
+      "captured": 0
+    }
+  ]
+}
