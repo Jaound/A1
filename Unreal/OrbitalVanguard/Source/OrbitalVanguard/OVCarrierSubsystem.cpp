@@ -43,6 +43,7 @@ FVector LeadPoint(FVector Origin, FVector Target, FVector Velocity, double Speed
 void UOVCarrierSubsystem::Reset(int32 Seed)
 {
     Hangars.Reset(); Aircraft.Reset(); Bolts.Reset(); RecentEvents.Reset(); Carriers.Reset();
+    StrikeCandidateCache.Reset();
     Profile = FOVAircraftProfile();
     ManeuverProfile = FOVAircraftManeuverProfile();
     GameTime = Accumulator = 0;
@@ -305,6 +306,9 @@ void UOVCarrierSubsystem::Step(float Delta)
         if (!State.bRecallOrdered && !Ship->bFTLCharging && LivingShip(Ship->AttackTarget)
             && Ship->AttackTarget->Systems->FactionId != Ship->Systems->FactionId) Launch(Ship);
     }
+    // Crew/ownership/interior protection have already advanced for this fixed step.
+    // No projectile resolves until all aircraft have moved, so this is a shared current-step observation.
+    RebuildStrikeCandidates();
     // All craft expose the same start-of-step positions to relative projectile sweeps.
     for (auto& Craft : Aircraft) Craft.PreviousPosition = Craft.Position;
     for (auto& Craft : Aircraft)
@@ -377,26 +381,45 @@ void UOVCarrierSubsystem::AdvanceAircraft(FOVAircraftRecord& Craft, float Delta)
     }
 }
 
+void UOVCarrierSubsystem::RebuildStrikeCandidates()
+{
+    CSV_SCOPED_TIMING_STAT_EXCLUSIVE(OV_CarrierTargeting);
+    TRACE_CPUPROFILER_EVENT_SCOPE(OV_CarrierSharedShipTargets);
+    const auto* Combat = GetWorld()->GetSubsystem<UOVCombatSubsystem>();
+    StrikeCandidateCache.SetNum(Carriers.Num());
+    for (int32 I = 0; I < Carriers.Num(); ++I)
+    {
+        auto& Entry = StrikeCandidateCache[I];
+        AOVShip* Source = Carriers[I].Carrier.Get();
+        Entry.Source = Source; Entry.Candidates.Reset();
+        if (!LivingShip(Source)) continue;
+        for (const auto& State : Combat->Ships)
+        {
+            AOVShip* Candidate = State.Ship.Get();
+            if (!LivingShip(Candidate) || State.bDeparted || Candidate->Systems->FactionId == Source->Systems->FactionId
+                || Combat->IsTargetProtected(Source, Candidate) || !Combat->GetDetection(Source, Candidate).bDetected) continue;
+            Entry.Candidates.Add(Candidate);
+        }
+    }
+}
+
 AOVShip* UOVCarrierSubsystem::SelectStrikeTarget(const FOVAircraftRecord& Craft) const
 {
     CSV_SCOPED_TIMING_STAT_EXCLUSIVE(OV_CarrierTargeting);
-    TRACE_CPUPROFILER_EVENT_SCOPE(OV_CarrierTargeting);
-    const auto* Combat = GetWorld()->GetSubsystem<UOVCombatSubsystem>();
-    auto Eligible = [&](AOVShip* Candidate)
-    {
-        return LivingShip(Candidate) && !Combat->IsDeparted(Candidate) && Candidate->Systems->FactionId != Craft.FactionId
-            && !Combat->IsTargetProtected(Craft.Carrier.Get(), Candidate)
-            && Combat->GetDetection(Craft.Carrier.Get(), Candidate).bDetected;
-    };
+    TRACE_CPUPROFILER_EVENT_SCOPE(OV_CarrierSelectShipTarget);
+    const auto* Entry = StrikeCandidateCache.FindByPredicate([&Craft](const FStrikeCandidateCache& C) { return C.Source == Craft.Carrier; });
+    if (!Entry) return nullptr;
+    auto Eligible = [&](AOVShip* Candidate) { return Candidate && Entry->Candidates.Contains(Candidate); };
     // The carrier's explicit target wins; otherwise keep a valid mission, not a new nearest ship each frame.
     if (Eligible(Craft.Carrier->AttackTarget)) return Craft.Carrier->AttackTarget;
     if (Eligible(Craft.StrikeTarget.Get())) return Craft.StrikeTarget.Get();
     AOVShip* Best = nullptr; double Distance = TNumericLimits<double>::Max();
-    for (const auto& State : Combat->Ships)
-        if (Eligible(State.Ship))
+    // Candidate order is unchanged Combat->Ships order, preserving equal-distance ties.
+    for (const auto& Candidate : Entry->Candidates)
+        if (Candidate.IsValid())
         {
-            const double D = FVector::DistSquared(Craft.Position, State.Ship->GetActorLocation());
-            if (D < Distance) { Best = State.Ship; Distance = D; }
+            const double D = FVector::DistSquared(Craft.Position, Candidate->GetActorLocation());
+            if (D < Distance) { Best = Candidate.Get(); Distance = D; }
         }
     return Best;
 }

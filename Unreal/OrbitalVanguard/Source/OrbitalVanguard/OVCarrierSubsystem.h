@@ -181,6 +181,14 @@ private:
     int32 NextAircraftId = 1, NextHangarId = 1, NextBoltId = 1;
     FRandomStream Random;
     float PatternOffset = 0;
+    struct FStrikeCandidateCache
+    {
+        TWeakObjectPtr<AOVShip> Source;
+        TArray<TWeakObjectPtr<AOVShip>> Candidates;
+    };
+    // Rebuilt every fixed step; retained capacity avoids per-aircraft detection allocations.
+    TArray<FStrikeCandidateCache> StrikeCandidateCache;
+    void RebuildStrikeCandidates();
     bool IsHangarOperational(const FOVHangarState& Hangar) const;
     bool IsHangarDestroyed(const FOVHangarState& Hangar) const;
     bool HasControl(AOVShip* Ship) const;
