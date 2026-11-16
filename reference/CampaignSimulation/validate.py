@@ -4,7 +4,8 @@ from pathlib import Path
 import json,re,runpy,math
 HERE=Path(__file__).resolve().parent
 namespace=runpy.run_path(str(HERE/'simulate.py'));Sim=namespace['Sim']
-spec=(HERE.parents[1]/'docs/BASE_BALANCE_DRAFT.md').read_text()
+# Historical snapshot: current design has two distinct destroyer hulls.
+spec=(HERE/'baseline_v01.md').read_text()
 def table(start,end):
  text=spec.split(start,1)[1].split(end,1)[0]
  return {cells[0].replace(' ',''):cells for line in text.splitlines() if line.startswith('|') and '---' not in line for cells in [[x.strip() for x in line.strip().strip('|').split('|')]]}

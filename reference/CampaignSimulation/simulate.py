@@ -6,7 +6,8 @@ from pathlib import Path
 
 ROOT=Path(__file__).resolve().parents[2]
 OUT=Path(__file__).resolve().parent
-# Costs/durations from docs/BASE_BALANCE_DRAFT.md, in game minutes.
+# Historical e221d23 costs/durations from baseline_v01.md, in game minutes.
+# The generic destroyer below is NOT the current Vector/Bastion design.
 ASSETS={
  'miner':([300,0,0],1.5,1,0), 'corvette':([450,0,0],2,1,1),
  'frigate':([600,0,0],2.5,1,1), 'destroyer':([1800,200,0],4,2,5),

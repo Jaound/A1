@@ -37,3 +37,5 @@
 [실제5시간 캠페인 경제·진행 분석](docs/CAMPAIGN_SIMULATION.md): 비용/생산/연구·배속·가상6/10임무를 비교한360회 모형 실행입니다. 실제 전투·UE 플레이 검증과 구분합니다.
 
 [후속 프로토타입 업데이트 기록](docs/PROTOTYPE_FBX_UPDATE_RECORD.md): FBX 선체·분리 포탑·함급 변형·전장 확대·뷰어·검증/배포 보고를 보관합니다. 모델 도입과 UE 수치 적용은 보류하며 사용자 보고와 독립 검증을 구분합니다.
+
+현행 구축함은 **백터급(Vector DD)·바스티온급(Bastion DD)** 두 함체이며 구 단일 구축함 항목/가격은 현행 기획에서 대체했습니다. [함대 명세](docs/FLEET_COMBAT.md)와 [R31](docs/OPEN_QUESTIONS.md#r31)을 확인합니다. 캠페인 모형은 구입력의 역사 분석입니다. 최신WebZIP 실물 분석은32MiB전송상한으로 보류되어 [접근 상태](docs/PROTOTYPE_FBX_UPDATE_RECORD.md)를 구분해 기록했습니다.

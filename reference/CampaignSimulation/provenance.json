@@ -6,15 +6,22 @@
   "model_scope": "economy/queue/assumed mission workload only",
   "final_runs": 360,
   "hashes": {
-    "docs/BASE_BALANCE_DRAFT.md": "41b0cbd2e80b28545db74b0d47ad95c8788a124df00fdd6303b8fdac7aa7b283",
-    "reference/CampaignSimulation/simulate.py": "bcbf7660e2fbaff471dc3e5f7f0960ca4077ab04907b2977fec55e5432311730",
-    "reference/CampaignSimulation/validate.py": "4bca54e6b123ed49b5c4f68710275ec11389faf1cb6c3d6d427807237af036dd",
+    "reference/CampaignSimulation/simulate.py": "eb99f8b8ebb4832b5227c3f55931f3853b147efd8a5adffec4cde98900e1e1e4",
+    "reference/CampaignSimulation/validate.py": "b3383403256cc46e88d8b18fd7df044a0a47bcb6459de3d9820782dfb6b37c2f",
     "reference/CampaignSimulation/results_six.json": "16fea4366377e60b1308f6a46c17c5fb6e436abe8422b05dc6f2b5f51a690ab7",
     "reference/CampaignSimulation/results_ten.json": "aeb8c93fb6bb8d269a88f9195e017440e87a59992e0e13b0c17106bb490334b1",
     "reference/CampaignSimulation/plot.py": "3d79cb3e96aaad7842b459db7cc5222013545e762634aba65620edd03dc5fdf4",
     "reference/CampaignSimulation/trace_six.csv": "c0a657c9fea8da1f7ddafa4c9dcd273c9e2f335752469da020b648d5eb2dcc36",
     "reference/CampaignSimulation/trace_ten.csv": "086939f5c2233741f372eb90d7ffa638c429ac3894c441b9eed2fff2029ed8c2",
     "reference/CampaignSimulation/resolution_check.json": "3e7a79065a4622d2669b23aa844d17441d3d1cea4ab42de07fbc02ba0f3d960d",
-    "reference/CampaignSimulation/campaign_timeline.png": "eb2f6be0bac1e2487c8eb2aecc4450baca8e8668ae2658a8deb026327d313850"
+    "reference/CampaignSimulation/campaign_timeline.png": "eb2f6be0bac1e2487c8eb2aecc4450baca8e8668ae2658a8deb026327d313850",
+    "reference/CampaignSimulation/baseline_v01.md": "b66a34a4e252f544b92915b01077be2f4bfb337c5fe8c98c2798b9c85e395bb1"
+  },
+  "historical_basis": {
+    "original_path": "docs/BASE_BALANCE_DRAFT.md",
+    "commit": "e221d237004d60a859e2bfc0b12023bff21b767c",
+    "sha256": "41b0cbd2e80b28545db74b0d47ad95c8788a124df00fdd6303b8fdac7aa7b283",
+    "snapshot": "reference/CampaignSimulation/baseline_v01.md",
+    "status": "Historical input with non-current banner and relocated Markdown links; original source payload hash retained separately"
   }
 }
