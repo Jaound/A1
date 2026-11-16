@@ -8,7 +8,8 @@
 
 | 분야별 현행 명세 | 담당 범위 |
 | --- | --- |
-| [전략·경제·기지](docs/STRATEGY_ECONOMY.md) | 성계·자원·물류·전초 전문화·AI 시간 |
+| [입체 모듈 기지](docs/BASE_SYSTEMS.md) | 코어·연결·시설·접안·조선·방어의 확정 구조 |
+| [전략·경제](docs/STRATEGY_ECONOMY.md) | 성계·자원·물류·전초 전문화·AI 시간 |
 | [함대 전투](docs/FLEET_COMBAT.md) | 함급·명령·기동·무장·탐지·PD·FTL |
 | [함선 시스템](docs/SHIP_SYSTEMS.md) | 시설·인원·레이아웃·장갑·쉴드·피해·수리·생존 |
 | [모함·격납고](docs/CARRIER_OPERATIONS.md) | 함재기/수납 소형함·용량·소유·출격/귀환·관제 |
@@ -30,3 +31,5 @@
 - 과거 [결정1~79 원문](docs/archive/DECISIONS_2026-11-11.md), [개선안 원문](docs/archive/PROTOTYPE_IMPROVEMENT_PLAN_2026-11-11.md), [시행착오 원문](docs/archive/DEVELOPMENT_PITFALLS_2026-11-11.md)
 
 확정 기획·미결정·시험 기준값·임시 구현·검증 결과를 구분합니다. 과거 기록과 프로토타입 코드는 현행 분야 명세를 덮어쓰지 않습니다.
+
+새로 제안한 [기지·생산·연구 밸런스v0.1](docs/BASE_BALANCE_DRAFT.md)은 비용·시간·수입·연구 경로의 **미실측 초안**입니다. 확정 구조와 새 제안 수치를 분리해 읽습니다.
