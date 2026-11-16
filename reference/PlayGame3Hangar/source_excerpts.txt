@@ -1,0 +1,20 @@
+src/core/ShipState.gd
+255: const FIGHTERS_PER_SMALL_SLOT: int = 20
+256: var hangar_max_small_ships: int = 0
+257: var hangar_fighter_slots: int = 0   # 함재기 최대 수용 수 (소형함 1 : 함재기 20 기준)
+
+src/core/DataCatalog.gd
+265: 		Enums.ShipKind.CARRIER:
+272: 			s.hangar_max_small_ships = 99; s.hangar_fighter_slots = 6 * ShipState.FIGHTERS_PER_SMALL_SLOT
+282: 		Enums.ShipKind.DREADNOUGHT:
+289: 			s.hangar_max_small_ships = 5; s.hangar_fighter_slots = 5 * ShipState.FIGHTERS_PER_SMALL_SLOT
+291: 		Enums.ShipKind.BATTLECARRIER:
+298: 			s.hangar_max_small_ships = 99; s.hangar_fighter_slots = 8 * ShipState.FIGHTERS_PER_SMALL_SLOT
+432: 		Enums.ShipKind.CARRIER, Enums.ShipKind.BATTLECARRIER:
+438: 			place.call(Enums.FacilityType.HANGAR, 0)
+439: 			place.call(Enums.FacilityType.HANGAR, 1)
+
+src/core/ShipLayout.gd
+189: 	if ftype == Enums.FacilityType.HANGAR and num_floors < 3:
+190: 		return {"ok": false, "reason": "통합 격납고는 대형함 이상(2~3층)에 설치를 권장합니다."}
+191: 	return {"ok": true, "reason": ""}
