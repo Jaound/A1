@@ -50,9 +50,9 @@ bool AOVHUD::IsOverPanel(float X,float Y) const
  if(IsOverMissionPanel(X,Y)) return true;
  if(bDragging||bResizing) return true;
  if(!PC->bDeveloperMode&&!bSceneMenuOpen&&PC->Phase2CScenario>=0&&P.X>=212&&P.X<=484&&P.Y>=76&&P.Y<=224)return true;
- if(!PC->bDeveloperMode&&!bHeroPanelOpen&&PinnedShips.Num()>0&&P.X>=PinnedPanelX()&&P.X<=PinnedPanelX()+266&&P.Y>=PinnedPanelY()&&P.Y<=PinnedPanelY()+(PinnedShips.Num()-1)*168+164)return true;
+ if(!PC->bDeveloperMode&&!bHeroPanelOpen&&PinnedShips.Num()>0&&P.X>=PinnedPanelX()&&P.X<=PinnedPanelX()+266&&P.Y>=PinnedPanelY()&&P.Y<=PinnedPanelY()+(PinnedShips.Num()-1)*160+158)return true;
  const int32 Notices=VisibleBattleNoticeCount();const float NoticeX=ViewportPixels.X/UIScale*.5f-120;
- const auto* Feed=GetBattleNoticeFeed();const int32 Footer=bBattleFeedOpen&&Feed&&Feed->DroppedCount>0?20:0;
+ const auto* Feed=GetBattleNoticeFeed();const int32 Footer=bBattleFeedOpen?34+(Feed&&Feed->DroppedCount>0?20:0):0;
  if(Notices>0&&P.X>=NoticeX&&P.X<=NoticeX+240&&P.Y>=66&&P.Y<=66+Notices*32+Footer)return true;
  // The basic HUD remains visible under the separate developer window.
  if(P.Y<62 || (P.X<620 && P.Y>ViewportPixels.Y/UIScale-220) || (P.X<204 && P.Y<ViewportPixels.Y/UIScale-230) || (bSceneMenuOpen && P.X>=210 && P.X<=650 && P.Y<=205)) return true;
@@ -141,11 +141,21 @@ void AOVHUD::NotifyHitBoxClick(FName N)
  if(N==TEXT("SceneMenuClose")){bSceneMenuOpen=false;return;}
  if(HandleInteriorAction(N)) return;
  if(N==TEXT("HeroPanel")) { SetHeroPanelOpen(!bHeroPanelOpen);return; }
- if(N==TEXT("BattleFeedToggle")) { bBattleFeedOpen=!bBattleFeedOpen;return; }
+ if(N==TEXT("BattleFeedToggle")) { bBattleFeedOpen=!bBattleFeedOpen;BattleFeedPage=0;return; }
+ if(N==TEXT("BattleFeedOlder")||N==TEXT("BattleFeedNewer")) {
+  const auto* Feed=GetBattleNoticeFeed();
+  if(bBattleFeedOpen&&Feed&&!Feed->Notices.IsEmpty())BattleFeedPage=FMath::Clamp(BattleFeedPage+(N==TEXT("BattleFeedOlder")?1:-1),0,(Feed->Notices.Num()-1)/3);
+  return;
+ }
  if(N.ToString().StartsWith(TEXT("BattleNotice_"))) {
-  const int32 Index=FCString::Atoi(*N.ToString().Mid(13));
+  const int64 Serial=FCString::Atoi64(*N.ToString().Mid(13));
   auto* PC=Cast<AOVController>(PlayerOwner);auto* Feed=GetWorld()->GetSubsystem<UOVBattleNotices>();
-  if(PC&&Feed&&Feed->Notices.IsValidIndex(Index)&&Index>=Feed->Notices.Num()-VisibleBattleNoticeCount()) {PC->bFollow=false;PC->CameraFocus=Feed->Notices[Index].LastPosition;PC->UpdateCamera();}
+  if(PC&&Feed&&!Feed->Notices.IsEmpty()) {
+   const int32 Index=Feed->Notices.IndexOfByPredicate([Serial](const FOVBattleNotice& Item){return Item.Serial==Serial;});
+   const int32 Page=bBattleFeedOpen?FMath::Clamp(BattleFeedPage,0,(Feed->Notices.Num()-1)/3):0;
+   const int32 Newest=Feed->Notices.Num()-1-Page*3;
+   if(Index!=INDEX_NONE&&Index<=Newest&&Index>Newest-VisibleBattleNoticeCount()) {PC->bFollow=false;PC->CameraFocus=Feed->Notices[Index].LastPosition;PC->UpdateCamera();}
+  }
   return;
  }
  if(N==TEXT("MissionBackground")) return;
@@ -575,7 +585,7 @@ float AOVHUD::PinnedPanelY() const
  const float NoticeX=ViewportPixels.X/UIScale*.5f-120;
  if(Count<=0||PinnedPanelX()+266<=NoticeX||PinnedPanelX()>=NoticeX+240)return 76;
  const auto* Feed=GetBattleNoticeFeed();
- const int32 Footer=bBattleFeedOpen&&Feed&&Feed->DroppedCount>0?20:0;
+ const int32 Footer=bBattleFeedOpen?34+(Feed&&Feed->DroppedCount>0?20:0):0;
  return FMath::Max(76.f,66.f+Count*32+Footer+4.f);
 }
 void AOVHUD::DrawPinned()
@@ -587,9 +597,9 @@ void AOVHUD::DrawPinned()
  const float X=PinnedPanelX();
  for(int32 I=0;I<PinnedShips.Num();++I)
  {
-  const float Y=PinnedPanelY()+I*168;auto* Ship=PinnedShips[I].Get();
-  DrawRect(Panel,X,Y,266,164);
-  AddHitBox(FVector2D(X,Y)*UIScale,FVector2D(266,164)*UIScale,FName(*FString::Printf(TEXT("PinnedBackground_%d"),I)),true,5);
+  const float Y=PinnedPanelY()+I*160;auto* Ship=PinnedShips[I].Get();
+  DrawRect(Panel,X,Y,266,158);
+  AddHitBox(FVector2D(X,Y)*UIScale,FVector2D(266,158)*UIScale,FName(*FString::Printf(TEXT("PinnedBackground_%d"),I)),true,5);
   Button(FName(*FString::Printf(TEXT("Pinned_%d"),I)),TEXT("핀 · ")+Ship->ShipName.Left(16),X+6,Y+4,218);
   Button(FName(*FString::Printf(TEXT("PinnedClose_%d"),I)),TEXT("X"),X+228,Y+4,32);
   const auto* Systems=Ship->Systems.Get();const auto* Layout=Systems?Systems->Layout.Get():nullptr;

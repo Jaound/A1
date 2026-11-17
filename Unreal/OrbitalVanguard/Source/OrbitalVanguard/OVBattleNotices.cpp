@@ -82,6 +82,7 @@ void UOVBattleNotices::Append(const FOVAttackState& Attack,AOVShip* Victim,EOVBa
         ++Last->Count;Last->GameTime=Attack.ResolvedAt;Last->LastPosition=Attack.Position;Last->DisplayTime=FPlatformTime::Seconds();return;
     }
     FOVBattleNotice& Notice=Notices.AddDefaulted_GetRef();
+    Notice.Serial=NextSerial++;
     Notice.ShipName=Victim?Victim->ShipName:TEXT("아군 영웅");Notice.ShipId=Attack.HitShipId;Notice.LastPosition=Attack.Position;
     Notice.GameTime=Attack.ResolvedAt;Notice.DisplayTime=FPlatformTime::Seconds();Notice.Count=Count;Notice.UnitId=UnitId;Notice.bShipWrecked=bWrecked;Notice.Kind=Kind;
     Notice.bCritical=bWrecked||Kind==EOVBattleNoticeKind::HeroDeath||Kind==EOVBattleNoticeKind::HeroRescue||Kind==EOVBattleNoticeKind::HostileBoarding||Kind==EOVBattleNoticeKind::AircraftCritical||Kind==EOVBattleNoticeKind::AircraftEliminated||(Kind==EOVBattleNoticeKind::FacilityDestroyed&&Attack.CriticalFacilitiesDestroyed>0);

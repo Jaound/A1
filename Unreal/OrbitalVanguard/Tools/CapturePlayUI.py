@@ -201,10 +201,10 @@ def tick(_dt):
             if name == '핀_무장':
                 check('PIN-WEAPON-LIVE-FOCUS',hud.get_pinned_preview_focus(0)==hud.get_pinned_weapon(0) and 'HP' in hud.get_pinned_weapon_summary(0))
             if name in ('전투_알림','쉴드_고갈_알림','항공대_위기'):
-                index=state['notice_count']-1;action='BattleNotice_'+str(index)
+                index=state['notice_count']-1;feed=hud.get_battle_notice_feed();action='BattleNotice_'+str(prop(prop(feed,'notices')[index],'serial'))
                 center=hud.get_action_center(action)
                 check('NOTICE-VISIBLE-HITBOX',center.x>=0 and str(hud.get_hit_action_at_canvas_point(center))==action)
-                feed=hud.get_battle_notice_feed();target=prop(prop(feed,'notices')[index],'last_position')
+                target=prop(prop(feed,'notices')[index],'last_position')
                 hud.execute_ui_action(action)
                 check('NOTICE-FOCUS-LAST-IMPACT',(prop(pc,'camera_focus')-target).length()<.1)
             path = os.path.join(out, '%02d_%s.png' % (state['index'] + 1, name))
@@ -219,6 +219,10 @@ def tick(_dt):
                 return
             check('RENDER-' + name, item['exists'])
             report['captures'].append(item)
+            if name == '항공대_위기':
+                hud.execute_ui_action('BattleFeedOlder')
+                check('NOTICE-OLDER-PAGE-OPENED',hud.get_battle_feed_page()==1)
+                state.update(stage='notice_older',at=time.monotonic());return
             if name == '핀_시설':
                 hud.execute_ui_action('PinnedClose_1');hud.execute_ui_action('PinnedClose_0')
             if name == '외부_무장':
@@ -239,6 +243,16 @@ def tick(_dt):
             check('WEAPON-PREVIEW-CLOSE-RELEASES', hud.get_weapon_preview_focus() == -1 and hud.get_weapon_preview_visible_mesh_count() == 0)
             state['index'] += 1
             state.update(stage='prepare', at=time.monotonic())
+        elif state['stage'] == 'notice_older':
+            feed=hud.get_battle_notice_feed();notices=prop(feed,'notices');notice=notices[len(notices)-4]
+            action='BattleNotice_'+str(prop(notice,'serial'));center=hud.get_action_center(action)
+            check('NOTICE-OLDER-STABLE-HITBOX',center.x>=0 and str(hud.get_hit_action_at_canvas_point(center))==action)
+            hud.execute_ui_action(action)
+            check('NOTICE-OLDER-LAST-POSITION',(prop(pc,'camera_focus')-prop(notice,'last_position')).length()<.1)
+            hud.execute_ui_action('BattleFeedNewer');check('NOTICE-NEWER-PAGE-OPENED',hud.get_battle_feed_page()==0)
+            state['index'] += 1
+            if state['index'] >= len(views):finish()
+            else:state.update(stage='prepare',at=time.monotonic())
     except Exception:
         report['errors'].append(traceback.format_exc())
         unreal.log_error(report['errors'][-1])

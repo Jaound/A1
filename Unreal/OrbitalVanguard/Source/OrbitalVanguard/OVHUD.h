@@ -50,6 +50,7 @@ public:
  UFUNCTION(BlueprintPure, Category="UI") FString GetFleetDisplayLabel(AOVShip* Ship) const;
  UFUNCTION(BlueprintPure, Category="UI") bool IsFleetAirOverview() const { return bFleetAirOverview; }
  UFUNCTION(BlueprintPure, Category="UI") bool IsBattleFeedOpen() const { return bBattleFeedOpen; }
+ UFUNCTION(BlueprintPure, Category="UI") int32 GetBattleFeedPage() const { return BattleFeedPage; }
  UFUNCTION(BlueprintPure, Category="UI") UOVBattleNotices* GetBattleNoticeFeed() const;
  UFUNCTION(BlueprintPure, Category="UI") bool IsOverWorldMarker(FVector2D Pixel) const;
  UFUNCTION(BlueprintCallable, Category="UI") bool HandleInteriorAction(FName Action);
@@ -91,6 +92,7 @@ private:
  bool bAircraftGrid=true;
  bool bFleetAirOverview=false;
  bool bBattleFeedOpen=false;
+ int32 BattleFeedPage=0;
  bool bDetailsPositioned=false;
  int32 FleetPage=0;
  int32 AircraftPage=0;

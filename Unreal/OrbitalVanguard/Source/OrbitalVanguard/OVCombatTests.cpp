@@ -148,8 +148,13 @@ bool FOVBattleNoticeTest::RunTest(const FString&)
     for(int32 I=0;I<70;++I){FOVAttackState E=Hit;E.AttackId=10000+I;E.ResolvedAt=10+I*3;Feed->RecordCombatHit(E,R.B);}
     TestEqual(TEXT("Feed is bounded"),Feed->Notices.Num(),64);
     TestTrue(TEXT("Discarded history is counted"),Feed->DroppedCount>0);
+    TSet<int64> Serials;for(const auto& Notice:Feed->Notices)Serials.Add(Notice.Serial);
+    TestEqual(TEXT("Visible notices have unique stable IDs"),Serials.Num(),Feed->Notices.Num());
+    const int64 LastSerial=Feed->Notices.Last().Serial;
     R.Enable();
     TestTrue(TEXT("New battle clears old notices"),Feed->Notices.IsEmpty()&&Feed->DroppedCount==0);
+    FOVAttackState NewHit=Hit;NewHit.AttackId=20000;Feed->RecordCombatHit(NewHit,R.B);
+    TestTrue(TEXT("Scene reset does not reuse old notice IDs"),!Feed->Notices.IsEmpty()&&Feed->Notices.Last().Serial>LastSerial);
     return true;
 }
 

@@ -169,7 +169,7 @@ int32 AOVHUD::VisibleBattleNoticeCount() const
 {
  const auto* PC=Cast<AOVController>(PlayerOwner);const auto* Feed=GetWorld()?GetWorld()->GetSubsystem<UOVBattleNotices>():nullptr;
  if(!PC||PC->bDeveloperMode||bSceneMenuOpen||!Feed||Feed->Notices.IsEmpty())return 0;
- if(bBattleFeedOpen)return FMath::Min(3,Feed->Notices.Num());
+ if(bBattleFeedOpen){const int32 Page=FMath::Clamp(BattleFeedPage,0,(Feed->Notices.Num()-1)/3);return FMath::Min(3,Feed->Notices.Num()-Page*3);}
  return FPlatformTime::Seconds()-Feed->Notices.Last().DisplayTime<5?1:0;
 }
 
@@ -178,18 +178,26 @@ void AOVHUD::DrawBattleNotices()
  const auto* Feed=GetWorld()->GetSubsystem<UOVBattleNotices>();const int32 Count=VisibleBattleNoticeCount();
  if(!Feed||Count==0)return;
  const float W=Canvas->SizeX/UIScale,H=Canvas->SizeY/UIScale,X=W*.5f-120;
+ const int32 Page=bBattleFeedOpen?FMath::Clamp(BattleFeedPage,0,(Feed->Notices.Num()-1)/3):0;
  if(FPlatformTime::Seconds()-Feed->LastCriticalDisplayTime<3) {
   const FLinearColor Warning(.8f,.04f,.03f,.20f);
   DrawRect(Warning,0,0,W,5);DrawRect(Warning,0,H-5,W,5);DrawRect(Warning,0,0,5,H);DrawRect(Warning,W-5,0,5,H);
  }
  for(int32 I=0;I<Count;++I) {
-  const int32 Index=Feed->Notices.Num()-1-I;const auto& N=Feed->Notices[Index];
+  const int32 Index=Feed->Notices.Num()-1-Page*3-I;const auto& N=Feed->Notices[Index];
   const TCHAR* Names[]={TEXT("피격"),TEXT("완파"),TEXT("쉴드 고갈"),TEXT("장갑 파괴"),TEXT("시설 파괴"),TEXT("쉴드 재가동"),TEXT("영웅 전사"),TEXT("강습 진입"),TEXT("강습 귀환"),TEXT("시설 장악"),TEXT("적 침입"),TEXT("영웅 피격"),TEXT("구조 대기"),TEXT("함재기 절반 미만"),TEXT("함재기 10% 이하"),TEXT("함재기 전멸"),TEXT("항공대 편제 변경")};
   const FString Suffix=N.Baseline>0?FString::Printf(TEXT(" %d/%d"),N.Remaining,N.Baseline):N.Count>1?FString::Printf(TEXT(" ×%d"),N.Count):FString();
-  const FString Label=FString::Printf(TEXT("%s · %s%s"),*N.ShipName.Left(8),Names[FMath::Clamp(int32(N.Kind),0,16)],*Suffix);
-  Button(FName(*FString::Printf(TEXT("BattleNotice_%d"),Index)),Label,X,66+I*32,240,N.bCritical);
+  const int32 Seconds=FMath::Max(0,FMath::FloorToInt(N.GameTime));
+  const FString Label=FString::Printf(TEXT("%02d:%02d %s · %s%s"),Seconds/60,Seconds%60,*N.ShipName.Left(6),Names[FMath::Clamp(int32(N.Kind),0,16)],*Suffix);
+  Button(FName(*FString::Printf(TEXT("BattleNotice_%lld"),N.Serial)),Label,X,66+I*32,240,N.bCritical);
  }
- if(bBattleFeedOpen&&Feed->DroppedCount>0)DrawText(FString::Printf(TEXT("이전 알림 %d건 생략"),Feed->DroppedCount),PlayInk,X,68+Count*32,GEngine->GetSmallFont());
+ if(bBattleFeedOpen) {
+  const float Y=66+Count*32;
+  Button(TEXT("BattleFeedOlder"),TEXT("이전"),X,Y,64);
+  DrawText(FString::Printf(TEXT("%d / %d"),Page+1,(Feed->Notices.Num()+2)/3),PlayInk,X+88,Y+5,GEngine->GetSmallFont());
+  Button(TEXT("BattleFeedNewer"),TEXT("다음"),X+176,Y,64);
+  if(Feed->DroppedCount>0)DrawText(FString::Printf(TEXT("이전 알림 %d건 생략"),Feed->DroppedCount),PlayInk,X,Y+32,GEngine->GetSmallFont());
+ }
 }
 
 void AOVHUD::DrawWorldIndicators()

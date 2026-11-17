@@ -16,6 +16,7 @@ struct ORBITALVANGUARD_API FOVBattleNotice
 {
     GENERATED_BODY()
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly) FString ShipName;
+    UPROPERTY(VisibleAnywhere, BlueprintReadOnly) int64 Serial=0;
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly) FName ShipId;
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly) FVector LastPosition=FVector::ZeroVector;
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly) double GameTime=0;
@@ -49,5 +50,6 @@ public:
     void RecordAircraftAdjustment(AOVShip* Carrier,int32 Remaining,int32 Baseline,double GameTime);
 private:
     TArray<int32> RecentAttackIds;
+    int64 NextSerial=1;
     void Append(const FOVAttackState& Attack,AOVShip* Victim,EOVBattleNoticeKind Kind,int32 Count,int32 UnitId=0);
 };
