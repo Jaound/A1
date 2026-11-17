@@ -52,7 +52,7 @@ bool AOVHUD::IsOverPanel(float X,float Y) const
  if(!PC->bDeveloperMode&&!bSceneMenuOpen&&PC->Phase2CScenario>=0&&P.X>=212&&P.X<=484&&P.Y>=76&&P.Y<=224)return true;
  if(!PC->bDeveloperMode&&!bHeroPanelOpen&&PinnedShips.Num()>0&&P.X>=PinnedPanelX()&&P.X<=PinnedPanelX()+266&&P.Y>=PinnedPanelY()&&P.Y<=PinnedPanelY()+(PinnedShips.Num()-1)*160+158)return true;
  const int32 Notices=BattleNoticeRows();const float NoticeX=ViewportPixels.X/UIScale*.5f-120;
- const auto* Feed=GetBattleNoticeFeed();const int32 Footer=bBattleFeedOpen?34+(Feed&&Feed->DroppedCount>0?20:0):0;
+ const auto* Feed=GetBattleNoticeFeed();const int32 Footer=bBattleFeedOpen?66+(Feed&&Feed->DroppedCount>0?20:0):0;
  if(Notices>0&&P.X>=NoticeX&&P.X<=NoticeX+240&&P.Y>=66&&P.Y<=66+Notices*32+Footer)return true;
  // The basic HUD remains visible under the separate developer window.
  if(P.Y<62 || (P.X<620 && P.Y>ViewportPixels.Y/UIScale-220) || (P.X<204 && P.Y<ViewportPixels.Y/UIScale-230) || (bSceneMenuOpen && P.X>=210 && P.X<=650 && P.Y<=205)) return true;
@@ -142,6 +142,7 @@ void AOVHUD::NotifyHitBoxClick(FName N)
  if(HandleInteriorAction(N)) return;
  if(N==TEXT("HeroPanel")) { SetHeroPanelOpen(!bHeroPanelOpen);return; }
  if(N==TEXT("BattleFeedToggle")) { bBattleFeedOpen=!bBattleFeedOpen;BattleFeedPage=0;BattleFeedFilter=0;return; }
+ if(N==TEXT("BattleWarningLevel")) {if(bBattleFeedOpen)WarningLevel=(WarningLevel+2)%3;return;}
  if(N==TEXT("BattleFeedFilter")) {if(bBattleFeedOpen){BattleFeedFilter=(BattleFeedFilter+1)%6;BattleFeedPage=0;}return;}
  if(N==TEXT("BattleFeedOlder")||N==TEXT("BattleFeedNewer")) {
   const auto Indices=BattleNoticeIndices();
@@ -598,7 +599,7 @@ float AOVHUD::PinnedPanelY() const
  const float NoticeX=ViewportPixels.X/UIScale*.5f-120;
  if(Count<=0||PinnedPanelX()+266<=NoticeX||PinnedPanelX()>=NoticeX+240)return 76;
  const auto* Feed=GetBattleNoticeFeed();
- const int32 Footer=bBattleFeedOpen?34+(Feed&&Feed->DroppedCount>0?20:0):0;
+ const int32 Footer=bBattleFeedOpen?66+(Feed&&Feed->DroppedCount>0?20:0):0;
  return FMath::Max(76.f,66.f+Count*32+Footer+4.f);
 }
 void AOVHUD::DrawPinned()

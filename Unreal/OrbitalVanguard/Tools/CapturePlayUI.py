@@ -264,6 +264,16 @@ def tick(_dt):
         elif state['stage'] == 'notice_empty':
             center=hud.get_action_center('BattleFeedFilter')
             check('NOTICE-EMPTY-FILTER-REMAINS-ACCESSIBLE',center.x>=0 and str(hud.get_hit_action_at_canvas_point(center))=='BattleFeedFilter')
+            center=hud.get_action_center('BattleWarningLevel')
+            check('WARNING-LEVEL-CLICKABLE',center.x>=0 and str(hud.get_hit_action_at_canvas_point(center))=='BattleWarningLevel')
+            w,h=pc.get_viewport_size();scale=max(.25,min(1,w/1280,h/740))
+            check('WARNING-LEVEL-CONSUMES-WORLD-INPUT',hud.is_over_panel(center.x*scale,center.y*scale))
+            events=len(prop(hud.get_battle_notice_feed(),'notices'));before=snapshot(pc)
+            check('WARNING-DEFAULT',hud.get_warning_level()==2)
+            hud.execute_ui_action('BattleWarningLevel');check('WARNING-LOW',hud.get_warning_level()==1)
+            hud.execute_ui_action('BattleWarningLevel');check('WARNING-OFF',hud.get_warning_level()==0)
+            hud.execute_ui_action('BattleWarningLevel');check('WARNING-RESTORE',hud.get_warning_level()==2)
+            check('WARNING-SETTING-NO-COMBAT-CHANGE',events==len(prop(hud.get_battle_notice_feed(),'notices')) and before==snapshot(pc))
             hud.execute_ui_action('BattleFeedFilter');hud.execute_ui_action('BattleFeedFilter');hud.execute_ui_action('BattleFeedFilter')
             state['index'] += 1;state.update(stage='prepare',at=time.monotonic())
     except Exception:

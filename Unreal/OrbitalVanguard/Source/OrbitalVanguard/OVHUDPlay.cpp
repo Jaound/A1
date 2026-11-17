@@ -203,8 +203,8 @@ void AOVHUD::DrawBattleNotices()
  const float W=Canvas->SizeX/UIScale,H=Canvas->SizeY/UIScale,X=W*.5f-120;
  const auto Indices=BattleNoticeIndices();const int32 Pages=FMath::Max(1,(Indices.Num()+2)/3);
  const int32 Page=bBattleFeedOpen?FMath::Clamp(BattleFeedPage,0,Pages-1):0;
- if(FPlatformTime::Seconds()-Feed->LastCriticalDisplayTime<3) {
-  const FLinearColor Warning(.8f,.04f,.03f,.20f);
+ if(WarningLevel>0&&FPlatformTime::Seconds()-Feed->LastCriticalDisplayTime<3) {
+  const FLinearColor Warning(.8f,.04f,.03f,WarningLevel==1?.08f:.20f);
   DrawRect(Warning,0,0,W,5);DrawRect(Warning,0,H-5,W,5);DrawRect(Warning,0,0,5,H);DrawRect(Warning,W-5,0,5,H);
  }
  for(int32 I=0;I<Count;++I) {
@@ -222,7 +222,9 @@ void AOVHUD::DrawBattleNotices()
   const TCHAR* Filters[]={TEXT("전체"),TEXT("위기"),TEXT("피해"),TEXT("강습"),TEXT("항공"),TEXT("선택함")};
   Button(TEXT("BattleFeedFilter"),FString::Printf(TEXT("%s %d/%d"),Filters[FMath::Clamp(BattleFeedFilter,0,5)],Page+1,Pages),X+68,Y,104);
   Button(TEXT("BattleFeedNewer"),TEXT("다음"),X+176,Y,64);
-  if(Feed->DroppedCount>0)DrawText(FString::Printf(TEXT("이전 알림 %d건 생략"),Feed->DroppedCount),PlayInk,X,Y+32,GEngine->GetSmallFont());
+  const TCHAR* Levels[]={TEXT("꺼짐"),TEXT("약하게"),TEXT("기본")};
+  Button(TEXT("BattleWarningLevel"),FString::Printf(TEXT("화면 경고: %s"),Levels[FMath::Clamp(WarningLevel,0,2)]),X,Y+32,150);
+  if(Feed->DroppedCount>0)DrawText(FString::Printf(TEXT("이전 알림 %d건 생략"),Feed->DroppedCount),PlayInk,X,Y+66,GEngine->GetSmallFont());
  }
 }
 
