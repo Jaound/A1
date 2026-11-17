@@ -1,0 +1,176 @@
+{
+  "passed": true,
+  "kind": "반복 수명 PIE API (직접 입력 아님)",
+  "checks": [
+    {
+      "id": "REP-RANGE",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "REP-60-SPAWN-DELETE",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "REP-ACTOR-REGISTRATIONS",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "REP-WIDGET-IDENTITY",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "REP-50-TAB-TOGGLE-CYCLES",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "REP-HP-UNCHANGED",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "REP-AIRCRAFT-ID-HP",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "REP-PEOPLE-UNCHANGED",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "REP-DEV-LIST-CLEAN",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "REP-OLD-PASSENGERS-0",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "REP-SCENE-RECORDS-CLEAR-0",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "REP-REACTIVATE-NO-GHOST-0",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "REP-POST-RESET-DELETE-0",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "REP-OLD-PASSENGERS-1",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "REP-SCENE-RECORDS-CLEAR-1",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "REP-REACTIVATE-NO-GHOST-1",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "REP-POST-RESET-DELETE-1",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "REP-OLD-PASSENGERS-2",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "REP-SCENE-RECORDS-CLEAR-2",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "REP-REACTIVATE-NO-GHOST-2",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "REP-POST-RESET-DELETE-2",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "REP-OLD-PASSENGERS-3",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "REP-SCENE-RECORDS-CLEAR-3",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "REP-REACTIVATE-NO-GHOST-3",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "REP-POST-RESET-DELETE-3",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "REP-OLD-PASSENGERS-4",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "REP-SCENE-RECORDS-CLEAR-4",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "REP-REACTIVATE-NO-GHOST-4",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "REP-POST-RESET-DELETE-4",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "REP-OLD-PASSENGERS-5",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "REP-SCENE-RECORDS-CLEAR-5",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "REP-REACTIVATE-NO-GHOST-5",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "REP-POST-RESET-DELETE-5",
+      "passed": true,
+      "detail": ""
+    }
+  ],
+  "errors": [],
+  "repetitions": {
+    "spawn_delete": 60,
+    "tabs_and_toggle": 50
+  }
+}

@@ -1,0 +1,358 @@
+{
+  "kind": "영웅 명단·선내 보직 PIE API 검사",
+  "checks": [
+    {
+      "id": "H-ROSTER-ROOM",
+      "passed": true,
+      "detail": "비전투 편성실 · 영웅 HP/성장/손실/소모품 유지 · 임무 시작 시 선택 편제만 배치"
+    },
+    {
+      "id": "H-ACTUAL-GAMEINSTANCE-SERVICE",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "H-UNIQUE-16-PEOPLE",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "H-DEPLOY-3",
+      "passed": true,
+      "detail": "영웅 편제 변경"
+    },
+    {
+      "id": "H-DEPLOY-4",
+      "passed": true,
+      "detail": "영웅 편제 변경"
+    },
+    {
+      "id": "H-DEPLOY-5",
+      "passed": true,
+      "detail": "영웅 편제 변경"
+    },
+    {
+      "id": "H-DEPLOY-6",
+      "passed": true,
+      "detail": "영웅 편제 변경"
+    },
+    {
+      "id": "H-DEPLOY-7",
+      "passed": true,
+      "detail": "영웅 편제 변경"
+    },
+    {
+      "id": "H-DEPLOY-8",
+      "passed": true,
+      "detail": "영웅 편제 변경"
+    },
+    {
+      "id": "H-DEPLOY-9",
+      "passed": true,
+      "detail": "영웅 편제 변경"
+    },
+    {
+      "id": "H-DEPLOY-10",
+      "passed": true,
+      "detail": "영웅 편제 변경"
+    },
+    {
+      "id": "H-DEPLOY-11",
+      "passed": true,
+      "detail": "영웅 편제 변경"
+    },
+    {
+      "id": "H-DEPLOY-12",
+      "passed": true,
+      "detail": "영웅 편제 변경"
+    },
+    {
+      "id": "H-DEPLOY-13",
+      "passed": true,
+      "detail": "영웅 편제 변경"
+    },
+    {
+      "id": "H-DEPLOY-14",
+      "passed": true,
+      "detail": "영웅 편제 변경"
+    },
+    {
+      "id": "H-DEPLOY-15",
+      "passed": true,
+      "detail": "영웅 편제 변경"
+    },
+    {
+      "id": "H-DEPLOY-16",
+      "passed": true,
+      "detail": "영웅 편제 변경"
+    },
+    {
+      "id": "H-DEPLOY-17",
+      "passed": true,
+      "detail": "영웅 편제 변경"
+    },
+    {
+      "id": "H-FACTION-15-LIMIT",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "H-DEV-XP",
+      "passed": true,
+      "detail": "개발용 시험 XP 지급 · 후보 성장값"
+    },
+    {
+      "id": "H-LEVEL-SKILLS",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "H-INVEST",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "H-SAVE",
+      "passed": true,
+      "detail": "영웅 명단 저장"
+    },
+    {
+      "id": "H-MUTATE-AFTER-SAVE",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "H-LOAD",
+      "passed": true,
+      "detail": "영웅 명단 불러오기"
+    },
+    {
+      "id": "H-SAVE-ID-AND-SKILLS",
+      "passed": true,
+      "detail": "loaded_id=(805947347, 1238302689, -1213197674, -2104858683) expected_id=(805947347, 1238302689, -1213197674, -2104858683) ranks=[2, 1, 1, 1] points=5"
+    },
+    {
+      "id": "H-RELEASE-26",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "H-RELEASE-27",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "H-RELEASE-28",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "H-RELEASE-29",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "H-RELEASE-30",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "H-RELEASE-31",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "H-RELEASE-32",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "H-RELEASE-33",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "H-RELEASE-34",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "H-RELEASE-35",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "H-RELEASE-36",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "H-RELEASE-37",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "H-RELEASE-38",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "H-RELEASE-39",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "H-F6-SECOND-RESERVE",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "H-F6-START",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "H-F6-INITIAL-NO-INTERIOR",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "H-F6-SELECTED-SHIP-SPAWN",
+      "passed": true,
+      "detail": "실제 인원 배치"
+    },
+    {
+      "id": "H-F6-TRANSPORT-LINK",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "H-F6-SECOND-SHIP-PRESERVES-FIRST",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "H-F6-DUTY-COMMAND",
+      "passed": true,
+      "detail": "보직 시설 이동 및 인계 준비"
+    },
+    {
+      "id": "H-F6-DUTY-ACTUAL-ARRIVAL",
+      "passed": true,
+      "detail": "보직 수행 중"
+    },
+    {
+      "id": "H-F6-DUTY-RELEASE",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "H-F6-ROOM-RETURN",
+      "passed": true,
+      "detail": "비전투 편성실 · 영웅 HP/성장/손실/소모품 유지 · 임무 시작 시 선택 편제만 배치"
+    },
+    {
+      "id": "H-F6-SECOND-RELEASE",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "H-DIRECT-ENEMY-SPAWN-REFUSED",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "H-OWN-SHIP-SPAWN-ALLOWED",
+      "passed": true,
+      "detail": "실제 인원 배치"
+    },
+    {
+      "id": "H-RETURN-TO-ROSTER-ROOM",
+      "passed": true,
+      "detail": "비전투 편성실 · 영웅 HP/성장/손실/소모품 유지 · 임무 시작 시 선택 편제만 배치"
+    },
+    {
+      "id": "H-OWNED-MISSION",
+      "passed": true,
+      "detail": "보유 영웅 임무 준비 · 동일 ID/HP/스킬/소모품으로 실제 운송과 작전 수행"
+    },
+    {
+      "id": "H-RUNTIME-IDS",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "H-IDLE-NO-PARTICIPATION-XP",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "H-NO-DUPLICATE-RUNTIME",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "H-NO-SAVE-IN-COMBAT",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "H-DUTY-ACCEPT",
+      "passed": true,
+      "detail": "보직 시설 이동 및 인계 준비"
+    },
+    {
+      "id": "H-DUTY-NOT-INSTANT",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "H-DUTY-ACTUAL-ARRIVAL",
+      "passed": true,
+      "detail": "보직 수행 중"
+    },
+    {
+      "id": "H-DUTY-APPLIED",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "H-DUTY-L10-COOLDOWN",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "H-DUTY-RELEASE",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "H-DUTY-EFFECT-REMOVED",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "H-COOLDOWN-GAME-SPEED",
+      "passed": true,
+      "detail": "game_delta_3x=3.0000001564621925 game_delta_1x=1.0000000521540642"
+    },
+    {
+      "id": "H-DUTY-REASSIGN",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "H-DUTY-RESTORED",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "H-DESTROYED-FACILITY-NO-BONUS",
+      "passed": true,
+      "detail": ""
+    }
+  ],
+  "errors": [],
+  "scope": "D114 v0.5 후보; 실제 키보드/마우스 및 장기 밸런스 검사 아님",
+  "passed": true
+}

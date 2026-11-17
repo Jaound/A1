@@ -1,0 +1,489 @@
+{
+  "passed": true,
+  "kind": "개발 카탈로그 필터 PIE API",
+  "scope": "공개 UI API와 카탈로그 대조; 실제 마우스·키보드 조작 및 외관 검증 아님",
+  "checks": [
+    {
+      "id": "FILT-ROSTER-ROOM",
+      "passed": true,
+      "detail": "비전투 편성실 · 영웅 HP/성장/손실/소모품 유지 · 임무 시작 시 선택 편제만 배치"
+    },
+    {
+      "id": "FILT-ROSTER-XP-FIXTURE",
+      "passed": true,
+      "detail": "개발용 시험 XP 지급 · 후보 성장값"
+    },
+    {
+      "id": "FILT-PAGE-OVERVIEW",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "FILT-CATALOGUE-UNIQUE",
+      "passed": true,
+      "detail": "50"
+    },
+    {
+      "id": "FILT-RESET",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "FILT-ALL-EXACT",
+      "passed": true,
+      "detail": "50"
+    },
+    {
+      "id": "FILT-XL-METADATA",
+      "passed": true,
+      "detail": "['battlecarrier', 'dreadnought']"
+    },
+    {
+      "id": "FILT-XL-APPLY",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "FILT-XL-EXACT",
+      "passed": true,
+      "detail": "['dreadnought', 'battlecarrier']"
+    },
+    {
+      "id": "FILT-CARRIER-METADATA",
+      "passed": true,
+      "detail": "['battlecarrier', 'carrier']"
+    },
+    {
+      "id": "FILT-CARRIER-APPLY",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "FILT-CARRIER-EXACT",
+      "passed": true,
+      "detail": "['carrier', 'battlecarrier']"
+    },
+    {
+      "id": "FILT-COMBINED-APPLY",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "FILT-COMBINED-EXACT",
+      "passed": true,
+      "detail": "['battlecarrier']"
+    },
+    {
+      "id": "FILT-AXIS-0-STATUS-0-APPLY",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "FILT-AXIS-0-STATUS-0-EXACT",
+      "passed": true,
+      "detail": "actual=0 expected=0"
+    },
+    {
+      "id": "FILT-AXIS-0-STATUS-1-APPLY",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "FILT-AXIS-0-STATUS-1-EXACT",
+      "passed": true,
+      "detail": "actual=50 expected=50"
+    },
+    {
+      "id": "FILT-AXIS-0-STATUS-2-APPLY",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "FILT-AXIS-0-STATUS-2-EXACT",
+      "passed": true,
+      "detail": "actual=0 expected=0"
+    },
+    {
+      "id": "FILT-AXIS-0-STATUS-3-APPLY",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "FILT-AXIS-0-STATUS-3-EXACT",
+      "passed": true,
+      "detail": "actual=0 expected=0"
+    },
+    {
+      "id": "FILT-AXIS-0-STATUS-4-APPLY",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "FILT-AXIS-0-STATUS-4-EXACT",
+      "passed": true,
+      "detail": "actual=0 expected=0"
+    },
+    {
+      "id": "FILT-AXIS-1-STATUS-0-APPLY",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "FILT-AXIS-1-STATUS-0-EXACT",
+      "passed": true,
+      "detail": "actual=0 expected=0"
+    },
+    {
+      "id": "FILT-AXIS-1-STATUS-1-APPLY",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "FILT-AXIS-1-STATUS-1-EXACT",
+      "passed": true,
+      "detail": "actual=45 expected=45"
+    },
+    {
+      "id": "FILT-AXIS-1-STATUS-2-APPLY",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "FILT-AXIS-1-STATUS-2-EXACT",
+      "passed": true,
+      "detail": "actual=4 expected=4"
+    },
+    {
+      "id": "FILT-AXIS-1-STATUS-3-APPLY",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "FILT-AXIS-1-STATUS-3-EXACT",
+      "passed": true,
+      "detail": "actual=1 expected=1"
+    },
+    {
+      "id": "FILT-AXIS-1-STATUS-4-APPLY",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "FILT-AXIS-1-STATUS-4-EXACT",
+      "passed": true,
+      "detail": "actual=0 expected=0"
+    },
+    {
+      "id": "FILT-AXIS-2-STATUS-0-APPLY",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "FILT-AXIS-2-STATUS-0-EXACT",
+      "passed": true,
+      "detail": "actual=6 expected=6"
+    },
+    {
+      "id": "FILT-AXIS-2-STATUS-1-APPLY",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "FILT-AXIS-2-STATUS-1-EXACT",
+      "passed": true,
+      "detail": "actual=0 expected=0"
+    },
+    {
+      "id": "FILT-AXIS-2-STATUS-2-APPLY",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "FILT-AXIS-2-STATUS-2-EXACT",
+      "passed": true,
+      "detail": "actual=16 expected=16"
+    },
+    {
+      "id": "FILT-AXIS-2-STATUS-3-APPLY",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "FILT-AXIS-2-STATUS-3-EXACT",
+      "passed": true,
+      "detail": "actual=0 expected=0"
+    },
+    {
+      "id": "FILT-AXIS-2-STATUS-4-APPLY",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "FILT-AXIS-2-STATUS-4-EXACT",
+      "passed": true,
+      "detail": "actual=28 expected=28"
+    },
+    {
+      "id": "FILT-AXIS-3-STATUS-0-APPLY",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "FILT-AXIS-3-STATUS-0-EXACT",
+      "passed": true,
+      "detail": "actual=50 expected=50"
+    },
+    {
+      "id": "FILT-AXIS-3-STATUS-1-APPLY",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "FILT-AXIS-3-STATUS-1-EXACT",
+      "passed": true,
+      "detail": "actual=0 expected=0"
+    },
+    {
+      "id": "FILT-AXIS-3-STATUS-2-APPLY",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "FILT-AXIS-3-STATUS-2-EXACT",
+      "passed": true,
+      "detail": "actual=0 expected=0"
+    },
+    {
+      "id": "FILT-AXIS-3-STATUS-3-APPLY",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "FILT-AXIS-3-STATUS-3-EXACT",
+      "passed": true,
+      "detail": "actual=0 expected=0"
+    },
+    {
+      "id": "FILT-AXIS-3-STATUS-4-APPLY",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "FILT-AXIS-3-STATUS-4-EXACT",
+      "passed": true,
+      "detail": "actual=0 expected=0"
+    },
+    {
+      "id": "FILT-AXIS-4-STATUS-0-APPLY",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "FILT-AXIS-4-STATUS-0-EXACT",
+      "passed": true,
+      "detail": "actual=34 expected=34"
+    },
+    {
+      "id": "FILT-AXIS-4-STATUS-1-APPLY",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "FILT-AXIS-4-STATUS-1-EXACT",
+      "passed": true,
+      "detail": "actual=0 expected=0"
+    },
+    {
+      "id": "FILT-AXIS-4-STATUS-2-APPLY",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "FILT-AXIS-4-STATUS-2-EXACT",
+      "passed": true,
+      "detail": "actual=16 expected=16"
+    },
+    {
+      "id": "FILT-AXIS-4-STATUS-3-APPLY",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "FILT-AXIS-4-STATUS-3-EXACT",
+      "passed": true,
+      "detail": "actual=0 expected=0"
+    },
+    {
+      "id": "FILT-AXIS-4-STATUS-4-APPLY",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "FILT-AXIS-4-STATUS-4-EXACT",
+      "passed": true,
+      "detail": "actual=0 expected=0"
+    },
+    {
+      "id": "FILT-AXIS-5-STATUS-0-APPLY",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "FILT-AXIS-5-STATUS-0-EXACT",
+      "passed": true,
+      "detail": "actual=47 expected=47"
+    },
+    {
+      "id": "FILT-AXIS-5-STATUS-1-APPLY",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "FILT-AXIS-5-STATUS-1-EXACT",
+      "passed": true,
+      "detail": "actual=0 expected=0"
+    },
+    {
+      "id": "FILT-AXIS-5-STATUS-2-APPLY",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "FILT-AXIS-5-STATUS-2-EXACT",
+      "passed": true,
+      "detail": "actual=0 expected=0"
+    },
+    {
+      "id": "FILT-AXIS-5-STATUS-3-APPLY",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "FILT-AXIS-5-STATUS-3-EXACT",
+      "passed": true,
+      "detail": "actual=3 expected=3"
+    },
+    {
+      "id": "FILT-AXIS-5-STATUS-4-APPLY",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "FILT-AXIS-5-STATUS-4-EXACT",
+      "passed": true,
+      "detail": "actual=0 expected=0"
+    },
+    {
+      "id": "FILT-PLANNED-DATA-APPLY",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "FILT-PLANNED-DATA-UNAVAILABLE",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "FILT-PLANNED-DIRECT-APPLY",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "FILT-PLANNED-DIRECT-UNAVAILABLE",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "FILT-PLANNED-PLANNING-APPLY",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "FILT-PLANNED-PLANNING-AVAILABLE",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "FILT-PLANNED-ROLE-APPLY",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "FILT-PLANNED-ROLE-UNKNOWN",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "FILT-INVALID-BASE",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "FILT-INVALID-SIZE-REJECT",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "FILT-INVALID-SIZE-PRESERVE",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "FILT-INVALID-ROLE-REJECT",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "FILT-INVALID-ROLE-PRESERVE",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "FILT-INVALID-AXIS-REJECT",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "FILT-INVALID-AXIS-PRESERVE",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "FILT-INVALID-STATUS-REJECT",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "FILT-INVALID-STATUS-PRESERVE",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "FILT-INVALID-NO-AXIS-REJECT",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "FILT-INVALID-NO-AXIS-PRESERVE",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "FILT-30-REPEAT-AND-RESET",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "FILT-NO-ACTOR-OR-HP-CHANGE",
+      "passed": true,
+      "detail": "(3, 3)"
+    },
+    {
+      "id": "FILT-NO-ROSTER-CHANGE",
+      "passed": true,
+      "detail": "(1, 1)"
+    }
+  ],
+  "errors": [],
+  "elapsed_seconds": 0.9690000000118744
+}

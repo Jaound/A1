@@ -1,11 +1,11 @@
 {
   "schema_version": 1,
-  "code_sha": "f9227de0f28afa0f95e16e91268cd9be0ba25f0a",
-  "source_archive_sha256": "48735e9cbed9e6e027cd4f0dbc08d5cd69dd8a4005e770be592901658bd2dfd1",
-  "source_archive_command": "git archive --format=tar f9227de0f28afa0f95e16e91268cd9be0ba25f0a Unreal/OrbitalVanguard/Source",
-  "binary_sha256": "0097cfc2e587b4eae11e87bc3582e0a163a42cbccc62452000e1b9c2f882012f",
-  "report": "docs/validation/Phase4/B2-Development.json",
-  "report_sha256": "12af5e71cd5e123bd0609b9d44a3711e3cdb694a1905c723b2c94bb91145e835",
+  "code_sha": "261159c9e65f7bc0c3c19e0a6ee5d388e70e2240",
+  "source_archive_sha256": "c879e07e41513c6a68f542c14410b4ae4126fc7c094955861bb218a88e8a7b82",
+  "source_archive_command": "git archive --format=tar 261159c9e65f7bc0c3c19e0a6ee5d388e70e2240 Unreal/OrbitalVanguard/Source",
+  "binary_sha256": "d02ffadeb3597213de31e05f22d60e0293794cc1b624c28f91bd989610c1bd17",
+  "report": "docs/validation/Phase4/B9-Development.json",
+  "report_sha256": "27609175c2d637ce5205ec235adf6cf134912eec4b1be690fa45a490e40b3793",
   "report_scope": "DEV PIE API; 물리 입력/실제 게임 밸런스 제외",
   "report_passed": true,
   "checks": [
@@ -71,6 +71,1093 @@
     },
     {
       "id": "생성 assault",
+      "passed": true
+    }
+  ],
+  "role_code_sha": "261159c9e65f7bc0c3c19e0a6ee5d388e70e2240",
+  "role_source_archive_sha256": "c879e07e41513c6a68f542c14410b4ae4126fc7c094955861bb218a88e8a7b82",
+  "role_binary_sha256": "d02ffadeb3597213de31e05f22d60e0293794cc1b624c28f91bd989610c1bd17",
+  "role_report": "docs/validation/Phase4/B9-HullRoles.json",
+  "role_report_sha256": "7d639da09378c5e8147409dad18d9aa5e1bf6336629b311c72aaf32fca03042e",
+  "role_checks": [
+    {
+      "id": "corvette / 실제 생성",
+      "passed": true
+    },
+    {
+      "id": "corvette / 동일 표적 생성",
+      "passed": true
+    },
+    {
+      "id": "corvette / PD 배제",
+      "passed": true
+    },
+    {
+      "id": "corvette / 선택",
+      "passed": true
+    },
+    {
+      "id": "corvette / 실제 이동",
+      "passed": true
+    },
+    {
+      "id": "corvette / 공격 무장 존재",
+      "passed": true
+    },
+    {
+      "id": "corvette / 표적 지정",
+      "passed": true
+    },
+    {
+      "id": "corvette / 발사 요청",
+      "passed": true
+    },
+    {
+      "id": "corvette / 재요청 중 발사 간격",
+      "passed": true
+    },
+    {
+      "id": "corvette / 실제 발사",
+      "passed": true
+    },
+    {
+      "id": "corvette / 동일 표적 실제 피격",
+      "passed": true
+    },
+    {
+      "id": "corvette / 엔진 1개 및 가동",
+      "passed": true
+    },
+    {
+      "id": "corvette / 실제 시설 피해",
+      "passed": true
+    },
+    {
+      "id": "corvette / 엔진 기능 정지",
+      "passed": true
+    },
+    {
+      "id": "corvette / 코어 완파",
+      "passed": true
+    },
+    {
+      "id": "corvette / DEV 정리",
+      "passed": true
+    },
+    {
+      "id": "corvette / 삭제 등록 정리",
+      "passed": true
+    },
+    {
+      "id": "frigate / 실제 생성",
+      "passed": true
+    },
+    {
+      "id": "frigate / 동일 표적 생성",
+      "passed": true
+    },
+    {
+      "id": "frigate / PD 배제",
+      "passed": true
+    },
+    {
+      "id": "frigate / 선택",
+      "passed": true
+    },
+    {
+      "id": "frigate / 실제 이동",
+      "passed": true
+    },
+    {
+      "id": "frigate / 공격 무장 존재",
+      "passed": true
+    },
+    {
+      "id": "frigate / 표적 지정",
+      "passed": true
+    },
+    {
+      "id": "frigate / 발사 요청",
+      "passed": true
+    },
+    {
+      "id": "frigate / 재요청 중 발사 간격",
+      "passed": true
+    },
+    {
+      "id": "frigate / 실제 발사",
+      "passed": true
+    },
+    {
+      "id": "frigate / 동일 표적 실제 피격",
+      "passed": true
+    },
+    {
+      "id": "frigate / 엔진 1개 및 가동",
+      "passed": true
+    },
+    {
+      "id": "frigate / 실제 시설 피해",
+      "passed": true
+    },
+    {
+      "id": "frigate / 엔진 기능 정지",
+      "passed": true
+    },
+    {
+      "id": "frigate / 코어 완파",
+      "passed": true
+    },
+    {
+      "id": "frigate / DEV 정리",
+      "passed": true
+    },
+    {
+      "id": "frigate / 삭제 등록 정리",
+      "passed": true
+    },
+    {
+      "id": "vector / 실제 생성",
+      "passed": true
+    },
+    {
+      "id": "vector / 동일 표적 생성",
+      "passed": true
+    },
+    {
+      "id": "vector / PD 배제",
+      "passed": true
+    },
+    {
+      "id": "vector / 선택",
+      "passed": true
+    },
+    {
+      "id": "vector / 실제 이동",
+      "passed": true
+    },
+    {
+      "id": "vector / 공격 무장 존재",
+      "passed": true
+    },
+    {
+      "id": "vector / 표적 지정",
+      "passed": true
+    },
+    {
+      "id": "vector / 발사 요청",
+      "passed": true
+    },
+    {
+      "id": "vector / 재요청 중 발사 간격",
+      "passed": true
+    },
+    {
+      "id": "vector / 실제 발사",
+      "passed": true
+    },
+    {
+      "id": "vector / 동일 표적 실제 피격",
+      "passed": true
+    },
+    {
+      "id": "vector / 엔진 1개 및 가동",
+      "passed": true
+    },
+    {
+      "id": "vector / 실제 시설 피해",
+      "passed": true
+    },
+    {
+      "id": "vector / 엔진 기능 정지",
+      "passed": true
+    },
+    {
+      "id": "vector / 코어 완파",
+      "passed": true
+    },
+    {
+      "id": "vector / DEV 정리",
+      "passed": true
+    },
+    {
+      "id": "vector / 삭제 등록 정리",
+      "passed": true
+    },
+    {
+      "id": "bastion / 실제 생성",
+      "passed": true
+    },
+    {
+      "id": "bastion / 동일 표적 생성",
+      "passed": true
+    },
+    {
+      "id": "bastion / PD 배제",
+      "passed": true
+    },
+    {
+      "id": "bastion / 선택",
+      "passed": true
+    },
+    {
+      "id": "bastion / 실제 이동",
+      "passed": true
+    },
+    {
+      "id": "bastion / 공격 무장 존재",
+      "passed": true
+    },
+    {
+      "id": "bastion / 표적 지정",
+      "passed": true
+    },
+    {
+      "id": "bastion / 발사 요청",
+      "passed": true
+    },
+    {
+      "id": "bastion / 재요청 중 발사 간격",
+      "passed": true
+    },
+    {
+      "id": "bastion / 실제 발사",
+      "passed": true
+    },
+    {
+      "id": "bastion / 동일 표적 실제 피격",
+      "passed": true
+    },
+    {
+      "id": "bastion / 엔진 1개 및 가동",
+      "passed": true
+    },
+    {
+      "id": "bastion / 실제 시설 피해",
+      "passed": true
+    },
+    {
+      "id": "bastion / 엔진 기능 정지",
+      "passed": true
+    },
+    {
+      "id": "bastion / 코어 완파",
+      "passed": true
+    },
+    {
+      "id": "bastion / DEV 정리",
+      "passed": true
+    },
+    {
+      "id": "bastion / 삭제 등록 정리",
+      "passed": true
+    },
+    {
+      "id": "cruiser / 실제 생성",
+      "passed": true
+    },
+    {
+      "id": "cruiser / 동일 표적 생성",
+      "passed": true
+    },
+    {
+      "id": "cruiser / PD 배제",
+      "passed": true
+    },
+    {
+      "id": "cruiser / 선택",
+      "passed": true
+    },
+    {
+      "id": "cruiser / 실제 이동",
+      "passed": true
+    },
+    {
+      "id": "cruiser / 공격 무장 존재",
+      "passed": true
+    },
+    {
+      "id": "cruiser / 표적 지정",
+      "passed": true
+    },
+    {
+      "id": "cruiser / 발사 요청",
+      "passed": true
+    },
+    {
+      "id": "cruiser / 재요청 중 발사 간격",
+      "passed": true
+    },
+    {
+      "id": "cruiser / 실제 발사",
+      "passed": true
+    },
+    {
+      "id": "cruiser / 동일 표적 실제 피격",
+      "passed": true
+    },
+    {
+      "id": "cruiser / 엔진 1개 및 가동",
+      "passed": true
+    },
+    {
+      "id": "cruiser / 실제 시설 피해",
+      "passed": true
+    },
+    {
+      "id": "cruiser / 엔진 기능 정지",
+      "passed": true
+    },
+    {
+      "id": "cruiser / 코어 완파",
+      "passed": true
+    },
+    {
+      "id": "cruiser / DEV 정리",
+      "passed": true
+    },
+    {
+      "id": "cruiser / 삭제 등록 정리",
+      "passed": true
+    },
+    {
+      "id": "air_defense / 실제 생성",
+      "passed": true
+    },
+    {
+      "id": "air_defense / 동일 표적 생성",
+      "passed": true
+    },
+    {
+      "id": "air_defense / PD 배제",
+      "passed": true
+    },
+    {
+      "id": "air_defense / 선택",
+      "passed": true
+    },
+    {
+      "id": "air_defense / 실제 이동",
+      "passed": true
+    },
+    {
+      "id": "air_defense / 공격 무장 존재",
+      "passed": true
+    },
+    {
+      "id": "air_defense / 표적 지정",
+      "passed": true
+    },
+    {
+      "id": "air_defense / 발사 요청",
+      "passed": true
+    },
+    {
+      "id": "air_defense / 재요청 중 발사 간격",
+      "passed": true
+    },
+    {
+      "id": "air_defense / 실제 발사",
+      "passed": true
+    },
+    {
+      "id": "air_defense / 동일 표적 실제 피격",
+      "passed": true
+    },
+    {
+      "id": "air_defense / 엔진 1개 및 가동",
+      "passed": true
+    },
+    {
+      "id": "air_defense / 실제 시설 피해",
+      "passed": true
+    },
+    {
+      "id": "air_defense / 엔진 기능 정지",
+      "passed": true
+    },
+    {
+      "id": "air_defense / 코어 완파",
+      "passed": true
+    },
+    {
+      "id": "air_defense / DEV 정리",
+      "passed": true
+    },
+    {
+      "id": "air_defense / 삭제 등록 정리",
+      "passed": true
+    },
+    {
+      "id": "radar / 실제 생성",
+      "passed": true
+    },
+    {
+      "id": "radar / 동일 표적 생성",
+      "passed": true
+    },
+    {
+      "id": "radar / PD 배제",
+      "passed": true
+    },
+    {
+      "id": "radar / 선택",
+      "passed": true
+    },
+    {
+      "id": "radar / 실제 이동",
+      "passed": true
+    },
+    {
+      "id": "radar / 공격 무장 존재",
+      "passed": true
+    },
+    {
+      "id": "radar / 표적 지정",
+      "passed": true
+    },
+    {
+      "id": "radar / 발사 요청",
+      "passed": true
+    },
+    {
+      "id": "radar / 재요청 중 발사 간격",
+      "passed": true
+    },
+    {
+      "id": "radar / 실제 발사",
+      "passed": true
+    },
+    {
+      "id": "radar / 동일 표적 실제 피격",
+      "passed": true
+    },
+    {
+      "id": "radar / 엔진 1개 및 가동",
+      "passed": true
+    },
+    {
+      "id": "radar / 실제 시설 피해",
+      "passed": true
+    },
+    {
+      "id": "radar / 엔진 기능 정지",
+      "passed": true
+    },
+    {
+      "id": "radar / 코어 완파",
+      "passed": true
+    },
+    {
+      "id": "radar / DEV 정리",
+      "passed": true
+    },
+    {
+      "id": "radar / 삭제 등록 정리",
+      "passed": true
+    },
+    {
+      "id": "battleship / 실제 생성",
+      "passed": true
+    },
+    {
+      "id": "battleship / 동일 표적 생성",
+      "passed": true
+    },
+    {
+      "id": "battleship / PD 배제",
+      "passed": true
+    },
+    {
+      "id": "battleship / 선택",
+      "passed": true
+    },
+    {
+      "id": "battleship / 실제 이동",
+      "passed": true
+    },
+    {
+      "id": "battleship / 공격 무장 존재",
+      "passed": true
+    },
+    {
+      "id": "battleship / 표적 지정",
+      "passed": true
+    },
+    {
+      "id": "battleship / 발사 요청",
+      "passed": true
+    },
+    {
+      "id": "battleship / 재요청 중 발사 간격",
+      "passed": true
+    },
+    {
+      "id": "battleship / 실제 발사",
+      "passed": true
+    },
+    {
+      "id": "battleship / 동일 표적 실제 피격",
+      "passed": true
+    },
+    {
+      "id": "battleship / 엔진 1개 및 가동",
+      "passed": true
+    },
+    {
+      "id": "battleship / 실제 시설 피해",
+      "passed": true
+    },
+    {
+      "id": "battleship / 엔진 기능 정지",
+      "passed": true
+    },
+    {
+      "id": "battleship / 코어 완파",
+      "passed": true
+    },
+    {
+      "id": "battleship / DEV 정리",
+      "passed": true
+    },
+    {
+      "id": "battleship / 삭제 등록 정리",
+      "passed": true
+    },
+    {
+      "id": "carrier / 실제 생성",
+      "passed": true
+    },
+    {
+      "id": "carrier / 동일 표적 생성",
+      "passed": true
+    },
+    {
+      "id": "carrier / PD 배제",
+      "passed": true
+    },
+    {
+      "id": "carrier / 선택",
+      "passed": true
+    },
+    {
+      "id": "carrier / 실제 이동",
+      "passed": true
+    },
+    {
+      "id": "carrier / 공격 무장 존재",
+      "passed": true
+    },
+    {
+      "id": "carrier / 표적 지정",
+      "passed": true
+    },
+    {
+      "id": "carrier / 발사 요청",
+      "passed": true
+    },
+    {
+      "id": "carrier / 재요청 중 발사 간격",
+      "passed": true
+    },
+    {
+      "id": "carrier / 실제 발사",
+      "passed": true
+    },
+    {
+      "id": "carrier / 동일 표적 실제 피격",
+      "passed": true
+    },
+    {
+      "id": "carrier / 엔진 1개 및 가동",
+      "passed": true
+    },
+    {
+      "id": "carrier / 실제 시설 피해",
+      "passed": true
+    },
+    {
+      "id": "carrier / 엔진 기능 정지",
+      "passed": true
+    },
+    {
+      "id": "carrier / 코어 완파",
+      "passed": true
+    },
+    {
+      "id": "carrier / DEV 정리",
+      "passed": true
+    },
+    {
+      "id": "carrier / 삭제 등록 정리",
+      "passed": true
+    },
+    {
+      "id": "missile_ship / 실제 생성",
+      "passed": true
+    },
+    {
+      "id": "missile_ship / 동일 표적 생성",
+      "passed": true
+    },
+    {
+      "id": "missile_ship / PD 배제",
+      "passed": true
+    },
+    {
+      "id": "missile_ship / 선택",
+      "passed": true
+    },
+    {
+      "id": "missile_ship / 실제 이동",
+      "passed": true
+    },
+    {
+      "id": "missile_ship / 공격 무장 존재",
+      "passed": true
+    },
+    {
+      "id": "missile_ship / 표적 지정",
+      "passed": true
+    },
+    {
+      "id": "missile_ship / 발사 요청",
+      "passed": true
+    },
+    {
+      "id": "missile_ship / 재요청 중 발사 간격",
+      "passed": true
+    },
+    {
+      "id": "missile_ship / 실제 발사",
+      "passed": true
+    },
+    {
+      "id": "missile_ship / 동일 표적 실제 피격",
+      "passed": true
+    },
+    {
+      "id": "missile_ship / 엔진 1개 및 가동",
+      "passed": true
+    },
+    {
+      "id": "missile_ship / 실제 시설 피해",
+      "passed": true
+    },
+    {
+      "id": "missile_ship / 엔진 기능 정지",
+      "passed": true
+    },
+    {
+      "id": "missile_ship / 코어 완파",
+      "passed": true
+    },
+    {
+      "id": "missile_ship / DEV 정리",
+      "passed": true
+    },
+    {
+      "id": "missile_ship / 삭제 등록 정리",
+      "passed": true
+    },
+    {
+      "id": "dreadnought / 실제 생성",
+      "passed": true
+    },
+    {
+      "id": "dreadnought / 동일 표적 생성",
+      "passed": true
+    },
+    {
+      "id": "dreadnought / PD 배제",
+      "passed": true
+    },
+    {
+      "id": "dreadnought / 선택",
+      "passed": true
+    },
+    {
+      "id": "dreadnought / 실제 이동",
+      "passed": true
+    },
+    {
+      "id": "dreadnought / 공격 무장 존재",
+      "passed": true
+    },
+    {
+      "id": "dreadnought / 표적 지정",
+      "passed": true
+    },
+    {
+      "id": "dreadnought / 발사 요청",
+      "passed": true
+    },
+    {
+      "id": "dreadnought / 재요청 중 발사 간격",
+      "passed": true
+    },
+    {
+      "id": "dreadnought / 실제 발사",
+      "passed": true
+    },
+    {
+      "id": "dreadnought / 동일 표적 실제 피격",
+      "passed": true
+    },
+    {
+      "id": "dreadnought / 엔진 1개 및 가동",
+      "passed": true
+    },
+    {
+      "id": "dreadnought / 실제 시설 피해",
+      "passed": true
+    },
+    {
+      "id": "dreadnought / 엔진 기능 정지",
+      "passed": true
+    },
+    {
+      "id": "dreadnought / 코어 완파",
+      "passed": true
+    },
+    {
+      "id": "dreadnought / DEV 정리",
+      "passed": true
+    },
+    {
+      "id": "dreadnought / 삭제 등록 정리",
+      "passed": true
+    },
+    {
+      "id": "battlecarrier / 실제 생성",
+      "passed": true
+    },
+    {
+      "id": "battlecarrier / 동일 표적 생성",
+      "passed": true
+    },
+    {
+      "id": "battlecarrier / PD 배제",
+      "passed": true
+    },
+    {
+      "id": "battlecarrier / 선택",
+      "passed": true
+    },
+    {
+      "id": "battlecarrier / 실제 이동",
+      "passed": true
+    },
+    {
+      "id": "battlecarrier / 공격 무장 존재",
+      "passed": true
+    },
+    {
+      "id": "battlecarrier / 표적 지정",
+      "passed": true
+    },
+    {
+      "id": "battlecarrier / 발사 요청",
+      "passed": true
+    },
+    {
+      "id": "battlecarrier / 재요청 중 발사 간격",
+      "passed": true
+    },
+    {
+      "id": "battlecarrier / 실제 발사",
+      "passed": true
+    },
+    {
+      "id": "battlecarrier / 동일 표적 실제 피격",
+      "passed": true
+    },
+    {
+      "id": "battlecarrier / 엔진 1개 및 가동",
+      "passed": true
+    },
+    {
+      "id": "battlecarrier / 실제 시설 피해",
+      "passed": true
+    },
+    {
+      "id": "battlecarrier / 엔진 기능 정지",
+      "passed": true
+    },
+    {
+      "id": "battlecarrier / 코어 완파",
+      "passed": true
+    },
+    {
+      "id": "battlecarrier / DEV 정리",
+      "passed": true
+    },
+    {
+      "id": "battlecarrier / 삭제 등록 정리",
+      "passed": true
+    },
+    {
+      "id": "repair / 실제 생성",
+      "passed": true
+    },
+    {
+      "id": "repair / 동일 표적 생성",
+      "passed": true
+    },
+    {
+      "id": "repair / PD 배제",
+      "passed": true
+    },
+    {
+      "id": "repair / 선택",
+      "passed": true
+    },
+    {
+      "id": "repair / 실제 이동",
+      "passed": true
+    },
+    {
+      "id": "repair / 공격 무장 없음",
+      "passed": true
+    },
+    {
+      "id": "repair / 자원 시설 가동",
+      "passed": true
+    },
+    {
+      "id": "repair / 엔진 1개 및 가동",
+      "passed": true
+    },
+    {
+      "id": "repair / 실제 시설 피해",
+      "passed": true
+    },
+    {
+      "id": "repair / 엔진 기능 정지",
+      "passed": true
+    },
+    {
+      "id": "repair / 코어 완파",
+      "passed": true
+    },
+    {
+      "id": "repair / DEV 정리",
+      "passed": true
+    },
+    {
+      "id": "repair / 삭제 등록 정리",
+      "passed": true
+    },
+    {
+      "id": "mining / 실제 생성",
+      "passed": true
+    },
+    {
+      "id": "mining / 동일 표적 생성",
+      "passed": true
+    },
+    {
+      "id": "mining / PD 배제",
+      "passed": true
+    },
+    {
+      "id": "mining / 선택",
+      "passed": true
+    },
+    {
+      "id": "mining / 실제 이동",
+      "passed": true
+    },
+    {
+      "id": "mining / 공격 무장 없음",
+      "passed": true
+    },
+    {
+      "id": "mining / 자원 시설 가동",
+      "passed": true
+    },
+    {
+      "id": "mining / 엔진 1개 및 가동",
+      "passed": true
+    },
+    {
+      "id": "mining / 실제 시설 피해",
+      "passed": true
+    },
+    {
+      "id": "mining / 엔진 기능 정지",
+      "passed": true
+    },
+    {
+      "id": "mining / 코어 완파",
+      "passed": true
+    },
+    {
+      "id": "mining / DEV 정리",
+      "passed": true
+    },
+    {
+      "id": "mining / 삭제 등록 정리",
+      "passed": true
+    },
+    {
+      "id": "transport / 실제 생성",
+      "passed": true
+    },
+    {
+      "id": "transport / 동일 표적 생성",
+      "passed": true
+    },
+    {
+      "id": "transport / PD 배제",
+      "passed": true
+    },
+    {
+      "id": "transport / 선택",
+      "passed": true
+    },
+    {
+      "id": "transport / 실제 이동",
+      "passed": true
+    },
+    {
+      "id": "transport / 공격 무장 없음",
+      "passed": true
+    },
+    {
+      "id": "transport / 자원 시설 가동",
+      "passed": true
+    },
+    {
+      "id": "transport / 엔진 1개 및 가동",
+      "passed": true
+    },
+    {
+      "id": "transport / 실제 시설 피해",
+      "passed": true
+    },
+    {
+      "id": "transport / 엔진 기능 정지",
+      "passed": true
+    },
+    {
+      "id": "transport / 코어 완파",
+      "passed": true
+    },
+    {
+      "id": "transport / DEV 정리",
+      "passed": true
+    },
+    {
+      "id": "transport / 삭제 등록 정리",
+      "passed": true
+    },
+    {
+      "id": "assault / 실제 생성",
+      "passed": true
+    },
+    {
+      "id": "assault / 동일 표적 생성",
+      "passed": true
+    },
+    {
+      "id": "assault / PD 배제",
+      "passed": true
+    },
+    {
+      "id": "assault / 선택",
+      "passed": true
+    },
+    {
+      "id": "assault / 실제 이동",
+      "passed": true
+    },
+    {
+      "id": "assault / 공격 무장 없음",
+      "passed": true
+    },
+    {
+      "id": "assault / PD 1기",
+      "passed": true
+    },
+    {
+      "id": "assault / 수송선 등록",
+      "passed": true
+    },
+    {
+      "id": "assault / 엔진 1개 및 가동",
+      "passed": true
+    },
+    {
+      "id": "assault / 실제 시설 피해",
+      "passed": true
+    },
+    {
+      "id": "assault / 엔진 기능 정지",
+      "passed": true
+    },
+    {
+      "id": "assault / 코어 완파",
+      "passed": true
+    },
+    {
+      "id": "assault / DEV 정리",
+      "passed": true
+    },
+    {
+      "id": "assault / 삭제 등록 정리",
+      "passed": true
+    },
+    {
+      "id": "지원 / 실제 물류 서브시스템 조회",
+      "passed": true
+    },
+    {
+      "id": "지원 / 네 함선 실제 생성",
+      "passed": true
+    },
+    {
+      "id": "채굴 / 유한 자원 차감",
+      "passed": true
+    },
+    {
+      "id": "수송 / 채굴 재고 수거",
+      "passed": true
+    },
+    {
+      "id": "수송 / 수리함 재고 이전",
+      "passed": true
+    },
+    {
+      "id": "수리 / 유한 자원 링크 시작",
+      "passed": true
+    },
+    {
+      "id": "수리 / 실제 복구·자원 차감",
+      "passed": true
+    },
+    {
+      "id": "carrier / 함재기 모함 생성",
+      "passed": true
+    },
+    {
+      "id": "carrier / 실제 출격",
+      "passed": true
+    },
+    {
+      "id": "carrier / 실제 복귀와 동일 기체 재고",
+      "passed": true
+    },
+    {
+      "id": "battlecarrier / 함재기 모함 생성",
+      "passed": true
+    },
+    {
+      "id": "battlecarrier / 실제 출격",
+      "passed": true
+    },
+    {
+      "id": "battlecarrier / 실제 복귀와 동일 기체 재고",
       "passed": true
     }
   ]

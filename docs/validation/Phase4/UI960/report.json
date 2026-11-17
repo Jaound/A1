@@ -1,0 +1,68 @@
+{
+  "kind": "PIE UI render capture via widget API",
+  "physical_input": false,
+  "requested_resolution": "960x600",
+  "floating_requested": true,
+  "screenshots": [
+    {
+      "view": "01_play_hero",
+      "tab": null,
+      "path": "C:/Users/user/source/repos/A1/Unreal/OrbitalVanguard/Saved/Validation/DevelopmentUI/20261117_101229_435800/01_play_hero.png",
+      "viewport_pixels": [
+        960,
+        602
+      ],
+      "requested_resolution_matched": false,
+      "exists": true
+    },
+    {
+      "view": "02_dev_overview",
+      "tab": "통합 현황",
+      "path": "C:/Users/user/source/repos/A1/Unreal/OrbitalVanguard/Saved/Validation/DevelopmentUI/20261117_101229_435800/02_dev_overview.png",
+      "viewport_pixels": [
+        960,
+        602
+      ],
+      "requested_resolution_matched": false,
+      "exists": true
+    },
+    {
+      "view": "03_dev_hulls",
+      "tab": "함선·초소형함",
+      "path": "C:/Users/user/source/repos/A1/Unreal/OrbitalVanguard/Saved/Validation/DevelopmentUI/20261117_101229_435800/03_dev_hulls.png",
+      "viewport_pixels": [
+        960,
+        602
+      ],
+      "requested_resolution_matched": false,
+      "exists": true
+    },
+    {
+      "view": "04_dev_heroes",
+      "tab": "영웅",
+      "path": "C:/Users/user/source/repos/A1/Unreal/OrbitalVanguard/Saved/Validation/DevelopmentUI/20261117_101229_435800/04_dev_heroes.png",
+      "viewport_pixels": [
+        960,
+        602
+      ],
+      "requested_resolution_matched": false,
+      "exists": true
+    },
+    {
+      "view": "05_dev_weapons",
+      "tab": "무장",
+      "path": "C:/Users/user/source/repos/A1/Unreal/OrbitalVanguard/Saved/Validation/DevelopmentUI/20261117_101229_435800/05_dev_weapons.png",
+      "viewport_pixels": [
+        960,
+        602
+      ],
+      "requested_resolution_matched": false,
+      "exists": true
+    }
+  ],
+  "errors": [],
+  "scope": "Widget API calls are not physical input, focus, or gameplay validation.",
+  "play_settings_restored": true,
+  "passed": true,
+  "elapsed_wall_seconds": 15.812999999994645
+}

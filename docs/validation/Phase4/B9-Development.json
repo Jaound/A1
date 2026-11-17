@@ -1,0 +1,602 @@
+{
+  "passed": true,
+  "scope": "DEV PIE API; 물리 입력/실제 게임 밸런스 제외",
+  "planning": "035a4fba81d26f1d67daa1f44bded0f7e8d3a434",
+  "checks": [
+    {
+      "id": "시작 F6",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "카탈로그 수량과 구분",
+      "passed": true,
+      "detail": "Counter({'<OVCatalogCategory.WEAPON: 1>': 26, '<OVCatalogCategory.HULL: 0>': 16, '<OVCatalogCategory.HERO: 4>': 4, '<OVCatalogCategory.POINT_DEFENSE: 5>': 2, '<OVCatalogCategory.FIGHTER: 2>': 1, '<OVCatalogCategory.POD: 3>': 1})"
+    },
+    {
+      "id": "기획만 특수 무장 구분",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "정의 ID 고유성",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "검증 근거 상태 구분",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "과거 자동 검증과 직접 입력 분리",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "실제 16 정의 목록",
+      "passed": true,
+      "detail": "['corvette', 'frigate', 'vector', 'bastion', 'cruiser', 'air_defense', 'radar', 'battleship', 'carrier', 'missile_ship', 'dreadnought', 'battlecarrier', 'repair', 'mining', 'transport', 'assault']"
+    },
+    {
+      "id": "생성 corvette",
+      "passed": true,
+      "detail": "시험 함선 1척 생성 · 최초 재고/병력만 공급 · 캠페인 획득 아님"
+    },
+    {
+      "id": "전투 등록 corvette",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "PD 등록 corvette",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "선내 그래프 corvette",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "생성 frigate",
+      "passed": true,
+      "detail": "시험 함선 1척 생성 · 최초 재고/병력만 공급 · 캠페인 획득 아님"
+    },
+    {
+      "id": "전투 등록 frigate",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "PD 등록 frigate",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "선내 그래프 frigate",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "생성 vector",
+      "passed": true,
+      "detail": "시험 함선 1척 생성 · 최초 재고/병력만 공급 · 캠페인 획득 아님"
+    },
+    {
+      "id": "전투 등록 vector",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "PD 등록 vector",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "선내 그래프 vector",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "생성 bastion",
+      "passed": true,
+      "detail": "시험 함선 1척 생성 · 최초 재고/병력만 공급 · 캠페인 획득 아님"
+    },
+    {
+      "id": "전투 등록 bastion",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "PD 등록 bastion",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "선내 그래프 bastion",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "생성 cruiser",
+      "passed": true,
+      "detail": "시험 함선 1척 생성 · 최초 재고/병력만 공급 · 캠페인 획득 아님"
+    },
+    {
+      "id": "전투 등록 cruiser",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "PD 등록 cruiser",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "선내 그래프 cruiser",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "생성 air_defense",
+      "passed": true,
+      "detail": "시험 함선 1척 생성 · 최초 재고/병력만 공급 · 캠페인 획득 아님"
+    },
+    {
+      "id": "전투 등록 air_defense",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "PD 등록 air_defense",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "선내 그래프 air_defense",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "생성 radar",
+      "passed": true,
+      "detail": "시험 함선 1척 생성 · 최초 재고/병력만 공급 · 캠페인 획득 아님"
+    },
+    {
+      "id": "전투 등록 radar",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "PD 등록 radar",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "선내 그래프 radar",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "생성 battleship",
+      "passed": true,
+      "detail": "시험 함선 1척 생성 · 최초 재고/병력만 공급 · 캠페인 획득 아님"
+    },
+    {
+      "id": "전투 등록 battleship",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "PD 등록 battleship",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "선내 그래프 battleship",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "생성 carrier",
+      "passed": true,
+      "detail": "시험 함선 1척 생성 · 최초 재고/병력만 공급 · 캠페인 획득 아님"
+    },
+    {
+      "id": "전투 등록 carrier",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "PD 등록 carrier",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "선내 그래프 carrier",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "생성 missile_ship",
+      "passed": true,
+      "detail": "시험 함선 1척 생성 · 최초 재고/병력만 공급 · 캠페인 획득 아님"
+    },
+    {
+      "id": "전투 등록 missile_ship",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "PD 등록 missile_ship",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "선내 그래프 missile_ship",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "생성 dreadnought",
+      "passed": true,
+      "detail": "시험 함선 1척 생성 · 최초 재고/병력만 공급 · 캠페인 획득 아님"
+    },
+    {
+      "id": "전투 등록 dreadnought",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "PD 등록 dreadnought",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "선내 그래프 dreadnought",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "생성 battlecarrier",
+      "passed": true,
+      "detail": "시험 함선 1척 생성 · 최초 재고/병력만 공급 · 캠페인 획득 아님"
+    },
+    {
+      "id": "전투 등록 battlecarrier",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "PD 등록 battlecarrier",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "선내 그래프 battlecarrier",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "생성 repair",
+      "passed": true,
+      "detail": "시험 함선 1척 생성 · 최초 재고/병력만 공급 · 캠페인 획득 아님"
+    },
+    {
+      "id": "전투 등록 repair",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "PD 등록 repair",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "선내 그래프 repair",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "생성 mining",
+      "passed": true,
+      "detail": "시험 함선 1척 생성 · 최초 재고/병력만 공급 · 캠페인 획득 아님"
+    },
+    {
+      "id": "전투 등록 mining",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "PD 등록 mining",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "선내 그래프 mining",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "생성 transport",
+      "passed": true,
+      "detail": "시험 함선 1척 생성 · 최초 재고/병력만 공급 · 캠페인 획득 아님"
+    },
+    {
+      "id": "전투 등록 transport",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "PD 등록 transport",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "선내 그래프 transport",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "생성 assault",
+      "passed": true,
+      "detail": "시험 함선 1척 생성 · 최초 재고/병력만 공급 · 캠페인 획득 아님"
+    },
+    {
+      "id": "전투 등록 assault",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "PD 등록 assault",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "선내 그래프 assault",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "F6 방공 시스템 활성",
+      "passed": true,
+      "detail": "등록뿐 아니라 실제 Step이 실행돼야 함"
+    },
+    {
+      "id": "겹침 생성 거부와 롤백",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "항모 격납고와 기체 등록",
+      "passed": true,
+      "detail": "(2, 4)"
+    },
+    {
+      "id": "혼합 티어 계수 dreadnought",
+      "passed": true,
+      "detail": "146.0"
+    },
+    {
+      "id": "혼합 티어 실제 유폭 피해 dreadnought",
+      "passed": true,
+      "detail": "1.4599990844726562"
+    },
+    {
+      "id": "혼합 티어 계수 battlecarrier",
+      "passed": true,
+      "detail": "120.0"
+    },
+    {
+      "id": "혼합 티어 실제 유폭 피해 battlecarrier",
+      "passed": true,
+      "detail": "1.1999969482421875"
+    },
+    {
+      "id": "동일 계열·티어 장착",
+      "passed": true,
+      "detail": "무장 교체 · 기존 장착 계열/티어/상하부 제약 유지 · HP 회복 없음"
+    },
+    {
+      "id": "타 계열 장착 거부",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "타 티어 장착 거부",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "장착으로 손상 무장 HP 회복 없음",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "적 함체 생성",
+      "passed": true,
+      "detail": "시험 함선 1척 생성 · 최초 재고/병력만 공급 · 캠페인 획득 아님"
+    },
+    {
+      "id": "직접 표적 지정",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "직접 발사 요청",
+      "passed": true,
+      "detail": "발사 요청 수락 · 실제 발사 가능 조건은 별도 검사 / READY"
+    },
+    {
+      "id": "실제 탄체 발사",
+      "passed": true,
+      "detail": "발사 요청 수락 · 실제 발사 가능 조건은 별도 검사 / READY"
+    },
+    {
+      "id": "발사 후 원 함체 삭제",
+      "passed": true,
+      "detail": "시험 함선과 해당 격납 시험 재고를 명시적으로 폐기 · 기발사 공격 기록은 유지"
+    },
+    {
+      "id": "기발사 정보 유지",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "선택 삭제 정리",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "다른 함선 표적 설정",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "표적 삭제",
+      "passed": true,
+      "detail": "시험 함선과 해당 격납 시험 재고를 명시적으로 폐기 · 기발사 공격 기록은 유지"
+    },
+    {
+      "id": "삭제 표적 참조 정리",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "운송 등록 후 승객 생성",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "승객 있는 함선 삭제 거부",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "항모 실제 발진",
+      "passed": true,
+      "detail": "4"
+    },
+    {
+      "id": "미귀환 기체 함선 삭제 거부",
+      "passed": true,
+      "detail": ""
+    }
+  ],
+  "errors": [],
+  "cases": [
+    {
+      "definition_id": "corvette",
+      "runtime_id": "OVShip_3",
+      "pd_count": 2,
+      "mounts": 4,
+      "hull_hp": 5400.0
+    },
+    {
+      "definition_id": "frigate",
+      "runtime_id": "OVShip_4",
+      "pd_count": 2,
+      "mounts": 4,
+      "hull_hp": 8400.0
+    },
+    {
+      "definition_id": "vector",
+      "runtime_id": "OVShip_5",
+      "pd_count": 2,
+      "mounts": 5,
+      "hull_hp": 21252.0
+    },
+    {
+      "definition_id": "bastion",
+      "runtime_id": "OVShip_6",
+      "pd_count": 4,
+      "mounts": 9,
+      "hull_hp": 34188.0
+    },
+    {
+      "definition_id": "cruiser",
+      "runtime_id": "OVShip_7",
+      "pd_count": 3,
+      "mounts": 8,
+      "hull_hp": 36960.0
+    },
+    {
+      "definition_id": "air_defense",
+      "runtime_id": "OVShip_8",
+      "pd_count": 11,
+      "mounts": 13,
+      "hull_hp": 25410.0
+    },
+    {
+      "definition_id": "radar",
+      "runtime_id": "OVShip_9",
+      "pd_count": 1,
+      "mounts": 2,
+      "hull_hp": 19404.0
+    },
+    {
+      "definition_id": "battleship",
+      "runtime_id": "OVShip_10",
+      "pd_count": 5,
+      "mounts": 15,
+      "hull_hp": 158400.0
+    },
+    {
+      "definition_id": "carrier",
+      "runtime_id": "OVShip_11",
+      "pd_count": 5,
+      "mounts": 9,
+      "hull_hp": 134640.0
+    },
+    {
+      "definition_id": "missile_ship",
+      "runtime_id": "OVShip_12",
+      "pd_count": 5,
+      "mounts": 15,
+      "hull_hp": 130680.0
+    },
+    {
+      "definition_id": "dreadnought",
+      "runtime_id": "OVShip_13",
+      "pd_count": 8,
+      "mounts": 24,
+      "hull_hp": 825000.0
+    },
+    {
+      "definition_id": "battlecarrier",
+      "runtime_id": "OVShip_14",
+      "pd_count": 8,
+      "mounts": 20,
+      "hull_hp": 693000.0
+    },
+    {
+      "definition_id": "repair",
+      "runtime_id": "OVShip_15",
+      "pd_count": 2,
+      "mounts": 2,
+      "hull_hp": 10164.0
+    },
+    {
+      "definition_id": "mining",
+      "runtime_id": "OVShip_16",
+      "pd_count": 2,
+      "mounts": 2,
+      "hull_hp": 6600.0
+    },
+    {
+      "definition_id": "transport",
+      "runtime_id": "OVShip_17",
+      "pd_count": 2,
+      "mounts": 2,
+      "hull_hp": 7920.0
+    },
+    {
+      "definition_id": "assault",
+      "runtime_id": "OVShip_18",
+      "pd_count": 1,
+      "mounts": 1,
+      "hull_hp": 10560.0
+    }
+  ]
+}

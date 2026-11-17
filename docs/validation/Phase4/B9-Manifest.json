@@ -1,0 +1,110 @@
+{
+  "code_sha": "261159c9e65f7bc0c3c19e0a6ee5d388e70e2240",
+  "planning_sha": "035a4fba81d26f1d67daa1f44bded0f7e8d3a434",
+  "build_label": "Phase4B9",
+  "source_archive_sha256": "c879e07e41513c6a68f542c14410b4ae4126fc7c094955861bb218a88e8a7b82",
+  "binary_sha256": "d02ffadeb3597213de31e05f22d60e0293794cc1b624c28f91bd989610c1bd17",
+  "build_identity": {
+    "code_sha": "f9227de0f28afa0f95e16e91268cd9be0ba25f0a",
+    "source_sha256": "339146daf0d70ff4159d0f09fd9cb7cfacfcb02773e787cc0bf0830e472f28e8",
+    "dirty": true,
+    "generated_at": "2026-11-17T10:01:32.5996714+09:00",
+    "description": "Source 상대 경로:개별 SHA-256 목록의 SHA-256. 생성물이며 검증 성공 표시가 아님."
+  },
+  "reports": {
+    "Development": {
+      "path": "docs/validation/Phase4/B9-Development.json",
+      "sha256": "27609175c2d637ce5205ec235adf6cf134912eec4b1be690fa45a490e40b3793",
+      "checks": 96,
+      "modified_utc_epoch": 1794877431.126656
+    },
+    "HullRoles": {
+      "path": "docs/validation/Phase4/B9-HullRoles.json",
+      "sha256": "7d639da09378c5e8147409dad18d9aa5e1bf6336629b311c72aaf32fca03042e",
+      "checks": 270,
+      "modified_utc_epoch": 1794877449.0157447
+    },
+    "DevelopmentFilters": {
+      "path": "docs/validation/Phase4/B9-DevelopmentFilters.json",
+      "sha256": "deec38144f223213b3ad6a03a27d638ac083f4ab1e00625e31f4a9b38e7ab629",
+      "checks": 96,
+      "modified_utc_epoch": 1794877410.9983292
+    },
+    "DevelopmentRepeat": {
+      "path": "docs/validation/Phase4/B9-DevelopmentRepeat.json",
+      "sha256": "2098907a56a88bcbb379e8d43ec6aee33a3c9ea42a2edf27e51f78ba724ce118",
+      "checks": 33,
+      "modified_utc_epoch": 1794877391.8126733
+    },
+    "HeroRoster": {
+      "path": "docs/validation/Phase4/B9-HeroRoster.json",
+      "sha256": "34f5b813c30ce9178781412bff0037bf758bcf147fe2f685c8a0d2eb68d4c8ba",
+      "checks": 70,
+      "modified_utc_epoch": 1794877469.4281936
+    },
+    "HeroBoarding": {
+      "path": "docs/validation/Phase4/B9-HeroBoarding.json",
+      "sha256": "47cd9b5455fe69c9309ffbcbf9577e82e6a4736a9b994bd28d4571ee3e296031",
+      "checks": 33,
+      "modified_utc_epoch": 1794877489.3840923
+    },
+    "OwnedMission": {
+      "path": "docs/validation/Phase4/B9-OwnedMission.json",
+      "sha256": "3799719b6e521caccd6f492d4e13b16b9194a374ba1b4ea00591ab53892d24ff",
+      "checks": 17,
+      "modified_utc_epoch": 1794877517.2318728
+    },
+    "Phase2AControls": {
+      "path": "docs/validation/Phase4/B9-Phase2AControls.json",
+      "sha256": "36dd707bd87c31ca0f40ca0b25748d591ee0aeccb29e5072b8167f76d4269c5c",
+      "checks": 57,
+      "modified_utc_epoch": 1794877540.1710634
+    },
+    "Phase2BRCalibration": {
+      "path": "docs/validation/Phase4/B9-Phase2BRCalibration.json",
+      "sha256": "f05a1bd7e5748ae76606efe3d229ee4726784cceb726b3162d27760c52f4af21",
+      "checks": 79,
+      "modified_utc_epoch": 1794877571.2452183
+    },
+    "Phase2C": {
+      "path": "docs/validation/Phase4/B9-Phase2C.json",
+      "sha256": "2ed6f12c3d15a8218f91b6f9df6a7e46b3cf0f3b254b30d8a53a4662702ef1d6",
+      "checks": 77,
+      "modified_utc_epoch": 1794877599.4865115
+    },
+    "Phase3Interior": {
+      "path": "docs/validation/Phase4/B9-Phase3Interior.json",
+      "sha256": "94434792984d04f949951bab4f2cf04bb4d5926358bf3088313e218ff73a216c",
+      "checks": 36,
+      "modified_utc_epoch": 1794877617.9951096
+    },
+    "IntegratedMission": {
+      "path": "docs/validation/Phase4/B9-IntegratedMission.json",
+      "sha256": "da0ea7acd8a59d0a6f16f3b8598b687b588a8133ccef858c8be4ff3aadab7236",
+      "checks": 316,
+      "modified_utc_epoch": 1794877877.407226
+    }
+  },
+  "note": "최종 Source 261159c의 B9 전체 검사 완료. Config의 역사 역할 근거 반영 후 필터96/96 및 역할부분확인16 확인. UI는 API 렌더이며 실제 입력이 아님.",
+  "automation": {
+    "passed": 80,
+    "failed": 0,
+    "engine_condition_failed": 15
+  },
+  "performance": {
+    "Phase4FinalFleet3x": {
+      "path": "docs/validation/Phase4/Phase4FinalFleet3x",
+      "seconds": 60,
+      "completed": true,
+      "physical_input": false
+    },
+    "Phase4FinalMission1x": {
+      "path": "docs/validation/Phase4/Phase4FinalMission1x",
+      "seconds": 60,
+      "completed": true,
+      "physical_input": false
+    }
+  },
+  "generated_calibration_sha256": "7990b399069242560dd730be5e23e8a003adf9072539931483b9844423cded4a",
+  "source_hash_matches_final_build": true
+}

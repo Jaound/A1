@@ -73,6 +73,9 @@ def run(world, pc, widget):
     check("FILT-PAGE-OVERVIEW", widget.open_page(0))
     catalogue = unreal.get_default_object(unreal.OVDevelopmentCatalogue)
     definitions = catalogue.get_definitions()
+    report["historical_partial_hull_roles"] = [name(d) for d in definitions if
+        prop(d, "category") == unreal.OVCatalogCategory.HULL and
+        prop(prop(d, "role"), "status") == unreal.OVCatalogStatus.PARTIAL]
     all_ids = [name(d) for d in definitions]
     check("FILT-CATALOGUE-UNIQUE", len(all_ids) == len(set(all_ids)), len(all_ids))
     check("FILT-RESET", widget.set_filters(0, none, -1, -1))
