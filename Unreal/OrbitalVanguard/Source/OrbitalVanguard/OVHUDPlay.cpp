@@ -178,15 +178,15 @@ void AOVHUD::DrawBattleNotices()
  const auto* Feed=GetWorld()->GetSubsystem<UOVBattleNotices>();const int32 Count=VisibleBattleNoticeCount();
  if(!Feed||Count==0)return;
  const float W=Canvas->SizeX/UIScale,H=Canvas->SizeY/UIScale,X=W*.5f-120;
- const auto& Latest=Feed->Notices.Last();
- if(Latest.bShipWrecked&&FPlatformTime::Seconds()-Latest.DisplayTime<3) {
+ if(FPlatformTime::Seconds()-Feed->LastCriticalDisplayTime<3) {
   const FLinearColor Warning(.8f,.04f,.03f,.20f);
   DrawRect(Warning,0,0,W,5);DrawRect(Warning,0,H-5,W,5);DrawRect(Warning,0,0,5,H);DrawRect(Warning,W-5,0,5,H);
  }
  for(int32 I=0;I<Count;++I) {
   const int32 Index=Feed->Notices.Num()-1-I;const auto& N=Feed->Notices[Index];
-  const FString Label=FString::Printf(TEXT("%s · %s%s"),*N.ShipName.Left(8),N.bShipWrecked?TEXT("완파"):TEXT("피격"),N.Count>1?*FString::Printf(TEXT(" ×%d"),N.Count):TEXT(""));
-  Button(FName(*FString::Printf(TEXT("BattleNotice_%d"),Index)),Label,X,66+I*32,240,N.bShipWrecked);
+  const TCHAR* Names[]={TEXT("피격"),TEXT("완파"),TEXT("쉴드 고갈"),TEXT("장갑 파괴"),TEXT("시설 파괴")};
+  const FString Label=FString::Printf(TEXT("%s · %s%s"),*N.ShipName.Left(8),Names[FMath::Clamp(int32(N.Kind),0,4)],N.Count>1?*FString::Printf(TEXT(" ×%d"),N.Count):TEXT(""));
+  Button(FName(*FString::Printf(TEXT("BattleNotice_%d"),Index)),Label,X,66+I*32,240,N.bCritical);
  }
  if(bBattleFeedOpen&&Feed->DroppedCount>0)DrawText(FString::Printf(TEXT("이전 알림 %d건 생략"),Feed->DroppedCount),PlayInk,X,68+Count*32,GEngine->GetSmallFont());
 }

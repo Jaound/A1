@@ -97,6 +97,28 @@ bool FOVBattleNoticeTest::RunTest(const FString&)
     TestEqual(TEXT("Same attack never duplicates"),Feed->Notices[0].Count,1);
     R.Fire();
     TestTrue(TEXT("Repeated actual hits group once per event"),Feed->Notices.Num()==1&&Feed->Notices[0].Count==2);
+    R.B->Systems->Shield=1;R.B->Systems->bShieldActive=true;
+    R.Fire();
+    TestTrue(TEXT("Real shield depletion creates separate notice"),Feed->Notices.ContainsByPredicate([](const FOVBattleNotice& N){return N.Kind==EOVBattleNoticeKind::ShieldDepleted;}));
+    R.B->Systems->Shield=0;R.B->Systems->bShieldActive=false;
+    for(auto& Armor:R.B->Systems->ArmorSections)Armor.HP=1;
+    R.Gun().Profile.Damage=300;R.Fire();
+    TestTrue(TEXT("Real armor destruction creates separate notice"),Feed->Notices.ContainsByPredicate([](const FOVBattleNotice& N){return N.Kind==EOVBattleNoticeKind::ArmorDestroyed;}));
+    const int32 ImpactSlot=R.B->Systems->Layout->GetSlotIndex(R.B->Systems->LastDamageSlot);
+    if(TestTrue(TEXT("Actual armor hit resolved to a non-core slot"),R.B->Systems->Slots.IsValidIndex(ImpactSlot)&&R.B->Systems->Layout->Slots[ImpactSlot].SlotId!=R.B->Systems->Layout->CoreSlotId))
+    {
+        auto& Definition=R.B->Systems->Layout->Slots[ImpactSlot];
+        Definition.Facility=EOVFacilityType::Engine;Definition.MaxFacilityHP=100;Definition.RequiredCrew=10;
+        const int32 PriorFacilityNotices=Feed->Notices.FilterByPredicate([](const FOVBattleNotice& N){return N.Kind==EOVBattleNoticeKind::FacilityDestroyed;}).Num();
+        R.B->Systems->Slots[ImpactSlot].HP=1;R.B->Systems->Slots[ImpactSlot].Crew=0;
+        TestEqual(TEXT("Crew loss alone does not create physical-destruction notice"),Feed->Notices.FilterByPredicate([](const FOVBattleNotice& N){return N.Kind==EOVBattleNoticeKind::FacilityDestroyed;}).Num(),PriorFacilityNotices);
+        R.Fire();
+        TestTrue(TEXT("Actual hit destroys facility and creates notice"),Feed->Notices.FilterByPredicate([](const FOVBattleNotice& N){return N.Kind==EOVBattleNoticeKind::FacilityDestroyed;}).Num()>PriorFacilityNotices);
+        TestTrue(TEXT("Actual engine destruction is marked critical"),Feed->Notices.ContainsByPredicate([](const FOVBattleNotice& N){return N.Kind==EOVBattleNoticeKind::FacilityDestroyed&&N.bCritical;}));
+        const double CriticalAt=Feed->LastCriticalDisplayTime;
+        FOVAttackState Later=Hit;Later.AttackId=9999;Later.ResolvedAt=5;Feed->RecordCombatHit(Later,R.B);
+        TestTrue(TEXT("Ordinary later hit does not cancel critical warning"),CriticalAt>0&&Feed->LastCriticalDisplayTime==CriticalAt);
+    }
     for(int32 I=0;I<70;++I){FOVAttackState E=Hit;E.AttackId=10000+I;E.ResolvedAt=10+I*3;Feed->RecordCombatHit(E,R.B);}
     TestEqual(TEXT("Feed is bounded"),Feed->Notices.Num(),64);
     TestTrue(TEXT("Discarded history is counted"),Feed->DroppedCount>0);

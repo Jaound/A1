@@ -179,6 +179,10 @@ struct ORBITALVANGUARD_API FOVAttackState
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly) FName SlotId;
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly) float HullDamage = 0;
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly) int32 Explosions = 0;
+    UPROPERTY(VisibleAnywhere, BlueprintReadOnly) bool bShieldDepleted = false;
+    UPROPERTY(VisibleAnywhere, BlueprintReadOnly) int32 ArmorSectionsDestroyed = 0;
+    UPROPERTY(VisibleAnywhere, BlueprintReadOnly) int32 FacilitiesDestroyed = 0;
+    UPROPERTY(VisibleAnywhere, BlueprintReadOnly) int32 CriticalFacilitiesDestroyed = 0;
 };
 
 /** Single combat clock. Camera/HUD are read-only consumers of these states and events. */

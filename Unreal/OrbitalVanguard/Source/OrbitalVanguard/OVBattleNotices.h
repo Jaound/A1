@@ -7,6 +7,9 @@
 class AOVShip;
 struct FOVAttackState;
 
+UENUM(BlueprintType)
+enum class EOVBattleNoticeKind : uint8 { Hit, ShipWrecked, ShieldDepleted, ArmorDestroyed, FacilityDestroyed };
+
 USTRUCT(BlueprintType)
 struct ORBITALVANGUARD_API FOVBattleNotice
 {
@@ -17,6 +20,8 @@ struct ORBITALVANGUARD_API FOVBattleNotice
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly) double GameTime=0;
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly) int32 Count=0;
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly) bool bShipWrecked=false;
+    UPROPERTY(VisibleAnywhere, BlueprintReadOnly) bool bCritical=false;
+    UPROPERTY(VisibleAnywhere, BlueprintReadOnly) EOVBattleNoticeKind Kind=EOVBattleNoticeKind::Hit;
     double DisplayTime=0;
 };
 
@@ -28,8 +33,10 @@ class ORBITALVANGUARD_API UOVBattleNotices : public UWorldSubsystem
 public:
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly) TArray<FOVBattleNotice> Notices;
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly) int32 DroppedCount=0;
+    double LastCriticalDisplayTime=-1000;
     void Reset();
     void RecordCombatHit(const FOVAttackState& Attack,AOVShip* Victim);
 private:
     TArray<int32> RecentAttackIds;
+    void Append(const FOVAttackState& Attack,AOVShip* Victim,EOVBattleNoticeKind Kind,int32 Count);
 };

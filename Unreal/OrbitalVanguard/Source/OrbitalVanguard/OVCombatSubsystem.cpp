@@ -681,12 +681,29 @@ bool UOVCombatSubsystem::ResolveImpact(FOVAttackState& Attack, AOVShip* HitShip,
     Attack.Result = EOVAttackResult::Hit; Attack.Position = Point; Attack.HitShipId = HitShip->GetFName();
     Attack.ResolvedAt = GameTime; ResolvedAttackIds.Add(Attack.AttackId);
     UOVShipSystemsComponent* Systems = HitShip->Systems;
+    const bool bShieldWasActive=Systems->bShieldActive&&Systems->Shield>0;
+    TArray<bool,TInlineAllocator<64>> ArmorWasAlive,FacilityWasAlive;
+    if(Systems->FactionId==0) {
+        for(const auto& Armor:Systems->ArmorSections)ArmorWasAlive.Add(Armor.HP>0);
+        for(const auto& Slot:Systems->Slots)FacilityWasAlive.Add(Slot.HP>0);
+    }
     Systems->IncomingSourceId = Attack.AttackerId;
     Systems->IncomingFactionId = Attack.FactionId;
     Systems->IncomingWeaponId = Attack.WeaponId;
     Attack.ImpactWeaponId = HitWeaponId;
     if (!HitWeaponId.IsNone()) Systems->ApplyWorldWeaponHit(HitWeaponId, Point, Normal, Attack.Damage, true);
     else Systems->ApplyWorldHit(Point, Normal, Attack.Damage, EOVDamageCause::External, true);
+    if(Systems->FactionId==0) {
+        Attack.bShieldDepleted=bShieldWasActive&&!Systems->bShieldActive&&Systems->Shield<=0;
+        for(int32 I=0;I<ArmorWasAlive.Num()&&I<Systems->ArmorSections.Num();++I)if(ArmorWasAlive[I]&&Systems->ArmorSections[I].HP<=0)++Attack.ArmorSectionsDestroyed;
+        for(int32 I=0;I<FacilityWasAlive.Num()&&I<Systems->Slots.Num();++I)if(FacilityWasAlive[I]&&Systems->Slots[I].HP<=0) {
+            ++Attack.FacilitiesDestroyed;
+            if(Systems->Layout&&Systems->Layout->Slots.IsValidIndex(I)) {
+                const auto Type=Systems->Layout->Slots[I].Facility;
+                if(Type==EOVFacilityType::Engine||Type==EOVFacilityType::WeaponControl||Type==EOVFacilityType::ShieldControl||Type==EOVFacilityType::FighterControl||Type==EOVFacilityType::Interception)++Attack.CriticalFacilitiesDestroyed;
+            }
+        }
+    }
     Attack.ArmorId = Systems->LastArmorSection; Attack.SlotId = Systems->LastDamageSlot;
     Attack.HullDamage = Systems->LastHullDamage; Attack.Explosions = Systems->LastExplosionCount;
     ++HitCount;
