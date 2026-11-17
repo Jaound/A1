@@ -1,0 +1,1190 @@
+{
+  "version": "flare-stop-sensitivity-v1",
+  "status": "isolated design model; not full environment/fleet/hero simulation or UE certification",
+  "source_profile_sha256": "639f0a233a3c0ed6bf97edc407754c304c3a4ff8499f1b75ec383a78d5f60d4b",
+  "source_script_sha256": "4bcbb00f0701a0a277d91bce4b0f3a18535bab4800aedd4805e82bd5e9b238f4",
+  "assumptions": {
+    "game_seconds": true,
+    "seed_count": 100,
+    "seed_range": [
+      171100,
+      171199
+    ],
+    "dt": 0.05,
+    "horizon": 12.0,
+    "scope": "Unshielded exposed target, only its own PD; 3/6/12 already launched standard missiles reach it within 1..12s. No evasion after PD.",
+    "cooldowns": "cooldowns progress during stop but no firing until stop ends; trial assumption",
+    "omissions": [
+      "flare shield damage/cover geometry/wave speed and period",
+      "HP/armor damage, ship or hero survival probabilities",
+      "allied PD, guided missiles, aircraft/pod flight and recovery",
+      "regeneration while stopped: loss estimate assumes shield regen is suspended",
+      "whole fleet tactics, moving target/obstacle geometry, actual UE timing"
+    ],
+    "summary_weighting": "equal weight to 18 PD-count/volley combinations; mean incoming count is 7",
+    "180s_interval": "reference for fractional downtime only, not an adopted flare period"
+  },
+  "summary": [
+    {
+      "disabled_seconds": 0,
+      "mean_additional_reached_per_7_missile_trial": 0.0,
+      "lost_firing_fraction_at_180s_interval": 0.0,
+      "lost_shield_regen_fraction_of_capacity": 0.0,
+      "uncovered_motion_loss_m": {
+        "corvette": 0,
+        "bastion": 0,
+        "carrier": 0,
+        "dreadnought": 0,
+        "assault": 0
+      }
+    },
+    {
+      "disabled_seconds": 2,
+      "mean_additional_reached_per_7_missile_trial": 0.5972222222222222,
+      "lost_firing_fraction_at_180s_interval": 0.011111111111111112,
+      "lost_shield_regen_fraction_of_capacity": 0.012,
+      "uncovered_motion_loss_m": {
+        "corvette": 96,
+        "bastion": 40,
+        "carrier": 24,
+        "dreadnought": 14,
+        "assault": 120
+      }
+    },
+    {
+      "disabled_seconds": 3,
+      "mean_additional_reached_per_7_missile_trial": 1.0566666666666666,
+      "lost_firing_fraction_at_180s_interval": 0.016666666666666666,
+      "lost_shield_regen_fraction_of_capacity": 0.018000000000000002,
+      "uncovered_motion_loss_m": {
+        "corvette": 144,
+        "bastion": 60,
+        "carrier": 36,
+        "dreadnought": 21,
+        "assault": 180
+      }
+    },
+    {
+      "disabled_seconds": 5,
+      "mean_additional_reached_per_7_missile_trial": 2.0100000000000002,
+      "lost_firing_fraction_at_180s_interval": 0.027777777777777776,
+      "lost_shield_regen_fraction_of_capacity": 0.03,
+      "uncovered_motion_loss_m": {
+        "corvette": 240,
+        "bastion": 100,
+        "carrier": 60,
+        "dreadnought": 35,
+        "assault": 300
+      }
+    },
+    {
+      "disabled_seconds": 8,
+      "mean_additional_reached_per_7_missile_trial": 3.4855555555555555,
+      "lost_firing_fraction_at_180s_interval": 0.044444444444444446,
+      "lost_shield_regen_fraction_of_capacity": 0.048,
+      "uncovered_motion_loss_m": {
+        "corvette": 384,
+        "bastion": 160,
+        "carrier": 96,
+        "dreadnought": 56,
+        "assault": 480
+      }
+    },
+    {
+      "disabled_seconds": 12,
+      "mean_additional_reached_per_7_missile_trial": 5.342777777777778,
+      "lost_firing_fraction_at_180s_interval": 0.06666666666666667,
+      "lost_shield_regen_fraction_of_capacity": 0.07200000000000001,
+      "uncovered_motion_loss_m": {
+        "corvette": 576,
+        "bastion": 240,
+        "carrier": 144,
+        "dreadnought": 84,
+        "assault": 720
+      }
+    }
+  ],
+  "rows": [
+    {
+      "disabled_seconds": 0,
+      "pd_mounts": 1,
+      "incoming_missiles": 3,
+      "trials": 100,
+      "baseline_mean_reached": 2.28,
+      "mean_reached": 2.28,
+      "p95_reached": 3,
+      "mean_additional_reached": 0.0
+    },
+    {
+      "disabled_seconds": 2,
+      "pd_mounts": 1,
+      "incoming_missiles": 3,
+      "trials": 100,
+      "baseline_mean_reached": 2.28,
+      "mean_reached": 2.43,
+      "p95_reached": 3,
+      "mean_additional_reached": 0.15000000000000036
+    },
+    {
+      "disabled_seconds": 3,
+      "pd_mounts": 1,
+      "incoming_missiles": 3,
+      "trials": 100,
+      "baseline_mean_reached": 2.28,
+      "mean_reached": 2.46,
+      "p95_reached": 3,
+      "mean_additional_reached": 0.18000000000000016
+    },
+    {
+      "disabled_seconds": 5,
+      "pd_mounts": 1,
+      "incoming_missiles": 3,
+      "trials": 100,
+      "baseline_mean_reached": 2.28,
+      "mean_reached": 2.57,
+      "p95_reached": 3,
+      "mean_additional_reached": 0.29000000000000004
+    },
+    {
+      "disabled_seconds": 8,
+      "pd_mounts": 1,
+      "incoming_missiles": 3,
+      "trials": 100,
+      "baseline_mean_reached": 2.28,
+      "mean_reached": 2.75,
+      "p95_reached": 3,
+      "mean_additional_reached": 0.4700000000000002
+    },
+    {
+      "disabled_seconds": 12,
+      "pd_mounts": 1,
+      "incoming_missiles": 3,
+      "trials": 100,
+      "baseline_mean_reached": 2.28,
+      "mean_reached": 3,
+      "p95_reached": 3,
+      "mean_additional_reached": 0.7200000000000002
+    },
+    {
+      "disabled_seconds": 0,
+      "pd_mounts": 1,
+      "incoming_missiles": 6,
+      "trials": 100,
+      "baseline_mean_reached": 4.83,
+      "mean_reached": 4.83,
+      "p95_reached": 6,
+      "mean_additional_reached": 0.0
+    },
+    {
+      "disabled_seconds": 2,
+      "pd_mounts": 1,
+      "incoming_missiles": 6,
+      "trials": 100,
+      "baseline_mean_reached": 4.83,
+      "mean_reached": 4.96,
+      "p95_reached": 6,
+      "mean_additional_reached": 0.1299999999999999
+    },
+    {
+      "disabled_seconds": 3,
+      "pd_mounts": 1,
+      "incoming_missiles": 6,
+      "trials": 100,
+      "baseline_mean_reached": 4.83,
+      "mean_reached": 5.05,
+      "p95_reached": 6,
+      "mean_additional_reached": 0.21999999999999975
+    },
+    {
+      "disabled_seconds": 5,
+      "pd_mounts": 1,
+      "incoming_missiles": 6,
+      "trials": 100,
+      "baseline_mean_reached": 4.83,
+      "mean_reached": 5.29,
+      "p95_reached": 6,
+      "mean_additional_reached": 0.45999999999999996
+    },
+    {
+      "disabled_seconds": 8,
+      "pd_mounts": 1,
+      "incoming_missiles": 6,
+      "trials": 100,
+      "baseline_mean_reached": 4.83,
+      "mean_reached": 5.52,
+      "p95_reached": 6,
+      "mean_additional_reached": 0.6899999999999995
+    },
+    {
+      "disabled_seconds": 12,
+      "pd_mounts": 1,
+      "incoming_missiles": 6,
+      "trials": 100,
+      "baseline_mean_reached": 4.83,
+      "mean_reached": 6,
+      "p95_reached": 6,
+      "mean_additional_reached": 1.17
+    },
+    {
+      "disabled_seconds": 0,
+      "pd_mounts": 1,
+      "incoming_missiles": 12,
+      "trials": 100,
+      "baseline_mean_reached": 10.39,
+      "mean_reached": 10.39,
+      "p95_reached": 12,
+      "mean_additional_reached": 0.0
+    },
+    {
+      "disabled_seconds": 2,
+      "pd_mounts": 1,
+      "incoming_missiles": 12,
+      "trials": 100,
+      "baseline_mean_reached": 10.39,
+      "mean_reached": 10.63,
+      "p95_reached": 12,
+      "mean_additional_reached": 0.2400000000000002
+    },
+    {
+      "disabled_seconds": 3,
+      "pd_mounts": 1,
+      "incoming_missiles": 12,
+      "trials": 100,
+      "baseline_mean_reached": 10.39,
+      "mean_reached": 10.72,
+      "p95_reached": 12,
+      "mean_additional_reached": 0.33000000000000007
+    },
+    {
+      "disabled_seconds": 5,
+      "pd_mounts": 1,
+      "incoming_missiles": 12,
+      "trials": 100,
+      "baseline_mean_reached": 10.39,
+      "mean_reached": 11,
+      "p95_reached": 12,
+      "mean_additional_reached": 0.6099999999999994
+    },
+    {
+      "disabled_seconds": 8,
+      "pd_mounts": 1,
+      "incoming_missiles": 12,
+      "trials": 100,
+      "baseline_mean_reached": 10.39,
+      "mean_reached": 11.6,
+      "p95_reached": 12,
+      "mean_additional_reached": 1.209999999999999
+    },
+    {
+      "disabled_seconds": 12,
+      "pd_mounts": 1,
+      "incoming_missiles": 12,
+      "trials": 100,
+      "baseline_mean_reached": 10.39,
+      "mean_reached": 12,
+      "p95_reached": 12,
+      "mean_additional_reached": 1.6099999999999994
+    },
+    {
+      "disabled_seconds": 0,
+      "pd_mounts": 2,
+      "incoming_missiles": 3,
+      "trials": 100,
+      "baseline_mean_reached": 0.74,
+      "mean_reached": 0.74,
+      "p95_reached": 2,
+      "mean_additional_reached": 0.0
+    },
+    {
+      "disabled_seconds": 2,
+      "pd_mounts": 2,
+      "incoming_missiles": 3,
+      "trials": 100,
+      "baseline_mean_reached": 0.74,
+      "mean_reached": 1.06,
+      "p95_reached": 2,
+      "mean_additional_reached": 0.32000000000000006
+    },
+    {
+      "disabled_seconds": 3,
+      "pd_mounts": 2,
+      "incoming_missiles": 3,
+      "trials": 100,
+      "baseline_mean_reached": 0.74,
+      "mean_reached": 1.25,
+      "p95_reached": 3,
+      "mean_additional_reached": 0.51
+    },
+    {
+      "disabled_seconds": 5,
+      "pd_mounts": 2,
+      "incoming_missiles": 3,
+      "trials": 100,
+      "baseline_mean_reached": 0.74,
+      "mean_reached": 1.59,
+      "p95_reached": 3,
+      "mean_additional_reached": 0.8500000000000001
+    },
+    {
+      "disabled_seconds": 8,
+      "pd_mounts": 2,
+      "incoming_missiles": 3,
+      "trials": 100,
+      "baseline_mean_reached": 0.74,
+      "mean_reached": 2.24,
+      "p95_reached": 3,
+      "mean_additional_reached": 1.5000000000000002
+    },
+    {
+      "disabled_seconds": 12,
+      "pd_mounts": 2,
+      "incoming_missiles": 3,
+      "trials": 100,
+      "baseline_mean_reached": 0.74,
+      "mean_reached": 3,
+      "p95_reached": 3,
+      "mean_additional_reached": 2.26
+    },
+    {
+      "disabled_seconds": 0,
+      "pd_mounts": 2,
+      "incoming_missiles": 6,
+      "trials": 100,
+      "baseline_mean_reached": 2.02,
+      "mean_reached": 2.02,
+      "p95_reached": 4,
+      "mean_additional_reached": 0.0
+    },
+    {
+      "disabled_seconds": 2,
+      "pd_mounts": 2,
+      "incoming_missiles": 6,
+      "trials": 100,
+      "baseline_mean_reached": 2.02,
+      "mean_reached": 2.45,
+      "p95_reached": 4,
+      "mean_additional_reached": 0.43000000000000016
+    },
+    {
+      "disabled_seconds": 3,
+      "pd_mounts": 2,
+      "incoming_missiles": 6,
+      "trials": 100,
+      "baseline_mean_reached": 2.02,
+      "mean_reached": 2.81,
+      "p95_reached": 5,
+      "mean_additional_reached": 0.79
+    },
+    {
+      "disabled_seconds": 5,
+      "pd_mounts": 2,
+      "incoming_missiles": 6,
+      "trials": 100,
+      "baseline_mean_reached": 2.02,
+      "mean_reached": 3.68,
+      "p95_reached": 5,
+      "mean_additional_reached": 1.6600000000000001
+    },
+    {
+      "disabled_seconds": 8,
+      "pd_mounts": 2,
+      "incoming_missiles": 6,
+      "trials": 100,
+      "baseline_mean_reached": 2.02,
+      "mean_reached": 4.68,
+      "p95_reached": 6,
+      "mean_additional_reached": 2.6599999999999997
+    },
+    {
+      "disabled_seconds": 12,
+      "pd_mounts": 2,
+      "incoming_missiles": 6,
+      "trials": 100,
+      "baseline_mean_reached": 2.02,
+      "mean_reached": 6,
+      "p95_reached": 6,
+      "mean_additional_reached": 3.98
+    },
+    {
+      "disabled_seconds": 0,
+      "pd_mounts": 2,
+      "incoming_missiles": 12,
+      "trials": 100,
+      "baseline_mean_reached": 5.75,
+      "mean_reached": 5.75,
+      "p95_reached": 8,
+      "mean_additional_reached": 0.0
+    },
+    {
+      "disabled_seconds": 2,
+      "pd_mounts": 2,
+      "incoming_missiles": 12,
+      "trials": 100,
+      "baseline_mean_reached": 5.75,
+      "mean_reached": 6.59,
+      "p95_reached": 9,
+      "mean_additional_reached": 0.8399999999999999
+    },
+    {
+      "disabled_seconds": 3,
+      "pd_mounts": 2,
+      "incoming_missiles": 12,
+      "trials": 100,
+      "baseline_mean_reached": 5.75,
+      "mean_reached": 7.15,
+      "p95_reached": 9,
+      "mean_additional_reached": 1.4000000000000004
+    },
+    {
+      "disabled_seconds": 5,
+      "pd_mounts": 2,
+      "incoming_missiles": 12,
+      "trials": 100,
+      "baseline_mean_reached": 5.75,
+      "mean_reached": 8.25,
+      "p95_reached": 11,
+      "mean_additional_reached": 2.5
+    },
+    {
+      "disabled_seconds": 8,
+      "pd_mounts": 2,
+      "incoming_missiles": 12,
+      "trials": 100,
+      "baseline_mean_reached": 5.75,
+      "mean_reached": 10.05,
+      "p95_reached": 12,
+      "mean_additional_reached": 4.300000000000001
+    },
+    {
+      "disabled_seconds": 12,
+      "pd_mounts": 2,
+      "incoming_missiles": 12,
+      "trials": 100,
+      "baseline_mean_reached": 5.75,
+      "mean_reached": 12,
+      "p95_reached": 12,
+      "mean_additional_reached": 6.25
+    },
+    {
+      "disabled_seconds": 0,
+      "pd_mounts": 3,
+      "incoming_missiles": 3,
+      "trials": 100,
+      "baseline_mean_reached": 0.18,
+      "mean_reached": 0.18,
+      "p95_reached": 1,
+      "mean_additional_reached": 0.0
+    },
+    {
+      "disabled_seconds": 2,
+      "pd_mounts": 3,
+      "incoming_missiles": 3,
+      "trials": 100,
+      "baseline_mean_reached": 0.18,
+      "mean_reached": 0.51,
+      "p95_reached": 2,
+      "mean_additional_reached": 0.33
+    },
+    {
+      "disabled_seconds": 3,
+      "pd_mounts": 3,
+      "incoming_missiles": 3,
+      "trials": 100,
+      "baseline_mean_reached": 0.18,
+      "mean_reached": 0.73,
+      "p95_reached": 2,
+      "mean_additional_reached": 0.55
+    },
+    {
+      "disabled_seconds": 5,
+      "pd_mounts": 3,
+      "incoming_missiles": 3,
+      "trials": 100,
+      "baseline_mean_reached": 0.18,
+      "mean_reached": 1.21,
+      "p95_reached": 3,
+      "mean_additional_reached": 1.03
+    },
+    {
+      "disabled_seconds": 8,
+      "pd_mounts": 3,
+      "incoming_missiles": 3,
+      "trials": 100,
+      "baseline_mean_reached": 0.18,
+      "mean_reached": 2.07,
+      "p95_reached": 3,
+      "mean_additional_reached": 1.89
+    },
+    {
+      "disabled_seconds": 12,
+      "pd_mounts": 3,
+      "incoming_missiles": 3,
+      "trials": 100,
+      "baseline_mean_reached": 0.18,
+      "mean_reached": 3,
+      "p95_reached": 3,
+      "mean_additional_reached": 2.82
+    },
+    {
+      "disabled_seconds": 0,
+      "pd_mounts": 3,
+      "incoming_missiles": 6,
+      "trials": 100,
+      "baseline_mean_reached": 0.66,
+      "mean_reached": 0.66,
+      "p95_reached": 3,
+      "mean_additional_reached": 0.0
+    },
+    {
+      "disabled_seconds": 2,
+      "pd_mounts": 3,
+      "incoming_missiles": 6,
+      "trials": 100,
+      "baseline_mean_reached": 0.66,
+      "mean_reached": 1.26,
+      "p95_reached": 3,
+      "mean_additional_reached": 0.6
+    },
+    {
+      "disabled_seconds": 3,
+      "pd_mounts": 3,
+      "incoming_missiles": 6,
+      "trials": 100,
+      "baseline_mean_reached": 0.66,
+      "mean_reached": 1.76,
+      "p95_reached": 3,
+      "mean_additional_reached": 1.1
+    },
+    {
+      "disabled_seconds": 5,
+      "pd_mounts": 3,
+      "incoming_missiles": 6,
+      "trials": 100,
+      "baseline_mean_reached": 0.66,
+      "mean_reached": 2.8,
+      "p95_reached": 4,
+      "mean_additional_reached": 2.1399999999999997
+    },
+    {
+      "disabled_seconds": 8,
+      "pd_mounts": 3,
+      "incoming_missiles": 6,
+      "trials": 100,
+      "baseline_mean_reached": 0.66,
+      "mean_reached": 4.22,
+      "p95_reached": 6,
+      "mean_additional_reached": 3.5599999999999996
+    },
+    {
+      "disabled_seconds": 12,
+      "pd_mounts": 3,
+      "incoming_missiles": 6,
+      "trials": 100,
+      "baseline_mean_reached": 0.66,
+      "mean_reached": 6,
+      "p95_reached": 6,
+      "mean_additional_reached": 5.34
+    },
+    {
+      "disabled_seconds": 0,
+      "pd_mounts": 3,
+      "incoming_missiles": 12,
+      "trials": 100,
+      "baseline_mean_reached": 2.58,
+      "mean_reached": 2.58,
+      "p95_reached": 5,
+      "mean_additional_reached": 0.0
+    },
+    {
+      "disabled_seconds": 2,
+      "pd_mounts": 3,
+      "incoming_missiles": 12,
+      "trials": 100,
+      "baseline_mean_reached": 2.58,
+      "mean_reached": 3.73,
+      "p95_reached": 6,
+      "mean_additional_reached": 1.15
+    },
+    {
+      "disabled_seconds": 3,
+      "pd_mounts": 3,
+      "incoming_missiles": 12,
+      "trials": 100,
+      "baseline_mean_reached": 2.58,
+      "mean_reached": 4.62,
+      "p95_reached": 7,
+      "mean_additional_reached": 2.04
+    },
+    {
+      "disabled_seconds": 5,
+      "pd_mounts": 3,
+      "incoming_missiles": 12,
+      "trials": 100,
+      "baseline_mean_reached": 2.58,
+      "mean_reached": 6.33,
+      "p95_reached": 9,
+      "mean_additional_reached": 3.75
+    },
+    {
+      "disabled_seconds": 8,
+      "pd_mounts": 3,
+      "incoming_missiles": 12,
+      "trials": 100,
+      "baseline_mean_reached": 2.58,
+      "mean_reached": 8.88,
+      "p95_reached": 11,
+      "mean_additional_reached": 6.300000000000001
+    },
+    {
+      "disabled_seconds": 12,
+      "pd_mounts": 3,
+      "incoming_missiles": 12,
+      "trials": 100,
+      "baseline_mean_reached": 2.58,
+      "mean_reached": 12,
+      "p95_reached": 12,
+      "mean_additional_reached": 9.42
+    },
+    {
+      "disabled_seconds": 0,
+      "pd_mounts": 5,
+      "incoming_missiles": 3,
+      "trials": 100,
+      "baseline_mean_reached": 0.01,
+      "mean_reached": 0.01,
+      "p95_reached": 0,
+      "mean_additional_reached": 0.0
+    },
+    {
+      "disabled_seconds": 2,
+      "pd_mounts": 5,
+      "incoming_missiles": 3,
+      "trials": 100,
+      "baseline_mean_reached": 0.01,
+      "mean_reached": 0.31,
+      "p95_reached": 1,
+      "mean_additional_reached": 0.3
+    },
+    {
+      "disabled_seconds": 3,
+      "pd_mounts": 5,
+      "incoming_missiles": 3,
+      "trials": 100,
+      "baseline_mean_reached": 0.01,
+      "mean_reached": 0.56,
+      "p95_reached": 2,
+      "mean_additional_reached": 0.55
+    },
+    {
+      "disabled_seconds": 5,
+      "pd_mounts": 5,
+      "incoming_missiles": 3,
+      "trials": 100,
+      "baseline_mean_reached": 0.01,
+      "mean_reached": 1.04,
+      "p95_reached": 2,
+      "mean_additional_reached": 1.03
+    },
+    {
+      "disabled_seconds": 8,
+      "pd_mounts": 5,
+      "incoming_missiles": 3,
+      "trials": 100,
+      "baseline_mean_reached": 0.01,
+      "mean_reached": 1.92,
+      "p95_reached": 3,
+      "mean_additional_reached": 1.91
+    },
+    {
+      "disabled_seconds": 12,
+      "pd_mounts": 5,
+      "incoming_missiles": 3,
+      "trials": 100,
+      "baseline_mean_reached": 0.01,
+      "mean_reached": 3,
+      "p95_reached": 3,
+      "mean_additional_reached": 2.99
+    },
+    {
+      "disabled_seconds": 0,
+      "pd_mounts": 5,
+      "incoming_missiles": 6,
+      "trials": 100,
+      "baseline_mean_reached": 0.05,
+      "mean_reached": 0.05,
+      "p95_reached": 0,
+      "mean_additional_reached": 0.0
+    },
+    {
+      "disabled_seconds": 2,
+      "pd_mounts": 5,
+      "incoming_missiles": 6,
+      "trials": 100,
+      "baseline_mean_reached": 0.05,
+      "mean_reached": 0.66,
+      "p95_reached": 2,
+      "mean_additional_reached": 0.61
+    },
+    {
+      "disabled_seconds": 3,
+      "pd_mounts": 5,
+      "incoming_missiles": 6,
+      "trials": 100,
+      "baseline_mean_reached": 0.05,
+      "mean_reached": 1.18,
+      "p95_reached": 3,
+      "mean_additional_reached": 1.13
+    },
+    {
+      "disabled_seconds": 5,
+      "pd_mounts": 5,
+      "incoming_missiles": 6,
+      "trials": 100,
+      "baseline_mean_reached": 0.05,
+      "mean_reached": 2.29,
+      "p95_reached": 4,
+      "mean_additional_reached": 2.24
+    },
+    {
+      "disabled_seconds": 8,
+      "pd_mounts": 5,
+      "incoming_missiles": 6,
+      "trials": 100,
+      "baseline_mean_reached": 0.05,
+      "mean_reached": 3.92,
+      "p95_reached": 5,
+      "mean_additional_reached": 3.87
+    },
+    {
+      "disabled_seconds": 12,
+      "pd_mounts": 5,
+      "incoming_missiles": 6,
+      "trials": 100,
+      "baseline_mean_reached": 0.05,
+      "mean_reached": 6,
+      "p95_reached": 6,
+      "mean_additional_reached": 5.95
+    },
+    {
+      "disabled_seconds": 0,
+      "pd_mounts": 5,
+      "incoming_missiles": 12,
+      "trials": 100,
+      "baseline_mean_reached": 0.32,
+      "mean_reached": 0.32,
+      "p95_reached": 1,
+      "mean_additional_reached": 0.0
+    },
+    {
+      "disabled_seconds": 2,
+      "pd_mounts": 5,
+      "incoming_missiles": 12,
+      "trials": 100,
+      "baseline_mean_reached": 0.32,
+      "mean_reached": 1.7,
+      "p95_reached": 4,
+      "mean_additional_reached": 1.38
+    },
+    {
+      "disabled_seconds": 3,
+      "pd_mounts": 5,
+      "incoming_missiles": 12,
+      "trials": 100,
+      "baseline_mean_reached": 0.32,
+      "mean_reached": 2.74,
+      "p95_reached": 6,
+      "mean_additional_reached": 2.4200000000000004
+    },
+    {
+      "disabled_seconds": 5,
+      "pd_mounts": 5,
+      "incoming_missiles": 12,
+      "trials": 100,
+      "baseline_mean_reached": 0.32,
+      "mean_reached": 4.75,
+      "p95_reached": 7,
+      "mean_additional_reached": 4.43
+    },
+    {
+      "disabled_seconds": 8,
+      "pd_mounts": 5,
+      "incoming_missiles": 12,
+      "trials": 100,
+      "baseline_mean_reached": 0.32,
+      "mean_reached": 8.01,
+      "p95_reached": 10,
+      "mean_additional_reached": 7.6899999999999995
+    },
+    {
+      "disabled_seconds": 12,
+      "pd_mounts": 5,
+      "incoming_missiles": 12,
+      "trials": 100,
+      "baseline_mean_reached": 0.32,
+      "mean_reached": 12,
+      "p95_reached": 12,
+      "mean_additional_reached": 11.68
+    },
+    {
+      "disabled_seconds": 0,
+      "pd_mounts": 8,
+      "incoming_missiles": 3,
+      "trials": 100,
+      "baseline_mean_reached": 0,
+      "mean_reached": 0,
+      "p95_reached": 0,
+      "mean_additional_reached": 0
+    },
+    {
+      "disabled_seconds": 2,
+      "pd_mounts": 8,
+      "incoming_missiles": 3,
+      "trials": 100,
+      "baseline_mean_reached": 0,
+      "mean_reached": 0.3,
+      "p95_reached": 1,
+      "mean_additional_reached": 0.3
+    },
+    {
+      "disabled_seconds": 3,
+      "pd_mounts": 8,
+      "incoming_missiles": 3,
+      "trials": 100,
+      "baseline_mean_reached": 0,
+      "mean_reached": 0.53,
+      "p95_reached": 2,
+      "mean_additional_reached": 0.53
+    },
+    {
+      "disabled_seconds": 5,
+      "pd_mounts": 8,
+      "incoming_missiles": 3,
+      "trials": 100,
+      "baseline_mean_reached": 0,
+      "mean_reached": 1.02,
+      "p95_reached": 2,
+      "mean_additional_reached": 1.02
+    },
+    {
+      "disabled_seconds": 8,
+      "pd_mounts": 8,
+      "incoming_missiles": 3,
+      "trials": 100,
+      "baseline_mean_reached": 0,
+      "mean_reached": 1.89,
+      "p95_reached": 3,
+      "mean_additional_reached": 1.89
+    },
+    {
+      "disabled_seconds": 12,
+      "pd_mounts": 8,
+      "incoming_missiles": 3,
+      "trials": 100,
+      "baseline_mean_reached": 0,
+      "mean_reached": 3,
+      "p95_reached": 3,
+      "mean_additional_reached": 3
+    },
+    {
+      "disabled_seconds": 0,
+      "pd_mounts": 8,
+      "incoming_missiles": 6,
+      "trials": 100,
+      "baseline_mean_reached": 0,
+      "mean_reached": 0,
+      "p95_reached": 0,
+      "mean_additional_reached": 0
+    },
+    {
+      "disabled_seconds": 2,
+      "pd_mounts": 8,
+      "incoming_missiles": 6,
+      "trials": 100,
+      "baseline_mean_reached": 0,
+      "mean_reached": 0.58,
+      "p95_reached": 2,
+      "mean_additional_reached": 0.58
+    },
+    {
+      "disabled_seconds": 3,
+      "pd_mounts": 8,
+      "incoming_missiles": 6,
+      "trials": 100,
+      "baseline_mean_reached": 0,
+      "mean_reached": 1.08,
+      "p95_reached": 3,
+      "mean_additional_reached": 1.08
+    },
+    {
+      "disabled_seconds": 5,
+      "pd_mounts": 8,
+      "incoming_missiles": 6,
+      "trials": 100,
+      "baseline_mean_reached": 0,
+      "mean_reached": 2.16,
+      "p95_reached": 4,
+      "mean_additional_reached": 2.16
+    },
+    {
+      "disabled_seconds": 8,
+      "pd_mounts": 8,
+      "incoming_missiles": 6,
+      "trials": 100,
+      "baseline_mean_reached": 0,
+      "mean_reached": 3.82,
+      "p95_reached": 5,
+      "mean_additional_reached": 3.82
+    },
+    {
+      "disabled_seconds": 12,
+      "pd_mounts": 8,
+      "incoming_missiles": 6,
+      "trials": 100,
+      "baseline_mean_reached": 0,
+      "mean_reached": 6,
+      "p95_reached": 6,
+      "mean_additional_reached": 6
+    },
+    {
+      "disabled_seconds": 0,
+      "pd_mounts": 8,
+      "incoming_missiles": 12,
+      "trials": 100,
+      "baseline_mean_reached": 0.02,
+      "mean_reached": 0.02,
+      "p95_reached": 0,
+      "mean_additional_reached": 0.0
+    },
+    {
+      "disabled_seconds": 2,
+      "pd_mounts": 8,
+      "incoming_missiles": 12,
+      "trials": 100,
+      "baseline_mean_reached": 0.02,
+      "mean_reached": 1.31,
+      "p95_reached": 3,
+      "mean_additional_reached": 1.29
+    },
+    {
+      "disabled_seconds": 3,
+      "pd_mounts": 8,
+      "incoming_missiles": 12,
+      "trials": 100,
+      "baseline_mean_reached": 0.02,
+      "mean_reached": 2.33,
+      "p95_reached": 5,
+      "mean_additional_reached": 2.31
+    },
+    {
+      "disabled_seconds": 5,
+      "pd_mounts": 8,
+      "incoming_missiles": 12,
+      "trials": 100,
+      "baseline_mean_reached": 0.02,
+      "mean_reached": 4.44,
+      "p95_reached": 7,
+      "mean_additional_reached": 4.420000000000001
+    },
+    {
+      "disabled_seconds": 8,
+      "pd_mounts": 8,
+      "incoming_missiles": 12,
+      "trials": 100,
+      "baseline_mean_reached": 0.02,
+      "mean_reached": 7.72,
+      "p95_reached": 10,
+      "mean_additional_reached": 7.7
+    },
+    {
+      "disabled_seconds": 12,
+      "pd_mounts": 8,
+      "incoming_missiles": 12,
+      "trials": 100,
+      "baseline_mean_reached": 0.02,
+      "mean_reached": 12,
+      "p95_reached": 12,
+      "mean_additional_reached": 11.98
+    },
+    {
+      "disabled_seconds": 0,
+      "pd_mounts": 11,
+      "incoming_missiles": 3,
+      "trials": 100,
+      "baseline_mean_reached": 0,
+      "mean_reached": 0,
+      "p95_reached": 0,
+      "mean_additional_reached": 0
+    },
+    {
+      "disabled_seconds": 2,
+      "pd_mounts": 11,
+      "incoming_missiles": 3,
+      "trials": 100,
+      "baseline_mean_reached": 0,
+      "mean_reached": 0.3,
+      "p95_reached": 1,
+      "mean_additional_reached": 0.3
+    },
+    {
+      "disabled_seconds": 3,
+      "pd_mounts": 11,
+      "incoming_missiles": 3,
+      "trials": 100,
+      "baseline_mean_reached": 0,
+      "mean_reached": 0.53,
+      "p95_reached": 2,
+      "mean_additional_reached": 0.53
+    },
+    {
+      "disabled_seconds": 5,
+      "pd_mounts": 11,
+      "incoming_missiles": 3,
+      "trials": 100,
+      "baseline_mean_reached": 0,
+      "mean_reached": 1.02,
+      "p95_reached": 2,
+      "mean_additional_reached": 1.02
+    },
+    {
+      "disabled_seconds": 8,
+      "pd_mounts": 11,
+      "incoming_missiles": 3,
+      "trials": 100,
+      "baseline_mean_reached": 0,
+      "mean_reached": 1.89,
+      "p95_reached": 3,
+      "mean_additional_reached": 1.89
+    },
+    {
+      "disabled_seconds": 12,
+      "pd_mounts": 11,
+      "incoming_missiles": 3,
+      "trials": 100,
+      "baseline_mean_reached": 0,
+      "mean_reached": 3,
+      "p95_reached": 3,
+      "mean_additional_reached": 3
+    },
+    {
+      "disabled_seconds": 0,
+      "pd_mounts": 11,
+      "incoming_missiles": 6,
+      "trials": 100,
+      "baseline_mean_reached": 0,
+      "mean_reached": 0,
+      "p95_reached": 0,
+      "mean_additional_reached": 0
+    },
+    {
+      "disabled_seconds": 2,
+      "pd_mounts": 11,
+      "incoming_missiles": 6,
+      "trials": 100,
+      "baseline_mean_reached": 0,
+      "mean_reached": 0.57,
+      "p95_reached": 2,
+      "mean_additional_reached": 0.57
+    },
+    {
+      "disabled_seconds": 3,
+      "pd_mounts": 11,
+      "incoming_missiles": 6,
+      "trials": 100,
+      "baseline_mean_reached": 0,
+      "mean_reached": 1.06,
+      "p95_reached": 3,
+      "mean_additional_reached": 1.06
+    },
+    {
+      "disabled_seconds": 5,
+      "pd_mounts": 11,
+      "incoming_missiles": 6,
+      "trials": 100,
+      "baseline_mean_reached": 0,
+      "mean_reached": 2.16,
+      "p95_reached": 4,
+      "mean_additional_reached": 2.16
+    },
+    {
+      "disabled_seconds": 8,
+      "pd_mounts": 11,
+      "incoming_missiles": 6,
+      "trials": 100,
+      "baseline_mean_reached": 0,
+      "mean_reached": 3.76,
+      "p95_reached": 5,
+      "mean_additional_reached": 3.76
+    },
+    {
+      "disabled_seconds": 12,
+      "pd_mounts": 11,
+      "incoming_missiles": 6,
+      "trials": 100,
+      "baseline_mean_reached": 0,
+      "mean_reached": 6,
+      "p95_reached": 6,
+      "mean_additional_reached": 6
+    },
+    {
+      "disabled_seconds": 0,
+      "pd_mounts": 11,
+      "incoming_missiles": 12,
+      "trials": 100,
+      "baseline_mean_reached": 0,
+      "mean_reached": 0,
+      "p95_reached": 0,
+      "mean_additional_reached": 0
+    },
+    {
+      "disabled_seconds": 2,
+      "pd_mounts": 11,
+      "incoming_missiles": 12,
+      "trials": 100,
+      "baseline_mean_reached": 0,
+      "mean_reached": 1.23,
+      "p95_reached": 3,
+      "mean_additional_reached": 1.23
+    },
+    {
+      "disabled_seconds": 3,
+      "pd_mounts": 11,
+      "incoming_missiles": 12,
+      "trials": 100,
+      "baseline_mean_reached": 0,
+      "mean_reached": 2.29,
+      "p95_reached": 5,
+      "mean_additional_reached": 2.29
+    },
+    {
+      "disabled_seconds": 5,
+      "pd_mounts": 11,
+      "incoming_missiles": 12,
+      "trials": 100,
+      "baseline_mean_reached": 0,
+      "mean_reached": 4.41,
+      "p95_reached": 7,
+      "mean_additional_reached": 4.41
+    },
+    {
+      "disabled_seconds": 8,
+      "pd_mounts": 11,
+      "incoming_missiles": 12,
+      "trials": 100,
+      "baseline_mean_reached": 0,
+      "mean_reached": 7.63,
+      "p95_reached": 10,
+      "mean_additional_reached": 7.63
+    },
+    {
+      "disabled_seconds": 12,
+      "pd_mounts": 11,
+      "incoming_missiles": 12,
+      "trials": 100,
+      "baseline_mean_reached": 0,
+      "mean_reached": 12,
+      "p95_reached": 12,
+      "mean_additional_reached": 12
+    }
+  ],
+  "trial_count": 10800
+}
