@@ -14,6 +14,7 @@ report = {'passed': None, 'kind': 'PIE 렌더와 UI API', 'physical_input': Fals
 state = {'stage': 'start', 'at': time.monotonic(), 'started': time.monotonic(), 'index': 0}
 editor = unreal.get_editor_subsystem(unreal.UnrealEditorSubsystem)
 views = ['전투_HUD', '영웅_카드', '외부_무장', '핀_비교', '핀_무장', '핀_시설', '격납고', '선내_영웅', '개발_함선', '개발_영웅', '개발_무장', '개발_시험', '초계함_모델', '개발_접기', '개발_확대', '전투_알림', '쉴드_고갈_알림', '적_쉴드_알림', '항공대_위기', '항공대_필터']
+if os.environ.get('OV_UI_ONLY_PIN') == '1': views = ['핀_비교']
 
 def prop(obj, key):
     return obj.get_editor_property(key)
@@ -89,6 +90,13 @@ def tick(_dt):
                     pc.select_ship(ship);hud.execute_ui_action('WindowPin')
                 pc.select_ship(ships[1]);hud.set_details_open(True)
                 check('PIN-COMPARE-THREE-SHIPS',hud.get_pinned_count()==2 and hud.get_pinned_ship(0)==ships[0] and hud.get_pinned_ship(1)==ships[2] and prop(pc,'selected')==ships[1])
+                first=hud.get_pinned_position(0);second=hud.get_pinned_position(1)
+                w,h=pc.get_viewport_size();scale=max(.25,min(1,w/1280,h/740))
+                x,y=first.x+14,first.y+15
+                hud.handle_pointer(x*scale,y*scale,True,True,0,False,0,0)
+                hud.handle_pointer((x-55)*scale,y*scale,False,True,0,False,0,0)
+                hud.handle_pointer((x-55)*scale,y*scale,False,False,0,False,0,0)
+                check('PIN-COMPARE-DRAG-INDEPENDENT',hud.get_pinned_position(0).x<first.x-50 and hud.get_pinned_position(1)==second and prop(pc,'selected')==ships[1])
             elif name == '핀_시설':
                 hud.set_details_open(True);hud.execute_ui_action('PinnedDeck_0_1')
                 check('PIN-DECK-INDEPENDENT',hud.get_pinned_deck(0)==1 and hud.get_pinned_deck(1)==0)

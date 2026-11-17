@@ -48,9 +48,12 @@ bool AOVHUD::IsOverPanel(float X,float Y) const
  const FVector2D P(X/UIScale,Y/UIScale);
  if(IsOverInteriorPanel(X,Y)) return true;
  if(IsOverMissionPanel(X,Y)) return true;
- if(bDragging||bResizing) return true;
+ if(bDragging||bResizing||DraggedPin!=INDEX_NONE) return true;
  if(!PC->bDeveloperMode&&!bSceneMenuOpen&&PC->Phase2CScenario>=0&&P.X>=212&&P.X<=484&&P.Y>=76&&P.Y<=224)return true;
- if(!PC->bDeveloperMode&&!bHeroPanelOpen&&PinnedShips.Num()>0&&P.X>=PinnedPanelX()&&P.X<=PinnedPanelX()+266&&P.Y>=PinnedPanelY()&&P.Y<=PinnedPanelY()+(PinnedShips.Num()-1)*160+158)return true;
+ if(!PC->bDeveloperMode&&!bHeroPanelOpen)for(int32 I=0;I<PinnedShips.Num();++I) {
+  const FVector2D Pos=GetPinnedPosition(I);
+  if(P.X>=Pos.X&&P.X<=Pos.X+266&&P.Y>=Pos.Y&&P.Y<=Pos.Y+158)return true;
+ }
  const int32 Notices=BattleNoticeRows();const float NoticeX=ViewportPixels.X/UIScale*.5f-120;
  const auto* Feed=GetBattleNoticeFeed();const int32 Footer=bBattleFeedOpen?66+(Feed&&Feed->DroppedCount>0?20:0):0;
  if(Notices>0&&P.X>=NoticeX&&P.X<=NoticeX+240&&P.Y>=66&&P.Y<=66+Notices*32+Footer)return true;
@@ -86,7 +89,7 @@ bool AOVHUD::HandlePointer(float X,float Y,bool Pressed,bool Down,float Wheel,bo
  // AHUD::Canvas is cleared by the viewport after rendering. Input runs outside DrawHUD.
  const bool Over=IsOverPanel(X,Y);
  if(PC&&PC->bDeveloperMode){
-  bDragging=false;bResizing=false;bInteriorDragging=false;bInteriorResizing=false;
+  bDragging=false;bResizing=false;bInteriorDragging=false;bInteriorResizing=false;DraggedPin=INDEX_NONE;
   const FVector2D Cursor(X,Y);
   if(Pressed&&DevelopmentRect.IsInsideOrOn(Cursor)) {
    const float Dpi=FMath::Max(.01f,UWidgetLayoutLibrary::GetViewportScale(this));
@@ -101,6 +104,13 @@ bool AOVHUD::HandlePointer(float X,float Y,bool Pressed,bool Down,float Wheel,bo
  bDevDragging=false;bDevResizing=false;
  // A drag begun in the existing window retains ownership; a new interior gesture consumes all buttons/wheel.
  const FVector2D P(X/UIScale,Y/UIScale);
+ if(DraggedPin!=INDEX_NONE) {
+  if(!Down||!PinnedPositions.IsValidIndex(DraggedPin)) {DraggedPin=INDEX_NONE;return true;}
+  const float Width=ViewportPixels.X/UIScale,Height=ViewportPixels.Y/UIScale;
+  PinnedPositions[DraggedPin]=FVector2D(FMath::Clamp(P.X-PinDragOffset.X,0.,FMath::Max(0.,double(Width-266))),
+      FMath::Clamp(P.Y-PinDragOffset.Y,56.,FMath::Max(56.,double(Height-158))));
+  return true;
+ }
  if(!bDragging&&!bResizing&&(bInteriorDragging||bInteriorResizing||IsOverInteriorPanel(X,Y))) {
   const FBox2D Bounds=InteriorBounds();
   if(Pressed) {
@@ -111,6 +121,16 @@ bool AOVHUD::HandlePointer(float X,float Y,bool Pressed,bool Down,float Wheel,bo
   if(bInteriorDragging){bInteriorMaximized=false;InteriorWindowPosition=P-InteriorDragOffset;}
   if(bInteriorResizing){bInteriorMaximized=false;InteriorWindowPosition=Bounds.Min;InteriorWindowSize=FVector2D(FMath::Max(620.,P.X-Bounds.Min.X),FMath::Max(500.,P.Y-Bounds.Min.Y));}
   return true;
+ }
+ if(PC&&!PC->bDeveloperMode&&!bHeroPanelOpen&&!bDragging&&!bResizing&&Pressed) {
+  const bool DetailsCover=PC->Selected&&bDetailsOpen&&P.X>=WindowPosition.X&&P.X<=WindowPosition.X+WindowSize.X
+      &&P.Y>=WindowPosition.Y&&P.Y<=WindowPosition.Y+(bMinimized?32:WindowSize.Y);
+  if(!DetailsCover)for(int32 I=PinnedShips.Num()-1;I>=0;--I) {
+   const FVector2D Pos=GetPinnedPosition(I);
+   if(P.X>=Pos.X+4&&P.X<=Pos.X+42&&P.Y>=Pos.Y+4&&P.Y<=Pos.Y+31) {
+    DraggedPin=I;PinDragOffset=P-Pos;PinnedPositions[I]=Pos;return true;
+   }
+  }
  }
  if(!PC||!PC->Selected||!bDetailsOpen) { bDragging=false;bResizing=false;return Over; }
  if(Pressed&&Over) {
@@ -195,13 +215,13 @@ void AOVHUD::NotifyHitBoxClick(FName N)
  if(N==TEXT("WindowPin")) {
   auto* PC=Cast<AOVController>(PlayerOwner);
   const int32 Index=PinnedShips.IndexOfByKey(PC->Selected);
-  if(Index!=INDEX_NONE){PinnedShips.RemoveAt(Index);PinnedPreviews[Index]->Release();PinnedPreviews.RemoveAt(Index);PinnedDecks.RemoveAt(Index);PinnedSlots.RemoveAt(Index);PinnedWeapons.RemoveAt(Index);PinnedSlotPages.RemoveAt(Index);}
-  else if(PinnedShips.Num()<2){PinnedShips.Add(PC->Selected);PinnedPreviews.Add(NewObject<UOVShipPreview>(this));PinnedDecks.Add(0);PinnedSlots.Add(INDEX_NONE);PinnedWeapons.Add(INDEX_NONE);PinnedSlotPages.Add(0);}
+  if(Index!=INDEX_NONE){DraggedPin=INDEX_NONE;PinnedShips.RemoveAt(Index);PinnedPreviews[Index]->Release();PinnedPreviews.RemoveAt(Index);PinnedDecks.RemoveAt(Index);PinnedSlots.RemoveAt(Index);PinnedWeapons.RemoveAt(Index);PinnedSlotPages.RemoveAt(Index);PinnedPositions.RemoveAt(Index);}
+  else if(PinnedShips.Num()<2){PinnedShips.Add(PC->Selected);PinnedPreviews.Add(NewObject<UOVShipPreview>(this));PinnedDecks.Add(0);PinnedSlots.Add(INDEX_NONE);PinnedWeapons.Add(INDEX_NONE);PinnedSlotPages.Add(0);PinnedPositions.Add(FVector2D(-1,-1));}
   return;
  }
  if(N.ToString().StartsWith(TEXT("PinnedClose_"))) {
   const int32 Index=FCString::Atoi(*N.ToString().Mid(12));
-  if(PinnedShips.IsValidIndex(Index)){PinnedShips.RemoveAt(Index);PinnedPreviews[Index]->Release();PinnedPreviews.RemoveAt(Index);PinnedDecks.RemoveAt(Index);PinnedSlots.RemoveAt(Index);PinnedWeapons.RemoveAt(Index);PinnedSlotPages.RemoveAt(Index);}
+  if(PinnedShips.IsValidIndex(Index)){DraggedPin=INDEX_NONE;PinnedShips.RemoveAt(Index);PinnedPreviews[Index]->Release();PinnedPreviews.RemoveAt(Index);PinnedDecks.RemoveAt(Index);PinnedSlots.RemoveAt(Index);PinnedWeapons.RemoveAt(Index);PinnedSlotPages.RemoveAt(Index);PinnedPositions.RemoveAt(Index);}
   return;
  }
  if(N.ToString().StartsWith(TEXT("PinnedWeaponNext_"))) {
@@ -212,6 +232,7 @@ void AOVHUD::NotifyHitBoxClick(FName N)
   }
   return;
  }
+ if(N.ToString().StartsWith(TEXT("PinnedGrip_")))return;
  if(N.ToString().StartsWith(TEXT("PinnedPage_"))) {
   TArray<FString> Parts;N.ToString().ParseIntoArray(Parts,TEXT("_"),true);
   if(Parts.Num()!=3)return;
@@ -602,19 +623,28 @@ float AOVHUD::PinnedPanelY() const
  const int32 Footer=bBattleFeedOpen?66+(Feed&&Feed->DroppedCount>0?20:0):0;
  return FMath::Max(76.f,66.f+Count*32+Footer+4.f);
 }
+FVector2D AOVHUD::GetPinnedPosition(int32 Index) const
+{
+ if(!PinnedPositions.IsValidIndex(Index))return FVector2D(-1,-1);
+ const FVector2D Default(PinnedPanelX(),PinnedPanelY()+Index*160);
+ const FVector2D Value=PinnedPositions[Index].X<0?Default:PinnedPositions[Index];
+ const float Width=ViewportPixels.X/UIScale,Height=ViewportPixels.Y/UIScale;
+ return FVector2D(FMath::Clamp(Value.X,0.,FMath::Max(0.,double(Width-266))),
+     FMath::Clamp(Value.Y,56.,FMath::Max(56.,double(Height-158))));
+}
 void AOVHUD::DrawPinned()
 {
  const auto* PC=Cast<AOVController>(PlayerOwner);
  for(int32 I=PinnedShips.Num()-1;I>=0;--I)if(!PinnedShips[I].IsValid()||PinnedShips[I]->IsHidden()||(PC&&PC->Combat&&PC->Combat->IsDeparted(PinnedShips[I].Get())))
- {PinnedPreviews[I]->Release();PinnedPreviews.RemoveAt(I);PinnedShips.RemoveAt(I);PinnedDecks.RemoveAt(I);PinnedSlots.RemoveAt(I);PinnedWeapons.RemoveAt(I);PinnedSlotPages.RemoveAt(I);}
+ {DraggedPin=INDEX_NONE;PinnedPreviews[I]->Release();PinnedPreviews.RemoveAt(I);PinnedShips.RemoveAt(I);PinnedDecks.RemoveAt(I);PinnedSlots.RemoveAt(I);PinnedWeapons.RemoveAt(I);PinnedSlotPages.RemoveAt(I);PinnedPositions.RemoveAt(I);}
  if(!PC||PC->bDeveloperMode||bHeroPanelOpen)return;
- const float X=PinnedPanelX();
  for(int32 I=0;I<PinnedShips.Num();++I)
  {
-  const float Y=PinnedPanelY()+I*160;auto* Ship=PinnedShips[I].Get();
+  const FVector2D Pos=GetPinnedPosition(I);const float X=Pos.X,Y=Pos.Y;auto* Ship=PinnedShips[I].Get();
   DrawRect(Panel,X,Y,266,158);
   AddHitBox(FVector2D(X,Y)*UIScale,FVector2D(266,158)*UIScale,FName(*FString::Printf(TEXT("PinnedBackground_%d"),I)),true,5);
-  Button(FName(*FString::Printf(TEXT("Pinned_%d"),I)),TEXT("핀 · ")+Ship->ShipName.Left(10),X+6,Y+4,148);
+  Button(FName(*FString::Printf(TEXT("PinnedGrip_%d"),I)),TEXT("이동"),X+4,Y+4,38);
+  Button(FName(*FString::Printf(TEXT("Pinned_%d"),I)),Ship->ShipName.Left(8),X+46,Y+4,108);
   Button(FName(*FString::Printf(TEXT("PinnedClose_%d"),I)),TEXT("X"),X+228,Y+4,32);
   const auto* Systems=Ship->Systems.Get();const auto* Layout=Systems?Systems->Layout.Get():nullptr;
   if(!Layout)continue;

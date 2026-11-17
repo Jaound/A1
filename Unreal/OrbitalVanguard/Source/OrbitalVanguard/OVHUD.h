@@ -29,6 +29,7 @@ public:
  UFUNCTION(BlueprintPure, Category="UI") int32 GetPinnedDeck(int32 Index) const { return PinnedDecks.IsValidIndex(Index)?PinnedDecks[Index]:INDEX_NONE; }
  UFUNCTION(BlueprintPure, Category="UI") int32 GetPinnedSlot(int32 Index) const { return PinnedSlots.IsValidIndex(Index)?PinnedSlots[Index]:INDEX_NONE; }
  UFUNCTION(BlueprintPure, Category="UI") int32 GetPinnedWeapon(int32 Index) const { return PinnedWeapons.IsValidIndex(Index)?PinnedWeapons[Index]:INDEX_NONE; }
+ UFUNCTION(BlueprintPure, Category="UI") FVector2D GetPinnedPosition(int32 Index) const;
  UFUNCTION(BlueprintPure, Category="UI") int32 GetWarningLevel() const { return WarningLevel; }
  UFUNCTION(BlueprintPure, Category="UI") FString GetPinnedWeaponSummary(int32 Index) const;
  UFUNCTION(BlueprintPure, Category="UI") int32 GetPinnedPreviewFocus(int32 Index) const;
@@ -43,7 +44,7 @@ public:
  UFUNCTION(BlueprintPure, Category="UI") float GetPreviewZoom() const { return PreviewZoom; }
  bool IsOverOrbitPreview(FVector2D Cursor) const;
  void OrbitPreview(FVector2D Delta);
- void CancelPointerDrag() { bDragging=false; bResizing=false; bInteriorDragging=false; bInteriorResizing=false; bDevDragging=false; bDevResizing=false; }
+ UFUNCTION(BlueprintCallable, Category="UI") void CancelPointerDrag() { bDragging=false; bResizing=false; bInteriorDragging=false; bInteriorResizing=false; bDevDragging=false; bDevResizing=false; DraggedPin=INDEX_NONE; }
  void OpenDetails() { bDetailsOpen=true; bMinimized=false; bHeroPanelOpen=false; SyncAddedUI(); }
  UFUNCTION(BlueprintCallable, Category="UI") bool HandlePointer(float X,float Y,bool Pressed,bool Down,float Wheel,bool Orbit,float DX,float DY);
  UFUNCTION(BlueprintCallable, Category="UI") void SetDetailsOpen(bool Open) { bDetailsOpen=Open; bMinimized=false; }
@@ -87,6 +88,9 @@ private:
  UPROPERTY() TArray<TObjectPtr<UOVShipPreview>> PinnedPreviews;
  UPROPERTY() TArray<TWeakObjectPtr<AOVShip>> PinnedShips;
  TArray<int32> PinnedDecks, PinnedSlots, PinnedWeapons, PinnedSlotPages;
+ TArray<FVector2D> PinnedPositions;
+ int32 DraggedPin=INDEX_NONE;
+ FVector2D PinDragOffset=FVector2D::ZeroVector;
  FBox2D DevelopmentRect, HeroRect;
  bool bHeroPanelOpen=false;
  bool bSceneMenuOpen=false;
