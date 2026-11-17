@@ -34,7 +34,20 @@ struct FHull
 const FHull* FindHull(FName Key)
 {
     for (const FHull& Hull : Hulls)
-        if (FName(Hull.Key) == Key) return &Hull;
+        if (FName(Hull.Key) == Key)
+        {
+            // D121 overrides the historical D116 candidate without changing its source data.
+            if (Key == TEXT("battlecarrier"))
+            {
+                static const FHull Revised = [&Hull]() {
+                    FHull Result = Hull;
+                    Result.MountCount = 10; // eight T3 cannons and two T4 spinal guns
+                    return Result;
+                }();
+                return &Revised;
+            }
+            return &Hull;
+        }
     return nullptr;
 }
 
@@ -335,7 +348,7 @@ bool FOVD116CatalogTest::RunTest(const FString&)
         float Sum = 0;
         for (const FOVWeaponMountDefinition& Mount : Layout->WeaponMounts)
             if (Mount.Type == EOVWeaponType::Cannon) Sum += Mount.ExplosionTierCoefficient;
-        const float Expected = Hull == Dreadnought ? 12 * 6.5f + 4 * 17.f : 8 * 6.5f + 4 * 17.f;
+        const float Expected = Hull == Dreadnought ? 12 * 6.5f + 4 * 17.f : 8 * 6.5f + 2 * 17.f;
         TestEqual(TEXT("Mixed cannon explosion coefficient sum"), Sum, Expected);
         auto* Systems = NewObject<UOVShipSystemsComponent>();
         Systems->Initialize(const_cast<UShipLayoutDataAsset*>(Layout));

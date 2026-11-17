@@ -98,7 +98,7 @@ def execute(pc):
     check("항모 격납고와 기체 등록", len(hangars) >= 1 and len(craft) == 2 * len(hangars), (len(hangars), len(craft)))
     # The two extra-large layouts must have the original T3/T4 profiles and true
     # per-family explosion damage. Small base avoids neighbor HP saturation.
-    for key, expected_sum in [("dreadnought", 146.0), ("battlecarrier", 120.0)]:
+    for key, expected_sum in [("dreadnought", 146.0), ("battlecarrier", 86.0)]:
         systems = p(ships[key], "systems"); layout = p(systems, "layout")
         mounts = [m for m in p(layout, "weapon_mounts") if p(m, "type") == unreal.OVWeaponType.CANNON]
         coef = sum(p(m, "explosion_tier_coefficient") for m in mounts)
