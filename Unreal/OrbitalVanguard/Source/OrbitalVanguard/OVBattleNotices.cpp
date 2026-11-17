@@ -38,25 +38,26 @@ void UOVBattleNotices::RecordInteriorEvent(FName EventKind,const FOVInteriorUnit
     if(EventKind==TEXT("Entry")&&Unit.FactionId!=0&&Ship->Systems->FactionId==0)Kind=EOVBattleNoticeKind::HostileBoarding;
     else if(Unit.FactionId!=0)return;
     else if(EventKind==TEXT("Death")&&Unit.Role!=EOVInteriorRole::Trooper)Kind=EOVBattleNoticeKind::HeroDeath;
+    else if(EventKind==TEXT("Damage")&&Unit.Role!=EOVInteriorRole::Trooper)Kind=EOVBattleNoticeKind::HeroHit;
     else if(EventKind==TEXT("Entry"))Kind=EOVBattleNoticeKind::BoardingEntry;
     else if(EventKind==TEXT("Return"))Kind=EOVBattleNoticeKind::BoardingReturn;
     else if(EventKind==TEXT("Capture"))Kind=EOVBattleNoticeKind::FacilityCaptured;
     else return;
     FOVAttackState Event;Event.HitShipId=Ship->GetFName();Event.Position=Ship->GetActorTransform().TransformPosition(Unit.LocalPosition);Event.ResolvedAt=GameTime;
-    Append(Event,Ship,Kind,1);
+    Append(Event,Ship,Kind,1,Unit.UnitId);
 }
 
-void UOVBattleNotices::Append(const FOVAttackState& Attack,AOVShip* Victim,EOVBattleNoticeKind Kind,int32 Count)
+void UOVBattleNotices::Append(const FOVAttackState& Attack,AOVShip* Victim,EOVBattleNoticeKind Kind,int32 Count,int32 UnitId)
 {
     const bool bWrecked=Kind==EOVBattleNoticeKind::ShipWrecked;
     FOVBattleNotice* Last=Notices.IsEmpty()?nullptr:&Notices.Last();
-    if(Kind==EOVBattleNoticeKind::Hit&&Last&&Last->Kind==Kind&&Last->ShipId==Attack.HitShipId&&Attack.ResolvedAt>=Last->GameTime&&Attack.ResolvedAt-Last->GameTime<=2.0)
+    if((Kind==EOVBattleNoticeKind::Hit||Kind==EOVBattleNoticeKind::HeroHit)&&Last&&Last->Kind==Kind&&Last->ShipId==Attack.HitShipId&&Last->UnitId==UnitId&&Attack.ResolvedAt>=Last->GameTime&&Attack.ResolvedAt-Last->GameTime<=2.0)
     {
         ++Last->Count;Last->GameTime=Attack.ResolvedAt;Last->LastPosition=Attack.Position;Last->DisplayTime=FPlatformTime::Seconds();return;
     }
     FOVBattleNotice& Notice=Notices.AddDefaulted_GetRef();
     Notice.ShipName=Victim->ShipName;Notice.ShipId=Attack.HitShipId;Notice.LastPosition=Attack.Position;
-    Notice.GameTime=Attack.ResolvedAt;Notice.DisplayTime=FPlatformTime::Seconds();Notice.Count=Count;Notice.bShipWrecked=bWrecked;Notice.Kind=Kind;
+    Notice.GameTime=Attack.ResolvedAt;Notice.DisplayTime=FPlatformTime::Seconds();Notice.Count=Count;Notice.UnitId=UnitId;Notice.bShipWrecked=bWrecked;Notice.Kind=Kind;
     Notice.bCritical=bWrecked||Kind==EOVBattleNoticeKind::HeroDeath||Kind==EOVBattleNoticeKind::HostileBoarding||(Kind==EOVBattleNoticeKind::FacilityDestroyed&&Attack.CriticalFacilitiesDestroyed>0);
     if(Notice.bCritical)LastCriticalDisplayTime=Notice.DisplayTime;
     if(Notices.Num()>64){Notices.RemoveAt(0);++DroppedCount;}

@@ -68,6 +68,25 @@ bool FOVInteriorHostileBoardingNotice::RunTest(const FString&)
     return true;
 }
 
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(FOVInteriorHeroHitNotice,"OrbitalVanguard.Interior.HeroHitNotice",EAutomationTestFlags::EditorContext|EAutomationTestFlags::EngineFilter)
+bool FOVInteriorHeroHitNotice::RunTest(const FString&)
+{
+    OVInteriorTest::FRange R;const FName Room=R.Origin->Systems->Layout->CoreSlotId;
+    const int32 Hero=R.Interior->RegisterUnit(R.Origin,0,EOVInteriorRole::Ranged,Room);
+    const int32 Enemy=R.Interior->RegisterUnit(R.Origin,1,EOVInteriorRole::Trooper,Room);
+    for(auto& U:R.Interior->Units) {
+        if(U.UnitId==Hero){U.HP=U.MaxHP=10000;U.Damage=0;U.Evasion=0;}
+        if(U.UnitId==Enemy){U.Damage=10;U.Evasion=0;}
+    }
+    R.Advance(5);
+    const auto* Feed=R.World->GetSubsystem<UOVBattleNotices>();
+    const auto* Hit=Feed->Notices.FindByPredicate([Hero](const FOVBattleNotice& N){return N.Kind==EOVBattleNoticeKind::HeroHit&&N.UnitId==Hero;});
+    TestTrue(TEXT("실제 선내 공격 피해로 아군 영웅 알림"),R.Interior->GetUnit(Hero).HP<10000&&Hit!=nullptr);
+    TestTrue(TEXT("같은 영웅의 반복 피격은 묶임"),Hit&&Hit->Count>1);
+    TestFalse(TEXT("적 일반병의 피격은 아군 영웅으로 표시하지 않음"),Feed->Notices.ContainsByPredicate([Enemy](const FOVBattleNotice& N){return N.Kind==EOVBattleNoticeKind::HeroHit&&N.UnitId==Enemy;}));
+    return true;
+}
+
 IMPLEMENT_SIMPLE_AUTOMATION_TEST(FOVInteriorOperationContributors,"OrbitalVanguard.Interior.ActualOperationContributors",EAutomationTestFlags::EditorContext|EAutomationTestFlags::EngineFilter)
 bool FOVInteriorOperationContributors::RunTest(const FString&)
 {

@@ -9,7 +9,7 @@ struct FOVAttackState;
 struct FOVInteriorUnitRecord;
 
 UENUM(BlueprintType)
-enum class EOVBattleNoticeKind : uint8 { Hit, ShipWrecked, ShieldDepleted, ArmorDestroyed, FacilityDestroyed, ShieldRestored, HeroDeath, BoardingEntry, BoardingReturn, FacilityCaptured, HostileBoarding };
+enum class EOVBattleNoticeKind : uint8 { Hit, ShipWrecked, ShieldDepleted, ArmorDestroyed, FacilityDestroyed, ShieldRestored, HeroDeath, BoardingEntry, BoardingReturn, FacilityCaptured, HostileBoarding, HeroHit };
 
 USTRUCT(BlueprintType)
 struct ORBITALVANGUARD_API FOVBattleNotice
@@ -20,6 +20,7 @@ struct ORBITALVANGUARD_API FOVBattleNotice
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly) FVector LastPosition=FVector::ZeroVector;
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly) double GameTime=0;
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly) int32 Count=0;
+    UPROPERTY(VisibleAnywhere, BlueprintReadOnly) int32 UnitId=0;
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly) bool bShipWrecked=false;
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly) bool bCritical=false;
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly) EOVBattleNoticeKind Kind=EOVBattleNoticeKind::Hit;
@@ -41,5 +42,5 @@ public:
     void RecordInteriorEvent(FName EventKind,const FOVInteriorUnitRecord& Unit,double GameTime);
 private:
     TArray<int32> RecentAttackIds;
-    void Append(const FOVAttackState& Attack,AOVShip* Victim,EOVBattleNoticeKind Kind,int32 Count);
+    void Append(const FOVAttackState& Attack,AOVShip* Victim,EOVBattleNoticeKind Kind,int32 Count,int32 UnitId=0);
 };

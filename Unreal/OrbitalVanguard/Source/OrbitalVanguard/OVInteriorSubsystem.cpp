@@ -419,6 +419,7 @@ void UOVInteriorSubsystem::ApplyDamage(FOVInteriorUnitRecord& U,float Amount,con
 {
     if(!OVInterior::Living(U)||Amount<=0)return;
     U.HP=FMath::Max(0.f,U.HP-Amount);U.LastDamagedAt=GameTime;
+    if(U.HP>0)if(auto* Feed=GetWorld()->GetSubsystem<UOVBattleNotices>())Feed->RecordInteriorEvent(TEXT("Damage"),U,GameTime);
     if(U.HP>0 && U.Role==EOVInteriorRole::Melee && OVInterior::Rank(U,3)>0 && U.HP<U.MaxHP*.25f && U.bSkill4Armed && GameTime>=U.Skill4ReadyAt)
     {U.Skill4ActiveUntil=GameTime+3;U.Skill4ReadyAt=GameTime+120;U.bSkill4Armed=false;++U.SkillUses;}
     if(U.HP<U.MaxHP*.25f)U.bWasCriticallyInjured=true;
