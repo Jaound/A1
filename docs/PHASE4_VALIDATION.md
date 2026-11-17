@@ -8,7 +8,7 @@
 - 브랜치: `codex/phase1-playground`.
 - `origin/work`를 fetch한 직후 고정한 기획: `035a4fba81d26f1d67daa1f44bded0f7e8d3a434`. 이전 기준과 변경 없음. 게임 코드는 work에 반영하지 않는다.
 - 엔진: `E:\UE_5.8`, UE5.8.4, Win64 Development Editor. MSVC14.51.36260, Windows SDK10.0.26100.0.
-- 단계 체크포인트: `4b9c9dc` → `f9227de` → **`261159c9e65f7bc0c3c19e0a6ee5d388e70e2240`**. 마지막은 구현 소스 SHA다. 문서/검증 메타데이터 제출 커밋은 그 이후이며 게임 Source는 같다. [검사/해시 명세](validation/Phase4/B9-Manifest.json)에 원본 로그와 보고서 SHA-256을 고정했다.
+- 단계 체크포인트: `4b9c9dc` → `f9227de` → **`261159c9e65f7bc0c3c19e0a6ee5d388e70e2240`**. 마지막은 구현 소스 SHA다. 문서/검증 메타데이터 제출 커밋은 그 이후이며 게임 Source는 같다. [검사/해시 명세](validation/Phase4/B9-Manifest.json)에 원본 로그와 보고서 SHA-256을 고정했다. 보고서 기본 해시는 Git의 LF 정규화 바이트이며 Windows 원본 파일 해시는 별도로 보존한다. 최종 제출 뒤 증분 빌드에서 Source 해시와 DLL 해시가 B9와 같고 작업트리가 깨끗함을 확인했다.
 
 ## 최종 실제 검사
 

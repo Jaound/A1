@@ -5,7 +5,7 @@
   "source_archive_command": "git archive --format=tar 261159c9e65f7bc0c3c19e0a6ee5d388e70e2240 Unreal/OrbitalVanguard/Source",
   "binary_sha256": "d02ffadeb3597213de31e05f22d60e0293794cc1b624c28f91bd989610c1bd17",
   "report": "docs/validation/Phase4/B9-Development.json",
-  "report_sha256": "27609175c2d637ce5205ec235adf6cf134912eec4b1be690fa45a490e40b3793",
+  "report_sha256": "5fa08185a7fe2c3c9e3b6a5cc883498eede748449f4e7128e47afa62a3559557",
   "report_scope": "DEV PIE API; 물리 입력/실제 게임 밸런스 제외",
   "report_passed": true,
   "checks": [
@@ -78,7 +78,7 @@
   "role_source_archive_sha256": "c879e07e41513c6a68f542c14410b4ae4126fc7c094955861bb218a88e8a7b82",
   "role_binary_sha256": "d02ffadeb3597213de31e05f22d60e0293794cc1b624c28f91bd989610c1bd17",
   "role_report": "docs/validation/Phase4/B9-HullRoles.json",
-  "role_report_sha256": "7d639da09378c5e8147409dad18d9aa5e1bf6336629b311c72aaf32fca03042e",
+  "role_report_sha256": "ef3cd6edee82df9eeca30ffd2a05b827a67414e3eb3820bb60fb88e09a501e6a",
   "role_checks": [
     {
       "id": "corvette / 실제 생성",
@@ -1160,5 +1160,6 @@
       "id": "battlecarrier / 실제 복귀와 동일 기체 재고",
       "passed": true
     }
-  ]
+  ],
+  "report_hash_basis": "Git LF 정규화 바이트; B9-Manifest에 Windows 원본 파일 해시 별도 보존"
 }

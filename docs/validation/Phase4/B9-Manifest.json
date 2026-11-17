@@ -14,75 +14,99 @@
   "reports": {
     "Development": {
       "path": "docs/validation/Phase4/B9-Development.json",
-      "sha256": "27609175c2d637ce5205ec235adf6cf134912eec4b1be690fa45a490e40b3793",
+      "sha256": "5fa08185a7fe2c3c9e3b6a5cc883498eede748449f4e7128e47afa62a3559557",
       "checks": 96,
-      "modified_utc_epoch": 1794877431.126656
+      "modified_utc_epoch": 1794877431.126656,
+      "raw_windows_file_sha256": "27609175c2d637ce5205ec235adf6cf134912eec4b1be690fa45a490e40b3793",
+      "hash_basis": "Git에 저장된 LF 정규화 바이트. 로컬 원본 바이트 해시는 별도 보존."
     },
     "HullRoles": {
       "path": "docs/validation/Phase4/B9-HullRoles.json",
-      "sha256": "7d639da09378c5e8147409dad18d9aa5e1bf6336629b311c72aaf32fca03042e",
+      "sha256": "ef3cd6edee82df9eeca30ffd2a05b827a67414e3eb3820bb60fb88e09a501e6a",
       "checks": 270,
-      "modified_utc_epoch": 1794877449.0157447
+      "modified_utc_epoch": 1794877449.0157447,
+      "raw_windows_file_sha256": "7d639da09378c5e8147409dad18d9aa5e1bf6336629b311c72aaf32fca03042e",
+      "hash_basis": "Git에 저장된 LF 정규화 바이트. 로컬 원본 바이트 해시는 별도 보존."
     },
     "DevelopmentFilters": {
       "path": "docs/validation/Phase4/B9-DevelopmentFilters.json",
-      "sha256": "deec38144f223213b3ad6a03a27d638ac083f4ab1e00625e31f4a9b38e7ab629",
+      "sha256": "cc42a3f1845ef2b81d02f2f808a672ae5fd72bc3122c1612b1f19a95389a3624",
       "checks": 96,
-      "modified_utc_epoch": 1794877410.9983292
+      "modified_utc_epoch": 1794877410.9983292,
+      "raw_windows_file_sha256": "deec38144f223213b3ad6a03a27d638ac083f4ab1e00625e31f4a9b38e7ab629",
+      "hash_basis": "Git에 저장된 LF 정규화 바이트. 로컬 원본 바이트 해시는 별도 보존."
     },
     "DevelopmentRepeat": {
       "path": "docs/validation/Phase4/B9-DevelopmentRepeat.json",
-      "sha256": "2098907a56a88bcbb379e8d43ec6aee33a3c9ea42a2edf27e51f78ba724ce118",
+      "sha256": "ac81f2bf04c2925a4fd853be6aa8197a371e3fa6cab94636342f14a7444fe830",
       "checks": 33,
-      "modified_utc_epoch": 1794877391.8126733
+      "modified_utc_epoch": 1794877391.8126733,
+      "raw_windows_file_sha256": "2098907a56a88bcbb379e8d43ec6aee33a3c9ea42a2edf27e51f78ba724ce118",
+      "hash_basis": "Git에 저장된 LF 정규화 바이트. 로컬 원본 바이트 해시는 별도 보존."
     },
     "HeroRoster": {
       "path": "docs/validation/Phase4/B9-HeroRoster.json",
-      "sha256": "34f5b813c30ce9178781412bff0037bf758bcf147fe2f685c8a0d2eb68d4c8ba",
+      "sha256": "8f6c70a79dc20ee7b6a88048eabdf8ac1544d2fd311b91fe707be3c7a18d16df",
       "checks": 70,
-      "modified_utc_epoch": 1794877469.4281936
+      "modified_utc_epoch": 1794877469.4281936,
+      "raw_windows_file_sha256": "34f5b813c30ce9178781412bff0037bf758bcf147fe2f685c8a0d2eb68d4c8ba",
+      "hash_basis": "Git에 저장된 LF 정규화 바이트. 로컬 원본 바이트 해시는 별도 보존."
     },
     "HeroBoarding": {
       "path": "docs/validation/Phase4/B9-HeroBoarding.json",
-      "sha256": "47cd9b5455fe69c9309ffbcbf9577e82e6a4736a9b994bd28d4571ee3e296031",
+      "sha256": "62928e1e5b59f6b2c4bb6ba579997ff346db992ee2dcb791056de5c6789389e7",
       "checks": 33,
-      "modified_utc_epoch": 1794877489.3840923
+      "modified_utc_epoch": 1794877489.3840923,
+      "raw_windows_file_sha256": "47cd9b5455fe69c9309ffbcbf9577e82e6a4736a9b994bd28d4571ee3e296031",
+      "hash_basis": "Git에 저장된 LF 정규화 바이트. 로컬 원본 바이트 해시는 별도 보존."
     },
     "OwnedMission": {
       "path": "docs/validation/Phase4/B9-OwnedMission.json",
-      "sha256": "3799719b6e521caccd6f492d4e13b16b9194a374ba1b4ea00591ab53892d24ff",
+      "sha256": "63d202ea0f968c0c0f264a4c0da9709c7009da373f0b7ef812f2eb9f18273f04",
       "checks": 17,
-      "modified_utc_epoch": 1794877517.2318728
+      "modified_utc_epoch": 1794877517.2318728,
+      "raw_windows_file_sha256": "3799719b6e521caccd6f492d4e13b16b9194a374ba1b4ea00591ab53892d24ff",
+      "hash_basis": "Git에 저장된 LF 정규화 바이트. 로컬 원본 바이트 해시는 별도 보존."
     },
     "Phase2AControls": {
       "path": "docs/validation/Phase4/B9-Phase2AControls.json",
-      "sha256": "36dd707bd87c31ca0f40ca0b25748d591ee0aeccb29e5072b8167f76d4269c5c",
+      "sha256": "30c9764d5f72de51bce3a4397107fb62f604370ce0a6b27a375bb4d55d166331",
       "checks": 57,
-      "modified_utc_epoch": 1794877540.1710634
+      "modified_utc_epoch": 1794877540.1710634,
+      "raw_windows_file_sha256": "36dd707bd87c31ca0f40ca0b25748d591ee0aeccb29e5072b8167f76d4269c5c",
+      "hash_basis": "Git에 저장된 LF 정규화 바이트. 로컬 원본 바이트 해시는 별도 보존."
     },
     "Phase2BRCalibration": {
       "path": "docs/validation/Phase4/B9-Phase2BRCalibration.json",
-      "sha256": "f05a1bd7e5748ae76606efe3d229ee4726784cceb726b3162d27760c52f4af21",
+      "sha256": "fa1bfab9b01ff741aee2994a57478f4e8a6a4c6267dec3ed76422a18645cad51",
       "checks": 79,
-      "modified_utc_epoch": 1794877571.2452183
+      "modified_utc_epoch": 1794877571.2452183,
+      "raw_windows_file_sha256": "f05a1bd7e5748ae76606efe3d229ee4726784cceb726b3162d27760c52f4af21",
+      "hash_basis": "Git에 저장된 LF 정규화 바이트. 로컬 원본 바이트 해시는 별도 보존."
     },
     "Phase2C": {
       "path": "docs/validation/Phase4/B9-Phase2C.json",
-      "sha256": "2ed6f12c3d15a8218f91b6f9df6a7e46b3cf0f3b254b30d8a53a4662702ef1d6",
+      "sha256": "55917f0501eb179bcb641040ad1be139826d7cd4bb2ba1d86aa27b86aa48e3f4",
       "checks": 77,
-      "modified_utc_epoch": 1794877599.4865115
+      "modified_utc_epoch": 1794877599.4865115,
+      "raw_windows_file_sha256": "2ed6f12c3d15a8218f91b6f9df6a7e46b3cf0f3b254b30d8a53a4662702ef1d6",
+      "hash_basis": "Git에 저장된 LF 정규화 바이트. 로컬 원본 바이트 해시는 별도 보존."
     },
     "Phase3Interior": {
       "path": "docs/validation/Phase4/B9-Phase3Interior.json",
-      "sha256": "94434792984d04f949951bab4f2cf04bb4d5926358bf3088313e218ff73a216c",
+      "sha256": "baa9c13f45524fa3e3afb932719d9108d750baf66ad22c188917d6952cbcf2de",
       "checks": 36,
-      "modified_utc_epoch": 1794877617.9951096
+      "modified_utc_epoch": 1794877617.9951096,
+      "raw_windows_file_sha256": "94434792984d04f949951bab4f2cf04bb4d5926358bf3088313e218ff73a216c",
+      "hash_basis": "Git에 저장된 LF 정규화 바이트. 로컬 원본 바이트 해시는 별도 보존."
     },
     "IntegratedMission": {
       "path": "docs/validation/Phase4/B9-IntegratedMission.json",
-      "sha256": "da0ea7acd8a59d0a6f16f3b8598b687b588a8133ccef858c8be4ff3aadab7236",
+      "sha256": "fa09dc63098dcae921cfb2871068deacaa68f23aea263213c3d6382044793357",
       "checks": 316,
-      "modified_utc_epoch": 1794877877.407226
+      "modified_utc_epoch": 1794877877.407226,
+      "raw_windows_file_sha256": "da0ea7acd8a59d0a6f16f3b8598b687b588a8133ccef858c8be4ff3aadab7236",
+      "hash_basis": "Git에 저장된 LF 정규화 바이트. 로컬 원본 바이트 해시는 별도 보존."
     }
   },
   "note": "최종 Source 261159c의 B9 전체 검사 완료. Config의 역사 역할 근거 반영 후 필터96/96 및 역할부분확인16 확인. UI는 API 렌더이며 실제 입력이 아님.",
