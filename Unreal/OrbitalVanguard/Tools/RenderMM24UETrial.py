@@ -4,6 +4,7 @@ This creates no map asset and never saves the level. It does not test gameplay,
 art approval, pitch articulation or direct OS input.
 """
 import json
+import math
 import os
 from pathlib import Path
 import time
@@ -32,12 +33,25 @@ def tick(_dt):
         if state['stage']=='setup':
             world=unreal.EditorLoadingAndSavingUtils.new_blank_map(False);check('NEW-UNSAVED-WORLD',world is not None)
             actors=unreal.get_editor_subsystem(unreal.EditorActorSubsystem)
+            # FBX static import bakes Blender object translation into mesh vertices.
+            # Apply the measured trial pivot explicitly; never change the mesh asset.
+            pivots={'MM24':unreal.Vector(0,0,-97.5),'CIWSB':unreal.Vector(40.5,-.027,-39)}
+            check('TRIAL-PIVOT-KNOWN',prefix in pivots)
+            pivot=pivots[prefix];report['trial_pivot_cm']=[pivot.x,pivot.y,pivot.z]
             for part in ('Base','Yaw'):
                 mesh=unreal.load_asset('/Game/Presentation/'+prefix+'Trial/SM_'+prefix+'_'+part+'Trial')
                 check('MESH-'+part,isinstance(mesh,unreal.StaticMesh))
                 obj=actors.spawn_actor_from_class(unreal.StaticMeshActor,unreal.Vector(0,0,0))
                 obj.static_mesh_component.set_static_mesh(mesh);obj.set_actor_enable_collision(False)
-                if part=='Yaw':state['yaw_actor']=obj
+                if part=='Yaw':
+                    pivot_actor=actors.spawn_actor_from_class(unreal.TargetPoint,pivot)
+                    obj.static_mesh_component.set_mobility(unreal.ComponentMobility.MOVABLE)
+                    obj.attach_to_actor(pivot_actor,unreal.Name('None'),unreal.AttachmentRule.KEEP_WORLD,
+                                        unreal.AttachmentRule.KEEP_WORLD,unreal.AttachmentRule.KEEP_WORLD,False)
+                    check('PIVOT-POSITION',(pivot_actor.get_actor_location()-pivot).length()<.01)
+                    check('MESH-KEEPS-INITIAL-ORIGIN',obj.get_actor_location().length()<.01)
+                    check('MESH-ATTACHED-TO-PIVOT',obj.get_attach_parent_actor()==pivot_actor)
+                    state['yaw_actor']=pivot_actor;state['yaw_mesh']=obj;state['pivot']=pivot
                 bounds=mesh.get_bounding_box()
                 report[part]={'min':[float(getattr(bounds.min,k)) for k in ('x','y','z')],
                               'max':[float(getattr(bounds.max,k)) for k in ('x','y','z')]}
@@ -54,6 +68,11 @@ def tick(_dt):
         if state['stage']=='render' and time.monotonic()-state['at']>3:
             angle=state['angles'][state['index']];state['yaw_actor'].set_actor_rotation(unreal.Rotator(0,0,angle),False)
             check('YAW-ROTATION-'+str(angle),abs(state['yaw_actor'].get_actor_rotation().yaw-angle)<.1)
+            check('YAW-MESH-ROTATION-'+str(angle),abs(state['yaw_mesh'].get_actor_rotation().yaw-angle)<.1)
+            pivot=state['pivot'];a=math.radians(angle)
+            expected=unreal.Vector(pivot.x-(pivot.x*math.cos(a)-pivot.y*math.sin(a)),
+                                   pivot.y-(pivot.x*math.sin(a)+pivot.y*math.cos(a)),0)
+            check('YAW-MESH-ORBIT-'+str(angle),(state['yaw_mesh'].get_actor_location()-expected).length()<.1)
             path=str(out/('MM24_%+03d.png'%angle))
             check('NO-SCREENSHOT-OVERWRITE-'+str(angle),not Path(path).exists())
             state['stage']='requesting'

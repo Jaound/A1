@@ -66,6 +66,8 @@
 
 **CIWS-B UE 격리 시험 에셋:** 원본 기반 시험 받침대·회전부와 시험 재질을 `Unreal/OrbitalVanguard/Content/Presentation/CIWSBTrial`에 반입했다. [메시 20/20](validation/PlayUIR2/CIWSB_UE메시_검사.json), [재질 51/51](validation/PlayUIR2/CIWSB_UE재질_검사.json), 빈 시험 레벨의 [0도](validation/PlayUIR2/CIWSB_UE회전_0.png) / [+45도](validation/PlayUIR2/CIWSB_UE회전_45.png) / [-45도](validation/PlayUIR2/CIWSB_UE회전_-45.png) 및 [값·렌더 파일 15/15](validation/PlayUIR2/CIWSB_UE회전_검사.json). 총 12개 UE 에셋 약34.9MB이며 최대 개별 약11.6MB, 저장소의 Git LFS 추적 규칙은 없다. 2048px 시험 맵과 40만 면은 최종 품질·성능 승인이 아니다. 원본과 다른 밝기·어두운 영역, 회전 간섭, 상하 포신·포구, 실제 PD 조준/발사·피격과 대량 성능은 미검증이다. 기존 전투와 기본 장면에는 연결하지 않았다. 시험 도구는 접두어 옵션으로 MM24와 재사용한다.
 
+**UE 회전축 검증 정정:** FBX StaticMesh 임포트가 Blender 객체의 피벗 이동을 메시 정점에 적용하므로, CIWS-B의 시험 축은 UE 좌표 약 (40.5, -0.027, -39)cm에 별도 부모를 두어야 한다. 최초 축 보정 v2는 정적 메시의 부모 부착이 UE에서 거부됐는데도 피벗만 검사해 [잘못 통과](validation/PlayUIR2/CIWSB_피벗v2_잘못된통과.json)했다. 실제 메시 회전 증거가 아니며 정정한다. 메시를 이동 가능하게 해 부모 부착·메시 회전·축 주위 위치를 검사한 [CIWS-B v3 25/25](validation/PlayUIR2/CIWSB_피벗v3_검사.json), [0도](validation/PlayUIR2/CIWSB_피벗v3_0.png) / [45도](validation/PlayUIR2/CIWSB_피벗v3_45.png); 같은 방법의 [MM24 v4 25/25](validation/PlayUIR2/MM24_피벗v4_검사.json), [45도](validation/PlayUIR2/MM24_피벗v4_45.png). 시험 레벨은 저장하지 않았다. 이 결과는 좌우 시험 축·메시 변환에 한정되며 모든 각도의 간섭·상하 포신·실제 사격/포구·원본 완성이나 전장 적용을 증명하지 않는다.
+
 ## 이전 작업 기록
 
 **아군 영웅 실제 피격:** 선내 전투의 실제 HP 감소를 아군 영웅 피격 알림에 연결했다. 일반 병력과 숨은 적 피해는 영웅 알림으로 기록하지 않으며 치명타는 중복 피격 대신 전사 사건으로 기록한다. 같은 함선의 서로 다른 영웅은 실행 중 개인 ID로 구분하고 같은 영웅의 연속 피격만 2초 게임시간 안에 묶는다. `PlayUI_R2_BQ_Build.log` 빌드 성공, `PlayUI_R2_BQ_Automation.log` 자동90/90: 실제 적 공격에 따른 HP 감소·묶음·적 비공개 포함. 실제 표시 화면·장기 경보 부하·직접 입력은 미검증이다. 함재기 임계 경보는 아직 미구현이며 소유권 변경과 실제 손실을 구분하는 시험이 필요하다.

@@ -1,0 +1,142 @@
+{
+  "passed": true,
+  "checks": [
+    {
+      "id": "NEW-UNSAVED-WORLD",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "TRIAL-PIVOT-KNOWN",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "MESH-Base",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "MESH-Yaw",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "PIVOT-POSITION",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "MESH-KEEPS-INITIAL-ORIGIN",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "YAW-ROTATION-0",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "NO-SCREENSHOT-OVERWRITE-0",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "SCREENSHOT-TASK-0",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "RENDER-FILE-0",
+      "passed": true,
+      "detail": "116149"
+    },
+    {
+      "id": "YAW-ROTATION-45",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "NO-SCREENSHOT-OVERWRITE-45",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "SCREENSHOT-TASK-45",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "RENDER-FILE-45",
+      "passed": true,
+      "detail": "116295"
+    },
+    {
+      "id": "YAW-ROTATION--45",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "NO-SCREENSHOT-OVERWRITE--45",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "SCREENSHOT-TASK--45",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "RENDER-FILE--45",
+      "passed": true,
+      "detail": "116361"
+    }
+  ],
+  "errors": [],
+  "scope": "unsaved blank-level UE render only",
+  "physical_input": false,
+  "gameplay": false,
+  "trial_pivot_cm": [
+    40.5,
+    -0.027,
+    -39.0
+  ],
+  "Base": {
+    "min": [
+      -39.585609436035156,
+      -79.1010513305664,
+      -99.99337768554688
+    ],
+    "max": [
+      116.7033920288086,
+      79.0376968383789,
+      -38.99906921386719
+    ]
+  },
+  "Yaw": {
+    "min": [
+      -123.55067443847656,
+      -54.974666595458984,
+      -39.00111770629883
+    ],
+    "max": [
+      123.43572235107422,
+      54.79621505737305,
+      99.99815368652344
+    ]
+  },
+  "images": [
+    {
+      "angle": 0,
+      "path": "C:\\Users\\user\\source\\repos\\A1\\Unreal\\OrbitalVanguard\\Saved\\Validation\\CIWSBUERender\\yaw_pivot_v2\\MM24_+00.png"
+    },
+    {
+      "angle": 45,
+      "path": "C:\\Users\\user\\source\\repos\\A1\\Unreal\\OrbitalVanguard\\Saved\\Validation\\CIWSBUERender\\yaw_pivot_v2\\MM24_+45.png"
+    },
+    {
+      "angle": -45,
+      "path": "C:\\Users\\user\\source\\repos\\A1\\Unreal\\OrbitalVanguard\\Saved\\Validation\\CIWSBUERender\\yaw_pivot_v2\\MM24_-45.png"
+    }
+  ]
+}
