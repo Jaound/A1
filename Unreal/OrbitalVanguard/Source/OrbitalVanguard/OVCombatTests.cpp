@@ -107,6 +107,25 @@ bool FOVBattleNoticeTest::RunTest(const FString&)
     TestTrue(TEXT("Natural shield recovery creates notice"),R.B->Systems->bShieldActive&&Feed->Notices.ContainsByPredicate([](const FOVBattleNotice& N){return N.Kind==EOVBattleNoticeKind::ShieldRestored;}));
     R.B->Systems->Simulate(1.f);
     TestEqual(TEXT("Active shield does not repeat recovery notice"),Feed->Notices.Num(),AfterRecovery);
+    R.B->Systems->Tuning.bAllowManualShieldToggle=true;
+    TestTrue(TEXT("Manual shield off accepted"),R.B->Systems->SetShieldManualOff(true));
+    TestTrue(TEXT("Manual shield on accepted"),R.B->Systems->SetShieldManualOff(false));
+    const int32 AfterManual=Feed->Notices.Num();
+    TestTrue(TEXT("Actual manual activation emits one notice"),AfterManual==AfterRecovery+1&&Feed->Notices.Last().Kind==EOVBattleNoticeKind::ShieldRestored);
+    R.B->Systems->SetShieldManualOff(false);
+    TestEqual(TEXT("Already active manual setting emits no duplicate"),Feed->Notices.Num(),AfterManual);
+    R.B->Systems->ResetState();
+    TestEqual(TEXT("Initial full shield reset emits no restoration notice"),Feed->Notices.Num(),AfterManual);
+    TArray<int32> Controls;
+    for(int32 I=0;I<R.B->Systems->Layout->Slots.Num();++I)if(R.B->Systems->Layout->Slots[I].Facility==EOVFacilityType::ShieldControl)Controls.Add(I);
+    TestEqual(TEXT("Capacity transition fixture has three controllers"),Controls.Num(),3);
+    if(Controls.Num()==3) {
+        R.B->Systems->DebugSetOccupation(R.B->Systems->Slots[Controls[2]].SlotId,1);
+        R.B->Systems->Shield=R.B->Systems->MaxShield*.4f;R.B->Systems->bShieldActive=false;
+        R.B->Systems->DebugSetOccupation(R.B->Systems->Slots[Controls[1]].SlotId,1);
+        TestTrue(TEXT("Capacity change activating stored charge emits notice"),R.B->Systems->bShieldActive&&Feed->Notices.Num()==AfterManual+1&&Feed->Notices.Last().Kind==EOVBattleNoticeKind::ShieldRestored);
+        R.B->Systems->ResetState();
+    }
     R.B->Systems->Shield=0;R.B->Systems->bShieldActive=false;
     for(auto& Armor:R.B->Systems->ArmorSections)Armor.HP=1;
     R.Gun().Profile.Damage=300;R.Fire();

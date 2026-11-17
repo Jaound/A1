@@ -166,6 +166,7 @@ private:
     bool IsOperational(int32 Index) const;
     bool CanAct() const;
     void MarkWrecked();
+    void NotifyShieldActivated();
     void SyncArmorDisplay();
     void BeginDamageEvent(EOVDamageCause Cause, FName Source);
     float AbsorbExternalDamage(float Damage);

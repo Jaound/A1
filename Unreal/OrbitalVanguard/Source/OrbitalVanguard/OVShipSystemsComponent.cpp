@@ -160,8 +160,15 @@ void UOVShipSystemsComponent::RefreshDerivedState()
     {
         // Capacity loss can move existing charge past 50%; transition before any recovery time is applied.
         bShieldActive = true;
+        NotifyShieldActivated();
     }
     SyncArmorDisplay();
+}
+
+void UOVShipSystemsComponent::NotifyShieldActivated()
+{
+    if(auto* World=GetWorld())if(auto* Combat=World->GetSubsystem<UOVCombatSubsystem>())if(Combat->bEnabled)
+        if(auto* Feed=World->GetSubsystem<UOVBattleNotices>())Feed->RecordShieldRestored(Cast<AOVShip>(GetOwner()),Combat->GameTime);
 }
 
 void UOVShipSystemsComponent::Simulate(float SimDelta)
@@ -183,8 +190,7 @@ void UOVShipSystemsComponent::Simulate(float SimDelta)
     Shield = FMath::Min(Half, Shield + Recovery);
     if (Shield + UE_KINDA_SMALL_NUMBER >= Half) {
         Shield = Half; bShieldActive = true;
-        if(auto* World=GetWorld())if(auto* Combat=World->GetSubsystem<UOVCombatSubsystem>())if(Combat->bEnabled)
-            if(auto* Feed=World->GetSubsystem<UOVBattleNotices>())Feed->RecordShieldRestored(Cast<AOVShip>(GetOwner()),Combat->GameTime);
+        NotifyShieldActivated();
     }
 }
 
