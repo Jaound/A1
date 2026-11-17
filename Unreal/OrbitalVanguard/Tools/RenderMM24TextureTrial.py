@@ -7,6 +7,8 @@ import sys
 import bpy
 
 args=sys.argv[sys.argv.index('--')+1:]
+baked='--baked' in args
+args=[a for a in args if a!='--baked']
 if len(args)!=1:raise ValueError('Pass a new output folder after --')
 source=Path(bpy.data.filepath).resolve();out=Path(args[0]).resolve()
 if out.exists():raise FileExistsError(out)
@@ -19,7 +21,8 @@ for name in ('MM24_BaseTrial','MM24_YawTrial'):
     for mat in obj.data.materials:
         if mat and mat.use_nodes:
             nodes=mat.node_tree.nodes
-            color=next((n for n in nodes if n.type=='TEX_IMAGE' and n.image and n.image.name=='Image_0'),None)
+            color=next((n for n in nodes if n.type=='TEX_IMAGE' and n.image and
+                        (n.image.name.startswith('MM24_TrialBake') if baked else n.image.name=='Image_0')),None)
             if color:nodes.active=color
 scene=bpy.context.scene;scene.display.shading.color_type='TEXTURE';scene.render.image_settings.file_format='PNG'
 yaw=bpy.data.objects['MM24_YawTrial']
@@ -28,6 +31,6 @@ for angle in (0,45,-45):
     scene.render.filepath=str(out/('textured_yaw_%+03d.png'%angle));bpy.ops.render.render(write_still=True)
 after=sha(source)
 (out/'report.json').write_text(json.dumps({'source_blend':str(source),'source_sha256_before':before,'source_sha256_after':after,
-    'source_unchanged':before==after,'scope':'Workbench source-color comparison only; no lighting, UV, pitch or gameplay approval'},ensure_ascii=False,indent=2),encoding='utf-8')
+    'source_unchanged':before==after,'baked':baked,'scope':'Workbench color comparison only; no lighting, UV, pitch or gameplay approval'},ensure_ascii=False,indent=2),encoding='utf-8')
 if before!=after:raise RuntimeError('Source blend unexpectedly changed')
 print('OV_MM24_TEXTURE_VIEWS',out)
