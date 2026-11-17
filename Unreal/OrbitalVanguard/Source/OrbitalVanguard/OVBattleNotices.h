@@ -9,7 +9,7 @@ struct FOVAttackState;
 struct FOVInteriorUnitRecord;
 
 UENUM(BlueprintType)
-enum class EOVBattleNoticeKind : uint8 { Hit, ShipWrecked, ShieldDepleted, ArmorDestroyed, FacilityDestroyed, ShieldRestored, HeroDeath, BoardingEntry, BoardingReturn, FacilityCaptured, HostileBoarding, HeroHit };
+enum class EOVBattleNoticeKind : uint8 { Hit, ShipWrecked, ShieldDepleted, ArmorDestroyed, FacilityDestroyed, ShieldRestored, HeroDeath, BoardingEntry, BoardingReturn, FacilityCaptured, HostileBoarding, HeroHit, HeroRescue };
 
 USTRUCT(BlueprintType)
 struct ORBITALVANGUARD_API FOVBattleNotice
@@ -40,6 +40,7 @@ public:
     void RecordCombatHit(const FOVAttackState& Attack,AOVShip* Victim);
     void RecordShieldRestored(AOVShip* Ship,double GameTime);
     void RecordInteriorEvent(FName EventKind,const FOVInteriorUnitRecord& Unit,double GameTime);
+    void RecordHeroRescue(int32 Faction,int32 UnitId,FVector Position,double GameTime);
 private:
     TArray<int32> RecentAttackIds;
     void Append(const FOVAttackState& Attack,AOVShip* Victim,EOVBattleNoticeKind Kind,int32 Count,int32 UnitId=0);

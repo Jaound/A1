@@ -1,4 +1,5 @@
 #include "OVTransportSubsystem.h"
+#include "OVBattleNotices.h"
 #include "OVCombatSubsystem.h"
 #include "OVShip.h"
 #include "OVShipSystemsComponent.h"
@@ -91,6 +92,7 @@ bool FOVTransportInterceptionTest::RunTest(const FString&)
     R.Transport->LaunchPods(R.Origin, R.Target); R.Transport->Simulate(.6f);
     TestTrue(TEXT("Airborne hero pod takes interception damage"), R.Transport->InterceptPod(R.Transport->Pods[0].PodId, 10000));
     TestFalse(TEXT("Destroyed pod cannot be killed twice"), R.Transport->InterceptPod(R.Transport->Pods[0].PodId, 10000));
+    TestFalse(TEXT("DEV hero-type token is not an actual hero rescue notice"),R.World->GetSubsystem<UOVBattleNotices>()->Notices.ContainsByPredicate([](const FOVBattleNotice& N){return N.Kind==EOVBattleNoticeKind::HeroRescue;}));
     TestTrue(TEXT("Airborne troop pod takes interception damage"), R.Transport->InterceptPod(R.Transport->Pods[1].PodId, 10000));
     TestEqual(TEXT("Hero-type token waits for rescue, not implemented hero death rule"), R.Transport->GetPerson(Ids[0]).State, EOVPassengerState::RescueWaiting);
     TestEqual(TEXT("Ordinary troop token dies"), R.Transport->GetPerson(Ids[1]).State, EOVPassengerState::Dead);

@@ -1,4 +1,5 @@
 #include "OVTransportSubsystem.h"
+#include "OVBattleNotices.h"
 #include "OVCombatSubsystem.h"
 #include "OVShip.h"
 #include "OVShipSystemsComponent.h"
@@ -158,8 +159,10 @@ void UOVTransportSubsystem::BeginReturn(FOVPodState& Pod)
     Pod.State = Pod.ReturnDestination.IsValid() ? EOVPodFlightState::Returning : EOVPodFlightState::Stranded;
     if (FOVPassengerToken* Person = FindPerson(Pod.PersonId))
     {
+        const bool bNewRescue=Pod.State==EOVPodFlightState::Stranded&&Person->State!=EOVPassengerState::RescueWaiting;
         Person->CurrentShip = nullptr;
         Person->State = Pod.State == EOVPodFlightState::Returning ? EOVPassengerState::InPod : EOVPassengerState::RescueWaiting;
+        if(bNewRescue&&Person->bRuntimeHero)if(auto* Feed=GetWorld()->GetSubsystem<UOVBattleNotices>())Feed->RecordHeroRescue(Person->FactionId,Person->RuntimeUnitId,Pod.Position,GameTime);
     }
 }
 
@@ -254,6 +257,7 @@ void UOVTransportSubsystem::DestroyPod(FOVPodState& Pod)
     {
         Person->CurrentShip = nullptr;
         Person->State = (Person->bHeroTypeDEV || Person->bRuntimeHero) ? EOVPassengerState::RescueWaiting : EOVPassengerState::Dead;
+        if(Person->bRuntimeHero)if(auto* Feed=GetWorld()->GetSubsystem<UOVBattleNotices>())Feed->RecordHeroRescue(Person->FactionId,Person->RuntimeUnitId,Pod.Position,GameTime);
     }
     const auto* Person = FindPerson(Pod.PersonId);
     LastMessage = Person && Person->RuntimeUnitId > 0 ?
@@ -445,7 +449,8 @@ void UOVTransportSubsystem::AdvanceShuttle(FOVShuttleRecord& Shuttle, float Delt
             if (Person && Person->State == EOVPassengerState::InShuttle)
             {
                 // R18 unresolved capture: retained affiliation, no fake prisoner success or free escape.
-                if (Destroyed) { Person->State = (Person->bHeroTypeDEV || Person->bRuntimeHero) ? EOVPassengerState::RescueWaiting : EOVPassengerState::Dead; Person->CurrentShip = nullptr; }
+                if (Destroyed) { Person->State = (Person->bHeroTypeDEV || Person->bRuntimeHero) ? EOVPassengerState::RescueWaiting : EOVPassengerState::Dead; Person->CurrentShip = nullptr;
+                    if(Person->bRuntimeHero&&IsValid(Ship))if(auto* Feed=GetWorld()->GetSubsystem<UOVBattleNotices>())Feed->RecordHeroRescue(Person->FactionId,Person->RuntimeUnitId,Ship->GetActorLocation(),GameTime); }
                 else Person->State = EOVPassengerState::AwaitingRecovery;
             }
         }

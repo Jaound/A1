@@ -445,6 +445,9 @@ bool FOVInteriorRuntimeShuttleLoss::RunTest(const FString&)
         else R.Combat->NotifyFTLDeparture(Shuttle);
         R.Advance(.1f);
         TestEqual(TEXT("나포/완파/이탈한 원 강습선 회수 경로는 상실"),R.Transport->Shuttles[0].State,EOVShuttleState::Lost);
+        auto* Feed=R.World->GetSubsystem<UOVBattleNotices>();
+        const int32 RescueNotices=Feed->Notices.FilterByPredicate([](const FOVBattleNotice& N){return N.Kind==EOVBattleNoticeKind::HeroRescue;}).Num();
+        TestEqual(TEXT("실제 강습선 완파만 영웅 구조 대기 알림"),RescueNotices,Case==1?1:0);
         TestFalse(TEXT("상실한 강습선의 회수 성공을 꾸미지 않음"),R.Transport->RecallShuttle(Shuttle));
         for(int32 I=0;I<Units.Num();++I)
         {
@@ -472,10 +475,44 @@ bool FOVInteriorRuntimeShuttleLoss::RunTest(const FString&)
         TestEqual(TEXT("영웅 구조 대기는 사망 집계와 분리"),R.Interior->TotalDeaths,Deaths);
         R.Advance(2);
         TestEqual(TEXT("반복 처리에서도 사망 1회만 집계"),R.Interior->TotalDeaths,Deaths);
+        TestEqual(TEXT("강습선 손실 처리 반복에도 구조 알림 중복 없음"),Feed->Notices.FilterByPredicate([](const FOVBattleNotice& N){return N.Kind==EOVBattleNoticeKind::HeroRescue;}).Num(),RescueNotices);
         TestEqual(TEXT("손실 뒤 무료 인원 생성/삭제 없음"),R.Transport->Persons.Num(),2);
         TestEqual(TEXT("손실 뒤 무료 포드 생성 없음"),R.Transport->Pods.Num(),0);
         TestEqual(TEXT("구조/회수 대기 영웅은 세력 배치 한도 점유"),R.Interior->CountActiveHeroes(0),1);
     }
+    return true;
+}
+
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(FOVInteriorPodRescueNotice,"OrbitalVanguard.Interior.RealPodRescueNotice",EAutomationTestFlags::EditorContext|EAutomationTestFlags::EngineFilter)
+bool FOVInteriorPodRescueNotice::RunTest(const FString&)
+{
+    OVInteriorTest::FRange R;const auto Units=R.Interior->RegisterBoardingTeam(R.Origin,0,1,1);
+    TestEqual(TEXT("영웅과 일반 병력 각각 등록"),Units.Num(),2);
+    if(Units.Num()!=2)return false;
+    TestEqual(TEXT("실제 승객별 포드 발사"),R.Transport->LaunchPods(R.Origin,R.Target),2);
+    R.Advance(.02f); // Test interception while the first pod is in flight, before its arrival.
+    const auto Hero=R.Interior->GetUnit(Units[0]);
+    const auto Person=R.Transport->GetPerson(Hero.PersonId);
+    const auto* Pod=R.Transport->Pods.FindByPredicate([&](const FOVPodState& P){return P.PersonId==Person.PersonId;});
+    if(!TestNotNull(TEXT("실제 영웅 원 포드"),Pod))return false;
+    const int32 PodId=Pod->PodId;const FVector LastPosition=Pod->Position;
+    TestTrue(TEXT("비행 중 포드 실제 격추 처리"),R.Transport->InterceptPod(PodId,10000));
+    auto* Feed=R.World->GetSubsystem<UOVBattleNotices>();
+    const auto* Notice=Feed->Notices.FindByPredicate([&](const FOVBattleNotice& N){return N.Kind==EOVBattleNoticeKind::HeroRescue&&N.UnitId==Hero.UnitId;});
+    TestTrue(TEXT("마지막 포드 위치에 영웅 구조 대기 경보"),Notice&&Notice->bCritical&&Notice->LastPosition.Equals(LastPosition,.01));
+    TestFalse(TEXT("파괴 포드 중복 처리 금지"),R.Transport->InterceptPod(PodId,10000));
+    R.Advance(.2f);
+    TestEqual(TEXT("유닛은 실제 구조 대기"),R.Interior->GetUnit(Hero.UnitId).State,EOVInteriorState::RescueWaiting);
+    TestEqual(TEXT("포드 및 유닛 처리에서도 구조 알림은 한 번"),Feed->Notices.FilterByPredicate([](const FOVBattleNotice& N){return N.Kind==EOVBattleNoticeKind::HeroRescue;}).Num(),1);
+    OVInteriorTest::FRange Stranded;
+    const auto Survivor=Stranded.Interior->RegisterBoardingTeam(Stranded.Origin,0,1,0);
+    Stranded.Transport->LaunchPods(Stranded.Origin,Stranded.Target);Stranded.Advance(.02f);
+    Stranded.Combat->NotifyFTLDeparture(Stranded.Target);Stranded.Origin->Systems->bWrecked=true;
+    Stranded.Advance(.1f);
+    auto* StrandedFeed=Stranded.World->GetSubsystem<UOVBattleNotices>();
+    TestTrue(TEXT("귀환 목적지 상실은 실제 영웅 구조 대기 알림"),Survivor.Num()==1&&Stranded.Interior->GetUnit(Survivor[0]).State==EOVInteriorState::RescueWaiting&&StrandedFeed->Notices.ContainsByPredicate([](const FOVBattleNotice& N){return N.Kind==EOVBattleNoticeKind::HeroRescue;}));
+    const int32 StrandedCount=StrandedFeed->Notices.Num();Stranded.Advance(.5f);
+    TestEqual(TEXT("표류 상태 반복 갱신으로 알림을 복제하지 않음"),StrandedFeed->Notices.Num(),StrandedCount);
     return true;
 }
 

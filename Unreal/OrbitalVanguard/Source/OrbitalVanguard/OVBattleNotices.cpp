@@ -47,6 +47,13 @@ void UOVBattleNotices::RecordInteriorEvent(FName EventKind,const FOVInteriorUnit
     Append(Event,Ship,Kind,1,Unit.UnitId);
 }
 
+void UOVBattleNotices::RecordHeroRescue(int32 Faction,int32 UnitId,FVector Position,double GameTime)
+{
+    if(Faction!=0||UnitId<=0||Position.ContainsNaN())return;
+    FOVAttackState Event;Event.Position=Position;Event.ResolvedAt=GameTime;
+    Append(Event,nullptr,EOVBattleNoticeKind::HeroRescue,1,UnitId);
+}
+
 void UOVBattleNotices::Append(const FOVAttackState& Attack,AOVShip* Victim,EOVBattleNoticeKind Kind,int32 Count,int32 UnitId)
 {
     const bool bWrecked=Kind==EOVBattleNoticeKind::ShipWrecked;
@@ -56,9 +63,9 @@ void UOVBattleNotices::Append(const FOVAttackState& Attack,AOVShip* Victim,EOVBa
         ++Last->Count;Last->GameTime=Attack.ResolvedAt;Last->LastPosition=Attack.Position;Last->DisplayTime=FPlatformTime::Seconds();return;
     }
     FOVBattleNotice& Notice=Notices.AddDefaulted_GetRef();
-    Notice.ShipName=Victim->ShipName;Notice.ShipId=Attack.HitShipId;Notice.LastPosition=Attack.Position;
+    Notice.ShipName=Victim?Victim->ShipName:TEXT("아군 영웅");Notice.ShipId=Attack.HitShipId;Notice.LastPosition=Attack.Position;
     Notice.GameTime=Attack.ResolvedAt;Notice.DisplayTime=FPlatformTime::Seconds();Notice.Count=Count;Notice.UnitId=UnitId;Notice.bShipWrecked=bWrecked;Notice.Kind=Kind;
-    Notice.bCritical=bWrecked||Kind==EOVBattleNoticeKind::HeroDeath||Kind==EOVBattleNoticeKind::HostileBoarding||(Kind==EOVBattleNoticeKind::FacilityDestroyed&&Attack.CriticalFacilitiesDestroyed>0);
+    Notice.bCritical=bWrecked||Kind==EOVBattleNoticeKind::HeroDeath||Kind==EOVBattleNoticeKind::HeroRescue||Kind==EOVBattleNoticeKind::HostileBoarding||(Kind==EOVBattleNoticeKind::FacilityDestroyed&&Attack.CriticalFacilitiesDestroyed>0);
     if(Notice.bCritical)LastCriticalDisplayTime=Notice.DisplayTime;
     if(Notices.Num()>64){Notices.RemoveAt(0);++DroppedCount;}
 }
