@@ -175,6 +175,20 @@ def tick(_dt):
             after_position=p(hud,'window_position')
             check('WINDOW-DEV-OVERLAY-POSITION-UNCHANGED',(after_position.x,after_position.y)==before_position)
             check('WINDOW-DEV-OVERLAY-NO-SIMULATION',snapshot(pc)==before_simulation)
+            dev_pos=hud.get_development_window_position();dev_size=hud.get_development_window_size()
+            x,y=dev_pos.x+30,dev_pos.y+12
+            hud.handle_pointer(x,y,True,True,0.,False,0.,0.)
+            hud.handle_pointer(x-50,y+20,False,True,0.,False,0.,0.)
+            hud.handle_pointer(x-50,y+20,False,False,0.,False,0.,0.)
+            moved=hud.get_development_window_position()
+            check('WINDOW-DEV-TITLE-DRAGS',moved.x<dev_pos.x-45 and moved.y>dev_pos.y+15)
+            x,y=moved.x+dev_size.x-5,moved.y+dev_size.y-5
+            hud.handle_pointer(x,y,True,True,0.,False,0.,0.)
+            hud.handle_pointer(x-50,y-30,False,True,0.,False,0.,0.)
+            hud.handle_pointer(x-50,y-30,False,False,0.,False,0.,0.)
+            resized=hud.get_development_window_size()
+            check('WINDOW-DEV-CORNER-RESIZES',resized.x<dev_size.x-45 and resized.y<dev_size.y-25)
+            check('WINDOW-DEV-FRAME-READONLY',snapshot(pc)==before_simulation)
             pc.action('Developer')
             check('WINDOW-DEV-OVERLAY-PREVIEW-RESTORED',hud.has_orbit_preview())
             # 정상 임무를 시작한 뒤 정지한다. 아래 검사는 출격·귀환 명령 없이

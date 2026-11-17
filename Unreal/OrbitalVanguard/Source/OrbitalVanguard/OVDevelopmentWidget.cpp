@@ -57,6 +57,9 @@ void UOVDevelopmentWidget::NativeOnInitialized()
  auto* Border=WidgetTree->ConstructWidget<UBorder>();
  Border->SetBrushColor(FLinearColor(.008f,.02f,.04f,.985f));Border->SetPadding(FMargin(10));WidgetTree->RootWidget=Border;
  auto* Root=WidgetTree->ConstructWidget<UVerticalBox>();Border->AddChild(Root);
+ auto* Header=Label(WidgetTree,TEXT("개발 도구 · 제목을 끌어 이동"));
+ Header->SetColorAndOpacity(FLinearColor(.45f,.85f,.95f));
+ Root->AddChildToVerticalBox(Header)->SetPadding(FMargin(3,1,3,5));
  auto* Tabs=Row(WidgetTree,Root);
  AddButton(WidgetTree,Tabs,TEXT("함선"))->OnClicked.AddDynamic(this,&UOVDevelopmentWidget::Hulls);
  AddButton(WidgetTree,Tabs,TEXT("영웅"))->OnClicked.AddDynamic(this,&UOVDevelopmentWidget::Heroes);
@@ -68,6 +71,9 @@ void UOVDevelopmentWidget::NativeOnInitialized()
  auto* Scroll=WidgetTree->ConstructWidget<UScrollBox>();Root->AddChildToVerticalBox(Scroll)->SetSize(FSlateChildSize(ESlateSizeRule::Fill));
  Body=WidgetTree->ConstructWidget<UVerticalBox>();Scroll->AddChild(Body);
  AdvancedButton=AddButton(WidgetTree,Root,TEXT("고급 진단 펼치기"));AdvancedButton->OnClicked.AddDynamic(this,&UOVDevelopmentWidget::ToggleAdvanced);
+ auto* ResizeHint=Label(WidgetTree,TEXT("오른쪽 아래를 끌어 크기 조절"));
+ ResizeHint->SetJustification(ETextJustify::Right);
+ Root->AddChildToVerticalBox(ResizeHint);
  Rebuild();
 }
 void UOVDevelopmentWidget::Reply(const FString& Message)

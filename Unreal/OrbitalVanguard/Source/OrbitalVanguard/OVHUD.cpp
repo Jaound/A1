@@ -77,7 +77,20 @@ bool AOVHUD::HandlePointer(float X,float Y,bool Pressed,bool Down,float Wheel,bo
  UIScale=FMath::Max(.25f,FMath::Min(1.f,FMath::Min(ViewportPixels.X/1280.f,ViewportPixels.Y/740.f)));
  // AHUD::Canvas is cleared by the viewport after rendering. Input runs outside DrawHUD.
  const bool Over=IsOverPanel(X,Y);
- if(PC&&PC->bDeveloperMode){CancelPointerDrag();return Over;}
+ if(PC&&PC->bDeveloperMode){
+  bDragging=false;bResizing=false;bInteriorDragging=false;bInteriorResizing=false;
+  const FVector2D Cursor(X,Y);
+  if(Pressed&&DevelopmentRect.IsInsideOrOn(Cursor)) {
+   const float Dpi=FMath::Max(.01f,UWidgetLayoutLibrary::GetViewportScale(this));
+   if(Cursor.Y<DevelopmentRect.Min.Y+28*Dpi) {bDevDragging=true;DevelopmentDragOffset=Cursor-DevelopmentRect.Min;}
+   else if(Cursor.X>DevelopmentRect.Max.X-20*Dpi&&Cursor.Y>DevelopmentRect.Max.Y-20*Dpi)bDevResizing=true;
+  }
+  if(!Down){bDevDragging=false;bDevResizing=false;}
+  if(bDevDragging){DevelopmentPosition=Cursor-DevelopmentDragOffset;SyncAddedUI();}
+  if(bDevResizing){DevelopmentPosition=DevelopmentRect.Min;DevelopmentSize=Cursor-DevelopmentRect.Min;SyncAddedUI();}
+  return Over||bDevDragging||bDevResizing;
+ }
+ bDevDragging=false;bDevResizing=false;
  // A drag begun in the existing window retains ownership; a new interior gesture consumes all buttons/wheel.
  const FVector2D P(X/UIScale,Y/UIScale);
  if(!bDragging&&!bResizing&&(bInteriorDragging||bInteriorResizing||IsOverInteriorPanel(X,Y))) {
@@ -477,8 +490,12 @@ void AOVHUD::SyncAddedUI()
 {
  auto* PC=Cast<AOVController>(PlayerOwner);if(!PC)return;int32 W=0,H=0;PC->GetViewportSize(W,H);if(W<=0||H<=0)return;
  const float Dpi=FMath::Max(.01f,UWidgetLayoutLibrary::GetViewportScale(this));
- const FVector2D DevSize(FMath::Min(760.f,W*.8f),FMath::Min(530.f,H*.78f));
- const FVector2D DevPos((W-DevSize.X)*.5f,(H-DevSize.Y)*.5f);DevelopmentRect=FBox2D(DevPos,DevPos+DevSize);
+ if(DevelopmentSize.X<0){DevelopmentSize=FVector2D(FMath::Min(760.f,W*.8f),FMath::Min(530.f,H*.78f));DevelopmentPosition=FVector2D((W-DevelopmentSize.X)*.5f,(H-DevelopmentSize.Y)*.5f);}
+ DevelopmentSize.X=FMath::Clamp(DevelopmentSize.X,FMath::Min(480.,double(W-16)),FMath::Max(1.,double(W-16)));
+ DevelopmentSize.Y=FMath::Clamp(DevelopmentSize.Y,FMath::Min(360.,double(H-16)),FMath::Max(1.,double(H-16)));
+ DevelopmentPosition.X=FMath::Clamp(DevelopmentPosition.X,0.,FMath::Max(0.,W-DevelopmentSize.X));
+ DevelopmentPosition.Y=FMath::Clamp(DevelopmentPosition.Y,0.,FMath::Max(0.,H-DevelopmentSize.Y));
+ const FVector2D DevSize=DevelopmentSize,DevPos=DevelopmentPosition;DevelopmentRect=FBox2D(DevPos,DevPos+DevSize);
  const FVector2D HeroSize(FMath::Min(400.f,W*.34f),FMath::Max(260.f,H-240.f));
  const FVector2D HeroPos(W-HeroSize.X-12.f,76.f);HeroRect=FBox2D(HeroPos,HeroPos+HeroSize);
  if(DevelopmentWidget){DevelopmentWidget->SetPositionInViewport(DevPos/Dpi,false);DevelopmentWidget->SetDesiredSizeInViewport(DevSize/Dpi);DevelopmentWidget->SetVisibility(PC->bDeveloperMode?ESlateVisibility::Visible:ESlateVisibility::Collapsed);}
