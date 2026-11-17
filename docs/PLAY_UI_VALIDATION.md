@@ -1,3 +1,11 @@
+# R2 적 관측 이후 통합 회귀
+
+**CIWS-B 원본 좌우 분리 시험 — 적용 보류:** 원본 해시를 보존하고 [측면](validation/PlayUIR2/CIWSB_원본측면.png)과 [60개 높이 단면](validation/PlayUIR2/CIWSB_원본단면.json)을 근거로 z=-0.69·-0.60·-0.39에서 별도 복사본을 시험했다. [v1 회전](validation/PlayUIR2/CIWSB_회전_v1.png) / [v2 회전](validation/PlayUIR2/CIWSB_회전_v2.png) / [v3 회전](validation/PlayUIR2/CIWSB_회전_v3.png). v3은 [닫힌 메시·UV·높이 검사 13/13](validation/PlayUIR2/CIWSB_분리v3_구조검사.json)이지만 회전 시 비원형 임시 절단면이 노출돼 외형 검사는 실패다. 상하 포신과 포구도 미분리이며 원본 무장 적용 완료가 아니다. 다음은 실제 베어링 경계와 접합부를 수작업으로 보정하고 가동 범위를 검증한다.
+
+**적 피해 관측 이후 통합 회귀:** 코드 `5a378b1`에서 [29사례·316검사 통과 요약](validation/PlayUIR2/DX_통합임무_요약.json); 기존 316개 검사 ID의 순서도 일치한다. 전체 원시 결과는 `Saved/Validation/Regression_20261118_013646/after_observed_IntegratedMission.json`, 로그는 `Saved/Logs/PlayUI_R2_DX_Integrated.log`. API 시간 진행이며 실제 직접 입력이나 실시간 성능 검사가 아니다.
+
+---
+
 # R2 핀 크기 조절 검증
 
 **핀 비교 카드 크기 조절:** 각 핀의 오른쪽 아래 대각선 표시를 끌어 크기를 바꾸면 프리뷰와 시설 칸이 함께 조정된다. 최소 266×158, 최대 550×400 논리 픽셀이며 화면 경계에 제한된다. 뒤에 겹친 핀의 조절점이 위 카드의 몸통을 통해 눌리지 않는다. 이름이 길면 표시 폭에 맞춰 줄인다. Win64 `PlayUI_R2_DW_Build.log` 성공, DW 자동98/98, [창 API 171/171](validation/PlayUIR2/DU_핀크기_API.json), [전체 1280 렌더/API 79/79](validation/PlayUIR2/DV_전체화면_API.json)(마지막 이름 폭 조정 전), 최종 [1280 화면](validation/PlayUIR2/핀_크기_1280.png)과 [1920 화면](validation/PlayUIR2/핀_크기_1920.png)(1920은 마지막 이름 폭 조정 전). 크기·최소값·다른 핀·선택·겹침 차단은 API로 확인했다. 직접 마우스·OS 포커스·모든 창 동시 배치와 긴 이름 툴팁은 미검증/미완료이며, 핀은 아직 모든 상세를 갖춘 창이 아니다.

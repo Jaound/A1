@@ -1,0 +1,108 @@
+{
+  "passed": true,
+  "checks": [
+    {
+      "id": "BaseTrial-TOPOLOGY",
+      "passed": true
+    },
+    {
+      "id": "BaseTrial-UV-CAP",
+      "passed": true
+    },
+    {
+      "id": "YawTrial-TOPOLOGY",
+      "passed": true
+    },
+    {
+      "id": "YawTrial-UV-CAP",
+      "passed": true
+    },
+    {
+      "id": "SEAM-Z--180",
+      "passed": true
+    },
+    {
+      "id": "SEAM-Z--90",
+      "passed": true
+    },
+    {
+      "id": "SEAM-Z--45",
+      "passed": true
+    },
+    {
+      "id": "SEAM-Z-0",
+      "passed": true
+    },
+    {
+      "id": "SEAM-Z-45",
+      "passed": true
+    },
+    {
+      "id": "SEAM-Z-90",
+      "passed": true
+    },
+    {
+      "id": "SEAM-Z-180",
+      "passed": true
+    },
+    {
+      "id": "ORIGINAL-SOURCE-UNCHANGED",
+      "passed": true
+    },
+    {
+      "id": "PACKED-IMAGES",
+      "passed": true
+    }
+  ],
+  "parts": {
+    "BaseTrial": {
+      "faces": 480407,
+      "boundary_edges": 0,
+      "nonmanifold_edges": 0,
+      "uv_layers": [
+        "UVMap"
+      ],
+      "cap_faces": 1
+    },
+    "YawTrial": {
+      "faces": 731984,
+      "boundary_edges": 0,
+      "nonmanifold_edges": 0,
+      "uv_layers": [
+        "UVMap"
+      ],
+      "cap_faces": 1
+    }
+  },
+  "angles": [
+    {
+      "degrees": -180,
+      "vertical_gap": -2.4437904357910156e-06
+    },
+    {
+      "degrees": -90,
+      "vertical_gap": -2.4437904357910156e-06
+    },
+    {
+      "degrees": -45,
+      "vertical_gap": -2.4437904357910156e-06
+    },
+    {
+      "degrees": 0,
+      "vertical_gap": -2.4437904357910156e-06
+    },
+    {
+      "degrees": 45,
+      "vertical_gap": -2.4437904357910156e-06
+    },
+    {
+      "degrees": 90,
+      "vertical_gap": -2.4437904357910156e-06
+    },
+    {
+      "degrees": 180,
+      "vertical_gap": -2.4437904357910156e-06
+    }
+  ],
+  "scope": "structural trial only; lateral fit, intersections, art and gameplay unverified"
+}

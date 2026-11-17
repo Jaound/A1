@@ -1,0 +1,10 @@
+{
+  "코드_SHA": "5a378b1",
+  "성공": true,
+  "완료": true,
+  "사례수": 29,
+  "검사수": 316,
+  "원시결과_SHA256": "3f799f354984b063b5ddd6aed4edc725ae81dfa5232ad0ee87a07eb2994d29ad",
+  "원시결과_로컬": "C:\\Users\\user\\source\\repos\\A1\\Unreal\\OrbitalVanguard\\Saved\\Validation\\Regression_20261118_013646\\after_observed_IntegratedMission.json",
+  "이전_검사ID순서_동일": true
+}
