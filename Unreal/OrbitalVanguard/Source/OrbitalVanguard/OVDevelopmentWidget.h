@@ -4,7 +4,7 @@
 #include "Components/Button.h"
 #include "Components/ComboBoxString.h"
 #include "OVDevelopmentWidget.generated.h"
-class UCheckBox; class AOVShip; class UButton; class UComboBoxString; class UEditableTextBox; class UScrollBox; class UTextBlock; class UVerticalBox; class UOVDevelopmentWidget;
+class UCheckBox; class AOVShip; class UButton; class UComboBoxString; class UEditableTextBox; class UScrollBox; class UTextBlock; class UVerticalBox; class UOVDevelopmentWidget; class UWrapBox;
 UCLASS()
 class ORBITALVANGUARD_API UOVCompactCombo : public UComboBoxString
 {
@@ -32,9 +32,17 @@ public:
  /** Size: 0=all, 1..4 hull class; Role=None=all. Axis: -1=all, 0..5 planning/data/generation/role/automation/direct. Status: -1=all, otherwise EOVCatalogStatus numeric value. */
  UFUNCTION(BlueprintCallable, Category="UI") bool SetFilters(int32 SizeClass, FName RoleTag, int32 StatusAxis, int32 StatusValue);
  UFUNCTION(BlueprintPure, Category="UI") TArray<FName> GetVisibleDefinitionIds() const { return VisibleDefinitionIds; }
- void SelectItem(FName Id);
+ UFUNCTION(BlueprintCallable, Category="UI") void SetAdvancedDiagnostics(bool bEnabled);
+ UFUNCTION(BlueprintPure, Category="UI") bool IsAdvancedDiagnostics() const { return bAdvanced; }
+ UFUNCTION(BlueprintPure, Category="UI") FName GetSelectedDefinitionId() const { return SelectedId; }
+ UFUNCTION(BlueprintPure, Category="UI") FString GetCompactSelectionText() const;
+ UFUNCTION(BlueprintPure, Category="UI") int32 GetCurrentPage() const { return Page; }
+ UFUNCTION(BlueprintCallable, Category="UI") void SelectItem(FName Id);
+ UFUNCTION(BlueprintCallable, Category="UI") void ExecuteSelectedCreation();
 private:
- int32 Page=0;
+ int32 Page=1;
+ bool bAdvanced=false;
+ int32 HeroFaction=0;
  int32 HullCategory=0;
  int32 OverviewCategory=0;
  int32 FilterSize=0;
@@ -46,6 +54,14 @@ private:
  TArray<FName> VisibleDefinitionIds;
  FName SelectedId;
  UPROPERTY() TObjectPtr<UVerticalBox> Body;
+ UPROPERTY() TObjectPtr<UWrapBox> Cards;
+ UPROPERTY() TArray<TObjectPtr<UOVDevelopmentItem>> CardButtons;
+ UPROPERTY() TObjectPtr<UComboBoxString> SideChoice;
+ UPROPERTY() TObjectPtr<UComboBoxString> PresetChoice;
+ UPROPERTY() TObjectPtr<UComboBoxString> HeroDestination;
+ UPROPERTY() TObjectPtr<UButton> AdvancedButton;
+ UPROPERTY() TObjectPtr<UButton> EquipButton;
+ UPROPERTY() TArray<TObjectPtr<UWidget>> AdvancedGroups;
  UPROPERTY() TObjectPtr<UScrollBox> List;
  UPROPERTY() TObjectPtr<UEditableTextBox> Search;
  UPROPERTY() TObjectPtr<UTextBlock> Detail;
@@ -94,6 +110,19 @@ private:
  TArray<FGuid> HeroIds;
  void Rebuild();
  void RefreshList();
+ void Reply(const FString& Message);
+ void UpdateCardSelection();
+ UFUNCTION() void ToggleAdvanced();
+ UFUNCTION() void SideChanged(FString Item, ESelectInfo::Type Type);
+ UFUNCTION() void PresetChanged(FString Item, ESelectInfo::Type Type);
+ UFUNCTION() void LocateHero();
+ UFUNCTION() void SceneCombat();
+ UFUNCTION() void SceneCalibration();
+ UFUNCTION() void SceneCarrier();
+ UFUNCTION() void SceneMission();
+ UFUNCTION() void SceneRoster();
+ UFUNCTION() void SceneRestart();
+ UFUNCTION() void PauseScene();
  FGuid HeroId() const;
  UFUNCTION() void Overview();
  UFUNCTION() void Hulls();
