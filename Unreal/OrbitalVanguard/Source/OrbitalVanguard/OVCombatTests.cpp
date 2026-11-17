@@ -158,6 +158,48 @@ bool FOVBattleNoticeTest::RunTest(const FString&)
     return true;
 }
 
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(FOVObservedEnemyNoticeTest,"OrbitalVanguard.Combat.ObservedEnemyNoticePrivacy",EAutomationTestFlags::EditorContext|EAutomationTestFlags::EngineFilter)
+bool FOVObservedEnemyNoticeTest::RunTest(const FString&)
+{
+    OVCombatTest::FRange R;
+    auto* Feed=R.World->GetSubsystem<UOVBattleNotices>();
+    R.Exact();R.B->Systems->Shield=1;R.B->Systems->bShieldActive=true;R.Fire();
+    if(!TestTrue(TEXT("실제 탐지 중 적 쉴드 고갈 알림"),!R.Combat->RecentEvents.IsEmpty()&&Feed->Notices.ContainsByPredicate([](const FOVBattleNotice& N){return N.Kind==EOVBattleNoticeKind::ShieldDepleted&&!N.bCritical;})))return false;
+    const auto ObservedHit=R.Combat->RecentEvents.Last();
+    TestTrue(TEXT("피격 시점 관측 정보 보존"),ObservedHit.bPlayerObserved);
+    TestTrue(TEXT("적 사건은 적으로 식별"),Feed->Notices.Last().ShipName.StartsWith(TEXT("적 ")));
+    TestFalse(TEXT("적 피해는 아군 위급 테두리를 켜지 않음"),Feed->Notices.Last().bCritical);
+    const int32 Before=Feed->Notices.Num();
+    FOVAttackState Hidden=ObservedHit;Hidden.AttackId+=10000;Hidden.bPlayerObserved=false;
+    Feed->RecordCombatHit(Hidden,R.B);
+    TestEqual(TEXT("미관측 적 피해는 알림을 내지 않음"),Feed->Notices.Num(),Before);
+    Feed->RecordCombatHit(ObservedHit,R.B);
+    TestEqual(TEXT("같은 적 피격은 중복 알림을 내지 않음"),Feed->Notices.Num(),Before);
+    R.B->Systems->Shield=0;R.B->Systems->bShieldActive=false;R.B->ShipName=TEXT("적 시험함");
+    for(auto& Armor:R.B->Systems->ArmorSections)Armor.HP=1;
+    R.Gun().Profile.Damage=300;R.Fire();
+    TestTrue(TEXT("실제 관측된 적 장갑 파괴 알림"),Feed->Notices.ContainsByPredicate([](const FOVBattleNotice& N){return N.Kind==EOVBattleNoticeKind::ArmorDestroyed&&!N.bCritical;}));
+    TestTrue(TEXT("적 이름 접두어를 중복하지 않음"),Feed->Notices.Last().ShipName==TEXT("적 시험함"));
+    TestFalse(TEXT("적 시설 내부 정보는 공개하지 않음"),Feed->Notices.ContainsByPredicate([](const FOVBattleNotice& N){return N.Kind==EOVBattleNoticeKind::FacilityDestroyed;}));
+    R.B->Systems->HullHP=1;for(auto& Armor:R.B->Systems->ArmorSections)Armor.HP=0;
+    R.Gun().Profile.Damage=100000;R.Fire();
+    TestTrue(TEXT("실제 관측된 적 완파는 일반 알림"),R.B->Systems->bWrecked&&Feed->Notices.ContainsByPredicate([](const FOVBattleNotice& N){return N.Kind==EOVBattleNoticeKind::ShipWrecked&&!N.bCritical;}));
+    {
+        OVCombatTest::FRange Lost;
+        Lost.Exact(0);Lost.Gun(0).Profile.Speed=1000;Lost.Gun(0).Profile.Range=10000;
+        Lost.B->SetActorLocation(FVector(3000,0,0));Lost.B->Systems->Shield=1;Lost.B->Systems->bShieldActive=true;
+        Lost.Fire(0,.05f);
+        TestEqual(TEXT("탐지 중 포탄 발사"),Lost.Combat->ShotCount,1);
+        Lost.DisableFacility(Lost.A,EOVFacilityType::Radar);Lost.DisableFacility(Lost.Scout,EOVFacilityType::Radar);
+        TestFalse(TEXT("명중 전 탐지 상실"),Lost.Combat->GetDetection(Lost.A,Lost.B).bDetected);
+        Lost.Combat->Simulate(4);
+        auto* LostFeed=Lost.World->GetSubsystem<UOVBattleNotices>();
+        TestTrue(TEXT("기발사 포탄은 탐지 상실 후 실제 명중"),Lost.Combat->HitCount==1&&!Lost.Combat->RecentEvents.IsEmpty());
+        TestTrue(TEXT("미관측 적 쉴드 피해는 노출하지 않음"),!Lost.Combat->RecentEvents.Last().bPlayerObserved&&LostFeed->Notices.IsEmpty());
+    }
+    return true;
+}
+
 IMPLEMENT_SIMPLE_AUTOMATION_TEST(FOVCombatDetectionTest, "OrbitalVanguard.Combat.DetectionSourcesAndInvalidation", EAutomationTestFlags::EditorContext | EAutomationTestFlags::EngineFilter)
 bool FOVCombatDetectionTest::RunTest(const FString&)
 {

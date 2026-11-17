@@ -681,10 +681,17 @@ bool UOVCombatSubsystem::ResolveImpact(FOVAttackState& Attack, AOVShip* HitShip,
     Attack.Result = EOVAttackResult::Hit; Attack.Position = Point; Attack.HitShipId = HitShip->GetFName();
     Attack.ResolvedAt = GameTime; ResolvedAttackIds.Add(Attack.AttackId);
     UOVShipSystemsComponent* Systems = HitShip->Systems;
+    Attack.bPlayerObserved=Systems->FactionId==0;
+    if(!Attack.bPlayerObserved&&Settings&&!Settings->bDevelopmentOmniscient)
+        for(const auto& Observer:Ships)
+            if(IsValid(Observer.Ship)&&Observer.Ship->Systems&&Observer.Ship->Systems->FactionId==0
+                &&GetDetection(Observer.Ship,HitShip).bDetected){Attack.bPlayerObserved=true;break;}
     const bool bShieldWasActive=Systems->bShieldActive&&Systems->Shield>0;
     TArray<bool,TInlineAllocator<64>> ArmorWasAlive,FacilityWasAlive;
-    if(Systems->FactionId==0) {
+    if(Attack.bPlayerObserved) {
         for(const auto& Armor:Systems->ArmorSections)ArmorWasAlive.Add(Armor.HP>0);
+    }
+    if(Systems->FactionId==0) {
         for(int32 I=0;I<Systems->Slots.Num();++I)FacilityWasAlive.Add(Systems->Layout&&Systems->Layout->Slots.IsValidIndex(I)&&Systems->Layout->Slots[I].Facility!=EOVFacilityType::None&&Systems->Slots[I].HP>0);
     }
     Systems->IncomingSourceId = Attack.AttackerId;
@@ -693,9 +700,11 @@ bool UOVCombatSubsystem::ResolveImpact(FOVAttackState& Attack, AOVShip* HitShip,
     Attack.ImpactWeaponId = HitWeaponId;
     if (!HitWeaponId.IsNone()) Systems->ApplyWorldWeaponHit(HitWeaponId, Point, Normal, Attack.Damage, true);
     else Systems->ApplyWorldHit(Point, Normal, Attack.Damage, EOVDamageCause::External, true);
-    if(Systems->FactionId==0) {
+    if(Attack.bPlayerObserved) {
         Attack.bShieldDepleted=bShieldWasActive&&!Systems->bShieldActive&&Systems->Shield<=0;
         for(int32 I=0;I<ArmorWasAlive.Num()&&I<Systems->ArmorSections.Num();++I)if(ArmorWasAlive[I]&&Systems->ArmorSections[I].HP<=0)++Attack.ArmorSectionsDestroyed;
+    }
+    if(Systems->FactionId==0) {
         for(int32 I=0;I<FacilityWasAlive.Num()&&I<Systems->Slots.Num();++I)if(FacilityWasAlive[I]&&Systems->Slots[I].HP<=0) {
             ++Attack.FacilitiesDestroyed;
             if(Systems->Layout&&Systems->Layout->Slots.IsValidIndex(I)) {

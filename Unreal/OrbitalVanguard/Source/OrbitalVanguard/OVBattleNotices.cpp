@@ -30,11 +30,12 @@ int32 UOVBattleNotices::GetToastIndex(double Now) const
 void UOVBattleNotices::RecordCombatHit(const FOVAttackState& Attack,AOVShip* Victim)
 {
     if(Attack.Result!=EOVAttackResult::Hit||Attack.AttackId<=0||RecentAttackIds.Contains(Attack.AttackId)
-        ||!IsValid(Victim)||!Victim->Systems||Victim->Systems->FactionId!=0||Victim->GetFName()!=Attack.HitShipId)return;
+        ||!IsValid(Victim)||!Victim->Systems||Victim->GetFName()!=Attack.HitShipId
+        ||(Victim->Systems->FactionId!=0&&!Attack.bPlayerObserved))return;
     RecentAttackIds.Add(Attack.AttackId);
     if(RecentAttackIds.Num()>256)RecentAttackIds.RemoveAt(0);
     if(Victim->Systems->bWrecked){Append(Attack,Victim,EOVBattleNoticeKind::ShipWrecked,1);return;}
-    Append(Attack,Victim,EOVBattleNoticeKind::Hit,1);
+    if(Victim->Systems->FactionId==0)Append(Attack,Victim,EOVBattleNoticeKind::Hit,1);
     if(Attack.bShieldDepleted)Append(Attack,Victim,EOVBattleNoticeKind::ShieldDepleted,1);
     if(Attack.ArmorSectionsDestroyed>0)Append(Attack,Victim,EOVBattleNoticeKind::ArmorDestroyed,Attack.ArmorSectionsDestroyed);
     if(Attack.FacilitiesDestroyed>0)Append(Attack,Victim,EOVBattleNoticeKind::FacilityDestroyed,Attack.FacilitiesDestroyed);
@@ -100,9 +101,13 @@ void UOVBattleNotices::Append(const FOVAttackState& Attack,AOVShip* Victim,EOVBa
     }
     FOVBattleNotice& Notice=Notices.AddDefaulted_GetRef();
     Notice.Serial=NextSerial++;
-    Notice.ShipName=Victim?Victim->ShipName:TEXT("아군 영웅");Notice.ShipId=Attack.HitShipId;Notice.LastPosition=Attack.Position;
+    Notice.ShipName=Victim?Victim->ShipName:TEXT("아군 영웅");
+    if(Victim&&Victim->Systems&&Victim->Systems->FactionId!=0&&!Notice.ShipName.StartsWith(TEXT("적 ")))
+        Notice.ShipName=TEXT("적 ")+Notice.ShipName;
+    Notice.ShipId=Attack.HitShipId;Notice.LastPosition=Attack.Position;
     Notice.GameTime=Attack.ResolvedAt;Notice.DisplayTime=FPlatformTime::Seconds();Notice.Count=Count;Notice.UnitId=UnitId;Notice.bShipWrecked=bWrecked;Notice.Kind=Kind;
-    Notice.bCritical=bWrecked||Kind==EOVBattleNoticeKind::HeroDeath||Kind==EOVBattleNoticeKind::HeroRescue||Kind==EOVBattleNoticeKind::HostileBoarding||Kind==EOVBattleNoticeKind::AircraftCritical||Kind==EOVBattleNoticeKind::AircraftEliminated||(Kind==EOVBattleNoticeKind::FacilityDestroyed&&Attack.CriticalFacilitiesDestroyed>0);
+    const bool bFriendly=!Victim||(Victim->Systems&&Victim->Systems->FactionId==0);
+    Notice.bCritical=(bWrecked&&bFriendly)||Kind==EOVBattleNoticeKind::HeroDeath||Kind==EOVBattleNoticeKind::HeroRescue||Kind==EOVBattleNoticeKind::HostileBoarding||Kind==EOVBattleNoticeKind::AircraftCritical||Kind==EOVBattleNoticeKind::AircraftEliminated||(Kind==EOVBattleNoticeKind::FacilityDestroyed&&Attack.CriticalFacilitiesDestroyed>0&&bFriendly);
     if(Notice.bCritical)LastCriticalDisplayTime=Notice.DisplayTime;
     if(Notices.Num()>64){Notices.RemoveAt(0);++DroppedCount;}
 }

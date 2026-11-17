@@ -183,6 +183,8 @@ struct ORBITALVANGUARD_API FOVAttackState
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly) int32 ArmorSectionsDestroyed = 0;
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly) int32 FacilitiesDestroyed = 0;
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly) int32 CriticalFacilitiesDestroyed = 0;
+    // Snapshot at impact; the target may be destroyed or leave detection immediately afterward.
+    UPROPERTY(VisibleAnywhere, BlueprintReadOnly) bool bPlayerObserved = false;
 };
 
 /** Single combat clock. Camera/HUD are read-only consumers of these states and events. */
