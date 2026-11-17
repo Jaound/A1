@@ -1,0 +1,29 @@
+{
+  "source": "C:\\Users\\user\\Documents\\OrbitalVanguardAssets\\Prepared\\PlayUI_R2_MM24_YawTrial\\MM24_YawTrial.blend",
+  "source_before": "002e4b296e1f5e35aebdf98092ab4f53acc65a42954e00a52009e9d0f632a425",
+  "source_after": "002e4b296e1f5e35aebdf98092ab4f53acc65a42954e00a52009e9d0f632a425",
+  "evidence_sha256": "84435f091da831f23428574fee42898d6f443502648bbd85cc05a80b0a0d9307",
+  "cut_z": -0.23,
+  "pitch_pivot": [
+    0.0,
+    0.0,
+    -0.23000000417232513
+  ],
+  "parts": {
+    "CradleTrial": {
+      "faces": 550801,
+      "cut_edges": 2022,
+      "cap_faces": 5,
+      "boundary_edges": 0,
+      "nonmanifold_edges": 1
+    },
+    "PitchPodTrial": {
+      "faces": 1202326,
+      "cut_edges": 2022,
+      "cap_faces": 5,
+      "boundary_edges": 0,
+      "nonmanifold_edges": 0
+    }
+  },
+  "status": "시험 분리만 수행. 관절·절단면·피벗·교차·재질·게임 연결은 미승인"
+}

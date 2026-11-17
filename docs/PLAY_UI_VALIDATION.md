@@ -1,5 +1,8 @@
 # 최근 검사: BF120 양포구와 상하 장착
 
+**MM24 상하 분리 첫 시험 — 적용 보류 (IJ~IL):** 원본 기반 회전부 복사본을 100개 높이 구간으로 조사한 [단면](validation/PlayUIR2/IJ_MM24상하단면.json)과 측면 외형을 근거로 Z=-0.23 시험 절단·X축 피벗을 사용했다. 원본은 전후 해시가 같고 [제작](validation/PlayUIR2/IK_MM24상하시험_제작.json), [0도](validation/PlayUIR2/IK_MM24상하시험_0.png), [+15도](validation/PlayUIR2/IK_MM24상하시험_15.png), [-15도](validation/PlayUIR2/IK_MM24상하시험_-15.png) 복사본을 남겼다. [임시 절단면 제외 검사](validation/PlayUIR2/IL_MM24상하간섭.json)에서 -30/-15/0/+15/+30도 발사기·지지부 표면 교차가 4242/1248/169/713/1791쌍이며 지지부에 비다양체 간선 1개가 있다. 표면 교차는 접촉과 관통을 구분하지 않지만 화면에도 틈과 겹침이 보여 적용하지 않았다. 시험 파일은 `C:/Users/user/Documents/OrbitalVanguardAssets/Prepared/PlayUI_R2_MM24_PitchTrial_v1`. 다음: 실제 축·접합 위치 조사와 지지부/발사기 간 여유 공간 재설계, 폐합·재질·상하·좌우 및 실전 발사 검증. 최종 모델·게임 적용 완료가 아니다.
+
+
 **BF120 개발 창 명령·기발사 탄 연결 (II):** 시험 버튼 이벤트로 적용→실제 포탄 발사→비행 중 해제/재적용→명중을 확인했다. 비행 중 공격의 ID·원점·소속은 보존됐고 [PIE API 32/32](validation/PlayUIR2/II_BF120비행탄_API.json), [개발 창 화면](validation/PlayUIR2/II_BF120비행탄_1280.png)이다. 재현성을 위해 시험 프로필의 명중 오차를 0으로 설정했고 발사체 속도 2,200cm/s는 유지했다. [IF](validation/PlayUIR2/IF_BF120비행탄_초기실패.json)·[IG](validation/PlayUIR2/IG_BF120비행탄_재시도실패.json)는 4,000cm 거리에서 0.5초만 진행해 명중을 잘못 기대한 실패였다. [IH 진단](validation/PlayUIR2/IH_BF120비행탄_진단.json)에서 아직 비행 중임을 확인하고 II에서 게임 시간 2.5초를 진행했다. 직접 마우스 입력·기본 원본 모델 적용은 미검증/미완료다.
 
 
