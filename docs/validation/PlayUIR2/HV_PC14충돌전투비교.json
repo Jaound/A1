@@ -1,0 +1,120 @@
+{
+  "passed": true,
+  "physical_input": false,
+  "seed": 260112,
+  "game_seconds": 30,
+  "cases": [
+    {
+      "case": "기존 OBB와 기존 장착점",
+      "game_time": 30.000001564621925,
+      "sim_wall_seconds": 0.24014739999984158,
+      "shots": 178,
+      "hits": 172,
+      "mount_hits": 0,
+      "hulls": [
+        21252.0,
+        3232.289,
+        34188.0
+      ],
+      "shields": [
+        6600.0,
+        192.756,
+        6660.0
+      ],
+      "wrecked": [
+        false,
+        false,
+        false
+      ],
+      "layout_box_count": 0
+    },
+    {
+      "case": "측정 상자와 표면 장착점",
+      "game_time": 30.000001564621925,
+      "sim_wall_seconds": 0.24532059999910416,
+      "shots": 178,
+      "hits": 172,
+      "mount_hits": 0,
+      "hulls": [
+        21252.0,
+        3232.289,
+        34188.0
+      ],
+      "shields": [
+        6600.0,
+        192.685,
+        6660.0
+      ],
+      "wrecked": [
+        false,
+        false,
+        false
+      ],
+      "layout_box_count": 27
+    }
+  ],
+  "checks": [
+    {
+      "id": "BASE_SCENE",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "BASE_TARGET",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "BASE_TARGET_FRIEND",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "BASE_TARGET_CORVETTE",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "BASE_ORIGINAL_BOX",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "TRIAL_SCENE",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "TRIAL_TARGET",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "TRIAL_TARGET_FRIEND",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "TRIAL_TARGET_CORVETTE",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "TRIAL_BOX_COUNT",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "SAME_GAME_TIME",
+      "passed": true,
+      "detail": "(30.000001564621925, 30.000001564621925)"
+    },
+    {
+      "id": "ACTUAL_COMBAT",
+      "passed": true,
+      "detail": ""
+    }
+  ],
+  "errors": [],
+  "scope": "동일 F6 시험 편성·시드의 30초 API 비교. 실제 렌더 성능이나 전체 밸런스 판정 아님."
+}

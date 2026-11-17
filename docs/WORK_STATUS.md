@@ -1,5 +1,8 @@
 # 최신 작업 — 플레이 UI R2 진행 중
 
+**PC14 충돌 후보 교전 비교 (HV):** 같은 F6 편성·시드 260112·정지 함선·30초 API 시뮬레이션에서 기존 OBB/장착점과 측정 27상자/표면 장착점을 비교했다([결과](validation/PlayUIR2/HV_PC14충돌전투비교.json)). 두 경우 발사 178·명중 172였고 세 함선의 선체 HP는 같았으며 초계함 쉴드는 192.756/192.685였다. 무장 직접 명중은 두 경우 모두 0이다. 표본 하나이므로 충돌 범위·밸런스 동등이나 대규모 성능을 뜻하지 않는다. 기록된 시뮬레이션 벽시각은 렌더 프레임/성능 벤치마크가 아니다. 후보는 기본 적용하지 않았다. 재실행: `powershell -ExecutionPolicy Bypass -File Unreal/OrbitalVanguard/Tools/RunPlayUIValidation.ps1 -Label PlayUI_R2_HV -Validators ComparePC14Collision.py -Resolution 1280x720`.
+
+
 **함대 목록 축약 표시·충돌 체적 비교 (HT/HU):** 함대 카드의 이름이 10자를 넘으면 줄임표를 표시해 축약 사실을 알리며, 동명 함선 번호와 전체 이름 툴팁은 유지한다. [창 API 200/200](validation/PlayUIR2/HT_함대이름_API.json), [명령 API 9/9](validation/PlayUIR2/HU_명령이름_API.json), [1280 화면](validation/PlayUIR2/HU_함대이름_1280.png), HT 빌드 성공. 추가로 [PC14 후보 상자 체적](validation/PlayUIR2/HT_PC14충돌체적.json)은 약 541,993cm³로 기존 OBB 3,150,000cm³의 17.2%다. 체적 차이는 명중 확률과 동일하지 않지만 전투 영향이 클 수 있으므로 시험 형상을 기본 규칙으로 적용하지 않았다. 직접 입력과 대량 성능은 미검증이다.
 
 
