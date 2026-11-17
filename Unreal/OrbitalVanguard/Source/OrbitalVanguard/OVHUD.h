@@ -33,6 +33,7 @@ public:
  UFUNCTION(BlueprintPure, Category="UI") FVector2D GetPinnedSize(int32 Index) const;
  UFUNCTION(BlueprintPure, Category="UI") FString GetPinnedTitleTooltip(FVector2D CanvasPoint) const;
  UFUNCTION(BlueprintPure, Category="UI") FString GetFleetTitleTooltip(FVector2D CanvasPoint) const;
+ UFUNCTION(BlueprintPure, Category="UI") FString GetCommandTitleTooltip(FVector2D CanvasPoint) const;
  UFUNCTION(BlueprintPure, Category="UI") FString GetDetailsTitleTooltip(FVector2D CanvasPoint) const;
  UFUNCTION(BlueprintPure, Category="UI") FString GetPinnedCarrierSummary(int32 Index) const;
  UFUNCTION(BlueprintPure, Category="UI") int32 GetDetailsSlotPage() const { return DetailsSlotPage; }
@@ -101,6 +102,7 @@ private:
  FVector2D PinDragOffset=FVector2D::ZeroVector;
  FBox2D DevelopmentRect, HeroRect;
  bool bHeroPanelOpen=false;
+ bool bCommandShipClipped=false,bCommandTargetClipped=false;
  bool bSceneMenuOpen=false;
  bool bHangarView=false;
  int32 DetailsSlotPage=0,DetailsPageDeck=INDEX_NONE;

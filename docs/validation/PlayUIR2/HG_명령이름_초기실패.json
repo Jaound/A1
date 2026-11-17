@@ -1,0 +1,30 @@
+{
+  "passed": false,
+  "physical_input": false,
+  "resolution": [
+    1280,
+    720
+  ],
+  "checks": [
+    {
+      "id": "WINDOW_START",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "TARGET",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "SHIP_TOOLTIP",
+      "passed": false,
+      "detail": ""
+    }
+  ],
+  "errors": [
+    "Traceback (most recent call last):\n  File \"ValidateCommandNameUI.py\", line 40, in tick\n  File \"ValidateCommandNameUI.py\", line 15, in check\nAssertionError: SHIP_TOOLTIP: \n"
+  ],
+  "image": "C:/Users/user/source/repos/A1/Unreal/OrbitalVanguard/Saved/Validation/CommandNameUI_1280x720.png",
+  "play_settings_restored": true
+}

@@ -14,6 +14,17 @@
 
 namespace {
 const FLinearColor PlayInk(.8f,.9f,1), PlayAccent(.2f,.9f,1), PlayPanel(.008f,.02f,.04f,.94f);
+FString FitCommandLabel(const AOVHUD* Hud,UFont* Font,const FString& Text,float MaxWidth)
+{
+ float W=0,H=0;Hud->GetTextSize(Text,W,H,Font);
+ if(W<=MaxWidth)return Text;
+ int32 Low=0,High=Text.Len();
+ while(Low<High) {
+  const int32 Mid=(Low+High+1)/2;Hud->GetTextSize(Text.Left(Mid)+TEXT("…"),W,H,Font);
+  if(W<=MaxWidth)Low=Mid;else High=Mid-1;
+ }
+ return Text.Left(Low)+TEXT("…");
+}
 }
 FString AOVHUD::ReadinessKorean(const FString& Key)
 {
@@ -63,6 +74,18 @@ FString AOVHUD::GetFleetTitleTooltip(FVector2D CanvasPoint) const
   const auto* Ship=PC->Ships[I].Get();
   if(Ship&&Ship->ShipName.Len()>10&&Action==FString::Printf(TEXT("Pick_%d"),I))
    return Ship->ShipName+GetFleetDisplayLabel(PC->Ships[I]).Mid(10);
+ }
+ return FString();
+}
+FString AOVHUD::GetCommandTitleTooltip(FVector2D CanvasPoint) const
+{
+ const auto* PC=Cast<AOVController>(PlayerOwner);if(!PC||!PC->Selected||PC->bDeveloperMode)return FString();
+ const FName Action=GetHitActionAtCanvasPoint(CanvasPoint);
+ if(Action==TEXT("CommandShipLabel")) {
+  return bCommandShipClipped?PC->Selected->ShipName:FString();
+ }
+ if(Action==TEXT("CommandTargetLabel")&&PC->Selected->AttackTarget) {
+  return bCommandTargetClipped?TEXT("표적: ")+PC->Selected->AttackTarget->ShipName:FString();
  }
  return FString();
 }
@@ -130,10 +153,15 @@ void AOVHUD::DrawPlayHUD()
   Button(TEXT("FleetNext"),TEXT("다음"),120,H-268,68);
  }
  const float Y=H-220;
+ bCommandShipClipped=bCommandTargetClipped=false;
  DrawRect(PlayPanel,10,Y,610,210);
  if(!PC->Selected) {DrawText(TEXT("함선을 선택하세요"),PlayInk,24,Y+20,GEngine->GetMediumFont());return;}
  auto* Ship=PC->Selected.Get();
- DrawText(Ship->ShipName.Left(24),PlayAccent,24,Y+12,GEngine->GetMediumFont());
+ const FString ShipLabel=FitCommandLabel(this,GEngine->GetMediumFont(),Ship->ShipName,280);
+ bCommandShipClipped=ShipLabel!=Ship->ShipName;
+ DrawText(ShipLabel,PlayAccent,24,Y+12,GEngine->GetMediumFont());
+ AddHitBox(FVector2D(24,Y+8)*UIScale,FVector2D(280,26)*UIScale,TEXT("CommandShipLabel"),true,8);
+ ActionCenters.Add(TEXT("CommandShipLabel"),FVector2D(164,Y+21));
  Button(TEXT("Focus"),TEXT("추적"),315,Y+8,60,PC->bFollow);
  Button(TEXT("Details"),TEXT("함선 상세"),380,Y+8,75,bDetailsOpen);
  if(PC->Interior&&PC->Interior->bEnabled)Button(TEXT("InteriorToggle"),TEXT("선내 지도"),460,Y+8,75,bInteriorOpen);
@@ -141,7 +169,14 @@ void AOVHUD::DrawPlayHUD()
  const float Hull=FMath::Clamp(Ship->Systems->HullHP/FMath::Max(1.f,Ship->Systems->MaxHullHP),0.f,1.f);
  DrawRect(FLinearColor(.08f,.13f,.19f),24,Y+38,210,10);DrawRect(PlayAccent,24,Y+38,210*Hull,4);
  DrawRect(FLinearColor(.3f,.48f,1),24,Y+45,210*FMath::Clamp(Ship->Systems->Shield/FMath::Max(1.f,Ship->Systems->MaxShield),0.f,1.f),3);
- DrawText(TEXT("표적: ")+(Ship->AttackTarget?Ship->AttackTarget->ShipName.Left(20):TEXT("없음")),PlayInk,250,Y+40,GEngine->GetSmallFont());
+ const FString TargetLabel=TEXT("표적: ")+(Ship->AttackTarget?Ship->AttackTarget->ShipName:TEXT("없음"));
+ const FString VisibleTarget=FitCommandLabel(this,GEngine->GetSmallFont(),TargetLabel,350);
+ bCommandTargetClipped=VisibleTarget!=TargetLabel;
+ DrawText(VisibleTarget,PlayInk,250,Y+40,GEngine->GetSmallFont());
+ if(Ship->AttackTarget) {
+  AddHitBox(FVector2D(250,Y+38)*UIScale,FVector2D(350,16)*UIScale,TEXT("CommandTargetLabel"),true,8);
+  ActionCenters.Add(TEXT("CommandTargetLabel"),FVector2D(425,Y+46));
+ }
  if(!Ship->bFriendly) {DrawText(TEXT("적 함선 · 관측된 외장 정보"),PlayInk,24,Y+72,GEngine->GetSmallFont());return;}
  const bool Disable=PC->Combat&&PC->Combat->GetShipState(Ship).Intent==EOVAttackIntent::DisableWeapons;
  const FName Actions[]={TEXT("Move"),TEXT("Stop"),TEXT("Target"),TEXT("FireAll"),TEXT("MoveAuto"),TEXT("FireAuto"),TEXT("Fire"),TEXT("NextWeapon"),Disable?FName(TEXT("HullIntent")):FName(TEXT("GunIntent")),TEXT("CancelAttack")};
@@ -263,7 +298,10 @@ void AOVHUD::DrawWorldIndicators()
   DrawLine(P.X-Radius,P.Y-Radius,P.X-Radius,P.Y+Radius,Color,Selected?3:1);
   DrawLine(P.X+Radius,P.Y-Radius,P.X+Radius,P.Y+Radius,Color,Selected?3:1);
   DrawLine(P.X-Radius,P.Y-Radius,P.X+Radius,P.Y-Radius,Color,Selected?3:1);
-  if(Selected||Target||PC->CameraDistance<45000) DrawText((Target?TEXT("공격 ▶ "):Selected?TEXT("선택 ▶ "):TEXT(""))+Ship->ShipName,Color,Label.X,Label.Y,GEngine->GetSmallFont());
+  if(Selected||Target||PC->CameraDistance<45000) {
+   const FString Name=(Target?TEXT("공격 ▶ "):Selected?TEXT("선택 ▶ "):TEXT(""))+Ship->ShipName;
+   DrawText(FitCommandLabel(this,GEngine->GetSmallFont(),Name,180),Color,Label.X,Label.Y,GEngine->GetSmallFont());
+  }
   const float Hull=FMath::Clamp(Ship->Systems->HullHP/FMath::Max(1.f,Ship->Systems->MaxHullHP),0.f,1.f);
   DrawRect(FLinearColor(.06f,.08f,.12f),Label.X,Label.Y+17,86,8);
   DrawRect(Color,Label.X,Label.Y+17,86*Hull,3);

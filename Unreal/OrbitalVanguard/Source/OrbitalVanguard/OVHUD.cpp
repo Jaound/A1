@@ -197,6 +197,7 @@ void AOVHUD::NotifyHitBoxClick(FName N)
  if(N==TEXT("WindowBackground")) return;
  if(N.ToString().StartsWith(TEXT("PinnedBackground_"))) return;
  if(N==TEXT("DetailsTitle"))return;
+ if(N==TEXT("CommandShipLabel")||N==TEXT("CommandTargetLabel"))return;
  if(N==TEXT("SceneMenu")) { bSceneMenuOpen=!bSceneMenuOpen;return; }
  if(N==TEXT("FleetPrevious")) { FleetPage=FMath::Max(0,FleetPage-1);return; }
  if(N==TEXT("FleetNext")) { ++FleetPage;return; }
@@ -559,6 +560,7 @@ void AOVHUD::DrawHUD()
   FString Name=GetPinnedTitleTooltip(Mouse);
   if(Name.IsEmpty())Name=GetFleetTitleTooltip(Mouse);
   if(Name.IsEmpty()&&!bDragging&&!bResizing)Name=GetDetailsTitleTooltip(Mouse);
+  if(Name.IsEmpty()&&!bDragging&&!bResizing)Name=GetCommandTitleTooltip(Mouse);
   if(!Name.IsEmpty()) {
    const float Width=FMath::Min(300.f,ViewportPixels.X/UIScale-8.f);
    TArray<FString> Lines;FString Line;

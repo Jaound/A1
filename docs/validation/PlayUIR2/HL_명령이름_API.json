@@ -1,0 +1,58 @@
+{
+  "passed": true,
+  "physical_input": false,
+  "resolution": [
+    1280,
+    720
+  ],
+  "checks": [
+    {
+      "id": "WINDOW_START",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "TARGET",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "SHIP_TOOLTIP",
+      "passed": true,
+      "detail": "(\"<Struct 'Vector2D' (0x0000023E12763160) {x: 164.000000, y: 541.000000}>\", 'CommandShipLabel', '아주 긴 이름을 가진 순양함 알파 베타 감마 델타 아주 긴 이름을 가진 순양함 알파 베타 감마 델타 아주 긴 이름을 가진 순양함 알파 베타 감마 델타 아주 긴 이름을 가진 순양함 알파 베타 감마 델타 ', '아주 긴 이름을 가진 순양함 알파 베타 감마 델타 아주 긴 이름을 가진 순양함 알파 베타 감마 델타 아주 긴 이름을 가진 순양함 알파 베타 감마 델타 아주 긴 이름을 가진 순양함 알파 베타 감마 델타 ')"
+    },
+    {
+      "id": "TARGET_TOOLTIP",
+      "passed": true,
+      "detail": "(\"<Struct 'Vector2D' (0x0000023E12761F60) {x: 425.000000, y: 566.000000}>\", 'CommandTargetLabel', '표적: 매우 긴 이름을 가진 표적 함선 하나 둘 셋 넷 다섯 여섯 매우 긴 이름을 가진 표적 함선 하나 둘 셋 넷 다섯 여섯 매우 긴 이름을 가진 표적 함선 하나 둘 셋 넷 다섯 여섯 매우 긴 이름을 가진 표적 함선 하나 둘 셋 넷 다섯 여섯 ', '매우 긴 이름을 가진 표적 함선 하나 둘 셋 넷 다섯 여섯 매우 긴 이름을 가진 표적 함선 하나 둘 셋 넷 다섯 여섯 매우 긴 이름을 가진 표적 함선 하나 둘 셋 넷 다섯 여섯 매우 긴 이름을 가진 표적 함선 하나 둘 셋 넷 다섯 여섯 ')"
+    },
+    {
+      "id": "EMPTY_POINT",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "LABELS_DO_NOT_CHANGE_SELECTION",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "SHORT_SHIP_NO_TOOLTIP",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "SHORT_TARGET_NO_TOOLTIP",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "RENDER_FILE",
+      "passed": true,
+      "detail": ""
+    }
+  ],
+  "errors": [],
+  "image": "C:/Users/user/source/repos/A1/Unreal/OrbitalVanguard/Saved/Validation/CommandNameUI_1280x720.png",
+  "play_settings_restored": true
+}
