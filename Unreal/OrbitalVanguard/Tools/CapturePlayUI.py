@@ -86,6 +86,8 @@ def tick(_dt):
                 state['before_preview'] = snapshot(pc)
             elif name == '핀_비교':
                 ships=prop(pc,'ships')
+                if os.environ.get('OV_UI_TOOLTIP_TEST') == '1':
+                    ships[0].set_editor_property('ship_name','긴 이름을 가진 함선의 전체 명칭 시험')
                 for ship in (ships[0],ships[2]):
                     pc.select_ship(ship);hud.execute_ui_action('WindowPin')
                 pc.select_ship(ships[1]);hud.set_details_open(True)
@@ -218,6 +220,11 @@ def tick(_dt):
                 for i in range(2):
                     action='Pinned_'+str(i);center=hud.get_action_center(action)
                     check('PIN-COMPARE-HITBOX-'+str(i),center.x>=0 and str(hud.get_hit_action_at_canvas_point(center))==action)
+                if os.environ.get('OV_UI_TOOLTIP_TEST') == '1' and not state.get('tooltip_cursor_set'):
+                    center=hud.get_action_center('Pinned_0');w,h=pc.get_viewport_size();scale=max(.25,min(1,w/1280,h/740))
+                    check('PIN-TOOLTIP-TEXT',hud.get_pinned_title_tooltip(center)=='긴 이름을 가진 함선의 전체 명칭 시험')
+                    pc.set_mouse_location(int(center.x*scale),int(center.y*scale))
+                    state.update(tooltip_cursor_set=True,at=time.monotonic());return
             if name == '핀_시설':
                 slots=prop(prop(prop(hud.get_pinned_ship(0),'systems'),'layout'),'slots')
                 index=next(i for i,s in enumerate(slots) if prop(s,'deck_id')==1)

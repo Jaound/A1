@@ -516,6 +516,24 @@ void AOVHUD::DrawHUD()
  DrawBattleNotices();
  DrawPinned();
  if(!PC->bDeveloperMode) { DrawDetails(); DrawInterior(); }
+ float MouseX=0,MouseY=0;
+ if(DraggedPin==INDEX_NONE && PC->GetMousePosition(MouseX,MouseY) && !IsOverAddedUI(MouseX,MouseY)) {
+  const FVector2D Mouse(MouseX/UIScale,MouseY/UIScale);
+  const FString Name=GetPinnedTitleTooltip(Mouse);
+  if(!Name.IsEmpty()) {
+   TArray<FString> Lines;
+   for(int32 Start=0;Start<Name.Len();Start+=24)Lines.Add(Name.Mid(Start,24));
+   const float Width=FMath::Min(300.f,ViewportPixels.X/UIScale-8.f);
+   const float Height=FMath::Min(float(Lines.Num()*19+10),ViewportPixels.Y/UIScale-8.f);
+   const float X=FMath::Clamp(float(Mouse.X+12),4.f,FMath::Max(4.f,float(ViewportPixels.X/UIScale-Width-4)));
+   const float Y=FMath::Clamp(float(Mouse.Y+16),4.f,FMath::Max(4.f,float(ViewportPixels.Y/UIScale-Height-4)));
+   DrawRect(Panel,X,Y,Width,Height);
+   for(int32 I=0;I<Lines.Num() && 5+I*19+16<=Height;++I) {
+    float TW=0,TH=0;GetTextSize(Lines[I],TW,TH,GEngine->GetSmallFont());
+    DrawText(Lines[I],Ink,X+6,Y+5+I*19,GEngine->GetSmallFont(),FMath::Min(1.f,(Width-12)/FMath::Max(1.f,TW)));
+   }
+  }
+ }
  Canvas->Canvas->PopTransform();
 }
 
@@ -651,6 +669,16 @@ FVector2D AOVHUD::GetPinnedSize(int32 Index) const
  const float Width=ViewportPixels.X/UIScale,Height=ViewportPixels.Y/UIScale;
  return FVector2D(FMath::Clamp(PinnedSizes[Index].X,266.,FMath::Max(266.,FMath::Min(550.,double(Width)))),
      FMath::Clamp(PinnedSizes[Index].Y,158.,FMath::Max(158.,FMath::Min(400.,double(Height-56)))));
+}
+FString AOVHUD::GetPinnedTitleTooltip(FVector2D CanvasPoint) const
+{
+ const FString Action=GetHitActionAtCanvasPoint(CanvasPoint).ToString();
+ for(int32 I=0;I<PinnedShips.Num();++I)if(PinnedShips[I].IsValid()&&Action==FString::Printf(TEXT("Pinned_%d"),I)) {
+  const int32 Limit=FMath::Clamp(FMath::FloorToInt((GetPinnedSize(I).X-180)/12.f),2,20);
+  const FString& Name=PinnedShips[I]->ShipName;
+  return Name.Len()>Limit?Name:FString();
+ }
+ return FString();
 }
 void AOVHUD::DrawPinned()
 {

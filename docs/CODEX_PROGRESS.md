@@ -1,3 +1,7 @@
+# 최근 진행: 핀의 긴 이름 확인
+
+**핀의 긴 함선 이름:** 핀 제목이 잘릴 때 마우스를 올리면 실제 함선의 전체 이름을 표시한다. 짧은 이름과 제목 밖에는 표시하지 않으며 화면 가장자리에 제한한다. 기존 핀 선택·이동을 유지한다. Win64 `PlayUI_R2_EA_Build.log` 성공, EA 자동 98/98, [창 API 174/174](validation/PlayUIR2/EA_핀제목_API.json), [1280 렌더/API 10/10](validation/PlayUIR2/EA_핀제목_렌더.json), [1920 렌더/API 10/10](validation/PlayUIR2/EB_핀제목_렌더.json), [1280 화면](validation/PlayUIR2/EA_핀제목_1280.png) / [1920 화면](validation/PlayUIR2/EB_핀제목_1920.png). 렌더는 API로 포인터를 이동한 시험이며 실제 마우스 입력은 미검증이다.
+
 # 최근 진행: CIWS-B 포신 단면 조사
 
 원본 기반 회전부를 X축 100구간으로 측정했다. 정점 범위 변화만으로 상하 관절·절단선을 확정할 수 없으므로 임의로 절단하거나 적용 완료로 처리하지 않았다. 상세와 다음 단계는 `docs/WORK_STATUS.md`를 참조한다.

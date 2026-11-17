@@ -1,3 +1,7 @@
+# 최근 검사: 핀 제목
+
+**핀의 긴 함선 이름:** 핀 제목이 잘릴 때 마우스를 올리면 실제 함선의 전체 이름을 표시한다. 짧은 이름과 제목 밖에는 표시하지 않으며 화면 가장자리에 제한한다. 기존 핀 선택·이동을 유지한다. Win64 `PlayUI_R2_EA_Build.log` 성공, EA 자동 98/98, [창 API 174/174](validation/PlayUIR2/EA_핀제목_API.json), [1280 렌더/API 10/10](validation/PlayUIR2/EA_핀제목_렌더.json), [1920 렌더/API 10/10](validation/PlayUIR2/EB_핀제목_렌더.json), [1280 화면](validation/PlayUIR2/EA_핀제목_1280.png) / [1920 화면](validation/PlayUIR2/EB_핀제목_1920.png). 렌더는 API로 포인터를 이동한 시험이며 실제 마우스 입력은 미검증이다.
+
 # R2 적 관측 이후 통합 회귀
 
 **CIWS-B 원본 좌우 분리 시험 — 적용 보류:** 원본 해시를 보존하고 [측면](validation/PlayUIR2/CIWSB_원본측면.png)과 [60개 높이 단면](validation/PlayUIR2/CIWSB_원본단면.json)을 근거로 z=-0.69·-0.60·-0.39에서 별도 복사본을 시험했다. [v1 회전](validation/PlayUIR2/CIWSB_회전_v1.png) / [v2 회전](validation/PlayUIR2/CIWSB_회전_v2.png) / [v3 회전](validation/PlayUIR2/CIWSB_회전_v3.png). v3은 [닫힌 메시·UV·높이 검사 13/13](validation/PlayUIR2/CIWSB_분리v3_구조검사.json)이지만 회전 시 비원형 임시 절단면이 노출돼 외형 검사는 실패다. 상하 포신과 포구도 미분리이며 원본 무장 적용 완료가 아니다. 다음은 실제 베어링 경계와 접합부를 수작업으로 보정하고 가동 범위를 검증한다.
