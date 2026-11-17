@@ -3,7 +3,7 @@
   "recorded_date_kst": "2026-11-17",
   "base_code_commit": "f8f4d7a3106805d77040ce9091913cebf0d2f374",
   "status": "source_files_not_imported",
-  "blocked_reason": "All 28 download_file requests were rejected because each uploaded archive exceeds the tool's 32 MiB transfer limit. No archive bytes or contents have been inspected.",
+  "blocked_reason": "All 29 download_file requests were rejected because each uploaded archive exceeds the tool's 32 MiB transfer limit. No archive bytes or contents have been inspected.",
   "assets": [
     {
       "id": "heavy_cannon_shc400",
@@ -335,6 +335,18 @@
       "display_name": "전략 미사일함",
       "original_filename": "전략미사일함.zip",
       "destination": "art/models/source/ships/missile_ship/전략미사일함.zip",
+      "source_status": "not_imported",
+      "size_bytes": null,
+      "sha256": null,
+      "inspection_status": "not_inspected",
+      "ue_import_status": "not_imported"
+    },
+    {
+      "id": "battlecarrier",
+      "category": "ship",
+      "display_name": "항공순양함",
+      "original_filename": "항공순양함.zip",
+      "destination": "art/models/source/ships/battlecarrier/항공순양함.zip",
       "source_status": "not_imported",
       "size_bytes": null,
       "sha256": null,

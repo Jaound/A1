@@ -1,51 +1,65 @@
-# 모델 원본 반입 목록
+# 모델 원본 업로드 폴더
 
-2026-11-17 KST. 사용자 첨부 **무장 9종 + 함선 15종 + 함재기 1종 + 강습 포드 1종 + 미사일 탄체 2종**의 반입 대상과 저장 위치를 기록한다.
+2026-11-17 KST. 사용자 첨부 **29종: 함선16 + 무장9 + 함재기1 + 강습포드1 + 미사일탄체2**의 목적지를 준비했다.
 
-함재기는 초소형함 자산으로 별도 분류하고, 강습 포드는 함선과 다른 운송체로 관리한다. 강습선은 일반 소형함이다. 미사일 탄체는 발사대와 별도 분류하며, 대함/일반 미사일이라는 자산명만으로 유도 여부나 최종 무장 매핑을 확정하지 않는다.
+## 실제 반입 상태
 
-## 현재 상태
+원본 ZIP은 아직 없다. 29개 첨부 모두 이 클라우드 다운로드 도구의32 MiB 제한으로 반입하지 못했다. 이 문서와 manifest는 목록이며 실제 파일 검사·UE 적용 완료가 아니다. 원본이 있는 Windows PC에서 아래 방법으로 업로드한다.
 
-**원본 ZIP은 아직 저장소에 없다.** 현재 다운로드 도구의 파일당 32 MiB 제한으로 28개 요청이 모두 거절됐다. 따라서 실제 크기·해시·압축 무결성·FBX/텍스처 구조·라이선스·메시 분리 가능성은 확인하지 않았다. manifest의 null은 미확인을 뜻한다. 파일명에서 추정한 무장 이름은 게임 데이터 매핑 확정이 아니다.
+## 폴더 구조
 
-이 커밋은 목록과 LFS 규칙만 준비하며 모델 업로드나 UE 적용 완료를 뜻하지 않는다. 코드 브랜치와 work는 수정하지 않는다.
+    art/models/source/
+      ships/               함선16종: corvette, frigate, vector, bastion, cruiser,
+                           air_defense, radar, battleship, carrier, missile_ship,
+                           dreadnought, battlecarrier, repair, mining, transport, assault
+      weapons/             무장9종
+      aircraft/fighter/    함재기
+      transport_devices/boarding_pod/  개인 강습포드
+      projectiles/anti_ship_missile/   대함 미사일 탄체
+      projectiles/standard_missile/    일반 미사일 탄체
 
-## 원본 저장 규칙
+각 모델의 실제 원본 파일명과 경로는 [manifest.json](manifest.json)에 있다. Git은 빈 폴더를 보존하지 않으므로 각 폴더의 .gitkeep으로 경로를 만들었다. 원본 ZIP은 이름을 바꾸거나 풀지 않고 보관한다.
 
-- [manifest.json](manifest.json)의 destination 경로에 원본 ZIP을 그대로 보관한다.
-- 원본 ZIP은 Git LFS로 저장한다. 전역에 영향을 주지 않도록 git lfs install --local을 사용한다.
-- 원본을 확보한 다음 크기·SHA-256·ZIP 무결성을 확인하고 manifest를 갱신한다.
-- 추후 분리·피벗 수정본과 UE 에셋은 원본과 별도 경로에서 관리한다.
-- 게임 명세의 함체 등록과 모델 파일 반입 여부를 구분한다.
+## 권장: Windows Git + Git LFS로 업로드
 
-## 로컬 PC에서 이어서 반입
+웹 브라우저 업로드는 파일당25 MiB 제한이 있고 LFS 반입 절차를 대신하지 못한다. 이 원본들은32 MiB보다 크므로 로컬 Git LFS를 사용한다. LFS는 큰 파일의 본체를 Git 이력과 별도로 저장하며 GitHub 계정/플랜의 파일 크기·저장·전송 한도가 적용된다.
 
-원본 28개가 있는 PC의 별도 에셋 작업 폴더에서 이 브랜치를 체크아웃한다.
-manifest에 지정한 경로로 복사하고 LFS 적용 여부를 확인한 뒤 커밋·푸시한다.
-크기·해시·ZIP 검사까지 완료하기 전 source_status를 imported로 바꾸지 않는다.
+1. Windows PowerShell에서 git --version과 git lfs version을 확인한다. 명령이 없다면 Git for Windows/Git LFS를 먼저 설치한다.
+2. 원본 ZIP29개를 한 폴더에 모은다. 예: C:\Users\user\Downloads\OV-Models. manifest의 원래 파일명을 유지한다.
+3. 기존 UE 작업 폴더와 다른 새 경로로 아래 브랜치를 복제한다. 아래 대상 폴더가 이미 있으면 비어 있는 다른 경로를 사용한다.
 
-```powershell
-git fetch origin codex/model-assets
-# 기존 변경을 보존하고 별도 워크트리에서 진행
-git worktree add ../A1-model-assets -b codex/model-assets-local origin/codex/model-assets
-Set-Location ../A1-model-assets
-git lfs install --local
-# manifest.json의 destination에 28개 원본 ZIP 복사
-git add art/models/source
-git lfs ls-files
-# 위 목록에서 실제 추가한 ZIP이 LFS로 추적되는지 확인
-git diff --cached --stat
-git commit -m "Import original ship and weapon model archives"
-git push origin HEAD:codex/model-assets
-```
+    Set-Location C:\Users\user
+    git clone --branch codex/model-assets --single-branch https://github.com/Jaound/A1.git A1-model-assets-upload
+    Set-Location .\A1-model-assets-upload
+    git lfs install --local
+    & .\art\models\source\Import-ModelArchives.ps1 -SourceDirectory 'C:\Users\user\Downloads\OV-Models'
+    git status --short
+    git add art/models/source
+    git lfs ls-files
+    git diff --cached --stat
 
-채팅을 통해 다시 전달하려면 각 전송 파일을 32 MiB 미만(권장 30 MiB 이하)으로 분할해야 한다. 분할 원본을 모두 받은 후 재조립·무결성 검증하고 원본 ZIP으로 반입한다.
+4. git lfs ls-files에 추가한 ZIP이 표시되는지 확인한다. 29개를 모두 넣었다면29개가 보여야 한다.
+5. 목록을 확인하고 커밋·푸시한다. 최초 인증 요청이 나타나면 자신의 GitHub 계정으로 로그인한다.
 
-## 이후 검사
+    git commit -m "Import 29 original model archives"
+    git push origin codex/model-assets
+    git status --short
 
-1. 원본 파일 28종과 manifest 일치, SHA-256/ZIP 무결성.
-2. FBX·텍스처 목록, 좌표축·단위·피벗·메시/재질 구성.
-3. 무장의 고정 받침대·회전 포탑·고저각 포신 분리 가능성.
-4. 함선별 장착점·출격구·레이더 가동부·충돌·스케일.
-5. 대표 모델 UE 적용 후 나머지 확대.
+도우미 스크립트는 원본명으로 파일을 찾아 지정된 하위 폴더에 복사하고, 복사 전후 SHA-256을 비교해 manifest의 크기·해시·반입 상태를 기록한다. 누락 파일은 나열하고 실제 찾은 파일만 처리한다. 이미 목적지에 다른 내용의 파일이 있으면 덮어쓰지 않고 중단한다. 스크립트는 커밋·푸시·UE 임포트를 하지 않는다. ZIP CRC와 메시/텍스처 검사는 별도로 해야 하며 inspection_status는 그대로 유지한다.
+
+PowerShell 실행 정책 때문에 스크립트가 차단되면 전역 정책은 바꾸지 않고 다음 한 번의 프로세스로 실행할 수 있다.
+
+    powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\art\models\source\Import-ModelArchives.ps1 -SourceDirectory 'C:\Users\user\Downloads\OV-Models'
+
+## 직접 복사하는 방법
+
+도우미 대신 manifest의 destination 경로에 해당 ZIP을 복사한 후 같은 git add / lfs ls-files / commit / push 순서로 업로드해도 된다. 이때 manifest의 크기·해시·반입 상태는 별도로 갱신해야 한다.
+
+## 후속 검사와 변경 범위
+
+- 원본 보관, ZIP 무결성 확인, 메시/재질 검사, 부품 분리, UE 적용은 각각 별도 단계다.
+- 모델 이름만으로 무장 성능·미사일 유도 여부를 확정하지 않는다.
+- 격납고·함선 기본 편성은 에셋 반입으로 바뀌지 않는다.
+- 게임 코드·work·기지 디자인 브랜치는 수정하지 않는다.
+- 도우미 스크립트의 실제 Windows 실행은 이 클라우드에서 미검증이다.
 
