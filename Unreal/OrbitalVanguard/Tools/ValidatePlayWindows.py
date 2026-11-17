@@ -159,12 +159,38 @@ def tick(_dt):
             state.update(phase=56,at=time.monotonic());return
         if state['phase']==56:
             attacker=state['attacker'];target=state['target'];combat=p(pc,'combat')
-            slots=p(p(p(attacker,'systems'),'layout'),'slots')
+            systems=p(attacker,'systems');layout=p(systems,'layout');slots=p(layout,'slots')
             index=next(i for i,s in enumerate(slots) if p(s,'deck_id')==1)
             action='PinnedSlot_0_'+str(index);center=hud.get_action_center(action)
             check('WINDOW-PIN-SLOT-HITBOX',center.x>=0 and str(hud.get_hit_action_at_canvas_point(center))==action)
             selected_before=p(pc,'selected');hud.execute_ui_action(action)
             check('WINDOW-PIN-INDEPENDENT-SLOT',hud.get_pinned_slot(0)==index and p(pc,'selected')==selected_before)
+            # PIE 전용 가짜 시설 한 칸을 추가해 15칸 경계와 입력을 확인한다. 디스크 에셋은 저장하지 않는다.
+            definitions=list(slots); runtime=list(p(systems,'slots'))
+            state.update(original_defs=definitions,original_runtime=runtime,extra_index=len(definitions))
+            p(layout,'slots').append(definitions[index])
+            p(systems,'slots').append(runtime[index])
+            check('WINDOW-PIN-PAGE-FIXTURE',len(p(layout,'slots'))==len(definitions)+1 and len(p(systems,'slots'))==len(runtime)+1)
+            state.update(phase=560,at=time.monotonic());return
+        if state['phase']==560:
+            center=hud.get_action_center('PinnedPage_0_1')
+            check('WINDOW-PIN-PAGE-NEXT-HIT',center.x>=0 and str(hud.get_hit_action_at_canvas_point(center))=='PinnedPage_0_1')
+            hud.execute_ui_action('PinnedPage_0_1')
+            state.update(phase=561,at=time.monotonic());return
+        if state['phase']==561:
+            action='PinnedSlot_0_'+str(state['extra_index']);center=hud.get_action_center(action)
+            check('WINDOW-PIN-PAGE-EXTRA-HIT',center.x>=0 and str(hud.get_hit_action_at_canvas_point(center))==action)
+            hud.execute_ui_action(action)
+            check('WINDOW-PIN-PAGE-EXTRA-SELECT',hud.get_pinned_slot(0)==state['extra_index'])
+            hud.execute_ui_action('PinnedPage_0_-1')
+            state.update(phase=562,at=time.monotonic());return
+        if state['phase']==562:
+            attacker=state['attacker'];target=state['target'];combat=p(pc,'combat')
+            systems=p(attacker,'systems');layout=p(systems,'layout')
+            index=next(i for i,s in enumerate(state['original_defs']) if p(s,'deck_id')==1)
+            center=hud.get_action_center('PinnedSlot_0_'+str(index))
+            check('WINDOW-PIN-PAGE-RETURN',center.x>=0)
+            p(layout,'slots').pop();p(systems,'slots').pop()
             hud.execute_ui_action('PinnedClose_1')
             check('WINDOW-PIN-CLOSE-ONLY-ONE',hud.get_pinned_count()==1 and hud.get_pinned_ship(0)==attacker)
             pc.select_ship(target);hud.execute_ui_action('WindowPin')

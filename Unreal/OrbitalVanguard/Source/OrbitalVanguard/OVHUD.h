@@ -85,7 +85,7 @@ private:
  UPROPERTY() TObjectPtr<UOVShipPreview> WeaponPreview;
  UPROPERTY() TArray<TObjectPtr<UOVShipPreview>> PinnedPreviews;
  UPROPERTY() TArray<TWeakObjectPtr<AOVShip>> PinnedShips;
- TArray<int32> PinnedDecks, PinnedSlots, PinnedWeapons;
+ TArray<int32> PinnedDecks, PinnedSlots, PinnedWeapons, PinnedSlotPages;
  FBox2D DevelopmentRect, HeroRect;
  bool bHeroPanelOpen=false;
  bool bSceneMenuOpen=false;

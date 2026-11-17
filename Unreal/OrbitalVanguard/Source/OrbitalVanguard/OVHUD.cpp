@@ -194,13 +194,13 @@ void AOVHUD::NotifyHitBoxClick(FName N)
  if(N==TEXT("WindowPin")) {
   auto* PC=Cast<AOVController>(PlayerOwner);
   const int32 Index=PinnedShips.IndexOfByKey(PC->Selected);
-  if(Index!=INDEX_NONE){PinnedShips.RemoveAt(Index);PinnedPreviews[Index]->Release();PinnedPreviews.RemoveAt(Index);PinnedDecks.RemoveAt(Index);PinnedSlots.RemoveAt(Index);PinnedWeapons.RemoveAt(Index);}
-  else if(PinnedShips.Num()<2){PinnedShips.Add(PC->Selected);PinnedPreviews.Add(NewObject<UOVShipPreview>(this));PinnedDecks.Add(0);PinnedSlots.Add(INDEX_NONE);PinnedWeapons.Add(INDEX_NONE);}
+  if(Index!=INDEX_NONE){PinnedShips.RemoveAt(Index);PinnedPreviews[Index]->Release();PinnedPreviews.RemoveAt(Index);PinnedDecks.RemoveAt(Index);PinnedSlots.RemoveAt(Index);PinnedWeapons.RemoveAt(Index);PinnedSlotPages.RemoveAt(Index);}
+  else if(PinnedShips.Num()<2){PinnedShips.Add(PC->Selected);PinnedPreviews.Add(NewObject<UOVShipPreview>(this));PinnedDecks.Add(0);PinnedSlots.Add(INDEX_NONE);PinnedWeapons.Add(INDEX_NONE);PinnedSlotPages.Add(0);}
   return;
  }
  if(N.ToString().StartsWith(TEXT("PinnedClose_"))) {
   const int32 Index=FCString::Atoi(*N.ToString().Mid(12));
-  if(PinnedShips.IsValidIndex(Index)){PinnedShips.RemoveAt(Index);PinnedPreviews[Index]->Release();PinnedPreviews.RemoveAt(Index);PinnedDecks.RemoveAt(Index);PinnedSlots.RemoveAt(Index);PinnedWeapons.RemoveAt(Index);}
+  if(PinnedShips.IsValidIndex(Index)){PinnedShips.RemoveAt(Index);PinnedPreviews[Index]->Release();PinnedPreviews.RemoveAt(Index);PinnedDecks.RemoveAt(Index);PinnedSlots.RemoveAt(Index);PinnedWeapons.RemoveAt(Index);PinnedSlotPages.RemoveAt(Index);}
   return;
  }
  if(N.ToString().StartsWith(TEXT("PinnedWeaponNext_"))) {
@@ -211,6 +211,17 @@ void AOVHUD::NotifyHitBoxClick(FName N)
   }
   return;
  }
+ if(N.ToString().StartsWith(TEXT("PinnedPage_"))) {
+  TArray<FString> Parts;N.ToString().ParseIntoArray(Parts,TEXT("_"),true);
+  if(Parts.Num()!=3)return;
+  const int32 Index=FCString::Atoi(*Parts[1]),Direction=FCString::Atoi(*Parts[2]);
+  if(!PinnedShips.IsValidIndex(Index)||!PinnedShips[Index].IsValid()||!PinnedSlotPages.IsValidIndex(Index))return;
+  const auto* S=PinnedShips[Index]->Systems.Get();
+  if(!S||!S->Layout||S->FactionId!=0||PinnedDecks[Index]<=0)return;
+  int32 Count=0;for(int32 I=0;I<S->Layout->Slots.Num()&&I<S->Slots.Num();++I)if(S->Layout->Slots[I].DeckId==PinnedDecks[Index])++Count;
+  PinnedSlotPages[Index]=FMath::Clamp(PinnedSlotPages[Index]+FMath::Clamp(Direction,-1,1),0,FMath::Max(0,(Count-1)/15));
+  return;
+ }
  if(N.ToString().StartsWith(TEXT("PinnedDeck_"))||N.ToString().StartsWith(TEXT("PinnedSlot_"))) {
   TArray<FString> Parts;N.ToString().ParseIntoArray(Parts,TEXT("_"),true);
   if(Parts.Num()!=3)return;
@@ -219,7 +230,7 @@ void AOVHUD::NotifyHitBoxClick(FName N)
   const auto* Systems=PinnedShips[Index]->Systems.Get();
   if(!Systems||!Systems->Layout)return;
   if(Parts[0]==TEXT("PinnedDeck")&&Value>=0&&Value<=Systems->Layout->DeckCount&&(Value==0||Systems->FactionId==0)) {
-   PinnedDecks[Index]=Value;PinnedSlots[Index]=INDEX_NONE;if(Value==0)PinnedWeapons[Index]=INDEX_NONE;
+   PinnedDecks[Index]=Value;PinnedSlots[Index]=INDEX_NONE;PinnedSlotPages[Index]=0;if(Value==0)PinnedWeapons[Index]=INDEX_NONE;
   } else if(Parts[0]==TEXT("PinnedSlot")&&Systems->FactionId==0&&Systems->Layout->Slots.IsValidIndex(Value)&&Systems->Layout->Slots[Value].DeckId==PinnedDecks[Index])PinnedSlots[Index]=Value;
   return;
  }
@@ -594,7 +605,7 @@ void AOVHUD::DrawPinned()
 {
  const auto* PC=Cast<AOVController>(PlayerOwner);
  for(int32 I=PinnedShips.Num()-1;I>=0;--I)if(!PinnedShips[I].IsValid()||PinnedShips[I]->IsHidden()||(PC&&PC->Combat&&PC->Combat->IsDeparted(PinnedShips[I].Get())))
- {PinnedPreviews[I]->Release();PinnedPreviews.RemoveAt(I);PinnedShips.RemoveAt(I);PinnedDecks.RemoveAt(I);PinnedSlots.RemoveAt(I);PinnedWeapons.RemoveAt(I);}
+ {PinnedPreviews[I]->Release();PinnedPreviews.RemoveAt(I);PinnedShips.RemoveAt(I);PinnedDecks.RemoveAt(I);PinnedSlots.RemoveAt(I);PinnedWeapons.RemoveAt(I);PinnedSlotPages.RemoveAt(I);}
  if(!PC||PC->bDeveloperMode||bHeroPanelOpen)return;
  const float X=PinnedPanelX();
  for(int32 I=0;I<PinnedShips.Num();++I)
@@ -602,7 +613,7 @@ void AOVHUD::DrawPinned()
   const float Y=PinnedPanelY()+I*160;auto* Ship=PinnedShips[I].Get();
   DrawRect(Panel,X,Y,266,158);
   AddHitBox(FVector2D(X,Y)*UIScale,FVector2D(266,158)*UIScale,FName(*FString::Printf(TEXT("PinnedBackground_%d"),I)),true,5);
-  Button(FName(*FString::Printf(TEXT("Pinned_%d"),I)),TEXT("핀 · ")+Ship->ShipName.Left(16),X+6,Y+4,218);
+  Button(FName(*FString::Printf(TEXT("Pinned_%d"),I)),TEXT("핀 · ")+Ship->ShipName.Left(10),X+6,Y+4,148);
   Button(FName(*FString::Printf(TEXT("PinnedClose_%d"),I)),TEXT("X"),X+228,Y+4,32);
   const auto* Systems=Ship->Systems.Get();const auto* Layout=Systems?Systems->Layout.Get():nullptr;
   if(!Layout)continue;
@@ -624,10 +635,16 @@ void AOVHUD::DrawPinned()
    } else DrawText(FString::Printf(TEXT("선체 %.0f%% · 쉴드 %.0f%%"),100*Systems->HullHP/FMath::Max(1.f,Systems->MaxHullHP),100*Systems->Shield/FMath::Max(1.f,Systems->MaxShield)),Ink,X+10,Y+144,GEngine->GetSmallFont());
   } else if(Systems->FactionId==0) {
    if(PinnedPreviews[I])PinnedPreviews[I]->Release();
-   int32 DeckSlots=0;for(const auto& Def:Layout->Slots)if(Def.DeckId==PinnedDecks[I])++DeckSlots;
-   if(DeckSlots>15)DrawText(TEXT("일부"),Ink,X+225,Y+41,GEngine->GetSmallFont());
-   int32 Cell=0;
+   int32 DeckSlots=0;for(int32 S=0;S<Layout->Slots.Num()&&S<Systems->Slots.Num();++S)if(Layout->Slots[S].DeckId==PinnedDecks[I])++DeckSlots;
+   PinnedSlotPages[I]=FMath::Clamp(PinnedSlotPages[I],0,FMath::Max(0,(DeckSlots-1)/15));
+   if(DeckSlots>15) {
+    Button(FName(*FString::Printf(TEXT("PinnedPage_%d_-1"),I)),TEXT("<"),X+158,Y+4,26);
+    Button(FName(*FString::Printf(TEXT("PinnedPage_%d_1"),I)),TEXT(">"),X+198,Y+4,26);
+    DrawText(FString::FromInt(PinnedSlotPages[I]+1),Ink,X+186,Y+9,GEngine->GetSmallFont(),.8f);
+   }
+   int32 Cell=0,Seen=0;
    for(int32 S=0;S<Layout->Slots.Num()&&S<Systems->Slots.Num()&&Cell<15;++S)if(Layout->Slots[S].DeckId==PinnedDecks[I]) {
+    if(Seen++<PinnedSlotPages[I]*15)continue;
     const auto& Def=Layout->Slots[S];const auto& Slot=Systems->Slots[S];
     const float CX=X+7+(Cell%5)*50,CY=Y+65+(Cell/5)*24;++Cell;
     const FName Action(*FString::Printf(TEXT("PinnedSlot_%d_%d"),I,S));
