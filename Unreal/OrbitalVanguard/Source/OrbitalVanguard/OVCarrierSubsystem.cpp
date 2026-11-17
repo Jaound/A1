@@ -133,6 +133,9 @@ EOVHangarAvailability UOVCarrierSubsystem::GetHangarAvailability(int32 HangarId)
 {
     const FOVHangarState* Hangar=Hangars.FindByPredicate([HangarId](const FOVHangarState& H){return H.HangarId==HangarId;});
     if (!Hangar) return EOVHangarAvailability::Unknown;
+    const AOVShip* Ship=Hangar->Carrier.Get();
+    if (!IsValid(Ship)||!Ship->Systems||!Ship->Systems->Layout) return EOVHangarAvailability::Unknown;
+    if (Ship->Systems->bWrecked) return EOVHangarAvailability::ShipLost;
     if (IsHangarDestroyed(*Hangar)) return EOVHangarAvailability::Destroyed;
     return IsHangarOperational(*Hangar)?EOVHangarAvailability::Ready:EOVHangarAvailability::Offline;
 }

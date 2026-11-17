@@ -118,6 +118,12 @@ bool FOVHangarAvailabilityTest::RunTest(const FString&)
     TestEqual(TEXT("Crew loss is offline, not destroyed"), R.Fleet->GetHangarAvailability(Hangar.HangarId), EOVHangarAvailability::Offline);
     R.Carrier->Systems->DebugDestroySlot(Hangar.SlotId,EOVDamageCause::Sabotage);
     TestEqual(TEXT("Physical damage is destroyed"), R.Fleet->GetHangarAvailability(Hangar.HangarId), EOVHangarAvailability::Destroyed);
+    OVCarrierTest::FRange Wreck(1);
+    if (!TestTrue(TEXT("Second hangar exists"), Wreck.Fleet->Hangars.Num()>0)) return false;
+    const auto Other=Wreck.Fleet->Hangars[0];
+    Wreck.Carrier->Systems->DebugDestroySlot(Wreck.Carrier->Systems->Layout->CoreSlotId,EOVDamageCause::Sabotage);
+    TestTrue(TEXT("Fixture ship is wrecked"),Wreck.Carrier->Systems->bWrecked);
+    TestEqual(TEXT("Wrecked carrier is not reported as physical hangar destruction"),Wreck.Fleet->GetHangarAvailability(Other.HangarId),EOVHangarAvailability::ShipLost);
     return true;
 }
 

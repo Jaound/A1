@@ -291,7 +291,7 @@ void AOVHUD::DrawDetails()
     for(const auto& Hangar:Carrier->Hangars)if(Hangar.Carrier==PC->Selected) {
      const int32 Stored=Carrier->Aircraft.FilterByPredicate([&](const auto& A){return A.HangarId==Hangar.HangarId&&A.State==EOVAircraftState::Stored;}).Num();
      const auto Availability=Carrier->GetHangarAvailability(Hangar.HangarId);
-     const TCHAR* FacilityState=Availability==EOVHangarAvailability::Ready?TEXT("가동"):Availability==EOVHangarAvailability::Destroyed?TEXT("파괴"):TEXT("정지");
+     const TCHAR* FacilityState=Availability==EOVHangarAvailability::Ready?TEXT("가동"):Availability==EOVHangarAvailability::Destroyed?TEXT("파괴"):Availability==EOVHangarAvailability::ShipLost?TEXT("함선 완파"):Availability==EOVHangarAvailability::Offline?TEXT("정지"):TEXT("미확인");
      FString Contents;
      if(Hangar.Mode==EOVHangarMode::Aircraft) Contents=FString::Printf(TEXT("함재기 %d/%d"),Stored,20+Hangar.ExtraAircraftCapacity);
      else if(const AOVShip* Small=Hangar.StoredSmallShip.Get();Small&&Small->Systems)
