@@ -10,14 +10,16 @@ import sys
 import bpy
 
 args=sys.argv[sys.argv.index('--')+1:]
-if len(args)!=1:raise ValueError('Pass a new output directory')
+if len(args) not in (1,2):raise ValueError('Pass a new output directory and optional part prefix')
+prefix=args[1] if len(args)==2 else 'MM24'
+if not prefix.replace('_','').isalnum():raise ValueError('Invalid part prefix')
 source=Path(bpy.data.filepath).resolve();out=Path(args[0]).resolve()
 if not source.is_file():raise FileNotFoundError(source)
 if out.exists():raise FileExistsError(out)
 def sha(path):
     with path.open('rb') as f:return hashlib.file_digest(f,'sha256').hexdigest()
 before=sha(source);out.mkdir(parents=True);parts=[]
-for name in ('MM24_BaseTrial','MM24_YawTrial'):
+for name in (prefix+'_BaseTrial',prefix+'_YawTrial'):
     original=bpy.data.objects.get(name)
     if not original or not original.data.uv_layers.get('TrialBakeUV'):raise RuntimeError('Missing baked UV '+name)
     obj=original.copy();obj.data=original.data.copy();bpy.context.collection.objects.link(obj)

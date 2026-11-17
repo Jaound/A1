@@ -5,13 +5,16 @@ materials, source art fidelity, performance or real-game operation.
 """
 import hashlib
 import json
+import os
 from pathlib import Path
 import traceback
 import unreal
 
-source=Path.home()/'Documents/OrbitalVanguardAssets/Prepared/PlayUI_R2_MM24_UEExport_v1'
-destination='/Game/Presentation/MM24Trial'
-output=Path(unreal.Paths.convert_relative_path_to_full(unreal.Paths.project_saved_dir()))/'Validation/MM24UETrial.json'
+prefix=os.environ.get('OV_TURRET_PREFIX','MM24')
+if not prefix.replace('_','').isalnum():raise ValueError('Invalid part prefix')
+source=Path.home()/'Documents/OrbitalVanguardAssets/Prepared'/('PlayUI_R2_'+prefix+'_UEExport_v1')
+destination='/Game/Presentation/'+prefix+'Trial'
+output=Path(unreal.Paths.convert_relative_path_to_full(unreal.Paths.project_saved_dir()))/('Validation/'+prefix+'UETrial.json')
 report={'passed':False,'checks':[],'parts':[],'errors':[],
         'scope':'isolated UE mesh inspection; not integrated into gameplay or final art'}
 def check(name,value,detail=''):

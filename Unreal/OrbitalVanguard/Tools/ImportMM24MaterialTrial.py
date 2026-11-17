@@ -5,14 +5,18 @@ Source image files are checked before and after import; no asset is replaced.
 """
 import hashlib
 import json
+import os
 from pathlib import Path
 import traceback
 import unreal
 
 base=Path.home()/'Documents/OrbitalVanguardAssets/Prepared'
-color=base/'PlayUI_R2_MM24_BakeTrial_v4';maps=base/'PlayUI_R2_MM24_MaterialTrial_v1'
-destination='/Game/Presentation/MM24Trial'
-output=Path(unreal.Paths.convert_relative_path_to_full(unreal.Paths.project_saved_dir()))/'Validation/MM24UEMaterials.json'
+prefix=os.environ.get('OV_TURRET_PREFIX','MM24')
+if not prefix.replace('_','').isalnum():raise ValueError('Invalid part prefix')
+color=base/os.environ.get('OV_TURRET_COLOR_FOLDER','PlayUI_R2_MM24_BakeTrial_v4')
+maps=base/os.environ.get('OV_TURRET_MATERIAL_FOLDER','PlayUI_R2_MM24_MaterialTrial_v1')
+destination='/Game/Presentation/'+prefix+'Trial'
+output=Path(unreal.Paths.convert_relative_path_to_full(unreal.Paths.project_saved_dir()))/('Validation/'+prefix+'UEMaterials.json')
 report={'passed':False,'checks':[],'assets':[],'errors':[],
         'scope':'isolated baked trial materials, not final art or gameplay'}
 def check(name,value,detail=''):
@@ -23,12 +27,12 @@ def sha(p):
 try:
     entries=[]
     for part in ('Base','Yaw'):
-        prefix='MM24_'+part+'Trial'
-        for kind,path in [('BaseColor',color/(prefix+'_baked.png')),('Normal',maps/(prefix+'_NORMAL.png')),
-                          ('Roughness',maps/(prefix+'_Roughness.png')),('Metallic',maps/(prefix+'_Metallic.png'))]:
-            entries.append((part,kind,path,'T_MM24_'+part+'_'+kind+'_Trial'))
-        check('EXISTING-TRIAL-MESH-'+part,isinstance(unreal.EditorAssetLibrary.load_asset(destination+'/SM_'+prefix),unreal.StaticMesh))
-        check('NO-MATERIAL-OVERWRITE-'+part,not unreal.EditorAssetLibrary.does_asset_exist(destination+'/M_MM24_'+part+'_Trial'))
+        part_name=prefix+'_'+part+'Trial'
+        for kind,path in [('BaseColor',color/(part_name+'_baked.png')),('Normal',maps/(part_name+'_NORMAL.png')),
+                          ('Roughness',maps/(part_name+'_Roughness.png')),('Metallic',maps/(part_name+'_Metallic.png'))]:
+            entries.append((part,kind,path,'T_'+prefix+'_'+part+'_'+kind+'_Trial'))
+        check('EXISTING-TRIAL-MESH-'+part,isinstance(unreal.EditorAssetLibrary.load_asset(destination+'/SM_'+part_name),unreal.StaticMesh))
+        check('NO-MATERIAL-OVERWRITE-'+part,not unreal.EditorAssetLibrary.does_asset_exist(destination+'/M_'+prefix+'_'+part+'_Trial'))
     for part,kind,path,asset in entries:
         check('SOURCE-'+asset,path.is_file());check('NO-OVERWRITE-'+asset,not unreal.EditorAssetLibrary.does_asset_exist(destination+'/'+asset))
     hashes={str(path):sha(path) for _,_,path,_ in entries};tools=unreal.AssetToolsHelpers.get_asset_tools();textures={}
@@ -46,7 +50,7 @@ try:
         report['assets'].append(destination+'/'+asset)
     library=unreal.MaterialEditingLibrary
     for part in ('Base','Yaw'):
-        name='M_MM24_'+part+'_Trial';mat=tools.create_asset(name,destination,unreal.Material,unreal.MaterialFactoryNew())
+        name='M_'+prefix+'_'+part+'_Trial';mat=tools.create_asset(name,destination,unreal.Material,unreal.MaterialFactoryNew())
         check('CREATE-'+name,isinstance(mat,unreal.Material))
         for index,(kind,prop) in enumerate([('BaseColor',unreal.MaterialProperty.MP_BASE_COLOR),('Normal',unreal.MaterialProperty.MP_NORMAL),
                                               ('Roughness',unreal.MaterialProperty.MP_ROUGHNESS),('Metallic',unreal.MaterialProperty.MP_METALLIC)]):
@@ -56,7 +60,7 @@ try:
                                      unreal.MaterialSamplerType.SAMPLERTYPE_COLOR if kind=='BaseColor' else unreal.MaterialSamplerType.SAMPLERTYPE_MASKS)
             check('CONNECT-'+part+'-'+kind,library.connect_material_property(node,'RGB' if kind in ('BaseColor','Normal') else 'R',prop))
         library.recompile_material(mat);check('SAVE-'+name,unreal.EditorAssetLibrary.save_loaded_asset(mat,only_if_is_dirty=False))
-        mesh=unreal.EditorAssetLibrary.load_asset(destination+'/SM_MM24_'+part+'Trial')
+        mesh=unreal.EditorAssetLibrary.load_asset(destination+'/SM_'+prefix+'_'+part+'Trial')
         mesh.set_material(0,mat);check('SAVE-TRIAL-MESH-'+part,unreal.EditorAssetLibrary.save_loaded_asset(mesh,only_if_is_dirty=False))
         report['assets'].append(destination+'/'+name)
     check('SOURCE-IMAGES-UNCHANGED',all(sha(Path(p))==digest for p,digest in hashes.items()))

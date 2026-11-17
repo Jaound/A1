@@ -10,9 +10,11 @@ import time
 import traceback
 import unreal
 
-tag=os.environ.get('OV_MM24_RENDER_TAG',time.strftime('%Y%m%d_%H%M%S'))
+prefix=os.environ.get('OV_TURRET_PREFIX','MM24')
+if not prefix.replace('_','').isalnum():raise ValueError('Invalid part prefix')
+tag=os.environ.get('OV_TURRET_RENDER_TAG',os.environ.get('OV_MM24_RENDER_TAG',time.strftime('%Y%m%d_%H%M%S')))
 if not tag.isalnum() and not all(c.isalnum() or c in '_-' for c in tag):raise ValueError('Invalid output tag')
-out=Path(unreal.Paths.convert_relative_path_to_full(unreal.Paths.project_saved_dir()))/'Validation/MM24UERender'/tag
+out=Path(unreal.Paths.convert_relative_path_to_full(unreal.Paths.project_saved_dir()))/('Validation/'+prefix+'UERender')/tag
 out.mkdir(parents=True,exist_ok=False)
 report={'passed':None,'checks':[],'errors':[],'scope':'unsaved blank-level UE render only',
         'physical_input':False,'gameplay':False}
@@ -31,7 +33,7 @@ def tick(_dt):
             world=unreal.EditorLoadingAndSavingUtils.new_blank_map(False);check('NEW-UNSAVED-WORLD',world is not None)
             actors=unreal.get_editor_subsystem(unreal.EditorActorSubsystem)
             for part in ('Base','Yaw'):
-                mesh=unreal.load_asset('/Game/Presentation/MM24Trial/SM_MM24_'+part+'Trial')
+                mesh=unreal.load_asset('/Game/Presentation/'+prefix+'Trial/SM_'+prefix+'_'+part+'Trial')
                 check('MESH-'+part,isinstance(mesh,unreal.StaticMesh))
                 obj=actors.spawn_actor_from_class(unreal.StaticMeshActor,unreal.Vector(0,0,0))
                 obj.static_mesh_component.set_static_mesh(mesh);obj.set_actor_enable_collision(False)
