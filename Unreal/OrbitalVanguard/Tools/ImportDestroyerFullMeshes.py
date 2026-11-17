@@ -7,7 +7,12 @@ import unreal
 
 root = Path.home() / 'Documents/OrbitalVanguardAssets/Prepared' / os.environ.get('OV_FULL_SHIP_TAG', 'PlayUI_R2_DestroyerFull_v1')
 source_report = json.loads((root / 'report.json').read_text(encoding='utf8'))
-output = Path(unreal.Paths.convert_relative_path_to_full(unreal.Paths.project_saved_dir())) / 'Validation' / (os.environ.get('OV_FULL_SHIP_TAG', 'DestroyerFull') + 'Import.json')
+only_id = os.environ.get('OV_FULL_SHIP_ID')
+if only_id:
+    source_report = [entry for entry in source_report if entry['id'] == only_id]
+    if len(source_report) != 1:
+        raise RuntimeError('지정한 함체 ID가 준비 보고서에 없습니다: ' + only_id)
+output = Path(unreal.Paths.convert_relative_path_to_full(unreal.Paths.project_saved_dir())) / 'Validation' / (os.environ.get('OV_FULL_SHIP_TAG', 'DestroyerFull') + ('_' + only_id if only_id else '') + 'Import.json')
 report = {'passed': False, 'ships': [], 'errors': []}
 def check(name, value):
     if not value: raise RuntimeError(name)

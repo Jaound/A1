@@ -1,0 +1,108 @@
+{
+  "passed": true,
+  "kind": "PIE 렌더와 UI API",
+  "physical_input": false,
+  "requested_size": [
+    1280,
+    720
+  ],
+  "captures": [
+    {
+      "view": "전함_모델",
+      "path": "C:/Users/user/source/repos/A1/Unreal/OrbitalVanguard/Saved/Validation\\PlayUI\\20261118_083204\\01_전함_모델.png",
+      "viewport_size": [
+        1280,
+        722
+      ],
+      "exists": true
+    },
+    {
+      "view": "구축전함_모델",
+      "path": "C:/Users/user/source/repos/A1/Unreal/OrbitalVanguard/Saved/Validation\\PlayUI\\20261118_083204\\02_구축전함_모델.png",
+      "viewport_size": [
+        1280,
+        722
+      ],
+      "exists": true
+    },
+    {
+      "view": "항공순양함_모델",
+      "path": "C:/Users/user/source/repos/A1/Unreal/OrbitalVanguard/Saved/Validation\\PlayUI\\20261118_083204\\03_항공순양함_모델.png",
+      "viewport_size": [
+        1280,
+        722
+      ],
+      "exists": true
+    }
+  ],
+  "checks": [
+    {
+      "id": "PLAY-WINDOW",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "SOURCE-HULL-CALIBRATION-전함_모델",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "SOURCE-HULL-SPAWN-전함_모델",
+      "passed": true,
+      "detail": "시험 함선 1척 생성 · 최초 재고/병력만 공급 · 캠페인 획득 아님"
+    },
+    {
+      "id": "SOURCE-HULL-IN-SCENE-전함_모델",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "RENDER-전함_모델",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "SOURCE-HULL-CALIBRATION-구축전함_모델",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "SOURCE-HULL-SPAWN-구축전함_모델",
+      "passed": true,
+      "detail": "시험 함선 1척 생성 · 최초 재고/병력만 공급 · 캠페인 획득 아님"
+    },
+    {
+      "id": "SOURCE-HULL-IN-SCENE-구축전함_모델",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "RENDER-구축전함_모델",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "SOURCE-HULL-CALIBRATION-항공순양함_모델",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "SOURCE-HULL-SPAWN-항공순양함_모델",
+      "passed": true,
+      "detail": "시험 함선 1척 생성 · 최초 재고/병력만 공급 · 캠페인 획득 아님"
+    },
+    {
+      "id": "SOURCE-HULL-IN-SCENE-항공순양함_모델",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "RENDER-항공순양함_모델",
+      "passed": true,
+      "detail": ""
+    }
+  ],
+  "errors": [],
+  "preview_settings_restored": true,
+  "elapsed_seconds": 20.968000000000757
+}

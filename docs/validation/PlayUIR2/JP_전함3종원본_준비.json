@@ -1,0 +1,152 @@
+[
+  {
+    "id": "battleship",
+    "source": "C:\\Users\\user\\Documents\\OrbitalVanguardAssets\\Source\\전함\\Meshy_AI_model_20261112_texture_fbx\\Meshy_AI_model_20261112_texture.fbx",
+    "source_sha256": "df19cf5198f8b2a1d2afac2586782909a8308df472f18390eef0e6ec30ab2801",
+    "source_unchanged": true,
+    "prepared_sha256": "75865c9dc297a08aecca7259d1fb897d74a2aae3ee98bd7d8f2f565ee133634f",
+    "vertices": 373607,
+    "polygons": 747635,
+    "uv_layers": 1,
+    "source_extent": [
+      183.1833953857422,
+      45.579410552978516,
+      30.0
+    ],
+    "textures": [
+      {
+        "name": "Image_0.png",
+        "size": [
+          8192,
+          8192
+        ],
+        "sha256": "3309b5698e7177ca5a2320a7cc00ec613c2093704cce41411851bca3a1dec622"
+      },
+      {
+        "name": "Image_2.png",
+        "size": [
+          4096,
+          4096
+        ],
+        "sha256": "94052ec0e3a7995ed2993624559d965a7f2aa7326da05e5d62d23d7e8116e584"
+      },
+      {
+        "name": "texture_0_metallic.png",
+        "size": [
+          4096,
+          4096
+        ],
+        "sha256": "9a5d0d4dd64eec2408822683f8b96912802dd3be7b5abc8dc512bd7c781e6045"
+      },
+      {
+        "name": "texture_0_roughness.png",
+        "size": [
+          4096,
+          4096
+        ],
+        "sha256": "cc922d49b77a558d90a2c875ad1b68bc897d3d7af94075f5bb9e0955eaeba048"
+      }
+    ],
+    "forward_direction_validated": false
+  },
+  {
+    "id": "dreadnought",
+    "source": "C:\\Users\\user\\Documents\\OrbitalVanguardAssets\\Source\\구축전함\\Meshy_AI_scifi_battlecruiser_bc300_20261117_image-to-3d-texture.fbx",
+    "source_sha256": "6249066fe9ee601008dda6d1ef16699b613103280b46c7cb78d3d4cf47be4b33",
+    "source_unchanged": true,
+    "prepared_sha256": "b47edd734d2a13e219f439c8444745f0bdbc7a8b5e475b011ec1388c9f998ee0",
+    "vertices": 346097,
+    "polygons": 692410,
+    "uv_layers": 1,
+    "source_extent": [
+      130.03236389160156,
+      37.84153747558594,
+      20.0
+    ],
+    "textures": [
+      {
+        "name": "Image_0.png",
+        "size": [
+          4096,
+          4096
+        ],
+        "sha256": "c92738c90d8131e6ffb9dae0b6752f08f0be8fdc7d29b89da22b4a121a09027d"
+      },
+      {
+        "name": "Image_2.png",
+        "size": [
+          4096,
+          4096
+        ],
+        "sha256": "dd024c44c1de175f6c9c383fd58bba82a71c45e220fc074794c620c43cc40bbb"
+      },
+      {
+        "name": "texture_0_metallic.png",
+        "size": [
+          2048,
+          2048
+        ],
+        "sha256": "5aa417af549ec4fdf1da6f9296a57308e7adc438ed806cbaa9e5c375310b5e41"
+      },
+      {
+        "name": "texture_0_roughness.png",
+        "size": [
+          2048,
+          2048
+        ],
+        "sha256": "7b9c5aa96014ac6cfce1b71c789633cce175e58b7722c148649d5302f57a318c"
+      }
+    ],
+    "forward_direction_validated": false
+  },
+  {
+    "id": "battlecarrier",
+    "source": "C:\\Users\\user\\Documents\\OrbitalVanguardAssets\\Source\\항공순양함\\Meshy_AI_model_20261117_texture_fbx\\Meshy_AI_model_20261117_texture.fbx",
+    "source_sha256": "df2b661082a19fd7f5ab775e86a37c8dabe4f9a2cb3902d3216d2ba0b745875e",
+    "source_unchanged": true,
+    "prepared_sha256": "eaf8aca6656ed0e7638e1dc79b08cfc3823ac51c98fbcd2d3cfb681d7efe330b",
+    "vertices": 334847,
+    "polygons": 669807,
+    "uv_layers": 1,
+    "source_extent": [
+      61.6288948059082,
+      19.42816162109375,
+      15.0
+    ],
+    "textures": [
+      {
+        "name": "Image_0.png",
+        "size": [
+          8192,
+          8192
+        ],
+        "sha256": "cc8a52a75cc2bd34c05b1a50cd2f5f5d89c82aada0b4dd5f5fee8c8ff3b46ed9"
+      },
+      {
+        "name": "Image_2.png",
+        "size": [
+          4096,
+          4096
+        ],
+        "sha256": "9f358fe9c5bb1cf060751e363446d87831e1b497faa6db75a860ee38d5340231"
+      },
+      {
+        "name": "texture_0_metallic.png",
+        "size": [
+          4096,
+          4096
+        ],
+        "sha256": "fe1fe40ca2f3f37a903872d5992f61b2fe343044a53e8badcdb23ddfd81daa76"
+      },
+      {
+        "name": "texture_0_roughness.png",
+        "size": [
+          4096,
+          4096
+        ],
+        "sha256": "10c518e223d5155d4bc58f3712fdd3e01ae76461b931e7fe11b5b719e72e4d49"
+      }
+    ],
+    "forward_direction_validated": false
+  }
+]

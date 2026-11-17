@@ -1,0 +1,15 @@
+{
+  "tag": "PlayUI_R2_MissileDefenseFull_v1",
+  "ships": [
+    {
+      "id": "missile_ship",
+      "folder": "전략미사일함",
+      "pattern": "*image-to-3d-texture.fbx"
+    },
+    {
+      "id": "air_defense",
+      "folder": "방공함",
+      "pattern": "Meshy_AI_model_20261112_texture.fbx"
+    }
+  ]
+}

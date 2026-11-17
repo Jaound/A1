@@ -1,0 +1,20 @@
+{
+  "tag": "PlayUI_R2_FrigateCruiserRadarFull_v1",
+  "ships": [
+    {
+      "id": "frigate",
+      "folder": "호위함",
+      "pattern": "Meshy_AI_model_20261112_texture.fbx"
+    },
+    {
+      "id": "cruiser",
+      "folder": "순양함",
+      "pattern": "*image-to-3d-texture.fbx"
+    },
+    {
+      "id": "radar",
+      "folder": "레이더 함",
+      "pattern": "Meshy_AI_model_20261112_texture.fbx"
+    }
+  ]
+}

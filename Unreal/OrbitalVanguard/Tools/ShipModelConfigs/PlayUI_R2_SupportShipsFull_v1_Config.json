@@ -1,0 +1,20 @@
+{
+  "tag": "PlayUI_R2_SupportShipsFull_v1",
+  "ships": [
+    {
+      "id": "repair",
+      "folder": "보급수리선",
+      "pattern": "*image-to-3d-texture.fbx"
+    },
+    {
+      "id": "mining",
+      "folder": "채굴선",
+      "pattern": "*image-to-3d-texture.fbx"
+    },
+    {
+      "id": "transport",
+      "folder": "수송선",
+      "pattern": "*image-to-3d-texture.fbx"
+    }
+  ]
+}

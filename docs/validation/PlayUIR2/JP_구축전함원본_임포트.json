@@ -1,0 +1,49 @@
+{
+  "passed": true,
+  "ships": [
+    {
+      "id": "dreadnought",
+      "triangles": 692410,
+      "mesh": "/Game/Presentation/Ships/DreadnoughtFull/SM_Hull",
+      "material": "/Game/Presentation/Ships/DreadnoughtFull/M_Readable",
+      "source_sha256": "6249066fe9ee601008dda6d1ef16699b613103280b46c7cb78d3d4cf47be4b33",
+      "images": [
+        {
+          "name": "Image_0.png",
+          "size": [
+            4096,
+            4096
+          ],
+          "sha256": "c92738c90d8131e6ffb9dae0b6752f08f0be8fdc7d29b89da22b4a121a09027d"
+        },
+        {
+          "name": "Image_2.png",
+          "size": [
+            4096,
+            4096
+          ],
+          "sha256": "dd024c44c1de175f6c9c383fd58bba82a71c45e220fc074794c620c43cc40bbb"
+        },
+        {
+          "name": "texture_0_metallic.png",
+          "size": [
+            2048,
+            2048
+          ],
+          "sha256": "5aa417af549ec4fdf1da6f9296a57308e7adc438ed806cbaa9e5c375310b5e41"
+        },
+        {
+          "name": "texture_0_roughness.png",
+          "size": [
+            2048,
+            2048
+          ],
+          "sha256": "7b9c5aa96014ac6cfce1b71c789633cce175e58b7722c148649d5302f57a318c"
+        }
+      ],
+      "forward_direction_validated": false,
+      "visibility_fill": 1.2
+    }
+  ],
+  "errors": []
+}

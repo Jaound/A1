@@ -24,6 +24,7 @@ if os.environ.get('OV_UI_CARRIER_ASSAULT_HULLS') == '1': views = ['항공모함_
 if os.environ.get('OV_UI_MISSILE_DEFENSE_HULLS') == '1': views = ['미사일함_모델', '방공함_모델']
 if os.environ.get('OV_UI_FRIGATE_CRUISER_RADAR_HULLS') == '1': views = ['호위함_모델', '순양함_모델', '레이더함_모델']
 if os.environ.get('OV_UI_SUPPORT_HULLS') == '1': views = ['보급수리함_모델', '채굴선_모델', '수송선_모델']
+if os.environ.get('OV_UI_HEAVY_HULLS') == '1': views = ['전함_모델', '구축전함_모델', '항공순양함_모델']
 
 def prop(obj, key):
     return obj.get_editor_property(key)
@@ -145,12 +146,13 @@ def tick(_dt):
             elif name == '핀_무장':
                 hud.set_details_open(True);hud.execute_ui_action('PinnedWeaponNext_0')
                 check('PIN-WEAPON-INDEPENDENT',hud.get_pinned_weapon(0)==0 and hud.get_pinned_weapon(1)==-1)
-            elif name in ('호위함_모델', '순양함_모델', '레이더함_모델', '보급수리함_모델', '채굴선_모델', '수송선_모델'):
+            elif name in ('호위함_모델', '순양함_모델', '레이더함_모델', '보급수리함_모델', '채굴선_모델', '수송선_모델', '전함_모델', '구축전함_모델', '항공순양함_모델'):
                 check('SOURCE-HULL-CALIBRATION-' + name, pc.start_calibration_range(1))
                 if not prop(pc, 'simulation_paused'):
                     pc.action('Pause')
                 ident = {'호위함_모델':'frigate', '순양함_모델':'cruiser', '레이더함_모델':'radar',
-                         '보급수리함_모델':'repair', '채굴선_모델':'mining', '수송선_모델':'transport'}[name]
+                         '보급수리함_모델':'repair', '채굴선_모델':'mining', '수송선_모델':'transport',
+                         '전함_모델':'battleship', '구축전함_모델':'dreadnought', '항공순양함_모델':'battlecarrier'}[name]
                 dev = prop(pc, 'development')
                 pc.set_editor_property('developer_mode', True)
                 spawned = dev.spawn_ships(ident, 0, 1, unreal.Vector(-50000,45000,2000), 0, 0, 0, False, False)
@@ -161,7 +163,8 @@ def tick(_dt):
                 hud.execute_ui_action('External')
                 mesh = prop(prop(spawned[0], 'hull'), 'static_mesh')
                 folder = {'frigate':'FrigateFull', 'cruiser':'CruiserFull', 'radar':'RadarFull',
-                          'repair':'RepairFull', 'mining':'MiningFull', 'transport':'TransportFull'}[ident]
+                          'repair':'RepairFull', 'mining':'MiningFull', 'transport':'TransportFull',
+                          'battleship':'BattleshipFull', 'dreadnought':'DreadnoughtFull', 'battlecarrier':'BattlecarrierFull'}[ident]
                 check('SOURCE-HULL-IN-SCENE-' + name, mesh and mesh.get_path_name() == '/Game/Presentation/Ships/' + folder + '/SM_Hull.SM_Hull')
             elif name in ('미사일함_모델', '방공함_모델'):
                 start2c = getattr(pc, 'start_phase2c_range', None) or getattr(pc, 'start_phase2_c_range')
@@ -293,7 +296,7 @@ def tick(_dt):
                 check('FLEET-TOOLTIP-TEXT',hud.get_fleet_title_tooltip(center)=='아주 긴 이름을 가진 동일 함급의 함선 1')
                 pc.set_mouse_location(int(center.x*scale),int(center.y*scale))
                 state.update(tooltip_cursor_set=True,at=time.monotonic());return
-            if name in ('백터_모델', '초계함_모델', '바스티온_모델', '항공모함_모델', '강습선_모델', '미사일함_모델', '방공함_모델', '호위함_모델', '순양함_모델', '레이더함_모델', '보급수리함_모델', '채굴선_모델', '수송선_모델') and time.monotonic()-state['at'] < 5:
+            if name.endswith('_모델') and time.monotonic()-state['at'] < 5:
                 return  # First-time source texture/shader preparation can outlast a normal frame.
             if name == '외부_무장':
                 check('PREVIEW-MESH-MIRROR', hud.get_preview_mesh_count() > 0, hud.get_preview_mesh_count())

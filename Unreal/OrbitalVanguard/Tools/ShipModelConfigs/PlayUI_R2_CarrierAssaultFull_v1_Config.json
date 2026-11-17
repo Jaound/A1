@@ -1,0 +1,15 @@
+{
+  "tag": "PlayUI_R2_CarrierAssaultFull_v1",
+  "ships": [
+    {
+      "id": "carrier",
+      "folder": "항공모함",
+      "pattern": "Meshy_AI_model_20261112_texture.fbx"
+    },
+    {
+      "id": "assault",
+      "folder": "강습선",
+      "pattern": "*image-to-3d-texture.fbx"
+    }
+  ]
+}

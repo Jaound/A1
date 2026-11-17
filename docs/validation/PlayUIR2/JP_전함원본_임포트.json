@@ -1,0 +1,49 @@
+{
+  "passed": true,
+  "ships": [
+    {
+      "id": "battleship",
+      "triangles": 747635,
+      "mesh": "/Game/Presentation/Ships/BattleshipFull/SM_Hull",
+      "material": "/Game/Presentation/Ships/BattleshipFull/M_Readable",
+      "source_sha256": "df19cf5198f8b2a1d2afac2586782909a8308df472f18390eef0e6ec30ab2801",
+      "images": [
+        {
+          "name": "Image_0.png",
+          "size": [
+            8192,
+            8192
+          ],
+          "sha256": "3309b5698e7177ca5a2320a7cc00ec613c2093704cce41411851bca3a1dec622"
+        },
+        {
+          "name": "Image_2.png",
+          "size": [
+            4096,
+            4096
+          ],
+          "sha256": "94052ec0e3a7995ed2993624559d965a7f2aa7326da05e5d62d23d7e8116e584"
+        },
+        {
+          "name": "texture_0_metallic.png",
+          "size": [
+            4096,
+            4096
+          ],
+          "sha256": "9a5d0d4dd64eec2408822683f8b96912802dd3be7b5abc8dc512bd7c781e6045"
+        },
+        {
+          "name": "texture_0_roughness.png",
+          "size": [
+            4096,
+            4096
+          ],
+          "sha256": "cc922d49b77a558d90a2c875ad1b68bc897d3d7af94075f5bb9e0955eaeba048"
+        }
+      ],
+      "forward_direction_validated": false,
+      "visibility_fill": 1.2
+    }
+  ],
+  "errors": []
+}

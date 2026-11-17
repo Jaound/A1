@@ -1,0 +1,20 @@
+{
+  "tag": "PlayUI_R2_HeavyShipsFull_v1",
+  "ships": [
+    {
+      "id": "battleship",
+      "folder": "전함",
+      "pattern": "Meshy_AI_model_20261112_texture.fbx"
+    },
+    {
+      "id": "dreadnought",
+      "folder": "구축전함",
+      "pattern": "*image-to-3d-texture.fbx"
+    },
+    {
+      "id": "battlecarrier",
+      "folder": "항공순양함",
+      "pattern": "Meshy_AI_model_20261117_texture.fbx"
+    }
+  ]
+}
