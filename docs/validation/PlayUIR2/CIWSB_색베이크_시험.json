@@ -1,0 +1,28 @@
+{
+  "inputs": {
+    "high_sha256_before": "7afb9bd4981fd4673a837e54464aa2254fd974dea0a9e79163ea7e36596e0937",
+    "low_sha256_before": "b856e1026ffae9fb70173fd8b364c7514a51bcba01e9ca30a6111537d13cd20e",
+    "high_sha256_after": "7afb9bd4981fd4673a837e54464aa2254fd974dea0a9e79163ea7e36596e0937",
+    "low_sha256_after": "b856e1026ffae9fb70173fd8b364c7514a51bcba01e9ca30a6111537d13cd20e"
+  },
+  "parts": [
+    {
+      "part": "CIWSB_BaseTrial",
+      "baked_file": "C:\\Users\\user\\Documents\\OrbitalVanguardAssets\\Prepared\\PlayUI_R2_CIWSB_ColorTrial_v1\\CIWSB_BaseTrial_baked.png",
+      "baked_sha256": "3ab545651c636296cdc74fddab88ebe431063cae0801e095be1760d71681b719",
+      "cap_file": "C:\\Users\\user\\Documents\\OrbitalVanguardAssets\\Prepared\\PlayUI_R2_CIWSB_ColorTrial_v1\\CIWSB_BaseTrial_cap_baked.png",
+      "cap_sha256": "70a72dc9b1125d0b6a39b321140b278ca3b1385551287c284c8fc8a3dedbb5de"
+    },
+    {
+      "part": "CIWSB_YawTrial",
+      "baked_file": "C:\\Users\\user\\Documents\\OrbitalVanguardAssets\\Prepared\\PlayUI_R2_CIWSB_ColorTrial_v1\\CIWSB_YawTrial_baked.png",
+      "baked_sha256": "340b85cb81c30f531123af268cf57d50b86858cdfd3431ac4a6ba1a29eaa67d6",
+      "cap_file": "C:\\Users\\user\\Documents\\OrbitalVanguardAssets\\Prepared\\PlayUI_R2_CIWSB_ColorTrial_v1\\CIWSB_YawTrial_cap_baked.png",
+      "cap_sha256": "c1148c143339281580b34a10af9e697c915a6ad10607cd35e0b858aeadd79d68"
+    }
+  ],
+  "cage_extrusion": 0.02,
+  "max_ray_distance": 0.06,
+  "smart_uv": true,
+  "status": "trial only; inspect texture, seam, joints and gameplay separately"
+}

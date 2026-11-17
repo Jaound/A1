@@ -1,0 +1,95 @@
+{
+  "inputs": {
+    "high_before": "7afb9bd4981fd4673a837e54464aa2254fd974dea0a9e79163ea7e36596e0937",
+    "low_before": "a1482e19246d815fbf29f3a545b1dfd952c6b8f443026c048f68ed195e892c46",
+    "high_after": "7afb9bd4981fd4673a837e54464aa2254fd974dea0a9e79163ea7e36596e0937",
+    "low_after": "a1482e19246d815fbf29f3a545b1dfd952c6b8f443026c048f68ed195e892c46"
+  },
+  "maps": [
+    {
+      "part": "CIWSB_BaseTrial",
+      "channel": "NORMAL",
+      "cap": false,
+      "path": "C:\\Users\\user\\Documents\\OrbitalVanguardAssets\\Prepared\\PlayUI_R2_CIWSB_MaterialTrial_v1\\CIWSB_BaseTrial_NORMAL.png",
+      "sha256": "6b122f232c2177710c0975719de5acbcebad6cfd05f66513485324e43a0c72da"
+    },
+    {
+      "part": "CIWSB_BaseTrial",
+      "channel": "NORMAL",
+      "cap": true,
+      "path": "C:\\Users\\user\\Documents\\OrbitalVanguardAssets\\Prepared\\PlayUI_R2_CIWSB_MaterialTrial_v1\\CIWSB_BaseTrial_NORMAL_cap.png",
+      "sha256": "dc9c38b80a2284b7f1590783e80c19b5494e9a9d1136433114c7bd8061b92ebf"
+    },
+    {
+      "part": "CIWSB_BaseTrial",
+      "channel": "Roughness",
+      "cap": false,
+      "path": "C:\\Users\\user\\Documents\\OrbitalVanguardAssets\\Prepared\\PlayUI_R2_CIWSB_MaterialTrial_v1\\CIWSB_BaseTrial_Roughness.png",
+      "sha256": "09107f291bea10b3ad077949e4f860311cf82dbcec35cf3bfc247ce7846f48ad"
+    },
+    {
+      "part": "CIWSB_BaseTrial",
+      "channel": "Roughness",
+      "cap": true,
+      "path": "C:\\Users\\user\\Documents\\OrbitalVanguardAssets\\Prepared\\PlayUI_R2_CIWSB_MaterialTrial_v1\\CIWSB_BaseTrial_Roughness_cap.png",
+      "sha256": "9790d5251d3695058934e7bfe897f9715ec8602b3cca0e954663e82f5dc9bb24"
+    },
+    {
+      "part": "CIWSB_BaseTrial",
+      "channel": "Metallic",
+      "cap": false,
+      "path": "C:\\Users\\user\\Documents\\OrbitalVanguardAssets\\Prepared\\PlayUI_R2_CIWSB_MaterialTrial_v1\\CIWSB_BaseTrial_Metallic.png",
+      "sha256": "6fb903448c420f2a8484f5940bc0404c16f041afd8ee72326b11a1dbaae93ad9"
+    },
+    {
+      "part": "CIWSB_BaseTrial",
+      "channel": "Metallic",
+      "cap": true,
+      "path": "C:\\Users\\user\\Documents\\OrbitalVanguardAssets\\Prepared\\PlayUI_R2_CIWSB_MaterialTrial_v1\\CIWSB_BaseTrial_Metallic_cap.png",
+      "sha256": "ab5140637b7f6192e92fac400e32e957c8a7b1682cddd128e96e0bfbaef50639"
+    },
+    {
+      "part": "CIWSB_YawTrial",
+      "channel": "NORMAL",
+      "cap": false,
+      "path": "C:\\Users\\user\\Documents\\OrbitalVanguardAssets\\Prepared\\PlayUI_R2_CIWSB_MaterialTrial_v1\\CIWSB_YawTrial_NORMAL.png",
+      "sha256": "7fe213a0309c020cd48fe7da180f3f20c3ac5dad1ea147618ac6c2c9e0e458c9"
+    },
+    {
+      "part": "CIWSB_YawTrial",
+      "channel": "NORMAL",
+      "cap": true,
+      "path": "C:\\Users\\user\\Documents\\OrbitalVanguardAssets\\Prepared\\PlayUI_R2_CIWSB_MaterialTrial_v1\\CIWSB_YawTrial_NORMAL_cap.png",
+      "sha256": "4ab6f12636fb9023910734786d412f4ad5a9a5ede4cc73f19f104af65a9639d2"
+    },
+    {
+      "part": "CIWSB_YawTrial",
+      "channel": "Roughness",
+      "cap": false,
+      "path": "C:\\Users\\user\\Documents\\OrbitalVanguardAssets\\Prepared\\PlayUI_R2_CIWSB_MaterialTrial_v1\\CIWSB_YawTrial_Roughness.png",
+      "sha256": "5b14158030a67069b12676020d0fe5fc6a3111352ad6a2dc130b0592196cbe13"
+    },
+    {
+      "part": "CIWSB_YawTrial",
+      "channel": "Roughness",
+      "cap": true,
+      "path": "C:\\Users\\user\\Documents\\OrbitalVanguardAssets\\Prepared\\PlayUI_R2_CIWSB_MaterialTrial_v1\\CIWSB_YawTrial_Roughness_cap.png",
+      "sha256": "ae4ad8a318a853d73b0be355dc2a4692bf399caad6928fdcc44b34570095b598"
+    },
+    {
+      "part": "CIWSB_YawTrial",
+      "channel": "Metallic",
+      "cap": false,
+      "path": "C:\\Users\\user\\Documents\\OrbitalVanguardAssets\\Prepared\\PlayUI_R2_CIWSB_MaterialTrial_v1\\CIWSB_YawTrial_Metallic.png",
+      "sha256": "36cf9d638e056cca4ae3e712595eeab6fa114941d9502c592ae6e14399f637ed"
+    },
+    {
+      "part": "CIWSB_YawTrial",
+      "channel": "Metallic",
+      "cap": true,
+      "path": "C:\\Users\\user\\Documents\\OrbitalVanguardAssets\\Prepared\\PlayUI_R2_CIWSB_MaterialTrial_v1\\CIWSB_YawTrial_Metallic_cap.png",
+      "sha256": "ab5140637b7f6192e92fac400e32e957c8a7b1682cddd128e96e0bfbaef50639"
+    }
+  ],
+  "status": "trial only; material appearance and original normal detail not yet verified"
+}

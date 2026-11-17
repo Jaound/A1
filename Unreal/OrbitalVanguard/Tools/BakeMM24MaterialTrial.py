@@ -11,7 +11,9 @@ import sys
 import bpy
 
 args=sys.argv[sys.argv.index('--')+1:]
-if len(args)!=2:raise ValueError('Pass high-poly blend and a new output directory')
+if len(args) not in (2,3):raise ValueError('Pass high-poly blend, new output directory, optional part prefix')
+prefix=args[2] if len(args)==3 else 'MM24'
+if not prefix.replace('_','').isalnum():raise ValueError('Invalid part prefix')
 high=Path(args[0]).resolve();low=Path(bpy.data.filepath).resolve();out=Path(args[1]).resolve()
 if not high.is_file() or not low.is_file():raise FileNotFoundError('Missing input blend')
 if out.exists():raise FileExistsError(out)
@@ -22,7 +24,7 @@ scene=bpy.context.scene;scene.render.engine='CYCLES';scene.cycles.samples=1
 scene.render.bake.use_selected_to_active=True;scene.render.bake.cage_extrusion=.02
 scene.render.bake.max_ray_distance=.06;scene.render.bake.margin=8
 results=[]
-for name in ('MM24_BaseTrial','MM24_YawTrial'):
+for name in (prefix+'_BaseTrial',prefix+'_YawTrial'):
     target=bpy.data.objects.get(name)
     if not target or not target.data.uv_layers.get('TrialBakeUV'):raise RuntimeError('Missing target trial UV '+name)
     target.data.uv_layers.active=target.data.uv_layers['TrialBakeUV']
@@ -64,7 +66,7 @@ for name in ('MM24_BaseTrial','MM24_YawTrial'):
             path=out/(name+'_'+channel+suffix+'.png');img.filepath_raw=str(path);img.file_format='PNG';img.save();img.pack()
             results.append({'part':name,'channel':channel,'cap':bool(suffix),'path':str(path),'sha256':sha(path)})
     bpy.data.objects.remove(original,do_unlink=True)
-bpy.ops.wm.save_as_mainfile(filepath=str(out/'MM24_MaterialTrial.blend'))
+bpy.ops.wm.save_as_mainfile(filepath=str(out/(prefix+'_MaterialTrial.blend')))
 inputs.update(high_after=sha(high),low_after=sha(low))
 report={'inputs':inputs,'maps':results,'status':'trial only; material appearance and original normal detail not yet verified'}
 (out/'report.json').write_text(json.dumps(report,ensure_ascii=False,indent=2),encoding='utf8')

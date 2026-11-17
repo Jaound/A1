@@ -1,0 +1,162 @@
+{
+  "passed": true,
+  "checks": [
+    {
+      "id": "CIWSB_BaseTrial-TOPOLOGY",
+      "passed": true
+    },
+    {
+      "id": "CIWSB_BaseTrial-UV-NORMAL-CAP",
+      "passed": true
+    },
+    {
+      "id": "CIWSB_BaseTrial-FACE-BUDGET",
+      "passed": true
+    },
+    {
+      "id": "CIWSB_BaseTrial-FBX-HASH",
+      "passed": true
+    },
+    {
+      "id": "CIWSB_BaseTrial-TEXTURE-Image_0.jpg",
+      "passed": true
+    },
+    {
+      "id": "CIWSB_BaseTrial-TEXTURE-Image_2.jpg",
+      "passed": true
+    },
+    {
+      "id": "CIWSB_BaseTrial-TEXTURE-texture_0_metallic.png",
+      "passed": true
+    },
+    {
+      "id": "CIWSB_BaseTrial-TEXTURE-texture_0_roughness.png",
+      "passed": true
+    },
+    {
+      "id": "CIWSB_YawTrial-TOPOLOGY",
+      "passed": true
+    },
+    {
+      "id": "CIWSB_YawTrial-UV-NORMAL-CAP",
+      "passed": true
+    },
+    {
+      "id": "CIWSB_YawTrial-FACE-BUDGET",
+      "passed": true
+    },
+    {
+      "id": "CIWSB_YawTrial-FBX-HASH",
+      "passed": true
+    },
+    {
+      "id": "CIWSB_YawTrial-TEXTURE-Image_0.jpg",
+      "passed": true
+    },
+    {
+      "id": "CIWSB_YawTrial-TEXTURE-Image_2.jpg",
+      "passed": true
+    },
+    {
+      "id": "CIWSB_YawTrial-TEXTURE-texture_0_metallic.png",
+      "passed": true
+    },
+    {
+      "id": "CIWSB_YawTrial-TEXTURE-texture_0_roughness.png",
+      "passed": true
+    },
+    {
+      "id": "SEAM-Z--180",
+      "passed": true
+    },
+    {
+      "id": "SEAM-Z--90",
+      "passed": true
+    },
+    {
+      "id": "SEAM-Z--45",
+      "passed": true
+    },
+    {
+      "id": "SEAM-Z-0",
+      "passed": true
+    },
+    {
+      "id": "SEAM-Z-45",
+      "passed": true
+    },
+    {
+      "id": "SEAM-Z-90",
+      "passed": true
+    },
+    {
+      "id": "SEAM-Z-180",
+      "passed": true
+    },
+    {
+      "id": "SOURCE-BLEND-UNCHANGED",
+      "passed": true
+    },
+    {
+      "id": "PACKED-IMAGES",
+      "passed": true
+    }
+  ],
+  "parts": {
+    "CIWSB_BaseTrial": {
+      "faces": 150340,
+      "boundary_edges": 0,
+      "nonmanifold_edges": 0,
+      "uv_layers": [
+        "UVMap"
+      ],
+      "custom_normals": true,
+      "cap_faces": 171
+    },
+    "CIWSB_YawTrial": {
+      "faces": 250370,
+      "boundary_edges": 0,
+      "nonmanifold_edges": 0,
+      "uv_layers": [
+        "UVMap"
+      ],
+      "custom_normals": true,
+      "cap_faces": 183
+    }
+  },
+  "angles": [
+    {
+      "yaw_degrees": -180,
+      "vertical_gap": -2.0444393157958984e-05
+    },
+    {
+      "yaw_degrees": -90,
+      "vertical_gap": -2.0444393157958984e-05
+    },
+    {
+      "yaw_degrees": -45,
+      "vertical_gap": -2.0444393157958984e-05
+    },
+    {
+      "yaw_degrees": 0,
+      "vertical_gap": -2.0444393157958984e-05
+    },
+    {
+      "yaw_degrees": 45,
+      "vertical_gap": -2.0444393157958984e-05
+    },
+    {
+      "yaw_degrees": 90,
+      "vertical_gap": -2.0444393157958984e-05
+    },
+    {
+      "yaw_degrees": 180,
+      "vertical_gap": -2.0444393157958984e-05
+    }
+  ],
+  "limitations": [
+    "Contact z bounds do not establish lateral collision clearance",
+    "Source-map visual quality, provisional caps and custom-normal appearance require review",
+    "Pitch remains fused and Unreal import, gameplay and performance are not verified"
+  ]
+}

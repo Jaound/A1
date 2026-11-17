@@ -20,9 +20,10 @@ parser.add_argument('--transfer-uv',action='store_true')
 parser.add_argument('--protect-uv-seams',action='store_true')
 parser.add_argument('--uv-seam-strength',type=float,default=1000.0)
 parser.add_argument('--uv-seam-background-weight',type=float,default=0.0)
+parser.add_argument('--prefix',default='MM24')
 args=parser.parse_args(sys.argv[sys.argv.index('--')+1:])
 source=Path(bpy.data.filepath).resolve();out=Path(args.output).resolve()
-if min(args.base_faces,args.yaw_faces)<=0 or not 0<=args.uv_seam_strength<=1000 or not 0<=args.uv_seam_background_weight<=1:raise ValueError('Invalid target or UV seam settings')
+if min(args.base_faces,args.yaw_faces)<=0 or not 0<=args.uv_seam_strength<=1000 or not 0<=args.uv_seam_background_weight<=1 or not args.prefix.replace('_','').isalnum():raise ValueError('Invalid target, prefix or UV seam settings')
 if not source.is_file():raise FileNotFoundError(source)
 if out.exists():raise FileExistsError(out)
 def sha(path):
@@ -36,7 +37,7 @@ for image in bpy.data.images:
     target=texture_dir/name;target.write_bytes(bytes(image.packed_file.data));image.filepath=str(target)
     textures.append({'name':name,'sha256':sha(target),'bytes':target.stat().st_size})
 if len(textures)<4:raise RuntimeError('Expected four packed source textures')
-for name,target in [('MM24_BaseTrial',args.base_faces),('MM24_YawTrial',args.yaw_faces)]:
+for name,target in [(args.prefix+'_BaseTrial',args.base_faces),(args.prefix+'_YawTrial',args.yaw_faces)]:
     obj=bpy.data.objects.get(name)
     if not obj or obj.type!='MESH':raise RuntimeError('Missing '+name)
     before_faces=len(obj.data.polygons);before_uv=[u.name for u in obj.data.uv_layers]
@@ -95,11 +96,11 @@ for name,target in [('MM24_BaseTrial',args.base_faces),('MM24_YawTrial',args.yaw
                              global_scale=1.0,axis_forward='-Y',axis_up='Z',add_leaf_bones=False,bake_anim=False,
                              path_mode='COPY',embed_textures=False)
     results[name]['fbx_sha256']=sha(fbx)
-base=bpy.data.objects['MM24_BaseTrial'];yaw=bpy.data.objects['MM24_YawTrial']
+base=bpy.data.objects[args.prefix+'_BaseTrial'];yaw=bpy.data.objects[args.prefix+'_YawTrial']
 for angle in (0,45,-45):
     yaw.rotation_euler.z=angle*3.141592653589793/180
     scene.render.filepath=str(out/('light_yaw_%+03d.png'%angle));bpy.ops.render.render(write_still=True)
-yaw.rotation_euler.z=0;bpy.ops.wm.save_as_mainfile(filepath=str(out/'MM24_LightTrial.blend'))
+yaw.rotation_euler.z=0;bpy.ops.wm.save_as_mainfile(filepath=str(out/(args.prefix+'_LightTrial.blend')))
 after=sha(source)
 report={'source_blend':str(source),'source_sha256_before':before,'source_sha256_after':after,'source_unchanged':before==after,
         'parts':results,'extracted_packed_textures':textures,'status':'simplified trial only; UV appearance, cap contact, pitch separation and UE gameplay remain unapproved'}

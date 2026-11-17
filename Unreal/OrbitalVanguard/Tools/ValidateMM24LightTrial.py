@@ -10,15 +10,15 @@ import bpy
 from mathutils import Vector
 
 args=sys.argv[sys.argv.index('--')+1:]
-if len(args)!=1:raise ValueError('Pass a new report path after --')
-out=Path(args[0]).resolve()
+if len(args) not in (1,2):raise ValueError('Pass a new report path and optional part prefix after --')
+out=Path(args[0]).resolve();prefix=args[1] if len(args)==2 else 'MM24'
 if out.exists():raise FileExistsError(out)
 blend=Path(bpy.data.filepath);prior=json.loads((blend.parent/'report.json').read_text(encoding='utf-8'))
 def sha(path):
     with Path(path).open('rb') as f:return hashlib.file_digest(f,'sha256').hexdigest()
 parts={};checks=[]
 def check(name,value):checks.append({'id':name,'passed':bool(value)})
-for name in ('MM24_BaseTrial','MM24_YawTrial'):
+for name in (prefix+'_BaseTrial',prefix+'_YawTrial'):
     obj=bpy.data.objects.get(name)
     if not obj:raise RuntimeError('Missing '+name)
     bm=bmesh.new();bm.from_mesh(obj.data)
@@ -34,7 +34,7 @@ for name in ('MM24_BaseTrial','MM24_YawTrial'):
     for tex in prior['extracted_packed_textures']:
         copied=blend.parent/(name+'.fbm')/tex['name']
         check(name+'-TEXTURE-'+tex['name'],copied.is_file() and sha(copied)==tex['sha256'])
-base=bpy.data.objects['MM24_BaseTrial'];yaw=bpy.data.objects['MM24_YawTrial'];angles=[]
+base=bpy.data.objects[prefix+'_BaseTrial'];yaw=bpy.data.objects[prefix+'_YawTrial'];angles=[]
 for degrees in (-180,-90,-45,0,45,90,180):
     yaw.rotation_euler.z=math.radians(degrees);bpy.context.view_layer.update()
     gap=min((yaw.matrix_world@Vector(c)).z for c in yaw.bound_box)-max((base.matrix_world@Vector(c)).z for c in base.bound_box)

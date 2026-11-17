@@ -15,6 +15,9 @@ import bpy
 args=sys.argv[sys.argv.index('--')+1:]
 smart_uv='--smart-uv' in args
 args=[a for a in args if a!='--smart-uv']
+prefix=next((a.split('=',1)[1] for a in args if a.startswith('--prefix=')),'MM24')
+args=[a for a in args if not a.startswith('--prefix=')]
+if not prefix.replace('_','').isalnum():raise ValueError('Invalid part prefix')
 if len(args) not in (2,4):raise ValueError('Pass high-poly .blend, new output directory, optionally cage extrusion and ray distance')
 high=Path(args[0]).resolve();low=Path(bpy.data.filepath).resolve();out=Path(args[1]).resolve()
 extrusion=float(args[2]) if len(args)==4 else .15;ray_distance=float(args[3]) if len(args)==4 else .4
@@ -31,7 +34,7 @@ scene.render.bake.use_pass_indirect=False;scene.render.bake.use_pass_color=True
 scene.render.bake.cage_extrusion=extrusion;scene.render.bake.max_ray_distance=ray_distance
 scene.render.bake.margin=8
 reports=[]
-for name in ('MM24_BaseTrial','MM24_YawTrial'):
+for name in (prefix+'_BaseTrial',prefix+'_YawTrial'):
     target=bpy.data.objects.get(name)
     if not target or target.type!='MESH':raise RuntimeError('Missing target '+name)
     with bpy.data.libraries.load(str(high),link=False) as (source,data):
@@ -44,8 +47,8 @@ for name in ('MM24_BaseTrial','MM24_YawTrial'):
         bpy.ops.object.mode_set(mode='EDIT');bpy.ops.mesh.select_all(action='SELECT')
         bpy.ops.uv.smart_project(angle_limit=math.radians(66),island_margin=.002)
         bpy.ops.object.mode_set(mode='OBJECT')
-    image=bpy.data.images.new('MM24_TrialBake_'+name,width=2048,height=2048,alpha=False)
-    cap_image=bpy.data.images.new('MM24_TrialBakeCap_'+name,width=256,height=256,alpha=False)
+    image=bpy.data.images.new(prefix+'_TrialBake_'+name,width=2048,height=2048,alpha=False)
+    cap_image=bpy.data.images.new(prefix+'_TrialBakeCap_'+name,width=256,height=256,alpha=False)
     for slot in target.material_slots:
         if not slot.material:raise RuntimeError('Missing target material')
         slot.material=slot.material.copy();slot.material.use_nodes=True
@@ -68,7 +71,7 @@ for name in ('MM24_BaseTrial','MM24_YawTrial'):
     bpy.data.objects.remove(original,do_unlink=True)
 scene.render.engine='BLENDER_WORKBENCH';scene.display.shading.color_type='TEXTURE'
 scene.render.filepath=str(out/'baked_yaw_+00.png');bpy.ops.render.render(write_still=True)
-bpy.ops.wm.save_as_mainfile(filepath=str(out/'MM24_BakedTrial.blend'))
+bpy.ops.wm.save_as_mainfile(filepath=str(out/(prefix+'_BakedTrial.blend')))
 inputs.update(high_sha256_after=sha(high),low_sha256_after=sha(low))
 report={'inputs':inputs,'parts':reports,'cage_extrusion':extrusion,'max_ray_distance':ray_distance,'smart_uv':smart_uv,
         'status':'trial only; inspect texture, seam, joints and gameplay separately'}

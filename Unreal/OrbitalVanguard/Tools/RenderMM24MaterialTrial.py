@@ -7,14 +7,15 @@ import bpy
 from mathutils import Vector
 
 args=sys.argv[sys.argv.index('--')+1:]
-if len(args)!=2 or args[1] not in ('source','trial'):raise ValueError('Pass new output directory and source or trial')
-source=Path(bpy.data.filepath).resolve();out=Path(args[0]).resolve();mode=args[1]
+if len(args) not in (2,3) or args[1] not in ('source','trial'):raise ValueError('Pass new output directory, source or trial, optional part prefix')
+source=Path(bpy.data.filepath).resolve();out=Path(args[0]).resolve();mode=args[1];prefix=args[2] if len(args)==3 else 'MM24'
+if not prefix.replace('_','').isalnum():raise ValueError('Invalid part prefix')
 if out.exists():raise FileExistsError(out)
 def sha(p):
     with p.open('rb') as f:return hashlib.file_digest(f,'sha256').hexdigest()
 before=sha(source);out.mkdir(parents=True)
 if mode=='trial':
-    for name in ('MM24_BaseTrial','MM24_YawTrial'):
+    for name in (prefix+'_BaseTrial',prefix+'_YawTrial'):
         obj=bpy.data.objects.get(name)
         if not obj:raise RuntimeError('Missing '+name)
         for slot in obj.material_slots:
@@ -24,7 +25,7 @@ if mode=='trial':
             bsdf=next(n for n in nodes if n.type=='BSDF_PRINCIPLED')
             def image_node(prefix):
                 return next(n for n in nodes if n.type=='TEX_IMAGE' and n.image and n.image.name.startswith(prefix))
-            links.new(image_node('MM24_TrialBake_').outputs['Color'],bsdf.inputs['Base Color'])
+            links.new(image_node(prefix+'_TrialBake_').outputs['Color'],bsdf.inputs['Base Color'])
             links.new(image_node('Trial_Roughness_').outputs['Color'],bsdf.inputs['Roughness'])
             links.new(image_node('Trial_Metallic_').outputs['Color'],bsdf.inputs['Metallic'])
             normal=nodes.new('ShaderNodeNormalMap')

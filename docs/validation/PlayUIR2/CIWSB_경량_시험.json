@@ -1,0 +1,67 @@
+{
+  "source_blend": "C:\\Users\\user\\Documents\\OrbitalVanguardAssets\\Prepared\\PlayUI_R2_CIWSB_YawTrial_v5\\CIWSB_YawTrial.blend",
+  "source_sha256_before": "7afb9bd4981fd4673a837e54464aa2254fd974dea0a9e79163ea7e36596e0937",
+  "source_sha256_after": "7afb9bd4981fd4673a837e54464aa2254fd974dea0a9e79163ea7e36596e0937",
+  "source_unchanged": true,
+  "parts": {
+    "CIWSB_BaseTrial": {
+      "source_faces": 480407,
+      "target_faces": 150000,
+      "output_faces": 150340,
+      "source_uv_layers": [
+        "UVMap"
+      ],
+      "output_uv_layers": [
+        "UVMap"
+      ],
+      "weighted_normals": true,
+      "uv_transfer": false,
+      "protected_uv_seam_vertices": 0,
+      "uv_seam_strength": null,
+      "uv_seam_background_weight": null,
+      "sharp_edges_by_28deg": 35688,
+      "fbx_sha256": "4b9ccd3613ff3507af650d40a12d223f73583af62f98d610f50d4a3fdbb8db9f"
+    },
+    "CIWSB_YawTrial": {
+      "source_faces": 731984,
+      "target_faces": 250000,
+      "output_faces": 250370,
+      "source_uv_layers": [
+        "UVMap"
+      ],
+      "output_uv_layers": [
+        "UVMap"
+      ],
+      "weighted_normals": true,
+      "uv_transfer": false,
+      "protected_uv_seam_vertices": 0,
+      "uv_seam_strength": null,
+      "uv_seam_background_weight": null,
+      "sharp_edges_by_28deg": 59187,
+      "fbx_sha256": "b84916b5073ce18443179abd142b6a41bc24523ea3f8341ad551e473c23320ed"
+    }
+  },
+  "extracted_packed_textures": [
+    {
+      "name": "Image_0.jpg",
+      "sha256": "3e6d743ea57527b76b9c64ade99d2a37933054ea2d0081aee073810fecd60b10",
+      "bytes": 11410131
+    },
+    {
+      "name": "Image_2.jpg",
+      "sha256": "35a3ffdbc62dc4f2e95dec75eefe3832f6ab82c50658692bb3d9615fa09f6f5b",
+      "bytes": 8563730
+    },
+    {
+      "name": "texture_0_metallic.png",
+      "sha256": "17160b64a1ba84a3cfbdad249eb4d4e3ba651f85f45ad62ae3569dcf3e4ee46c",
+      "bytes": 1046952
+    },
+    {
+      "name": "texture_0_roughness.png",
+      "sha256": "497c3a5986e112f81b4ad834c62dbc94ea6ee4f32dda307feae558644c281adf",
+      "bytes": 1819408
+    }
+  ],
+  "status": "simplified trial only; UV appearance, cap contact, pitch separation and UE gameplay remain unapproved"
+}
