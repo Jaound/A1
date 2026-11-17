@@ -149,9 +149,17 @@ void AOVHUD::DrawPlayHUD()
  if(auto* Carrier=GetWorld()->GetSubsystem<UOVCarrierSubsystem>();Carrier&&Carrier->Carriers.ContainsByPredicate([&](const auto& C){return C.Carrier==Ship;})) {
   Button(TEXT("LaunchAircraft"),TEXT("함재기 출격"),380,Y+128,108);
   Button(TEXT("RecallAircraft"),TEXT("함재기 귀환"),495,Y+128,108);
-  const FOVAircraftOverview Air=Carrier->GetAircraftOverview(Ship);
-  DrawText(FString::Printf(TEXT("기체 %d · 보관 %d · 출격 %d · 귀환 %d · 관제상실 %d · 손실 %d"),
-      Air.Surviving,Air.Stored,Air.Sortie,Air.Returning,Air.ControlLost,Air.Wrecked),PlayInk,24,Y+187,GEngine->GetSmallFont());
+  FOVAircraftOverview Air;
+  for(const auto& C:Carrier->Carriers) {
+   AOVShip* CarrierShip=C.Carrier.Get();
+   if(!CarrierShip||!CarrierShip->bFriendly||(!bFleetAirOverview&&CarrierShip!=Ship))continue;
+   const FOVAircraftOverview Part=Carrier->GetAircraftOverview(CarrierShip);
+   Air.Surviving+=Part.Surviving;Air.Stored+=Part.Stored;Air.Sortie+=Part.Sortie;
+   Air.Returning+=Part.Returning;Air.ControlLost+=Part.ControlLost;Air.Wrecked+=Part.Wrecked;
+  }
+  Button(TEXT("AirScope"),bFleetAirOverview?TEXT("함대 전체"):TEXT("선택 모함"),24,Y+178,75,bFleetAirOverview);
+  DrawText(FString::Printf(TEXT("생존 %d · 보관 %d · 출격 %d · 귀환 %d · 관제상실 %d · 손실 %d"),
+      Air.Surviving,Air.Stored,Air.Sortie,Air.Returning,Air.ControlLost,Air.Wrecked),PlayInk,105,Y+184,GEngine->GetSmallFont());
  }
 }
 

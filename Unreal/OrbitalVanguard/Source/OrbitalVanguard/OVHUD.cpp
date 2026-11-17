@@ -118,6 +118,7 @@ void AOVHUD::NotifyHitBoxClick(FName N)
  if(N==TEXT("AircraftPrevious")) { AircraftPage=FMath::Max(0,AircraftPage-1);return; }
  if(N==TEXT("AircraftNext")) { ++AircraftPage;return; }
  if(N==TEXT("AircraftFilter")) { AircraftFilter=(AircraftFilter+1)%4;AircraftPage=0;return; }
+ if(N==TEXT("AirScope")) { bFleetAirOverview=!bFleetAirOverview;return; }
  if(N==TEXT("AircraftLocate")) {
   auto* PC=Cast<AOVController>(PlayerOwner);auto* Carrier=GetWorld()->GetSubsystem<UOVCarrierSubsystem>();
   if(PC&&PC->Selected&&PC->Selected->bFriendly&&Carrier&&bDetailsOpen&&!bMinimized&&bHangarView&&bAircraftGrid&&!PC->bDeveloperMode&&!bHeroPanelOpen) {
