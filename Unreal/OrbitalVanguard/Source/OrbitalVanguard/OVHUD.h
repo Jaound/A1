@@ -6,6 +6,7 @@ class AOVShip;
 class UOVDevelopmentWidget;
 class UOVHeroWidget;
 class UOVShipPreview;
+class UOVBattleNotices;
 UCLASS()
 class ORBITALVANGUARD_API AOVHUD : public AHUD {
  GENERATED_BODY()
@@ -39,6 +40,7 @@ public:
  UFUNCTION(BlueprintPure, Category="UI") FVector2D GetActionCenter(FName Action) const;
  UFUNCTION(BlueprintPure, Category="UI") FString GetFleetDisplayLabel(AOVShip* Ship) const;
  UFUNCTION(BlueprintPure, Category="UI") bool IsFleetAirOverview() const { return bFleetAirOverview; }
+ UFUNCTION(BlueprintPure, Category="UI") UOVBattleNotices* GetBattleNoticeFeed() const;
  UFUNCTION(BlueprintPure, Category="UI") bool IsOverWorldMarker(FVector2D Pixel) const;
  UFUNCTION(BlueprintCallable, Category="UI") bool HandleInteriorAction(FName Action);
  UFUNCTION(BlueprintPure, Category="UI") bool IsOverInteriorPanel(float X,float Y) const;
@@ -76,6 +78,7 @@ private:
  bool bHangarView=false;
  bool bAircraftGrid=true;
  bool bFleetAirOverview=false;
+ bool bBattleFeedOpen=false;
  bool bDetailsPositioned=false;
  int32 FleetPage=0;
  int32 AircraftPage=0;
@@ -85,6 +88,8 @@ private:
  FString NoticeText;
  double NoticeExpires=0;
  void DrawPinned();
+ void DrawBattleNotices();
+ int32 VisibleBattleNoticeCount() const;
  static FString ReadinessKorean(const FString& Key);
  TMap<FName,FVector2D> ActionCenters;
  float UIScale=1.f;

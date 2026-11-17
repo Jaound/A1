@@ -3,6 +3,7 @@
 #include "OVShip.h"
 #include "OVShipSystemsComponent.h"
 #include "OVCombatSubsystem.h"
+#include "OVBattleNotices.h"
 #include "OVInteriorSubsystem.h"
 #include "OVCarrierSubsystem.h"
 #include "OVHeroSubsystem.h"
@@ -66,6 +67,7 @@ void AOVHUD::DrawPlayHUD()
  Button(TEXT("Speed2"),TEXT("2배"),468,18,52,PC->SimulationSpeed==2);
  Button(TEXT("Speed3"),TEXT("3배"),526,18,52,PC->SimulationSpeed==3);
  Button(TEXT("Overview"),TEXT("전체 보기"),596,18,100);
+ Button(TEXT("BattleFeedToggle"),TEXT("전투 알림"),W-300,18,90,bBattleFeedOpen);
  Button(TEXT("HeroPanel"),TEXT("영웅"),W-202,18,82,bHeroPanelOpen);
  Button(TEXT("Developer"),TEXT("개발 도구"),W-112,18,96,PC->bDeveloperMode);
  if(LastNoticeSource!=PC->LastAction) {
@@ -161,6 +163,32 @@ void AOVHUD::DrawPlayHUD()
   DrawText(FString::Printf(TEXT("생존 %d · 보관 %d · 출격 %d · 귀환 %d · 관제상실 %d · 손실 %d"),
       Air.Surviving,Air.Stored,Air.Sortie,Air.Returning,Air.ControlLost,Air.Wrecked),PlayInk,105,Y+184,GEngine->GetSmallFont());
  }
+}
+
+int32 AOVHUD::VisibleBattleNoticeCount() const
+{
+ const auto* PC=Cast<AOVController>(PlayerOwner);const auto* Feed=GetWorld()?GetWorld()->GetSubsystem<UOVBattleNotices>():nullptr;
+ if(!PC||PC->bDeveloperMode||bSceneMenuOpen||!Feed||Feed->Notices.IsEmpty())return 0;
+ if(bBattleFeedOpen)return FMath::Min(3,Feed->Notices.Num());
+ return FPlatformTime::Seconds()-Feed->Notices.Last().DisplayTime<5?1:0;
+}
+
+void AOVHUD::DrawBattleNotices()
+{
+ const auto* Feed=GetWorld()->GetSubsystem<UOVBattleNotices>();const int32 Count=VisibleBattleNoticeCount();
+ if(!Feed||Count==0)return;
+ const float W=Canvas->SizeX/UIScale,H=Canvas->SizeY/UIScale,X=W*.5f-120;
+ const auto& Latest=Feed->Notices.Last();
+ if(Latest.bShipWrecked&&FPlatformTime::Seconds()-Latest.DisplayTime<3) {
+  const FLinearColor Warning(.8f,.04f,.03f,.20f);
+  DrawRect(Warning,0,0,W,5);DrawRect(Warning,0,H-5,W,5);DrawRect(Warning,0,0,5,H);DrawRect(Warning,W-5,0,5,H);
+ }
+ for(int32 I=0;I<Count;++I) {
+  const int32 Index=Feed->Notices.Num()-1-I;const auto& N=Feed->Notices[Index];
+  const FString Label=FString::Printf(TEXT("%s · %s%s"),*N.ShipName.Left(8),N.bShipWrecked?TEXT("완파"):TEXT("피격"),N.Count>1?*FString::Printf(TEXT(" ×%d"),N.Count):TEXT(""));
+  Button(FName(*FString::Printf(TEXT("BattleNotice_%d"),Index)),Label,X,66+I*32,240,N.bShipWrecked);
+ }
+ if(bBattleFeedOpen&&Feed->DroppedCount>0)DrawText(FString::Printf(TEXT("이전 알림 %d건 생략"),Feed->DroppedCount),PlayInk,X,68+Count*32,GEngine->GetSmallFont());
 }
 
 void AOVHUD::DrawWorldIndicators()

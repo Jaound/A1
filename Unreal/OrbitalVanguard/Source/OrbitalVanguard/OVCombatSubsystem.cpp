@@ -1,4 +1,5 @@
 #include "OVCombatSubsystem.h"
+#include "OVBattleNotices.h"
 #include "OVCarrierSubsystem.h"
 #include "OVTransportSubsystem.h"
 #include "OVInteriorSubsystem.h"
@@ -147,6 +148,7 @@ void UOVCombatSubsystem::EnableCombat(const TArray<AOVShip*>& InShips, int32 See
 
 void UOVCombatSubsystem::DisableCombat()
 {
+    if(auto* World=GetWorld())if(auto* Notices=World->GetSubsystem<UOVBattleNotices>())Notices->Reset();
     for (const auto& State : Ships) if (IsValid(State.Ship)) State.Ship->ClearWeaponVisuals();
     bEnabled = false; GameTime = 0; Accumulator = 0;
     ShotCount = 0; HitCount = 0; Ships.Reset(); Attacks.Reset(); RecentEvents.Reset();
@@ -761,6 +763,10 @@ void UOVCombatSubsystem::RecordEvent(const FOVAttackState& Attack)
     ResolvedAttackIds.Add(Attack.AttackId);
     RecentEvents.Add(Attack);
     if (RecentEvents.Num() > 128) RecentEvents.RemoveAt(0);
+    if(Attack.Result==EOVAttackResult::Hit) {
+        const FOVCombatShipState* Hit=Ships.FindByPredicate([&](const FOVCombatShipState& S){return S.ShipId==Attack.HitShipId;});
+        if(Hit)if(auto* World=GetWorld())if(auto* Notices=World->GetSubsystem<UOVBattleNotices>())Notices->RecordCombatHit(Attack,Hit->Ship);
+    }
     UE_LOG(LogTemp, Log, TEXT("OVCombat attack=%d source=%s faction=%d weapon=%s result=%d target=%s mount=%s hull=%.2f explosions=%d"),
         Attack.AttackId, *Attack.AttackerId.ToString(), Attack.FactionId, *Attack.WeaponId.ToString(),
         int32(Attack.Result), *Attack.HitShipId.ToString(), *Attack.ImpactWeaponId.ToString(), Attack.HullDamage, Attack.Explosions);

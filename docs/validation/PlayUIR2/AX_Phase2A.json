@@ -1,0 +1,293 @@
+{
+  "kind": "Editor PIE API; not physical input",
+  "planning": "cb96d2c",
+  "checks": [
+    {
+      "name": "Editor map loaded",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Real PIE world",
+      "passed": true,
+      "detail": "/Game/Maps/UEDPIE_0_ControlRange.ControlRange"
+    },
+    {
+      "name": "Pause freezes real frame simulation",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "DataAsset layouts loaded, 14/26/38 independent armor",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Layout validation from serialized assets",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Selection while paused",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Camera uses full viewport for HUD input coordinates",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Paused camera pan",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Paused camera orbit",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Paused camera zoom",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Anchored altitude drag locks XY",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "UI blocked drag preserves preview",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Paused XYZ order persists without movement",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "XYZ accelerated arrival stops",
+      "passed": true,
+      "detail": "<Struct 'Vector' (0x0000020D23C86360) {x: -200.000000, y: 1600.000000, z: 1400.000000}>"
+    },
+    {
+      "name": "Manual pitch roll turn target",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Auto preserves Hold and manual posture",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Target does not switch manual mode or move",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Clear target independent",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Follow toggles on",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Follow toggles off",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Common simulation clock 1x",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Common simulation clock 2x",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Common simulation clock 3x",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Same game-time motion and shield at 1/2/3x",
+      "passed": true,
+      "detail": "[(<Struct 'Vector' (0x0000020D2DF9B940) {x: 8000.000000, y: -4000.000000, z: 300.000000}>, 18.0), (<Struct 'Vector' (0x0000020D2DF98D80) {x: 8000.000000, y: -4000.000000, z: 300.000000}>, 18.0), (<Struct 'Vector' (0x0000020D2DFA4B00) {x: 8000.000000, y: -4000.000000, z: 300.000000}>, 18.0)]"
+    },
+    {
+      "name": "Overlapping pair hard separates once",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "FTL charging cannot be pushed",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "FTL rejects destination",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Rotated rolled scaled world hit mapping",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Representative switch resets detail indices",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "DEV selected armor ID matches state",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "DEV repair armor restores only section",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Independent weapon HP damage leaves hull",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Third floor selection",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Enemy floors blocked outside DEV",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Deselect clears selection and orders",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "HUD top bar consumes pointer API",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "HUD API does not mutate world preview",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Floating title drag changes window position",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Floating resize API works outside draw callback",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Bottom toolbar outside handle cannot start resizing",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Read-only preview orbit does not move ship or world camera",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Read-only viewer adds no simulation actors",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Wreck immediately clears movement velocity and target",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Wreck cannot be repaired or commanded",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "PlayGame3 is the default profile",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Legacy profile retains its reset distance",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "PlayGame3 reset distance and angles",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Equal 120x30 px orbit at 30/60/144 samples and paused/1x/2x/3x",
+      "passed": true,
+      "detail": "[(70.39996337890625, -46.39996337890625), (70.39996337890625, -46.39996337890625), (70.40005493164062, -46.400146484375), (70.39996337890625, -46.39996337890625), (70.39996337890625, -46.39996337890625), (70.40005493164062, -46.400146484375), (70.39996337890625, -46.39996337890625), (70.39996337890625, -46.39996337890625), (70.40005493164062, -46.400146484375), (70.39996337890625, -46.39996337890625), (70.39996337890625, -46.39996337890625), (70.40005493164062, -46.400146484375)]"
+    },
+    {
+      "name": "PlayGame3 zoom during precision order keeps destination",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "RMB test point projects in PIE",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "RMB press does not issue orders",
+      "passed": true,
+      "detail": "(<Struct 'Vector' (0x0000020D2DF98D80) {x: 902.838975, y: 901.251520, z: 300.000000}>, <Struct 'Vector2D' (0x0000020D2DFE8D20) {x: 623.115845, y: 270.275116}>, False)"
+    },
+    {
+      "name": "RMB release issues fixed XY and dragged Z",
+      "passed": true,
+      "detail": "(<Struct 'Vector' (0x0000020D2DF98D80) {x: 902.838975, y: 901.251520, z: 300.000000}>, <Struct 'Vector' (0x0000020D5D63E298) {x: 902.838975, y: 901.251520, z: 454.000000}>)"
+    },
+    {
+      "name": "Repeated RMB release cannot issue a second order",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Release outside battlefield cancels RMB order",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "RMB cannot commit active V precision order",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "V precision confirm remains available",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Real PIE frames advance motion and clock",
+      "passed": true,
+      "detail": ""
+    }
+  ],
+  "errors": [],
+  "passed": true
+}

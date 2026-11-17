@@ -13,7 +13,7 @@ width, height = map(int, size.split('x'))
 report = {'passed': None, 'kind': 'PIE 렌더와 UI API', 'physical_input': False, 'requested_size': [width, height], 'captures': [], 'checks': [], 'errors': []}
 state = {'stage': 'start', 'at': time.monotonic(), 'started': time.monotonic(), 'index': 0}
 editor = unreal.get_editor_subsystem(unreal.UnrealEditorSubsystem)
-views = ['전투_HUD', '영웅_카드', '외부_무장', '격납고', '선내_영웅', '개발_함선', '개발_영웅', '개발_무장', '개발_시험', '초계함_모델', '개발_접기', '개발_확대']
+views = ['전투_HUD', '영웅_카드', '외부_무장', '격납고', '선내_영웅', '개발_함선', '개발_영웅', '개발_무장', '개발_시험', '초계함_모델', '개발_접기', '개발_확대', '전투_알림']
 
 def prop(obj, key):
     return obj.get_editor_property(key)
@@ -114,6 +114,17 @@ def tick(_dt):
                 hud.execute_ui_action('InteriorDeck_' + str(deck))
                 hud.execute_ui_action('InteriorUnit_' + str(prop(unit, 'unit_id')))
                 check('INTERIOR-HERO-DECK-SELECTED', prop(hud, 'interior_deck') == deck and prop(unit, 'unit_id') in prop(hud, 'interior_selected_units'))
+            elif name == '전투_알림':
+                pc.action('MissionAttack')
+                if prop(pc,'simulation_paused'):pc.action('Pause')
+                pc.action('Speed1')
+                feed=hud.get_battle_notice_feed()
+                for _ in range(1800):
+                    pc.step_simulation(.1)
+                    if prop(feed,'notices'):break
+                check('NOTICE-ACTUAL-COMBAT-HIT',bool(prop(feed,'notices')))
+                pc.action('Pause');hud.execute_ui_action('BattleFeedToggle')
+                state['notice_count']=len(prop(feed,'notices'))
             elif name in ('개발_접기','개발_확대'):
                 pc.action('Developer');hud.reset_development_window()
                 if name == '개발_접기':
@@ -133,6 +144,13 @@ def tick(_dt):
             if name == '외부_무장':
                 check('PREVIEW-MESH-MIRROR', hud.get_preview_mesh_count() > 0, hud.get_preview_mesh_count())
                 check('PREVIEW-NO-DAMAGE', state['before_preview'] == snapshot(pc))
+            if name == '전투_알림':
+                index=state['notice_count']-1;action='BattleNotice_'+str(index)
+                center=hud.get_action_center(action)
+                check('NOTICE-VISIBLE-HITBOX',center.x>=0 and str(hud.get_hit_action_at_canvas_point(center))==action)
+                feed=hud.get_battle_notice_feed();target=prop(prop(feed,'notices')[index],'last_position')
+                hud.execute_ui_action(action)
+                check('NOTICE-FOCUS-LAST-IMPACT',(prop(pc,'camera_focus')-target).length()<.1)
             path = os.path.join(out, '%02d_%s.png' % (state['index'] + 1, name))
             unreal.SystemLibrary.execute_console_command(world, 'Shot SHOWUI filename="%s" -nosuffix' % path.replace('\\', '/'), pc)
             state['pending'] = {'view': name, 'path': path, 'viewport_size': list(pc.get_viewport_size())}

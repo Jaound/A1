@@ -1,4 +1,5 @@
 #include "OVCombatSubsystem.h"
+#include "OVBattleNotices.h"
 #include "OVShip.h"
 #include "OVShipSystemsComponent.h"
 #include "Engine/World.h"
@@ -77,6 +78,31 @@ struct FRange
                 Ship->Systems->DebugSetCrew(Ship->Systems->Slots[I].SlotId, 0);
     }
 };
+}
+
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(FOVBattleNoticeTest, "OrbitalVanguard.Combat.ConfirmedFriendlyNotices", EAutomationTestFlags::EditorContext | EAutomationTestFlags::EngineFilter)
+bool FOVBattleNoticeTest::RunTest(const FString&)
+{
+    OVCombatTest::FRange R;
+    auto* Feed=R.World->GetSubsystem<UOVBattleNotices>();
+    if(!TestNotNull(TEXT("Notice subsystem exists"),Feed))return false;
+    R.Exact();R.Fire();
+    TestTrue(TEXT("Unobserved enemy hit creates no allied notice"),Feed->Notices.IsEmpty());
+    R.A->Systems->FactionId=1;R.A->bFriendly=false;R.B->Systems->FactionId=0;R.B->bFriendly=true;
+    R.Enable();R.Exact();R.Fire();
+    if(!TestTrue(TEXT("Actual attack creates allied hit notice"),Feed->Notices.Num()==1&&R.Combat->HitCount==1))return false;
+    const FOVAttackState Hit=R.Combat->RecentEvents.Last();
+    TestTrue(TEXT("Notice uses recorded impact position"),Feed->Notices[0].LastPosition.Equals(Hit.Position,.01));
+    Feed->RecordCombatHit(Hit,R.B);
+    TestEqual(TEXT("Same attack never duplicates"),Feed->Notices[0].Count,1);
+    R.Fire();
+    TestTrue(TEXT("Repeated actual hits group once per event"),Feed->Notices.Num()==1&&Feed->Notices[0].Count==2);
+    for(int32 I=0;I<70;++I){FOVAttackState E=Hit;E.AttackId=10000+I;E.ResolvedAt=10+I*3;Feed->RecordCombatHit(E,R.B);}
+    TestEqual(TEXT("Feed is bounded"),Feed->Notices.Num(),64);
+    TestTrue(TEXT("Discarded history is counted"),Feed->DroppedCount>0);
+    R.Enable();
+    TestTrue(TEXT("New battle clears old notices"),Feed->Notices.IsEmpty()&&Feed->DroppedCount==0);
+    return true;
 }
 
 IMPLEMENT_SIMPLE_AUTOMATION_TEST(FOVCombatDetectionTest, "OrbitalVanguard.Combat.DetectionSourcesAndInvalidation", EAutomationTestFlags::EditorContext | EAutomationTestFlags::EngineFilter)

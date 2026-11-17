@@ -11,6 +11,7 @@
 #include "OVShip.h"
 #include "OVShipSystemsComponent.h"
 #include "OVCombatSubsystem.h"
+#include "OVBattleNotices.h"
 #include "OVPointDefenseSubsystem.h"
 #include "Engine/Canvas.h"
 #include "Engine/Engine.h"
@@ -22,6 +23,10 @@ FLinearColor Health(float R) { return R<=0?FLinearColor(.2f,.23f,.26f):R<.3f?FLi
 FString Facility(EOVFacilityType T) {
  const TCHAR* Labels[]={TEXT("빈 공간"),TEXT("코어"),TEXT("함교"),TEXT("생명유지"),TEXT("엔진"),TEXT("무기제어실"),TEXT("탄약고"),TEXT("축전실"),TEXT("미사일 적재실"),TEXT("쉴드 제어실"),TEXT("레이더"),TEXT("요격 제어실"),TEXT("포드 발사실"),TEXT("격납고"),TEXT("함재기 관제실"),TEXT("자원 저장소"),TEXT("보안 시설")};
  return Labels[FMath::Clamp(static_cast<int32>(T),0,16)]; }
+}
+UOVBattleNotices* AOVHUD::GetBattleNoticeFeed() const
+{
+ return GetWorld()?GetWorld()->GetSubsystem<UOVBattleNotices>():nullptr;
 }
 void AOVHUD::Button(FName N,const FString& L,float X,float Y,float W,bool Active)
 {
@@ -46,6 +51,9 @@ bool AOVHUD::IsOverPanel(float X,float Y) const
  if(bDragging||bResizing) return true;
  if(!PC->bDeveloperMode&&!bSceneMenuOpen&&PC->Phase2CScenario>=0&&P.X>=212&&P.X<=484&&P.Y>=76&&P.Y<=224)return true;
  if(!PC->bDeveloperMode&&!bHeroPanelOpen&&!bDetailsOpen&&PinnedShips.Num()>0&&P.X>=ViewportPixels.X/UIScale-278&&P.Y>=76&&P.Y<=76+PinnedShips.Num()*170)return true;
+ const int32 Notices=VisibleBattleNoticeCount();const float NoticeX=ViewportPixels.X/UIScale*.5f-120;
+ const auto* Feed=GetBattleNoticeFeed();const int32 Footer=bBattleFeedOpen&&Feed&&Feed->DroppedCount>0?20:0;
+ if(Notices>0&&P.X>=NoticeX&&P.X<=NoticeX+240&&P.Y>=66&&P.Y<=66+Notices*32+Footer)return true;
  // The basic HUD remains visible under the separate developer window.
  if(P.Y<62 || (P.X<620 && P.Y>ViewportPixels.Y/UIScale-220) || (P.X<204 && P.Y<ViewportPixels.Y/UIScale-230) || (bSceneMenuOpen && P.X>=210 && P.X<=650 && P.Y<=205)) return true;
  return !PC->bDeveloperMode&&PC->Selected&&bDetailsOpen&&P.X>=WindowPosition.X&&P.X<=WindowPosition.X+WindowSize.X&&P.Y>=WindowPosition.Y&&P.Y<=WindowPosition.Y+(bMinimized?32:WindowSize.Y);
@@ -133,6 +141,13 @@ void AOVHUD::NotifyHitBoxClick(FName N)
  if(N==TEXT("SceneMenuClose")){bSceneMenuOpen=false;return;}
  if(HandleInteriorAction(N)) return;
  if(N==TEXT("HeroPanel")) { SetHeroPanelOpen(!bHeroPanelOpen);return; }
+ if(N==TEXT("BattleFeedToggle")) { bBattleFeedOpen=!bBattleFeedOpen;return; }
+ if(N.ToString().StartsWith(TEXT("BattleNotice_"))) {
+  const int32 Index=FCString::Atoi(*N.ToString().Mid(13));
+  auto* PC=Cast<AOVController>(PlayerOwner);auto* Feed=GetWorld()->GetSubsystem<UOVBattleNotices>();
+  if(PC&&Feed&&Feed->Notices.IsValidIndex(Index)&&Index>=Feed->Notices.Num()-VisibleBattleNoticeCount()) {PC->bFollow=false;PC->CameraFocus=Feed->Notices[Index].LastPosition;PC->UpdateCamera();}
+  return;
+ }
  if(N==TEXT("MissionBackground")) return;
  if(N==TEXT("WindowBackground")) return;
  if(N==TEXT("SceneMenu")) { bSceneMenuOpen=!bSceneMenuOpen;return; }
@@ -396,6 +411,7 @@ void AOVHUD::DrawHUD()
  UIScale=FMath::Max(.25f,FMath::Min(1.f,FMath::Min(Canvas->SizeX/1280.f,Canvas->SizeY/740.f)));
  Canvas->Canvas->PushRelativeTransform(FScaleMatrix(FVector(UIScale,UIScale,1)));
  DrawPlayHUD(); DrawWorldIndicators(); DrawPhase2C(); DrawMission();
+ DrawBattleNotices();
  DrawPinned();
  if(!PC->bDeveloperMode) { DrawDetails(); DrawInterior(); }
  Canvas->Canvas->PopTransform();
