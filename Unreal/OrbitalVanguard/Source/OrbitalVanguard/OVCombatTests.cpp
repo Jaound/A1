@@ -4,6 +4,10 @@
 #include "OVShipSystemsComponent.h"
 #include "Engine/World.h"
 #include "Misc/AutomationTest.h"
+#include "Misc/FileHelper.h"
+#include "Misc/Paths.h"
+#include "Serialization/JsonReader.h"
+#include "Serialization/JsonSerializer.h"
 
 #if WITH_DEV_AUTOMATION_TESTS
 namespace OVCombatTest
@@ -691,14 +695,14 @@ bool FOVCombatPC14MountOcclusionTest::RunTest(const FString&)
         TestFalse(TEXT("Degenerate combat box is rejected"),Layout->ValidateLayout(Errors));
     }
     for (const EOVAttackKind Kind : {EOVAttackKind::Beam, EOVAttackKind::Cannon})
-        for (int32 Variant=0;Variant<3;++Variant)
+        for (int32 Variant=0;Variant<4;++Variant)
         {
-            const bool bFlush=Variant!=0,bBoxes=Variant==2;
+            const bool bFlush=Variant!=0,bBoxes=Variant>=2;
             OVCombatTest::FRange R;
             auto* Layout=DuplicateObject<UShipLayoutDataAsset>(R.B->Systems->Layout,R.B);
             Layout->LocalHalfExtent=FVector(175,75,30);
             Layout->WeaponMounts[0].LocalPosition=FVector(-46.6666667,0,bFlush?3.606237:42.0);
-            if(bBoxes)
+            if(Variant==2)
             {
                 // Explicitly provisional test boxes; not a final PC14 collision mesh.
                 auto Add=[&](FVector Center,FVector Extent){FOVCombatHullBox Box;Box.LocalCenter=Center;Box.HalfExtent=Extent;Layout->CombatHullBoxes.Add(Box);};
@@ -709,6 +713,22 @@ bool FOVCombatPC14MountOcclusionTest::RunTest(const FString&)
                 Add(FVector(-46.5,46.5,13.724693),FVector(18.5,28.5,16.275307));
                 const int32 Armor=Layout->ResolveArmor(FVector(-46.5,0,-2.550614),FVector::UpVector);
                 TestTrue(TEXT("Recessed upper surface maps to upper armor using actual normal"),Layout->ArmorSections.IsValidIndex(Armor)&&Layout->ArmorSections[Armor].Face==EOVArmorFace::Top);
+            }
+            if(Variant==3)
+            {
+                const FString Path=FPaths::ConvertRelativePathToFull(FPaths::Combine(FPaths::ProjectDir(),TEXT("../../docs/validation/PlayUIR2/HA_PC14충돌후보.json")));
+                FString Content;TSharedPtr<FJsonObject> Data;
+                if(!TestTrue(TEXT("Measured candidate file exists"),FFileHelper::LoadFileToString(Content,*Path))
+                    || !TestTrue(TEXT("Measured candidate JSON is valid"),FJsonSerializer::Deserialize(TJsonReaderFactory<>::Create(Content),Data)&&Data.IsValid()))continue;
+                const TArray<TSharedPtr<FJsonValue>>* Boxes=nullptr;
+                if(!TestTrue(TEXT("Measured candidate has 27 boxes"),Data->TryGetArrayField(TEXT("boxes"),Boxes)&&Boxes&&Boxes->Num()==27))continue;
+                for(const auto& Value:*Boxes)
+                {
+                    const auto Object=Value->AsObject();
+                    const auto& C=Object->GetArrayField(TEXT("local_center_cm"));const auto& E=Object->GetArrayField(TEXT("half_extent_cm"));
+                    FOVCombatHullBox Box;Box.LocalCenter=FVector(C[0]->AsNumber(),C[1]->AsNumber(),C[2]->AsNumber());
+                    Box.HalfExtent=FVector(E[0]->AsNumber(),E[1]->AsNumber(),E[2]->AsNumber());Layout->CombatHullBoxes.Add(Box);
+                }
             }
             R.B->Systems->Initialize(Layout);
             R.B->Systems->Shield=0;R.B->Systems->bShieldActive=false;

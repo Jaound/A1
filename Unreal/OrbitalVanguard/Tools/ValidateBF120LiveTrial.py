@@ -5,8 +5,9 @@ import unreal
 saved = unreal.Paths.convert_relative_path_to_full(unreal.Paths.project_saved_dir())
 pc14_trial = os.environ.get('OV_BF120_PC14') == '1'
 flush_trial = pc14_trial and os.environ.get('OV_BF120_FLUSH') == '1'
-boxes_trial = flush_trial and os.environ.get('OV_BF120_BOXES') == '1'
-stem = 'BF120PC14BoxesTrial' if boxes_trial else 'BF120PC14FlushTrial' if flush_trial else 'BF120PC14Trial' if pc14_trial else 'BF120LiveTrial'
+boxes_mode = os.environ.get('OV_BF120_BOXES','') if flush_trial else ''
+boxes_trial = boxes_mode in ('1','grid')
+stem = 'BF120PC14GridBoxesTrial' if boxes_mode == 'grid' else 'BF120PC14BoxesTrial' if boxes_trial else 'BF120PC14FlushTrial' if flush_trial else 'BF120PC14Trial' if pc14_trial else 'BF120LiveTrial'
 out = os.path.join(saved, 'Validation', stem + '.json')
 png = os.path.join(saved, 'Validation', stem + '.png').replace('\\', '/')
 os.makedirs(os.path.dirname(out), exist_ok=True)
@@ -65,13 +66,19 @@ def tick(_):
                     if component.get_name().startswith('PC14MountSupport_'): component.set_visibility(False,True)
                 if boxes_trial:
                     boxes=[]
-                    for center,half in [((0,0,-16.275307),(175,75,13.724693)),((-120,0,13.724693),(55,75,16.275307)),
-                                        ((73.5,0,13.724693),(101.5,75,16.275307)),((-46.5,-46.5,13.724693),(18.5,28.5,16.275307)),
-                                        ((-46.5,46.5,13.724693),(18.5,28.5,16.275307))]:
+                    if boxes_mode == 'grid':
+                        path=os.path.normpath(os.path.join(unreal.Paths.project_dir(),'..','..','docs','validation','PlayUIR2','HA_PC14충돌후보.json'))
+                        with open(path,encoding='utf-8') as file: data=json.load(file)
+                        values=[(entry['local_center_cm'],entry['half_extent_cm']) for entry in data['boxes']]
+                    else:
+                        values=[((0,0,-16.275307),(175,75,13.724693)),((-120,0,13.724693),(55,75,16.275307)),
+                                ((73.5,0,13.724693),(101.5,75,16.275307)),((-46.5,-46.5,13.724693),(18.5,28.5,16.275307)),
+                                ((-46.5,46.5,13.724693),(18.5,28.5,16.275307))]
+                    for center,half in values:
                         box=unreal.OVCombatHullBox(); box.set_editor_property('local_center',unreal.Vector(*center))
                         box.set_editor_property('half_extent',unreal.Vector(*half)); boxes.append(box)
                     layout.set_editor_property('combat_hull_boxes',boxes)
-                    check('PROVISIONAL_BOXES',len(p(layout,'combat_hull_boxes'))==5)
+                    check('PROVISIONAL_BOXES',len(p(layout,'combat_hull_boxes'))==len(values) and 0<len(values)<=32)
             definition.set_editor_property('presentation_profile','BF120Trial'); definitions[index]=definition
             layout.set_editor_property('weapon_mounts',definitions)
             check('OPT_IN_PROFILE',str(p(p(layout,'weapon_mounts')[index],'presentation_profile'))=='BF120Trial')
