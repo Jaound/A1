@@ -1,0 +1,22 @@
+{
+  "source_before": "18798724549028515a71008a1b1b51d83b377844f45419cf0a2ce751700097d9",
+  "source_after": "18798724549028515a71008a1b1b51d83b377844f45419cf0a2ce751700097d9",
+  "original_before": "579f1678ce81325512148c1beab132ff92fb945a99633f84f7cc3a91e3531c36",
+  "original_after": "579f1678ce81325512148c1beab132ff92fb945a99633f84f7cc3a91e3531c36",
+  "collar_radius": 0.16,
+  "clearance_radius": 0.22,
+  "cylinder_depth": 1.56,
+  "topology": {
+    "cradle": {
+      "faces": 388683,
+      "boundary_edges": 0,
+      "nonmanifold_edges": 0
+    },
+    "pod_and_collar": {
+      "faces": 1204018,
+      "boundary_edges": 0,
+      "nonmanifold_edges": 0
+    }
+  },
+  "scope": "원본 복사 지지대의 칼라를 사용한 시험. 외형·피벗·간섭·재질·전장 적용 미승인"
+}

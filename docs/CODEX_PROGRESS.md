@@ -1,5 +1,8 @@
 # 최근 진행: BF120 286조합 간섭 검사
 
+**MM24 원본 지지대 칼라 시험 — 적용 보류 (IP~IR):** 초기 지지대 복사본에서 회전축 주변 형상을 추출해 포드에 연결하고 더 큰 공간을 지지대에 만들었다([제작](validation/PlayUIR2/IP_MM24칼라_제작.json)). 두 입력 해시는 보존되고 지지대·포드의 경계/비다양체 간선은 0이었다. [5각도 검사](validation/PlayUIR2/IQ_MM24칼라_간섭.json)는 -30/-15/0/+15/+30도 교차 0/0/51/135/0쌍이다. [교차면 범위](validation/PlayUIR2/IR_MM24칼라_간섭위치.json)에서 +15도는 한 지지대 삼각형 중심에 집중됐으나 실제 접촉 위치와 관통은 별도 확인이 필요하다. [+15도](validation/PlayUIR2/IP_MM24칼라_15.png)·[-15도](validation/PlayUIR2/IP_MM24칼라_-15.png)에 여전히 큰 빈 공간이 보여 채택하지 않았다. 시험본 `C:/Users/user/Documents/OrbitalVanguardAssets/Prepared/PlayUI_R2_MM24_CollarTrial_v1`; 원본·기존 게임은 변경하지 않았다. 다음은 큰 절단 형상을 되돌린 복사본에서 실제 회전축·연결면을 근거로 지지 형상을 재설계하고 여러 각도/재질을 검증한다.
+
+
 **MM24 접합 여유 공간 시험 — 적용 보류 (IM~IO):** [교차 위치 조사](validation/PlayUIR2/IM_MM24접합간섭위치.json)를 근거로 기존 시험 복사본의 지지부에 두 시험 공간을 불린 절단했다([제작](validation/PlayUIR2/IN_MM24여유공간_제작.json)). 입력 해시는 유지됐고 지지부 비다양체 간선은 1→0이 됐다. [5각도 교차](validation/PlayUIR2/IO_MM24여유공간_간섭.json)는 -30/-15/0/+15/+30도에서 82/5/61/214/87쌍으로 줄었으나 0이 아니며, [+15도](validation/PlayUIR2/IN_MM24여유공간_15.png)·[-15도](validation/PlayUIR2/IN_MM24여유공간_-15.png)에서 지지부가 크게 비어 보인다. 임시 단면의 접촉/관통 구별과 연속 각도는 미검증이며 이 후보는 채택하지 않았다. 시험본은 `C:/Users/user/Documents/OrbitalVanguardAssets/Prepared/PlayUI_R2_MM24_ClearanceTrial_v1`. 다음: 지지부를 보존하는 회전축·연결 칼라 및 국소 공간을 설계하고 외형/간섭/재질을 재검증한다.
 
 

@@ -1,0 +1,59 @@
+{
+  "source_before": "b05c181334d4474c6039fe6250db25dde6016e70d0382ff7d6f7a077f659eac7",
+  "source_after": "b05c181334d4474c6039fe6250db25dde6016e70d0382ff7d6f7a077f659eac7",
+  "parent_correct": true,
+  "parts": {
+    "cradle": {
+      "faces": 388683,
+      "boundary_edges": 0,
+      "nonmanifold_edges": 0,
+      "uv_layers": [
+        "UVMap"
+      ]
+    },
+    "pod": {
+      "faces": 1204018,
+      "boundary_edges": 0,
+      "nonmanifold_edges": 0,
+      "uv_layers": [
+        "UVMap"
+      ]
+    },
+    "base": {
+      "faces": 503665,
+      "boundary_edges": 0,
+      "nonmanifold_edges": 0,
+      "uv_layers": [
+        "UVMap"
+      ]
+    }
+  },
+  "angles": [
+    {
+      "degrees": -30,
+      "pod_cradle_intersections": 0,
+      "pod_base_intersections": 0
+    },
+    {
+      "degrees": -15,
+      "pod_cradle_intersections": 0,
+      "pod_base_intersections": 0
+    },
+    {
+      "degrees": 0,
+      "pod_cradle_intersections": 51,
+      "pod_base_intersections": 0
+    },
+    {
+      "degrees": 15,
+      "pod_cradle_intersections": 135,
+      "pod_base_intersections": 0
+    },
+    {
+      "degrees": 30,
+      "pod_cradle_intersections": 0,
+      "pod_base_intersections": 0
+    }
+  ],
+  "scope": "임시 절단면 제외 표면 교차 표본. 접촉/관통 구분·전체 각도·재질·실전 미검증"
+}
