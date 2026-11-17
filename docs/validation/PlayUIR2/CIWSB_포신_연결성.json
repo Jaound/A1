@@ -1,0 +1,25 @@
+{
+  "source": "C:\\Users\\user\\Documents\\OrbitalVanguardAssets\\Prepared\\PlayUI_R2_CIWSB_YawTrial_v5\\CIWSB_YawTrial.blend",
+  "source_before": "7afb9bd4981fd4673a837e54464aa2254fd974dea0a9e79163ea7e36596e0937",
+  "source_after": "7afb9bd4981fd4673a837e54464aa2254fd974dea0a9e79163ea7e36596e0937",
+  "mesh": "CIWSB_YawTrial",
+  "vertices": 366268,
+  "edges": 1098520,
+  "components": 1,
+  "largest": [
+    {
+      "vertices": 366268,
+      "min": [
+        -1.2355087995529175,
+        -0.5479621887207031,
+        -0.38999998569488525
+      ],
+      "max": [
+        1.2343381643295288,
+        0.5497491955757141,
+        1.0
+      ]
+    }
+  ],
+  "scope": "connected topology evidence, not an approved articulation split"
+}

@@ -1,3 +1,7 @@
+# 최근 진행: CIWS-B 연결 표면 확인
+
+**CIWS-B 포신 연결성:** 좌우 회전 시험부는 366,268개 정점이 하나의 연결 표면이다([연결성 검사](validation/PlayUIR2/CIWSB_포신_연결성.json)). 별도 메시가 숨어 있는 경우가 아니므로 포신 상하 관절은 수작업 접합·회전 시험이 필요하다. 이 결과만으로 원본 형상 보존이나 간섭 없음을 판정할 수 없다.
+
 # 최근 진행: 핀의 긴 이름 확인
 
 **핀의 긴 함선 이름:** 핀 제목이 잘릴 때 마우스를 올리면 실제 함선의 전체 이름을 표시한다. 짧은 이름과 제목 밖에는 표시하지 않으며 화면 가장자리에 제한한다. 기존 핀 선택·이동을 유지한다. Win64 `PlayUI_R2_EA_Build.log` 성공, EA 자동 98/98, [창 API 174/174](validation/PlayUIR2/EA_핀제목_API.json), [1280 렌더/API 10/10](validation/PlayUIR2/EA_핀제목_렌더.json), [1920 렌더/API 10/10](validation/PlayUIR2/EB_핀제목_렌더.json), [1280 화면](validation/PlayUIR2/EA_핀제목_1280.png) / [1920 화면](validation/PlayUIR2/EB_핀제목_1920.png). 렌더는 API로 포인터를 이동한 시험이며 실제 마우스 입력은 미검증이다.
