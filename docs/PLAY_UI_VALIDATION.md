@@ -1,3 +1,9 @@
+# R2 기존 API 회귀 재검증
+
+**R2 추가 후 기존 API 회귀:** 코드 `37c6150` 기준 실행. [2A 57/57](validation/PlayUIR2/DE_2A.json), [명령·보호 60/60](validation/PlayUIR2/DE_명령보호.json), [D116 종합 79/79](validation/PlayUIR2/DE_D116종합.json), [2C 77/77](validation/PlayUIR2/DE_2C.json), [선내 36/36](validation/PlayUIR2/DE_선내.json), [통합 임무 29사례·316검사](validation/PlayUIR2/DE_통합임무.json) 통과. D116 79에는 명령·보호 60과 기존 2B 검사가 포함되므로 합산하지 않는다. `Saved/Logs/PlayUI_R2_Regression_*.log`, 이전/새 결과는 `Saved/Validation/Regression_20261118_013646`에 보존했다. 통합 검사 실행 관리 명령에서 결과 파일명을 잘못 기대해 `MISSING_OR_STALE`을 출력했으나 실제 `IntegratedMission.json`의 성공·완료와 29/316을 별도로 검증했다. 이는 API 시뮬레이션이며 직접 입력·실시간 10분 렌더 성능은 아니다.
+
+---
+
 # R2 추가 검증 — 진행 중
 
 **위급 화면 경고 설정:** 전투 알림을 열어 `화면 경고`를 누르면 붉은 외곽의 기본·약하게·꺼짐을 전환한다. 실제 사건·피해는 바꾸지 않으며 현재 플레이 창에만 적용되고 영구 저장은 아직 없다. Win64 `PlayUI_R2_DA_Build.log` 성공, `PlayUI_R2_DC_Automation.log` 자동96/96, [1280 렌더/API 74/74](validation/PlayUIR2/화면경고_1280_API.json), [1920 렌더/API 73/73](validation/PlayUIR2/화면경고_1920_API.json). 1280 검사는 버튼의 전장 입력 소비까지 확인했으며 1920 검사는 해당 항목 추가 전이다. [1280 화면](validation/PlayUIR2/화면경고_1280.png) / [1920 화면](validation/PlayUIR2/화면경고_1920.png)은 시험용 피해로 만든 장면이며 실제 마우스 입력·약하게/꺼짐의 픽셀 비교와 장기 부하는 미검증이다.
