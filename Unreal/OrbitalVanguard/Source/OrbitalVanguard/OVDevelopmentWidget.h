@@ -6,6 +6,13 @@
 #include "OVDevelopmentWidget.generated.h"
 class UCheckBox; class AOVShip; class UButton; class UComboBoxString; class UEditableTextBox; class UScrollBox; class UTextBlock; class UVerticalBox; class UOVDevelopmentWidget;
 UCLASS()
+class ORBITALVANGUARD_API UOVCompactCombo : public UComboBoxString
+{
+ GENERATED_BODY()
+public:
+ void SetCompactFont() { auto CompactFont=GetFont();CompactFont.Size=14;InitFont(CompactFont); }
+};
+UCLASS()
 class ORBITALVANGUARD_API UOVDevelopmentItem : public UButton
 {
  GENERATED_BODY()
@@ -21,11 +28,22 @@ class ORBITALVANGUARD_API UOVDevelopmentWidget : public UUserWidget
 public:
  virtual void NativeOnInitialized() override;
  bool IsEditing() const;
+ UFUNCTION(BlueprintCallable, Category="UI") bool OpenPage(int32 Index);
+ /** Size: 0=all, 1..4 hull class; Role=None=all. Axis: -1=all, 0..5 planning/data/generation/role/automation/direct. Status: -1=all, otherwise EOVCatalogStatus numeric value. */
+ UFUNCTION(BlueprintCallable, Category="UI") bool SetFilters(int32 SizeClass, FName RoleTag, int32 StatusAxis, int32 StatusValue);
+ UFUNCTION(BlueprintPure, Category="UI") TArray<FName> GetVisibleDefinitionIds() const { return VisibleDefinitionIds; }
  void SelectItem(FName Id);
 private:
  int32 Page=0;
  int32 HullCategory=0;
  int32 OverviewCategory=0;
+ int32 FilterSize=0;
+ FName FilterRole=NAME_None;
+ int32 FilterAxis=INDEX_NONE;
+ int32 FilterStatus=INDEX_NONE;
+ bool bUpdatingFilters=false;
+ TArray<FName> FilterRoles;
+ TArray<FName> VisibleDefinitionIds;
  FName SelectedId;
  UPROPERTY() TObjectPtr<UVerticalBox> Body;
  UPROPERTY() TObjectPtr<UScrollBox> List;
@@ -36,8 +54,16 @@ private:
  UPROPERTY() TObjectPtr<UComboBoxString> HeroChoice;
  UPROPERTY() TObjectPtr<UComboBoxString> RoleChoice;
  UPROPERTY() TObjectPtr<UComboBoxString> CategoryChoice;
+ UPROPERTY() TObjectPtr<UComboBoxString> SizeFilter;
+ UPROPERTY() TObjectPtr<UComboBoxString> RoleFilter;
+ UPROPERTY() TObjectPtr<UComboBoxString> AxisFilter;
+ UPROPERTY() TObjectPtr<UComboBoxString> StatusFilter;
  UPROPERTY() TObjectPtr<UEditableTextBox> HeroName;
  UPROPERTY() TObjectPtr<UEditableTextBox> XPAmount;
+ UPROPERTY() TObjectPtr<UEditableTextBox> SupportBasic;
+ UPROPERTY() TObjectPtr<UEditableTextBox> SupportAdvanced;
+ UPROPERTY() TObjectPtr<UEditableTextBox> SupportRare;
+ UPROPERTY() TObjectPtr<UEditableTextBox> SupportCharges;
  UPROPERTY() TObjectPtr<UEditableTextBox> Quantity;
  UPROPERTY() TObjectPtr<UEditableTextBox> X;
  UPROPERTY() TObjectPtr<UEditableTextBox> Y;
@@ -76,6 +102,7 @@ private:
  UFUNCTION() void Close();
  UFUNCTION() void SearchChanged(const FText& Text);
  UFUNCTION() void CategoryChanged(FString Item, ESelectInfo::Type Type);
+ UFUNCTION() void FiltersChanged(FString Item, ESelectInfo::Type Type);
  void RefreshShips();
  AOVShip* RuntimeShip() const;
  UFUNCTION() void SelectRuntimeShip();
@@ -102,6 +129,7 @@ private:
  UFUNCTION() void CreateHero();
  UFUNCTION() void CreateFour();
  UFUNCTION() void GrantXP();
+ UFUNCTION() void ConfigureSupport();
  UFUNCTION() void DeployHero();
  UFUNCTION() void ReleaseHero();
  UFUNCTION() void Skill0();

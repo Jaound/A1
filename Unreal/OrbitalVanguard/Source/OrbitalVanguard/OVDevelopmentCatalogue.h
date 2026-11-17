@@ -27,6 +27,10 @@ struct ORBITALVANGUARD_API FOVCatalogDefinition
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly) EOVCatalogCategory Category = EOVCatalogCategory::Hull;
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly) FString DisplayName;
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly) FString Description;
+    // Zero means this definition is not a conventional hull; not a fighter/pod cost.
+    UPROPERTY(VisibleAnywhere, BlueprintReadOnly) int32 SizeClass = 0;
+    UPROPERTY(VisibleAnywhere, BlueprintReadOnly) int32 FleetCost = 0;
+    UPROPERTY(VisibleAnywhere, BlueprintReadOnly) TArray<FName> RoleTags;
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly) FString SourceEvidence;
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly) FOVCatalogEvidence Planning;
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly) FOVCatalogEvidence Data;
@@ -43,4 +47,5 @@ class ORBITALVANGUARD_API UOVDevelopmentCatalogue : public UWorldSubsystem
     GENERATED_BODY()
 public:
     UFUNCTION(BlueprintPure) TArray<FOVCatalogDefinition> GetDefinitions() const;
+    UFUNCTION(BlueprintPure) FString GetOverviewText() const;
 };

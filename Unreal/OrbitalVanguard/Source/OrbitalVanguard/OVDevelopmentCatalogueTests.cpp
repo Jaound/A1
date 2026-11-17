@@ -14,12 +14,26 @@ bool FOVDevelopmentCatalogueTest::RunTest(const FString&)
         TestFalse(TEXT("Definition ID is unique"), Ids.Contains(D.DefinitionId)); Ids.Add(D.DefinitionId);
         ++Counts[static_cast<int32>(D.Category)];
         TestFalse(TEXT("Description and provenance are present"), D.Description.IsEmpty() || D.SourceEvidence.IsEmpty());
+        if (D.Category == EOVCatalogCategory::Hull)
+            TestTrue(TEXT("Hull filter metadata is present"), D.SizeClass >= 1 && D.SizeClass <= 4 && D.FleetCost > 0 && !D.RoleTags.IsEmpty());
+        else
+            TestTrue(TEXT("Non-hulls do not inherit hull cost"), D.SizeClass == 0 && D.FleetCost == 0 && D.RoleTags.IsEmpty());
+        if (D.Category == EOVCatalogCategory::Hull)
+            TestTrue(TEXT("Hull role evidence is unknown or partial with revision and scope"),
+                D.Role.Status == EOVCatalogStatus::Unknown || (D.Role.Status == EOVCatalogStatus::Partial &&
+                D.Role.VerificationSHA.Len() == 40 && D.Role.Reason.Contains(TEXT("미검증"))));
+        else
+            TestTrue(TEXT("Hull role evidence must not claim other categories"), D.Role.Status == EOVCatalogStatus::Unknown);
         TestTrue(TEXT("Evidence is either absent or explicitly historical"),
             (D.AutomatedVerification.Status == EOVCatalogStatus::Unknown && D.AutomatedVerification.VerificationSHA.IsEmpty()) ||
             (D.AutomatedVerification.Status == EOVCatalogStatus::Partial && D.AutomatedVerification.VerificationSHA.Len() == 40));
     }
     TestEqual(TEXT("Hull definitions"), Counts[0], 16);
-    TestEqual(TEXT("Weapon profiles"), Counts[1], 25);
+    TestEqual(TEXT("Weapon profiles plus planned family"), Counts[1], 26);
+    const auto* Special = Definitions.FindByPredicate([](const auto& D) { return D.DefinitionId == TEXT("planned_special_weapon"); });
+    TestTrue(TEXT("Unspecified special family is planning only"), Special && Special->Planning.Status == EOVCatalogStatus::Available
+        && Special->Data.Status == EOVCatalogStatus::Unavailable && Special->DirectInput.Status == EOVCatalogStatus::Unavailable);
+    TestEqual(TEXT("49 candidate definitions and one planned family"), Definitions.Num(), 50);
     TestEqual(TEXT("Fighter definition"), Counts[2], 1);
     TestEqual(TEXT("Pod definition"), Counts[3], 1);
     TestEqual(TEXT("Hero types"), Counts[4], 4);

@@ -23,7 +23,7 @@ struct FMount { int32 Weapon, Tier; bool bTop; };
 struct FHull
 {
     const TCHAR* Key;
-    int32 Size, Decks, PD, RadarTier;
+    int32 Size, FleetCost, Decks, PD, RadarTier;
     float HP, Shield, Armor, FrontArmor, Speed, Turn;
     int32 MountCount;
     FMount Mounts[16];
@@ -136,6 +136,31 @@ UShipLayoutDataAsset* MakeLayout(UObject* Outer, const FHull& Hull)
     UE_LOG(LogTemp, Error, TEXT("D116 invalid %s layout: %s"), Hull.Key, *FString::Join(Errors, TEXT("; ")));
     return nullptr;
 }
+}
+
+bool OVCalibration::GetHullMetadata(FName HullId, FOVHullMetadata& OutMetadata)
+{
+    OutMetadata = {};
+    const FHull* Hull = FindHull(HullId);
+    if (!Hull) return false;
+    OutMetadata.SizeClass = Hull->Size;
+    OutMetadata.FleetCost = Hull->FleetCost;
+    if (Hull->MountCount > 0) OutMetadata.RoleTags.Add(TEXT("공격"));
+    // Explicit documented specializations; neither PD count nor weapon count infers a role.
+    if (HullId == TEXT("corvette")) OutMetadata.RoleTags.Add(TEXT("정찰"));
+    if (HullId == TEXT("frigate")) OutMetadata.RoleTags.Add(TEXT("호위"));
+    if (HullId == TEXT("air_defense")) OutMetadata.RoleTags.Add(TEXT("방공"));
+    if (HullId == TEXT("radar")) OutMetadata.RoleTags.Add(TEXT("탐지 지원"));
+    if (HullId == TEXT("carrier") || HullId == TEXT("battlecarrier")) OutMetadata.RoleTags.Add(TEXT("함재기 운용"));
+    if (HullId == TEXT("missile_ship")) OutMetadata.RoleTags.Add(TEXT("미사일"));
+    if (HullId == TEXT("repair")) OutMetadata.RoleTags.Add(TEXT("수리"));
+    if (HullId == TEXT("mining")) OutMetadata.RoleTags.Add(TEXT("채굴"));
+    if (HullId == TEXT("transport")) OutMetadata.RoleTags.Add(TEXT("수송"));
+    if (HullId == TEXT("assault")) OutMetadata.RoleTags.Add(TEXT("강습"));
+    OutMetadata.Description = FString::Printf(TEXT("D116 후보 · 체급 %d · 시험 편성 코스트 %d · %d층 · 선체 %.0f · 쉴드 %.0f · 장갑/칸 %.0f · 전면 장갑/칸 %.0f · 속도 %.0fcm/s · 선회 %.1f도/s · 레이더 T%d · 공격 장착점 %d / PD %d · 함체별 총 승무원 미정"),
+        Hull->Size, Hull->FleetCost, Hull->Decks, Hull->HP, Hull->Shield, Hull->Armor, Hull->FrontArmor,
+        Hull->Speed, Hull->Turn, Hull->RadarTier, Hull->MountCount, Hull->PD);
+    return true;
 }
 
 FString OVCalibration::GetHullName(FName HullId)
@@ -320,6 +345,15 @@ bool FOVD116CatalogTest::RunTest(const FString&)
                 break;
             }
     }
+    FOVHullMetadata Meta;
+    TestTrue(TEXT("Vector metadata exists"), OVCalibration::GetHullMetadata(TEXT("vector"), Meta));
+    TestTrue(TEXT("Vector class and source fleet cost"), Meta.SizeClass == 2 && Meta.FleetCost == 5 && Meta.RoleTags.Contains(TEXT("공격")));
+    TestTrue(TEXT("Air defense documented role"), OVCalibration::GetHullMetadata(TEXT("air_defense"), Meta) && Meta.RoleTags.Contains(TEXT("방공")));
+    TestTrue(TEXT("Radar is not inferred to be air defense"), OVCalibration::GetHullMetadata(TEXT("radar"), Meta) && Meta.RoleTags.Contains(TEXT("탐지 지원")) && !Meta.RoleTags.Contains(TEXT("방공")));
+    TestTrue(TEXT("Support source fleet cost and role"), OVCalibration::GetHullMetadata(TEXT("repair"), Meta) && Meta.FleetCost == 1 && Meta.RoleTags.Contains(TEXT("수리")));
+    TestTrue(TEXT("Extra-large source fleet cost"), OVCalibration::GetHullMetadata(TEXT("dreadnought"), Meta) && Meta.SizeClass == 4 && Meta.FleetCost == 125);
+    TestFalse(TEXT("Unknown metadata rejected"), OVCalibration::GetHullMetadata(TEXT("not_a_hull"), Meta));
+    TestTrue(TEXT("Unknown metadata has no synthetic values"), Meta.SizeClass == 0 && Meta.FleetCost == 0 && Meta.RoleTags.IsEmpty());
     TestEqual(TEXT("Public hull catalog matches source"), OVCalibration::GetHullIds().Num(), 16);
     TestEqual(TEXT("Public profile catalog matches source"), OVCalibration::GetWeaponProfileIds().Num(), 25);
     auto* Settings = NewObject<UOVCombatSettings>();

@@ -7,3 +7,6 @@ Unreal/**/.vs/
 Unreal/**/*.sln
 Unreal/**/*.VC.db
 Unreal/**/__pycache__/
+
+# Local build identity is generated for each build.
+Unreal/OrbitalVanguard/Config/BuildIdentity.generated.json

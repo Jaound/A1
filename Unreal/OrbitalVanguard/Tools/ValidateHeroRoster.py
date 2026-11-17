@@ -62,6 +62,32 @@ def run(pc):
           "loaded_id=%s expected_id=%s ranks=%s points=%s" % (loaded_id, expected_id, loaded_ranks, loaded_points))
     for hero_id in ids[1:15]:
         check("H-RELEASE-" + str(len(report["checks"])), heroes.set_deployment(hero_id, False))
+    # 영웅창의 "선택 함선에 배치"와 동일한 API 경로를 F6 초기 세 척에서 검증한다.
+    # UI 물리 클릭은 별도 검사다. 장면 전환 전에 두 명을 편성 예약한다.
+    check("H-F6-SECOND-RESERVE", heroes.set_deployment(ids[1], True))
+    # F6 0번은 두 번째 아군을 이탈 처리하므로 실제 세 척을 쓰는 1번 장면을 선택한다.
+    check("H-F6-START", pc.start_calibration_range(1))
+    f6ships = list(p(pc, "ships")); f6interior = p(pc, "interior"); f6transport = p(pc, "transport")
+    check("H-F6-INITIAL-NO-INTERIOR", not p(f6interior, "enabled"))
+    pc.select_ship(f6ships[0])
+    first_id = f6interior.spawn_roster_hero(p(pc, "selected"), ids[0], "")
+    check("H-F6-SELECTED-SHIP-SPAWN", first_id > 0, p(f6interior, "last_message"))
+    first_unit = f6interior.get_unit(first_id)
+    first_person = p(first_unit, "person_id")
+    check("H-F6-TRANSPORT-LINK", first_person > 0 and p(f6transport.get_person(first_person), "runtime_unit_id") == first_id)
+    pc.select_ship(f6ships[1])
+    second_id = f6interior.spawn_roster_hero(p(pc, "selected"), ids[1], "")
+    check("H-F6-SECOND-SHIP-PRESERVES-FIRST", second_id > 0 and p(f6interior.get_unit(first_id), "person_id") == first_person
+          and p(f6transport.get_person(first_person), "runtime_unit_id") == first_id)
+    f6bridge = next(s for s in p(p(p(f6ships[0], "systems"), "layout"), "slots") if p(s, "facility") == unreal.OVFacilityType.BRIDGE)
+    f6bridge_id = p(f6bridge, "slot_id")
+    check("H-F6-DUTY-COMMAND", f6interior.set_hero_duty(first_id, True, f6bridge_id), p(f6interior, "last_message"))
+    f6interior.simulate(60.0)
+    check("H-F6-DUTY-ACTUAL-ARRIVAL", p(f6interior.get_unit(first_id), "duty_active") and p(f6interior.get_duty_bonuses(f6ships[0]), "speed_bonus") > 0,
+          p(f6interior.get_unit(first_id), "reason"))
+    check("H-F6-DUTY-RELEASE", f6interior.set_hero_duty(first_id, False, f6bridge_id) and p(f6interior.get_duty_bonuses(f6ships[0]), "speed_bonus") == 0)
+    check("H-F6-ROOM-RETURN", dev.open_roster_room(), p(dev, "last_message"))
+    check("H-F6-SECOND-RELEASE", heroes.set_deployment(ids[1], False))
     start2c = getattr(pc, "start_phase2c_range", None) or getattr(pc, "start_phase2_c_range")
     start2c(3)
     fixture_ships = list(p(pc, "ships"))

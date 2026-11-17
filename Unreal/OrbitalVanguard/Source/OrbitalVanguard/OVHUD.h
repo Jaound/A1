@@ -14,6 +14,8 @@ public:
  void SyncAddedUI();
  bool IsOverAddedUI(float X,float Y) const;
  bool IsAddedUIEditing() const;
+ UFUNCTION(BlueprintPure, Category="UI") UOVDevelopmentWidget* GetDevelopmentPanel() const { return DevelopmentWidget; }
+ UFUNCTION(BlueprintPure, Category="UI") UOVHeroWidget* GetHeroPanel() const { return HeroWidget; }
  void SetHeroPanelOpen(bool bOpen) { bHeroPanelOpen=bOpen; SyncAddedUI(); }
  bool IsHeroPanelOpen() const { return bHeroPanelOpen; }
  virtual void NotifyHitBoxClick(FName BoxName) override;

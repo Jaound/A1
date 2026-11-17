@@ -197,6 +197,7 @@ public:
     UFUNCTION(BlueprintCallable) bool RemoveShip(AOVShip* Ship);
     UFUNCTION(BlueprintCallable) int32 RegisterUnit(AOVShip* Ship, int32 Faction, EOVInteriorRole Role, FName SlotId = NAME_None);
     UFUNCTION(BlueprintCallable) int32 SpawnRosterHero(AOVShip* Ship, FGuid HeroId, FName SlotId = NAME_None);
+    UFUNCTION(BlueprintCallable) bool SetHeroBoardingAssignment(int32 UnitId, bool bAssigned);
     UFUNCTION(BlueprintCallable) bool SetHeroDuty(int32 UnitId, bool bEnable, FName SlotId = NAME_None);
     UFUNCTION(BlueprintPure) FOVHeroDutyBonuses GetDutyBonuses(AOVShip* Ship) const;
     UFUNCTION(BlueprintCallable) TArray<int32> RegisterBoardingTeam(AOVShip* Origin, int32 Faction, int32 HeroCount, int32 Troops);

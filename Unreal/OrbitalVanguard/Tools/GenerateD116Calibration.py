@@ -42,7 +42,7 @@ lines += ["};", "constexpr FHull Hulls[] = {"]
 weapon_indices = {key: index for index, key in enumerate(("beam", "heavy_beam", "cannon", "heavy_cannon", "missile", "guided", "spinal"))}
 for key, h in profile["ships"].items():
     mounts = ", ".join(f'{{{weapon_indices[w["kind"]]}, {w["tier"]}, {str(w["mount"] == "top").lower()}}}' for w in h["weapons"])
-    lines.append(f'    {{TEXT("{key}"), {h["size"]}, {h["decks"]}, {h["pd"]}, {h["radar_tier"]}, '
+    lines.append(f'    {{TEXT("{key}"), {h["size"]}, {h["fleet_cost"]}, {h["decks"]}, {h["pd"]}, {h["radar_tier"]}, '
                  + values(h["hp"], h["shield"], h["armor_cell"], h["front_armor"], h["speed"]*100, h["hull_turn"])
                  + f', {len(h["weapons"])}, {{{mounts}}}}},')
 lines += ["};", ""]

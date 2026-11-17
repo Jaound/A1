@@ -19,14 +19,8 @@ bool IsHexDigest(const FString& Value, int32 Length)
     return true;
 }
 
-void ApplyHistoricalEvidence(TArray<FOVCatalogDefinition>& Definitions)
+void ApplyGenerationEvidence(const TSharedPtr<FJsonObject>& Root, TArray<FOVCatalogDefinition>& Definitions)
 {
-    FString Data;
-    const FString Path = FPaths::Combine(FPaths::ProjectConfigDir(), TEXT("DevelopmentEvidence.json"));
-    if (!FFileHelper::LoadFileToString(Data, *Path) || Data.Len() > 2000000) return;
-    TSharedPtr<FJsonObject> Root;
-    const TSharedRef<TJsonReader<>> Reader = TJsonReaderFactory<>::Create(Data);
-    if (!FJsonSerializer::Deserialize(Reader, Root) || !Root.IsValid()) return;
     double Version = 0;
     FString CodeSHA, TreeSHA, BinarySHA, ReportPath, ReportSHA;
     const TArray<TSharedPtr<FJsonValue>>* Checks = nullptr;
@@ -59,6 +53,77 @@ void ApplyHistoricalEvidence(TArray<FOVCatalogDefinition>& Definitions)
         Definition.Generation = Historic;
         Definition.AutomatedVerification = Historic;
     }
+}
+
+void ApplyRoleEvidence(const TSharedPtr<FJsonObject>& Root, TArray<FOVCatalogDefinition>& Definitions)
+{
+    double Version = 0;
+    FString CodeSHA, SourceSHA, BinarySHA, ReportPath, ReportSHA;
+    const TArray<TSharedPtr<FJsonValue>>* Checks = nullptr;
+    if (!Root->TryGetNumberField(TEXT("schema_version"), Version) || Version != 1 ||
+        !Root->TryGetStringField(TEXT("role_code_sha"), CodeSHA) || !IsHexDigest(CodeSHA, 40) ||
+        !Root->TryGetStringField(TEXT("role_source_archive_sha256"), SourceSHA) || !IsHexDigest(SourceSHA, 64) ||
+        !Root->TryGetStringField(TEXT("role_binary_sha256"), BinarySHA) || !IsHexDigest(BinarySHA, 64) ||
+        !Root->TryGetStringField(TEXT("role_report"), ReportPath) || ReportPath.IsEmpty() ||
+        !Root->TryGetStringField(TEXT("role_report_sha256"), ReportSHA) || !IsHexDigest(ReportSHA, 64) ||
+        !Root->TryGetArrayField(TEXT("role_checks"), Checks) || !Checks) return;
+    TMap<FString, int32> Counts;
+    TMap<FString, bool> Passed;
+    for (const auto& Value : *Checks)
+    {
+        const TSharedPtr<FJsonObject> Row = Value.IsValid() ? Value->AsObject() : nullptr;
+        FString Id; bool Result = false;
+        if (Row.IsValid() && Row->TryGetStringField(TEXT("id"), Id) && Row->TryGetBoolField(TEXT("passed"), Result))
+        { ++Counts.FindOrAdd(Id); Passed.Add(Id, Result); }
+    }
+    for (FOVCatalogDefinition& D : Definitions)
+    {
+        if (D.Category != EOVCatalogCategory::Hull) continue;
+        const FString Key = D.DefinitionId.ToString();
+        const TCHAR* Common[] = {TEXT("실제 생성"), TEXT("선택"), TEXT("실제 이동"), TEXT("실제 시설 피해"),
+            TEXT("엔진 기능 정지"), TEXT("코어 완파"), TEXT("DEV 정리"), TEXT("삭제 등록 정리")};
+        TArray<FString> Required;
+        for (const TCHAR* Name : Common) Required.Add(Key + TEXT(" / ") + Name);
+        const bool bRepair = Key == TEXT("repair"), bMining = Key == TEXT("mining"),
+            bTransport = Key == TEXT("transport"), bAssault = Key == TEXT("assault");
+        const bool bSupport = bRepair || bMining || bTransport || bAssault;
+        if (bSupport) Required.Add(Key + TEXT(" / 공격 무장 없음"));
+        else
+        {
+            Required.Add(Key + TEXT(" / 발사 요청"));
+            Required.Add(Key + TEXT(" / 실제 발사"));
+            Required.Add(Key + TEXT(" / 동일 표적 실제 피격"));
+        }
+        if (bRepair) { Required.Add(TEXT("수리 / 유한 자원 링크 시작")); Required.Add(TEXT("수리 / 실제 복구·자원 차감")); }
+        if (bMining) Required.Add(TEXT("채굴 / 유한 자원 차감"));
+        if (bTransport) { Required.Add(TEXT("수송 / 채굴 재고 수거")); Required.Add(TEXT("수송 / 수리함 재고 이전")); }
+        if (bAssault) { Required.Add(TEXT("assault / PD 1기")); Required.Add(TEXT("assault / 수송선 등록")); }
+        if (Key == TEXT("carrier") || Key == TEXT("battlecarrier"))
+        { Required.Add(Key + TEXT(" / 실제 출격")); Required.Add(Key + TEXT(" / 실제 복귀와 동일 기체 재고")); }
+        bool bComplete = true;
+        for (const FString& Id : Required)
+        {
+            const int32* Count = Counts.Find(Id); const bool* Result = Passed.Find(Id);
+            if (!Count || *Count != 1 || !Result || !*Result) { bComplete = false; break; }
+        }
+        if (!bComplete) continue;
+        D.Role.Status = EOVCatalogStatus::Partial;
+        D.Role.VerificationSHA = CodeSHA;
+        D.Role.Reason = FString::Printf(TEXT("과거 빌드의 해당 함체 개별 시험 %d건 통과. 생성·선택·이동과 DEV 시설 파괴/완파·정리를 확인. 공격 함체는 대표 무장 1개의 발사·피격, 지원함은 시험 자원 작업 일부만 확인. PD 비활성 조건으로 실제 방공/레이더 역할 및 모든 장착점은 미검증. 현재 실행 바이너리와 일치 여부 미확인. 검증 코드 %s · 보고서 %s · 보고서 SHA-256 %s · 소스 SHA-256 %s · 바이너리 SHA-256 %s"),
+            Required.Num(), *CodeSHA, *ReportPath, *ReportSHA, *SourceSHA, *BinarySHA);
+    }
+}
+
+void ApplyHistoricalEvidence(TArray<FOVCatalogDefinition>& Definitions)
+{
+    FString Data;
+    const FString Path = FPaths::Combine(FPaths::ProjectConfigDir(), TEXT("DevelopmentEvidence.json"));
+    if (!FFileHelper::LoadFileToString(Data, *Path) || Data.Len() > 2000000) return;
+    TSharedPtr<FJsonObject> Root;
+    const TSharedRef<TJsonReader<>> Reader = TJsonReaderFactory<>::Create(Data);
+    if (!FJsonSerializer::Deserialize(Reader, Root) || !Root.IsValid()) return;
+    ApplyGenerationEvidence(Root, Definitions);
+    ApplyRoleEvidence(Root, Definitions);
 }
 
 FOVCatalogEvidence Evidence(EOVCatalogStatus Status, const TCHAR* Reason)
@@ -94,13 +159,27 @@ TArray<FOVCatalogDefinition> UOVDevelopmentCatalogue::GetDefinitions() const
     const FString CalibrationSource = FString::Printf(TEXT("OVCalibrationData.inl; source SHA-256 %s"), *OVCalibration::GetSourceHash());
     for (FName Id : OVCalibration::GetHullIds())
     {
-        auto D = Base(Id, EOVCatalogCategory::Hull, OVCalibration::GetHullName(Id), TEXT("D116 시험 함체. 수치와 내부 배치는 후보이며 최종 에셋이 아니다."), CalibrationSource);
+        FOVHullMetadata Metadata;
+        OVCalibration::GetHullMetadata(Id, Metadata);
+        auto D = Base(Id, EOVCatalogCategory::Hull, OVCalibration::GetHullName(Id), Metadata.Description, CalibrationSource);
+        D.SizeClass = Metadata.SizeClass; D.FleetCost = Metadata.FleetCost; D.RoleTags = Metadata.RoleTags;
         Out.Add(MoveTemp(D));
     }
     for (FName Id : OVCalibration::GetWeaponProfileIds())
     {
         auto D = Base(Id, EOVCatalogCategory::Weapon, WeaponName(Id), OVCalibration::GetWeaponProfileDescription(Id), CalibrationSource);
         D.Generation = Evidence(EOVCatalogStatus::NotApplicable, TEXT("무장 프로필은 독립 함체가 아니라 장착 데이터다."));
+        Out.Add(MoveTemp(D));
+    }
+    {
+        auto D = Base(TEXT("planned_special_weapon"), EOVCatalogCategory::Weapon, TEXT("특수 무장 · 내용 미정"),
+            TEXT("기획상 특수 무장 계열을 나타내는 단일 표시 항목. 하위 종류·티어·효과·공급 시설은 미정이며, 이 항목을 미정 무장의 전체 개수로 해석할 수 없다. 현재 후보 데이터 49개와 별도다."),
+            TEXT("docs/01_design/fleet/FLEET_COMBAT.md: 공격 무장 표"));
+        D.Data = Evidence(EOVCatalogStatus::Unavailable, TEXT("구체적인 무장 종류와 수치 데이터가 아직 없다."));
+        D.Generation = Evidence(EOVCatalogStatus::NotApplicable, TEXT("무장 계열의 기획 표시이며 생성 가능한 개체가 아니다."));
+        D.Role = Evidence(EOVCatalogStatus::Unknown, TEXT("특수 무장의 효과와 역할은 미정이다."));
+        D.AutomatedVerification = Evidence(EOVCatalogStatus::Unknown, TEXT("구현되지 않아 동작 검증 결과가 없다."));
+        D.DirectInput = Evidence(EOVCatalogStatus::Unavailable, TEXT("종류와 장착 데이터가 없어 직접 장착할 수 없다."));
         Out.Add(MoveTemp(D));
     }
     for (EOVPDWeaponKind Kind : {EOVPDWeaponKind::Beam, EOVPDWeaponKind::Kinetic})
@@ -131,4 +210,62 @@ TArray<FOVCatalogDefinition> UOVDevelopmentCatalogue::GetDefinitions() const
     }
     ApplyHistoricalEvidence(Out);
     return Out;
+}
+
+FString UOVDevelopmentCatalogue::GetOverviewText() const
+{
+    const TArray<FOVCatalogDefinition> Definitions = GetDefinitions();
+    FString Text = TEXT("전체 등록 항목 ") + FString::FromInt(Definitions.Num())
+        + TEXT("개 · 기획 항목과 후보 데이터는 별개로 집계\n");
+    Text += TEXT("기획 기준: 035a4fba81d26f1d67daa1f44bded0f7e8d3a434\n");
+    FString BuildText = TEXT("빌드 코드/소스 식별 정보: 미기록\n");
+    const FString BuildPath = FPaths::Combine(FPaths::ProjectConfigDir(), TEXT("BuildIdentity.generated.json"));
+    FString Raw;
+    if (FFileHelper::LoadFileToString(Raw, *BuildPath) && Raw.Len() <= 4096)
+    {
+        TSharedPtr<FJsonObject> Object;
+        const TSharedRef<TJsonReader<>> Reader = TJsonReaderFactory<>::Create(Raw);
+        FString CodeSHA, SourceSHA; bool bDirty = false;
+        if (FJsonSerializer::Deserialize(Reader, Object) && Object.IsValid()
+            && Object->TryGetStringField(TEXT("code_sha"), CodeSHA) && IsHexDigest(CodeSHA, 40)
+            && Object->TryGetStringField(TEXT("source_sha256"), SourceSHA) && IsHexDigest(SourceSHA, 64)
+            && Object->TryGetBoolField(TEXT("dirty"), bDirty))
+        {
+            BuildText = FString::Printf(TEXT("빌드 기록 코드: %s · 미커밋 변경: %s\n빌드 소스 SHA-256: %s\n"),
+                *CodeSHA, bDirty ? TEXT("있음") : TEXT("없음"), *SourceSHA);
+        }
+    }
+    Text += BuildText;
+    FString EvidenceSHA;
+    for (const FOVCatalogDefinition& D : Definitions)
+        if (IsHexDigest(D.AutomatedVerification.VerificationSHA, 40)) { EvidenceSHA = D.AutomatedVerification.VerificationSHA; break; }
+    Text += EvidenceSHA.IsEmpty() ? TEXT("개별 검증 기록 리비전: 미기록\n")
+        : FString::Printf(TEXT("개별 검증 기록 리비전: %s · 현재 빌드와 일치 여부 미확인\n"), *EvidenceSHA);
+    struct FCategory { EOVCatalogCategory Category; const TCHAR* Name; };
+    const FCategory Categories[] = {{EOVCatalogCategory::Hull,TEXT("함체")}, {EOVCatalogCategory::Weapon,TEXT("공격 무장")},
+        {EOVCatalogCategory::Fighter,TEXT("함재기")}, {EOVCatalogCategory::Pod,TEXT("포드")},
+        {EOVCatalogCategory::Hero,TEXT("영웅 유형")}, {EOVCatalogCategory::PointDefense,TEXT("방공 무장")}};
+    for (const FCategory& Category : Categories)
+    {
+        int32 Total=0, Planned=0, Data=0, DataPartial=0, Generated=0, GeneratedHistorical=0, GenerationUnknown=0;
+        int32 Role=0, RolePartial=0, RoleUnknown=0;
+        for (const FOVCatalogDefinition& D : Definitions)
+        {
+            if (D.Category != Category.Category) continue;
+            ++Total;
+            Planned += D.Planning.Status == EOVCatalogStatus::Available ? 1 : 0;
+            Data += D.Data.Status == EOVCatalogStatus::Available ? 1 : 0;
+            DataPartial += D.Data.Status == EOVCatalogStatus::Partial ? 1 : 0;
+            Generated += D.Generation.Status == EOVCatalogStatus::Available ? 1 : 0;
+            GeneratedHistorical += D.Generation.Status == EOVCatalogStatus::Partial ? 1 : 0;
+            GenerationUnknown += D.Generation.Status == EOVCatalogStatus::Unknown ? 1 : 0;
+            Role += D.Role.Status == EOVCatalogStatus::Available ? 1 : 0;
+            RolePartial += D.Role.Status == EOVCatalogStatus::Partial ? 1 : 0;
+            RoleUnknown += D.Role.Status == EOVCatalogStatus::Unknown ? 1 : 0;
+        }
+        Text += FString::Printf(TEXT("\n%s %d · 기획 %d · 데이터 있음 %d/부분 %d\n생성 확인 %d/과거 기록 %d/미확인 %d · 역할 기능 확인 %d/부분 확인 %d/미확인 %d\n"),
+            Category.Name, Total, Planned, Data, DataPartial, Generated, GeneratedHistorical, GenerationUnknown, Role, RolePartial, RoleUnknown);
+    }
+    Text += TEXT("\n과거 기록은 성공·실패를 포함할 수 있으며 현재 빌드의 기능 완료를 뜻하지 않습니다. 해당 없음·미지원 항목은 미확인 집계와 구분합니다.");
+    return Text;
 }

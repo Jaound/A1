@@ -5,6 +5,15 @@
 class AOVShip;
 class UOVCombatSubsystem;
 
+// Read-only candidate metadata. Zero size/cost means no hull definition.
+struct ORBITALVANGUARD_API FOVHullMetadata
+{
+    int32 SizeClass = 0;
+    int32 FleetCost = 0;
+    TArray<FName> RoleTags;
+    FString Description;
+};
+
 namespace OVCalibration
 {
 inline constexpr TCHAR Id[] = TEXT("Calibration_D116_v06");
@@ -18,6 +27,7 @@ inline constexpr double RayLength = 1500000;
 inline constexpr double AltitudeScale = 20;
 
 TArray<FName> GetHullIds();
+bool GetHullMetadata(FName HullId, FOVHullMetadata& OutMetadata);
 FString GetHullName(FName HullId);
 double GetHullGeometryScale(FName HullId);
 TArray<FName> GetWeaponProfileIds();

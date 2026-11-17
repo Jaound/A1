@@ -1,8 +1,9 @@
-"""Capture the PIE UI using reflected widget functions, not OS mouse/keyboard input.
+"""Capture the PIE UI using the widget API, not OS mouse/keyboard input.
 
 Run through Tools/RunValidation.py with OV_VALIDATOR pointing here. Set
 OV_UI_CAPTURE_RES=1920x1080 or 960x600 to request a viewport resolution; omit it
-to preserve the current PIE viewport. Embedded PIE may ignore r.SetRes: the
+to preserve the current PIE viewport. Set OV_CAPTURE_FLOATING=1 with a requested
+resolution to temporarily use a separate PIE window. Embedded PIE may ignore r.SetRes: the
 report records actual viewport dimensions and does not claim requested sizing.
 Each invocation writes a timestamped directory under Saved/Validation so an old
 screenshot cannot make this run pass. This is visual evidence, not a click,
@@ -19,9 +20,10 @@ run_id = time.strftime("%Y%m%d_%H%M%S") + "_%06d" % (time.time_ns() % 1000000)
 out_dir = os.path.join(saved, "Validation", "DevelopmentUI", run_id)
 os.makedirs(out_dir, exist_ok=False)
 requested = os.environ.get("OV_UI_CAPTURE_RES", "").strip().lower()
-report = {"kind": "PIE UI render capture via reflected widget functions", "physical_input": False,
-          "requested_resolution": requested or None, "screenshots": [], "errors": [],
-          "scope": "Reflection calls are not physical input, focus, or gameplay validation."}
+floating = os.environ.get("OV_CAPTURE_FLOATING", "") == "1"
+report = {"kind": "PIE UI render capture via widget API", "physical_input": False,
+          "requested_resolution": requested or None, "floating_requested": floating, "screenshots": [], "errors": [],
+          "scope": "Widget API calls are not physical input, focus, or gameplay validation."}
 editor = unreal.get_editor_subsystem(unreal.UnrealEditorSubsystem)
 level = unreal.get_editor_subsystem(unreal.LevelEditorSubsystem)
 state = {"stage": "start", "started": time.monotonic(), "at": time.monotonic(), "index": 0}
@@ -31,6 +33,15 @@ views = [("01_play_hero", None), ("02_dev_overview", "통합 현황"),
 
 
 def finish():
+    if state.get("floating_started"):
+        try:
+            restored = unreal.OVDevelopmentEditorLibrary.restore_preview_settings()
+            report["play_settings_restored"] = bool(restored)
+            if not restored:
+                report["errors"].append("PIE 창 크기 설정 복구 실패")
+        except Exception:
+            report["play_settings_restored"] = False
+            report["errors"].append("PIE 창 크기 설정 복구 실패: " + traceback.format_exc())
     report["passed"] = not report["errors"] and len(report["screenshots"]) == len(views) and all(
         entry["exists"] for entry in report["screenshots"])
     report["elapsed_wall_seconds"] = time.monotonic() - state["started"]
@@ -41,10 +52,10 @@ def finish():
 
 
 def select_tab(widget, label):
-    # Direct reflected UFUNCTION call. This does not synthesize a physical click.
-    functions = {"통합 현황": "Overview", "함선·초소형함": "Hulls",
-                 "영웅": "Heroes", "무장": "Weapons"}
-    widget.call_method(functions[label])
+    # This uses the UI's callable API, not a physical mouse click.
+    pages = {"통합 현황": 0, "함선·초소형함": 1, "영웅": 2, "무장": 3}
+    if not widget.open_page(pages[label]):
+        raise RuntimeError("개발 탭 API 실패: " + label)
 
 
 def viewport_size(pc):
@@ -60,7 +71,15 @@ def tick(_dt):
         if state["stage"] == "start":
             if requested and requested not in ("1920x1080", "960x600"):
                 raise RuntimeError("지원 요청 해상도는 1920x1080 또는 960x600")
-            level.editor_request_begin_play()
+            if floating:
+                if not requested:
+                    raise RuntimeError("OV_CAPTURE_FLOATING=1에는 OV_UI_CAPTURE_RES가 필요합니다")
+                width, height = (int(part) for part in requested.split("x"))
+                if not unreal.OVDevelopmentEditorLibrary.start_preview_window(width, height):
+                    raise RuntimeError("별도 PIE 창 요청 실패: 에디터/기존 PIE 상태와 크기를 확인하세요")
+                state["floating_started"] = True
+            else:
+                level.editor_request_begin_play()
             state["stage"] = "wait_pie"
             return
         world = editor.get_game_world()
@@ -70,7 +89,7 @@ def tick(_dt):
                 raise RuntimeError("30초 내 PIE 플레이어를 찾지 못함")
             return
         if state["stage"] == "wait_pie":
-            if requested:
+            if requested and not floating:
                 unreal.SystemLibrary.execute_console_command(world, "r.SetRes " + requested + "w", pc)
             if pc.get_editor_property("developer_mode"):
                 pc.action("Developer")
@@ -86,10 +105,7 @@ def tick(_dt):
                 hud = pc.get_hud()
                 if not hud:
                     raise RuntimeError("PIE HUD를 찾지 못함")
-                try:
-                    widget = hud.get_editor_property("development_widget")
-                except Exception:
-                    widget = hud.get_editor_property("DevelopmentWidget")
+                widget = hud.get_development_panel()
                 if not widget:
                     raise RuntimeError("HUD의 개발 위젯이 생성되지 않음")
                 select_tab(widget, tab)

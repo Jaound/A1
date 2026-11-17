@@ -91,6 +91,12 @@ int32 UOVInteriorSubsystem::SpawnRosterHero(AOVShip* Ship,FGuid HeroId,FName Slo
        GetWorld()->GetSubsystem<UOVCombatSubsystem>()->IsDeparted(Ship) ||
        !H->bDeploymentReserved || H->Status!=EOVHeroStatus::Deployed || H->RuntimeUnitId!=0 || H->RuntimePersonId!=0)
     {LastMessage=TEXT("영웅 배치 불가: 편제, 상태 또는 기존 실행 연결 확인");return 0;}
+    // F6/F5의 기존 함선은 선내·수송 장면 초기화에 포함되지 않을 수 있다.
+    // 기존 장면이나 다른 승객을 재설정하지 않고 필요한 함선만 등록한다.
+    if(!AddShip(Ship))return 0;
+    auto* Transport=GetWorld()->GetSubsystem<UOVTransportSubsystem>();
+    if(!Transport || !Transport->AddShip(Ship))
+    {LastMessage=TEXT("영웅 배치 불가: 해당 함선을 수송 시스템에 등록할 수 없습니다");return 0;}
     const int32 Id=RegisterUnit(Ship,H->FactionId,H->Role,SlotId);
     auto* U=FindUnit(Id);if(!U)return 0;
     U->HeroId=HeroId;U->Name=H->Name;U->HeroSkillRanks=H->SkillRanks;U->HeroLevel=H->Level;U->AmplifierCharges=H->AmplifierCharges;U->DevRepairBaseCost=H->DevRepairBaseCost;
@@ -102,6 +108,23 @@ int32 UOVInteriorSubsystem::SpawnRosterHero(AOVShip* Ship,FGuid HeroId,FName Slo
     H->RuntimeUnitId=U->UnitId;H->RuntimePersonId=U->PersonId;
     if(auto* Combat=GetWorld()->GetSubsystem<UOVCombatSubsystem>())if(Combat->Settings)Combat->Settings->bHeroD114Aim=true;
     return Id;
+}
+
+bool UOVInteriorSubsystem::SetHeroBoardingAssignment(int32 UnitId,bool bAssigned)
+{
+    auto* U=FindUnit(UnitId);
+    auto* Transport=GetWorld()->GetSubsystem<UOVTransportSubsystem>();
+    if(!U || !U->HeroId.IsValid() || !OVInterior::Living(*U) || !Transport || !U->Ship.IsValid() || !U->Ship->Systems ||
+       U->Ship->Systems->FactionId!=U->FactionId || U->bWasInsideTarget ||
+       (bAssigned && (U->bDutyRequested || U->State==EOVInteriorState::Fighting ||
+           (U->State==EOVInteriorState::Operating && (U->Order==EOVInteriorOrder::Capture || U->Order==EOVInteriorOrder::Sabotage)))))
+    {LastMessage=TEXT("강습 편성 불가: 아군 함선의 생존 영웅을 선택하고 보직·교전을 먼저 해제하세요");return false;}
+    const auto Person=Transport->GetPerson(U->PersonId);
+    if(Person.RuntimeUnitId!=UnitId || Person.CurrentShip!=U->Ship || Person.State!=EOVPassengerState::Aboard ||
+       !Transport->SetRuntimeBoardingAssignment(U->PersonId,UnitId,bAssigned))
+    {LastMessage=TEXT("강습 편성 불가: 실제 탑승 인원 상태를 확인하세요");return false;}
+    LastMessage=bAssigned?TEXT("영웅을 강습 대상으로 명시 편성했습니다"):TEXT("영웅의 강습 편성을 해제했습니다");
+    return true;
 }
 
 bool UOVInteriorSubsystem::SetHeroDuty(int32 UnitId,bool bEnable,FName SlotId)
@@ -413,6 +436,11 @@ void UOVInteriorSubsystem::SyncTransport(FOVInteriorUnitRecord& U)
     {
         if(!U.bWasInsideTarget||U.EntryShip!=P.CurrentShip)
         {
+            AOVShip* Arrived=P.CurrentShip.Get();
+            if(!IsValid(Arrived) || !Arrived->Systems || !Arrived->Systems->Layout ||
+               Arrived->Systems->Layout->LayoutVersion!=P.EntryLayoutVersion ||
+               Arrived->Systems->Layout->GetSlotIndex(P.EntrySlot)==INDEX_NONE || P.EntryLocalPoint.ContainsNaN() || !AddShip(Arrived))
+            {U.Ship=Arrived;U.State=EOVInteriorState::Blocked;U.Reason=TEXT("진입함 내부 배치 검증 실패 · 인원 보존");return;}
             U.Ship=P.CurrentShip;U.NodeId=P.EntrySlot;U.LocalPosition=P.EntryLocalPoint;U.LayoutVersion=P.EntryLayoutVersion;
             U.EntryShip=P.CurrentShip;U.EntrySlot=P.EntrySlot;U.EntryLocalPoint=P.EntryLocalPoint;U.bWasInsideTarget=true;
             U.Path.Reset();U.PlannedGoal=NAME_None;
@@ -426,6 +454,9 @@ void UOVInteriorSubsystem::SyncTransport(FOVInteriorUnitRecord& U)
     {U.Ship=P.CurrentShip;U.State=EOVInteriorState::AwaitingRecovery;U.Reason=TEXT("원 강습선 회수 대기");}
     else if(P.State==EOVPassengerState::Aboard && (U.Ship!=P.CurrentShip||U.State==EOVInteriorState::InTransit||U.State==EOVInteriorState::AwaitingRecovery))
     {
+        AOVShip* Returned=P.CurrentShip.Get();
+        if(!IsValid(Returned) || !Returned->Systems || !Returned->Systems->Layout || !AddShip(Returned))
+        {U.Ship=Returned;U.State=EOVInteriorState::Blocked;U.Reason=TEXT("귀환함 내부 배치 검증 실패 · 인원 보존");return;}
         U.Ship=P.CurrentShip;U.bWasInsideTarget=false;U.EntryShip=nullptr;U.Path.Reset();U.PlannedGoal=NAME_None;
         if(U.Ship.IsValid()) {U.NodeId=U.Ship->Systems->Layout->CoreSlotId;U.LocalPosition=U.Ship->Systems->Layout->Slots[U.Ship->Systems->Layout->GetSlotIndex(U.NodeId)].LocalCenter;U.LayoutVersion=U.Ship->Systems->Layout->LayoutVersion;}
         U.Order=EOVInteriorOrder::Defend;U.TargetSlot=U.NodeId;U.State=EOVInteriorState::Aboard;
@@ -438,6 +469,7 @@ void UOVInteriorSubsystem::SyncTransport(FOVInteriorUnitRecord& U)
 void UOVInteriorSubsystem::AdvanceUnit(FOVInteriorUnitRecord& U,float Delta)
 {
     if(!IsOnboard(U)||U.State==EOVInteriorState::AwaitingRecovery)return;
+    if(!FindGraph(U.Ship.Get())){U.State=EOVInteriorState::Blocked;U.Reason=TEXT("내부 배치가 없어 이동할 수 없습니다");return;}
     if(GetWorld()->GetSubsystem<UOVCombatSubsystem>()->IsDeparted(U.Ship.Get()))
     {if(U.HeroId.IsValid())GetWorld()->GetSubsystem<UOVLogisticsSubsystem>()->CancelDevRepair(U.Ship.Get(),U.HeroId);U.bDutyActive=false;U.State=EOVInteriorState::Blocked;U.Reason=TEXT("목표 초광속 이탈 · 인원 보존, 성계 밖 작전/회수 미지원");return;}
     const auto* L=U.Ship->Systems->Layout.Get();
@@ -556,7 +588,8 @@ void UOVInteriorSubsystem::AdvanceOperations(float Delta)
     TMap<int32,TArray<int32>> Workers;
     for(int32 I=0;I<Units.Num();++I)
     {
-        auto& U=Units[I];if(!IsOnboard(U)||U.State==EOVInteriorState::AwaitingRecovery||U.State==EOVInteriorState::Blocked||U.State==EOVInteriorState::Fighting||U.Order==EOVInteriorOrder::Retreat||U.Order==EOVInteriorOrder::None||U.NodeId!=U.TargetSlot)continue;
+        auto& U=Units[I];if(!IsOnboard(U)||U.State==EOVInteriorState::AwaitingRecovery||U.State==EOVInteriorState::Blocked||U.State==EOVInteriorState::Fighting||
+            (U.Order!=EOVInteriorOrder::Capture && U.Order!=EOVInteriorOrder::Sabotage)||U.NodeId!=U.TargetSlot)continue;
         const auto* L=U.Ship->Systems->Layout.Get();const int32 Index=L->GetSlotIndex(U.TargetSlot);if(Index==INDEX_NONE)continue;
         if(((U.LocalPosition-L->Slots[Index].LocalCenter)*U.Ship->GetActorScale3D()).Size()>Settings.ArrivalTolerance)continue;
         const auto Facility=U.Ship->Systems->GetSlotState(U.TargetSlot);

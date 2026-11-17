@@ -9,15 +9,24 @@
 #include "OVTransportSubsystem.h"
 #include "OVInteriorSubsystem.h"
 #include "OVMissionSubsystem.h"
+#include "OVDevelopmentSubsystem.h"
+#include "OVLogisticsSubsystem.h"
 #include "Engine/World.h"
 
 void AOVController::ResetPhase2C()
 {
- GetWorld()->GetSubsystem<UOVInteriorSubsystem>()->Disable();
+ // An explicit scene reset detaches persistent heroes before clearing transient records.
+ // Merely disabling these systems left old passengers/operations alive on the reused 3 actors.
+ auto* Inside=GetWorld()->GetSubsystem<UOVInteriorSubsystem>();
+ Inside->ResetScenario({}); Inside->Disable();
  GetWorld()->GetSubsystem<UOVMissionSubsystem>()->Disable();
  GetWorld()->GetSubsystem<UOVCarrierSubsystem>()->Reset();
- GetWorld()->GetSubsystem<UOVTransportSubsystem>()->Disable();
+ auto* Transit=GetWorld()->GetSubsystem<UOVTransportSubsystem>();
+ Transit->ResetScenario({}); Transit->Disable();
  GetWorld()->GetSubsystem<UOVPointDefenseSubsystem>()->Disable();
+ GetWorld()->GetSubsystem<UOVDevelopmentSubsystem>()->SpawnedShips.Reset();
+ auto* Logistics=GetWorld()->GetSubsystem<UOVLogisticsSubsystem>();
+ Logistics->Cargo.Reset(); Logistics->Nodes.Reset(); Logistics->RepairLinks.Reset();
  // Only explicitly created transient benchmark actors are removed; original three survive.
  while(Ships.Num()>3) { AOVShip* Extra=Ships.Last(); Ships.Pop(); if(IsValid(Extra))Extra->Destroy(); }
  TrialFTLRemaining.Reset();

@@ -57,8 +57,17 @@ bool FOVInteriorOperationContributors::RunTest(const FString&)
     const int32 Worker=R.Interior->RegisterUnit(R.Target,0,EOVInteriorRole::Melee,Slot);
     const int32 Bystander=R.Interior->RegisterUnit(R.Target,0,EOVInteriorRole::Support,Slot);
     TestTrue(TEXT("작업자와 비참가자 생성"),Worker>0 && Bystander>0);
-    TestTrue(TEXT("작업 명령"),R.Interior->IssueOrder({Worker},EOVInteriorOrder::Capture,Slot));
     R.Interior->IssueOrder({Bystander},EOVInteriorOrder::None);
+    R.Advance(2);
+    TestTrue(TEXT("적 시설 수호 대기는 점령 작전을 만들지 않음"),R.Interior->Operations.IsEmpty());
+    TestTrue(TEXT("작업 명령"),R.Interior->IssueOrder({Worker},EOVInteriorOrder::Capture,Slot));
+    R.Advance(2);
+    const auto* Started=R.Interior->Operations.FindByPredicate([Slot](const FOVInteriorOperation& O){return O.SlotId==Slot && O.FactionId==0;});
+    TestTrue(TEXT("명시적 점령은 진행됨"),Started && Started->Progress>0);
+    R.Interior->IssueOrder({Worker},EOVInteriorOrder::Defend,Slot);R.Advance(.2f);
+    const auto* Stopped=R.Interior->Operations.FindByPredicate([Slot](const FOVInteriorOperation& O){return O.SlotId==Slot && O.FactionId==0;});
+    TestTrue(TEXT("수호 전환은 점령 진행을 중단"),Stopped && FMath::IsNearlyZero(Stopped->Progress));
+    TestTrue(TEXT("점령 명령 재개"),R.Interior->IssueOrder({Worker},EOVInteriorOrder::Capture,Slot));
     R.Advance(25);
     const auto* Event=R.Interior->Events.FindByPredicate([Slot](const FOVInteriorEvent& E){return E.Kind==TEXT("Capture") && E.SlotId==Slot;});
     TestNotNull(TEXT("실제 점령 완료 사건"),Event);

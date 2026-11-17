@@ -19,6 +19,7 @@ public:
 private:
  UPROPERTY() TObjectPtr<UComboBoxString> Choice;
  UPROPERTY() TObjectPtr<UTextBlock> Detail;
+ UPROPERTY() TObjectPtr<UTextBlock> EmptyHelp;
  UPROPERTY() TObjectPtr<UTextBlock> Feedback;
  UPROPERTY() TObjectPtr<UScrollBox> Roster;
  UPROPERTY() TArray<TObjectPtr<UTextBlock>> UnitRows;
@@ -36,6 +37,9 @@ private:
  UFUNCTION() void Release();
  UFUNCTION() void OpenInterior();
  UFUNCTION() void SpawnHero();
+ UFUNCTION() void BoardingOn();
+ UFUNCTION() void BoardingOff();
+ void SetBoarding(bool bAssigned);
  UFUNCTION() void DutyOn();
  UFUNCTION() void DutyOff();
  UFUNCTION() void Skill0();

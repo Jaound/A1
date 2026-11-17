@@ -46,7 +46,11 @@ def execute(pc):
     by_category = collections.Counter(str(p(d, "category")) for d in definitions)
     hulls = [d for d in definitions if p(d, "category") == unreal.OVCatalogCategory.HULL]
     weapons = [d for d in definitions if p(d, "category") == unreal.OVCatalogCategory.WEAPON]
-    check("카탈로그 수량과 구분", len(hulls) == 16 and len(weapons) == 25 and len(definitions) == 49, by_category)
+    planned = [d for d in definitions if str(p(d, "definition_id")) == "planned_special_weapon"]
+    check("카탈로그 수량과 구분", len(hulls) == 16 and len(weapons) == 26 and len(definitions) == 50 and len(planned) == 1, by_category)
+    check("기획만 특수 무장 구분", len(planned) == 1 and p(p(planned[0], "planning"), "status") == unreal.OVCatalogStatus.AVAILABLE
+          and p(p(planned[0], "data"), "status") == unreal.OVCatalogStatus.UNAVAILABLE
+          and p(p(planned[0], "direct_input"), "status") == unreal.OVCatalogStatus.UNAVAILABLE)
     check("정의 ID 고유성", len({str(p(d, "definition_id")) for d in definitions}) == len(definitions))
     check("검증 근거 상태 구분", all(
         (p(p(d, "automated_verification"), "status") == unreal.OVCatalogStatus.UNKNOWN and not p(p(d, "automated_verification"), "verification_sha")) or

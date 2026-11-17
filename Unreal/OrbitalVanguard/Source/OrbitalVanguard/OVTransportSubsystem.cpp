@@ -331,6 +331,7 @@ void UOVTransportSubsystem::AdvancePod(FOVPodState& Pod, float Delta)
         if (!Usable(Origin) || !Usable(Target) || Origin->Systems->FactionId != Pod.FactionId ||
             Target->Systems->FactionId == Pod.FactionId || Origin->Systems->GetEfficiency(EOVFacilityType::Boarding) <= 0 ||
             FVector::Distance(Origin->GetActorLocation(), Target->GetActorLocation()) > Settings.PodLaunchRange ||
+            (Person->RuntimeUnitId>0 && !Person->bBoardingAssigned) ||
             Person->State != EOVPassengerState::Aboard || Person->CurrentShip != Origin)
         { Pod.State = EOVPodFlightState::Cancelled; return; }
         Pod.State = EOVPodFlightState::Outbound; Pod.LaunchTime = GameTime; Pod.Position = Origin->GetActorLocation();
