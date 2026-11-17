@@ -2,6 +2,7 @@
 #include "Components/StaticMeshComponent.h"
 #include "GameFramework/Actor.h"
 #include "Materials/MaterialInstanceDynamic.h"
+#include "Engine/StaticMesh.h"
 
 namespace OVWeaponGeometry
 {
@@ -15,6 +16,33 @@ float BarrelLength(const FVector& HullHalfExtent, float Tier, bool bPointDefense
 FVector MuzzleLocal(FVector MountPosition, FRotator Aim, float Length, bool bFixedVLS)
 {
     return MountPosition + (bFixedVLS ? FVector(0, 0, MountPosition.Z < 0 ? -1 : 1) : Aim.Vector()) * Length;
+}
+
+bool HasBF120Trial(const FOVWeaponMountDefinition& Definition)
+{
+    if (Definition.Type != EOVWeaponType::Cannon || Definition.PresentationProfile != TEXT("BF120Trial")) return false;
+    static TWeakObjectPtr<UStaticMesh> Base, Body, Pitch;
+    if (!Base.IsValid()) Base = LoadObject<UStaticMesh>(nullptr,TEXT("/Game/Presentation/BF120Trial/SM_BF120_BaseTrial.SM_BF120_BaseTrial"),nullptr,LOAD_NoWarn);
+    if (!Body.IsValid()) Body = LoadObject<UStaticMesh>(nullptr,TEXT("/Game/Presentation/BF120Trial/SM_BF120_YawBody.SM_BF120_YawBody"),nullptr,LOAD_NoWarn);
+    if (!Pitch.IsValid()) Pitch = LoadObject<UStaticMesh>(nullptr,TEXT("/Game/Presentation/BF120Trial/SM_BF120_PitchTrial.SM_BF120_PitchTrial"),nullptr,LOAD_NoWarn);
+    return Base.IsValid() && Body.IsValid() && Pitch.IsValid();
+}
+
+FVector MuzzleLocal(const FOVWeaponMountDefinition& Definition, FRotator Aim,
+    FVector HullHalfExtent, bool bFixedVLS, int32 BarrelIndex)
+{
+    const float Length=BarrelLength(HullHalfExtent,Definition.Tier,false);
+    if (!HasBF120Trial(Definition) || bFixedVLS) return MuzzleLocal(Definition.LocalPosition,Aim,Length,bFixedVLS);
+    // Measured isolated UE trial, cm. One projectile uses one barrel; shots alternate without changing cadence or damage.
+    const FVector YawOrigin(99.5,2.5,-41),PitchOrigin(8,0,50);
+    const FVector Tips[]={FVector(-241.143,41.673,49.709),FVector(-241.167,-42.358,49.477)};
+    const bool bBottom=Definition.LocalPosition.Z<0;
+    const FQuat Flip=FRotator(0,0,bBottom?180.f:0.f).Quaternion();
+    const FQuat Yaw=FRotator(0,bBottom?180.f-Aim.Yaw:180.f+Aim.Yaw,0).Quaternion();
+    const FQuat Pitch=FRotator(bBottom?Aim.Pitch:-Aim.Pitch,0,0).Quaternion();
+    const double Scale=Length/249.143;
+    const FVector InYaw=(PitchOrigin-YawOrigin)+Pitch.RotateVector(Tips[BarrelIndex&1]-PitchOrigin);
+    return Definition.LocalPosition+Flip.RotateVector(Yaw.RotateVector(InYaw))*Scale;
 }
 }
 
@@ -36,7 +64,7 @@ USceneComponent* UOVWeaponVisualComponent::MakePivot(USceneComponent* Parent)
 }
 
 UStaticMeshComponent* UOVWeaponVisualComponent::MakeMesh(USceneComponent* Parent, const TCHAR* Asset,
-    FVector Position, FVector Scale, FRotator Rotation)
+    FVector Position, FVector Scale, FRotator Rotation, bool bUseBodyMaterial)
 {
     UStaticMeshComponent* Part = NewObject<UStaticMeshComponent>(GetOwner());
     GetOwner()->AddInstanceComponent(Part);
@@ -51,7 +79,7 @@ UStaticMeshComponent* UOVWeaponVisualComponent::MakeMesh(USceneComponent* Parent
     Part->SetRelativeLocation(Position);
     Part->SetRelativeRotation(Rotation);
     Part->SetRelativeScale3D(Scale);
-    if (BodyMaterial) Part->SetMaterial(0, BodyMaterial);
+    if (BodyMaterial && bUseBodyMaterial) Part->SetMaterial(0, BodyMaterial);
     Part->RegisterComponent();
     Parts.Add(Part);
     return Part;
@@ -70,6 +98,27 @@ void UOVWeaponVisualComponent::Initialize(const FOVWeaponMountDefinition& InDefi
     UMaterialInterface* Base = LoadObject<UMaterialInterface>(nullptr, TEXT("/Engine/BasicShapes/BasicShapeMaterial.BasicShapeMaterial"));
     if (Base) BodyMaterial = UMaterialInstanceDynamic::Create(Base, this);
 
+    if (OVWeaponGeometry::HasBF120Trial(Definition))
+    {
+        // Isolated trial measurements; source meshes bake their original world offsets.
+        const FVector YawOrigin(99.5,2.5,-41),PitchOrigin(8,0,50),Clearance(0,0,1);
+        const FVector Tips[]={FVector(-241.143,41.673,49.709),FVector(-241.167,-42.358,49.477)};
+        const double Scale=Length/249.143;
+        auto* Flip=MakePivot(this);Flip->SetRelativeRotation(FRotator(0,0,State.bBottom?180.f:0.f));
+        MakeMesh(Flip,TEXT("/Game/Presentation/BF120Trial/SM_BF120_BaseTrial.SM_BF120_BaseTrial"),-YawOrigin*Scale,FVector(Scale),FRotator::ZeroRotator,false);
+        YawPivot=MakePivot(Flip);
+        MakeMesh(YawPivot,TEXT("/Game/Presentation/BF120Trial/SM_BF120_YawBody.SM_BF120_YawBody"),(-YawOrigin+Clearance)*Scale,FVector(Scale),FRotator::ZeroRotator,false);
+        PitchPivot=MakePivot(YawPivot);PitchPivot->SetRelativeLocation((PitchOrigin-YawOrigin)*Scale);
+        Barrel=MakeMesh(PitchPivot,TEXT("/Game/Presentation/BF120Trial/SM_BF120_PitchTrial.SM_BF120_PitchTrial"),(-PitchOrigin+Clearance)*Scale,FVector(Scale),FRotator::ZeroRotator,false);
+        Flash=MakeMesh(PitchPivot,TEXT("/Engine/BasicShapes/Sphere.Sphere"),(Tips[0]-PitchOrigin)*Scale,FVector(Length*.15/100.f));
+        SecondFlash=MakeMesh(PitchPivot,TEXT("/Engine/BasicShapes/Sphere.Sphere"),(Tips[1]-PitchOrigin)*Scale,FVector(Length*.15/100.f));
+        UStaticMeshComponent* FlashParts[]={Flash.Get(),SecondFlash.Get()};
+        for (auto* Part : FlashParts) if (Part) {
+            if (Base) {auto* Material=UMaterialInstanceDynamic::Create(Base,Part);Material->SetVectorParameterValue(TEXT("Color"),FLinearColor(1.f,.66f,.08f));Part->SetMaterial(0,Material);}
+            Part->SetVisibility(false);
+        }
+        return;
+    }
     // Fixed plinth remains level with the hull. Only the trunnion and barrel elevate.
     MakeMesh(this, TEXT("/Engine/BasicShapes/Cylinder.Cylinder"), FVector(0, 0, -Side * Length * .23),
         FVector(Length * .8, Length * .8, Length * .18) / 100.f);
@@ -96,25 +145,29 @@ void UOVWeaponVisualComponent::Initialize(const FOVWeaponMountDefinition& InDefi
 bool UOVWeaponVisualComponent::Matches(const FOVWeaponMountDefinition& Other, FVector HullHalfExtent) const
 {
     return Definition.WeaponId == Other.WeaponId && Definition.Type == Other.Type
-        && Definition.Tier == Other.Tier && Definition.LocalPosition.Equals(Other.LocalPosition)
+        && Definition.Tier == Other.Tier && Definition.PresentationProfile==Other.PresentationProfile && Definition.LocalPosition.Equals(Other.LocalPosition)
         && Extent.Equals(HullHalfExtent);
 }
 
 void UOVWeaponVisualComponent::Synchronize(FRotator LogicalAim, bool bFixedVLS, bool bDestroyed, bool bFriendly,
-    int32 ShotId, double ShotTime, double GameTime)
+    int32 ShotId, double ShotTime, double GameTime, int32 ShotsFired)
 {
     State.LogicalAim = LogicalAim;
     State.bFixedVLS = bFixedVLS;
     State.bDestroyed = bDestroyed;
     State.VisualAim = bFixedVLS ? FRotator(State.bBottom ? -90 : 90, 0, 0) : LogicalAim;
-    if (YawPivot) YawPivot->SetRelativeRotation(FRotator(0, State.VisualAim.Yaw, 0));
-    if (PitchPivot) PitchPivot->SetRelativeRotation(FRotator(State.VisualAim.Pitch, 0, 0));
-    State.LocalMuzzle = OVWeaponGeometry::MuzzleLocal(Definition.LocalPosition, LogicalAim, Length, bFixedVLS);
+    const bool bSource=OVWeaponGeometry::HasBF120Trial(Definition)&&!bFixedVLS;
+    if (YawPivot) YawPivot->SetRelativeRotation(FRotator(0,bSource?(State.bBottom?180.f-State.VisualAim.Yaw:180.f+State.VisualAim.Yaw):State.VisualAim.Yaw,0));
+    if (PitchPivot) PitchPivot->SetRelativeRotation(FRotator(bSource?(State.bBottom?State.VisualAim.Pitch:-State.VisualAim.Pitch):State.VisualAim.Pitch,0,0));
+    const int32 BarrelIndex=ShotsFired>0?(ShotsFired-1)%2:0;
+    State.LocalMuzzle = bSource?OVWeaponGeometry::MuzzleLocal(Definition,LogicalAim,Extent,false,BarrelIndex)
+        :OVWeaponGeometry::MuzzleLocal(Definition.LocalPosition,LogicalAim,Length,bFixedVLS);
     State.LastShotId = ShotId;
     State.LastShotTime = ShotTime;
     // Game time keeps a paused muzzle flash frozen. Opening a viewer cannot fire or re-trigger it.
     State.bFlashVisible = !bDestroyed && ShotId > 0 && ShotTime >= 0 && GameTime >= ShotTime && GameTime - ShotTime < .12;
-    if (Flash) Flash->SetVisibility(State.bFlashVisible);
+    if (Flash) Flash->SetVisibility(State.bFlashVisible&&(!bSource||BarrelIndex==0));
+    if (SecondFlash) SecondFlash->SetVisibility(State.bFlashVisible&&bSource&&BarrelIndex==1);
     if (Barrel) Barrel->SetVisibility(!bDestroyed);
     if (BodyMaterial && (!bColorInitialized || bLastDestroyed != bDestroyed || bLastFriendly != bFriendly))
     {

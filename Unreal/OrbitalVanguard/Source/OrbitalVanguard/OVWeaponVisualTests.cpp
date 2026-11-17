@@ -239,4 +239,65 @@ bool FOVWeaponVisualProfileSwapTest::RunTest(const FString&)
     TestTrue(TEXT("Display follows new actual aim"), R.Visual(2).VisualAim.Equals(R.Gun(2).LocalAim));
     return true;
 }
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(FOVBF120LiveTrialTest, "OrbitalVanguard.Presentation.BF120TrialAlternatingMuzzles",
+    EAutomationTestFlags::EditorContext | EAutomationTestFlags::EngineFilter)
+bool FOVBF120LiveTrialTest::RunTest(const FString&)
+{
+    OVWeaponVisualTest::FRange R;
+    auto& Def=R.A->Systems->Layout->WeaponMounts[0];Def.PresentationProfile=TEXT("BF120Trial");
+    if (!TestTrue(TEXT("Source trial assets available"),OVWeaponGeometry::HasBF120Trial(Def))) return false;
+    R.Accurate(0);R.A->RefreshWeaponVisuals();
+    TArray<UOVWeaponVisualComponent*> Visuals;R.A->GetComponents(Visuals);
+    auto** Found=Visuals.FindByPredicate([&](const UOVWeaponVisualComponent* V){return V&&V->GetMountId()==Def.WeaponId;});
+    if(!TestNotNull(TEXT("Source trial visual exists"),Found?*Found:nullptr))return false;
+    TArray<USceneComponent*> Children;(*Found)->GetChildrenComponents(true,Children);
+    int32 SourceMeshes=0;
+    for(auto* C:Children)if(const auto* M=Cast<UStaticMeshComponent>(C);M&&M->GetStaticMesh()&&M->GetStaticMesh()->GetPathName().Contains(TEXT("/BF120Trial/")))++SourceMeshes;
+    TestEqual(TEXT("All three authored trial parts are present"),SourceMeshes,3);
+    FVector Origins[2];
+    for(int32 Shot=0;Shot<2;++Shot)
+    {
+        R.Gun(0).Cooldown=0;R.Combat->RequestFire(R.A,Def.WeaponId);R.Combat->Simulate(1.f/120.f);
+        if(!TestTrue(TEXT("Actual cannon projectile exists"),R.Combat->Attacks.Num()>0))return false;
+        Origins[Shot]=R.Combat->Attacks.Last().Origin;const auto State=R.Visual(0);
+        TestTrue(TEXT("Projectile starts at current source muzzle"),Origins[Shot].Equals(State.WorldMuzzle,.01));
+        int32 VisibleFlashes=0;
+        for(auto* C:Children)if(const auto* M=Cast<UStaticMeshComponent>(C);M&&M->GetStaticMesh()&&M->GetStaticMesh()->GetPathName()==TEXT("/Engine/BasicShapes/Sphere.Sphere")&&M->IsVisible())
+        {++VisibleFlashes;TestTrue(TEXT("Visible flash is at actual projectile origin"),M->GetComponentLocation().Equals(Origins[Shot],.1));}
+        TestEqual(TEXT("Only the firing barrel flashes"),VisibleFlashes,1);
+    }
+    TestEqual(TEXT("Two requests cause exactly two shots"),R.Combat->ShotCount,2);
+    TestFalse(TEXT("Successive shots use different barrels"),Origins[0].Equals(Origins[1],.1));
+    for (const float Side : {1.f, -1.f})
+    {
+        Def.LocalPosition.Z=Side*30.f;
+        R.A->SetActorRotation(FRotator(7,31,13));
+        for (const FRotator Aim : {FRotator(0,0,0), FRotator(20,75,0), FRotator(-10,-120,0)})
+        {
+            R.Gun(0).LocalAim=Aim;R.A->RefreshWeaponVisuals();
+            Visuals.Reset();R.A->GetComponents(Visuals);
+            Found=Visuals.FindByPredicate([&](const UOVWeaponVisualComponent* V){return V&&V->GetMountId()==Def.WeaponId;});
+            if(!TestNotNull(TEXT("Rebuilt visual exists"),Found?*Found:nullptr))return false;
+            Children.Reset();(*Found)->GetChildrenComponents(true,Children);
+            int32 Index=0;
+            for(auto* C:Children)if(const auto* M=Cast<UStaticMeshComponent>(C);M&&M->GetStaticMesh()&&M->GetStaticMesh()->GetPathName()==TEXT("/Engine/BasicShapes/Sphere.Sphere"))
+            {
+                const FVector Expected=R.A->GetActorTransform().TransformPosition(OVWeaponGeometry::MuzzleLocal(Def,Aim,R.A->Systems->Layout->LocalHalfExtent,false,Index));
+                TestTrue(TEXT("Source flash follows both actual muzzle transforms"),M->GetComponentLocation().Equals(Expected,.1));
+                ++Index;
+            }
+            TestEqual(TEXT("Source model has two muzzle positions"),Index,2);
+        }
+    }
+    R.Gun(0).Profile.Kind=EOVAttackKind::GuidedMissile;R.A->RefreshWeaponVisuals();
+    Visuals.Reset();R.A->GetComponents(Visuals);
+    Found=Visuals.FindByPredicate([&](const UOVWeaponVisualComponent* V){return V&&V->GetMountId()==Def.WeaponId;});
+    if(!TestNotNull(TEXT("Incompatible profile has fallback visual"),Found?*Found:nullptr))return false;
+    Children.Reset();(*Found)->GetChildrenComponents(true,Children);
+    for(auto* C:Children)if(const auto* M=Cast<UStaticMeshComponent>(C);M&&M->GetStaticMesh())
+        TestFalse(TEXT("Missile does not use cannon trial parts"),M->GetStaticMesh()->GetPathName().Contains(TEXT("/BF120Trial/")));
+    const FVector Fallback=OVWeaponGeometry::MuzzleLocal(Def.LocalPosition,R.Gun(0).LocalAim,OVWeaponGeometry::BarrelLength(R.A->Systems->Layout->LocalHalfExtent,Def.Tier,false),false);
+    TestTrue(TEXT("Missile keeps its usual gameplay muzzle"),R.A->GetWeaponMuzzleWorld(Def.WeaponId).Equals(R.A->GetActorTransform().TransformPosition(Fallback),.01));
+    return true;
+}
 #endif

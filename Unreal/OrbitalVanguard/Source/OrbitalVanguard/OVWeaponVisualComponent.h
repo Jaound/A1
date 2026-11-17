@@ -14,6 +14,9 @@ namespace OVWeaponGeometry
     ORBITALVANGUARD_API float BarrelLength(const FVector& HullHalfExtent, float Tier, bool bPointDefense);
     ORBITALVANGUARD_API FVector MuzzleLocal(FVector MountPosition, FRotator Aim,
         float BarrelLength, bool bFixedVLS);
+    ORBITALVANGUARD_API bool HasBF120Trial(const FOVWeaponMountDefinition& Definition);
+    ORBITALVANGUARD_API FVector MuzzleLocal(const FOVWeaponMountDefinition& Definition, FRotator Aim,
+        FVector HullHalfExtent, bool bFixedVLS, int32 BarrelIndex);
 }
 
 USTRUCT(BlueprintType)
@@ -43,7 +46,7 @@ public:
     UOVWeaponVisualComponent();
     void Initialize(const FOVWeaponMountDefinition& Definition, FVector HullHalfExtent);
     void Synchronize(FRotator LogicalAim, bool bFixedVLS, bool bDestroyed, bool bFriendly,
-        int32 ShotId, double ShotTime, double GameTime);
+        int32 ShotId, double ShotTime, double GameTime, int32 ShotsFired = 0);
     FOVWeaponVisualState ReadState() const;
     FName GetMountId() const { return Definition.WeaponId; }
     bool Matches(const FOVWeaponMountDefinition& Other, FVector HullHalfExtent) const;
@@ -60,9 +63,10 @@ private:
     UPROPERTY() TObjectPtr<USceneComponent> PitchPivot;
     UPROPERTY() TObjectPtr<UStaticMeshComponent> Barrel;
     UPROPERTY() TObjectPtr<UStaticMeshComponent> Flash;
+    UPROPERTY() TObjectPtr<UStaticMeshComponent> SecondFlash;
     UPROPERTY() TObjectPtr<UMaterialInstanceDynamic> BodyMaterial;
     UPROPERTY() TArray<TObjectPtr<USceneComponent>> Parts;
     USceneComponent* MakePivot(USceneComponent* Parent);
     UStaticMeshComponent* MakeMesh(USceneComponent* Parent, const TCHAR* Asset,
-        FVector Position, FVector Scale, FRotator Rotation = FRotator::ZeroRotator);
+        FVector Position, FVector Scale, FRotator Rotation = FRotator::ZeroRotator, bool bUseBodyMaterial = true);
 };

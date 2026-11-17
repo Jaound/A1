@@ -36,10 +36,11 @@ FVector MountOrigin(const FOVCombatShipState& State, const FOVWeaponMountDefinit
 {
     const FOVCombatMountState* Mount = State.Mounts.FindByPredicate(
         [&Def](const FOVCombatMountState& M) { return M.MountId == Def.WeaponId; });
-    const FVector Local = OVWeaponGeometry::MuzzleLocal(Def.LocalPosition,
-        Mount ? Mount->LocalAim : FRotator::ZeroRotator,
-        OVWeaponGeometry::BarrelLength(State.Ship->Systems->Layout->LocalHalfExtent, Def.Tier, false),
-        Mount && Mount->Profile.Kind == EOVAttackKind::Missile);
+    FOVWeaponMountDefinition EffectiveDef = Def;
+    if (!Mount || Mount->Profile.Kind != EOVAttackKind::Cannon) EffectiveDef.PresentationProfile = NAME_None;
+    const FVector Local = OVWeaponGeometry::MuzzleLocal(EffectiveDef,Mount ? Mount->LocalAim : FRotator::ZeroRotator,
+        State.Ship->Systems->Layout->LocalHalfExtent,Mount && Mount->Profile.Kind == EOVAttackKind::Missile,
+        Mount ? Mount->ShotsFired%2 : 0);
     return State.Ship->GetActorTransform().TransformPosition(Local);
 }
 

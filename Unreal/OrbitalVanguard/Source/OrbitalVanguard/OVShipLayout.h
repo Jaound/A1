@@ -51,6 +51,8 @@ struct ORBITALVANGUARD_API FOVWeaponMountDefinition
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Weapon") float Tier = 1;
     // Optional profile-specific explosion coefficient. Zero preserves legacy tier behavior.
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Weapon") float ExplosionTierCoefficient = 0;
+    // Optional presentation/geometry profile. NAME_None preserves the existing muzzle path.
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Weapon") FName PresentationProfile = NAME_None;
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Weapon") FVector LocalPosition = FVector::ZeroVector;
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Weapon") float MaxHP = 200;
 };
