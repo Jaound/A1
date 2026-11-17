@@ -1,5 +1,7 @@
 # 최신 작업 — 플레이 UI R2 진행 중
 
+**기체 위치 찾기:** 생존 아군 기체를 선택해 위치 찾기를 누르면 비행 중에는 해당 개체 위치, 보관 중에는 현재 모함 위치를 카메라 중심으로 사용한다. 함선 추적을 해제하고 판정·기체 상태는 바꾸지 않는다. 상세창/기체 화면이 숨겨진 경우 명령을 차단한다. 빌드 `PlayUI_R2_R_Build.log`, 자동86/86 `PlayUI_R2_R_Automation.log`, 창 API103/103 `PlayUI_R2_R_ValidatePlayWindows.log`, 2A API57/57 성공. 실제 마우스와 새 버튼 렌더는 미확인. 다음 작업은 함대 카드 구분·소형함 카드·창 프레임·두 핀 상세·무장뷰·알림·원본 접합 및 전체 검증이다.
+
 **기체 필터·원본 MM48 성분 분리:** 격납고에 전체/생존/손상(선체 또는 쉴드)/손실 필터를 추가했다. 필터 변경은 페이지를 초기화하며 기체 데이터에는 쓰지 않는다. 빌드 `PlayUI_R2_O_Build.log` 성공, 창 API101/101(`PlayUI_R2_P_ValidatePlayWindows.log`): 실제 기체에 시험 피해·완파 후 손상/손실의 포함·제외와 조회 불변을 확인했다. 1280 렌더23/23([화면](validation/PlayUIR2/기체필터_1280.png)). 직접 입력·대량 성능은 미검증이다.
 
 MM48 원본의 실제 연결 성분 3개를 원본 변경 없이 Blender 복사본 `Documents/OrbitalVanguardAssets/Prepared/PlayUI_R2_MM48_loose_components/MM48_ConnectedComponents.blend`로 분리·UV 보존했다([보고](validation/PlayUIR2/MM48_분리조사.json)). 가장 큰 성분이 전체 받침과 발사기 영역을 포함하므로 yaw/pitch 관절 분리나 UE 적용 완료가 아니다. 다음: 선체와 무장 접합부의 근거 있는 수작업 분리·정합, 함대 썸네일, 소형함 카드, 이동/리사이즈 창, 독립 핀·무장뷰·사건 알림과 종합 검증.

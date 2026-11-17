@@ -118,6 +118,16 @@ void AOVHUD::NotifyHitBoxClick(FName N)
  if(N==TEXT("AircraftPrevious")) { AircraftPage=FMath::Max(0,AircraftPage-1);return; }
  if(N==TEXT("AircraftNext")) { ++AircraftPage;return; }
  if(N==TEXT("AircraftFilter")) { AircraftFilter=(AircraftFilter+1)%4;AircraftPage=0;return; }
+ if(N==TEXT("AircraftLocate")) {
+  auto* PC=Cast<AOVController>(PlayerOwner);auto* Carrier=GetWorld()->GetSubsystem<UOVCarrierSubsystem>();
+  if(PC&&PC->Selected&&PC->Selected->bFriendly&&Carrier&&bDetailsOpen&&!bMinimized&&bHangarView&&bAircraftGrid&&!PC->bDeveloperMode&&!bHeroPanelOpen) {
+   if(const auto* A=Carrier->Aircraft.FindByPredicate([&](const FOVAircraftRecord& Item){return Item.AircraftId==SelectedAircraftId&&Item.Carrier==PC->Selected&&Item.FactionId==PC->Selected->Systems->FactionId&&Item.State!=EOVAircraftState::Wrecked;})) {
+    PC->bFollow=false;PC->CameraFocus=A->State==EOVAircraftState::Stored?PC->Selected->GetActorLocation():A->Position;
+    PC->UpdateCamera();PC->LastAction=TEXT("기체 위치로 이동");
+   }
+  }
+  return;
+ }
  if(N.ToString().StartsWith(TEXT("AircraftCard_"))) {
   const int32 Id=FCString::Atoi(*N.ToString().Mid(13));
   auto* PC=Cast<AOVController>(PlayerOwner);
@@ -299,6 +309,7 @@ void AOVHUD::DrawDetails()
     if(const auto* A=Carrier->Aircraft.FindByPredicate([&](const FOVAircraftRecord& Item){return Item.AircraftId==SelectedAircraftId&&Item.Carrier==PC->Selected&&Item.FactionId==S->FactionId;})) {
      const TCHAR* Labels[]={TEXT("보관"),TEXT("출격"),TEXT("귀환"),TEXT("도킹 대기"),TEXT("관제 상실"),TEXT("완파")};
      DrawText(FString::Printf(TEXT("선택 기체 · %s · 내구 %.0f"),Labels[FMath::Clamp(int32(A->State),0,5)],A->HP),Ink,X+16,Y+258,GEngine->GetSmallFont());
+     if(PC->Selected->bFriendly&&A->State!=EOVAircraftState::Wrecked)Button(TEXT("AircraftLocate"),TEXT("위치 찾기"),X+W-105,Y+250,90);
     }
    }
   }

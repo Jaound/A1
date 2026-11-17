@@ -221,6 +221,10 @@ def tick(_dt):
             card='AircraftCard_'+str(state['next_aircraft_id'])
             hit_button(hud,card);hud.execute_ui_action(card)
             check('WINDOW-AIRCRAFT-PAGE-SELECTS-STABLE-ID',p(hud,'selected_aircraft_id')==state['next_aircraft_id'])
+            chosen=next(a for a in p(p(pc,'carrier'),'aircraft') if p(a,'aircraft_id')==state['next_aircraft_id'])
+            expected=p(pc,'selected').get_actor_location() if p(chosen,'state')==unreal.OVAircraftState.STORED else p(chosen,'position')
+            hud.execute_ui_action('AircraftLocate')
+            check('WINDOW-AIRCRAFT-LOCATE-ACTUAL', (p(pc,'camera_focus')-expected).length()<.1 and not p(pc,'follow'))
             check('WINDOW-AIRCRAFT-PAGE-READONLY',observe_combat(pc)==state['mission_observation'])
             for _ in range(3):hud.execute_ui_action('AircraftFilter')
             state.update(phase=112,at=time.monotonic());return
@@ -248,6 +252,8 @@ def tick(_dt):
             check('WINDOW-AIRCRAFT-FILTER-AFTER-DAMAGE-READONLY',observe_combat(pc)==state['mission_observation'])
             hud.execute_ui_action('AircraftFilter')
             hud.execute_ui_action('Deck1')
+            pc.set_editor_property('camera_focus',unreal.Vector(987,654,321));hud.execute_ui_action('AircraftLocate')
+            check('WINDOW-AIRCRAFT-LOCATE-HIDDEN-BLOCKED',(p(pc,'camera_focus')-unreal.Vector(987,654,321)).length()<.1)
             state.update(phase=12,at=time.monotonic());return
         if state['phase']==12:
             for action in ('DetailsInteriorToggle','InteriorToggle'):
