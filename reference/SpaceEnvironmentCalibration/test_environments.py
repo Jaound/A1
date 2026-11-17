@@ -165,6 +165,34 @@ class Rules(unittest.TestCase):
         b.t=a["emp_until"]+.01;b.move_pods(.5)
         self.assertNotEqual(a["pos"],pos)
 
+    def test_environment_core_wreck_attributed_once(self):
+        b=self.battle("radiation");s=b.ships[0]
+        b.destroy_facility(s,"core","radiation")
+        b.wreck(s,"radiation")
+        self.assertEqual(b.metric["environment_wrecks"],1)
+        self.assertEqual(b.metric["wreck_env_radiation_core"],1)
+
+    def test_asteroid_contact_damage_has_cooldown(self):
+        b=EnvironmentBattle(["assault"],["assault"],171800,hazard="asteroid",heroes=False,avoidance=False)
+        s,v=b.ships;s.pos=[-100,0,0];v.pos=[250,0,0]
+        b.bodies=[{"id":0,"pos":[0,0,0],"radius":50,"hp":1000,"destroyed":False}]
+        b.knowledge[0]={v.uid:{"id":v.uid,"kind":v.kind,"position":tuple(v.pos),"shield_active":True,"observed_mounts":()}}
+        for _ in range(4):b.update_motion(s,.5);b.t+=.5
+        self.assertGreater(b.metric["env_collisions"],0)
+        self.assertGreater(b.metric["env_damage_input_asteroid_collision"],0)
+        damage=b.metric["env_damage_input_asteroid_collision"]
+        b.update_motion(s,.5)
+        self.assertEqual(b.metric["env_damage_input_asteroid_collision"],damage)
+
+    def test_radiation_time_integral(self):
+        doses=[]
+        for step,count in ((1,1),(.5,2)):
+            b=self.battle("radiation")
+            for s in b.ships:s.pos=[0,0,0]
+            for _ in range(count):b.environment(step)
+            doses.append(b.metric["env_damage_input_radiation"])
+        self.assertAlmostEqual(*doses)
+
     def test_unit_identity_short_linked(self):
         b=EnvironmentBattle(legacy.roster(100),legacy.roster(100),171800,hazard="flare",
                             mode="assault",heroes=True,duration=10,retreat=False)

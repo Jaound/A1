@@ -213,7 +213,20 @@ class EnvironmentBattle(legacy.Battle):
                 if u.hp == 0: u.state = "dead"
         if ship.hp <= 0: self.wreck(ship, cause)
 
+    def destroy_facility(self, ship, role, origin="external", chain=None):
+        old = getattr(self,"environment_damage_origin",None)
+        if origin in ("radiation","flare","asteroid_collision"):
+            self.environment_damage_origin = origin
+        try:
+            return super().destroy_facility(ship,role,origin,chain)
+        finally:
+            self.environment_damage_origin = old
+
     def wreck(self, ship, cause):
+        if ship.dead: return
+        root = getattr(self,"environment_damage_origin",None)
+        if root and not cause.startswith("env_"): cause = "env_"+root+"_"+cause
+        elif cause in ("radiation","flare","asteroid_collision"): cause = "env_"+cause
         # External aircraft survive the carrier wreck as control-lost records.
         outside = [a for a in self.aircraft.get(ship.uid, []) if a["hp"] > 0 and not a["docked"]] if hasattr(self, "aircraft") else []
         super().wreck(ship, cause)
@@ -301,6 +314,20 @@ class EnvironmentBattle(legacy.Battle):
                 self.wreck(ship, "env_blackhole")
                 return
         elif self.bodies:
+            seeking_cover = False
+            # Outside a warned pulse, move around permanent shelter to regain LOS.
+            if self.avoidance and ship.eff("engine") and ship.ftl is None and self.t >= ship.order_until and ship.target and ship.target.alive():
+                block = self.blockers(old,ship.target.pos)
+                if block and math.isinf(block[2]["hp"]):
+                    body = block[2]
+                    margin = body["radius"]+ship.d["radius"]+35.
+                    candidates = [add(body["pos"],off) for off in ([0,0,margin],[0,0,-margin],[0,margin,0],[0,-margin,0])]
+                    candidates = [point for point in candidates if self.blockers(old,point,ship.d["radius"]*.65) is None and self.blockers(point,ship.target.pos) is None]
+                    if candidates:
+                        goal=min(candidates,key=lambda point:math.dist(old,point)+math.dist(point,ship.target.pos))
+                        ship.vel=mul(unit(sub(goal,old)),ship.d["speed"]*.7*ship.eff("engine"))
+                        desired_velocity=list(ship.vel);proposed=add(old,mul(ship.vel,dt))
+                        self.metric["env_los_reposition_steps"]+=1
             if self.hazard == "flare" and self.avoidance and ship.eff("engine") and ship.ftl is None and self.t >= ship.order_until:
                 current_wave = max(0, math.floor((self.t-self.params["warning"])/self.params["period"]))
                 for wave in (current_wave, current_wave+1):
