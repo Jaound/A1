@@ -1,0 +1,108 @@
+{
+  "passed": true,
+  "kind": "PIE 렌더와 UI API",
+  "physical_input": false,
+  "requested_size": [
+    1280,
+    720
+  ],
+  "captures": [
+    {
+      "view": "보급수리함_모델",
+      "path": "C:/Users/user/source/repos/A1/Unreal/OrbitalVanguard/Saved/Validation\\PlayUI\\20261118_082415\\01_보급수리함_모델.png",
+      "viewport_size": [
+        1280,
+        722
+      ],
+      "exists": true
+    },
+    {
+      "view": "채굴선_모델",
+      "path": "C:/Users/user/source/repos/A1/Unreal/OrbitalVanguard/Saved/Validation\\PlayUI\\20261118_082415\\02_채굴선_모델.png",
+      "viewport_size": [
+        1280,
+        722
+      ],
+      "exists": true
+    },
+    {
+      "view": "수송선_모델",
+      "path": "C:/Users/user/source/repos/A1/Unreal/OrbitalVanguard/Saved/Validation\\PlayUI\\20261118_082415\\03_수송선_모델.png",
+      "viewport_size": [
+        1280,
+        722
+      ],
+      "exists": true
+    }
+  ],
+  "checks": [
+    {
+      "id": "PLAY-WINDOW",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "SOURCE-HULL-CALIBRATION-보급수리함_모델",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "SOURCE-HULL-SPAWN-보급수리함_모델",
+      "passed": true,
+      "detail": "시험 함선 1척 생성 · 최초 재고/병력만 공급 · 캠페인 획득 아님"
+    },
+    {
+      "id": "SOURCE-HULL-IN-SCENE-보급수리함_모델",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "RENDER-보급수리함_모델",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "SOURCE-HULL-CALIBRATION-채굴선_모델",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "SOURCE-HULL-SPAWN-채굴선_모델",
+      "passed": true,
+      "detail": "시험 함선 1척 생성 · 최초 재고/병력만 공급 · 캠페인 획득 아님"
+    },
+    {
+      "id": "SOURCE-HULL-IN-SCENE-채굴선_모델",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "RENDER-채굴선_모델",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "SOURCE-HULL-CALIBRATION-수송선_모델",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "SOURCE-HULL-SPAWN-수송선_모델",
+      "passed": true,
+      "detail": "시험 함선 1척 생성 · 최초 재고/병력만 공급 · 캠페인 획득 아님"
+    },
+    {
+      "id": "SOURCE-HULL-IN-SCENE-수송선_모델",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "RENDER-수송선_모델",
+      "passed": true,
+      "detail": ""
+    }
+  ],
+  "errors": [],
+  "preview_settings_restored": true,
+  "elapsed_seconds": 20.95300000000134
+}

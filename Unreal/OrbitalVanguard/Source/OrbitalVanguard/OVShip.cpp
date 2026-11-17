@@ -192,7 +192,10 @@ void AOVShip::ApplyPresentationHull(FName DefinitionId)
         DefinitionId==TEXT("air_defense")?TEXT("/Game/Presentation/Ships/Air_DefenseFull/SM_Hull.SM_Hull"):
         DefinitionId==TEXT("frigate")?TEXT("/Game/Presentation/Ships/FrigateFull/SM_Hull.SM_Hull"):
         DefinitionId==TEXT("cruiser")?TEXT("/Game/Presentation/Ships/CruiserFull/SM_Hull.SM_Hull"):
-        DefinitionId==TEXT("radar")?TEXT("/Game/Presentation/Ships/RadarFull/SM_Hull.SM_Hull"):nullptr;
+        DefinitionId==TEXT("radar")?TEXT("/Game/Presentation/Ships/RadarFull/SM_Hull.SM_Hull"):
+        DefinitionId==TEXT("repair")?TEXT("/Game/Presentation/Ships/RepairFull/SM_Hull.SM_Hull"):
+        DefinitionId==TEXT("mining")?TEXT("/Game/Presentation/Ships/MiningFull/SM_Hull.SM_Hull"):
+        DefinitionId==TEXT("transport")?TEXT("/Game/Presentation/Ships/TransportFull/SM_Hull.SM_Hull"):nullptr;
     const TCHAR* MaterialPath=bCorvette?TEXT("/Game/Presentation/PC14Full/M_PC14_FullReadable.M_PC14_FullReadable"):
         DefinitionId==TEXT("vector")?TEXT("/Game/Presentation/Ships/VectorFull/M_Readable.M_Readable"):
         DefinitionId==TEXT("bastion")?TEXT("/Game/Presentation/Ships/BastionFull/M_Readable.M_Readable"):
@@ -202,7 +205,10 @@ void AOVShip::ApplyPresentationHull(FName DefinitionId)
         DefinitionId==TEXT("air_defense")?TEXT("/Game/Presentation/Ships/Air_DefenseFull/M_Readable.M_Readable"):
         DefinitionId==TEXT("frigate")?TEXT("/Game/Presentation/Ships/FrigateFull/M_Readable.M_Readable"):
         DefinitionId==TEXT("cruiser")?TEXT("/Game/Presentation/Ships/CruiserFull/M_Readable.M_Readable"):
-        DefinitionId==TEXT("radar")?TEXT("/Game/Presentation/Ships/RadarFull/M_Readable.M_Readable"):nullptr;
+        DefinitionId==TEXT("radar")?TEXT("/Game/Presentation/Ships/RadarFull/M_Readable.M_Readable"):
+        DefinitionId==TEXT("repair")?TEXT("/Game/Presentation/Ships/RepairFull/M_Readable.M_Readable"):
+        DefinitionId==TEXT("mining")?TEXT("/Game/Presentation/Ships/MiningFull/M_Readable.M_Readable"):
+        DefinitionId==TEXT("transport")?TEXT("/Game/Presentation/Ships/TransportFull/M_Readable.M_Readable"):nullptr;
     if(!MeshPath||!MaterialPath)return;
     auto* Mesh=LoadObject<UStaticMesh>(nullptr,MeshPath,nullptr,LOAD_NoWarn);
     auto* Material=LoadObject<UMaterialInterface>(nullptr,MaterialPath,nullptr,LOAD_NoWarn);
