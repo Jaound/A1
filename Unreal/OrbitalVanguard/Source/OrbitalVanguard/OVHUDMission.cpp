@@ -10,7 +10,7 @@
 
 bool AOVHUD::IsOverMissionPanel(float X,float Y) const
 {
- const auto* PC=Cast<AOVController>(PlayerOwner);if(!PC||PC->bDeveloperMode)return false;
+ const auto* PC=Cast<AOVController>(PlayerOwner);if(!PC||PC->bDeveloperMode||bSceneMenuOpen)return false;
  const auto* Mission=GetWorld()->GetSubsystem<UOVMissionSubsystem>();
  const FVector2D P(X/UIScale,Y/UIScale);
  return Mission&&Mission->bEnabled&&P.X>=212&&P.X<=514&&P.Y>=76&&P.Y<=302;
@@ -36,7 +36,7 @@ void AOVHUD::DrawMission()
   Pair(TEXT("MissionDefendShield"),TEXT("쉴드실 수호"),TEXT("MissionDefendBridge"),TEXT("함교 수호"),54);
   Pair(TEXT("MissionShield"),TEXT("쉴드실 탈환"),TEXT("MissionBridge"),TEXT("함교 탈환"),88);
  } else DrawText(TEXT("함대만 교전 중"),Ink,X+12,Y+64,GEngine->GetSmallFont());
- Pair(TEXT("InteriorMissionToggle"),TEXT("선내 지도"),TEXT("HeroPanel"),TEXT("영웅 위치"),158);
+ Pair(TEXT("InteriorMissionToggle"),TEXT("선내 지도"),TEXT("MissionHeroPanel"),TEXT("영웅 위치"),158);
  const auto Score=Mission->GetScore();
  DrawText(FString::Printf(TEXT("진입 %d  ·  회수 %d"),Score.Entered,Score.Returned),Ink,X+12,Y+194,GEngine->GetSmallFont());
  if(Mission->Result!=EOVMissionResult::Ongoing) {

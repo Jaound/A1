@@ -17,6 +17,20 @@ def check(key, value, detail=''):
     if not value: raise AssertionError(key + ': ' + str(detail))
 def snapshot(pc):
     return [(s.get_path_name(), p(p(s, 'systems'), 'hull_hp'), p(p(s, 'systems'), 'shield'), len(s.get_weapon_visual_states())) for s in p(pc, 'ships')]
+def hit_button(hud, action):
+    center=hud.get_action_center(action)
+    hit=str(hud.get_hit_action_at_canvas_point(center))
+    check('WINDOW-UNIQUE-'+action.upper()+'-HIT',center.x>=0 and center.y>=0 and hit==action,
+          {'center':(center.x,center.y),'hit':hit})
+
+def observe_combat(pc):
+    combat,wing,pd=p(pc,'combat'),p(pc,'carrier'),p(pc,'point_defense')
+    return {'ships':snapshot(pc),
+            'clocks':tuple(p(s,'game_time') for s in (combat,wing,pd)),
+            'shots':tuple(p(s,'shot_count') for s in (combat,wing,pd)),
+            'aircraft':[(p(a,'aircraft_id'),str(p(a,'state')),p(a,'hp'),p(a,'shield')) for a in p(wing,'aircraft')],
+            'forced_mounts':[str(p(combat.get_ship_state(s),'forced_mount')) for s in p(pc,'ships')]}
+
 def finish():
     report['passed'] = not report['errors'] and bool(report['checks'])
     with open(out, 'w', encoding='utf-8') as f: json.dump(report, f, ensure_ascii=False, indent=2)
@@ -138,6 +152,71 @@ def tick(_dt):
             check('WINDOW-DEV-OVERLAY-NO-SIMULATION',snapshot(pc)==before_simulation)
             pc.action('Developer')
             check('WINDOW-DEV-OVERLAY-PREVIEW-RESTORED',hud.has_orbit_preview())
+            # 정상 임무를 시작한 뒤 정지한다. 아래 검사는 출격·귀환 명령 없이
+            # 두 화면의 고유 버튼과 조회가 실제 상태를 바꾸지 않는지 확인한다.
+            pc.action('MissionAttack')
+            if not p(pc,'simulation_paused'):pc.action('Pause')
+            pc.set_editor_property('developer_mode',False)
+            hud.set_hero_panel_open(False);hud.set_details_open(False)
+            hud.execute_ui_action('InteriorClose')
+            state.update(phase=9,at=time.monotonic(),mission_observation=observe_combat(pc));return
+        if state['phase']==9:
+            check('WINDOW-UNIQUE-NORMAL-MISSION-FIXTURE',p(p(pc,'mission'),'enabled') and
+                  p(pc,'simulation_paused') and not p(pc,'developer_mode'))
+            # 같은 명령을 수행해도 표시 위치마다 별도 HitBox가 있어야 한다.
+            for action in ('HeroPanel','MissionHeroPanel'):
+                hit_button(hud,action)
+                hud.execute_ui_action(action)
+                check('WINDOW-UNIQUE-'+action.upper()+'-OPENS',hud.is_hero_panel_open())
+                hud.execute_ui_action(action)
+                check('WINDOW-UNIQUE-'+action.upper()+'-CLOSES',not hud.is_hero_panel_open())
+            hud.execute_ui_action('SceneMenu')
+            state.update(phase=10,at=time.monotonic());return
+        if state['phase']==10:
+            hit_button(hud,'SceneMenu');hit_button(hud,'SceneMenuClose')
+            hud.execute_ui_action('SceneMenuClose')
+            wing=p(pc,'carrier')
+            carriers=[p(c,'carrier') for c in p(wing,'carriers') if p(c,'carrier') and
+                      p(p(p(c,'carrier'),'systems'),'faction_id')==0]
+            check('WINDOW-UNIQUE-REGISTERED-CARRIER-FIXTURE',bool(carriers))
+            pc.select_ship(carriers[0]);hud.execute_ui_action('External');hud.execute_ui_action('HangarView')
+            state.update(phase=11,at=time.monotonic());return
+        if state['phase']==11:
+            check('WINDOW-UNIQUE-SCENE-MENU-CLOSED',hud.get_action_center('SceneMenuClose').x<0)
+            for action in ('HangarLaunchAircraft','HangarRecallAircraft','LaunchAircraft','RecallAircraft'):
+                hit_button(hud,action)
+            check('WINDOW-UNIQUE-HANGAR-OBSERVATION-NO-MUTATION',observe_combat(pc)==state['mission_observation'])
+            hud.execute_ui_action('Deck1')
+            state.update(phase=12,at=time.monotonic());return
+        if state['phase']==12:
+            for action in ('DetailsInteriorToggle','InteriorToggle'):
+                hit_button(hud,action)
+            hud.execute_ui_action('DetailsInteriorToggle')
+            check('WINDOW-UNIQUE-DETAILS-INTERIOR-OPENS',p(hud,'interior_open'))
+            hud.execute_ui_action('InteriorToggle')
+            check('WINDOW-UNIQUE-BASE-INTERIOR-CLOSES',not p(hud,'interior_open'))
+            check('WINDOW-UNIQUE-UI-NO-SHOTS-OR-INVENTORY-MUTATION',observe_combat(pc)==state['mission_observation'])
+            hud.execute_ui_action('InteriorToggle');hud.execute_ui_action('InteriorClear')
+            state.update(phase=13,at=time.monotonic());return
+        if state['phase']==13:
+            # 목록과 지도는 같은 개인을 제어하지만 서로 다른 HitBox를 사용한다.
+            # 여러 인물이 겹칠 수 있으므로 실제 최상단에 노출된 마커를 선택한다.
+            visible=[]
+            for unit in p(p(pc,'interior'),'units'):
+                unit_id=p(unit,'unit_id');action='InteriorMarker_'+str(unit_id)
+                center=hud.get_action_center(action)
+                if center.x>=0 and center.y>=0:
+                    visible.append((unit_id,action,center,str(hud.get_hit_action_at_canvas_point(center))))
+            check('WINDOW-UNIQUE-INTERIOR-MARKERS-REGISTERED',bool(visible),len(visible))
+            exposed=next((entry for entry in visible if entry[1]==entry[3]),None)
+            check('WINDOW-UNIQUE-INTERIOR-MARKER-CENTER-HIT',exposed is not None,
+                  [(entry[1],entry[3]) for entry in visible])
+            unit_id,action,center,hit=exposed
+            hud.execute_ui_action(hit)
+            check('WINDOW-UNIQUE-INTERIOR-MARKER-SELECTS-REAL-UNIT',list(p(hud,'interior_selected_units'))==[unit_id])
+            hud.execute_ui_action(hit)
+            check('WINDOW-UNIQUE-INTERIOR-MARKER-DESELECTS-REAL-UNIT',not list(p(hud,'interior_selected_units')))
+            check('WINDOW-UNIQUE-INTERIOR-MARKER-NO-SIMULATION',observe_combat(pc)==state['mission_observation'])
             finish()
     except Exception:
         report['errors'].append(traceback.format_exc());unreal.log_error(report['errors'][-1]);finish()

@@ -73,7 +73,7 @@ void AOVHUD::DrawPlayHUD()
   Button(TEXT("MissionDefense"),TEXT("방어 임무"),362,108,126);
   Button(TEXT("MissionFleetOnly"),TEXT("함대만 비교"),498,108,132);
   Button(TEXT("RestartScene"),TEXT("현재 장면 재시작"),226,148,190);
-  Button(TEXT("SceneMenu"),TEXT("닫기"),498,148,132,true);
+  Button(TEXT("SceneMenuClose"),TEXT("닫기"),498,148,132,true);
  }
  const int32 PageSize=FMath::Max(2,FMath::FloorToInt((H-255)/58));
  const int32 PageCount=FMath::Max(1,FMath::DivideAndRoundUp(PC->Ships.Num(),PageSize));

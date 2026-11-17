@@ -44,13 +44,10 @@ bool AOVHUD::IsOverPanel(float X,float Y) const
  if(IsOverInteriorPanel(X,Y)) return true;
  if(IsOverMissionPanel(X,Y)) return true;
  if(bDragging||bResizing) return true;
- if(!PC->bDeveloperMode&&PC->Phase2CScenario>=0&&P.X>=212&&P.X<=484&&P.Y>=76&&P.Y<=224)return true;
+ if(!PC->bDeveloperMode&&!bSceneMenuOpen&&PC->Phase2CScenario>=0&&P.X>=212&&P.X<=484&&P.Y>=76&&P.Y<=224)return true;
  if(!PC->bDeveloperMode&&!bHeroPanelOpen&&!bDetailsOpen&&PinnedShips.Num()>0&&P.X>=ViewportPixels.X/UIScale-278&&P.Y>=76&&P.Y<=76+PinnedShips.Num()*170)return true;
- if(!PC->bDeveloperMode) {
-  if(P.Y<62 || P.Y>ViewportPixels.Y/UIScale-160 || (P.X<204 && P.Y<ViewportPixels.Y/UIScale-170) || (bSceneMenuOpen && P.X>=210 && P.X<=650 && P.Y<=205)) return true;
- }
- if(PC->bDeveloperMode && PC->Combat && PC->Combat->bEnabled && PC->Selected && (PC->Selected->bFriendly||PC->bDeveloperMode) && P.X>=10 && P.X<=440 && P.Y>=216 && P.Y<=560) return true;
- if(PC->bDeveloperMode && (P.Y<55 || (PC->Selected&&P.Y>ViewportPixels.Y/UIScale-88) || (P.X<200&&P.Y<210))) return true;
+ // The basic HUD remains visible under the separate developer window.
+ if(P.Y<62 || P.Y>ViewportPixels.Y/UIScale-160 || (P.X<204 && P.Y<ViewportPixels.Y/UIScale-170) || (bSceneMenuOpen && P.X>=210 && P.X<=650 && P.Y<=205)) return true;
  return !PC->bDeveloperMode&&PC->Selected&&bDetailsOpen&&P.X>=WindowPosition.X&&P.X<=WindowPosition.X+WindowSize.X&&P.Y>=WindowPosition.Y&&P.Y<=WindowPosition.Y+(bMinimized?32:WindowSize.Y);
 }
 bool AOVHUD::HasOrbitPreview() const
@@ -104,6 +101,12 @@ bool AOVHUD::HandlePointer(float X,float Y,bool Pressed,bool Down,float Wheel,bo
 }
 void AOVHUD::NotifyHitBoxClick(FName N)
 {
+ // Different rendered buttons need unique hitboxes even when they share a game command.
+ if(N==TEXT("MissionHeroPanel"))N=TEXT("HeroPanel");
+ if(N==TEXT("HangarLaunchAircraft"))N=TEXT("LaunchAircraft");
+ if(N==TEXT("HangarRecallAircraft"))N=TEXT("RecallAircraft");
+ if(N==TEXT("DetailsInteriorToggle"))N=TEXT("InteriorToggle");
+ if(N==TEXT("SceneMenuClose")){bSceneMenuOpen=false;return;}
  if(HandleInteriorAction(N)) return;
  if(N==TEXT("HeroPanel")) { SetHeroPanelOpen(!bHeroPanelOpen);return; }
  if(N==TEXT("MissionBackground")) return;
@@ -239,8 +242,8 @@ void AOVHUD::DrawDetails()
    }
    if(Row==0)DrawText(TEXT("장착된 격납고 없음"),Ink,X+16,Y+88,GEngine->GetSmallFont());
    else {
-    Button(TEXT("LaunchAircraft"),TEXT("출격"),X+16,Y+220,92);
-    Button(TEXT("RecallAircraft"),TEXT("귀환"),X+116,Y+220,92);
+    Button(TEXT("HangarLaunchAircraft"),TEXT("출격"),X+16,Y+220,92);
+    Button(TEXT("HangarRecallAircraft"),TEXT("귀환"),X+116,Y+220,92);
    }
   }
  }
@@ -271,7 +274,7 @@ void AOVHUD::DrawDetails()
   const auto& F=S->Slots[PC->SelectedSlot];const auto& D=L->Slots[PC->SelectedSlot];
   DrawText(FString::Printf(TEXT("%s %s 내구 %.0f/%.0f 인원 %.0f/%.0f"),*(PC->bDeveloperMode?F.SlotId.ToString():FString(TEXT("시설"))),*Facility(D.Facility),F.HP,D.MaxFacilityHP,F.Crew,D.RequiredCrew),Ink,X+10,Y+322,GEngine->GetSmallFont());
   if(PC->bDeveloperMode)DrawText(S->GetSlotStatus(F.SlotId).Left(45),Accent,X+10,Y+341,GEngine->GetSmallFont());
-  else Button(TEXT("InteriorToggle"),TEXT("선내 작전 열기"),X+10,Y+390,150);
+  else Button(TEXT("DetailsInteriorToggle"),TEXT("선내 작전 열기"),X+10,Y+390,150);
  }
  if(Reveal)DrawText(FString::Printf(TEXT("엔진 %.0f%% 쉴드 %.0f%% 레이더 %.0f%%"),100*S->GetEfficiency(EOVFacilityType::Engine),100*S->GetEfficiency(EOVFacilityType::ShieldControl),100*S->GetEfficiency(EOVFacilityType::Radar)),Ink,X+10,Y+362,GEngine->GetSmallFont());
  else DrawText(TEXT("적 내부 정보 숨김 · 관측된 외장만 표시"),Ink,X+10,Y+362,GEngine->GetSmallFont());

@@ -43,6 +43,7 @@ bool AOVHUD::IsOverInteriorPanel(float X,float Y) const
 
 bool AOVHUD::HandleInteriorAction(FName Action)
 {
+ if(Action.ToString().StartsWith(TEXT("InteriorMarker_")))Action=FName(*(TEXT("InteriorUnit_")+Action.ToString().RightChop(15)));
  const FString Name=Action.ToString();
  if(!Name.StartsWith(TEXT("Interior"))) return false;
  auto* PC=Cast<AOVController>(PlayerOwner);
@@ -246,7 +247,11 @@ void AOVHUD::DrawInterior()
    DrawRect(FLinearColor(.06f,.1f,.14f),P.X-9,P.Y+14,18,2);
    DrawRect(C,P.X-9,P.Y+14,18*FMath::Clamp(U.HP/FMath::Max(1.f,U.MaxHP),0.f,1.f),2);
   }
-  if(U.FactionId==0)AddHitBox(FVector2D(P.X-11,P.Y-16)*UIScale,FVector2D(24,34)*UIScale,FName(*FString::Printf(TEXT("InteriorUnit_%d"),U.UnitId)),true,205);
+  if(U.FactionId==0) {
+   const FName Marker(*FString::Printf(TEXT("InteriorMarker_%d"),U.UnitId));
+   AddHitBox(FVector2D(P.X-11,P.Y-16)*UIScale,FVector2D(24,34)*UIScale,Marker,true,215);
+   ActionCenters.Add(Marker,P);
+  }
  }
  const int32 SlotIndex=L->GetSlotIndex(InteriorTargetSlot);
  if(L->Slots.IsValidIndex(SlotIndex)&&Ship->Systems->Slots.IsValidIndex(SlotIndex))
