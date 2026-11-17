@@ -57,4 +57,6 @@ private:
     FString OutputDirectory;
     FString Label;
     FString Failure;
+    FString UIMode=TEXT("play");
+    int32 LastUIStage=-1;
 };

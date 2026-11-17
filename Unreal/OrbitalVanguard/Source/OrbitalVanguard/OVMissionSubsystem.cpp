@@ -419,7 +419,18 @@ bool UOVMissionSubsystem::HandleAction(FName Action)
     if(Action==TEXT("MissionDefense"))return StartMission(PC,EOVMissionMode::Defense);
     if(Action==TEXT("MissionFleetOnly"))return StartMission(PC,EOVMissionMode::FleetOnly);
     if(!bEnabled||!PC)return false;
-    if(Action==TEXT("MissionRestart")||Action==TEXT("RestartScene"))return StartMission(PC,Mode,Seed,AttackHeroCount,DefenseHeroCount,bUseShuttle);
+    if(Action==TEXT("MissionRestart")||Action==TEXT("RestartScene"))
+    {
+        // Restarting the example fixture would detach the owned roster and silently replace its team.
+        // Keep the actual operation and transport state until recovery and explicit roster-room departure.
+        if(bUsesOwnedRoster)
+        {
+            Status=TEXT("재시작 보류 · 회수 후 편성실에서 재출전하세요");
+            PC->LastAction=Status;
+            return true;
+        }
+        return StartMission(PC,Mode,Seed,AttackHeroCount,DefenseHeroCount,bUseShuttle);
+    }
     bool Handled=true;
     if(Action==TEXT("MissionPods")){if(Mode==EOVMissionMode::Attack)Dispatch(false);}
     else if(Action==TEXT("MissionShuttle")){if(Mode==EOVMissionMode::Attack)Dispatch(true);}

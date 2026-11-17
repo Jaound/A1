@@ -65,44 +65,21 @@ void AOVHUD::DrawPhase2C()
   DrawLine(P.X,P.Y,Q.X,Q.Y,Color,E.bHit?2:1);
   if(E.bDestroyed)DrawText(TEXT("요격 성공"),Color,Q.X,Q.Y-14,GEngine->GetSmallFont());
  }
- if(!PC->bDeveloperMode&&PC->Selected&&PC->Selected->Systems&&PC->Selected->Systems->FactionId==0
-    &&Carrier->Carriers.ContainsByPredicate([&](const auto& S){return S.Carrier==PC->Selected;}))
-  DrawText(TEXT("함재기 · ")+Carrier->GetCarrierStatus(PC->Selected).Left(44),Gold,650,Canvas->SizeY/UIScale-53,GEngine->GetSmallFont());
- // 실제 선내 임무는 효과를 공유하지만 DEV 운송 버튼·전체 재고 요약은 가져오지 않는다.
- if(PC->Phase2CScenario<0||!PC->Selected||!PC->Selected->Systems||PC->Selected->Systems->FactionId!=0)return;
- const float X=PC->bDeveloperMode?450:10,Y=300;
- DrawRect(FLinearColor(.008f,.02f,.04f,.94f),X,Y,246,296);
+ if(PC->bDeveloperMode||bSceneMenuOpen||PC->Phase2CScenario<0||!PC->Selected||!PC->Selected->Systems||PC->Selected->Systems->FactionId!=0)return;
+ const float X=212,Y=76;
+ DrawRect(FLinearColor(.008f,.02f,.04f,.94f),X,Y,272,148);
+ AddHitBox(FVector2D(X,Y)*UIScale,FVector2D(272,148)*UIScale,TEXT("MissionBackground"),true,9);
  const auto Defense=PD->GetShipState(PC->Selected);
- int32 LocalShots=0;for(const auto& Mount:Defense.Mounts)LocalShots+=Mount.ShotCount;
- DrawText(FString::Printf(TEXT("선택 함선 요격 · 발사 %d"),LocalShots),Cyan,X+10,Y+10,GEngine->GetSmallFont());
- FString Priority;for(const auto Kind:Defense.Priority) { if(!Priority.IsEmpty())Priority+=TEXT(" > ");Priority+=Kind==EOVPDTargetKind::Missile?TEXT("미사일"):Kind==EOVPDTargetKind::Aircraft?TEXT("함재기"):TEXT("포드"); }
- Button(TEXT("PDPriority"),Priority,X+10,Y+32,226);
+ FString Priority;for(const auto Kind:Defense.Priority) {if(!Priority.IsEmpty())Priority+=TEXT(" > ");Priority+=Kind==EOVPDTargetKind::Missile?TEXT("미사일"):Kind==EOVPDTargetKind::Aircraft?TEXT("함재기"):TEXT("포드");}
+ DrawText(TEXT("요격 우선순위"),Cyan,X+12,Y+10,GEngine->GetSmallFont());
+ Button(TEXT("PDPriority"),Priority,X+12,Y+30,248);
  const bool HasCarrier=Carrier->Carriers.ContainsByPredicate([&](const auto& S){return S.Carrier==PC->Selected;});
- float Row=Y+68;
  if(HasCarrier) {
-  DrawText(FString::Printf(TEXT("보관 %d · 비행 %d · 손실 %d"),Carrier->CountAircraft(PC->Selected,EOVAircraftState::Stored),Carrier->CountAircraft(PC->Selected,EOVAircraftState::Sortie)+Carrier->CountAircraft(PC->Selected,EOVAircraftState::Returning),Carrier->CountAircraft(PC->Selected,EOVAircraftState::Wrecked)),Ink,X+10,Row,GEngine->GetSmallFont());
-  Button(TEXT("LaunchAircraft"),TEXT("함재기 출격"),X+10,Row+22,109);Button(TEXT("RecallAircraft"),TEXT("명시 복귀"),X+127,Row+22,109);
-  Button(TEXT("TrialFTL"),TEXT("FTL 시험 충전"),X+10,Row+56,109);Button(TEXT("TrialDeparture"),TEXT("회수 후 이탈"),X+127,Row+56,109);
-  Button(TEXT("AbandonAircraft"),TEXT("미귀환 기체 포기 선택"),X+10,Row+90,226);
-  DrawText(Carrier->GetCarrierStatus(PC->Selected).Left(30),Gold,X+10,Row+121,GEngine->GetSmallFont());
-  if(PC->bDeveloperMode)Button(TEXT("DevFighterRepair"),TEXT("DEV 시험 공급 수리"),X+10,Row+144,226);
-  if(PC->Phase2CScenario!=5)return;
-  // Mixed scene's transport controls remain reachable by selecting the assault ship.
-  DrawText(TEXT("강습선 선택 → 운송 명령"),Ink,X+10,Y+268,GEngine->GetSmallFont());return;
- }
- if(PC->Phase2CScenario>=3) {
-  DrawText(TEXT("DEV 승객 토큰 · 선내전 미구현"),Gold,X+10,Row,GEngine->GetSmallFont());
-  int32 Inside=0,Dead=0,Rescue=0;for(const auto& Person:Transport->Persons)if(Person.FactionId==0) {
-   Inside+=Person.State==EOVPassengerState::InsideTarget;Dead+=Person.State==EOVPassengerState::Dead;Rescue+=Person.State==EOVPassengerState::RescueWaiting;
-  }
-  DrawText(FString::Printf(TEXT("아군 진입 %d · 사망 %d · 구조 %d"),Inside,Dead,Rescue),Ink,X+10,Row+20,GEngine->GetSmallFont());
-  if(PC->Phase2CScenario==3) {
-   Button(TEXT("LaunchPods"),TEXT("개인 포드 출발"),X+10,Row+46,109);Button(TEXT("RecallPods"),TEXT("비행 포드 회항"),X+127,Row+46,109);
-  } else {
-   Button(TEXT("DispatchShuttle"),TEXT("강습선 이송"),X+10,Row+46,109);Button(TEXT("RecallShuttle"),TEXT("수송선 회수"),X+127,Row+46,109);
-  }
-  Button(TEXT("DevEntryReturn"),TEXT("DEV 원 진입점 복귀 확인"),X+10,Row+82,226);
-  DrawText(TEXT("실내 이동 대신 시험 이벤트 입력"),Gold,X+10,Row+116,GEngine->GetSmallFont());
-  if(PC->bDeveloperMode&&PC->Phase2CScenario!=3)Button(TEXT("DevLoseShuttle"),TEXT("DEV 수송선 상실"),X+10,Row+143,226);
+  DrawText(FString::Printf(TEXT("보관 %d   비행 %d   손실 %d"),Carrier->CountAircraft(PC->Selected,EOVAircraftState::Stored),Carrier->CountAircraft(PC->Selected,EOVAircraftState::Sortie)+Carrier->CountAircraft(PC->Selected,EOVAircraftState::Returning),Carrier->CountAircraft(PC->Selected,EOVAircraftState::Wrecked)),Ink,X+12,Y+72,GEngine->GetSmallFont());
+  DrawText(TEXT("출격 · 귀환은 하단 명령에서"),Ink,X+12,Y+106,GEngine->GetSmallFont());
+ } else if(PC->Phase2CScenario>=3) {
+  DrawText(TEXT("운송 시험 · 임시 승객"),Gold,X+12,Y+72,GEngine->GetSmallFont());
+  Button(PC->Phase2CScenario==3?TEXT("LaunchPods"):TEXT("DispatchShuttle"),TEXT("출발"),X+12,Y+103,118);
+  Button(PC->Phase2CScenario==3?TEXT("RecallPods"):TEXT("RecallShuttle"),TEXT("귀환"),X+140,Y+103,118);
  }
 }

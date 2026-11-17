@@ -12,6 +12,14 @@ def check(n,v,d=''):
  unreal.log('OVOWN '+n+' '+str(bool(v))+' '+str(d))
  if not v: raise AssertionError(n+': '+str(d))
 def gid(v):return tuple(p(v,x) for x in ('a','b','c','d'))
+def restart_snapshot(pc):
+ mission=p(pc,'mission');roster=p(pc,'heroes');interior=p(pc,'interior');transport=p(pc,'transport')
+ return (p(mission,'battle_id'),p(mission,'uses_owned_roster'),p(mission,'game_time'),p(mission,'result'),tuple(p(mission,'attack_unit_ids')),
+         tuple((gid(p(h,'hero_id')),p(h,'runtime_unit_id'),p(h,'runtime_person_id'),p(h,'xp'),p(h,'current_hp'),p(h,'status'),tuple(p(h,'skill_ranks'))) for h in roster.get_heroes(0)),
+         tuple((p(u,'unit_id'),p(u,'person_id'),p(u,'hp'),p(u,'state'),p(u,'ship').get_path_name() if p(u,'ship') else '') for u in p(interior,'units')),
+         tuple((p(person,'person_id'),p(person,'state'),p(person,'pod_id')) for person in p(transport,'persons')),
+         tuple((p(pod,'pod_id'),p(pod,'person_id'),p(pod,'state'),p(pod,'hp')) for pod in p(transport,'pods')),
+         tuple((s.get_path_name(),p(p(s,'systems'),'hull_hp'),p(p(s,'systems'),'shield')) for s in p(pc,'ships')))
 def finish():
  report['passed']=bool(report['checks']) and all(x['passed'] for x in report['checks']) and not report['errors']
  dest=os.path.join(unreal.Paths.project_saved_dir(),'Validation','OwnedMission.json')
@@ -37,6 +45,12 @@ def tick(dt):
    check('OWN-AIM-PROFILE',p(p(p(pc,'combat'),'settings'),'hero_d114_aim'))
    check('OWN-UNIQUE-4',len({gid(x) for x in ids})==4)
    check('OWN-INITIAL-REAL-UNITS',all(p(roster.get_hero(x),'runtime_unit_id')>0 for x in ids))
+   before=restart_snapshot(pc)
+   pc.action('RestartScene')
+   check('OWN-RESTART-SCENE-PRESERVES-OPERATION',before==restart_snapshot(pc))
+   check('OWN-RESTART-REASON',p(pc,'last_action')=='재시작 보류 · 회수 후 편성실에서 재출전하세요')
+   pc.action('MissionRestart')
+   check('OWN-RESTART-ALIAS-PRESERVES-OPERATION',before==restart_snapshot(pc))
    mission.set_auto_player(True)
    if p(pc,'simulation_paused'):pc.action('Pause')
    pc.action('Speed1')
@@ -61,6 +75,9 @@ def tick(dt):
    check('OWN-XP-ONCE',snapshot==[(gid(x),p(roster.get_hero(x),'xp'),p(roster.get_hero(x),'level')) for x in state['ids']])
    report['game_seconds']=p(mission,'game_time');report['returned']=p(score,'returned_after_entry')
    report['heroes']=[{'id':gid(x),'level':p(roster.get_hero(x),'level'),'xp':p(roster.get_hero(x),'xp'),'participation':mission.get_hero_participation_seconds(x)} for x in state['ids']]
+   before=restart_snapshot(pc)
+   pc.action('RestartScene')
+   check('OWN-RESTART-RESULT-AND-LOSSES-PRESERVED',before==restart_snapshot(pc))
    if not p(pc,'simulation_paused'):pc.action('Pause')
    finish()
  except Exception:

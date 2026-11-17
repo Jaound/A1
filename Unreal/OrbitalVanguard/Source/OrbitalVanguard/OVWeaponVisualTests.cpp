@@ -181,4 +181,62 @@ bool FOVWeaponVisualPDTest::RunTest(const FString&)
     TestTrue(TEXT("Intercepted attack removed before it can impact a hull"), R.Combat->Attacks.IsEmpty());
     return true;
 }
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(FOVWeaponVisualProfileSwapTest, "OrbitalVanguard.Presentation.ProfileReplacementRechecksActualMuzzle",
+    EAutomationTestFlags::EditorContext | EAutomationTestFlags::EngineFilter)
+bool FOVWeaponVisualProfileSwapTest::RunTest(const FString&)
+{
+    // Replacing a muzzle does not itself require traversal: the actual new ray
+    // may still be within the unchanged firing tolerance at long range.
+    {
+        OVWeaponVisualTest::FRange Distant;
+        Distant.B->SetActorLocation(FVector(800, 0, 0));
+        Distant.Combat->Simulate(4);
+        const FName DistantId = Distant.Gun(2).MountId;
+        const FRotator DistantAim = Distant.Gun(2).LocalAim;
+        const float DistantTolerance = Distant.Gun(2).Profile.FireTolerance;
+        TestTrue(TEXT("Distant original VLS is aligned"), Distant.Combat->GetReadiness(Distant.A, DistantId).bReady);
+        TestTrue(TEXT("Distant replacement succeeds"), Distant.Combat->SetWeaponProfile(Distant.A, DistantId, TEXT("GuidedMissile_T1")));
+        const auto DistantReadiness = Distant.Combat->GetReadiness(Distant.A, DistantId);
+        TestTrue(TEXT("Distant replacement stays within actual firing tolerance"), DistantReadiness.AimError < DistantTolerance);
+        TestTrue(TEXT("Replacement inside tolerance remains ready"), DistantReadiness.bReady);
+        TestTrue(TEXT("Ready replacement also preserves logical aim"), Distant.Gun(2).LocalAim.Equals(DistantAim));
+        TestEqual(TEXT("Inside-tolerance replacement does not change tolerance"), Distant.Gun(2).Profile.FireTolerance, DistantTolerance);
+        AddInfo(FString::Printf(TEXT("Inside-tolerance replacement: actual error %.3f deg, tolerance %.3f deg"), DistantReadiness.AimError, DistantTolerance));
+    }
+
+    OVWeaponVisualTest::FRange R;
+    const FName Id = R.Gun(2).MountId;
+    const FVector MountWorld = R.A->GetActorTransform().TransformPosition(R.A->Systems->Layout->WeaponMounts[2].LocalPosition);
+    const FVector OriginalOutlet = R.A->GetWeaponMuzzleWorld(Id);
+    const double OutletLength = FVector::Distance(MountWorld, OriginalOutlet);
+    // Target at the original VLS outlet height. Moving that outlet onto a
+    // barrel pointing sideways creates atan(1/7) ~= 8.13 degrees of real error,
+    // while the two hulls remain separated. No aim/tolerance override is used.
+    R.B->SetActorLocation(OriginalOutlet + FVector(0, OutletLength * 8, 0));
+    TestTrue(TEXT("Close alignment fixture has distinct physical outlets"), OutletLength > UE_KINDA_SMALL_NUMBER);
+    TestTrue(TEXT("Close alignment fixture keeps hulls separated"),
+        R.B->GetActorLocation().Y - R.A->GetActorLocation().Y
+        > R.A->Systems->Layout->LocalHalfExtent.Y + R.B->Systems->Layout->LocalHalfExtent.Y);
+    R.Combat->Simulate(4);
+    const FRotator OldAim = R.Gun(2).LocalAim;
+    const FVector OldMuzzle = R.A->GetWeaponMuzzleWorld(Id);
+    const float Tolerance = R.Gun(2).Profile.FireTolerance;
+    TestTrue(TEXT("Original VLS aligned at its physical outlet"), R.Combat->GetReadiness(R.A, Id).bReady);
+    TestTrue(TEXT("Existing supported profile replacement succeeds"), R.Combat->SetWeaponProfile(R.A, Id, TEXT("GuidedMissile_T1")));
+    TestTrue(TEXT("Different launcher geometry actually changes muzzle"), !OldMuzzle.Equals(R.A->GetWeaponMuzzleWorld(Id)));
+    TestTrue(TEXT("Replacement never snaps logical aim"), R.Gun(2).LocalAim.Equals(OldAim));
+    const auto ReplacementReadiness = R.Combat->GetReadiness(R.A, Id);
+    TestTrue(TEXT("Close replacement exceeds unchanged tolerance with margin"), ReplacementReadiness.AimError > Tolerance + 1.f);
+    TestEqual(TEXT("Muzzle replacement rechecks finite alignment"), ReplacementReadiness.Reason, FString(TEXT("TURRET ALIGNING")));
+    AddInfo(FString::Printf(TEXT("Outside-tolerance replacement: actual error %.3f deg, tolerance %.3f deg, outlet offset %.3f cm"),
+        ReplacementReadiness.AimError, Tolerance, OutletLength));
+    R.Combat->RequestFire(R.A, Id);
+    R.Combat->Simulate(1.f / 120.f);
+    TestEqual(TEXT("Unaligned replacement cannot fire"), R.Combat->ShotCount, 0);
+    R.Combat->Simulate(1);
+    TestTrue(TEXT("Queued request fires after real traversal"), R.Combat->ShotCount > 0);
+    TestEqual(TEXT("Readiness tolerance is never widened for profile replacement"), R.Gun(2).Profile.FireTolerance, Tolerance);
+    TestTrue(TEXT("Display follows new actual aim"), R.Visual(2).VisualAim.Equals(R.Gun(2).LocalAim));
+    return true;
+}
 #endif

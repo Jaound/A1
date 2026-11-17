@@ -110,6 +110,35 @@ def run(pc):
     check("WVP-REPAIRED-TRACKING", not p(visual(source, beam), "destroyed")
           and not angles_equal(old_angle, p(mount(combat, source, beam), "local_aim")))
 
+    # A real registered PD mount uses its own readiness/HP, never the anti-ship mount table.
+    check("WVP-PD-SUMMARY-SCENE", pc.start_calibration_range(1))
+    pc.set_editor_property("developer_mode", True)
+    dev=p(pc, "development")
+    defenders=list(dev.spawn_ships("air_defense",0,1,unreal.Vector(100000,-100000,0),0,0,0,False,False))
+    check("WVP-PD-SUMMARY-REGISTERED",len(defenders)==1,p(dev,"last_message"))
+    defender=defenders[0]
+    pd=p(pc,"point_defense")
+    pd_mounts=list(p(pd.get_ship_state(defender),"mounts"))
+    check("WVP-PD-SUMMARY-MULTIPLE-MOUNTS",len(pd_mounts)>=2)
+    pd_id=p(pd_mounts[0],"mount_id")
+    index=next(i for i,d in enumerate(p(p(p(defender,"systems"),"layout"),"weapon_mounts")) if p(d,"weapon_id")==pd_id)
+    pc.select_ship(defender);pc.action("Weapon_%d" % index)
+    pc.set_editor_property("developer_mode",False)
+    hud=pc.get_hud()
+    summary=hud.get_selected_weapon_summary()
+    check("WVP-PD-SUMMARY-READY", "요격" in summary and "자동 방어" in summary and "사용 불가" not in summary,summary)
+    check("WVP-PD-SUMMARY-RANGE",str(round(p(p(pd_mounts[0],"profile"),"range")*p(pd.get_ship_state(defender),"range_scale")/100))+"m" in summary,summary)
+    p(defender,"systems").debug_hit_weapon(pd_id,100000)
+    summary=hud.get_selected_weapon_summary()
+    check("WVP-PD-SUMMARY-INDIVIDUAL-DESTROYED","무장 파괴" in summary and "HP 0/" in summary,summary)
+    check("WVP-PD-SUMMARY-OTHERS-ACTIVE",pd.get_readiness(defender)=="DEFENDING")
+    p(defender,"systems").debug_repair_weapon(pd_id)
+    check("WVP-PD-SUMMARY-REPAIRED","자동 방어" in hud.get_selected_weapon_summary())
+    p(defender,"systems").set_editor_property("faction_id",1)
+    summary=hud.get_selected_weapon_summary()
+    check("WVP-PD-SUMMARY-ENEMY-PRIVACY","외장 관측" in summary and "운영 정보 미확인" in summary and "자동 방어" not in summary and "재사용" not in summary,summary)
+    p(defender,"systems").set_editor_property("faction_id",0)
+
     # Equal game seconds through the real controller speed path, using the same deterministic fixture.
     for speed in (1, 2, 3):
         combat, source, target = fixture(pc)

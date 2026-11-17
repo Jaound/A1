@@ -71,6 +71,7 @@ void UOVPerformanceProbe::BeginRun(AOVController& PC, double Now)
     FParse::Value(FCommandLine::Get(), TEXT("OVPerfPairs="), PairFilter);
     FParse::Value(FCommandLine::Get(), TEXT("OVPerfSpeed="), SpeedFilter);
     bMissionRun = FParse::Param(FCommandLine::Get(), TEXT("OVPerfMission"));
+    FParse::Value(FCommandLine::Get(), TEXT("OVPerfUI="), UIMode);
     if (bMissionRun) Cases.Add(FIntPoint(0, 1));
     else for (int32 Pairs : {0, 1, 3}) for (int32 Speed : {1, 3})
         if ((PairFilter < 0 || PairFilter == Pairs) && (SpeedFilter == 0 || SpeedFilter == Speed)) Cases.Add(FIntPoint(Pairs, Speed));
@@ -270,6 +271,14 @@ void UOVPerformanceProbe::Tick(float DeltaTime)
     AOVController* PC = Cast<AOVController>(GetWorld()->GetFirstPlayerController());
     if (!PC || PC->Ships.Num() < 3 || !PC->Carrier || !PC->Combat || !PC->Transport || !PC->PointDefense) return;
     if (!bStarted) { BeginRun(*PC, Now); return; }
+    const int32 UIStage=UIMode==TEXT("cycle")?int32((Now-RunStarted)/5)%3:UIMode==TEXT("heroes")?1:UIMode==TEXT("preview")?2:0;
+    if(UIStage!=LastUIStage) {
+        LastUIStage=UIStage;
+        if(auto* HUD=Cast<AOVHUD>(PC->GetHUD())) {
+            HUD->SetHeroPanelOpen(UIStage==1);
+            HUD->SetDetailsOpen(UIStage==2);
+        }
+    }
     CSV_CUSTOM_STAT(OrbitalVanguard, CaseIndex, CaseIndex, ECsvCustomStatOp::Set);
     CSV_CUSTOM_STAT(OrbitalVanguard, StageIndex, bWarmup ? -1 : Stage, ECsvCustomStatOp::Set);
     CSV_CUSTOM_STAT(OrbitalVanguard, GameSpeed, Cases[CaseIndex].Y, ECsvCustomStatOp::Set);

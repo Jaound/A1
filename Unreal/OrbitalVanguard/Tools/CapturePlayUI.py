@@ -1,0 +1,148 @@
+"""실제 PIE 렌더 화면·읽기전용 프리뷰 검사. OS 직접 입력 검증이 아니다."""
+import json
+import os
+import time
+import traceback
+import unreal
+
+stamp = time.strftime('%Y%m%d_%H%M%S')
+out = os.path.join(unreal.Paths.convert_relative_path_to_full(unreal.Paths.project_saved_dir()), 'Validation', 'PlayUI', stamp)
+os.makedirs(out, exist_ok=False)
+size = os.environ.get('OV_UI_CAPTURE_RES', '1280x720')
+width, height = map(int, size.split('x'))
+report = {'passed': None, 'kind': 'PIE 렌더와 UI API', 'physical_input': False, 'requested_size': [width, height], 'captures': [], 'checks': [], 'errors': []}
+state = {'stage': 'start', 'at': time.monotonic(), 'started': time.monotonic(), 'index': 0}
+editor = unreal.get_editor_subsystem(unreal.UnrealEditorSubsystem)
+views = ['전투_HUD', '영웅_카드', '외부_무장', '격납고', '선내_영웅', '개발_함선', '개발_영웅', '개발_무장', '개발_시험', '초계함_모델']
+
+def prop(obj, key):
+    return obj.get_editor_property(key)
+
+def check(identifier, value, detail=''):
+    report['checks'].append({'id': identifier, 'passed': bool(value), 'detail': str(detail)})
+    if not value:
+        raise AssertionError(identifier + ': ' + str(detail))
+
+def snapshot(pc):
+    return [(s.get_path_name(), prop(prop(s, 'systems'), 'hull_hp'), prop(prop(s, 'systems'), 'shield')) for s in prop(pc, 'ships')]
+
+def show_heroes(hud, value):
+    # Stable action used by the actual button; compatible with the first UI build.
+    visible = hud.get_hero_panel().get_visibility() == unreal.SlateVisibility.VISIBLE
+    if visible != value:
+        hud.execute_ui_action('HeroPanel')
+
+def finish():
+    try:
+        report['preview_settings_restored'] = bool(unreal.OVDevelopmentEditorLibrary.restore_preview_settings())
+    except Exception:
+        report['errors'].append(traceback.format_exc())
+    report['passed'] = not report['errors'] and len(report['captures']) == len(views)
+    report['elapsed_seconds'] = time.monotonic() - state['started']
+    with open(os.path.join(out, 'report.json'), 'w', encoding='utf-8') as stream:
+        json.dump(report, stream, ensure_ascii=False, indent=2)
+    unreal.unregister_slate_post_tick_callback(state['handle'])
+
+def tick(_dt):
+    try:
+        if time.monotonic() - state['started'] > 150:
+            raise RuntimeError('PIE 캡처 제한 시간 초과')
+        if state['stage'] == 'start':
+            check('PLAY-WINDOW', unreal.OVDevelopmentEditorLibrary.start_preview_window(width, height))
+            state['stage'] = 'world'
+            return
+        world = editor.get_game_world()
+        pc = unreal.GameplayStatics.get_player_controller(world, 0) if world else None
+        if not pc or len(prop(pc, 'ships')) < 3:
+            return
+        hud = pc.get_hud()
+        if state['stage'] == 'world':
+            pc.action('MissionAttack')
+            if not prop(pc, 'simulation_paused'):
+                pc.action('Pause')
+            if prop(pc, 'developer_mode'):
+                pc.action('Developer')
+            state.update(stage='prepare', at=time.monotonic())
+            return
+        if time.monotonic() - state['at'] < .8:
+            return
+        name = views[state['index']]
+        if state['stage'] == 'prepare':
+            show_heroes(hud, False)
+            hud.set_details_open(False)
+            hud.execute_ui_action('InteriorClose')
+            if prop(pc, 'developer_mode'):
+                pc.action('Developer')
+            if name == '영웅_카드':
+                show_heroes(hud, True)
+                hero = hud.get_hero_panel()
+                hero.refresh_cards()
+                cards = hero.get_card_views()
+                check('HERO-MISSION-CARDS', len(cards) >= 4)
+                check('HERO-CARD-SELECTION', hero.select_mission_hero(prop(cards[0], 'unit_id')))
+            elif name == '외부_무장':
+                hud.execute_ui_action('External')
+                state['before_preview'] = snapshot(pc)
+            elif name == '초계함_모델':
+                # Explicit art inspection only: original surface anchors remain unfinished.
+                unreal.SystemLibrary.execute_console_command(world, 'ov.Presentation.ImportedHull 1', pc)
+                pc.start_calibration_range(1)
+                pc.select_ship(prop(pc, 'ships')[1])
+                hud.execute_ui_action('External')
+                mesh = prop(prop(prop(pc, 'selected'), 'hull'), 'static_mesh')
+                check('IMPORTED-HULL-IN-SCENE', mesh and mesh.get_path_name() == '/Game/Presentation/Ships/SM_PC14.SM_PC14')
+            elif name == '격납고':
+                ships = prop(pc, 'ships')
+                carrier = prop(pc, 'carrier')
+                for ship in ships:
+                    if any(prop(h, 'carrier') == ship for h in prop(carrier, 'hangars')) and prop(ship, 'friendly'):
+                        pc.select_ship(ship)
+                        break
+                hud.set_details_open(True)
+                hud.execute_ui_action('HangarView')
+            elif name == '선내_영웅':
+                mission = prop(pc, 'mission')
+                pc.select_ship(prop(mission, 'origin'))
+                hud.execute_ui_action('InteriorToggle')
+                check('INTERIOR-WINDOW-OPEN', prop(hud, 'interior_open'))
+                units = prop(prop(pc, 'interior'), 'units')
+                heroes = [u for u in units if prop(u, 'ship') == prop(pc, 'selected') and prop(u, 'role') != unreal.OVInteriorRole.TROOPER]
+                check('INTERIOR-ACTUAL-HEROES', bool(heroes))
+                unit = heroes[0]
+                slots = prop(prop(prop(pc, 'selected'), 'systems'), 'layout').get_editor_property('slots')
+                deck = next(prop(slot, 'deck_id') for slot in slots if prop(slot, 'slot_id') == prop(unit, 'node_id'))
+                hud.execute_ui_action('InteriorDeck_' + str(deck))
+                hud.execute_ui_action('InteriorUnit_' + str(prop(unit, 'unit_id')))
+                check('INTERIOR-HERO-DECK-SELECTED', prop(hud, 'interior_deck') == deck and prop(unit, 'unit_id') in prop(hud, 'interior_selected_units'))
+            elif name.startswith('개발_'):
+                pc.action('Developer')
+                page = {'개발_함선': 1, '개발_영웅': 2, '개발_무장': 3, '개발_시험': 0}[name]
+                panel = hud.get_development_panel()
+                check('DEV-PAGE-' + str(page), panel.open_page(page))
+            state.update(stage='capture', at=time.monotonic())
+            return
+        if state['stage'] == 'capture':
+            if name == '외부_무장':
+                check('PREVIEW-MESH-MIRROR', hud.get_preview_mesh_count() > 0, hud.get_preview_mesh_count())
+                check('PREVIEW-NO-DAMAGE', state['before_preview'] == snapshot(pc))
+            path = os.path.join(out, '%02d_%s.png' % (state['index'] + 1, name))
+            unreal.SystemLibrary.execute_console_command(world, 'Shot SHOWUI filename="%s" -nosuffix' % path.replace('\\', '/'), pc)
+            state['pending'] = {'view': name, 'path': path, 'viewport_size': list(pc.get_viewport_size())}
+            state.update(stage='verify', at=time.monotonic())
+            return
+        if state['stage'] == 'verify':
+            item = state['pending']
+            item['exists'] = os.path.isfile(item['path']) and os.path.getsize(item['path']) > 0
+            check('RENDER-' + name, item['exists'])
+            report['captures'].append(item)
+            state['index'] += 1
+            if state['index'] >= len(views):
+                finish()
+            else:
+                state.update(stage='prepare', at=time.monotonic())
+    except Exception:
+        report['errors'].append(traceback.format_exc())
+        unreal.log_error(report['errors'][-1])
+        finish()
+
+state['handle'] = unreal.register_slate_post_tick_callback(tick)

@@ -13,6 +13,7 @@
 #include "OVShip.h"
 #include "Blueprint/WidgetTree.h"
 #include "Components/Border.h"
+#include "Components/ButtonSlot.h"
 #include "Components/ScrollBox.h"
 #include "Components/SizeBox.h"
 #include "Components/HorizontalBox.h"
@@ -103,14 +104,17 @@ void UOVHeroCard::Update(const FOVHeroCardView& View)
 {
     HeroId = View.HeroId; UnitId = View.UnitId;
     Portrait->Configure(View.RoleIndex,View.bSelected,View.bLost);
-    NameLabel->SetText(FText::FromString(View.Name));
+    FString DisplayName=View.Name;
+    if(View.bMissionOnly)DisplayName.RemoveFromEnd(TEXT(" 영웅"));
+    if(DisplayName.Len()>14)DisplayName=DisplayName.Left(13)+TEXT("…");
+    NameLabel->SetText(FText::FromString(DisplayName));
     RoleLabel->SetText(FText::FromString(FString::Printf(TEXT("%s · Lv.%d"),*View.Role,View.Level)));
     StateLabel->SetText(FText::FromString((View.bSelected ? TEXT("✓ ") : TEXT("")) + View.State));
     Health->SetVisibility(View.bHPKnown ? ESlateVisibility::Visible : ESlateVisibility::Hidden);
     Health->SetPercent(View.bHPKnown ? FMath::Clamp(View.HP/FMath::Max(1.f,View.MaxHP),0.f,1.f) : 0.f);
     Health->SetFillColorAndOpacity(View.bLost ? FLinearColor(.4f,.4f,.45f) : FLinearColor(.25f,.85f,.6f));
     SetBackgroundColor(View.bSelected ? FLinearColor(.1f,.34f,.44f) : FLinearColor(.04f,.09f,.15f));
-    SetToolTipText(FText::FromString(View.Location + (View.bHPKnown ? FString::Printf(TEXT("\nHP %.0f / %.0f"),View.HP,View.MaxHP) : TEXT(""))));
+    SetToolTipText(FText::FromString(View.Name+TEXT("\n")+View.Location + (View.bHPKnown ? FString::Printf(TEXT("\nHP %.0f / %.0f"),View.HP,View.MaxHP) : TEXT(""))));
 }
 
 void UOVHeroWidget::NativeOnInitialized()
@@ -119,24 +123,29 @@ void UOVHeroWidget::NativeOnInitialized()
     using namespace OVHeroUI;
     auto* Border = WidgetTree->ConstructWidget<UBorder>();
     Border->SetBrushColor(FLinearColor(.008f,.02f,.04f,.97f)); Border->SetPadding(FMargin(10)); WidgetTree->RootWidget = Border;
-    auto* Outer = WidgetTree->ConstructWidget<UScrollBox>(); Border->AddChild(Outer);
+    auto* Frame = WidgetTree->ConstructWidget<UVerticalBox>(); Border->AddChild(Frame);
+    auto* Outer = WidgetTree->ConstructWidget<UScrollBox>();
     auto* Box = WidgetTree->ConstructWidget<UVerticalBox>(); Outer->AddChild(Box);
-    auto* Top = WidgetTree->ConstructWidget<UHorizontalBox>(); Box->AddChildToVerticalBox(Top);
+    auto* Top = WidgetTree->ConstructWidget<UHorizontalBox>(); Frame->AddChildToVerticalBox(Top);
     Header = Text(WidgetTree,TEXT("영웅"),19); Top->AddChildToHorizontalBox(Header)->SetSize(FSlateChildSize(ESlateSizeRule::Fill));
     auto* CloseButton=RowButton(WidgetTree,Top,TEXT("닫기"));
     CloseButton->OnClicked.AddDynamic(this,&UOVHeroWidget::Close);
     if(auto* CloseSlot=Cast<UHorizontalBoxSlot>(CloseButton->Slot))CloseSlot->SetSize(FSlateChildSize(ESlateSizeRule::Automatic));
+    // Selection and its primary actions remain visible while the roster scrolls.
+    Detail = Text(WidgetTree,TEXT("초상화를 선택하세요.")); Frame->AddChildToVerticalBox(Detail)->SetPadding(FMargin(0,6,0,4));
+    auto* Actions = WidgetTree->ConstructWidget<UHorizontalBox>(); Frame->AddChildToVerticalBox(Actions);
+    LocateButton = RowButton(WidgetTree,Actions,TEXT("위치 찾기")); LocateButton->OnClicked.AddDynamic(this,&UOVHeroWidget::Locate);
+    InteriorButton = RowButton(WidgetTree,Actions,TEXT("선내 지도")); InteriorButton->OnClicked.AddDynamic(this,&UOVHeroWidget::OpenInterior);
+    RetreatButton = RowButton(WidgetTree,Actions,TEXT("철수")); RetreatButton->OnClicked.AddDynamic(this,&UOVHeroWidget::Retreat);
+    RetreatButton->SetToolTipText(FText::FromString(TEXT("원 진입점까지 이동해 원래 운송수단으로 회수합니다.")));
+    Feedback = Text(WidgetTree,TEXT("")); Feedback->SetColorAndOpacity(FSlateColor(FLinearColor(1,.78f,.3f)));
+    Feedback->SetVisibility(ESlateVisibility::Collapsed); Frame->AddChildToVerticalBox(Feedback);
+    Frame->AddChildToVerticalBox(Outer)->SetSize(FSlateChildSize(ESlateSizeRule::Fill));
     EmptyHelp = Text(WidgetTree,TEXT("보유 영웅 없음")); Box->AddChildToVerticalBox(EmptyHelp);
     OwnedLabel = Text(WidgetTree,TEXT("보유 영웅")); Box->AddChildToVerticalBox(OwnedLabel)->SetPadding(FMargin(0,6));
     OwnedCards = WidgetTree->ConstructWidget<UWrapBox>(); OwnedCards->SetInnerSlotPadding(FVector2D(6,6)); Box->AddChildToVerticalBox(OwnedCards);
     MissionLabel = Text(WidgetTree,TEXT("임무 전용 영웅")); Box->AddChildToVerticalBox(MissionLabel)->SetPadding(FMargin(0,6));
     MissionCards = WidgetTree->ConstructWidget<UWrapBox>(); MissionCards->SetInnerSlotPadding(FVector2D(6,6)); Box->AddChildToVerticalBox(MissionCards);
-    Detail = Text(WidgetTree,TEXT("초상화를 선택하세요.")); Box->AddChildToVerticalBox(Detail)->SetPadding(FMargin(0,10,0,4));
-    auto* Actions = WidgetTree->ConstructWidget<UHorizontalBox>(); Box->AddChildToVerticalBox(Actions);
-    LocateButton = RowButton(WidgetTree,Actions,TEXT("위치 찾기")); LocateButton->OnClicked.AddDynamic(this,&UOVHeroWidget::Locate);
-    InteriorButton = RowButton(WidgetTree,Actions,TEXT("선내 지도")); InteriorButton->OnClicked.AddDynamic(this,&UOVHeroWidget::OpenInterior);
-    RetreatButton = RowButton(WidgetTree,Actions,TEXT("철수")); RetreatButton->OnClicked.AddDynamic(this,&UOVHeroWidget::Retreat);
-    RetreatButton->SetToolTipText(FText::FromString(TEXT("원 진입점까지 이동해 원래 운송수단으로 회수합니다.")));
     SkillsLabel = Text(WidgetTree,TEXT("자동 스킬")); Box->AddChildToVerticalBox(SkillsLabel)->SetPadding(FMargin(0,8,0,2));
     auto* Skills = WidgetTree->ConstructWidget<UWrapBox>(); Skills->SetInnerSlotPadding(FVector2D(4,4)); Box->AddChildToVerticalBox(Skills);
     for (int32 Index=0; Index<4; ++Index)
@@ -164,7 +173,6 @@ void UOVHeroWidget::NativeOnInitialized()
     Button(WidgetTree,FormationBox,TEXT("보유 편제로 출전"))->OnClicked.AddDynamic(this,&UOVHeroWidget::StartMission);
     auto* Trial = Button(WidgetTree,Box,TEXT("영웅 시험 장면")); Trial->OnClicked.AddDynamic(this,&UOVHeroWidget::StartTrial);
     Trial->SetToolTipText(FText::FromString(TEXT("전장을 재시작하고 임무 전용 대표 영웅 4명으로 연습합니다. 보유 명단에는 추가하지 않습니다.")));
-    Feedback = Text(WidgetTree,TEXT("")); Feedback->SetColorAndOpacity(FSlateColor(FLinearColor(1,.78f,.3f))); Box->AddChildToVerticalBox(Feedback);
     Refresh();
 }
 
@@ -186,7 +194,12 @@ void UOVHeroWidget::RebuildCards()
         Card->OnClicked.AddDynamic(Card,&UOVHeroCard::Pick);
         auto* Size = WidgetTree->ConstructWidget<USizeBox>(); Size->SetWidthOverride(148); Size->AddChild(Card); CardSizes.Add(Size);
         (View.bMissionOnly ? MissionCards : OwnedCards)->AddChildToWrapBox(Size);
-        auto* Stack = WidgetTree->ConstructWidget<UVerticalBox>(); Card->AddChild(Stack);
+        auto* Stack = WidgetTree->ConstructWidget<UVerticalBox>();
+        if(auto* ContentSlot=Cast<UButtonSlot>(Card->AddChild(Stack)))
+        {
+            ContentSlot->SetHorizontalAlignment(HAlign_Fill); ContentSlot->SetVerticalAlignment(VAlign_Fill);
+            ContentSlot->SetPadding(FMargin(4));
+        }
         auto* PictureSize = WidgetTree->ConstructWidget<USizeBox>(); PictureSize->SetHeightOverride(78); Stack->AddChildToVerticalBox(PictureSize); PortraitSizes.Add(PictureSize);
         Card->Portrait = WidgetTree->ConstructWidget<UOVPortraitWidget>(); Card->Portrait->SetVisibility(ESlateVisibility::HitTestInvisible); PictureSize->AddChild(Card->Portrait);
         Card->NameLabel = OVHeroUI::Text(WidgetTree,View.Name,17); Stack->AddChildToVerticalBox(Card->NameLabel);
@@ -341,7 +354,8 @@ void UOVHeroWidget::SetFeedback(const FString& Message)
 {
     if (!Feedback) return;
     FString Short=Message; Short.ReplaceInline(TEXT("\r"),TEXT(" ")); Short.ReplaceInline(TEXT("\n"),TEXT(" "));
-    Feedback->SetText(FText::FromString(Short.Left(72))); Feedback->SetToolTipText(FText::FromString(Message));
+    Feedback->SetText(FText::FromString(Short.Left(36))); Feedback->SetToolTipText(FText::FromString(Message));
+    Feedback->SetVisibility(Message.IsEmpty()?ESlateVisibility::Collapsed:ESlateVisibility::Visible);
 }
 bool UOVHeroWidget::LocateSelectedHero()
 {

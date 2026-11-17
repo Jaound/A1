@@ -4,13 +4,17 @@
 #include "OVShipSystemsComponent.h"
 #include "OVCombatSubsystem.h"
 #include "OVInteriorSubsystem.h"
+#include "OVCarrierSubsystem.h"
+#include "OVHeroSubsystem.h"
+#include "OVMissionSubsystem.h"
 #include "Engine/Canvas.h"
 #include "Engine/Engine.h"
 #include "Camera/PlayerCameraManager.h"
 
 namespace {
 const FLinearColor PlayInk(.8f,.9f,1), PlayAccent(.2f,.9f,1), PlayPanel(.008f,.02f,.04f,.94f);
-FString ReadinessKorean(const FString& Key)
+}
+FString AOVHUD::ReadinessKorean(const FString& Key)
 {
  static const TMap<FString,FString> Labels={
   {TEXT("READY"),TEXT("발사 가능")},{TEXT("NO VALID TARGET"),TEXT("표적을 지정하세요")},
@@ -24,7 +28,6 @@ FString ReadinessKorean(const FString& Key)
   {TEXT("WRECKED"),TEXT("완파")},{TEXT("NEUTRAL"),TEXT("중립 함선")},{TEXT("DEPARTED"),TEXT("이탈")}};
  if(const FString* Value=Labels.Find(Key)) return *Value;
  return TEXT("사용 불가 · DEV에서 상세 원인 확인");
-}
 }
 
 FVector2D AOVHUD::GetActionCenter(FName Action) const
@@ -42,48 +45,90 @@ void AOVHUD::DrawPlayHUD()
 {
  auto* PC=Cast<AOVController>(PlayerOwner);
  const float W=Canvas->SizeX/UIScale,H=Canvas->SizeY/UIScale;
- DrawRect(PlayPanel,10,10,W-20,82);
- DrawText(TEXT("오비탈 뱅가드  /  ")+PC->GetScenarioLabel(),PlayAccent,22,20,GEngine->GetSmallFont());
- Button(TEXT("Pause"),PC->bSimulationPaused?TEXT("F1 시작"):TEXT("F1 정지"),390,16,90,PC->bSimulationPaused);
- Button(TEXT("Speed1"),TEXT("1배"),488,16,52,PC->SimulationSpeed==1);
- Button(TEXT("Speed2"),TEXT("2배"),548,16,52,PC->SimulationSpeed==2);
- Button(TEXT("Speed3"),TEXT("3배"),608,16,52,PC->SimulationSpeed==3);
- Button(TEXT("Overview"),TEXT("Home 전체 보기"),676,16,134);
- Button(TEXT("HeroPanel"),bHeroPanelOpen?TEXT("영웅 명단 닫기"):TEXT("영웅 명단"),W-280,16,128,bHeroPanelOpen);
- Button(TEXT("Developer"),TEXT("Insert 개발"),W-144,16,122);
- Button(TEXT("CombatRange"),TEXT("F5 기본 전투"),22,55,130);
- Button(TEXT("CalibrationRange"),TEXT("F6 교정 전투"),160,55,130);
- Button(TEXT("Phase2C"),TEXT("F7 다음 2C 장면"),298,55,158);
- Button(TEXT("RestartScene"),TEXT("이 장면 재시작"),464,55,136);
- for(int32 I=0;I<FMath::Min(5,PC->Ships.Num());++I) {
-  const AOVShip* Ship=PC->Ships[I];
-  if(PC->Combat&&PC->Combat->bEnabled&&PC->Combat->IsDeparted(PC->Ships[I])) continue;
-  const float Y=104+I*36;
-  Button(FName(*FString::Printf(TEXT("Pick_%d"),I)),(Ship->bFriendly?TEXT("아군 · "):TEXT("적군 · "))+Ship->ShipName.Left(18),12,Y,184,Ship==PC->Selected);
+ DrawRect(PlayPanel,10,10,W-20,46);
+ DrawText(TEXT("오비탈 뱅가드"),PlayAccent,24,18,GEngine->GetMediumFont());
+ Button(TEXT("SceneMenu"),TEXT("장면"),226,18,70,bSceneMenuOpen);
+ Button(TEXT("Pause"),PC->bSimulationPaused?TEXT("시작 ▷"):TEXT("정지 Ⅱ"),318,18,84,PC->bSimulationPaused);
+ Button(TEXT("Speed1"),TEXT("1배"),410,18,52,PC->SimulationSpeed==1);
+ Button(TEXT("Speed2"),TEXT("2배"),468,18,52,PC->SimulationSpeed==2);
+ Button(TEXT("Speed3"),TEXT("3배"),526,18,52,PC->SimulationSpeed==3);
+ Button(TEXT("Overview"),TEXT("전체 보기"),596,18,100);
+ Button(TEXT("HeroPanel"),TEXT("영웅"),W-202,18,82,bHeroPanelOpen);
+ Button(TEXT("Developer"),TEXT("개발 도구"),W-112,18,96,PC->bDeveloperMode);
+ if(LastNoticeSource!=PC->LastAction) {
+  LastNoticeSource=PC->LastAction;NoticeExpires=FPlatformTime::Seconds()+3;
+  NoticeText=PC->LastAction;
+  int32 Separator=INDEX_NONE;if(NoticeText.FindChar(TCHAR('·'),Separator))NoticeText=NoticeText.Left(Separator).TrimEnd();
+  if(NoticeText.StartsWith(TEXT("Forced")))NoticeText=TEXT("강제 사격 · 내부 아군 위험");
+  if(NoticeText.StartsWith(TEXT("AUTO")))NoticeText=TEXT("자동화 변경");
+  NoticeText=NoticeText.Left(24);
  }
- const float Y=H-120;
- DrawRect(PlayPanel,10,Y,W-20,110);
- if(!PC->Selected) { DrawText(TEXT("함선을 클릭하거나 왼쪽 목록에서 선택하세요."),PlayInk,22,Y+14,GEngine->GetSmallFont()); return; }
+ if(FPlatformTime::Seconds()<NoticeExpires)DrawText(NoticeText,PlayInk,716,26,GEngine->GetSmallFont());
+ if(bSceneMenuOpen) {
+  DrawRect(PlayPanel,216,63,426,139);
+  Button(TEXT("CombatRange"),TEXT("기본 전투"),226,72,126);
+  Button(TEXT("CalibrationRange"),TEXT("함대 교전"),362,72,126);
+  Button(TEXT("Phase2C"),TEXT("모함 · 운송"),498,72,132);
+  Button(TEXT("MissionAttack"),TEXT("강습 임무"),226,108,126);
+  Button(TEXT("MissionDefense"),TEXT("방어 임무"),362,108,126);
+  Button(TEXT("MissionFleetOnly"),TEXT("함대만 비교"),498,108,132);
+  Button(TEXT("RestartScene"),TEXT("현재 장면 재시작"),226,148,190);
+  Button(TEXT("SceneMenu"),TEXT("닫기"),498,148,132,true);
+ }
+ const int32 PageSize=FMath::Max(2,FMath::FloorToInt((H-255)/58));
+ const int32 PageCount=FMath::Max(1,FMath::DivideAndRoundUp(PC->Ships.Num(),PageSize));
+ FleetPage=FMath::Clamp(FleetPage,0,PageCount-1);
+ DrawRect(PlayPanel,10,70,190,H-240);
+ DrawText(TEXT("함대"),PlayAccent,22,80,GEngine->GetSmallFont());
+ for(int32 Row=0;Row<PageSize;++Row) {
+  const int32 I=FleetPage*PageSize+Row; if(!PC->Ships.IsValidIndex(I))break;
+  const auto* Ship=PC->Ships[I].Get();if(!Ship||!Ship->Systems)continue;
+  if(PC->Combat&&PC->Combat->bEnabled&&PC->Combat->IsDeparted(PC->Ships[I]))continue;
+  const float Y=104+Row*58; const FLinearColor Color=Ship->bFriendly?PlayAccent:FLinearColor(1,.38f,.26f);
+  Button(FName(*FString::Printf(TEXT("Pick_%d"),I)),(Ship->bFriendly?TEXT("◆ "):TEXT("◇ "))+Ship->ShipName.Left(15),18,Y,174,Ship==PC->Selected);
+  DrawRect(Color,18,Y,3,48);
+  DrawRect(FLinearColor(.05f,.1f,.16f),26,Y+32,158,10);
+  DrawRect(Color,26,Y+32,158*FMath::Clamp(Ship->Systems->HullHP/FMath::Max(1.f,Ship->Systems->MaxHullHP),0.f,1.f),4);
+  DrawRect(FLinearColor(.3f,.48f,1),26,Y+39,158*FMath::Clamp(Ship->Systems->Shield/FMath::Max(1.f,Ship->Systems->MaxShield),0.f,1.f),3);
+ }
+ if(PageCount>1) {
+  Button(TEXT("FleetPrevious"),TEXT("이전"),20,H-208,68);
+  Button(TEXT("FleetNext"),TEXT("다음"),120,H-208,68);
+ }
+ const float Y=H-154;
+ DrawRect(PlayPanel,10,Y,W-20,144);
+ if(!PC->Selected) {DrawText(TEXT("함선을 선택하세요"),PlayInk,24,Y+20,GEngine->GetMediumFont());return;}
  auto* Ship=PC->Selected.Get();
- DrawText(Ship->ShipName+FString::Printf(TEXT("   선체 %.0f%%   쉴드 %.0f%%"),100*Ship->Systems->HullHP/FMath::Max(1.f,Ship->Systems->MaxHullHP),100*Ship->Systems->Shield/FMath::Max(1.f,Ship->Systems->MaxShield)),PlayAccent,22,Y+10,GEngine->GetSmallFont());
- DrawText(TEXT("표적: ")+(Ship->AttackTarget?Ship->AttackTarget->ShipName:TEXT("없음")),PlayInk,470,Y+10,GEngine->GetSmallFont());
- Button(TEXT("Focus"),TEXT("F 추적"),W-212,Y+4,88,PC->bFollow);
- Button(TEXT("Details"),TEXT("상세 보기"),W-116,Y+4,92,bDetailsOpen);
- if(PC->Interior&&PC->Interior->bEnabled) Button(TEXT("InteriorToggle"),TEXT("선내 작전"),W-328,Y+4,108,bInteriorOpen);
- if(Ship->bFriendly) {
-  const FName Actions[]={TEXT("Move"),TEXT("Stop"),TEXT("Target"),TEXT("Fire"),TEXT("FireAll"),TEXT("NextWeapon"),TEXT("MoveAuto"),TEXT("FireAuto"),PC->Combat&&PC->Combat->GetShipState(Ship).Intent==EOVAttackIntent::DisableWeapons?FName(TEXT("HullIntent")):FName(TEXT("GunIntent")),TEXT("CancelAttack")};
-  const FString Labels[]={TEXT("V 이동"),TEXT("X 정지"),TEXT("T 표적"),TEXT("B 한 무장"),TEXT("L 전 무장"),TEXT("N 무장 변경"),Ship->IsMovementAutomatic()?TEXT("이동 자동"):TEXT("이동 수동"),Ship->IsAttackAutomatic()?TEXT("사격 자동"):TEXT("사격 수동"),PC->Combat&&PC->Combat->GetShipState(Ship).Intent==EOVAttackIntent::DisableWeapons?TEXT("선체 격파로"):TEXT("무장 무력화"),TEXT("사격 취소")};
-  for(int32 I=0;I<10;++I) Button(Actions[I],Labels[I],22+I*112,Y+32,104);
-  if(PC->Combat&&PC->Combat->bEnabled) {
-   const auto State=PC->Combat->GetShipState(Ship);
-   if(State.Mounts.IsValidIndex(PC->SelectedWeapon)) {
-    const auto& M=State.Mounts[PC->SelectedWeapon];const auto R=PC->Combat->GetReadiness(Ship,M.MountId);
-    const TCHAR* Kind=M.Profile.Kind==EOVAttackKind::Beam?TEXT("빔"):M.Profile.Kind==EOVAttackKind::Cannon?TEXT("함포"):M.Profile.Kind==EOVAttackKind::Missile?TEXT("미사일"):TEXT("유도탄");
-    DrawText(FString::Printf(TEXT("%s %d  ·  %s  ·  대기 %.1f초%s"),Kind,PC->SelectedWeapon+1,*ReadinessKorean(R.Reason),R.Cooldown,M.bFireRequested?TEXT("  / 발사 요청 접수"):TEXT("")),R.bReady?FLinearColor::Green:FLinearColor(1,.8f,.25f),22,Y+67,GEngine->GetSmallFont());
-   }
+ DrawText(Ship->ShipName.Left(24),PlayAccent,24,Y+12,GEngine->GetMediumFont());
+ DrawText(TEXT("표적  ")+(Ship->AttackTarget?Ship->AttackTarget->ShipName.Left(24):TEXT("없음")),PlayInk,390,Y+15,GEngine->GetSmallFont());
+ Button(TEXT("Focus"),TEXT("추적"),W-310,Y+8,82,PC->bFollow);
+ Button(TEXT("Details"),TEXT("함선 상세"),W-220,Y+8,100,bDetailsOpen);
+ if(PC->Interior&&PC->Interior->bEnabled)Button(TEXT("InteriorToggle"),TEXT("선내 지도"),W-112,Y+8,96,bInteriorOpen);
+ const float Hull=FMath::Clamp(Ship->Systems->HullHP/FMath::Max(1.f,Ship->Systems->MaxHullHP),0.f,1.f);
+ DrawRect(FLinearColor(.08f,.13f,.19f),24,Y+41,300,10);DrawRect(PlayAccent,24,Y+41,300*Hull,4);
+ DrawRect(FLinearColor(.3f,.48f,1),24,Y+48,300*FMath::Clamp(Ship->Systems->Shield/FMath::Max(1.f,Ship->Systems->MaxShield),0.f,1.f),3);
+ if(!Ship->bFriendly) {DrawText(TEXT("적 함선 · 관측된 외장 정보"),PlayInk,24,Y+72,GEngine->GetSmallFont());return;}
+ const bool Disable=PC->Combat&&PC->Combat->GetShipState(Ship).Intent==EOVAttackIntent::DisableWeapons;
+ const FName Actions[]={TEXT("Move"),TEXT("Stop"),TEXT("Target"),TEXT("FireAll"),TEXT("MoveAuto"),TEXT("FireAuto"),TEXT("Fire"),TEXT("NextWeapon"),Disable?FName(TEXT("HullIntent")):FName(TEXT("GunIntent")),TEXT("CancelAttack")};
+ const FString Labels[]={TEXT("이동"),TEXT("정지"),TEXT("표적 지정"),TEXT("전체 발사"),Ship->IsMovementAutomatic()?TEXT("이동 자동 ✓"):TEXT("이동 수동"),Ship->IsAttackAutomatic()?TEXT("사격 자동 ✓"):TEXT("사격 수동"),TEXT("선택 발사"),TEXT("다음 무장"),Disable?TEXT("목적: 무장"):TEXT("목적: 선체"),TEXT("공격 취소")};
+ const float BW=FMath::Min(112.f,(W-48)/10-6);
+ for(int32 I=0;I<10;++I)Button(Actions[I],Labels[I],24+I*(BW+6),Y+62,BW,(I==4&&Ship->IsMovementAutomatic())||(I==5&&Ship->IsAttackAutomatic()));
+ if(PC->Combat&&PC->Combat->bEnabled) {
+  const auto State=PC->Combat->GetShipState(Ship);
+  const TCHAR* Policies[]={TEXT("보호: 사격 계속"),TEXT("보호: 목표 달성까지"),TEXT("보호: 철수까지")};
+  Button(TEXT("Protection"),Policies[static_cast<int32>(State.Protection)],550,Y+102,158);
+  if(Ship->AttackTarget&&Ship->AttackTarget->Systems->HasInteriorPresence(Ship->Systems->FactionId))
+   Button(TEXT("ForceGun"),TEXT("선택 강제 · 아군 위험"),716,Y+102,178,!State.ForcedMount.IsNone());
+  if(State.Mounts.IsValidIndex(PC->SelectedWeapon)) {
+   const auto& M=State.Mounts[PC->SelectedWeapon];const auto R=PC->Combat->GetReadiness(Ship,M.MountId);
+   const TCHAR* Kind=M.Profile.Kind==EOVAttackKind::Beam?TEXT("빔"):M.Profile.Kind==EOVAttackKind::Cannon?TEXT("함포"):TEXT("미사일");
+   DrawText(FString::Printf(TEXT("%s %d  ·  %s%s"),Kind,PC->SelectedWeapon+1,*ReadinessKorean(R.Reason),M.bFireRequested?TEXT(" · 발사 접수"):TEXT("")),R.bReady?PlayAccent:FLinearColor(1,.8f,.25f),24,Y+104,GEngine->GetSmallFont());
   }
  }
- DrawText(PC->LastAction.Left(100),PlayInk,22,Y+87,GEngine->GetSmallFont());
+ if(auto* Carrier=GetWorld()->GetSubsystem<UOVCarrierSubsystem>();Carrier&&Carrier->Carriers.ContainsByPredicate([&](const auto& C){return C.Carrier==Ship;})) {
+  Button(TEXT("LaunchAircraft"),TEXT("함재기 출격"),W-260,Y+102,118);
+  Button(TEXT("RecallAircraft"),TEXT("함재기 귀환"),W-134,Y+102,118);
+ }
 }
 
 void AOVHUD::DrawWorldIndicators()
@@ -104,12 +149,12 @@ void AOVHUD::DrawWorldIndicators()
   DrawLine(P.X-Radius,P.Y-Radius,P.X-Radius,P.Y+Radius,Color,Selected?3:1);
   DrawLine(P.X+Radius,P.Y-Radius,P.X+Radius,P.Y+Radius,Color,Selected?3:1);
   DrawLine(P.X-Radius,P.Y-Radius,P.X+Radius,P.Y-Radius,Color,Selected?3:1);
-  DrawText((Target?TEXT("공격 ▶ "):Selected?TEXT("선택 ▶ "):TEXT(""))+Ship->ShipName,Color,Label.X,Label.Y,GEngine->GetSmallFont());
+  if(Selected||Target||PC->CameraDistance<45000) DrawText((Target?TEXT("공격 ▶ "):Selected?TEXT("선택 ▶ "):TEXT(""))+Ship->ShipName,Color,Label.X,Label.Y,GEngine->GetSmallFont());
   const float Hull=FMath::Clamp(Ship->Systems->HullHP/FMath::Max(1.f,Ship->Systems->MaxHullHP),0.f,1.f);
   DrawRect(FLinearColor(.06f,.08f,.12f),Label.X,Label.Y+17,86,8);
   DrawRect(Color,Label.X,Label.Y+17,86*Hull,3);
   DrawRect(FLinearColor(.25f,.4f,1),Label.X,Label.Y+22,86*Ship->Systems->Shield/FMath::Max(1.f,Ship->Systems->MaxShield),3);
-  DrawText(FString::Printf(TEXT("고도 %.0fm"),Ship->GetActorLocation().Z/100),PlayInk,Label.X,Label.Y+29,GEngine->GetSmallFont());
+  if(Selected||Target)DrawText(FString::Printf(TEXT("고도 %.0fm"),Ship->GetActorLocation().Z/100),PlayInk,Label.X,Label.Y+29,GEngine->GetSmallFont());
   const FName Marker(*FString::Printf(TEXT("WorldPick_%d"),I));
   AddHitBox((P-FVector2D(Radius+6,Radius+6))*UIScale,FVector2D(2*Radius+12,2*Radius+12)*UIScale,Marker,true,5);
   ActionCenters.Add(Marker,P);

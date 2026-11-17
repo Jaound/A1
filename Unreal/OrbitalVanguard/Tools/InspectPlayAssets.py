@@ -20,8 +20,7 @@ for path in sorted((root / 'Incoming').glob('*.zip')):
                   'lfs_pointer': False, 'entries': entries})
 sources = [{'path': str(p), 'bytes': p.stat().st_size, 'sha256': sha(p)}
            for p in (root / 'Source').rglob('*.fbx')]
-data = {'description': '実バイト確認。原本非変更。FBX/テクスチャ接続の視覚検証とは別。', 'archives': items, 'fbx': sources}
-data['description'] = '실제 원본 바이트 확인·원본 비변경. FBX/텍스처 연결의 시각 검증과는 별도.'
+data = {'description': '실제 원본 바이트 확인·원본 비변경. FBX/텍스처 연결의 시각 검증과는 별도.', 'archives': items, 'fbx': sources}
 (reports / 'PlayUI_SourceInventory.json').write_text(json.dumps(data, ensure_ascii=False, indent=2), encoding='utf-8')
 prototype = Path.home() / 'Downloads/Play_Game_3.zip'
 if prototype.exists():

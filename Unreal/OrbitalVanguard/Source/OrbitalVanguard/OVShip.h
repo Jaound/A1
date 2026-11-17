@@ -72,6 +72,8 @@ public:
     UFUNCTION(BlueprintCallable, Category="Debug") void DebugSetFTLCharging(bool bCharging);
     void Simulate(float SimDelta);
     void SetCalibrationHull(const FVector* LocalHalfExtent);
+    /** Optional imported presentation mesh; never changes combat or selection bounds. */
+    void ApplyPresentationHull(FName DefinitionId);
     void Configure(const FString& Name, bool Friendly, float Speed, float RotationRate,
         const FVector& Scale, const FLinearColor& Color);
     /** Read-only rendering synchronization, called once after a simulation batch, never a second simulation. */

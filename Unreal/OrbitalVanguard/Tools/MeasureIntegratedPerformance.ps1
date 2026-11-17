@@ -5,7 +5,8 @@ param(
     [ValidateSet(-1,0,1,3)][int]$Pairs=-1,
     [ValidateSet(0,1,3)][int]$Speed=0,
     [switch]$Trace,
-    [switch]$Mission
+    [switch]$Mission,
+    [ValidateSet('play','heroes','preview','cycle')][string]$UI='play'
 )
 # 실제 렌더 실행이다. 자동 API 시간 도약이나 실제 사람의 조작 증거가 아니다.
 $projectRoot=Split-Path $PSScriptRoot -Parent
@@ -18,6 +19,7 @@ New-Item -ItemType Directory -Path $outputRoot -Force | Out-Null
 $logPath=Join-Path $outputRoot '실행.log'
 $arguments=@("`"$projectPath`"",'/Game/Maps/ControlRange','-game','-windowed','-ResX=1920','-ResY=1080','-d3d11','-NoSplash','-unattended','-OVPerf',"-OVPerfSeconds=$Seconds","-OVPerfLabel=$Label","-OVPerfPairs=$Pairs","-OVPerfSpeed=$Speed","`"-ABSLOG=$logPath`"")
 if($Mission){$arguments+='-OVPerfMission'}
+$arguments+="-OVPerfUI=$UI"
 if($Trace){
     # 이 엔진의 초기 Trace 파일 생성은 한글 경로를 잘못 변환했다.
     # 다른 증거 경로는 그대로 보존하고 Trace 대상만 ASCII 경로에 둔다.
@@ -32,6 +34,7 @@ $run=[ordered]@{
     '종류'='1920×1080 별도 게임 창의 실제 렌더 장시간 측정'
     '시작시각'=(Get-Date).ToString('o')
     '코드SHA'=$sourceSHA
+    '화면조건'=$UI
     '미커밋변경'=$dirty
     '명령'=$arguments
     '직접입력'=$(if($Mission){'없음. 실제 통합 임무의 정상 명령 AI를 1배속 렌더 시계에서 실행함'}else{'없음. 진단기가 출격/교전/귀환을 제어함'})

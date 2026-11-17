@@ -252,6 +252,7 @@ bool OVCalibration::Start(UOVCombatSubsystem& Combat, const TArray<AOVShip*>& Sh
         Systems.Tuning.CrewDamageCoefficient = CrewInjury;
         Systems.FactionId = bFriendly ? 0 : 1;
         Systems.Initialize(Layouts[I]);
+        Ship->ApplyPresentationHull(FName(Keys[I]));
         Ship->SetActorLocationAndRotation(Positions[I], FRotator(0,bFriendly ? 0 : 180,0));
         Ship->DebugResetMotion();
         Ship->SetAutomation(!bFriendly,!bFriendly);
@@ -302,6 +303,7 @@ bool OVCalibration::ConfigureHull(UOVCombatSubsystem& Combat, AOVShip& Ship, FNa
     S.Tuning.ShieldRegenFraction=ShieldCombat; S.Tuning.ShieldNonCombatRegenFraction=ShieldNonCombat;
     S.Tuning.NoHitRecoveryInterval=ShieldTransition; S.Tuning.ShieldRecoveryDelay=ShieldDelay; S.Tuning.CrewDamageCoefficient=CrewInjury;
     S.FactionId=Friendly?0:1; S.Initialize(Layout);
+    Ship.ApplyPresentationHull(HullId);
     Ship.SetActorHiddenInGame(false); Ship.SetActorEnableCollision(true);
     Ship.SetActorLocationAndRotation(Position,FRotator(0,Friendly?0:180,0)); Ship.DebugResetMotion(); Ship.SetAutomation(false,false);
     Combat.RegisterShip(&Ship,Hull->RadarTier,HullId==TEXT("radar"),Hull->Size);

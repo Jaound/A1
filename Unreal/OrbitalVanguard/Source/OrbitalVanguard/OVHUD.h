@@ -5,27 +5,35 @@
 class AOVShip;
 class UOVDevelopmentWidget;
 class UOVHeroWidget;
+class UOVShipPreview;
 UCLASS()
 class ORBITALVANGUARD_API AOVHUD : public AHUD {
  GENERATED_BODY()
 public:
  virtual void BeginPlay() override;
+ virtual void EndPlay(const EEndPlayReason::Type Reason) override;
  virtual void DrawHUD() override;
  void SyncAddedUI();
  bool IsOverAddedUI(float X,float Y) const;
  bool IsAddedUIEditing() const;
  UFUNCTION(BlueprintPure, Category="UI") UOVDevelopmentWidget* GetDevelopmentPanel() const { return DevelopmentWidget; }
  UFUNCTION(BlueprintPure, Category="UI") UOVHeroWidget* GetHeroPanel() const { return HeroWidget; }
- void SetHeroPanelOpen(bool bOpen) { bHeroPanelOpen=bOpen; SyncAddedUI(); }
- bool IsHeroPanelOpen() const { return bHeroPanelOpen; }
+ UFUNCTION(BlueprintPure, Category="UI") int32 GetPreviewMeshCount() const;
+ UFUNCTION(BlueprintPure, Category="UI") FString GetSelectedWeaponSummary() const;
+ UFUNCTION(BlueprintPure, Category="UI") int32 GetPinnedCount() const { return PinnedShips.Num(); }
+ UFUNCTION(BlueprintCallable, Category="UI") void SetHeroPanelOpen(bool bOpen) { bHeroPanelOpen=bOpen; if(bOpen)bDetailsOpen=false; SyncAddedUI(); }
+ UFUNCTION(BlueprintPure, Category="UI") bool IsHeroPanelOpen() const { return bHeroPanelOpen; }
  virtual void NotifyHitBoxClick(FName BoxName) override;
+ UFUNCTION(BlueprintCallable, Category="UI") void ExecuteUIAction(FName Action) { NotifyHitBoxClick(Action); }
  UFUNCTION(BlueprintPure, Category="UI") bool IsOverPanel(float X,float Y) const;
  UFUNCTION(BlueprintPure, Category="UI") FName GetHitActionAtCanvasPoint(FVector2D Point) const;
- bool HasOrbitPreview() const;
+ UFUNCTION(BlueprintPure, Category="UI") bool HasOrbitPreview() const;
+ UFUNCTION(BlueprintPure, Category="UI") FRotator GetPreviewRotation() const { return PreviewRotation; }
+ UFUNCTION(BlueprintPure, Category="UI") float GetPreviewZoom() const { return PreviewZoom; }
  bool IsOverOrbitPreview(FVector2D Cursor) const;
  void OrbitPreview(FVector2D Delta);
  void CancelPointerDrag() { bDragging=false; bResizing=false; }
- void OpenDetails() { bDetailsOpen=true; bMinimized=false; }
+ void OpenDetails() { bDetailsOpen=true; bMinimized=false; bHeroPanelOpen=false; SyncAddedUI(); }
  UFUNCTION(BlueprintCallable, Category="UI") bool HandlePointer(float X,float Y,bool Pressed,bool Down,float Wheel,bool Orbit,float DX,float DY);
  UFUNCTION(BlueprintCallable, Category="UI") void SetDetailsOpen(bool Open) { bDetailsOpen=Open; bMinimized=false; }
  UFUNCTION(BlueprintPure, Category="UI") FVector2D GetActionCenter(FName Action) const;
@@ -46,8 +54,20 @@ public:
 private:
  UPROPERTY() TObjectPtr<UOVDevelopmentWidget> DevelopmentWidget;
  UPROPERTY() TObjectPtr<UOVHeroWidget> HeroWidget;
+ UPROPERTY() TObjectPtr<UOVShipPreview> ShipPreview;
+ UPROPERTY() TArray<TObjectPtr<UOVShipPreview>> PinnedPreviews;
+ UPROPERTY() TArray<TWeakObjectPtr<AOVShip>> PinnedShips;
  FBox2D DevelopmentRect, HeroRect;
- bool bHeroPanelOpen=true;
+ bool bHeroPanelOpen=false;
+ bool bSceneMenuOpen=false;
+ bool bHangarView=false;
+ bool bDetailsPositioned=false;
+ int32 FleetPage=0;
+ FString LastNoticeSource;
+ FString NoticeText;
+ double NoticeExpires=0;
+ void DrawPinned();
+ static FString ReadinessKorean(const FString& Key);
  TMap<FName,FVector2D> ActionCenters;
  float UIScale=1.f;
  FVector2D ViewportPixels=FVector2D(1280,740);

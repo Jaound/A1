@@ -129,6 +129,10 @@ def run(pc, widget):
     check("HC-ENEMY-NOT-SELECTABLE", bool(enemies) and not widget.select_mission_hero(p(enemies[0], "unit_id")))
     check("HC-TROOPS-NOT-HERO-CARDS", bool(troops) and not widget.select_mission_hero(p(troops[0], "unit_id")))
     check("HC-INVALID-ID-REJECT", not widget.select_mission_hero(999999))
+    pc.action("RestartScene")
+    check("HC-EXAMPLE-RESTART-PRESERVED", not p(mission, "uses_owned_roster") and p(mission, "attack_hero_count") == 4
+          and p(mission, "game_time") == 0 and len(heroes.get_heroes(0)) == 4)
+    examples = [c for c in rows(widget) if p(c, "mission_only")]
     # 같은 방의 실제 적 전투원으로 자동 스킬을 발동시킨다. UI가 쿨타임을 직접 변경하지 않는다.
     focus_id = p(examples[0], "unit_id")
     focus = interior.get_unit(focus_id)

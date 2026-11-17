@@ -3,12 +3,19 @@
 #include "OVCombatSubsystem.h"
 #include "OVPointDefenseSubsystem.h"
 #include "Engine/World.h"
+#include "Engine/StaticMesh.h"
 #include "OVShipSystemsComponent.h"
 #include "Components/SceneComponent.h"
 #include "Components/StaticMeshComponent.h"
 #include "Components/BoxComponent.h"
 #include "Materials/MaterialInstanceDynamic.h"
 #include "UObject/ConstructorHelpers.h"
+#include "HAL/IConsoleManager.h"
+
+// Original PC14 hull and trial mount surface anchors still need art alignment.
+// Opt-in keeps the tested articulated placeholder in normal scenarios.
+static TAutoConsoleVariable<int32> CVarOVImportedHull(TEXT("ov.Presentation.ImportedHull"),0,
+    TEXT("DEV source-hull inspection. 1 enables PC14 on the next scenario creation; no combat geometry changes."));
 
 #if WITH_DEV_AUTOMATION_TESTS
 #include "Misc/AutomationTest.h"
@@ -139,6 +146,7 @@ AOVShip::AOVShip()
 
 void AOVShip::SetCalibrationHull(const FVector* LocalHalfExtent)
 {
+    Hull->SetStaticMesh(LoadObject<UStaticMesh>(nullptr,TEXT("/Engine/BasicShapes/Cube.Cube")));
     // Readable temporary silhouette inside the existing coarse combat OBB.
     // Selection retains exactly that OBB; neither actor scale nor combat dimensions change.
     CalibrationSelection->SetCollisionEnabled(LocalHalfExtent?ECollisionEnabled::QueryOnly:ECollisionEnabled::NoCollision);
@@ -163,6 +171,22 @@ void AOVShip::SetCalibrationHull(const FVector* LocalHalfExtent)
         for(int32 I=0;I<AccentMeshes.Num();++I) { AccentMeshes[I]->SetRelativeLocation(Locations[I]); AccentMeshes[I]->SetRelativeScale3D(Scales[I]); }
     }
     for(UStaticMeshComponent* Part:AccentMeshes) { Part->SetVisibility(true);Part->SetCollisionEnabled(LocalHalfExtent?ECollisionEnabled::NoCollision:ECollisionEnabled::QueryOnly); }
+}
+
+void AOVShip::ApplyPresentationHull(FName DefinitionId)
+{
+    if(CVarOVImportedHull.GetValueOnGameThread()!=1 || DefinitionId!=TEXT("corvette") || !Systems || !Systems->Layout)return;
+    auto* Mesh=LoadObject<UStaticMesh>(nullptr,TEXT("/Game/Presentation/Ships/SM_PC14.SM_PC14"),nullptr,LOAD_NoWarn);
+    if(!Mesh)return;
+    const FBoxSphereBounds Bounds=Mesh->GetBounds();
+    const FVector Available=Systems->Layout->LocalHalfExtent;
+    const FVector Ratio=Available/Bounds.BoxExtent.ComponentMax(FVector(1));
+    const double Scale=Ratio.GetMin();
+    Hull->SetStaticMesh(Mesh);
+    Hull->SetRelativeScale3D(FVector(Scale));
+    Hull->SetRelativeLocation(-Bounds.Origin*Scale);
+    Hull->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+    for(auto Part:AccentMeshes)Part->SetVisibility(false);
 }
 
 void AOVShip::Configure(const FString& Name, bool Friendly, float Speed, float RotationRate,

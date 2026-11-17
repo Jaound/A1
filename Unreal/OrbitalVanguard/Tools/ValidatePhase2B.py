@@ -215,6 +215,20 @@ def run_projectiles(pc):
     for kind, index in ((unreal.OVAttackKind.CANNON, 0), (unreal.OVAttackKind.MISSILE, 2), (unreal.OVAttackKind.GUIDED_MISSILE, 2)):
         combat, a, support, target = fixture(pc, 1)
         custom_profile(combat, a, index, kind=kind, speed=200, accuracy=1, salvo=1)
+        # Profile replacement can change a fixed VLS outlet into an articulated tube.
+        # The old fixture aligned BEFORE replacement. Wait only for the real finite
+        # traverse of the new muzzle; never bypass readiness or widen its tolerance.
+        alignment_frames = 0
+        while alignment_frames < 120:
+            readiness = combat.get_readiness(a, weapon_id(combat, a, index))
+            if p(readiness, 'ready') or p(readiness, 'reason') != 'TURRET ALIGNING':
+                break
+            frames(pc, 1)
+            alignment_frames += 1
+        if alignment_frames:
+            report.setdefault('fixture_adjustments', []).append({
+                'case': 'run_projectiles ' + str(kind), 'alignment_frames': alignment_frames,
+                'reason': '포구 형상이 바뀐 프로필 교체 후 실제 유한 선회 대기; 발사 허용각/사거리 유지'})
         combat.request_fire(a, weapon_id(combat, a, index))
         frames(pc, 3)
         shots = p(combat, 'attacks')
@@ -327,7 +341,17 @@ def tick(dt):
                 return
             check('Rendered detail/HUD observes paused combat without extra shots', p(state['combat'], 'shot_count') == state['shots'] and p(state['combat'], 'game_time') == state['clock'])
             pc = state['pc']; pc.start_combat_range()
+            # 개발창은 이제 독립 UMG 도구다. 전장 상세창의 입력 소비는 플레이 화면에서 검사한다.
+            # 기존 ID는 유지하며 하단으로 이동한 FIRE 대신 창 뒤 함대 목록도 같은 소비 경계를 사용한다.
+            pc.set_editor_property('developer_mode', False)
             pc.set_target(p(pc, 'ships')[2]); pc.action('External')
+            # 상세창이 최초 배치를 마친 실제 렌더 이후 드래그한다.
+            state.update(phase=3.5, at=time.monotonic())
+            return
+        if state['phase'] == 3.5:
+            if time.monotonic()-state['at'] < .5:
+                return
+            pc = state['pc']
             move_window(pc, 10, 216)
             state.update(phase=4, at=time.monotonic())
             return
