@@ -20,6 +20,8 @@ public:
  UFUNCTION(BlueprintPure, Category="UI") UOVDevelopmentWidget* GetDevelopmentPanel() const { return DevelopmentWidget; }
  UFUNCTION(BlueprintPure, Category="UI") UOVHeroWidget* GetHeroPanel() const { return HeroWidget; }
  UFUNCTION(BlueprintPure, Category="UI") int32 GetPreviewMeshCount() const;
+ UFUNCTION(BlueprintPure, Category="UI") int32 GetWeaponPreviewVisibleMeshCount() const;
+ UFUNCTION(BlueprintPure, Category="UI") int32 GetWeaponPreviewFocus() const;
  UFUNCTION(BlueprintPure, Category="UI") FString GetSelectedWeaponSummary() const;
  UFUNCTION(BlueprintPure, Category="UI") int32 GetPinnedCount() const { return PinnedShips.Num(); }
  UFUNCTION(BlueprintCallable, Category="UI") void SetHeroPanelOpen(bool bOpen) { bHeroPanelOpen=bOpen; if(bOpen)bDetailsOpen=false; SyncAddedUI(); }
@@ -71,6 +73,7 @@ private:
  UPROPERTY() TObjectPtr<UOVDevelopmentWidget> DevelopmentWidget;
  UPROPERTY() TObjectPtr<UOVHeroWidget> HeroWidget;
  UPROPERTY() TObjectPtr<UOVShipPreview> ShipPreview;
+ UPROPERTY() TObjectPtr<UOVShipPreview> WeaponPreview;
  UPROPERTY() TArray<TObjectPtr<UOVShipPreview>> PinnedPreviews;
  UPROPERTY() TArray<TWeakObjectPtr<AOVShip>> PinnedShips;
  FBox2D DevelopmentRect, HeroRect;

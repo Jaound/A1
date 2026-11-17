@@ -219,6 +219,15 @@ void AOVHUD::DrawExternal(float X,float Y,float W)
   AddHitBox((P-FVector2D(11,11))*UIScale,FVector2D(22,22)*UIScale,Action,true,130);
   ActionCenters.Add(Action,P);
  }
+ if(!PC->Selected->IsHidden()&&!Systems->bWrecked&&(!PC->Combat||!PC->Combat->IsDeparted(PC->Selected))&&Layout->WeaponMounts.IsValidIndex(PC->SelectedWeapon)) {
+  if(!WeaponPreview)WeaponPreview=NewObject<UOVShipPreview>(this);
+  WeaponPreview->Update(PC->Selected,FRotator(-25,35,0),1.f,1.7f,PC->SelectedWeapon);
+  const float PW=FMath::Min(150.f,W*.4f),PH=88.f,PX=X+W-PW-5,PY=Y+5;
+  DrawRect(FLinearColor(.009f,.02f,.035f),PX,PY,PW,PH);
+  if(auto* Texture=WeaponPreview->GetTexture())DrawTexture(Texture,PX,PY,PW,PH,0,0,1,1,FLinearColor::White,BLEND_Opaque);
+  DrawText(TEXT("선택 무장 · 실시간"),Ink,PX+4,PY+4,GEngine->GetSmallFont());
+  AddHitBox(FVector2D(PX,PY)*UIScale,FVector2D(PW,PH)*UIScale,TEXT("WeaponPreviewBackground"),true,140);
+ }
  DrawText(TEXT("중클릭 회전 · 휠 확대 · 무장 선택"),Ink,X+8,Y+174,GEngine->GetSmallFont());
 }
 FString AOVHUD::GetSelectedWeaponSummary() const
@@ -407,6 +416,7 @@ void AOVHUD::DrawHUD()
  SyncAddedUI();
  ActionCenters.Reset();
  Super::DrawHUD();auto* PC=Cast<AOVController>(PlayerOwner);if(!PC||!Canvas||PC->Ships.Num()<3)return;
+ if(WeaponPreview&&(!HasOrbitPreview()||!IsValid(PC->Selected)||PC->Selected->IsHidden()||PC->Selected->Systems->bWrecked||(PC->Combat&&PC->Combat->IsDeparted(PC->Selected))))WeaponPreview->Release();
  ViewportPixels=FVector2D(Canvas->SizeX,Canvas->SizeY);
  UIScale=FMath::Max(.25f,FMath::Min(1.f,FMath::Min(Canvas->SizeX/1280.f,Canvas->SizeY/740.f)));
  Canvas->Canvas->PushRelativeTransform(FScaleMatrix(FVector(UIScale,UIScale,1)));
@@ -478,6 +488,7 @@ void AOVHUD::BeginPlay()
 void AOVHUD::EndPlay(const EEndPlayReason::Type Reason)
 {
  if(ShipPreview)ShipPreview->Release();
+ if(WeaponPreview)WeaponPreview->Release();
  for(auto Preview:PinnedPreviews)if(Preview)Preview->Release();
  Super::EndPlay(Reason);
 }
@@ -485,6 +496,8 @@ int32 AOVHUD::GetPreviewMeshCount() const
 {
  return ShipPreview?ShipPreview->GetMeshCount():0;
 }
+int32 AOVHUD::GetWeaponPreviewVisibleMeshCount() const { return WeaponPreview?WeaponPreview->GetVisibleMeshCount():0; }
+int32 AOVHUD::GetWeaponPreviewFocus() const { return WeaponPreview?WeaponPreview->GetFocusMount():INDEX_NONE; }
 void AOVHUD::DrawPinned()
 {
  const auto* PC=Cast<AOVController>(PlayerOwner);

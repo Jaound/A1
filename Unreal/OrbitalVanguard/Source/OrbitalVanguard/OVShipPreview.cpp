@@ -1,6 +1,7 @@
 #include "OVShipPreview.h"
 #include "OVShip.h"
 #include "OVShipSystemsComponent.h"
+#include "OVWeaponVisualComponent.h"
 #include "Components/SceneCaptureComponent2D.h"
 #include "Components/StaticMeshComponent.h"
 #include "Engine/TextureRenderTarget2D.h"
@@ -8,22 +9,27 @@
 #include "ProfilingDebugging/CpuProfilerTrace.h"
 #include "ProfilingDebugging/CsvProfiler.h"
 
+int32 UOVShipPreview::GetVisibleMeshCount() const
+{
+    int32 Count=0;for(const auto& Mesh:Mirrors)if(IsValid(Mesh)&&Mesh->IsVisible())++Count;return Count;
+}
+
 void UOVShipPreview::Release()
 {
     if (IsValid(Proxy)) Proxy->Destroy();
     Proxy=nullptr; Capture=nullptr; Texture=nullptr;
-    Mirrors.Reset(); Sources.Reset(); Subject.Reset(); LastCapture=-1;
+    Mirrors.Reset(); Sources.Reset(); Subject.Reset(); LastCapture=-1; LastFocusMount=INDEX_NONE;
 }
 
-void UOVShipPreview::Update(AOVShip* Ship, FRotator Rotation, float Zoom, float Aspect)
+void UOVShipPreview::Update(AOVShip* Ship, FRotator Rotation, float Zoom, float Aspect, int32 FocusMount)
 {
     TRACE_CPUPROFILER_EVENT_SCOPE(OV_ShipPreview);
     CSV_SCOPED_TIMING_STAT_EXCLUSIVE(OV_Preview);
     if (!IsValid(Ship) || !Ship->Systems || !Ship->Systems->Layout) { Release(); return; }
     if (Subject!=Ship) Release();
     const double Now=FPlatformTime::Seconds();
-    if (Now-LastCapture<.05 && Rotation.Equals(ViewRotation) && FMath::IsNearlyEqual(ViewAspect,Aspect)) return;
-    LastCapture=Now;
+    if (Now-LastCapture<.05 && Rotation.Equals(ViewRotation) && FMath::IsNearlyEqual(ViewAspect,Aspect) && LastFocusMount==FocusMount) return;
+    LastCapture=Now;LastFocusMount=FocusMount;
     if (!Proxy)
     {
         FActorSpawnParameters Params; Params.ObjectFlags|=RF_Transient;
@@ -68,9 +74,15 @@ void UOVShipPreview::Update(AOVShip* Ship, FRotator Rotation, float Zoom, float 
         Width=FMath::Max(Width,FMath::Abs(P.Y)); Height=FMath::Max(Height,FMath::Abs(P.Z));
     }
     OrthoWidth=2.6*FMath::Max(Width,Height*ViewAspect)/FMath::Max(.5f,Zoom);
+    FVector Focus=FVector::ZeroVector;
+    if(Ship->Systems->Layout->WeaponMounts.IsValidIndex(FocusMount)) {
+        const auto& Mount=Ship->Systems->Layout->WeaponMounts[FocusMount];
+        Focus=Rotation.RotateVector(Mount.LocalPosition);
+        OrthoWidth=FMath::Max(100.f,OVWeaponGeometry::BarrelLength(Extent,Mount.Tier,Mount.Type==EOVWeaponType::Interception)*4.f);
+    }
     if (Texture->SizeY!=FMath::RoundToInt(800/ViewAspect)) Texture->ResizeTarget(800,FMath::RoundToInt(800/ViewAspect));
     Capture->OrthoWidth=OrthoWidth;
-    Capture->SetRelativeLocation(FVector(-FMath::Max(5000.,Extent.Size()*4),0,0));
+    Capture->SetRelativeLocation(FVector(-FMath::Max(5000.,Extent.Size()*4),Focus.Y,Focus.Z));
     Capture->SetRelativeRotation(FRotator::ZeroRotator);
     for (int32 I=0;I<Sources.Num();++I)
     {
@@ -79,7 +91,16 @@ void UOVShipPreview::Update(AOVShip* Ship, FRotator Rotation, float Zoom, float 
         for (int32 M=0;M<Source->GetNumMaterials();++M) Mirror->SetMaterial(M,Source->GetMaterial(M));
         const FTransform Local=Source->GetComponentTransform().GetRelativeTransform(Ship->GetActorTransform());
         Mirror->SetRelativeTransform(Local*FTransform(Rotation));
-        Mirror->SetVisibility(Source->IsVisible());
+        bool bIncluded=true;
+        if(Ship->Systems->Layout->WeaponMounts.IsValidIndex(FocusMount)) {
+            bIncluded=false;
+            for(const USceneComponent* Parent=Source->GetAttachParent();Parent;Parent=Parent->GetAttachParent())
+                if(const auto* Weapon=Cast<UOVWeaponVisualComponent>(Parent)) {
+                    bIncluded=Weapon->ReadState().MountId==Ship->Systems->Layout->WeaponMounts[FocusMount].WeaponId;
+                    break;
+                }
+        }
+        Mirror->SetVisibility(Source->IsVisible()&&bIncluded);
     }
     Capture->CaptureScene();
 }

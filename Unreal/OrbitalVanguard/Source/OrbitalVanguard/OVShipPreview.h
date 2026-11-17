@@ -13,11 +13,13 @@ class ORBITALVANGUARD_API UOVShipPreview : public UObject
 {
     GENERATED_BODY()
 public:
-    void Update(AOVShip* Ship, FRotator Rotation, float Zoom, float Aspect);
+    void Update(AOVShip* Ship, FRotator Rotation, float Zoom, float Aspect, int32 FocusMount=INDEX_NONE);
     void Release();
     UTextureRenderTarget2D* GetTexture() const { return Texture; }
     FVector2D Project(FVector LocalPosition) const;
     int32 GetMeshCount() const { return Mirrors.Num(); }
+    int32 GetVisibleMeshCount() const;
+    int32 GetFocusMount() const { return LastFocusMount; }
 private:
     UPROPERTY() TObjectPtr<AActor> Proxy;
     UPROPERTY() TObjectPtr<USceneCaptureComponent2D> Capture;
@@ -28,4 +30,5 @@ private:
     FRotator ViewRotation;
     float OrthoWidth=1000, ViewAspect=2;
     double LastCapture=-1;
+    int32 LastFocusMount=INDEX_NONE;
 };

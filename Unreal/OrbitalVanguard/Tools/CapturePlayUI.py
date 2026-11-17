@@ -152,6 +152,8 @@ def tick(_dt):
         if state['stage'] == 'capture':
             if name == '외부_무장':
                 check('PREVIEW-MESH-MIRROR', hud.get_preview_mesh_count() > 0, hud.get_preview_mesh_count())
+                check('WEAPON-PREVIEW-SELECTED-MOUNT', hud.get_weapon_preview_focus() == prop(pc, 'selected_weapon'))
+                check('WEAPON-PREVIEW-ONLY-MOUNT-MESHES', 0 < hud.get_weapon_preview_visible_mesh_count() < hud.get_preview_mesh_count(), hud.get_weapon_preview_visible_mesh_count())
                 check('PREVIEW-NO-DAMAGE', state['before_preview'] == snapshot(pc))
             if name in ('전투_알림','쉴드_고갈_알림'):
                 index=state['notice_count']-1;action='BattleNotice_'+str(index)
@@ -170,11 +172,24 @@ def tick(_dt):
             item['exists'] = os.path.isfile(item['path']) and os.path.getsize(item['path']) > 0
             check('RENDER-' + name, item['exists'])
             report['captures'].append(item)
+            if name == '외부_무장':
+                hud.execute_ui_action('Weapon_1')
+                state.update(stage='weapon_switched', at=time.monotonic())
+                return
             state['index'] += 1
             if state['index'] >= len(views):
                 finish()
             else:
                 state.update(stage='prepare', at=time.monotonic())
+        elif state['stage'] == 'weapon_switched':
+            check('WEAPON-PREVIEW-SWITCH-MOUNT', prop(pc,'selected_weapon') == 1 and hud.get_weapon_preview_focus() == 1 and hud.get_weapon_preview_visible_mesh_count() > 0)
+            check('WEAPON-PREVIEW-SWITCH-NO-DAMAGE', state['before_preview'] == snapshot(pc))
+            hud.set_details_open(False)
+            state.update(stage='weapon_closed', at=time.monotonic())
+        elif state['stage'] == 'weapon_closed':
+            check('WEAPON-PREVIEW-CLOSE-RELEASES', hud.get_weapon_preview_focus() == -1 and hud.get_weapon_preview_visible_mesh_count() == 0)
+            state['index'] += 1
+            state.update(stage='prepare', at=time.monotonic())
     except Exception:
         report['errors'].append(traceback.format_exc())
         unreal.log_error(report['errors'][-1])
