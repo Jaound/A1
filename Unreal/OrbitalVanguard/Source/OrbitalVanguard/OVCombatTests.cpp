@@ -762,12 +762,18 @@ IMPLEMENT_SIMPLE_AUTOMATION_TEST(FOVCombatPC14RecessArmorTest, "OrbitalVanguard.
     EAutomationTestFlags::EditorContext | EAutomationTestFlags::EngineFilter)
 bool FOVCombatPC14RecessArmorTest::RunTest(const FString&)
 {
+  for(int32 Direction=0;Direction<4;++Direction)
+  {
     OVCombatTest::FRange R;
     auto* Layout=UShipLayoutDataAsset::MakeTestLayout(R.B,1);
     if(!TestTrue(TEXT("Measured candidate loads"),OVCombatTest::LoadPC14TrialBoxes(Layout->CombatHullBoxes)))return false;
     R.B->Systems->Initialize(Layout);R.B->Systems->Shield=0;R.B->Systems->bShieldActive=false;
     for(auto& Mount:R.B->Systems->WeaponMountStates)Mount.HP=0;
-    R.A->SetActorLocation(FVector(1000,0,1300));R.A->SetActorRotation(FRotator(-90,0,0));
+    const FVector Positions[]={FVector(1000,0,1300),FVector(1000,0,-1300),FVector(1000,-1300,0),FVector(-300,0,0)};
+    const FRotator Rotations[]={FRotator(-90,0,0),FRotator(90,0,0),FRotator(0,90,0),FRotator::ZeroRotator};
+    // The slightly descending forward shot first contacts a candidate box's upper surface.
+    const EOVArmorFace Faces[]={EOVArmorFace::Top,EOVArmorFace::Bottom,EOVArmorFace::Left,EOVArmorFace::Top};
+    R.A->SetActorLocation(Positions[Direction]);R.A->SetActorRotation(Rotations[Direction]);
     R.Combat->Settings->GuaranteedRange=100000;R.Combat->SetTarget(R.A,R.B);
     auto& Gun=R.Gun();Gun.Profile.Accuracy=1;Gun.Profile.AimSpreadDegrees=0;Gun.Profile.Range=100000;
     Gun.Profile.FireTolerance=180;Gun.Profile.TraverseSpeed=10000;Gun.Profile.TraverseAcceleration=100000;Gun.Profile.Damage=50;
@@ -776,10 +782,11 @@ bool FOVCombatPC14RecessArmorTest::RunTest(const FString&)
     if(!TestTrue(TEXT("Attack resolves on hull"),R.Combat->HitCount==1&&!R.Combat->RecentEvents.IsEmpty()))return false;
     const FOVAttackState& Event=R.Combat->RecentEvents.Last();
     const int32 Armor=Layout->GetArmorIndex(Event.ArmorId);
-    TestTrue(TEXT("Actual recessed upper impact maps to top armor"),Layout->ArmorSections.IsValidIndex(Armor)&&Layout->ArmorSections[Armor].Face==EOVArmorFace::Top);
+    TestTrue(FString::Printf(TEXT("Actual recessed impact %d maps to the contacted surface normal"),Direction),Layout->ArmorSections.IsValidIndex(Armor)&&Layout->ArmorSections[Armor].Face==Faces[Direction]);
     TestTrue(TEXT("Actual armor hit maps to a real facility slot"),Layout->GetSlotIndex(Event.SlotId)!=INDEX_NONE);
     TestTrue(TEXT("Hull damage uses existing path once"),Event.HullDamage>0&&R.B->Systems->LastHullDamage==Event.HullDamage);
-    return true;
+  }
+  return true;
 }
 
 IMPLEMENT_SIMPLE_AUTOMATION_TEST(FOVCombatPC14BottomMountTest, "OrbitalVanguard.Combat.PC14TrialBottomMountImpact",
