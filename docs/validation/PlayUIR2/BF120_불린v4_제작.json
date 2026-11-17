@@ -1,0 +1,51 @@
+{
+  "source": "C:\\Users\\user\\Documents\\OrbitalVanguardAssets\\Prepared\\PlayUI_R2_BF120_PitchTrial_v5\\BF120_PitchTrial.blend",
+  "source_before": "9daebbcf818e2b1bb1adeb776db235942f2626050719ec9d2c7596b733b1832d",
+  "source_after": "9daebbcf818e2b1bb1adeb776db235942f2626050719ec9d2c7596b733b1832d",
+  "evidence": "C:\\Users\\user\\Documents\\OrbitalVanguardAssets\\Reports\\PlayUI_R2_BF120_PitchXSlices.json",
+  "evidence_sha256": "8471dc4437b8da0a6cda1a03a477a84069663c91e93e6402550f690e7ef12c2d",
+  "cut_x": -0.136,
+  "trial_pitch_pivot": [
+    0.07999999821186066,
+    0.0,
+    0.49000000953674316
+  ],
+  "trial_yaw_pivot": [
+    0.9950000047683716,
+    -0.02500000037252903,
+    -0.41999998688697815
+  ],
+  "parts": {
+    "YawBody": {
+      "faces": 594639,
+      "cut_edges": 504,
+      "cap_faces": 2,
+      "boundary_edges": 0,
+      "nonmanifold_edges": 0
+    },
+    "PitchTrial": {
+      "faces": 138445,
+      "cut_edges": 504,
+      "cap_faces": 2,
+      "boundary_edges": 0,
+      "nonmanifold_edges": 0
+    }
+  },
+  "status": "experimental boolean clearance; inspect topology, UV, normals, appearance, interference and gameplay before approval",
+  "socket_radius": 0.32,
+  "socket_depth": 0.7,
+  "collar_radius": 0.18,
+  "collar_depth": 0.4,
+  "collar_center_x": -0.05,
+  "socket_center_x": 0.05,
+  "socket_center_z": 0.493,
+  "socket_centers_y": [
+    0.419,
+    -0.418
+  ],
+  "socket_topology": {
+    "faces": 532436,
+    "boundary_edges": 0,
+    "nonmanifold_edges": 0
+  }
+}
