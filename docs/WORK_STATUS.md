@@ -1,5 +1,8 @@
 # 최신 작업 — 플레이 UI R2 진행 중
 
+**BF120 F5 전장 시험 (GK/GL):** F5의 임시 레이아웃에만 시험 프로필을 넣고 실제 함포 1발의 발사 원점·표시·적 쉴드 명중을 확인했다. [1280 API 11/11](validation/PlayUIR2/GK_BF120전장_API.json), [1920 API 11/11](validation/PlayUIR2/GL_BF120전장_API.json), [1280 화면](validation/PlayUIR2/GK_BF120전장_1280.png)·[1920 화면](validation/PlayUIR2/GL_BF120전장_1920.png). [기존 포탑 PIE API 39/39](validation/PlayUIR2/GM_포탑회귀_API.json). 첫 GJ 캡처는 에디터 화면을 잘못 찍어 화면 근거에서 제외하고 별도 플레이 창으로 재시도했다. 스크린샷은 F5 임시 함체와 시험 포탑이며 원본 함선 적용 완료가 아니다. 실제 입력·패키징·적절한 함체 접합·대량 성능·다른 원본 무장 등은 미검증이다. 재실행: `powershell -ExecutionPolicy Bypass -File Unreal/OrbitalVanguard/Tools/RunPlayUIValidation.ps1 -Label PlayUI_R2_GK -Validators ValidateBF120LiveTrial.py -Resolution 1280x720`.
+
+
 **BF120 실제 발사 연결 시험 (GI):** 명시적으로 `BF120Trial`로 지정한 함포만 격리된 원본 기반 3부품을 붙이고 두 발사구를 교대로 쓴다. 한 요청당 탄 1발이며 기존 발사 주기·피해는 바꾸지 않는다. 무장 종류가 함포가 아니거나 시험 자산이 없으면 기존 표현과 발사 위치를 사용한다. GI 빌드 성공, `OrbitalVanguard.Presentation.BF120TrialAlternatingMuzzles` 및 전체 자동 100/100 통과. 새 검사는 실제 포탄 발사 2회·번갈아 표시·상하 장착과 함체 회전·비호환 유도탄 복귀를 확인한다. 발사 간격과 양포 순서는 임시 표현 정책이다. **기본 전장에는 미적용**, 패키징·함체 부착·명중 화면·기체 다수 성능·직접 입력 미검증이다. 다음: 실전의 옵트인 시험 장면과 렌더·충돌/피해·성능을 확인하고 자산/피벗 보정 후 기본 모델 적용 여부를 결정한다.
 
 

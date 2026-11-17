@@ -1,5 +1,10 @@
 # 최근 검사: BF120 양포구와 상하 장착
 
+## BF120 F5 전장 연결 — 2026-11-18
+
+[1280 API 11/11](validation/PlayUIR2/GK_BF120전장_API.json), [1920 API 11/11](validation/PlayUIR2/GL_BF120전장_API.json): 임시 레이아웃에 시험 프로필 적용 후 실제 발사 원점·발사 효과·적 쉴드 감소 확인. [1280 화면](validation/PlayUIR2/GK_BF120전장_1280.png), [1920 화면](validation/PlayUIR2/GL_BF120전장_1920.png)은 별도 PIE 창 렌더다. 첫 캡처는 에디터 화면이어서 전장 렌더 근거에서 제외했다. [기존 포탑 API 39/39](validation/PlayUIR2/GM_포탑회귀_API.json). 화면에 보이는 함체는 임시 모델이고 API 제어는 직접 마우스·키보드 검증이 아니다.
+
+
 ## BF120 실제 발사 연결 시험 — 2026-11-18
 
 `PlayUI_R2_GI_Build.log` 빌드 성공, `PlayUI_R2_GI_BF120Live.log` 신규 시험 성공, `PlayUI_R2_GI_Automation.log` 전체 100/100 성공. 소스 메시 3개와 실제 발사체 2개·좌우 발사 효과, 상하·회전 자세, 유도탄으로 교체한 경우의 기존 외형/원점을 확인했다. 자동 테스트의 시험 프로필이며 기본 장면·포탄 피격·대량 성능·패키지·직접 입력은 확인하지 않았다. 양포 교대는 게임 밸런스를 변경하지 않는 임시 시각/발사 위치 선택이다.
