@@ -1,0 +1,64 @@
+{
+  "passed": true,
+  "checks": [
+    {
+      "id": "NEW-UNSAVED-WORLD",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "MESH-Base",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "MESH-Yaw",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "NO-SCREENSHOT-OVERWRITE",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "SCREENSHOT-TASK",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "RENDER-FILE",
+      "passed": true,
+      "detail": "268561"
+    }
+  ],
+  "errors": [],
+  "scope": "unsaved blank-level UE render only",
+  "physical_input": false,
+  "gameplay": false,
+  "Base": {
+    "min": [
+      -127.59557342529297,
+      -130.61582946777344,
+      -150.0201416015625
+    ],
+    "max": [
+      127.42157745361328,
+      116.34297943115234,
+      -97.49800109863281
+    ]
+  },
+  "Yaw": {
+    "min": [
+      -113.12104034423828,
+      -120.69747924804688,
+      -97.50611877441406
+    ],
+    "max": [
+      113.06705474853516,
+      130.6536865234375,
+      150.0120086669922
+    ]
+  },
+  "image": "C:\\Users\\user\\source\\repos\\A1\\Unreal\\OrbitalVanguard\\Saved\\Validation\\MM24UERender\\front_v2\\MM24.png"
+}
