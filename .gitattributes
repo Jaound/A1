@@ -6,3 +6,6 @@
 /Unreal/OrbitalVanguard/Content/Presentation/Ships/AssaultFull/*.uasset filter=lfs diff=lfs merge=lfs -text
 /Unreal/OrbitalVanguard/Content/Presentation/Ships/Missile_ShipFull/*.uasset filter=lfs diff=lfs merge=lfs -text
 /Unreal/OrbitalVanguard/Content/Presentation/Ships/Air_DefenseFull/*.uasset filter=lfs diff=lfs merge=lfs -text
+/Unreal/OrbitalVanguard/Content/Presentation/Ships/FrigateFull/*.uasset filter=lfs diff=lfs merge=lfs -text
+/Unreal/OrbitalVanguard/Content/Presentation/Ships/CruiserFull/*.uasset filter=lfs diff=lfs merge=lfs -text
+/Unreal/OrbitalVanguard/Content/Presentation/Ships/RadarFull/*.uasset filter=lfs diff=lfs merge=lfs -text

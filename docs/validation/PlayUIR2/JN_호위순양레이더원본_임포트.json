@@ -1,0 +1,135 @@
+{
+  "passed": true,
+  "ships": [
+    {
+      "id": "frigate",
+      "triangles": 370972,
+      "mesh": "/Game/Presentation/Ships/FrigateFull/SM_Hull",
+      "material": "/Game/Presentation/Ships/FrigateFull/M_Readable",
+      "source_sha256": "562dde59aa573133be119d93dd2adc8e52f075ba041c0f536a29133e2a25295a",
+      "images": [
+        {
+          "name": "Image_0.png",
+          "size": [
+            8192,
+            8192
+          ],
+          "sha256": "1287a2c5cffeb072cd6a2ad8c169f3af8066bb40d06dbef107e9b6f9ecaafec6"
+        },
+        {
+          "name": "Image_2.png",
+          "size": [
+            4096,
+            4096
+          ],
+          "sha256": "dab999a6c8da1179775698885d942649f9baf9776340377e2708bc4a5dc8b128"
+        },
+        {
+          "name": "texture_0_metallic.png",
+          "size": [
+            4096,
+            4096
+          ],
+          "sha256": "815ba0b15d35953bb24a26a857b1d7ea98bbbdfb3d5d8045fb726a81c427537d"
+        },
+        {
+          "name": "texture_0_roughness.png",
+          "size": [
+            4096,
+            4096
+          ],
+          "sha256": "156d86ee7d82b783c9ce02ab72f5e0a1eeea23be2b79e915a169e5397053ced4"
+        }
+      ],
+      "forward_direction_validated": false,
+      "visibility_fill": 1.2
+    },
+    {
+      "id": "cruiser",
+      "triangles": 657078,
+      "mesh": "/Game/Presentation/Ships/CruiserFull/SM_Hull",
+      "material": "/Game/Presentation/Ships/CruiserFull/M_Readable",
+      "source_sha256": "94e28015eb731a13c4ea5499f43ff6aa645bd7dc850ff16607a9c559bf6071f1",
+      "images": [
+        {
+          "name": "Image_0.png",
+          "size": [
+            4096,
+            4096
+          ],
+          "sha256": "37b3ec5368234f17c3f95a9f3d0e5d9d9f464049f78480552b8009f0d21c553d"
+        },
+        {
+          "name": "Image_2.png",
+          "size": [
+            4096,
+            4096
+          ],
+          "sha256": "03dd41f184a5c71f5ba3bfbe1314012b08c2405aac5a393bac392f42d7aaa9c7"
+        },
+        {
+          "name": "texture_0_metallic.png",
+          "size": [
+            2048,
+            2048
+          ],
+          "sha256": "4e516942dc33c26d7be40b4faca74f1160ee4a3889249e077da0285a5c948b9d"
+        },
+        {
+          "name": "texture_0_roughness.png",
+          "size": [
+            2048,
+            2048
+          ],
+          "sha256": "5f0b67ac13fc9a8965187873b093bbcd986c16516a6f218041aa5a665149f3c9"
+        }
+      ],
+      "forward_direction_validated": false,
+      "visibility_fill": 1.2
+    },
+    {
+      "id": "radar",
+      "triangles": 2025027,
+      "mesh": "/Game/Presentation/Ships/RadarFull/SM_Hull",
+      "material": "/Game/Presentation/Ships/RadarFull/M_Readable",
+      "source_sha256": "1108743a32e2c0e9cb23ee3bb6f8ececc64ea547fa02bd41d7ea399cad79118b",
+      "images": [
+        {
+          "name": "Image_0.png",
+          "size": [
+            8192,
+            8192
+          ],
+          "sha256": "e3bc2815e883f053bdc1561d9c1d371e124e848be8f8ba6e4ca55966f0927a9d"
+        },
+        {
+          "name": "Image_2.png",
+          "size": [
+            4096,
+            4096
+          ],
+          "sha256": "9152882c082fde72c37a49d1d63f597cfcee4f96f3b2ced559703587712af2ee"
+        },
+        {
+          "name": "texture_0_metallic.png",
+          "size": [
+            4096,
+            4096
+          ],
+          "sha256": "64b34c2dad0b69fe4a59ee039ed9dac583ece317aa714bf96b8be304c6416d7a"
+        },
+        {
+          "name": "texture_0_roughness.png",
+          "size": [
+            4096,
+            4096
+          ],
+          "sha256": "f7c49d6e07347e952b0f29af05e42f4ff55f8ac71f9145f20fcf68bc6868bad7"
+        }
+      ],
+      "forward_direction_validated": false,
+      "visibility_fill": 1.2
+    }
+  ],
+  "errors": []
+}

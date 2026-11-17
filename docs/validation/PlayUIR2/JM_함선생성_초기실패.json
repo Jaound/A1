@@ -1,0 +1,32 @@
+{
+  "passed": false,
+  "kind": "PIE 렌더와 UI API",
+  "physical_input": false,
+  "requested_size": [
+    1280,
+    720
+  ],
+  "captures": [],
+  "checks": [
+    {
+      "id": "PLAY-WINDOW",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "SOURCE-HULL-CALIBRATION-호위함_모델",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "SOURCE-HULL-SPAWN-호위함_모델",
+      "passed": false,
+      "detail": "개발 모드를 켜야 시험 함선을 생성할 수 있습니다."
+    }
+  ],
+  "errors": [
+    "Traceback (most recent call last):\n  File \"CapturePlayUI.py\", line 154, in tick\n  File \"CapturePlayUI.py\", line 33, in check\nAssertionError: SOURCE-HULL-SPAWN-호위함_모델: 개발 모드를 켜야 시험 함선을 생성할 수 있습니다.\n"
+  ],
+  "preview_settings_restored": true,
+  "elapsed_seconds": 1.7969999999986612
+}

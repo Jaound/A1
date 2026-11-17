@@ -109,6 +109,36 @@ bool FOVMissileDefensePresentation::RunTest(const FString&)
     Flag->Set(Previous,ECVF_SetByConsole);World->DestroyWorld(false);return true;
 }
 
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(FOVFrigateCruiserRadarPresentation,
+    "OrbitalVanguard.Presentation.FrigateCruiserRadarSourceMeshes",
+    EAutomationTestFlags::EditorContext | EAutomationTestFlags::EngineFilter)
+bool FOVFrigateCruiserRadarPresentation::RunTest(const FString&)
+{
+    auto* Flag=IConsoleManager::Get().FindConsoleVariable(TEXT("ov.Presentation.ImportedHull"));
+    if(!TestNotNull(TEXT("Presentation flag exists"),Flag))return false;
+    const int32 Previous=Flag->GetInt();Flag->Set(1,ECVF_SetByConsole);
+    UWorld* World=UWorld::CreateWorld(EWorldType::Game,false);
+    TArray<AOVShip*> Ships={World->SpawnActor<AOVShip>(),World->SpawnActor<AOVShip>(),World->SpawnActor<AOVShip>()};
+    auto* Combat=World->GetSubsystem<UOVCombatSubsystem>();
+    if(TestTrue(TEXT("Calibration settings initialized"),OVCalibration::Start(*Combat,Ships,1)))
+    {
+        const FName Ids[]={TEXT("frigate"),TEXT("cruiser"),TEXT("radar")};
+        const TCHAR* Paths[]={TEXT("/Game/Presentation/Ships/FrigateFull/SM_Hull.SM_Hull"),TEXT("/Game/Presentation/Ships/CruiserFull/SM_Hull.SM_Hull"),TEXT("/Game/Presentation/Ships/RadarFull/SM_Hull.SM_Hull")};
+        for(int32 I=0;I<3;++I)
+        {
+            AOVShip* Ship=Ships[I];
+            if(!TestTrue(TEXT("Actual calibration hull configured"),OVCalibration::ConfigureHull(*Combat,*Ship,Ids[I],true,FVector::ZeroVector,6)))continue;
+            auto* Expected=LoadObject<UStaticMesh>(nullptr,Paths[I]);
+            TestTrue(TEXT("Source mesh assigned to correct hull"),Expected&&Ship->Hull->GetStaticMesh()==Expected);
+            TestEqual(TEXT("Visual mesh has no collision"),Ship->Hull->GetCollisionEnabled(),ECollisionEnabled::NoCollision);
+            auto* Selection=Ship->FindComponentByClass<UBoxComponent>();
+            if(TestNotNull(TEXT("Selection retained"),Selection))
+                TestTrue(TEXT("Selection bounds unchanged"),Selection->GetUnscaledBoxExtent().Equals(Ship->Systems->Layout->LocalHalfExtent,.01));
+        }
+    }
+    Flag->Set(Previous,ECVF_SetByConsole);World->DestroyWorld(false);return true;
+}
+
 IMPLEMENT_SIMPLE_AUTOMATION_TEST(FOVPC14SurfaceGrid,
     "OrbitalVanguard.Presentation.ImportedPC14SurfaceGrid",
     EAutomationTestFlags::EditorContext | EAutomationTestFlags::EngineFilter)
