@@ -4,6 +4,8 @@
 
 **진행 중 / 검증 대기:** D121 항공순양함 T3 함포 8·T4 전용 주포 2를 기존 D116 원본 데이터 위의 명시적 코드 오버라이드로 적용하고 유폭 검사 기대치를 갱신했다. 생성기 `--check` 통과, C++ 컴파일 성공. 열린 `OrbitalVanguard` 플레이 창 PID 26100이 DLL을 점유하여 링크 LNK1104로 빌드는 실패했다. 로그 `Unreal/OrbitalVanguard/Saved/Logs/PlayUI_R2_A_Build.log`. 새 바이너리·기능 성공은 확인되지 않았다. 플레이 창 종료 동의를 요청했으며, 종료 후 `Unreal/OrbitalVanguard/Tools/Build.ps1`을 재실행하고 자동검사 및 `ValidateDevelopment.py`로 무장 수·티어·유폭을 검증한다.
 
+**후속 검증:** 사용자 승인으로 플레이 창을 닫은 뒤 `PlayUI_R2_A3_Build.log` 빌드 성공(2.69초). 자동 검사85/85 성공(`PlayUI_R2_A2_Automation.log`), 기존 한국어 엔진 자체 검사 오류15건 별도. `ValidateDevelopment.py` PIE API 96/96 성공, 혼합 티어 유폭 포함(`PlayUI_R2_A_ValidateDevelopment.log`, `Saved/Validation/Development.json`). 동시 실행했던 첫 자동검사는 엔진 시작 직후 종료되어 성공으로 취급하지 않았다. 무장 수·티어 단독 경계 검사와 전체 R2 회귀는 계속 필요하다.
+
 **미착수:** D121 격납고 설치 상한과 슬롯 검사, 기획 문서의 안전한 통합, 원본 9무장 분리/모델 적용, 지휘·창·핀·함재기·무장뷰·알림, 회귀·렌더·직접 입력·성능 및 전체 제출. 로컬 Incoming에 ZIP 31개가 있으며 기존 원본/수정본을 보존한다. 기존 PC14 시험 임포트 및 임시 포탑은 원본 적용 완료가 아니다. 기준 자동85 및 API57/79/77 등은 이전 코드의 결과다. 캠페인·경제 등은 범위 밖이다. 상세 지시는 `git show b7becc4:docs/03_development/PLAY_UI_R2_PROMPT.md`.
 
 ---
