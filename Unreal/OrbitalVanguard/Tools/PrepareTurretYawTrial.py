@@ -17,11 +17,15 @@ from mathutils import Matrix,Vector
 parser=argparse.ArgumentParser()
 for name in ('source','output','evidence','name'):parser.add_argument('--'+name,required=True)
 parser.add_argument('--cut-z',required=True,type=float)
+parser.add_argument('--pivot-x',type=float,default=0.0)
+parser.add_argument('--pivot-y',type=float,default=0.0)
+parser.add_argument('--bearing-radius',type=float,default=0.0)
 args=parser.parse_args(sys.argv[sys.argv.index('--')+1:])
 source=Path(args.source).resolve();out=Path(args.output).resolve();evidence=Path(args.evidence).resolve()
 if not source.is_file() or not evidence.is_file():raise FileNotFoundError('Source or inspection report missing')
 if out.exists():raise FileExistsError(out)
 if not args.name.replace('_','').isalnum():raise ValueError('Invalid asset identifier')
+if not 0<=args.bearing_radius<=2:raise ValueError('Invalid trial bearing radius')
 def sha(path):
     with path.open('rb') as f:return hashlib.file_digest(f,'sha256').hexdigest()
 inspection=json.loads(evidence.read_text(encoding='utf8'));before=sha(source)
@@ -33,7 +37,7 @@ out.mkdir(parents=True);bpy.ops.wm.read_factory_settings(use_empty=True);bpy.ops
 meshes=[o for o in bpy.context.scene.objects if o.type=='MESH']
 if len(meshes)!=1:raise RuntimeError('Expected one fused mesh; inspect before attempting split')
 original=meshes[0];original.data.transform(original.matrix_world);original.matrix_world=Matrix.Identity(4)
-scene=bpy.context.scene;pivot=Vector((0,0,args.cut_z));cap=bpy.data.materials.new('TrialCutCap');cap.diffuse_color=(.22,.23,.25,1)
+scene=bpy.context.scene;pivot=Vector((args.pivot_x,args.pivot_y,args.cut_z));cap=bpy.data.materials.new('TrialCutCap');cap.diffuse_color=(.22,.23,.25,1)
 parts=[];results={}
 for suffix,upper in [('BaseTrial',False),('YawTrial',True)]:
     name=args.name+'_'+suffix;mesh=original.data.copy();mesh.name=name+'Mesh';obj=bpy.data.objects.new(name,mesh);scene.collection.objects.link(obj)
@@ -47,6 +51,12 @@ for suffix,upper in [('BaseTrial',False),('YawTrial',True)]:
     bm.to_mesh(mesh);bm.free();mesh.transform(Matrix.Translation(-pivot));obj.location=pivot
     results[name]['uv_layers']=[u.name for u in mesh.uv_layers];parts.append(obj)
 bpy.data.objects.remove(original,do_unlink=True)
+if args.bearing_radius:
+    # Optional, clearly separate placeholder adapter; not a source-art replacement.
+    bpy.ops.mesh.primitive_cylinder_add(vertices=96,radius=args.bearing_radius,depth=.06,location=pivot)
+    bearing=bpy.context.object;bearing.name=args.name+'_BearingTrial'
+    world=bearing.matrix_world.copy();bearing.parent=parts[0];bearing.matrix_world=world
+    bearing.data.materials.append(cap)
 cam=bpy.data.cameras.new('TrialCamera');camera=bpy.data.objects.new('TrialCamera',cam);scene.collection.objects.link(camera)
 scene.camera=camera;cam.type='ORTHO';cam.ortho_scale=max(inspection['bounds_max'][i]-inspection['bounds_min'][i] for i in range(3))*1.4
 camera.location=Vector((5,-6,4));camera.rotation_euler=(-camera.location).to_track_quat('-Z','Y').to_euler()
@@ -58,7 +68,7 @@ for angle in (0,45,-45):
     parts[1].rotation_euler.z=math.radians(angle);scene.render.filepath=str(out/('yaw_%+03d.png'%angle));bpy.ops.render.render(write_still=True)
 parts[1].rotation_euler.z=0;bpy.ops.wm.save_as_mainfile(filepath=str(out/(args.name+'_YawTrial.blend')))
 after=sha(source);report={'source':str(source),'source_before':before,'source_after':after,'evidence':str(evidence),
-  'evidence_sha256':sha(evidence),'cut_z':args.cut_z,'parts':results,
+  'evidence_sha256':sha(evidence),'cut_z':args.cut_z,'trial_pivot':list(pivot),'trial_bearing_radius':args.bearing_radius,'parts':results,
   'status':'experimental base/yaw only; pitch, cap, pivot, visual and gameplay unapproved'}
 (out/'report.json').write_text(json.dumps(report,ensure_ascii=False,indent=2),encoding='utf8')
 if before!=after:raise RuntimeError('Source unexpectedly changed')

@@ -1,0 +1,28 @@
+{
+  "source": "C:\\Users\\user\\Documents\\OrbitalVanguardAssets\\Prepared\\PlayUI_R2_CIWSB_YawTrial_v5\\CIWSB_YawTrial.blend",
+  "source_before": "7afb9bd4981fd4673a837e54464aa2254fd974dea0a9e79163ea7e36596e0937",
+  "source_after": "7afb9bd4981fd4673a837e54464aa2254fd974dea0a9e79163ea7e36596e0937",
+  "angles": [
+    {
+      "degrees": -90,
+      "surface_intersections": 0
+    },
+    {
+      "degrees": -45,
+      "surface_intersections": 0
+    },
+    {
+      "degrees": 0,
+      "surface_intersections": 54
+    },
+    {
+      "degrees": 45,
+      "surface_intersections": 0
+    },
+    {
+      "degrees": 90,
+      "surface_intersections": 0
+    }
+  ],
+  "scope": "surface intersections with caps omitted; no clearance, pitch, material or gameplay approval"
+}

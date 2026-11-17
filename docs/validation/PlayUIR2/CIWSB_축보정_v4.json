@@ -1,0 +1,32 @@
+{
+  "source": "C:\\Users\\user\\Documents\\OrbitalVanguardAssets\\Source\\PlayUI_R2_20261117_inspect\\ciws_beam_b\\Meshy_AI_CIWS_Beam_B_20261112_image-to-3d-texture_fbx\\Meshy_AI_CIWS_Beam_B_20261112_image-to-3d-texture.fbx",
+  "source_before": "2f6aa4ccb4e7c050c287721effe615ecfa2cadb07da9fabed941dc630901653d",
+  "source_after": "2f6aa4ccb4e7c050c287721effe615ecfa2cadb07da9fabed941dc630901653d",
+  "evidence": "C:\\Users\\user\\Documents\\OrbitalVanguardAssets\\Prepared\\PlayUI_R2_CIWSB_Orthographic\\analysis.json",
+  "evidence_sha256": "49d54598fcbba999a334815462eb22c2f321df38f1243beb70aa43519512c909",
+  "cut_z": -0.39,
+  "trial_bearing_radius": 0.57,
+  "parts": {
+    "CIWSB_BaseTrial": {
+      "faces": 480407,
+      "cut_edges": 729,
+      "cap_faces": 1,
+      "boundary_edges": 0,
+      "nonmanifold_edges": 0,
+      "uv_layers": [
+        "UVMap"
+      ]
+    },
+    "CIWSB_YawTrial": {
+      "faces": 731984,
+      "cut_edges": 729,
+      "cap_faces": 1,
+      "boundary_edges": 0,
+      "nonmanifold_edges": 0,
+      "uv_layers": [
+        "UVMap"
+      ]
+    }
+  },
+  "status": "experimental base/yaw only; pitch, cap, pivot, visual and gameplay unapproved"
+}
