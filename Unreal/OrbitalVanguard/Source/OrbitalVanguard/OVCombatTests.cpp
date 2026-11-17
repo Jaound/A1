@@ -12,6 +12,22 @@
 #if WITH_DEV_AUTOMATION_TESTS
 namespace OVCombatTest
 {
+bool LoadPC14TrialBoxes(TArray<FOVCombatHullBox>& Out)
+{
+    const FString Path=FPaths::ConvertRelativePathToFull(FPaths::Combine(FPaths::ProjectDir(),TEXT("../../docs/validation/PlayUIR2/HA_PC14충돌후보.json")));
+    FString Content;TSharedPtr<FJsonObject> Data;const TArray<TSharedPtr<FJsonValue>>* Boxes=nullptr;
+    if(!FFileHelper::LoadFileToString(Content,*Path)||!FJsonSerializer::Deserialize(TJsonReaderFactory<>::Create(Content),Data)
+        || !Data.IsValid()||!Data->TryGetArrayField(TEXT("boxes"),Boxes)||!Boxes||Boxes->Num()!=27)return false;
+    for(const auto& Value:*Boxes)
+    {
+        const auto Object=Value->AsObject();if(!Object.IsValid())return false;
+        const auto& C=Object->GetArrayField(TEXT("local_center_cm"));const auto& E=Object->GetArrayField(TEXT("half_extent_cm"));
+        if(C.Num()!=3||E.Num()!=3)return false;
+        FOVCombatHullBox Box;Box.LocalCenter=FVector(C[0]->AsNumber(),C[1]->AsNumber(),C[2]->AsNumber());
+        Box.HalfExtent=FVector(E[0]->AsNumber(),E[1]->AsNumber(),E[2]->AsNumber());Out.Add(Box);
+    }
+    return true;
+}
 // Real Actors and the production subsystem in a disposable world. No DEV hit substitutes
 // for fire: fixtures only arrange initial state, then use RequestFire and Simulate.
 struct FRange
@@ -716,19 +732,7 @@ bool FOVCombatPC14MountOcclusionTest::RunTest(const FString&)
             }
             if(Variant==3)
             {
-                const FString Path=FPaths::ConvertRelativePathToFull(FPaths::Combine(FPaths::ProjectDir(),TEXT("../../docs/validation/PlayUIR2/HA_PC14충돌후보.json")));
-                FString Content;TSharedPtr<FJsonObject> Data;
-                if(!TestTrue(TEXT("Measured candidate file exists"),FFileHelper::LoadFileToString(Content,*Path))
-                    || !TestTrue(TEXT("Measured candidate JSON is valid"),FJsonSerializer::Deserialize(TJsonReaderFactory<>::Create(Content),Data)&&Data.IsValid()))continue;
-                const TArray<TSharedPtr<FJsonValue>>* Boxes=nullptr;
-                if(!TestTrue(TEXT("Measured candidate has 27 boxes"),Data->TryGetArrayField(TEXT("boxes"),Boxes)&&Boxes&&Boxes->Num()==27))continue;
-                for(const auto& Value:*Boxes)
-                {
-                    const auto Object=Value->AsObject();
-                    const auto& C=Object->GetArrayField(TEXT("local_center_cm"));const auto& E=Object->GetArrayField(TEXT("half_extent_cm"));
-                    FOVCombatHullBox Box;Box.LocalCenter=FVector(C[0]->AsNumber(),C[1]->AsNumber(),C[2]->AsNumber());
-                    Box.HalfExtent=FVector(E[0]->AsNumber(),E[1]->AsNumber(),E[2]->AsNumber());Layout->CombatHullBoxes.Add(Box);
-                }
+                if(!TestTrue(TEXT("Measured candidate has 27 valid boxes"),OVCombatTest::LoadPC14TrialBoxes(Layout->CombatHullBoxes)))continue;
             }
             R.B->Systems->Initialize(Layout);
             R.B->Systems->Shield=0;R.B->Systems->bShieldActive=false;
@@ -751,6 +755,55 @@ bool FOVCombatPC14MountOcclusionTest::RunTest(const FString&)
             TestTrue(FString::Printf(TEXT("Attack %d layout %d direction %d: observed mount/hull result"),int32(Kind),Variant,Direction),
                 bShouldHit?Event.ImpactWeaponId==Layout->WeaponMounts[0].WeaponId:Event.ImpactWeaponId.IsNone());
         }
+    return true;
+}
+
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(FOVCombatPC14RecessArmorTest, "OrbitalVanguard.Combat.PC14TrialRecessArmorImpact",
+    EAutomationTestFlags::EditorContext | EAutomationTestFlags::EngineFilter)
+bool FOVCombatPC14RecessArmorTest::RunTest(const FString&)
+{
+    OVCombatTest::FRange R;
+    auto* Layout=UShipLayoutDataAsset::MakeTestLayout(R.B,1);
+    if(!TestTrue(TEXT("Measured candidate loads"),OVCombatTest::LoadPC14TrialBoxes(Layout->CombatHullBoxes)))return false;
+    R.B->Systems->Initialize(Layout);R.B->Systems->Shield=0;R.B->Systems->bShieldActive=false;
+    for(auto& Mount:R.B->Systems->WeaponMountStates)Mount.HP=0;
+    R.A->SetActorLocation(FVector(1000,0,1300));R.A->SetActorRotation(FRotator(-90,0,0));
+    R.Combat->Settings->GuaranteedRange=100000;R.Combat->SetTarget(R.A,R.B);
+    auto& Gun=R.Gun();Gun.Profile.Accuracy=1;Gun.Profile.AimSpreadDegrees=0;Gun.Profile.Range=100000;
+    Gun.Profile.FireTolerance=180;Gun.Profile.TraverseSpeed=10000;Gun.Profile.TraverseAcceleration=100000;Gun.Profile.Damage=50;
+    R.Combat->Simulate(.2f);TestTrue(TEXT("Actual attack request succeeds"),R.Combat->RequestFire(R.A,Gun.MountId));
+    R.Combat->Simulate(.1f);
+    if(!TestTrue(TEXT("Attack resolves on hull"),R.Combat->HitCount==1&&!R.Combat->RecentEvents.IsEmpty()))return false;
+    const FOVAttackState& Event=R.Combat->RecentEvents.Last();
+    const int32 Armor=Layout->GetArmorIndex(Event.ArmorId);
+    TestTrue(TEXT("Actual recessed upper impact maps to top armor"),Layout->ArmorSections.IsValidIndex(Armor)&&Layout->ArmorSections[Armor].Face==EOVArmorFace::Top);
+    TestTrue(TEXT("Actual armor hit maps to a real facility slot"),Layout->GetSlotIndex(Event.SlotId)!=INDEX_NONE);
+    TestTrue(TEXT("Hull damage uses existing path once"),Event.HullDamage>0&&R.B->Systems->LastHullDamage==Event.HullDamage);
+    return true;
+}
+
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(FOVCombatPC14BottomMountTest, "OrbitalVanguard.Combat.PC14TrialBottomMountImpact",
+    EAutomationTestFlags::EditorContext | EAutomationTestFlags::EngineFilter)
+bool FOVCombatPC14BottomMountTest::RunTest(const FString&)
+{
+    for(const EOVAttackKind Kind:{EOVAttackKind::Beam,EOVAttackKind::Cannon})
+    {
+        OVCombatTest::FRange R;auto* Layout=UShipLayoutDataAsset::MakeTestLayout(R.B,1);
+        if(!TestTrue(TEXT("Measured candidate loads"),OVCombatTest::LoadPC14TrialBoxes(Layout->CombatHullBoxes)))continue;
+        // Trial-only lower mount: underside surface -29.3900 cm, BF120 base offset 6.1569 cm.
+        Layout->WeaponMounts[0].LocalPosition=FVector(46.6666667,0,-35.5469);
+        R.B->Systems->Initialize(Layout);R.B->Systems->Shield=0;R.B->Systems->bShieldActive=false;
+        R.A->SetActorLocation(FVector(1046.6666667,0,-1300));R.A->SetActorRotation(FRotator(90,0,0));
+        R.Combat->Settings->GuaranteedRange=100000;R.Combat->SetTarget(R.A,R.B);
+        R.Combat->SetAttackIntent(R.A,EOVAttackIntent::DisableWeapons);
+        auto& Gun=R.Gun();Gun.Profile.Kind=Kind;Gun.Profile.Accuracy=1;Gun.Profile.AimSpreadDegrees=0;
+        Gun.Profile.Range=100000;Gun.Profile.FireTolerance=180;Gun.Profile.Speed=60000;
+        Gun.Profile.TraverseSpeed=10000;Gun.Profile.TraverseAcceleration=100000;Gun.Profile.Damage=50;Gun.Profile.Salvo=1;
+        R.Combat->Simulate(.2f);TestTrue(TEXT("Lower attack request succeeds"),R.Combat->RequestFire(R.A,Gun.MountId));
+        R.Combat->Simulate(.1f);
+        if(!TestTrue(TEXT("Lower attack hits"),R.Combat->HitCount==1&&!R.Combat->RecentEvents.IsEmpty()))continue;
+        TestTrue(TEXT("Actual attack hits the lower mount"),R.Combat->RecentEvents.Last().ImpactWeaponId==Layout->WeaponMounts[0].WeaponId);
+    }
     return true;
 }
 
