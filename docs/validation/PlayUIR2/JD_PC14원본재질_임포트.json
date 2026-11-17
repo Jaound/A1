@@ -1,0 +1,147 @@
+{
+  "passed": true,
+  "scope": "source-resolution maps",
+  "source_modified": false,
+  "destination": "/Game/Presentation/PC14Full",
+  "checks": [
+    {
+      "id": "SOURCE-T_PC14_Base_Full",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "NO-OVERWRITE-T_PC14_Base_Full",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "SOURCE-T_PC14_Normal_Full",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "NO-OVERWRITE-T_PC14_Normal_Full",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "SOURCE-T_PC14_Roughness_Full",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "NO-OVERWRITE-T_PC14_Roughness_Full",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "SOURCE-T_PC14_Metallic_Full",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "NO-OVERWRITE-T_PC14_Metallic_Full",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "NO-OVERWRITE-MATERIAL",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "IMPORTED-T_PC14_Base_Full",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "SAVE-T_PC14_Base_Full",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "IMPORTED-T_PC14_Normal_Full",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "SAVE-T_PC14_Normal_Full",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "IMPORTED-T_PC14_Roughness_Full",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "SAVE-T_PC14_Roughness_Full",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "IMPORTED-T_PC14_Metallic_Full",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "SAVE-T_PC14_Metallic_Full",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "MATERIAL-CREATED",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "CONNECT-BASE-TINT",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "CONNECT-BASE",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "CONNECT-normal",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "CONNECT-roughness",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "CONNECT-metallic",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "SAVE-MATERIAL",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "SOURCE-UNCHANGED",
+      "passed": true,
+      "detail": ""
+    }
+  ],
+  "errors": [],
+  "source_sha256": {
+    "Image_0.png": "0ecd473d80f089c221443831543d2ece5c931d001b50c0bed7af593683db609d",
+    "Image_2.png": "ca00d605bc41c19513f074113eb861b915d0c3758a9e0e17f0f34172f7a407aa",
+    "texture_0_roughness.png": "f5d3073133b5def0cb8c81a1d3eb6ace0ea08154d45282c5f2e26883e9a9af67",
+    "texture_0_metallic.png": "f50f27a1dca4f2778fe827dded80a68ffe67da02de66bdb3e8bd2180da8c7f16"
+  },
+  "assets": [
+    "/Game/Presentation/PC14Full/T_PC14_Base_Full",
+    "/Game/Presentation/PC14Full/T_PC14_Normal_Full",
+    "/Game/Presentation/PC14Full/T_PC14_Roughness_Full",
+    "/Game/Presentation/PC14Full/T_PC14_Metallic_Full",
+    "/Game/Presentation/PC14Full/M_PC14_Full"
+  ]
+}

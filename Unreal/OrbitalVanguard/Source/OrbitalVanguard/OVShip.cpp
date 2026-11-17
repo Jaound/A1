@@ -12,12 +12,12 @@
 #include "UObject/ConstructorHelpers.h"
 #include "HAL/IConsoleManager.h"
 
-// Original PC14 hull and trial mount surface anchors still need art alignment.
-// Opt-in keeps the tested articulated placeholder in normal scenarios.
-static TAutoConsoleVariable<int32> CVarOVImportedHull(TEXT("ov.Presentation.ImportedHull"),0,
-    TEXT("DEV source-hull inspection. 1 enables PC14 on the next scenario creation; no combat geometry changes."));
+// PC14 uses the full source mesh and source-resolution maps; mount surfaces
+// still need art alignment. Combat and selection geometry remain unchanged.
+static TAutoConsoleVariable<int32> CVarOVImportedHull(TEXT("ov.Presentation.ImportedHull"),1,
+    TEXT("PC14 source-derived preview: 1 enables it on the next scenario creation; 0 restores the placeholder. No combat geometry changes."));
 static TAutoConsoleVariable<int32> CVarOVPC14SourceMaterial(TEXT("ov.Presentation.PC14SourceMaterial"),1,
-    TEXT("DEV PC14 trial material from reduced source maps; 0 uses faction placeholder material."));
+    TEXT("PC14 source-map material with provisional visibility fill; 0 uses faction placeholder material."));
 
 #if WITH_DEV_AUTOMATION_TESTS
 #include "Misc/AutomationTest.h"
@@ -181,13 +181,13 @@ void AOVShip::SetCalibrationHull(const FVector* LocalHalfExtent)
 void AOVShip::ApplyPresentationHull(FName DefinitionId)
 {
     if(CVarOVImportedHull.GetValueOnGameThread()!=1 || DefinitionId!=TEXT("corvette") || !Systems || !Systems->Layout)return;
-    auto* Mesh=LoadObject<UStaticMesh>(nullptr,TEXT("/Game/Presentation/Ships/SM_PC14.SM_PC14"),nullptr,LOAD_NoWarn);
+    auto* Mesh=LoadObject<UStaticMesh>(nullptr,TEXT("/Game/Presentation/Ships/SM_PC14_FullMesh.SM_PC14_FullMesh"),nullptr,LOAD_NoWarn);
     if(!Mesh)return;
     for(const auto& Support:PresentationMountSupports)if(IsValid(Support.Get()))Support->DestroyComponent();
     PresentationMountSupports.Reset();
     if(bSavedHullMaterial){Hull->SetMaterial(0,SavedHullMaterial);SavedHullMaterial=nullptr;bSavedHullMaterial=false;}
     if(CVarOVPC14SourceMaterial.GetValueOnGameThread()==1)
-        if(auto* Material=LoadObject<UMaterialInterface>(nullptr,TEXT("/Game/Presentation/PC14Trial/M_PC14_TrialReadable.M_PC14_TrialReadable"),nullptr,LOAD_NoWarn))
+        if(auto* Material=LoadObject<UMaterialInterface>(nullptr,TEXT("/Game/Presentation/PC14Full/M_PC14_FullReadable.M_PC14_FullReadable"),nullptr,LOAD_NoWarn))
             if(auto* Instance=UMaterialInstanceDynamic::Create(Material,this)) {
                 SavedHullMaterial=Hull->GetMaterial(0);bSavedHullMaterial=true;
                 Instance->SetVectorParameterValue(TEXT("FactionTint"),bFriendly?FLinearColor(.8f,.9f,1.f):FLinearColor(1.f,.72f,.7f));
@@ -202,14 +202,14 @@ void AOVShip::ApplyPresentationHull(FName DefinitionId)
     Hull->SetRelativeLocation(-Bounds.Origin*Scale);
     Hull->SetCollisionEnabled(ECollisionEnabled::NoCollision);
     for(auto Part:AccentMeshes)Part->SetVisibility(false);
-    // Authored visual adapters for this exact simplified PC14 mesh and existing
-    // corvette hardpoints. Surface heights were measured from the imported UE
-    // triangles; these do not alter the physical mount, muzzle or collision OBB.
+    // Provisional adapters measured against the full mesh and existing
+    // corvette hardpoints. Final art alignment still requires review;
+    // these do not alter the physical mount, muzzle or collision OBB.
     const FVector ExpectedExtent(175,75,30);
     const auto& Mounts=Systems->Layout->WeaponMounts;
     if(!Available.Equals(ExpectedExtent,.01)||Mounts.Num()<2)return;
     const FVector ExpectedPositions[]={FVector(-46.6666667,0,42),FVector(46.6666667,0,-42)};
-    const double SurfaceAtUnitScale[]={-2.5506140066/.7732958684,-29.3900465727/.7732958684};
+    const double SurfaceAtUnitScale[]={-2.7250/.7723395451,-29.3247/.7723395451};
     for(int32 I=0;I<2;++I)
     {
         const auto& Mount=Mounts[I];
@@ -227,7 +227,10 @@ void AOVShip::ApplyPresentationHull(FName DefinitionId)
         Support->SetCollisionEnabled(ECollisionEnabled::NoCollision);Support->SetGenerateOverlapEvents(false);
         Support->SetRelativeLocation(FVector(Mount.LocalPosition.X,Mount.LocalPosition.Y,(BaseInner+Surface)*.5));
         Support->SetRelativeScale3D(FVector(Length*.42/100,Length*.42/100,Height/100));
-        Support->SetMaterial(0,Hull->GetMaterial(0));Support->RegisterComponent();PresentationMountSupports.Add(Support);
+        // The provisional adapter is a primitive, so do not stretch the source
+        // hull's UV-mapped texture across it.
+        Support->SetMaterial(0,bSavedHullMaterial?SavedHullMaterial.Get():Hull->GetMaterial(0));
+        Support->RegisterComponent();PresentationMountSupports.Add(Support);
     }
 }
 

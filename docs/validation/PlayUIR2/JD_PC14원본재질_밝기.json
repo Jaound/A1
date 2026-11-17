@@ -1,0 +1,60 @@
+{
+  "passed": true,
+  "checks": [
+    {
+      "id": "NO-OVERWRITE",
+      "passed": true
+    },
+    {
+      "id": "TEXTURE-base",
+      "passed": true
+    },
+    {
+      "id": "TEXTURE-normal",
+      "passed": true
+    },
+    {
+      "id": "TEXTURE-roughness",
+      "passed": true
+    },
+    {
+      "id": "TEXTURE-metallic",
+      "passed": true
+    },
+    {
+      "id": "MATERIAL",
+      "passed": true
+    },
+    {
+      "id": "TINT",
+      "passed": true
+    },
+    {
+      "id": "BASE",
+      "passed": true
+    },
+    {
+      "id": "CONNECT-normal",
+      "passed": true
+    },
+    {
+      "id": "CONNECT-roughness",
+      "passed": true
+    },
+    {
+      "id": "CONNECT-metallic",
+      "passed": true
+    },
+    {
+      "id": "FILL",
+      "passed": true
+    },
+    {
+      "id": "SAVE",
+      "passed": true
+    }
+  ],
+  "errors": [],
+  "ambient_fill": 1.2,
+  "scope": "source-resolution source maps and provisional emissive fill"
+}

@@ -141,13 +141,12 @@ def tick(_dt):
                 hud.set_details_open(True);hud.execute_ui_action('PinnedWeaponNext_0')
                 check('PIN-WEAPON-INDEPENDENT',hud.get_pinned_weapon(0)==0 and hud.get_pinned_weapon(1)==-1)
             elif name == '초계함_모델':
-                # Explicit art inspection only: original surface anchors remain unfinished.
-                unreal.SystemLibrary.execute_console_command(world, 'ov.Presentation.ImportedHull 1', pc)
+                # Inspect the default full-geometry mesh; surface anchors remain provisional.
                 pc.start_calibration_range(1)
                 pc.select_ship(prop(pc, 'ships')[1])
                 hud.execute_ui_action('External')
                 mesh = prop(prop(prop(pc, 'selected'), 'hull'), 'static_mesh')
-                check('IMPORTED-HULL-IN-SCENE', mesh and mesh.get_path_name() == '/Game/Presentation/Ships/SM_PC14.SM_PC14')
+                check('IMPORTED-HULL-IN-SCENE', mesh and mesh.get_path_name() == '/Game/Presentation/Ships/SM_PC14_FullMesh.SM_PC14_FullMesh')
             elif name == '격납고':
                 ships = prop(pc, 'ships')
                 carrier = prop(pc, 'carrier')

@@ -1,0 +1,11 @@
+{
+  "source": "C:\\Users\\user\\Documents\\OrbitalVanguardAssets\\Source\\초계함\\Meshy_AI_scifi_patrol_corvette_pc14_20261112_image-to-3d-texture.fbx",
+  "source_sha256": "ba2d8690f1253d9dbe51c9345481796ece30e3385d9538d8dea2793a7020239f",
+  "source_unchanged": true,
+  "prepared_fbx": "C:\\Users\\user\\Documents\\OrbitalVanguardAssets\\Prepared\\PlayUI_R2_PC14_FullMesh_v1\\OV_PC14_FullMesh.fbx",
+  "prepared_sha256": "307bc97e873e0966b76ba7b25f6a89143dfe595de71242cb651c50644cff5e81",
+  "vertices": 150051,
+  "polygons": 300142,
+  "uv_layers": 1,
+  "scope": "원본 전체 메시, 위치·균일 크기 변환만. 텍스처 및 최종 접합은 별도."
+}

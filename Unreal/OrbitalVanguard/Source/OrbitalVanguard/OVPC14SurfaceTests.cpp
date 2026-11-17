@@ -6,6 +6,7 @@
 #include "OVShip.h"
 #include "OVShipSystemsComponent.h"
 #include "Components/StaticMeshComponent.h"
+#include "Components/BoxComponent.h"
 #include "Engine/World.h"
 #include "HAL/IConsoleManager.h"
 #include "Materials/MaterialInterface.h"
@@ -13,6 +14,36 @@
 #include "Misc/Paths.h"
 
 #if WITH_DEV_AUTOMATION_TESTS
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(FOVPC14DefaultPresentation,
+    "OrbitalVanguard.Presentation.PC14DefaultPresentation",
+    EAutomationTestFlags::EditorContext | EAutomationTestFlags::EngineFilter)
+bool FOVPC14DefaultPresentation::RunTest(const FString&)
+{
+    auto* Flag=IConsoleManager::Get().FindConsoleVariable(TEXT("ov.Presentation.ImportedHull"));
+    if(!TestNotNull(TEXT("Presentation flag exists"),Flag))return false;
+    const int32 Previous=Flag->GetInt();
+    Flag->Set(1,ECVF_SetByConsole);
+    UWorld* World=UWorld::CreateWorld(EWorldType::Game,false);
+    TArray<AOVShip*> Ships={World->SpawnActor<AOVShip>(),World->SpawnActor<AOVShip>(),World->SpawnActor<AOVShip>()};
+    auto* Combat=World->GetSubsystem<UOVCombatSubsystem>();
+    if(TestTrue(TEXT("F6 calibration starts"),OVCalibration::Start(*Combat,Ships,1)))
+    {
+        auto* Ship=Ships[1];
+        auto* Expected=LoadObject<UStaticMesh>(nullptr,TEXT("/Game/Presentation/Ships/SM_PC14_FullMesh.SM_PC14_FullMesh"));
+        TestTrue(TEXT("Corvette uses full source geometry"),Expected&&Ship->Hull->GetStaticMesh()==Expected);
+        TestEqual(TEXT("Presentation mesh does not replace selection or combat collision"),Ship->Hull->GetCollisionEnabled(),ECollisionEnabled::NoCollision);
+        auto* Selection=Ship->FindComponentByClass<UBoxComponent>();
+        if(TestNotNull(TEXT("Selection component exists"),Selection))
+        {
+            TestEqual(TEXT("Original selection remains enabled"),Selection->GetCollisionEnabled(),ECollisionEnabled::QueryOnly);
+            TestTrue(TEXT("Selection retains the calibration extent"),Selection->GetUnscaledBoxExtent().Equals(Ship->Systems->Layout->LocalHalfExtent,.01));
+        }
+        TestTrue(TEXT("Other hull definitions do not receive the corvette mesh"),Ships[0]->Hull->GetStaticMesh()!=Expected);
+    }
+    Flag->Set(Previous,ECVF_SetByConsole);World->DestroyWorld(false);
+    return true;
+}
+
 IMPLEMENT_SIMPLE_AUTOMATION_TEST(FOVPC14SurfaceGrid,
     "OrbitalVanguard.Presentation.ImportedPC14SurfaceGrid",
     EAutomationTestFlags::EditorContext | EAutomationTestFlags::EngineFilter)
@@ -100,6 +131,39 @@ bool FOVPC14ImportedMountSurface::RunTest(const FString&)
     return true;
 }
 
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(FOVPC14FullMeshMountSurface,
+    "OrbitalVanguard.Presentation.PC14FullMeshMountSurface",
+    EAutomationTestFlags::EditorContext | EAutomationTestFlags::EngineFilter)
+bool FOVPC14FullMeshMountSurface::RunTest(const FString&)
+{
+    auto* Mesh=LoadObject<UStaticMesh>(nullptr,TEXT("/Game/Presentation/Ships/SM_PC14_FullMesh.SM_PC14_FullMesh"));
+    if(!TestNotNull(TEXT("Full source mesh exists"),Mesh)||!TestTrue(TEXT("Render geometry exists"),Mesh->GetRenderData()&&Mesh->GetRenderData()->LODResources.Num()>0))return false;
+    const auto& LOD=Mesh->GetRenderData()->LODResources[0];
+    TestEqual(TEXT("Full source triangle count"),LOD.IndexBuffer.GetNumIndices()/3,300142);
+    const auto Bounds=Mesh->GetBounds();
+    const double Scale=(FVector(175,75,30)/Bounds.BoxExtent.ComponentMax(FVector(1))).GetMin();
+    const double Xs[]={-46.6666667,46.6666667},Signs[]={1,-1},TrialZ[]={-2.5506140066,-29.3900465727};
+    for(int32 M=0;M<2;++M)
+    {
+        const FVector Start(Xs[M],0,Signs[M]*100),End(Xs[M],0,-Signs[M]*100);
+        double Nearest=DBL_MAX,Surface=0;
+        for(int32 I=0;I+2<LOD.IndexBuffer.GetNumIndices();I+=3)
+        {
+            const auto Position=[&](uint32 Index){return (FVector(LOD.VertexBuffers.PositionVertexBuffer.VertexPosition(Index))-Bounds.Origin)*Scale;};
+            FVector Hit,Normal;
+            if(FMath::SegmentTriangleIntersection(Start,End,Position(LOD.IndexBuffer.GetIndex(I)),Position(LOD.IndexBuffer.GetIndex(I+1)),Position(LOD.IndexBuffer.GetIndex(I+2)),Hit,Normal))
+            {
+                const double Distance=FVector::DistSquared(Start,Hit);
+                if(Distance<Nearest){Nearest=Distance;Surface=Hit.Z;}
+            }
+        }
+        TestTrue(TEXT("Mount ray reaches full geometry"),Nearest<DBL_MAX);
+        AddInfo(FString::Printf(TEXT("Mount %d full z=%.4f cm; preview z=%.4f cm; difference=%.4f cm"),M,Surface,TrialZ[M],FMath::Abs(Surface-TrialZ[M])));
+        TestTrue(TEXT("Provisional adapter remains close to full surface"),Nearest<DBL_MAX&&FMath::Abs(Surface-TrialZ[M])<2.0);
+    }
+    return true;
+}
+
 IMPLEMENT_SIMPLE_AUTOMATION_TEST(FOVPC14MountAdapter,
     "OrbitalVanguard.Presentation.ImportedPC14MountAdapter",
     EAutomationTestFlags::EditorContext | EAutomationTestFlags::EngineFilter)
@@ -124,8 +188,8 @@ bool FOVPC14MountAdapter::RunTest(const FString&)
         const float HPBefore=Ship->Systems->HullHP;
         auto* OriginalMaterial=Ship->Hull->GetMaterial(0);
         CVar->Set(1,ECVF_SetByConsole);Ship->ApplyPresentationHull(TEXT("corvette"));
-        auto* TrialMaterial=LoadObject<UMaterialInterface>(nullptr,TEXT("/Game/Presentation/PC14Trial/M_PC14_TrialReadable.M_PC14_TrialReadable"));
-        TestTrue(TEXT("Source-derived trial material applied"),TrialMaterial&&Ship->Hull->GetMaterial(0)&&Ship->Hull->GetMaterial(0)->GetMaterial()==TrialMaterial->GetMaterial());
+        auto* SourceMaterial=LoadObject<UMaterialInterface>(nullptr,TEXT("/Game/Presentation/PC14Full/M_PC14_FullReadable.M_PC14_FullReadable"));
+        TestTrue(TEXT("Source-resolution material applied"),SourceMaterial&&Ship->Hull->GetMaterial(0)&&Ship->Hull->GetMaterial(0)->GetMaterial()==SourceMaterial->GetMaterial());
         TArray<UStaticMeshComponent*> Components;Ship->GetComponents<UStaticMeshComponent>(Components);
         int32 Supports=0;
         for(const auto* Component:Components)if(Component->GetName().StartsWith(TEXT("PC14MountSupport_")))
@@ -133,8 +197,8 @@ bool FOVPC14MountAdapter::RunTest(const FString&)
             ++Supports;TestEqual(TEXT("Adapter never changes collision"),Component->GetCollisionEnabled(),ECollisionEnabled::NoCollision);
             const FVector P=Component->GetRelativeLocation(),Scale=Component->GetRelativeScale3D();
             const double HalfHeight=Scale.Z*50;
-            if(P.X<0)TestTrue(TEXT("Upper adapter reaches measured hull surface and gun base"),FMath::IsNearlyEqual(P.Z-HalfHeight,-2.550614,.01)&&FMath::IsNearlyEqual(P.Z+HalfHeight,33.68,.01));
-            else TestTrue(TEXT("Lower adapter reaches measured hull surface and gun base"),FMath::IsNearlyEqual(P.Z+HalfHeight,-29.390047,.01)&&FMath::IsNearlyEqual(P.Z-HalfHeight,-33.68,.01));
+            if(P.X<0)TestTrue(TEXT("Upper adapter reaches measured hull surface and gun base"),FMath::IsNearlyEqual(P.Z-HalfHeight,-2.7250,.01)&&FMath::IsNearlyEqual(P.Z+HalfHeight,33.68,.01));
+            else TestTrue(TEXT("Lower adapter reaches measured hull surface and gun base"),FMath::IsNearlyEqual(P.Z+HalfHeight,-29.3247,.01)&&FMath::IsNearlyEqual(P.Z-HalfHeight,-33.68,.01));
         }
         TestEqual(TEXT("Upper and lower mount adapters exist"),Supports,2);
         TestTrue(TEXT("Presentation leaves actual muzzle unchanged"),Ship->GetWeaponMuzzleWorld(Gun).Equals(MuzzleBefore,.001));

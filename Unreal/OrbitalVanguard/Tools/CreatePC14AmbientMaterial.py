@@ -9,18 +9,20 @@ from pathlib import Path
 import traceback
 import unreal
 
-destination='/Game/Presentation/PC14Trial'
+full_maps=os.environ.get('OV_PC14_FULL_MAPS')=='1'
+destination='/Game/Presentation/PC14Full' if full_maps else '/Game/Presentation/PC14Trial'
 name=os.environ.get('OV_PC14_TRIAL_MATERIAL_NAME','M_PC14_TrialAmbient')
 fill_value=float(os.environ.get('OV_PC14_TRIAL_FILL','.35'))
 out=Path(unreal.Paths.convert_relative_path_to_full(unreal.Paths.project_saved_dir()))/('Validation/'+name+'.json')
-report={'passed':False,'checks':[],'errors':[],'ambient_fill':fill_value,'scope':'reduced source maps and provisional emissive fill'}
+report={'passed':False,'checks':[],'errors':[],'ambient_fill':fill_value,'scope':('source-resolution' if full_maps else 'reduced')+' source maps and provisional emissive fill'}
 def check(key, value):
     report['checks'].append({'id':key,'passed':bool(value)})
     if not value: raise AssertionError(key)
 try:
     check('NO-OVERWRITE',not unreal.EditorAssetLibrary.does_asset_exist(destination+'/'+name))
     textures={}
-    for kind,asset in [('base','T_PC14_Base_Trial'),('normal','T_PC14_Normal_Trial'),('roughness','T_PC14_Roughness_Trial'),('metallic','T_PC14_Metallic_Trial')]:
+    suffix='Full' if full_maps else 'Trial'
+    for kind,asset in [('base','T_PC14_Base_'+suffix),('normal','T_PC14_Normal_'+suffix),('roughness','T_PC14_Roughness_'+suffix),('metallic','T_PC14_Metallic_'+suffix)]:
         textures[kind]=unreal.EditorAssetLibrary.load_asset(destination+'/'+asset)
         check('TEXTURE-'+kind,isinstance(textures[kind],unreal.Texture2D))
     tools=unreal.AssetToolsHelpers.get_asset_tools()

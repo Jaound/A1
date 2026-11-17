@@ -1,0 +1,61 @@
+{
+  "passed": true,
+  "source": "C:\\Users\\user\\Documents\\OrbitalVanguardAssets\\Prepared\\PlayUI_R2_PC14_FullMesh_v1\\OV_PC14_FullMesh.fbx",
+  "asset": "/Game/Presentation/Ships/SM_PC14_FullMesh",
+  "checks": [
+    {
+      "id": "SOURCE-EXISTS",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "NO-OVERWRITE",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "STATIC-MESH",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "FULL-TRIANGLES",
+      "passed": true,
+      "detail": "300142"
+    },
+    {
+      "id": "UV-PRESERVED",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "NO-COLLISION",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "EXPECTED-SCALE",
+      "passed": true,
+      "detail": "[350.0000305175781, 108.2801284790039, 77.68603897094727]"
+    },
+    {
+      "id": "SAVED",
+      "passed": true,
+      "detail": ""
+    }
+  ],
+  "errors": [],
+  "scope": "원본 전체 기하만. 기존 축소 텍스처와 임시 포탑 연결부는 별도.",
+  "source_sha256": "307bc97e873e0966b76ba7b25f6a89143dfe595de71242cb651c50644cff5e81",
+  "triangles": 300142,
+  "vertices": 168187,
+  "uv_channels": 1,
+  "simple_collisions": 0,
+  "bounds_cm": [
+    350.0000305175781,
+    108.2801284790039,
+    77.68603897094727
+  ],
+  "asset_bytes": 11927136,
+  "asset_sha256": "c0fed78fe46bf47a9ed5693004f585e34e8f71f66f0da084e8888ed7ae3106dc"
+}

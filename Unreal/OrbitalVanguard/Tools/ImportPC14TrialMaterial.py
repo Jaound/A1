@@ -11,10 +11,11 @@ import traceback
 
 import unreal
 
-root = Path.home() / 'Documents/OrbitalVanguardAssets/Prepared/PlayUI_R2_PC14_Textures1024'
-destination = '/Game/Presentation/PC14Trial'
-saved = Path(unreal.Paths.convert_relative_path_to_full(unreal.Paths.project_saved_dir())) / 'Validation/PC14TrialMaterial.json'
-report = {'passed': False, 'scope': '1024px source-derived trial material; no final model approval',
+full_maps = os.environ.get('OV_PC14_FULL_MAPS') == '1'
+root = Path.home() / ('Documents/OrbitalVanguardAssets/Prepared/PlayUI_v1_20261117b/corvette_pc14/Textures' if full_maps else 'Documents/OrbitalVanguardAssets/Prepared/PlayUI_R2_PC14_Textures1024')
+destination = '/Game/Presentation/PC14Full' if full_maps else '/Game/Presentation/PC14Trial'
+saved = Path(unreal.Paths.convert_relative_path_to_full(unreal.Paths.project_saved_dir())) / ('Validation/PC14FullMaterial.json' if full_maps else 'Validation/PC14TrialMaterial.json')
+report = {'passed': False, 'scope': 'source-resolution maps' if full_maps else '1024px source-derived trial material; no final model approval',
           'source_modified': False, 'destination': destination, 'checks': [], 'errors': []}
 
 def check(name, condition, detail=''):
@@ -27,11 +28,12 @@ def digest(path):
         return hashlib.file_digest(stream, 'sha256').hexdigest()
 
 try:
-    files = [('Image_0.png', 'T_PC14_Base_Trial', 'base'),
-             ('Image_2.png', 'T_PC14_Normal_Trial', 'normal'),
-             ('texture_0_roughness.png', 'T_PC14_Roughness_Trial', 'roughness'),
-             ('texture_0_metallic.png', 'T_PC14_Metallic_Trial', 'metallic')]
-    material_name = 'M_PC14_Trial'
+    suffix = 'Full' if full_maps else 'Trial'
+    files = [('Image_0.png', 'T_PC14_Base_' + suffix, 'base'),
+             ('Image_2.png', 'T_PC14_Normal_' + suffix, 'normal'),
+             ('texture_0_roughness.png', 'T_PC14_Roughness_' + suffix, 'roughness'),
+             ('texture_0_metallic.png', 'T_PC14_Metallic_' + suffix, 'metallic')]
+    material_name = 'M_PC14_' + suffix
     for filename, asset, _ in files:
         check('SOURCE-' + asset, (root / filename).is_file())
         check('NO-OVERWRITE-' + asset, not unreal.EditorAssetLibrary.does_asset_exist(destination + '/' + asset))
