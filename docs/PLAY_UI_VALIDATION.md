@@ -1,3 +1,7 @@
+# 최근 검사: 함대 제목
+
+**함대 목록의 긴 이름:** 이름이 생략된 함대 카드를 가리키면 전체 이름을 표시하며 같은 이름의 함선은 기존 번호도 함께 보여준다. `PlayUI_R2_ED_Build.log` 성공, [창 API 178/178](validation/PlayUIR2/ED_함대제목_API.json). [1280 렌더/API 3/3](validation/PlayUIR2/EC_함대제목_렌더.json)과 [화면](validation/PlayUIR2/EC_함대제목_1280.png)은 마지막 조회 최적화 전 결과이며 실제 마우스 입력이 아닌 API 포인터 이동이다. `PlayUI_R2_EC_Automation.log` 자동 98/98 역시 마지막 조회 최적화 전이다.
+
 # 최근 검사: 핀 제목
 
 **핀의 긴 함선 이름:** 핀 제목이 잘릴 때 마우스를 올리면 실제 함선의 전체 이름을 표시한다. 짧은 이름과 제목 밖에는 표시하지 않으며 화면 가장자리에 제한한다. 기존 핀 선택·이동을 유지한다. Win64 `PlayUI_R2_EA_Build.log` 성공, EA 자동 98/98, [창 API 174/174](validation/PlayUIR2/EA_핀제목_API.json), [1280 렌더/API 10/10](validation/PlayUIR2/EA_핀제목_렌더.json), [1920 렌더/API 10/10](validation/PlayUIR2/EB_핀제목_렌더.json), [1280 화면](validation/PlayUIR2/EA_핀제목_1280.png) / [1920 화면](validation/PlayUIR2/EB_핀제목_1920.png). 렌더는 API로 포인터를 이동한 시험이며 실제 마우스 입력은 미검증이다.

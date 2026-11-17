@@ -519,7 +519,8 @@ void AOVHUD::DrawHUD()
  float MouseX=0,MouseY=0;
  if(DraggedPin==INDEX_NONE && PC->GetMousePosition(MouseX,MouseY) && !IsOverAddedUI(MouseX,MouseY)) {
   const FVector2D Mouse(MouseX/UIScale,MouseY/UIScale);
-  const FString Name=GetPinnedTitleTooltip(Mouse);
+  FString Name=GetPinnedTitleTooltip(Mouse);
+  if(Name.IsEmpty())Name=GetFleetTitleTooltip(Mouse);
   if(!Name.IsEmpty()) {
    TArray<FString> Lines;
    for(int32 Start=0;Start<Name.Len();Start+=24)Lines.Add(Name.Mid(Start,24));

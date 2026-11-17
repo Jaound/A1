@@ -58,6 +58,14 @@ def tick(_dt):
             for ship in ships[:2]:ship.set_editor_property('ship_name','같은 함선')
             first,second=(hud.get_fleet_display_label(s) for s in ships[:2])
             check('WINDOW-FLEET-DUPLICATE-NAMES-DISTINCT',first!=second and first.endswith('1') and second.endswith('2'),(first,second))
+            long_name='아주 긴 이름을 가진 동일 함급의 함선'
+            for ship in ships[:2]:ship.set_editor_property('ship_name',long_name)
+            for i in range(2):
+                center=hud.get_action_center('Pick_'+str(i))
+                check('WINDOW-FLEET-LONG-NAME-TOOLTIP-'+str(i),hud.get_fleet_title_tooltip(center)==long_name+' '+str(i+1))
+            ships[0].set_editor_property('ship_name','짧음')
+            check('WINDOW-FLEET-SHORT-NAME-NO-TOOLTIP',hud.get_fleet_title_tooltip(hud.get_action_center('Pick_0'))=='')
+            check('WINDOW-FLEET-TOOLTIP-ONLY-CARD',hud.get_fleet_title_tooltip(unreal.Vector2D(-10,-10))=='')
             for ship,name in zip(ships[:2],old_names):ship.set_editor_property('ship_name',name)
             check('WINDOW-FLEET-LABEL-READONLY',state['snapshot']==snapshot(pc))
             hud.set_details_open(False);pc.action('Pick_0')

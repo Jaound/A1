@@ -15,6 +15,7 @@ state = {'stage': 'start', 'at': time.monotonic(), 'started': time.monotonic(), 
 editor = unreal.get_editor_subsystem(unreal.UnrealEditorSubsystem)
 views = ['전투_HUD', '영웅_카드', '외부_무장', '핀_비교', '핀_무장', '핀_시설', '격납고', '선내_영웅', '개발_함선', '개발_영웅', '개발_무장', '개발_시험', '초계함_모델', '개발_접기', '개발_확대', '전투_알림', '쉴드_고갈_알림', '적_쉴드_알림', '항공대_위기', '항공대_필터']
 if os.environ.get('OV_UI_ONLY_PIN') == '1': views = ['핀_비교']
+if os.environ.get('OV_UI_TOOLTIP_TEST') == 'fleet': views = ['함대_긴이름']
 
 def prop(obj, key):
     return obj.get_editor_property(key)
@@ -81,6 +82,9 @@ def tick(_dt):
                 cards = hero.get_card_views()
                 check('HERO-MISSION-CARDS', len(cards) >= 4)
                 check('HERO-CARD-SELECTION', hero.select_mission_hero(prop(cards[0], 'unit_id')))
+            elif name == '함대_긴이름':
+                for ship in prop(pc,'ships')[:2]:
+                    ship.set_editor_property('ship_name','아주 긴 이름을 가진 동일 함급의 함선')
             elif name == '외부_무장':
                 hud.execute_ui_action('External')
                 state['before_preview'] = snapshot(pc)
@@ -206,6 +210,11 @@ def tick(_dt):
             state.update(stage='capture', at=time.monotonic())
             return
         if state['stage'] == 'capture':
+            if name == '함대_긴이름' and not state.get('tooltip_cursor_set'):
+                center=hud.get_action_center('Pick_0');w,h=pc.get_viewport_size();scale=max(.25,min(1,w/1280,h/740))
+                check('FLEET-TOOLTIP-TEXT',hud.get_fleet_title_tooltip(center)=='아주 긴 이름을 가진 동일 함급의 함선 1')
+                pc.set_mouse_location(int(center.x*scale),int(center.y*scale))
+                state.update(tooltip_cursor_set=True,at=time.monotonic());return
             if name == '초계함_모델' and time.monotonic()-state['at'] < 5:
                 return  # First-time source texture/shader preparation can outlast a normal frame.
             if name == '외부_무장':

@@ -54,6 +54,18 @@ FString AOVHUD::GetFleetDisplayLabel(AOVShip* Ship) const
  }
  return Ship->ShipName.Left(10)+(Same>1?FString::Printf(TEXT(" %d"),Ordinal):FString());
 }
+FString AOVHUD::GetFleetTitleTooltip(FVector2D CanvasPoint) const
+{
+ const auto* PC=Cast<AOVController>(PlayerOwner);if(!PC)return FString();
+ const FString Action=GetHitActionAtCanvasPoint(CanvasPoint).ToString();
+ if(!Action.StartsWith(TEXT("Pick_")))return FString();
+ for(int32 I=0;I<PC->Ships.Num();++I) {
+  const auto* Ship=PC->Ships[I].Get();
+  if(Ship&&Ship->ShipName.Len()>10&&Action==FString::Printf(TEXT("Pick_%d"),I))
+   return Ship->ShipName+GetFleetDisplayLabel(PC->Ships[I]).Mid(10);
+ }
+ return FString();
+}
 
 void AOVHUD::DrawPlayHUD()
 {
