@@ -1,5 +1,8 @@
 # 최근 진행: BF120 286조합 간섭 검사
 
+**MM24 접합 여유 공간 시험 — 적용 보류 (IM~IO):** [교차 위치 조사](validation/PlayUIR2/IM_MM24접합간섭위치.json)를 근거로 기존 시험 복사본의 지지부에 두 시험 공간을 불린 절단했다([제작](validation/PlayUIR2/IN_MM24여유공간_제작.json)). 입력 해시는 유지됐고 지지부 비다양체 간선은 1→0이 됐다. [5각도 교차](validation/PlayUIR2/IO_MM24여유공간_간섭.json)는 -30/-15/0/+15/+30도에서 82/5/61/214/87쌍으로 줄었으나 0이 아니며, [+15도](validation/PlayUIR2/IN_MM24여유공간_15.png)·[-15도](validation/PlayUIR2/IN_MM24여유공간_-15.png)에서 지지부가 크게 비어 보인다. 임시 단면의 접촉/관통 구별과 연속 각도는 미검증이며 이 후보는 채택하지 않았다. 시험본은 `C:/Users/user/Documents/OrbitalVanguardAssets/Prepared/PlayUI_R2_MM24_ClearanceTrial_v1`. 다음: 지지부를 보존하는 회전축·연결 칼라 및 국소 공간을 설계하고 외형/간섭/재질을 재검증한다.
+
+
 **MM24 상하 분리 첫 시험 — 적용 보류 (IJ~IL):** 원본 기반 회전부 복사본을 100개 높이 구간으로 조사한 [단면](validation/PlayUIR2/IJ_MM24상하단면.json)과 측면 외형을 근거로 Z=-0.23 시험 절단·X축 피벗을 사용했다. 원본은 전후 해시가 같고 [제작](validation/PlayUIR2/IK_MM24상하시험_제작.json), [0도](validation/PlayUIR2/IK_MM24상하시험_0.png), [+15도](validation/PlayUIR2/IK_MM24상하시험_15.png), [-15도](validation/PlayUIR2/IK_MM24상하시험_-15.png) 복사본을 남겼다. [임시 절단면 제외 검사](validation/PlayUIR2/IL_MM24상하간섭.json)에서 -30/-15/0/+15/+30도 발사기·지지부 표면 교차가 4242/1248/169/713/1791쌍이며 지지부에 비다양체 간선 1개가 있다. 표면 교차는 접촉과 관통을 구분하지 않지만 화면에도 틈과 겹침이 보여 적용하지 않았다. 시험 파일은 `C:/Users/user/Documents/OrbitalVanguardAssets/Prepared/PlayUI_R2_MM24_PitchTrial_v1`. 다음: 실제 축·접합 위치 조사와 지지부/발사기 간 여유 공간 재설계, 폐합·재질·상하·좌우 및 실전 발사 검증. 최종 모델·게임 적용 완료가 아니다.
 
 
