@@ -103,6 +103,7 @@ void AOVHUD::NotifyHitBoxClick(FName N)
 {
  // Different rendered buttons need unique hitboxes even when they share a game command.
  if(N==TEXT("MissionHeroPanel"))N=TEXT("HeroPanel");
+ if(N==TEXT("CommandHeroPanel")||N==TEXT("InteriorHeroPanel"))N=TEXT("HeroPanel");
  if(N==TEXT("HangarLaunchAircraft"))N=TEXT("LaunchAircraft");
  if(N==TEXT("HangarRecallAircraft"))N=TEXT("RecallAircraft");
  if(N==TEXT("DetailsInteriorToggle"))N=TEXT("InteriorToggle");

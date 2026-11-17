@@ -100,13 +100,14 @@ void AOVHUD::DrawPlayHUD()
  if(!PC->Selected) {DrawText(TEXT("함선을 선택하세요"),PlayInk,24,Y+20,GEngine->GetMediumFont());return;}
  auto* Ship=PC->Selected.Get();
  DrawText(Ship->ShipName.Left(24),PlayAccent,24,Y+12,GEngine->GetMediumFont());
- DrawText(TEXT("표적: ")+(Ship->AttackTarget?Ship->AttackTarget->ShipName.Left(12):TEXT("없음")),PlayInk,250,Y+13,GEngine->GetSmallFont());
- Button(TEXT("Focus"),TEXT("추적"),350,Y+8,70,PC->bFollow);
- Button(TEXT("Details"),TEXT("함선 상세"),425,Y+8,88,bDetailsOpen);
- if(PC->Interior&&PC->Interior->bEnabled)Button(TEXT("InteriorToggle"),TEXT("선내 지도"),518,Y+8,88,bInteriorOpen);
+ Button(TEXT("Focus"),TEXT("추적"),315,Y+8,60,PC->bFollow);
+ Button(TEXT("Details"),TEXT("함선 상세"),380,Y+8,75,bDetailsOpen);
+ if(PC->Interior&&PC->Interior->bEnabled)Button(TEXT("InteriorToggle"),TEXT("선내 지도"),460,Y+8,75,bInteriorOpen);
+ Button(TEXT("CommandHeroPanel"),TEXT("영웅"),540,Y+8,65,bHeroPanelOpen);
  const float Hull=FMath::Clamp(Ship->Systems->HullHP/FMath::Max(1.f,Ship->Systems->MaxHullHP),0.f,1.f);
  DrawRect(FLinearColor(.08f,.13f,.19f),24,Y+38,210,10);DrawRect(PlayAccent,24,Y+38,210*Hull,4);
  DrawRect(FLinearColor(.3f,.48f,1),24,Y+45,210*FMath::Clamp(Ship->Systems->Shield/FMath::Max(1.f,Ship->Systems->MaxShield),0.f,1.f),3);
+ DrawText(TEXT("표적: ")+(Ship->AttackTarget?Ship->AttackTarget->ShipName.Left(20):TEXT("없음")),PlayInk,250,Y+40,GEngine->GetSmallFont());
  if(!Ship->bFriendly) {DrawText(TEXT("적 함선 · 관측된 외장 정보"),PlayInk,24,Y+72,GEngine->GetSmallFont());return;}
  const bool Disable=PC->Combat&&PC->Combat->GetShipState(Ship).Intent==EOVAttackIntent::DisableWeapons;
  const FName Actions[]={TEXT("Move"),TEXT("Stop"),TEXT("Target"),TEXT("FireAll"),TEXT("MoveAuto"),TEXT("FireAuto"),TEXT("Fire"),TEXT("NextWeapon"),Disable?FName(TEXT("HullIntent")):FName(TEXT("GunIntent")),TEXT("CancelAttack")};

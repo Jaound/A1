@@ -127,6 +127,7 @@ void AOVHUD::DrawInterior()
  AOVShip* Ship=InteriorShip.Get();
  DrawText(TEXT("선내 작전 · ")+(Ship?Ship->ShipName:TEXT("함선 선택")),Accent,X+12,Y+10,GEngine->GetSmallFont());
  Button(TEXT("InteriorClose"),TEXT("닫기"),X+W-66,Y+5,56);
+ Button(TEXT("InteriorHeroPanel"),TEXT("영웅"),X+W-132,Y+5,60);
  Button(TEXT("InteriorSelectedShip"),TEXT("선택 함선 보기"),X+12,Y+37,140);
  Button(TEXT("InteriorShipNext"),TEXT("다음 알려진 함선"),X+160,Y+37,150);
  if(!IsValid(Ship)||!Ship->Systems||!Ship->Systems->Layout||!Interior->IsStructureKnown(0,Ship))

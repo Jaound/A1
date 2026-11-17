@@ -183,7 +183,7 @@ def tick(_dt):
             check('WINDOW-UNIQUE-NORMAL-MISSION-FIXTURE',p(p(pc,'mission'),'enabled') and
                   p(pc,'simulation_paused') and not p(pc,'developer_mode'))
             # 같은 명령을 수행해도 표시 위치마다 별도 HitBox가 있어야 한다.
-            for action in ('HeroPanel','MissionHeroPanel'):
+            for action in ('HeroPanel','MissionHeroPanel','CommandHeroPanel'):
                 hit_button(hud,action)
                 hud.execute_ui_action(action)
                 check('WINDOW-UNIQUE-'+action.upper()+'-OPENS',hud.is_hero_panel_open())
@@ -236,6 +236,12 @@ def tick(_dt):
             hud.execute_ui_action(hit)
             check('WINDOW-UNIQUE-INTERIOR-MARKER-DESELECTS-REAL-UNIT',not list(p(hud,'interior_selected_units')))
             check('WINDOW-UNIQUE-INTERIOR-MARKER-NO-SIMULATION',observe_combat(pc)==state['mission_observation'])
+            hit_button(hud,'InteriorHeroPanel')
+            hud.execute_ui_action('InteriorHeroPanel')
+            check('WINDOW-INTERIOR-HERO-OPENS',hud.is_hero_panel_open())
+            hud.execute_ui_action('InteriorHeroPanel')
+            check('WINDOW-INTERIOR-HERO-CLOSES',not hud.is_hero_panel_open())
+            check('WINDOW-INTERIOR-HERO-NO-SIMULATION',observe_combat(pc)==state['mission_observation'])
             finish()
     except Exception:
         report['errors'].append(traceback.format_exc());unreal.log_error(report['errors'][-1]);finish()

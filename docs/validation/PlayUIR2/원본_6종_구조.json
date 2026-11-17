@@ -1,0 +1,477 @@
+{
+  "blender_version": "5.2.3 LTS",
+  "source_modified": false,
+  "scope": "연결 성분·UV·재질 조사. 초계함 경량 시험본. 원본 포탑 관절 분리는 미수행.",
+  "models": [
+    {
+      "id": "heavy_cannon_shc400",
+      "source_fbx": "C:\\Users\\user\\Documents\\OrbitalVanguardAssets\\Source\\PlayUI_R2_20261117_inspect\\heavy_cannon_shc400\\Meshy_AI_Heavy_Cannon_SHC400_20261112_image-to-3d-texture_fbx\\Meshy_AI_Heavy_Cannon_SHC400_20261112_image-to-3d-texture.fbx",
+      "nested_sha256": "0b94d164c86f6784de9a3d9e9efcf7ffeab3f2e842e3967d4733b112ed09ef3e",
+      "source_bytes": 66076924,
+      "source_sha256_before": "b76b45942e4620efdfbf0ebb57fba3a259084ba15b9ad1195e5763a705c613de",
+      "status": "원본 검사 완료 · 관절 분리 미수행",
+      "original_meshes": [
+        {
+          "name": "Mesh_0",
+          "vertices": 551210,
+          "edges": 1654074,
+          "polygons": 1102716,
+          "uv_layers": [
+            "UVMap"
+          ],
+          "dimensions_blender": [
+            3.900430202484131,
+            1.7261096239089966,
+            2.5
+          ],
+          "materials": [
+            "Material.001"
+          ],
+          "connected_vertex_components": 1,
+          "largest_component_vertices": [
+            551210
+          ]
+        }
+      ],
+      "images": [
+        {
+          "name": "Image_0",
+          "path": "C:\\Users\\user\\Documents\\OrbitalVanguardAssets\\Source\\PlayUI_R2_20261117_inspect\\heavy_cannon_shc400\\Meshy_AI_Heavy_Cannon_SHC400_20261112_image-to-3d-texture_fbx\\Meshy_AI_Heavy_Cannon_SHC400_20261112_image-to-3d-texture.fbm\\Image_0.jpg",
+          "exists": false,
+          "size": [
+            4096,
+            4096
+          ],
+          "packed": true
+        },
+        {
+          "name": "Image_2",
+          "path": "C:\\Users\\user\\Documents\\OrbitalVanguardAssets\\Source\\PlayUI_R2_20261117_inspect\\heavy_cannon_shc400\\Meshy_AI_Heavy_Cannon_SHC400_20261112_image-to-3d-texture_fbx\\Meshy_AI_Heavy_Cannon_SHC400_20261112_image-to-3d-texture.fbm\\Image_2.jpg",
+          "exists": false,
+          "size": [
+            4096,
+            4096
+          ],
+          "packed": true
+        },
+        {
+          "name": "texture_0_metallic.png",
+          "path": "C:\\Users\\user\\Documents\\OrbitalVanguardAssets\\Source\\PlayUI_R2_20261117_inspect\\heavy_cannon_shc400\\Meshy_AI_Heavy_Cannon_SHC400_20261112_image-to-3d-texture_fbx\\Meshy_AI_Heavy_Cannon_SHC400_20261112_image-to-3d-texture.fbm\\texture_0_metallic.png",
+          "exists": false,
+          "size": [
+            2048,
+            2048
+          ],
+          "packed": true
+        },
+        {
+          "name": "texture_0_roughness.png",
+          "path": "C:\\Users\\user\\Documents\\OrbitalVanguardAssets\\Source\\PlayUI_R2_20261117_inspect\\heavy_cannon_shc400\\Meshy_AI_Heavy_Cannon_SHC400_20261112_image-to-3d-texture_fbx\\Meshy_AI_Heavy_Cannon_SHC400_20261112_image-to-3d-texture.fbm\\texture_0_roughness.png",
+          "exists": false,
+          "size": [
+            2048,
+            2048
+          ],
+          "packed": true
+        }
+      ],
+      "largest_component_fraction": 1.0,
+      "articulation": "받침대·회전부·포신의 의미 구분과 피벗을 안전하게 자동 추정할 수 없어 원본 분리 미수행. 임시 관절 포탑 사용.",
+      "inspection_png": "C:\\Users\\user\\Documents\\OrbitalVanguardAssets\\Prepared\\PlayUI_R2_20261117_inspect\\heavy_cannon_shc400\\Inspection.png",
+      "source_sha256_after": "b76b45942e4620efdfbf0ebb57fba3a259084ba15b9ad1195e5763a705c613de",
+      "source_unchanged": true
+    },
+    {
+      "id": "railgun_rg200",
+      "source_fbx": "C:\\Users\\user\\Documents\\OrbitalVanguardAssets\\Source\\PlayUI_R2_20261117_inspect\\railgun_rg200\\Meshy_AI_Railgun_RG200_20261112_image-to-3d-texture_fbx\\Meshy_AI_Railgun_RG200_20261112_image-to-3d-texture.fbx",
+      "nested_sha256": "c2c184454b8e6a458407a89b0ff7f076883aa2ff7c8c262379de883f1282bfbf",
+      "source_bytes": 104005964,
+      "source_sha256_before": "df013f23f06dc83fef832126af9e96911dfa65f9b0d5cca1a364a21783a55efd",
+      "status": "원본 검사 완료 · 관절 분리 미수행",
+      "original_meshes": [
+        {
+          "name": "Mesh_0",
+          "vertices": 1032143,
+          "edges": 3097221,
+          "polygons": 2064814,
+          "uv_layers": [
+            "UVMap"
+          ],
+          "dimensions_blender": [
+            8.45619010925293,
+            3.5255913734436035,
+            3.0
+          ],
+          "materials": [
+            "Material.001"
+          ],
+          "connected_vertex_components": 1,
+          "largest_component_vertices": [
+            1032143
+          ]
+        }
+      ],
+      "images": [
+        {
+          "name": "Image_0",
+          "path": "C:\\Users\\user\\Documents\\OrbitalVanguardAssets\\Source\\PlayUI_R2_20261117_inspect\\railgun_rg200\\Meshy_AI_Railgun_RG200_20261112_image-to-3d-texture_fbx\\Meshy_AI_Railgun_RG200_20261112_image-to-3d-texture.fbm\\Image_0.jpg",
+          "exists": false,
+          "size": [
+            4096,
+            4096
+          ],
+          "packed": true
+        },
+        {
+          "name": "Image_2",
+          "path": "C:\\Users\\user\\Documents\\OrbitalVanguardAssets\\Source\\PlayUI_R2_20261117_inspect\\railgun_rg200\\Meshy_AI_Railgun_RG200_20261112_image-to-3d-texture_fbx\\Meshy_AI_Railgun_RG200_20261112_image-to-3d-texture.fbm\\Image_2.jpg",
+          "exists": false,
+          "size": [
+            4096,
+            4096
+          ],
+          "packed": true
+        },
+        {
+          "name": "texture_0_metallic.png",
+          "path": "C:\\Users\\user\\Documents\\OrbitalVanguardAssets\\Source\\PlayUI_R2_20261117_inspect\\railgun_rg200\\Meshy_AI_Railgun_RG200_20261112_image-to-3d-texture_fbx\\Meshy_AI_Railgun_RG200_20261112_image-to-3d-texture.fbm\\texture_0_metallic.png",
+          "exists": false,
+          "size": [
+            2048,
+            2048
+          ],
+          "packed": true
+        },
+        {
+          "name": "texture_0_roughness.png",
+          "path": "C:\\Users\\user\\Documents\\OrbitalVanguardAssets\\Source\\PlayUI_R2_20261117_inspect\\railgun_rg200\\Meshy_AI_Railgun_RG200_20261112_image-to-3d-texture_fbx\\Meshy_AI_Railgun_RG200_20261112_image-to-3d-texture.fbm\\texture_0_roughness.png",
+          "exists": false,
+          "size": [
+            2048,
+            2048
+          ],
+          "packed": true
+        }
+      ],
+      "largest_component_fraction": 1.0,
+      "articulation": "받침대·회전부·포신의 의미 구분과 피벗을 안전하게 자동 추정할 수 없어 원본 분리 미수행. 임시 관절 포탑 사용.",
+      "inspection_png": "C:\\Users\\user\\Documents\\OrbitalVanguardAssets\\Prepared\\PlayUI_R2_20261117_inspect\\railgun_rg200\\Inspection.png",
+      "source_sha256_after": "df013f23f06dc83fef832126af9e96911dfa65f9b0d5cca1a364a21783a55efd",
+      "source_unchanged": true
+    },
+    {
+      "id": "plasma_heavy_cannon",
+      "source_fbx": "C:\\Users\\user\\Documents\\OrbitalVanguardAssets\\Source\\PlayUI_R2_20261117_inspect\\plasma_heavy_cannon\\Meshy_AI_Plasma_Heavy_Cannon_20261112_image-to-3d-texture_fbx\\Meshy_AI_Plasma_Heavy_Cannon_20261112_image-to-3d-texture.fbx",
+      "nested_sha256": "924fe680f5694fc6220c0bcae9922ac7fb3e404fd056ca14b6b762d8f1d70ef9",
+      "source_bytes": 124386780,
+      "source_sha256_before": "f0918200de009b36ac47ba11be7332fa78e303957246cef2e9ffc819d359fffc",
+      "status": "원본 검사 완료 · 관절 분리 미수행",
+      "original_meshes": [
+        {
+          "name": "Mesh_0",
+          "vertices": 1258411,
+          "edges": 3776259,
+          "polygons": 2517506,
+          "uv_layers": [
+            "UVMap"
+          ],
+          "dimensions_blender": [
+            5.929800987243652,
+            3.340752124786377,
+            2.5
+          ],
+          "materials": [
+            "Material.001"
+          ],
+          "connected_vertex_components": 1,
+          "largest_component_vertices": [
+            1258411
+          ]
+        }
+      ],
+      "images": [
+        {
+          "name": "Image_0",
+          "path": "C:\\Users\\user\\Documents\\OrbitalVanguardAssets\\Source\\PlayUI_R2_20261117_inspect\\plasma_heavy_cannon\\Meshy_AI_Plasma_Heavy_Cannon_20261112_image-to-3d-texture_fbx\\Meshy_AI_Plasma_Heavy_Cannon_20261112_image-to-3d-texture.fbm\\Image_0.jpg",
+          "exists": false,
+          "size": [
+            4096,
+            4096
+          ],
+          "packed": true
+        },
+        {
+          "name": "Image_2",
+          "path": "C:\\Users\\user\\Documents\\OrbitalVanguardAssets\\Source\\PlayUI_R2_20261117_inspect\\plasma_heavy_cannon\\Meshy_AI_Plasma_Heavy_Cannon_20261112_image-to-3d-texture_fbx\\Meshy_AI_Plasma_Heavy_Cannon_20261112_image-to-3d-texture.fbm\\Image_2.jpg",
+          "exists": false,
+          "size": [
+            4096,
+            4096
+          ],
+          "packed": true
+        },
+        {
+          "name": "texture_0_metallic.png",
+          "path": "C:\\Users\\user\\Documents\\OrbitalVanguardAssets\\Source\\PlayUI_R2_20261117_inspect\\plasma_heavy_cannon\\Meshy_AI_Plasma_Heavy_Cannon_20261112_image-to-3d-texture_fbx\\Meshy_AI_Plasma_Heavy_Cannon_20261112_image-to-3d-texture.fbm\\texture_0_metallic.png",
+          "exists": false,
+          "size": [
+            2048,
+            2048
+          ],
+          "packed": true
+        },
+        {
+          "name": "texture_0_roughness.png",
+          "path": "C:\\Users\\user\\Documents\\OrbitalVanguardAssets\\Source\\PlayUI_R2_20261117_inspect\\plasma_heavy_cannon\\Meshy_AI_Plasma_Heavy_Cannon_20261112_image-to-3d-texture_fbx\\Meshy_AI_Plasma_Heavy_Cannon_20261112_image-to-3d-texture.fbm\\texture_0_roughness.png",
+          "exists": false,
+          "size": [
+            2048,
+            2048
+          ],
+          "packed": true
+        }
+      ],
+      "largest_component_fraction": 1.0,
+      "articulation": "받침대·회전부·포신의 의미 구분과 피벗을 안전하게 자동 추정할 수 없어 원본 분리 미수행. 임시 관절 포탑 사용.",
+      "inspection_png": "C:\\Users\\user\\Documents\\OrbitalVanguardAssets\\Prepared\\PlayUI_R2_20261117_inspect\\plasma_heavy_cannon\\Inspection.png",
+      "source_sha256_after": "f0918200de009b36ac47ba11be7332fa78e303957246cef2e9ffc819d359fffc",
+      "source_unchanged": true
+    },
+    {
+      "id": "missile_pod_mm24",
+      "source_fbx": "C:\\Users\\user\\Documents\\OrbitalVanguardAssets\\Source\\PlayUI_R2_20261117_inspect\\missile_pod_mm24\\Meshy_AI_Missile_Pod_MM24_20261112_image-to-3d-texture_fbx\\Meshy_AI_Missile_Pod_MM24_20261112_image-to-3d-texture.fbx",
+      "nested_sha256": "f46e9b45597415de7b8ffb1bff6eee7aef4d8e0e98b5549acad41844c14f9ce9",
+      "source_bytes": 111728796,
+      "source_sha256_before": "ecb56c3a2f079a47770670048e2327621c284c5ced2e88a7dc67d7455a9140cd",
+      "status": "원본 검사 완료 · 관절 분리 미수행",
+      "original_meshes": [
+        {
+          "name": "Mesh_0",
+          "vertices": 1124319,
+          "edges": 3376437,
+          "polygons": 2250958,
+          "uv_layers": [
+            "UVMap"
+          ],
+          "dimensions_blender": [
+            2.550126552581787,
+            2.6124396324157715,
+            3.0
+          ],
+          "materials": [
+            "Material.001"
+          ],
+          "connected_vertex_components": 1,
+          "largest_component_vertices": [
+            1124319
+          ]
+        }
+      ],
+      "images": [
+        {
+          "name": "Image_0",
+          "path": "C:\\Users\\user\\Documents\\OrbitalVanguardAssets\\Source\\PlayUI_R2_20261117_inspect\\missile_pod_mm24\\Meshy_AI_Missile_Pod_MM24_20261112_image-to-3d-texture_fbx\\Meshy_AI_Missile_Pod_MM24_20261112_image-to-3d-texture.fbm\\Image_0.jpg",
+          "exists": false,
+          "size": [
+            4096,
+            4096
+          ],
+          "packed": true
+        },
+        {
+          "name": "Image_2",
+          "path": "C:\\Users\\user\\Documents\\OrbitalVanguardAssets\\Source\\PlayUI_R2_20261117_inspect\\missile_pod_mm24\\Meshy_AI_Missile_Pod_MM24_20261112_image-to-3d-texture_fbx\\Meshy_AI_Missile_Pod_MM24_20261112_image-to-3d-texture.fbm\\Image_2.jpg",
+          "exists": false,
+          "size": [
+            4096,
+            4096
+          ],
+          "packed": true
+        },
+        {
+          "name": "texture_0_metallic.png",
+          "path": "C:\\Users\\user\\Documents\\OrbitalVanguardAssets\\Source\\PlayUI_R2_20261117_inspect\\missile_pod_mm24\\Meshy_AI_Missile_Pod_MM24_20261112_image-to-3d-texture_fbx\\Meshy_AI_Missile_Pod_MM24_20261112_image-to-3d-texture.fbm\\texture_0_metallic.png",
+          "exists": false,
+          "size": [
+            2048,
+            2048
+          ],
+          "packed": true
+        },
+        {
+          "name": "texture_0_roughness.png",
+          "path": "C:\\Users\\user\\Documents\\OrbitalVanguardAssets\\Source\\PlayUI_R2_20261117_inspect\\missile_pod_mm24\\Meshy_AI_Missile_Pod_MM24_20261112_image-to-3d-texture_fbx\\Meshy_AI_Missile_Pod_MM24_20261112_image-to-3d-texture.fbm\\texture_0_roughness.png",
+          "exists": false,
+          "size": [
+            2048,
+            2048
+          ],
+          "packed": true
+        }
+      ],
+      "largest_component_fraction": 1.0,
+      "articulation": "받침대·회전부·포신의 의미 구분과 피벗을 안전하게 자동 추정할 수 없어 원본 분리 미수행. 임시 관절 포탑 사용.",
+      "inspection_png": "C:\\Users\\user\\Documents\\OrbitalVanguardAssets\\Prepared\\PlayUI_R2_20261117_inspect\\missile_pod_mm24\\Inspection.png",
+      "source_sha256_after": "ecb56c3a2f079a47770670048e2327621c284c5ced2e88a7dc67d7455a9140cd",
+      "source_unchanged": true
+    },
+    {
+      "id": "missile_pod_mm48",
+      "source_fbx": "C:\\Users\\user\\Documents\\OrbitalVanguardAssets\\Source\\PlayUI_R2_20261117_inspect\\missile_pod_mm48\\Meshy_AI_Missile_Pod_MM48_20261112_image-to-3d-texture_fbx\\Meshy_AI_Missile_Pod_MM48_20261112_image-to-3d-texture.fbx",
+      "nested_sha256": "ab601865d0f6ffc713ee00e46d0fdffe1e263893b9e922ea59ca5817e0d11c2a",
+      "source_bytes": 153794972,
+      "source_sha256_before": "dba02308c7b4da283f97f1022bf90a20185571a1520ff363fd06a7054aaaa300",
+      "status": "원본 검사 완료 · 관절 분리 미수행",
+      "original_meshes": [
+        {
+          "name": "Mesh_0",
+          "vertices": 1642892,
+          "edges": 4930296,
+          "polygons": 3286864,
+          "uv_layers": [
+            "UVMap"
+          ],
+          "dimensions_blender": [
+            2.6449480056762695,
+            3.1659724712371826,
+            2.5
+          ],
+          "materials": [
+            "Material.001"
+          ],
+          "connected_vertex_components": 3,
+          "largest_component_vertices": [
+            1612062,
+            21468,
+            9362
+          ]
+        }
+      ],
+      "images": [
+        {
+          "name": "Image_0",
+          "path": "C:\\Users\\user\\Documents\\OrbitalVanguardAssets\\Source\\PlayUI_R2_20261117_inspect\\missile_pod_mm48\\Meshy_AI_Missile_Pod_MM48_20261112_image-to-3d-texture_fbx\\Meshy_AI_Missile_Pod_MM48_20261112_image-to-3d-texture.fbm\\Image_0.jpg",
+          "exists": false,
+          "size": [
+            4096,
+            4096
+          ],
+          "packed": true
+        },
+        {
+          "name": "Image_2",
+          "path": "C:\\Users\\user\\Documents\\OrbitalVanguardAssets\\Source\\PlayUI_R2_20261117_inspect\\missile_pod_mm48\\Meshy_AI_Missile_Pod_MM48_20261112_image-to-3d-texture_fbx\\Meshy_AI_Missile_Pod_MM48_20261112_image-to-3d-texture.fbm\\Image_2.jpg",
+          "exists": false,
+          "size": [
+            4096,
+            4096
+          ],
+          "packed": true
+        },
+        {
+          "name": "texture_0_metallic.png",
+          "path": "C:\\Users\\user\\Documents\\OrbitalVanguardAssets\\Source\\PlayUI_R2_20261117_inspect\\missile_pod_mm48\\Meshy_AI_Missile_Pod_MM48_20261112_image-to-3d-texture_fbx\\Meshy_AI_Missile_Pod_MM48_20261112_image-to-3d-texture.fbm\\texture_0_metallic.png",
+          "exists": false,
+          "size": [
+            2048,
+            2048
+          ],
+          "packed": true
+        },
+        {
+          "name": "texture_0_roughness.png",
+          "path": "C:\\Users\\user\\Documents\\OrbitalVanguardAssets\\Source\\PlayUI_R2_20261117_inspect\\missile_pod_mm48\\Meshy_AI_Missile_Pod_MM48_20261112_image-to-3d-texture_fbx\\Meshy_AI_Missile_Pod_MM48_20261112_image-to-3d-texture.fbm\\texture_0_roughness.png",
+          "exists": false,
+          "size": [
+            2048,
+            2048
+          ],
+          "packed": true
+        }
+      ],
+      "largest_component_fraction": 0.9812343112024405,
+      "articulation": "받침대·회전부·포신의 의미 구분과 피벗을 안전하게 자동 추정할 수 없어 원본 분리 미수행. 임시 관절 포탑 사용.",
+      "inspection_png": "C:\\Users\\user\\Documents\\OrbitalVanguardAssets\\Prepared\\PlayUI_R2_20261117_inspect\\missile_pod_mm48\\Inspection.png",
+      "source_sha256_after": "dba02308c7b4da283f97f1022bf90a20185571a1520ff363fd06a7054aaaa300",
+      "source_unchanged": true
+    },
+    {
+      "id": "ciws_beam_b",
+      "source_fbx": "C:\\Users\\user\\Documents\\OrbitalVanguardAssets\\Source\\PlayUI_R2_20261117_inspect\\ciws_beam_b\\Meshy_AI_CIWS_Beam_B_20261112_image-to-3d-texture_fbx\\Meshy_AI_CIWS_Beam_B_20261112_image-to-3d-texture.fbx",
+      "nested_sha256": "d7f4b9c2684faa612aa4bd2215b126ef2d9f3290ac441044fe18b0a01a5b53c9",
+      "source_bytes": 70851244,
+      "source_sha256_before": "2f6aa4ccb4e7c050c287721effe615ecfa2cadb07da9fabed941dc630901653d",
+      "status": "원본 검사 완료 · 관절 분리 미수행",
+      "original_meshes": [
+        {
+          "name": "Mesh_0",
+          "vertices": 605518,
+          "edges": 1817490,
+          "polygons": 1211660,
+          "uv_layers": [
+            "UVMap"
+          ],
+          "dimensions_blender": [
+            2.4698469638824463,
+            1.5811845064163208,
+            2.0
+          ],
+          "materials": [
+            "Material.001"
+          ],
+          "connected_vertex_components": 1,
+          "largest_component_vertices": [
+            605518
+          ]
+        }
+      ],
+      "images": [
+        {
+          "name": "Image_0",
+          "path": "C:\\Users\\user\\Documents\\OrbitalVanguardAssets\\Source\\PlayUI_R2_20261117_inspect\\ciws_beam_b\\Meshy_AI_CIWS_Beam_B_20261112_image-to-3d-texture_fbx\\Meshy_AI_CIWS_Beam_B_20261112_image-to-3d-texture.fbm\\Image_0.jpg",
+          "exists": false,
+          "size": [
+            4096,
+            4096
+          ],
+          "packed": true
+        },
+        {
+          "name": "Image_2",
+          "path": "C:\\Users\\user\\Documents\\OrbitalVanguardAssets\\Source\\PlayUI_R2_20261117_inspect\\ciws_beam_b\\Meshy_AI_CIWS_Beam_B_20261112_image-to-3d-texture_fbx\\Meshy_AI_CIWS_Beam_B_20261112_image-to-3d-texture.fbm\\Image_2.jpg",
+          "exists": false,
+          "size": [
+            4096,
+            4096
+          ],
+          "packed": true
+        },
+        {
+          "name": "texture_0_metallic.png",
+          "path": "C:\\Users\\user\\Documents\\OrbitalVanguardAssets\\Source\\PlayUI_R2_20261117_inspect\\ciws_beam_b\\Meshy_AI_CIWS_Beam_B_20261112_image-to-3d-texture_fbx\\Meshy_AI_CIWS_Beam_B_20261112_image-to-3d-texture.fbm\\texture_0_metallic.png",
+          "exists": false,
+          "size": [
+            2048,
+            2048
+          ],
+          "packed": true
+        },
+        {
+          "name": "texture_0_roughness.png",
+          "path": "C:\\Users\\user\\Documents\\OrbitalVanguardAssets\\Source\\PlayUI_R2_20261117_inspect\\ciws_beam_b\\Meshy_AI_CIWS_Beam_B_20261112_image-to-3d-texture_fbx\\Meshy_AI_CIWS_Beam_B_20261112_image-to-3d-texture.fbm\\texture_0_roughness.png",
+          "exists": false,
+          "size": [
+            2048,
+            2048
+          ],
+          "packed": true
+        }
+      ],
+      "largest_component_fraction": 1.0,
+      "articulation": "받침대·회전부·포신의 의미 구분과 피벗을 안전하게 자동 추정할 수 없어 원본 분리 미수행. 임시 관절 포탑 사용.",
+      "inspection_png": "C:\\Users\\user\\Documents\\OrbitalVanguardAssets\\Prepared\\PlayUI_R2_20261117_inspect\\ciws_beam_b\\Inspection.png",
+      "source_sha256_after": "2f6aa4ccb4e7c050c287721effe615ecfa2cadb07da9fabed941dc630901653d",
+      "source_unchanged": true
+    }
+  ]
+}
