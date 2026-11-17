@@ -51,7 +51,7 @@ bool AOVHUD::IsOverPanel(float X,float Y) const
  if(bDragging||bResizing) return true;
  if(!PC->bDeveloperMode&&!bSceneMenuOpen&&PC->Phase2CScenario>=0&&P.X>=212&&P.X<=484&&P.Y>=76&&P.Y<=224)return true;
  if(!PC->bDeveloperMode&&!bHeroPanelOpen&&PinnedShips.Num()>0&&P.X>=PinnedPanelX()&&P.X<=PinnedPanelX()+266&&P.Y>=PinnedPanelY()&&P.Y<=PinnedPanelY()+(PinnedShips.Num()-1)*160+158)return true;
- const int32 Notices=VisibleBattleNoticeCount();const float NoticeX=ViewportPixels.X/UIScale*.5f-120;
+ const int32 Notices=BattleNoticeRows();const float NoticeX=ViewportPixels.X/UIScale*.5f-120;
  const auto* Feed=GetBattleNoticeFeed();const int32 Footer=bBattleFeedOpen?34+(Feed&&Feed->DroppedCount>0?20:0):0;
  if(Notices>0&&P.X>=NoticeX&&P.X<=NoticeX+240&&P.Y>=66&&P.Y<=66+Notices*32+Footer)return true;
  // The basic HUD remains visible under the separate developer window.
@@ -141,10 +141,11 @@ void AOVHUD::NotifyHitBoxClick(FName N)
  if(N==TEXT("SceneMenuClose")){bSceneMenuOpen=false;return;}
  if(HandleInteriorAction(N)) return;
  if(N==TEXT("HeroPanel")) { SetHeroPanelOpen(!bHeroPanelOpen);return; }
- if(N==TEXT("BattleFeedToggle")) { bBattleFeedOpen=!bBattleFeedOpen;BattleFeedPage=0;return; }
+ if(N==TEXT("BattleFeedToggle")) { bBattleFeedOpen=!bBattleFeedOpen;BattleFeedPage=0;BattleFeedFilter=0;return; }
+ if(N==TEXT("BattleFeedFilter")) {if(bBattleFeedOpen){BattleFeedFilter=(BattleFeedFilter+1)%6;BattleFeedPage=0;}return;}
  if(N==TEXT("BattleFeedOlder")||N==TEXT("BattleFeedNewer")) {
-  const auto* Feed=GetBattleNoticeFeed();
-  if(bBattleFeedOpen&&Feed&&!Feed->Notices.IsEmpty())BattleFeedPage=FMath::Clamp(BattleFeedPage+(N==TEXT("BattleFeedOlder")?1:-1),0,(Feed->Notices.Num()-1)/3);
+  const auto Indices=BattleNoticeIndices();
+  if(bBattleFeedOpen&&!Indices.IsEmpty())BattleFeedPage=FMath::Clamp(BattleFeedPage+(N==TEXT("BattleFeedOlder")?1:-1),0,(Indices.Num()-1)/3);
   return;
  }
  if(N.ToString().StartsWith(TEXT("BattleNotice_"))) {
@@ -152,9 +153,10 @@ void AOVHUD::NotifyHitBoxClick(FName N)
   auto* PC=Cast<AOVController>(PlayerOwner);auto* Feed=GetWorld()->GetSubsystem<UOVBattleNotices>();
   if(PC&&Feed&&!Feed->Notices.IsEmpty()) {
    const int32 Index=Feed->Notices.IndexOfByPredicate([Serial](const FOVBattleNotice& Item){return Item.Serial==Serial;});
-   const int32 Page=bBattleFeedOpen?FMath::Clamp(BattleFeedPage,0,(Feed->Notices.Num()-1)/3):0;
-   const int32 Newest=Feed->Notices.Num()-1-Page*3;
-   if(Index!=INDEX_NONE&&Index<=Newest&&Index>Newest-VisibleBattleNoticeCount()) {PC->bFollow=false;PC->CameraFocus=Feed->Notices[Index].LastPosition;PC->UpdateCamera();}
+   const auto Indices=BattleNoticeIndices();const int32 Pages=FMath::Max(1,(Indices.Num()+2)/3);
+   const int32 Page=bBattleFeedOpen?FMath::Clamp(BattleFeedPage,0,Pages-1):0;
+   const int32 Position=Indices.IndexOfByKey(Index);
+   if(Position!=INDEX_NONE&&Position>=Page*3&&Position<Page*3+VisibleBattleNoticeCount()) {PC->bFollow=false;PC->CameraFocus=Feed->Notices[Index].LastPosition;PC->UpdateCamera();}
   }
   return;
  }
@@ -581,7 +583,7 @@ float AOVHUD::PinnedPanelX() const
 }
 float AOVHUD::PinnedPanelY() const
 {
- const int32 Count=VisibleBattleNoticeCount();
+ const int32 Count=BattleNoticeRows();
  const float NoticeX=ViewportPixels.X/UIScale*.5f-120;
  if(Count<=0||PinnedPanelX()+266<=NoticeX||PinnedPanelX()>=NoticeX+240)return 76;
  const auto* Feed=GetBattleNoticeFeed();

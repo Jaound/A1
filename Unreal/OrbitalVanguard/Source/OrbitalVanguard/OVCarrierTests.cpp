@@ -71,6 +71,7 @@ bool FOVAircraftLossWarning::RunTest(const FString&)
     for(int32 I=Total/2+1;I<Total-Total/10;++I)R.Fleet->ApplyAircraftDamage(R.Fleet->Aircraft[I].AircraftId,100000);
     TestEqual(TEXT("정확히 10%에서 모함·함대 경보"),Count(EOVBattleNoticeKind::AircraftCritical),2);
     TestTrue(TEXT("경보는 실제 분모와 생존 수를 보존"),Feed->Notices.ContainsByPredicate([&](const FOVBattleNotice& N){return N.Kind==EOVBattleNoticeKind::AircraftCritical&&N.Baseline==Total&&N.Remaining==Total/10&&N.bFleetScope;}));
+    TestTrue(TEXT("함대 범위 경보를 마지막 손실 모함의 개별 사건으로 오인하지 않음"),Feed->Notices.ContainsByPredicate([](const FOVBattleNotice& N){return N.Kind==EOVBattleNoticeKind::AircraftCritical&&N.bFleetScope&&N.ShipId.IsNone();}));
     for(int32 I=Total-Total/10;I<Total;++I)R.Fleet->ApplyAircraftDamage(R.Fleet->Aircraft[I].AircraftId,100000);
     TestEqual(TEXT("실제 모든 기체 완파 시 모함·함대 전멸"),Count(EOVBattleNoticeKind::AircraftEliminated),2);
     const int32 Before=Feed->Notices.Num();

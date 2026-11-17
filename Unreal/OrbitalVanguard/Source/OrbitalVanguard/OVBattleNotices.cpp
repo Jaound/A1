@@ -58,7 +58,7 @@ void UOVBattleNotices::RecordAircraftThreshold(AOVShip* Carrier,bool bFleet,int3
 {
     if((!bFleet&&!IsValid(Carrier))||Baseline<=0||Remaining<0||Remaining>Baseline||Position.ContainsNaN()||Severity<1||Severity>3)return;
     const auto Kind=Severity==3?EOVBattleNoticeKind::AircraftEliminated:Severity==2?EOVBattleNoticeKind::AircraftCritical:EOVBattleNoticeKind::AircraftHalf;
-    FOVAttackState Event;Event.HitShipId=IsValid(Carrier)?Carrier->GetFName():NAME_None;Event.Position=Position;Event.ResolvedAt=GameTime;
+    FOVAttackState Event;Event.HitShipId=!bFleet&&IsValid(Carrier)?Carrier->GetFName():NAME_None;Event.Position=Position;Event.ResolvedAt=GameTime;
     Append(Event,Carrier,Kind,1);
     auto& Notice=Notices.Last();Notice.bFleetScope=bFleet;Notice.Remaining=Remaining;Notice.Baseline=Baseline;
     for(int32 I=PreviousSeverity+1;I<=Severity;++I)Notice.CrossedThresholdMask|=1<<(I-1);

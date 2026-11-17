@@ -13,7 +13,7 @@ width, height = map(int, size.split('x'))
 report = {'passed': None, 'kind': 'PIE 렌더와 UI API', 'physical_input': False, 'requested_size': [width, height], 'captures': [], 'checks': [], 'errors': []}
 state = {'stage': 'start', 'at': time.monotonic(), 'started': time.monotonic(), 'index': 0}
 editor = unreal.get_editor_subsystem(unreal.UnrealEditorSubsystem)
-views = ['전투_HUD', '영웅_카드', '외부_무장', '핀_비교', '핀_무장', '핀_시설', '격납고', '선내_영웅', '개발_함선', '개발_영웅', '개발_무장', '개발_시험', '초계함_모델', '개발_접기', '개발_확대', '전투_알림', '쉴드_고갈_알림', '항공대_위기']
+views = ['전투_HUD', '영웅_카드', '외부_무장', '핀_비교', '핀_무장', '핀_시설', '격납고', '선내_영웅', '개발_함선', '개발_영웅', '개발_무장', '개발_시험', '초계함_모델', '개발_접기', '개발_확대', '전투_알림', '쉴드_고갈_알림', '항공대_위기', '항공대_필터']
 
 def prop(obj, key):
     return obj.get_editor_property(key)
@@ -162,6 +162,8 @@ def tick(_dt):
                 check('AIR-NOTICE-REAL-LOSS-THRESHOLD',any(prop(n,'kind')==unreal.OVBattleNoticeKind.AIRCRAFT_CRITICAL and prop(n,'baseline')==len(inventory) for n in notices))
                 if not hud.is_battle_feed_open():hud.execute_ui_action('BattleFeedToggle')
                 state['notice_count']=len(notices)
+            elif name == '항공대_필터':
+                check('NOTICE-SELECTED-FILTER',hud.get_battle_feed_filter()==5)
             elif name in ('개발_접기','개발_확대'):
                 pc.action('Developer');hud.reset_development_window()
                 if name == '개발_접기':
@@ -200,6 +202,12 @@ def tick(_dt):
                 hud.execute_ui_action(action);check('PIN-FACILITY-SELECTED',hud.get_pinned_slot(0)==index)
             if name == '핀_무장':
                 check('PIN-WEAPON-LIVE-FOCUS',hud.get_pinned_preview_focus(0)==hud.get_pinned_weapon(0) and 'HP' in hud.get_pinned_weapon_summary(0))
+            if name == '항공대_필터':
+                notices=prop(hud.get_battle_notice_feed(),'notices')
+                own=next(n for n in reversed(notices) if not prop(n,'fleet_scope') and prop(n,'kind')==unreal.OVBattleNoticeKind.AIRCRAFT_CRITICAL)
+                fleet=next(n for n in reversed(notices) if prop(n,'fleet_scope') and prop(n,'kind')==unreal.OVBattleNoticeKind.AIRCRAFT_CRITICAL)
+                check('NOTICE-SELECTED-CARRIER-VISIBLE',hud.get_action_center('BattleNotice_'+str(prop(own,'serial'))).x>=0)
+                check('NOTICE-FLEET-NOT-MISATTRIBUTED',hud.get_action_center('BattleNotice_'+str(prop(fleet,'serial'))).x<0)
             if name in ('전투_알림','쉴드_고갈_알림','항공대_위기'):
                 index=state['notice_count']-1;feed=hud.get_battle_notice_feed();action='BattleNotice_'+str(prop(prop(feed,'notices')[index],'serial'))
                 center=hud.get_action_center(action)
@@ -250,9 +258,14 @@ def tick(_dt):
             hud.execute_ui_action(action)
             check('NOTICE-OLDER-LAST-POSITION',(prop(pc,'camera_focus')-prop(notice,'last_position')).length()<.1)
             hud.execute_ui_action('BattleFeedNewer');check('NOTICE-NEWER-PAGE-OPENED',hud.get_battle_feed_page()==0)
-            state['index'] += 1
-            if state['index'] >= len(views):finish()
-            else:state.update(stage='prepare',at=time.monotonic())
+            hud.execute_ui_action('BattleFeedFilter');hud.execute_ui_action('BattleFeedFilter')
+            check('NOTICE-DAMAGE-FILTER',hud.get_battle_feed_filter()==2)
+            state.update(stage='notice_empty',at=time.monotonic())
+        elif state['stage'] == 'notice_empty':
+            center=hud.get_action_center('BattleFeedFilter')
+            check('NOTICE-EMPTY-FILTER-REMAINS-ACCESSIBLE',center.x>=0 and str(hud.get_hit_action_at_canvas_point(center))=='BattleFeedFilter')
+            hud.execute_ui_action('BattleFeedFilter');hud.execute_ui_action('BattleFeedFilter');hud.execute_ui_action('BattleFeedFilter')
+            state['index'] += 1;state.update(stage='prepare',at=time.monotonic())
     except Exception:
         report['errors'].append(traceback.format_exc())
         unreal.log_error(report['errors'][-1])

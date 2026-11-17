@@ -51,6 +51,7 @@ public:
  UFUNCTION(BlueprintPure, Category="UI") bool IsFleetAirOverview() const { return bFleetAirOverview; }
  UFUNCTION(BlueprintPure, Category="UI") bool IsBattleFeedOpen() const { return bBattleFeedOpen; }
  UFUNCTION(BlueprintPure, Category="UI") int32 GetBattleFeedPage() const { return BattleFeedPage; }
+ UFUNCTION(BlueprintPure, Category="UI") int32 GetBattleFeedFilter() const { return BattleFeedFilter; }
  UFUNCTION(BlueprintPure, Category="UI") UOVBattleNotices* GetBattleNoticeFeed() const;
  UFUNCTION(BlueprintPure, Category="UI") bool IsOverWorldMarker(FVector2D Pixel) const;
  UFUNCTION(BlueprintCallable, Category="UI") bool HandleInteriorAction(FName Action);
@@ -93,6 +94,7 @@ private:
  bool bFleetAirOverview=false;
  bool bBattleFeedOpen=false;
  int32 BattleFeedPage=0;
+ int32 BattleFeedFilter=0;
  bool bDetailsPositioned=false;
  int32 FleetPage=0;
  int32 AircraftPage=0;
@@ -127,6 +129,8 @@ private:
  FRotator PreviewRotation=FRotator(-25,35,0);
  float PreviewZoom=1;
  void DrawDetails();
+ TArray<int32,TInlineAllocator<64>> BattleNoticeIndices() const;
+ int32 BattleNoticeRows() const;
  FString GetWeaponSummary(AOVShip* Ship,int32 Weapon) const;
  float PinnedPanelX() const;
  float PinnedPanelY() const;
