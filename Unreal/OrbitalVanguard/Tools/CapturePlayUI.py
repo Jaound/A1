@@ -103,6 +103,8 @@ def tick(_dt):
                 for ship in (ships[0],ships[2]):
                     pc.select_ship(ship);hud.execute_ui_action('WindowPin')
                 pc.select_ship(ships[1]);hud.set_details_open(True)
+                if os.environ.get('OV_UI_TOOLTIP_TEST') == 'detail':
+                    ships[1].set_editor_property('ship_name','매우 긴 함선 이름을 상세창에서 확인하는 시험')
                 check('PIN-COMPARE-THREE-SHIPS',hud.get_pinned_count()==2 and hud.get_pinned_ship(0)==ships[0] and hud.get_pinned_ship(1)==ships[2] and prop(pc,'selected')==ships[1])
                 first=hud.get_pinned_position(0);second=hud.get_pinned_position(1)
                 w,h=pc.get_viewport_size();scale=max(.25,min(1,w/1280,h/740))
@@ -240,6 +242,11 @@ def tick(_dt):
                 if os.environ.get('OV_UI_TOOLTIP_TEST') == '1' and not state.get('tooltip_cursor_set'):
                     center=hud.get_action_center('Pinned_0');w,h=pc.get_viewport_size();scale=max(.25,min(1,w/1280,h/740))
                     check('PIN-TOOLTIP-TEXT',hud.get_pinned_title_tooltip(center)=='긴 이름을 가진 함선의 전체 명칭 시험')
+                    pc.set_mouse_location(int(center.x*scale),int(center.y*scale))
+                    state.update(tooltip_cursor_set=True,at=time.monotonic());return
+                if os.environ.get('OV_UI_TOOLTIP_TEST') == 'detail' and not state.get('tooltip_cursor_set'):
+                    center=prop(hud,'window_position')+unreal.Vector2D(20,15);w,h=pc.get_viewport_size();scale=max(.25,min(1,w/1280,h/740))
+                    check('DETAIL-TOOLTIP-TEXT',hud.get_details_title_tooltip(center)=='매우 긴 함선 이름을 상세창에서 확인하는 시험')
                     pc.set_mouse_location(int(center.x*scale),int(center.y*scale))
                     state.update(tooltip_cursor_set=True,at=time.monotonic());return
             if name == '핀_시설':

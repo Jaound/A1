@@ -1,0 +1,962 @@
+{
+  "passed": true,
+  "checks": [
+    {
+      "id": "WINDOW-MESH-MIRROR",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "WINDOW-MIRROR-NO-DAMAGE",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "WINDOW-FLEET-DUPLICATE-NAMES-DISTINCT",
+      "passed": true,
+      "detail": "('같은 함선 1', '같은 함선 2')"
+    },
+    {
+      "id": "WINDOW-FLEET-LONG-NAME-TOOLTIP-0",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "WINDOW-FLEET-LONG-NAME-TOOLTIP-1",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "WINDOW-FLEET-SHORT-NAME-NO-TOOLTIP",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "WINDOW-FLEET-TOOLTIP-ONLY-CARD",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "WINDOW-FLEET-LABEL-READONLY",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "WINDOW-USER-PICK-OPENS",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "WINDOW-CLOSE-STAYS-CLOSED",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "WINDOW-RESELECT-REOPENS",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "WINDOW-NEW-SHIP",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "WINDOW-EMPTY-CLOSES",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "WINDOW-MULTI-REPRESENTATIVE",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "WINDOW-PIN-LIMIT-0",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "WINDOW-PIN-LIMIT-1",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "WINDOW-PIN-LIMIT-2",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "WINDOW-UNPIN",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "WINDOW-REFRESH-NO-SIMULATION",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "WINDOW-REAL-SHIP-COUNT",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "WINDOW-EMPTY-GUTTER-CONSUMES",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "WINDOW-PAUSED-CLOCK",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "WINDOW-SCENE-SWITCH-MIRROR",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "WINDOW-SCENE-NO-SHIP-CLONE",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "WINDOW-PIN-RESET-FIXTURE",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "WINDOW-COMMAND-CARD-Move",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "WINDOW-COMMAND-CARD-Stop",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "WINDOW-COMMAND-CARD-Target",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "WINDOW-COMMAND-CARD-FireAll",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "WINDOW-COMMAND-CARD-MoveAuto",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "WINDOW-COMMAND-CARD-FireAuto",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "WINDOW-COMMAND-CARD-Fire",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "WINDOW-COMMAND-CARD-NextWeapon",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "WINDOW-COMMAND-CARD-CancelAttack",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "WINDOW-BOTTOM-RIGHT-WORLD-AVAILABLE",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "WINDOW-PROTECTION-BUTTON-VISIBLE",
+      "passed": true,
+      "detail": "<Struct 'Vector2D' (0x00000282FEF07A60) {x: 106.500000, y: 978.940430}>"
+    },
+    {
+      "id": "WINDOW-PROTECTION-BUTTON-HIT",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "WINDOW-FORCEGUN-BUTTON-VISIBLE",
+      "passed": true,
+      "detail": "<Struct 'Vector2D' (0x00000282FEF05E60) {x: 284.000000, y: 978.940430}>"
+    },
+    {
+      "id": "WINDOW-FORCEGUN-BUTTON-HIT",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "WINDOW-PROTECTION-UI-CHANGES-POLICY",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "WINDOW-PROTECTION-CYCLE-RETURNS",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "WINDOW-FORCED-UI-SELECTED-MOUNT",
+      "passed": true,
+      "detail": "['Weapon_0']"
+    },
+    {
+      "id": "WINDOW-FORCED-UI-NO-PAUSED-SHOT",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "WINDOW-FORCED-UI-CANCEL-RECOVERY",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "WINDOW-TWO-SIMULTANEOUS-PINS",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "WINDOW-PINS-KEEP-SHIPS-AFTER-SELECTION",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "WINDOW-PIN-VISIBLE-WITH-DETAIL-0",
+      "passed": true,
+      "detail": "<Struct 'Vector2D' (0x00000282FEF07AA0) {x: 661.999939, y: 93.500000}>"
+    },
+    {
+      "id": "WINDOW-PIN-CONSUMES-INPUT-0",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "WINDOW-PIN-BACKGROUND-CONSUMES-0",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "WINDOW-PIN-VISIBLE-WITH-DETAIL-1",
+      "passed": true,
+      "detail": "<Struct 'Vector2D' (0x00000282FEF06EA0) {x: 661.999939, y: 253.500000}>"
+    },
+    {
+      "id": "WINDOW-PIN-CONSUMES-INPUT-1",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "WINDOW-PIN-BACKGROUND-CONSUMES-1",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "WINDOW-PIN-LONG-NAME-TOOLTIP",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "WINDOW-PIN-TOOLTIP-ONLY-TITLE",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "WINDOW-PIN-SHORT-NAME-NO-TOOLTIP",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "WINDOW-DETAIL-LONG-NAME-TOOLTIP",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "WINDOW-DETAIL-TITLE-NO-SELECTION-CHANGE",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "WINDOW-DETAIL-SHORT-NAME-NO-TOOLTIP",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "WINDOW-PIN-GRIP-HIT",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "WINDOW-PIN-GRIP-NO-GAME-COMMAND",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "WINDOW-PIN-DRAG-START",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "WINDOW-PIN-DRAG-CONSUMES-OUTSIDE",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "WINDOW-PIN-DRAG-CLAMP",
+      "passed": true,
+      "detail": "<Struct 'Vector2D' (0x00000282FEF14420) {x: 0.000000, y: 56.000000}>"
+    },
+    {
+      "id": "WINDOW-PIN-DRAG-RELEASE",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "WINDOW-PIN-DRAG-INDEPENDENT",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "WINDOW-PIN-DRAG-RESTORE",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "WINDOW-PIN-CANCEL-STOPS-DRAG",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "WINDOW-PIN-RESIZE-START",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "WINDOW-PIN-RESIZE-EXPANDS",
+      "passed": true,
+      "detail": "<Struct 'Vector2D' (0x00000282FEF148A0) {x: 320.999999, y: 198.000008}>"
+    },
+    {
+      "id": "WINDOW-PIN-RESIZE-INDEPENDENT",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "WINDOW-PIN-RESIZE-MINIMUM",
+      "passed": true,
+      "detail": "<Struct 'Vector2D' (0x00000282FEF149A0) {x: 266.000000, y: 158.000000}>"
+    },
+    {
+      "id": "WINDOW-PIN-OVERLAP-BLOCKS-UNDER-RESIZE",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "WINDOW-PIN-WEAPON-INDEPENDENT",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "WINDOW-PIN-ENEMY-WEAPON-PRIVATE",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "WINDOW-PIN-WEAPON-ACTUAL-FOCUS",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "WINDOW-PIN-INDEPENDENT-DECK",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "WINDOW-PIN-ENEMY-DECK-PRIVATE",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "WINDOW-PIN-SLOT-HITBOX",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "WINDOW-PIN-INDEPENDENT-SLOT",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "WINDOW-PIN-PAGE-FIXTURE",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "WINDOW-PIN-PAGE-NEXT-HIT",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "WINDOW-PIN-PAGE-EXTRA-HIT",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "WINDOW-PIN-PAGE-EXTRA-SELECT",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "WINDOW-PIN-PAGE-RETURN",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "WINDOW-PIN-CLOSE-ONLY-ONE",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "WINDOW-PIN-REOPEN",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "WINDOW-FTL-PIN-REMOVED",
+      "passed": true,
+      "detail": "1"
+    },
+    {
+      "id": "WINDOW-HIDDEN-PIN-REMOVED",
+      "passed": true,
+      "detail": "0"
+    },
+    {
+      "id": "WINDOW-PINS-NO-SHIP-CLONES",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "WINDOW-DEV-OVERLAY-VISIBLE-PREVIEW-FIXTURE",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "WINDOW-DEV-OVERLAY-VIEWPORT-FIXTURE",
+      "passed": true,
+      "detail": "(1133, 936)"
+    },
+    {
+      "id": "WINDOW-DEV-OVERLAY-NO-ORBIT-PREVIEW",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "WINDOW-DEV-OVERLAY-ROTATION-UNCHANGED",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "WINDOW-DEV-OVERLAY-ZOOM-UNCHANGED",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "WINDOW-DEV-OVERLAY-POSITION-UNCHANGED",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "WINDOW-DEV-OVERLAY-NO-SIMULATION",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "WINDOW-DEV-TITLE-DRAGS",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "WINDOW-DEV-CORNER-RESIZES",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "WINDOW-DEV-FRAME-READONLY",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "WINDOW-DEV-NATIVE-DRAG-DISPATCH",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "WINDOW-DEV-NATIVE-DRAG-MOVES",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "WINDOW-DEV-NATIVE-RESIZE-DISPATCH",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "WINDOW-DEV-NATIVE-RESIZE-CHANGES",
+      "passed": true,
+      "detail": "(<Struct 'Vector2D' (0x00000282FEF150A0) {x: 705.000000, y: 495.000000}>, <Struct 'Vector2D' (0x00000282FEF152A0) {x: 680.000000, y: 475.000000}>)"
+    },
+    {
+      "id": "WINDOW-DEV-NATIVE-READONLY",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "WINDOW-DEV-MINIMIZES",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "WINDOW-DEV-MIN-DRAG-DISPATCH",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "WINDOW-DEV-MIN-RESTORES",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "WINDOW-DEV-MAXIMIZES",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "WINDOW-DEV-MAX-RESTORES",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "WINDOW-DEV-RESET",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "WINDOW-DEV-OVERLAY-PREVIEW-RESTORED",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "WINDOW-UNIQUE-NORMAL-MISSION-FIXTURE",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "WINDOW-UNIQUE-HEROPANEL-HIT",
+      "passed": true,
+      "detail": "{'center': (1119.0, 31.5), 'hit': 'HeroPanel'}"
+    },
+    {
+      "id": "WINDOW-UNIQUE-HEROPANEL-OPENS",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "WINDOW-UNIQUE-HEROPANEL-CLOSES",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "WINDOW-UNIQUE-MISSIONHEROPANEL-HIT",
+      "passed": true,
+      "detail": "{'center': (433.0, 247.5), 'hit': 'MissionHeroPanel'}"
+    },
+    {
+      "id": "WINDOW-UNIQUE-MISSIONHEROPANEL-OPENS",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "WINDOW-UNIQUE-MISSIONHEROPANEL-CLOSES",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "WINDOW-UNIQUE-COMMANDHEROPANEL-HIT",
+      "passed": true,
+      "detail": "{'center': (572.5, 858.9404296875), 'hit': 'CommandHeroPanel'}"
+    },
+    {
+      "id": "WINDOW-UNIQUE-COMMANDHEROPANEL-OPENS",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "WINDOW-UNIQUE-COMMANDHEROPANEL-CLOSES",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "WINDOW-UNIQUE-SCENEMENU-HIT",
+      "passed": true,
+      "detail": "{'center': (261.0, 31.5), 'hit': 'SceneMenu'}"
+    },
+    {
+      "id": "WINDOW-UNIQUE-SCENEMENUCLOSE-HIT",
+      "passed": true,
+      "detail": "{'center': (564.0, 161.5), 'hit': 'SceneMenuClose'}"
+    },
+    {
+      "id": "WINDOW-UNIQUE-REGISTERED-CARRIER-FIXTURE",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "WINDOW-PIN-CARRIER-AND-ENEMY",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "WINDOW-UNIQUE-PINNEDHANGAR_0-HIT",
+      "passed": true,
+      "detail": "{'center': (793.9999389648438, 124.5), 'hit': 'PinnedHangar_0'}"
+    },
+    {
+      "id": "WINDOW-PIN-ENEMY-HANGAR-HIDDEN",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "WINDOW-PIN-ENEMY-HANGAR-ACTION-BLOCKED",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "WINDOW-UNIQUE-PINNEDLAUNCH_0-HIT",
+      "passed": true,
+      "detail": "{'center': (605.9999389648438, 217.5), 'hit': 'PinnedLaunch_0'}"
+    },
+    {
+      "id": "WINDOW-UNIQUE-PINNEDRECALL_0-HIT",
+      "passed": true,
+      "detail": "{'center': (679.9999389648438, 217.5), 'hit': 'PinnedRecall_0'}"
+    },
+    {
+      "id": "WINDOW-PIN-CARRIER-ACTUAL-COUNTS",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "WINDOW-PIN-CARRIER-OWNERSHIP-PRIVACY",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "WINDOW-PIN-CARRIER-OWNERSHIP-RESTORED",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "WINDOW-PIN-CARRIER-READONLY",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "WINDOW-UNIQUE-SCENE-MENU-CLOSED",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "WINDOW-UNIQUE-HANGARLAUNCHAIRCRAFT-HIT",
+      "passed": true,
+      "detail": "{'center': (1123.0, 309.5), 'hit': 'HangarLaunchAircraft'}"
+    },
+    {
+      "id": "WINDOW-UNIQUE-HANGARRECALLAIRCRAFT-HIT",
+      "passed": true,
+      "detail": "{'center': (1207.0, 309.5), 'hit': 'HangarRecallAircraft'}"
+    },
+    {
+      "id": "WINDOW-UNIQUE-LAUNCHAIRCRAFT-HIT",
+      "passed": true,
+      "detail": "{'center': (434.0, 978.9404296875), 'hit': 'LaunchAircraft'}"
+    },
+    {
+      "id": "WINDOW-UNIQUE-RECALLAIRCRAFT-HIT",
+      "passed": true,
+      "detail": "{'center': (549.0, 978.9404296875), 'hit': 'RecallAircraft'}"
+    },
+    {
+      "id": "WINDOW-AIRCRAFT-CARD-FIXTURE",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "WINDOW-UNIQUE-AIRCRAFTCARD_1-HIT",
+      "passed": true,
+      "detail": "{'center': (890.5999145507812, 194.5), 'hit': 'AircraftCard_1'}"
+    },
+    {
+      "id": "WINDOW-AIRCRAFT-CARD-SELECTS-ID",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "WINDOW-AIRCRAFT-CARD-READONLY",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "WINDOW-UNIQUE-AIRSCOPE-HIT",
+      "passed": true,
+      "detail": "{'center': (61.5, 1028.9404296875), 'hit': 'AirScope'}"
+    },
+    {
+      "id": "WINDOW-AIR-SCOPE-CHANGES",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "WINDOW-AIR-SCOPE-RESTORES",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "WINDOW-AIR-SCOPE-READONLY",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "WINDOW-UNIQUE-HANGAR-OBSERVATION-NO-MUTATION",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "WINDOW-AIRCRAFT-PAGE-FIXTURE",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "WINDOW-UNIQUE-AIRCRAFTCARD_16-HIT",
+      "passed": true,
+      "detail": "{'center': (890.5999145507812, 194.5), 'hit': 'AircraftCard_16'}"
+    },
+    {
+      "id": "WINDOW-AIRCRAFT-PAGE-SELECTS-STABLE-ID",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "WINDOW-AIRCRAFT-LOCATE-ACTUAL",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "WINDOW-AIRCRAFT-PAGE-READONLY",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "WINDOW-AIRCRAFT-LOSS-FILTER-EMPTY",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "WINDOW-AIRCRAFT-FILTER-READONLY",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "WINDOW-AIRCRAFT-DAMAGE-FIXTURE",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "WINDOW-AIRCRAFT-LOSS-FIXTURE",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "WINDOW-AIRCRAFT-FILTER-RESTORES",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "WINDOW-AIRCRAFT-DAMAGED-INCLUDED",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "WINDOW-AIRCRAFT-DESTROYED-NOT-DAMAGED",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "WINDOW-AIRCRAFT-LOSS-INCLUDED",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "WINDOW-AIRCRAFT-DAMAGED-NOT-LOSS",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "WINDOW-AIRCRAFT-FILTER-AFTER-DAMAGE-READONLY",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "WINDOW-UNIQUE-HANGARDISPLAYMODE-HIT",
+      "passed": true,
+      "detail": "{'center': (1204.0, 161.5), 'hit': 'HangarDisplayMode'}"
+    },
+    {
+      "id": "WINDOW-HANGAR-FACILITY-VIEW",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "WINDOW-HANGAR-FACILITY-READONLY",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "WINDOW-AIRCRAFT-LOCATE-HIDDEN-BLOCKED",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "WINDOW-UNIQUE-DETAILSINTERIORTOGGLE-HIT",
+      "passed": true,
+      "detail": "{'center': (924.9999389648438, 479.5), 'hit': 'DetailsInteriorToggle'}"
+    },
+    {
+      "id": "WINDOW-UNIQUE-INTERIORTOGGLE-HIT",
+      "passed": true,
+      "detail": "{'center': (497.5, 858.9404296875), 'hit': 'InteriorToggle'}"
+    },
+    {
+      "id": "WINDOW-UNIQUE-DETAILS-INTERIOR-OPENS",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "WINDOW-UNIQUE-BASE-INTERIOR-CLOSES",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "WINDOW-UNIQUE-UI-NO-SHOTS-OR-INVENTORY-MUTATION",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "WINDOW-UNIQUE-INTERIOR-MARKERS-REGISTERED",
+      "passed": true,
+      "detail": "4"
+    },
+    {
+      "id": "WINDOW-UNIQUE-INTERIOR-MARKER-CENTER-HIT",
+      "passed": true,
+      "detail": "[('InteriorMarker_9', 'InteriorMarker_9'), ('InteriorMarker_10', 'InteriorMarker_10'), ('InteriorMarker_11', 'InteriorMarker_11'), ('InteriorMarker_12', 'InteriorMarker_12')]"
+    },
+    {
+      "id": "WINDOW-UNIQUE-INTERIOR-MARKER-SELECTS-REAL-UNIT",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "WINDOW-UNIQUE-INTERIOR-MARKER-DESELECTS-REAL-UNIT",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "WINDOW-UNIQUE-INTERIOR-MARKER-NO-SIMULATION",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "WINDOW-UNIQUE-INTERIORHEROPANEL-HIT",
+      "passed": true,
+      "detail": "{'center': (1136.0, 105.5), 'hit': 'InteriorHeroPanel'}"
+    },
+    {
+      "id": "WINDOW-INTERIOR-HERO-OPENS",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "WINDOW-INTERIOR-HERO-CLOSES",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "WINDOW-INTERIOR-HERO-NO-SIMULATION",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "WINDOW-INTERIOR-DRAG-MOVES",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "WINDOW-INTERIOR-RESIZE-CHANGES",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "WINDOW-INTERIOR-MOVED-MARKER-HIT",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "WINDOW-INTERIOR-MOVED-MARKER-SELECTS",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "WINDOW-INTERIOR-MOVE-RESIZE-READONLY",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "WINDOW-INTERIOR-MINIMIZES",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "WINDOW-INTERIOR-MIN-RESTORES",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "WINDOW-INTERIOR-MAXIMIZES",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "WINDOW-INTERIOR-MAX-RESTORES",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "WINDOW-INTERIOR-CLOSE-CANCELS-DRAG",
+      "passed": true,
+      "detail": ""
+    }
+  ],
+  "errors": [],
+  "physical_input": false
+}

@@ -196,6 +196,7 @@ void AOVHUD::NotifyHitBoxClick(FName N)
  if(N==TEXT("MissionBackground")) return;
  if(N==TEXT("WindowBackground")) return;
  if(N.ToString().StartsWith(TEXT("PinnedBackground_"))) return;
+ if(N==TEXT("DetailsTitle"))return;
  if(N==TEXT("SceneMenu")) { bSceneMenuOpen=!bSceneMenuOpen;return; }
  if(N==TEXT("FleetPrevious")) { FleetPage=FMath::Max(0,FleetPage-1);return; }
  if(N==TEXT("FleetNext")) { ++FleetPage;return; }
@@ -402,7 +403,11 @@ void AOVHUD::DrawDetails()
  // The foreground window consumes blank-area clicks too, including over fire buttons.
  AddHitBox(WindowPosition*UIScale,FVector2D(W,bMinimized?32:WindowSize.Y)*UIScale,TEXT("WindowBackground"),true,100);
  DrawRect(Panel,X,Y,W,bMinimized?32:WindowSize.Y);
- DrawText(PC->Selected->ShipName,Accent,X+10,Y+8,GEngine->GetSmallFont());
+ const int32 TitleLimit=FMath::Clamp(FMath::FloorToInt((W-150)/12.f),4,24);
+ const FString& FullTitle=PC->Selected->ShipName;
+ const FString ShortTitle=FullTitle.Len()>TitleLimit?FullTitle.Left(TitleLimit-1)+TEXT("…"):FullTitle;
+ DrawText(ShortTitle,Accent,X+10,Y+8,GEngine->GetSmallFont());
+ AddHitBox(FVector2D(X+10,Y+2)*UIScale,FVector2D(W-150,28)*UIScale,TEXT("DetailsTitle"),true,110);
  Button(TEXT("WindowMin"),bMinimized?TEXT("+"):TEXT("_"),X+W-90,Y+2,26);Button(TEXT("WindowMax"),TEXT("[]"),X+W-60,Y+2,26);Button(TEXT("WindowClose"),TEXT("X"),X+W-30,Y+2,26);
  if(bMinimized)return;
  Button(TEXT("External"),TEXT("외부 / 무장"),X+10,Y+38,100,PC->ViewedDeck==0&&!bHangarView);
@@ -536,10 +541,18 @@ void AOVHUD::DrawHUD()
   const FVector2D Mouse(MouseX/UIScale,MouseY/UIScale);
   FString Name=GetPinnedTitleTooltip(Mouse);
   if(Name.IsEmpty())Name=GetFleetTitleTooltip(Mouse);
+  if(Name.IsEmpty()&&!bDragging&&!bResizing)Name=GetDetailsTitleTooltip(Mouse);
   if(!Name.IsEmpty()) {
-   TArray<FString> Lines;
-   for(int32 Start=0;Start<Name.Len();Start+=24)Lines.Add(Name.Mid(Start,24));
    const float Width=FMath::Min(300.f,ViewportPixels.X/UIScale-8.f);
+   TArray<FString> Lines;FString Line;
+   for(const TCHAR Character:Name) {
+    const FString Candidate=Line+FString::Chr(Character);float TW=0,TH=0;
+    GetTextSize(Candidate,TW,TH,GEngine->GetSmallFont());
+    if(TW>Width-12&&!Line.IsEmpty()) {
+     Lines.Add(Line.TrimEnd());Line=FChar::IsWhitespace(Character)?FString():FString::Chr(Character);
+    } else Line=Candidate;
+   }
+   if(!Line.IsEmpty())Lines.Add(Line);
    const float Height=FMath::Min(float(Lines.Num()*19+10),ViewportPixels.Y/UIScale-8.f);
    const float X=FMath::Clamp(float(Mouse.X+12),4.f,FMath::Max(4.f,float(ViewportPixels.X/UIScale-Width-4)));
    const float Y=FMath::Clamp(float(Mouse.Y+16),4.f,FMath::Max(4.f,float(ViewportPixels.Y/UIScale-Height-4)));
@@ -710,6 +723,13 @@ FString AOVHUD::GetPinnedTitleTooltip(FVector2D CanvasPoint) const
   return Name.Len()>Limit?Name:FString();
  }
  return FString();
+}
+FString AOVHUD::GetDetailsTitleTooltip(FVector2D CanvasPoint) const
+{
+ const auto* PC=Cast<AOVController>(PlayerOwner);
+ if(!PC||!PC->Selected||!bDetailsOpen||PC->bDeveloperMode||GetHitActionAtCanvasPoint(CanvasPoint)!=TEXT("DetailsTitle"))return FString();
+ const int32 Limit=FMath::Clamp(FMath::FloorToInt((WindowSize.X-150)/12.f),4,24);
+ return PC->Selected->ShipName.Len()>Limit?PC->Selected->ShipName:FString();
 }
 void AOVHUD::DrawPinned()
 {

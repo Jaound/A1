@@ -1,0 +1,75 @@
+{
+  "passed": true,
+  "kind": "PIE 렌더와 UI API",
+  "physical_input": false,
+  "requested_size": [
+    1920,
+    1080
+  ],
+  "captures": [
+    {
+      "view": "핀_비교",
+      "path": "C:/Users/user/source/repos/A1/Unreal/OrbitalVanguard/Saved/Validation\\PlayUI\\20261118_041006\\01_핀_비교.png",
+      "viewport_size": [
+        1920,
+        1082
+      ],
+      "exists": true
+    }
+  ],
+  "checks": [
+    {
+      "id": "PLAY-WINDOW",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "PIN-COMPARE-THREE-SHIPS",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "PIN-COMPARE-DRAG-INDEPENDENT",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "PIN-COMPARE-RESIZE-INDEPENDENT",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "PIN-COMPARE-HITBOX-0",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "PIN-COMPARE-HITBOX-1",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "DETAIL-TOOLTIP-TEXT",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "PIN-COMPARE-HITBOX-0",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "PIN-COMPARE-HITBOX-1",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "RENDER-핀_비교",
+      "passed": true,
+      "detail": ""
+    }
+  ],
+  "errors": [],
+  "preview_settings_restored": true,
+  "elapsed_seconds": 4.062999999994645
+}

@@ -1,3 +1,7 @@
+# 최근 진행: 상세창 긴 이름 확인
+
+**상세창의 긴 이름:** 함선명이 창 제어 버튼을 가리지 않도록 제목을 줄이고, 제목에 마우스를 올리면 전체 이름을 표시한다. 제목 클릭은 선택을 바꾸지 않고 창 드래그 동작을 유지한다. 처음 렌더는 한 글자가 다음 줄로 떨어져 [기록](validation/PlayUIR2/EN_상세제목_1280.png)했으며, 글자 수 대신 실제 폭으로 줄을 나누도록 수정했다. `PlayUI_R2_EO_Build.log` 성공, EO 자동 98/98, [창 API 191/191](validation/PlayUIR2/EO_상세제목_API.json), 렌더/API [1280 10/10](validation/PlayUIR2/EO_상세제목_렌더.json) / [1920 10/10](validation/PlayUIR2/EP_상세제목_렌더.json), [1280 화면](validation/PlayUIR2/EO_상세제목_1280.png) / [1920 화면](validation/PlayUIR2/EP_상세제목_1920.png). 포인터는 API로 이동했으며 직접 마우스 입력은 미검증이다.
+
 # 최근 진행: BF120 좌우 분리 시험
 
 **BF120 좌우 분리 시험:** [원본 측면](validation/PlayUIR2/BF120_원본측면.png)·[60개 높이 구간](validation/PlayUIR2/BF120_원본단면.json)의 받침대 경계를 근거로 z=-0.42, 피벗 (0.995,-0.025)에 복사본을 분리했다. [구조 13/13](validation/PlayUIR2/BF120_좌우분리_구조.json), [교차 검사](validation/PlayUIR2/BF120_좌우분리_교차.json)는 캡 제외 -90/-45/+45/+90도 각 0쌍, 0도 158쌍이다. 0도 접합의 접촉/관통과 모든 각도는 미확정이다. [-45도 시험 화면](validation/PlayUIR2/BF120_좌우분리_-45.png). [연결성 검사](validation/PlayUIR2/BF120_포신_연결성.json)에서 좌우부 367,209개 정점이 단일 표면이므로 두 포신의 상하 분리·동기화, 포구·재질·게임 적용은 미완료다. 원본은 변경하지 않았다.
