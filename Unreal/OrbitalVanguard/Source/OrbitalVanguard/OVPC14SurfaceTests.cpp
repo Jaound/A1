@@ -9,8 +9,54 @@
 #include "Engine/World.h"
 #include "HAL/IConsoleManager.h"
 #include "Materials/MaterialInterface.h"
+#include "Misc/FileHelper.h"
+#include "Misc/Paths.h"
 
 #if WITH_DEV_AUTOMATION_TESTS
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(FOVPC14SurfaceGrid,
+    "OrbitalVanguard.Presentation.ImportedPC14SurfaceGrid",
+    EAutomationTestFlags::EditorContext | EAutomationTestFlags::EngineFilter)
+bool FOVPC14SurfaceGrid::RunTest(const FString&)
+{
+    auto* Mesh=LoadObject<UStaticMesh>(nullptr,TEXT("/Game/Presentation/Ships/SM_PC14.SM_PC14"));
+    if(!TestNotNull(TEXT("PC14 trial mesh exists"),Mesh)||!TestTrue(TEXT("Mesh render data available"),Mesh->GetRenderData()&&Mesh->GetRenderData()->LODResources.Num()>0))return false;
+    const auto& LOD=Mesh->GetRenderData()->LODResources[0];const auto Bounds=Mesh->GetBounds();
+    const FVector Ratio=FVector(175,75,30)/Bounds.BoxExtent.ComponentMax(FVector(1));const double Scale=Ratio.GetMin();
+    TArray<double> Xs,Ys;
+    for(int32 X=-170;X<=170;X+=10)Xs.Add(X);
+    Xs.Append({-46.6666667,46.6666667});Xs.Sort();
+    for(int32 Y=-70;Y<=70;Y+=5)Ys.Add(Y);
+    FString Rows;int32 TopHits=0,BottomHits=0;
+    for(double X:Xs)for(double Y:Ys)
+    {
+        double Zs[2]={0,0};bool Hits[2]={false,false};
+        for(int32 Side=0;Side<2;++Side)
+        {
+            const double Sign=Side==0?1.0:-1.0;const FVector Start(X,Y,Sign*100),End(X,Y,-Sign*100);double Nearest=DBL_MAX;
+            for(int32 I=0;I+2<LOD.IndexBuffer.GetNumIndices();I+=3)
+            {
+                const auto Position=[&](uint32 Index){return (FVector(LOD.VertexBuffers.PositionVertexBuffer.VertexPosition(Index))-Bounds.Origin)*Scale;};
+                FVector Hit,Normal;
+                if(FMath::SegmentTriangleIntersection(Start,End,Position(LOD.IndexBuffer.GetIndex(I)),Position(LOD.IndexBuffer.GetIndex(I+1)),Position(LOD.IndexBuffer.GetIndex(I+2)),Hit,Normal))
+                {
+                    const double Distance=FVector::DistSquared(Start,Hit);
+                    if(Distance<Nearest){Nearest=Distance;Zs[Side]=Hit.Z;Hits[Side]=true;}
+                }
+            }
+        }
+        TopHits+=Hits[0]?1:0;BottomHits+=Hits[1]?1:0;
+        if(!Rows.IsEmpty())Rows+=TEXT(",\n");
+        Rows+=FString::Printf(TEXT("{\"x_cm\":%.4f,\"y_cm\":%.4f,\"top_z_cm\":%s,\"bottom_z_cm\":%s}"),X,Y,
+            Hits[0]?*FString::SanitizeFloat(Zs[0]):TEXT("null"),Hits[1]?*FString::SanitizeFloat(Zs[1]):TEXT("null"));
+    }
+    TestTrue(TEXT("Grid finds upper and lower imported geometry"),TopHits>0&&BottomHits>0);
+    const FString Json=FString::Printf(TEXT("{\"scope\":\"UE imported PC14 trial mesh; vertical rays, not final collision\",\"selection_half_extent_cm\":[175,75,30],\"top_hits\":%d,\"bottom_hits\":%d,\"samples\":[\n%s\n]}"),TopHits,BottomHits,*Rows);
+    const FString Output=FPaths::Combine(FPaths::ProjectSavedDir(),TEXT("Validation"),TEXT("PC14SurfaceGrid.json"));
+    IFileManager::Get().MakeDirectory(*FPaths::GetPath(Output),true);
+    TestTrue(TEXT("Surface report is written to generated validation folder"),FFileHelper::SaveStringToFile(Json,*Output));
+    return true;
+}
+
 IMPLEMENT_SIMPLE_AUTOMATION_TEST(FOVPC14ImportedMountSurface,
     "OrbitalVanguard.Presentation.ImportedPC14MountSurface",
     EAutomationTestFlags::EditorContext | EAutomationTestFlags::EngineFilter)
