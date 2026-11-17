@@ -146,6 +146,12 @@ def tick(_dt):
                 check('WINDOW-PIN-CONSUMES-INPUT-'+str(i),hud.is_over_panel(center.x*scale,center.y*scale))
                 background=unreal.Vector2D(center.x,center.y+60)
                 check('WINDOW-PIN-BACKGROUND-CONSUMES-'+str(i),str(hud.get_hit_action_at_canvas_point(background))=='PinnedBackground_'+str(i) and hud.is_over_panel(background.x*scale,background.y*scale))
+            selected_before=p(pc,'selected');hud.execute_ui_action('PinnedWeaponNext_0');hud.execute_ui_action('PinnedWeaponNext_1')
+            check('WINDOW-PIN-WEAPON-INDEPENDENT',hud.get_pinned_weapon(0)==0 and hud.get_pinned_weapon(1)==0 and p(pc,'selected')==selected_before)
+            check('WINDOW-PIN-ENEMY-WEAPON-PRIVATE','운영 정보 미확인' in hud.get_pinned_weapon_summary(1))
+            state.update(phase=57,at=time.monotonic());return
+        if state['phase']==57:
+            check('WINDOW-PIN-WEAPON-ACTUAL-FOCUS',hud.get_pinned_preview_focus(0)==hud.get_pinned_weapon(0) and hud.get_pinned_preview_focus(1)==hud.get_pinned_weapon(1))
             selected_before=p(pc,'selected');hud.execute_ui_action('PinnedDeck_0_1')
             check('WINDOW-PIN-INDEPENDENT-DECK',hud.get_pinned_deck(0)==1 and hud.get_pinned_deck(1)==0 and p(pc,'selected')==selected_before)
             hud.execute_ui_action('PinnedDeck_1_1')

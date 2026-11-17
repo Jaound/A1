@@ -182,13 +182,21 @@ void AOVHUD::NotifyHitBoxClick(FName N)
  if(N==TEXT("WindowPin")) {
   auto* PC=Cast<AOVController>(PlayerOwner);
   const int32 Index=PinnedShips.IndexOfByKey(PC->Selected);
-  if(Index!=INDEX_NONE){PinnedShips.RemoveAt(Index);PinnedPreviews[Index]->Release();PinnedPreviews.RemoveAt(Index);PinnedDecks.RemoveAt(Index);PinnedSlots.RemoveAt(Index);}
-  else if(PinnedShips.Num()<2){PinnedShips.Add(PC->Selected);PinnedPreviews.Add(NewObject<UOVShipPreview>(this));PinnedDecks.Add(0);PinnedSlots.Add(INDEX_NONE);}
+  if(Index!=INDEX_NONE){PinnedShips.RemoveAt(Index);PinnedPreviews[Index]->Release();PinnedPreviews.RemoveAt(Index);PinnedDecks.RemoveAt(Index);PinnedSlots.RemoveAt(Index);PinnedWeapons.RemoveAt(Index);}
+  else if(PinnedShips.Num()<2){PinnedShips.Add(PC->Selected);PinnedPreviews.Add(NewObject<UOVShipPreview>(this));PinnedDecks.Add(0);PinnedSlots.Add(INDEX_NONE);PinnedWeapons.Add(INDEX_NONE);}
   return;
  }
  if(N.ToString().StartsWith(TEXT("PinnedClose_"))) {
   const int32 Index=FCString::Atoi(*N.ToString().Mid(12));
-  if(PinnedShips.IsValidIndex(Index)){PinnedShips.RemoveAt(Index);PinnedPreviews[Index]->Release();PinnedPreviews.RemoveAt(Index);PinnedDecks.RemoveAt(Index);PinnedSlots.RemoveAt(Index);}
+  if(PinnedShips.IsValidIndex(Index)){PinnedShips.RemoveAt(Index);PinnedPreviews[Index]->Release();PinnedPreviews.RemoveAt(Index);PinnedDecks.RemoveAt(Index);PinnedSlots.RemoveAt(Index);PinnedWeapons.RemoveAt(Index);}
+  return;
+ }
+ if(N.ToString().StartsWith(TEXT("PinnedWeaponNext_"))) {
+  const int32 Index=FCString::Atoi(*N.ToString().Mid(17));
+  if(PinnedShips.IsValidIndex(Index)&&PinnedShips[Index].IsValid()&&PinnedDecks[Index]==0) {
+   const auto* S=PinnedShips[Index]->Systems.Get();
+   if(S&&S->Layout) {const int32 Count=FMath::Min(S->Layout->WeaponMounts.Num(),S->WeaponMountStates.Num());if(Count>0)PinnedWeapons[Index]=(PinnedWeapons[Index]+1)%Count;}
+  }
   return;
  }
  if(N.ToString().StartsWith(TEXT("PinnedDeck_"))||N.ToString().StartsWith(TEXT("PinnedSlot_"))) {
@@ -199,7 +207,7 @@ void AOVHUD::NotifyHitBoxClick(FName N)
   const auto* Systems=PinnedShips[Index]->Systems.Get();
   if(!Systems||!Systems->Layout)return;
   if(Parts[0]==TEXT("PinnedDeck")&&Value>=0&&Value<=Systems->Layout->DeckCount&&(Value==0||Systems->FactionId==0)) {
-   PinnedDecks[Index]=Value;PinnedSlots[Index]=INDEX_NONE;
+   PinnedDecks[Index]=Value;PinnedSlots[Index]=INDEX_NONE;if(Value==0)PinnedWeapons[Index]=INDEX_NONE;
   } else if(Parts[0]==TEXT("PinnedSlot")&&Systems->FactionId==0&&Systems->Layout->Slots.IsValidIndex(Value)&&Systems->Layout->Slots[Value].DeckId==PinnedDecks[Index])PinnedSlots[Index]=Value;
   return;
  }
@@ -256,12 +264,16 @@ void AOVHUD::DrawExternal(float X,float Y,float W)
 FString AOVHUD::GetSelectedWeaponSummary() const
 {
  const auto* PC=Cast<AOVController>(PlayerOwner);
- if(!PC||!PC->Selected||!PC->Selected->Systems||!PC->Selected->Systems->Layout)return TEXT("무장을 선택하세요");
- AOVShip* Ship=PC->Selected;
+ return PC?GetWeaponSummary(PC->Selected,PC->SelectedWeapon):TEXT("무장을 선택하세요");
+}
+FString AOVHUD::GetWeaponSummary(AOVShip* Ship,int32 Weapon) const
+{
+ const auto* PC=Cast<AOVController>(PlayerOwner);
+ if(!PC||!IsValid(Ship)||!Ship->Systems||!Ship->Systems->Layout)return TEXT("무장을 선택하세요");
  const auto* Systems=Ship->Systems.Get();const auto* Layout=Systems->Layout.Get();
- if(!Systems->WeaponMountStates.IsValidIndex(PC->SelectedWeapon)||!Layout->WeaponMounts.IsValidIndex(PC->SelectedWeapon))return TEXT("무장을 선택하세요");
- const auto& HealthState=Systems->WeaponMountStates[PC->SelectedWeapon];
- const auto& Def=Layout->WeaponMounts[PC->SelectedWeapon];
+ if(!Systems->WeaponMountStates.IsValidIndex(Weapon)||!Layout->WeaponMounts.IsValidIndex(Weapon))return TEXT("무장을 선택하세요");
+ const auto& HealthState=Systems->WeaponMountStates[Weapon];
+ const auto& Def=Layout->WeaponMounts[Weapon];
  FString Kind=Def.Type==EOVWeaponType::Beam?TEXT("빔"):Def.Type==EOVWeaponType::Cannon?TEXT("함포"):Def.Type==EOVWeaponType::Interception?TEXT("요격"):TEXT("미사일");
  // Enemy exterior inspection cannot reveal fire-control readiness, cooldowns or current PD profiles.
  if(Systems->FactionId!=0&&!PC->bDeveloperMode)
@@ -521,6 +533,14 @@ int32 AOVHUD::GetPreviewMeshCount() const
 }
 int32 AOVHUD::GetWeaponPreviewVisibleMeshCount() const { return WeaponPreview?WeaponPreview->GetVisibleMeshCount():0; }
 int32 AOVHUD::GetWeaponPreviewFocus() const { return WeaponPreview?WeaponPreview->GetFocusMount():INDEX_NONE; }
+FString AOVHUD::GetPinnedWeaponSummary(int32 Index) const
+{
+ return PinnedShips.IsValidIndex(Index)&&PinnedWeapons.IsValidIndex(Index)?GetWeaponSummary(PinnedShips[Index].Get(),PinnedWeapons[Index]):TEXT("무장을 선택하세요");
+}
+int32 AOVHUD::GetPinnedPreviewFocus(int32 Index) const
+{
+ return PinnedPreviews.IsValidIndex(Index)&&PinnedPreviews[Index]?PinnedPreviews[Index]->GetFocusMount():INDEX_NONE;
+}
 float AOVHUD::GetSelectedWeaponHealthRatio() const
 {
  const auto* PC=Cast<AOVController>(PlayerOwner);
@@ -562,7 +582,7 @@ void AOVHUD::DrawPinned()
 {
  const auto* PC=Cast<AOVController>(PlayerOwner);
  for(int32 I=PinnedShips.Num()-1;I>=0;--I)if(!PinnedShips[I].IsValid()||PinnedShips[I]->IsHidden()||(PC&&PC->Combat&&PC->Combat->IsDeparted(PinnedShips[I].Get())))
- {PinnedPreviews[I]->Release();PinnedPreviews.RemoveAt(I);PinnedShips.RemoveAt(I);PinnedDecks.RemoveAt(I);PinnedSlots.RemoveAt(I);}
+ {PinnedPreviews[I]->Release();PinnedPreviews.RemoveAt(I);PinnedShips.RemoveAt(I);PinnedDecks.RemoveAt(I);PinnedSlots.RemoveAt(I);PinnedWeapons.RemoveAt(I);}
  if(!PC||PC->bDeveloperMode||bHeroPanelOpen)return;
  const float X=PinnedPanelX();
  for(int32 I=0;I<PinnedShips.Num();++I)
@@ -574,13 +594,22 @@ void AOVHUD::DrawPinned()
   Button(FName(*FString::Printf(TEXT("PinnedClose_%d"),I)),TEXT("X"),X+228,Y+4,32);
   const auto* Systems=Ship->Systems.Get();const auto* Layout=Systems?Systems->Layout.Get():nullptr;
   if(!Layout)continue;
+  if(!Layout->WeaponMounts.IsValidIndex(PinnedWeapons[I])||!Systems->WeaponMountStates.IsValidIndex(PinnedWeapons[I]))PinnedWeapons[I]=INDEX_NONE;
   Button(FName(*FString::Printf(TEXT("PinnedDeck_%d_0"),I)),TEXT("외부"),X+6,Y+35,55,PinnedDecks[I]==0);
   if(Systems->FactionId==0)for(int32 D=1;D<=Layout->DeckCount;++D)
    Button(FName(*FString::Printf(TEXT("PinnedDeck_%d_%d"),I,D)),FString::Printf(TEXT("%dF"),D),X+64+(D-1)*45,Y+35,40,PinnedDecks[I]==D);
   if(PinnedDecks[I]==0) {
-   auto* Preview=PinnedPreviews[I].Get();Preview->Update(Ship,FRotator(-25,35,0),1,3.4f);
+   if(Layout->WeaponMounts.Num()>0)Button(FName(*FString::Printf(TEXT("PinnedWeaponNext_%d"),I)),TEXT("무장 +"),X+204,Y+35,56,PinnedWeapons[I]>=0);
+   auto* Preview=PinnedPreviews[I].Get();
+   if(Systems->bWrecked)Preview->Release();
+   else Preview->Update(Ship,FRotator(-25,35,0),1,3.4f,PinnedWeapons[I]);
    if(auto* Texture=Preview->GetTexture())DrawTexture(Texture,X+6,Y+64,254,75,0,0,1,1,FLinearColor::White,BLEND_Opaque);
-   DrawText(FString::Printf(TEXT("선체 %.0f%% · 쉴드 %.0f%%"),100*Systems->HullHP/FMath::Max(1.f,Systems->MaxHullHP),100*Systems->Shield/FMath::Max(1.f,Systems->MaxShield)),Ink,X+10,Y+144,GEngine->GetSmallFont());
+   else if(Systems->bWrecked)DrawText(TEXT("함선 완파"),Ink,X+12,Y+72,GEngine->GetSmallFont());
+   if(PinnedWeapons[I]>=0) {
+    TArray<FString> Lines;GetWeaponSummary(Ship,PinnedWeapons[I]).ParseIntoArrayLines(Lines);
+    if(Lines.Num()>0)DrawText(Lines[0],Ink,X+10,Y+65,GEngine->GetSmallFont(),.9f);
+    if(Lines.Num()>1)DrawText(Lines[1],Ink,X+10,Y+144,GEngine->GetSmallFont(),.9f);
+   } else DrawText(FString::Printf(TEXT("선체 %.0f%% · 쉴드 %.0f%%"),100*Systems->HullHP/FMath::Max(1.f,Systems->MaxHullHP),100*Systems->Shield/FMath::Max(1.f,Systems->MaxShield)),Ink,X+10,Y+144,GEngine->GetSmallFont());
   } else if(Systems->FactionId==0) {
    if(PinnedPreviews[I])PinnedPreviews[I]->Release();
    int32 DeckSlots=0;for(const auto& Def:Layout->Slots)if(Def.DeckId==PinnedDecks[I])++DeckSlots;

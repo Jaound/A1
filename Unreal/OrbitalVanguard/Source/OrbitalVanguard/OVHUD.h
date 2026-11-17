@@ -28,6 +28,9 @@ public:
  UFUNCTION(BlueprintPure, Category="UI") AOVShip* GetPinnedShip(int32 Index) const { return PinnedShips.IsValidIndex(Index)?PinnedShips[Index].Get():nullptr; }
  UFUNCTION(BlueprintPure, Category="UI") int32 GetPinnedDeck(int32 Index) const { return PinnedDecks.IsValidIndex(Index)?PinnedDecks[Index]:INDEX_NONE; }
  UFUNCTION(BlueprintPure, Category="UI") int32 GetPinnedSlot(int32 Index) const { return PinnedSlots.IsValidIndex(Index)?PinnedSlots[Index]:INDEX_NONE; }
+ UFUNCTION(BlueprintPure, Category="UI") int32 GetPinnedWeapon(int32 Index) const { return PinnedWeapons.IsValidIndex(Index)?PinnedWeapons[Index]:INDEX_NONE; }
+ UFUNCTION(BlueprintPure, Category="UI") FString GetPinnedWeaponSummary(int32 Index) const;
+ UFUNCTION(BlueprintPure, Category="UI") int32 GetPinnedPreviewFocus(int32 Index) const;
  UFUNCTION(BlueprintCallable, Category="UI") void SetHeroPanelOpen(bool bOpen) { bHeroPanelOpen=bOpen; if(bOpen)bDetailsOpen=false; SyncAddedUI(); }
  UFUNCTION(BlueprintPure, Category="UI") bool IsHeroPanelOpen() const { return bHeroPanelOpen; }
  virtual void NotifyHitBoxClick(FName BoxName) override;
@@ -80,7 +83,7 @@ private:
  UPROPERTY() TObjectPtr<UOVShipPreview> WeaponPreview;
  UPROPERTY() TArray<TObjectPtr<UOVShipPreview>> PinnedPreviews;
  UPROPERTY() TArray<TWeakObjectPtr<AOVShip>> PinnedShips;
- TArray<int32> PinnedDecks, PinnedSlots;
+ TArray<int32> PinnedDecks, PinnedSlots, PinnedWeapons;
  FBox2D DevelopmentRect, HeroRect;
  bool bHeroPanelOpen=false;
  bool bSceneMenuOpen=false;
@@ -122,6 +125,7 @@ private:
  FRotator PreviewRotation=FRotator(-25,35,0);
  float PreviewZoom=1;
  void DrawDetails();
+ FString GetWeaponSummary(AOVShip* Ship,int32 Weapon) const;
  float PinnedPanelX() const;
  float PinnedPanelY() const;
  void DrawCombat();
