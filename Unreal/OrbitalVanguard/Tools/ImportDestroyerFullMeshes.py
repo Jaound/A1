@@ -1,12 +1,13 @@
 """백터·바스티온 원본 메시와 맵을 새 UE 에셋으로 반입한다. 덮어쓰지 않는다."""
 from pathlib import Path
 import json
+import os
 import traceback
 import unreal
 
-root = Path.home() / 'Documents/OrbitalVanguardAssets/Prepared/PlayUI_R2_DestroyerFull_v1'
+root = Path.home() / 'Documents/OrbitalVanguardAssets/Prepared' / os.environ.get('OV_FULL_SHIP_TAG', 'PlayUI_R2_DestroyerFull_v1')
 source_report = json.loads((root / 'report.json').read_text(encoding='utf8'))
-output = Path(unreal.Paths.convert_relative_path_to_full(unreal.Paths.project_saved_dir())) / 'Validation/DestroyerFullImport.json'
+output = Path(unreal.Paths.convert_relative_path_to_full(unreal.Paths.project_saved_dir())) / 'Validation' / (os.environ.get('OV_FULL_SHIP_TAG', 'DestroyerFull') + 'Import.json')
 report = {'passed': False, 'ships': [], 'errors': []}
 def check(name, value):
     if not value: raise RuntimeError(name)

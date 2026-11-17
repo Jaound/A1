@@ -185,10 +185,14 @@ void AOVShip::ApplyPresentationHull(FName DefinitionId)
     const bool bCorvette=DefinitionId==TEXT("corvette");
     const TCHAR* MeshPath=bCorvette?TEXT("/Game/Presentation/Ships/SM_PC14_FullMesh.SM_PC14_FullMesh"):
         DefinitionId==TEXT("vector")?TEXT("/Game/Presentation/Ships/VectorFull/SM_Hull.SM_Hull"):
-        DefinitionId==TEXT("bastion")?TEXT("/Game/Presentation/Ships/BastionFull/SM_Hull.SM_Hull"):nullptr;
+        DefinitionId==TEXT("bastion")?TEXT("/Game/Presentation/Ships/BastionFull/SM_Hull.SM_Hull"):
+        DefinitionId==TEXT("carrier")?TEXT("/Game/Presentation/Ships/CarrierFull/SM_Hull.SM_Hull"):
+        DefinitionId==TEXT("assault")?TEXT("/Game/Presentation/Ships/AssaultFull/SM_Hull.SM_Hull"):nullptr;
     const TCHAR* MaterialPath=bCorvette?TEXT("/Game/Presentation/PC14Full/M_PC14_FullReadable.M_PC14_FullReadable"):
         DefinitionId==TEXT("vector")?TEXT("/Game/Presentation/Ships/VectorFull/M_Readable.M_Readable"):
-        DefinitionId==TEXT("bastion")?TEXT("/Game/Presentation/Ships/BastionFull/M_Readable.M_Readable"):nullptr;
+        DefinitionId==TEXT("bastion")?TEXT("/Game/Presentation/Ships/BastionFull/M_Readable.M_Readable"):
+        DefinitionId==TEXT("carrier")?TEXT("/Game/Presentation/Ships/CarrierFull/M_Readable.M_Readable"):
+        DefinitionId==TEXT("assault")?TEXT("/Game/Presentation/Ships/AssaultFull/M_Readable.M_Readable"):nullptr;
     if(!MeshPath||!MaterialPath)return;
     auto* Mesh=LoadObject<UStaticMesh>(nullptr,MeshPath,nullptr,LOAD_NoWarn);
     auto* Material=LoadObject<UMaterialInterface>(nullptr,MaterialPath,nullptr,LOAD_NoWarn);

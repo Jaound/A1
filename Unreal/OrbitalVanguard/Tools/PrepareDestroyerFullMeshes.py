@@ -4,17 +4,24 @@
 """
 import hashlib
 import json
+import os
 from pathlib import Path
 import bpy
 from mathutils import Matrix, Vector
 
 root = Path.home() / 'Documents/OrbitalVanguardAssets'
-output = root / 'Prepared/PlayUI_R2_DestroyerFull_v1'
+config_path = os.environ.get('OV_FULL_SHIP_CONFIG')
+config = json.loads(Path(config_path).read_text(encoding='utf8')) if config_path else {
+    'tag': 'PlayUI_R2_DestroyerFull_v1',
+    'ships': [{'id':'vector', 'folder':'백터급 구축함', 'pattern':'Meshy_AI_model_20261112_texture.fbx'},
+              {'id':'bastion', 'folder':'바스티온급 구축함', 'pattern':'Meshy_AI_model_20261112_texture.fbx'}]}
+output = root / 'Prepared' / config['tag']
 output.mkdir(parents=True, exist_ok=False)
 digest = lambda p: hashlib.file_digest(p.open('rb'), 'sha256').hexdigest()
 rows = []
-for identifier, folder in [('vector', '백터급 구축함'), ('bastion', '바스티온급 구축함')]:
-    candidates = list((root / 'Source' / folder).rglob('Meshy_AI_model_20261112_texture.fbx'))
+for entry in config['ships']:
+    identifier, folder = entry['id'], entry['folder']
+    candidates = list((root / 'Source' / folder).rglob(entry['pattern']))
     if len(candidates) != 1:
         raise RuntimeError(f'{identifier}: 원본 FBX {len(candidates)}개')
     source = candidates[0]
