@@ -1,0 +1,108 @@
+{
+  "source": "C:\\Users\\user\\Documents\\OrbitalVanguardAssets\\Prepared\\PlayUI_R2_BF120_BooleanSocket_v4\\BF120_PitchTrial.blend",
+  "source_before": "003c6e87602842d35ff0a908985b19e8761c01c0fb10df0b43258a417ce583c9",
+  "source_after": "003c6e87602842d35ff0a908985b19e8761c01c0fb10df0b43258a417ce583c9",
+  "evidence": "C:\\Users\\user\\Documents\\OrbitalVanguardAssets\\Reports\\PlayUI_R2_BF120_PitchXSlices.json",
+  "evidence_sha256": "8471dc4437b8da0a6cda1a03a477a84069663c91e93e6402550f690e7ef12c2d",
+  "cut_x": -0.136,
+  "trial_pitch_pivot": [
+    0.07999999821186066,
+    0.0,
+    0.49000000953674316
+  ],
+  "trial_yaw_pivot": [
+    0.9950000047683716,
+    -0.02500000037252903,
+    -0.41999998688697815
+  ],
+  "parts": {
+    "YawBody": {
+      "faces": 594639,
+      "cut_edges": 504,
+      "cap_faces": 2,
+      "boundary_edges": 0,
+      "nonmanifold_edges": 0
+    },
+    "PitchTrial": {
+      "faces": 138445,
+      "cut_edges": 504,
+      "cap_faces": 2,
+      "boundary_edges": 0,
+      "nonmanifold_edges": 0
+    }
+  },
+  "status": "three-part low-poly experiment; topology, UV, material, clearance and gameplay unapproved",
+  "socket_radius": 0.32,
+  "socket_depth": 0.7,
+  "collar_radius": 0.18,
+  "collar_depth": 0.4,
+  "collar_center_x": -0.05,
+  "socket_center_x": 0.05,
+  "socket_center_z": 0.493,
+  "socket_centers_y": [
+    0.419,
+    -0.418
+  ],
+  "socket_topology": {
+    "faces": 532436,
+    "boundary_edges": 0,
+    "nonmanifold_edges": 0
+  },
+  "light_parts": {
+    "BaseTrial": {
+      "source_faces": 272548,
+      "target_faces": 70000,
+      "output_faces": 70474,
+      "boundary_edges": 0,
+      "nonmanifold_edges": 0,
+      "uv_layers": [
+        "UVMap"
+      ],
+      "weighted_normals": true
+    },
+    "YawBody": {
+      "source_faces": 532436,
+      "target_faces": 140000,
+      "output_faces": 141414,
+      "boundary_edges": 0,
+      "nonmanifold_edges": 0,
+      "uv_layers": [
+        "UVMap"
+      ],
+      "weighted_normals": true
+    },
+    "PitchTrial": {
+      "source_faces": 158229,
+      "target_faces": 70000,
+      "output_faces": 71370,
+      "boundary_edges": 0,
+      "nonmanifold_edges": 0,
+      "uv_layers": [
+        "UVMap"
+      ],
+      "weighted_normals": true
+    }
+  },
+  "textures": [
+    {
+      "name": "Image_0.jpg",
+      "sha256": "4ef85a98d8e15057f5ef832bca741b6642b11c5f50c26ef149cfbe931792867d",
+      "bytes": 11076479
+    },
+    {
+      "name": "Image_2.jpg",
+      "sha256": "1fb184be39cc7fa39ca2b98773f4e4d04438e8db2287f79893ae09038b596d40",
+      "bytes": 8116875
+    },
+    {
+      "name": "texture_0_metallic.png",
+      "sha256": "cce691272387d06d077a0717b8089c2b7a8abd797a1d4e7d53ddccc2cee23fd7",
+      "bytes": 1446602
+    },
+    {
+      "name": "texture_0_roughness.png",
+      "sha256": "98461dc155a98c48cb3b7c743894c1b152d45e3f10c6b991b2c492eb67088b1e",
+      "bytes": 1599655
+    }
+  ]
+}

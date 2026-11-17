@@ -8,12 +8,14 @@ import bmesh,bpy
 from mathutils import Matrix,Vector
 from mathutils.bvhtree import BVHTree
 args=sys.argv[sys.argv.index('--')+1:]
+metadata=next((a.split('=',1)[1] for a in args if a.startswith('--metadata=')),None)
+args=[a for a in args if not a.startswith('--metadata=')]
 if len(args) not in (2,3):raise ValueError('prefix, new report path, optionally angle step required')
 name=args[0];out=Path(args[1]).resolve();src=Path(bpy.data.filepath).resolve()
 step=int(args[2]) if len(args)==3 else 15
 if step<=0 or 90%step:raise ValueError('angle step must divide 90')
 if out.exists():raise FileExistsError(out)
-meta=json.loads((src.parent/'report.json').read_text(encoding='utf8'))
+meta=json.loads((Path(metadata).resolve() if metadata else src.parent/'report.json').read_text(encoding='utf8'))
 def sha(p):
  with p.open('rb') as f:return hashlib.file_digest(f,'sha256').hexdigest()
 before=sha(src);body=bpy.data.objects.get(name+'_YawBody');barrel=bpy.data.objects.get(name+'_PitchTrial');base=bpy.data.objects.get(name+'_BaseTrial')
@@ -23,7 +25,7 @@ def check(k,v):checks.append({'id':k,'passed':bool(v)})
 check('PITCH-PARENT-IS-YAW',barrel.parent==body)
 for label,obj in [('BODY',body),('PITCH',barrel)]:
  bm=bmesh.new();bm.from_mesh(obj.data);boundary=sum(e.is_boundary for e in bm.edges);nonmanifold=sum(not e.is_manifold for e in bm.edges);bm.free()
- caps=sum(1 for f in obj.data.polygons if f.material_index<len(obj.data.materials) and obj.data.materials[f.material_index] and obj.data.materials[f.material_index].name=='TrialPitchCutCap')
+ caps=sum(1 for f in obj.data.polygons if f.material_index<len(obj.data.materials) and obj.data.materials[f.material_index] and obj.data.materials[f.material_index].name.startswith('TrialPitchCutCap'))
  parts[label]={'boundary_edges':boundary,'nonmanifold_edges':nonmanifold,'pitch_cap_faces':caps,'uv_layers':[u.name for u in obj.data.uv_layers]}
  check(label+'-CLOSED',boundary==0 and nonmanifold==0)
  if label=='BODY' and meta.get('socket_radius'):
@@ -41,7 +43,7 @@ check('YAW-CARRIES-PITCH-PIVOT',(barrel.matrix_world.translation-expected).lengt
 body.rotation_euler.z=0;bpy.context.view_layer.update()
 def tree(obj):
  bm=bmesh.new();bm.from_mesh(obj.data)
- caps=[f for f in bm.faces if f.material_index<len(obj.data.materials) and obj.data.materials[f.material_index] and obj.data.materials[f.material_index].name in ('TrialPitchCutCap','TrialCutCap')]
+ caps=[f for f in bm.faces if f.material_index<len(obj.data.materials) and obj.data.materials[f.material_index] and obj.data.materials[f.material_index].name.startswith(('TrialPitchCutCap','TrialCutCap'))]
  if caps:bmesh.ops.delete(bm,geom=caps,context='FACES_ONLY')
  bm.transform(obj.matrix_world);t=BVHTree.FromBMesh(bm,epsilon=0.0);bm.free();return t
 body_tree=tree(body);base_tree=tree(base);angles=[]

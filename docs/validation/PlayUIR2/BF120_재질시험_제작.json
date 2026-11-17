@@ -1,0 +1,138 @@
+{
+  "inputs": {
+    "high_before": "003c6e87602842d35ff0a908985b19e8761c01c0fb10df0b43258a417ce583c9",
+    "low_before": "ad44632ddc2eec4156db21d42d4a9f99afb4ae836de3b75b18b96c4a104970c5",
+    "high_after": "003c6e87602842d35ff0a908985b19e8761c01c0fb10df0b43258a417ce583c9",
+    "low_after": "ad44632ddc2eec4156db21d42d4a9f99afb4ae836de3b75b18b96c4a104970c5"
+  },
+  "maps": [
+    {
+      "part": "BF120_BaseTrial",
+      "channel": "NORMAL",
+      "cap": false,
+      "path": "C:\\Users\\user\\Documents\\OrbitalVanguardAssets\\Prepared\\PlayUI_R2_BF120_MaterialTrial_v1\\BF120_BaseTrial_NORMAL.png",
+      "sha256": "e673ced5f8c64b995c0812e0ccd3cb9603b96a037153f9bae5cb1751ccd4b8f1"
+    },
+    {
+      "part": "BF120_BaseTrial",
+      "channel": "NORMAL",
+      "cap": true,
+      "path": "C:\\Users\\user\\Documents\\OrbitalVanguardAssets\\Prepared\\PlayUI_R2_BF120_MaterialTrial_v1\\BF120_BaseTrial_NORMAL_cap.png",
+      "sha256": "9fe28f68ee53199a35701dc05c55492da93a8ecfd3982132659e9066a3f207fc"
+    },
+    {
+      "part": "BF120_BaseTrial",
+      "channel": "Roughness",
+      "cap": false,
+      "path": "C:\\Users\\user\\Documents\\OrbitalVanguardAssets\\Prepared\\PlayUI_R2_BF120_MaterialTrial_v1\\BF120_BaseTrial_Roughness.png",
+      "sha256": "8a3679d97d3daf842aca1e46ea784fc956873449a30bf3c195951a5983ac43e5"
+    },
+    {
+      "part": "BF120_BaseTrial",
+      "channel": "Roughness",
+      "cap": true,
+      "path": "C:\\Users\\user\\Documents\\OrbitalVanguardAssets\\Prepared\\PlayUI_R2_BF120_MaterialTrial_v1\\BF120_BaseTrial_Roughness_cap.png",
+      "sha256": "1d62080a62a4d90a3eba0e38573f8e8d697c5a33b0487c7e0b1469a855e33dbc"
+    },
+    {
+      "part": "BF120_BaseTrial",
+      "channel": "Metallic",
+      "cap": false,
+      "path": "C:\\Users\\user\\Documents\\OrbitalVanguardAssets\\Prepared\\PlayUI_R2_BF120_MaterialTrial_v1\\BF120_BaseTrial_Metallic.png",
+      "sha256": "95ed0dd440367efd25ef5442d2ccce6094c2373c1e2c4d1677552438d4a6a6f0"
+    },
+    {
+      "part": "BF120_BaseTrial",
+      "channel": "Metallic",
+      "cap": true,
+      "path": "C:\\Users\\user\\Documents\\OrbitalVanguardAssets\\Prepared\\PlayUI_R2_BF120_MaterialTrial_v1\\BF120_BaseTrial_Metallic_cap.png",
+      "sha256": "7743cab596e561554747607a8e29d1bc3a90fe113b86c667b7ce8b1e3122d561"
+    },
+    {
+      "part": "BF120_YawBody",
+      "channel": "NORMAL",
+      "cap": false,
+      "path": "C:\\Users\\user\\Documents\\OrbitalVanguardAssets\\Prepared\\PlayUI_R2_BF120_MaterialTrial_v1\\BF120_YawBody_NORMAL.png",
+      "sha256": "504f3ae643b28ba58411c3e8925dad21f22266762e5a2ae072b1b4a19a49b6df"
+    },
+    {
+      "part": "BF120_YawBody",
+      "channel": "NORMAL",
+      "cap": true,
+      "path": "C:\\Users\\user\\Documents\\OrbitalVanguardAssets\\Prepared\\PlayUI_R2_BF120_MaterialTrial_v1\\BF120_YawBody_NORMAL_cap.png",
+      "sha256": "a0d161780482e61d18f70ef39c7e0144e22e59cb6d440a812cd3cd4ae7870135"
+    },
+    {
+      "part": "BF120_YawBody",
+      "channel": "Roughness",
+      "cap": false,
+      "path": "C:\\Users\\user\\Documents\\OrbitalVanguardAssets\\Prepared\\PlayUI_R2_BF120_MaterialTrial_v1\\BF120_YawBody_Roughness.png",
+      "sha256": "3e061bb7ae459ea205c9c8d208e27b82f63f432b8d29d669076f6f4c938ea013"
+    },
+    {
+      "part": "BF120_YawBody",
+      "channel": "Roughness",
+      "cap": true,
+      "path": "C:\\Users\\user\\Documents\\OrbitalVanguardAssets\\Prepared\\PlayUI_R2_BF120_MaterialTrial_v1\\BF120_YawBody_Roughness_cap.png",
+      "sha256": "8144dce8f1a13696b8898e530b1573d0927ed8a880b536ce6d141b811dac2fa5"
+    },
+    {
+      "part": "BF120_YawBody",
+      "channel": "Metallic",
+      "cap": false,
+      "path": "C:\\Users\\user\\Documents\\OrbitalVanguardAssets\\Prepared\\PlayUI_R2_BF120_MaterialTrial_v1\\BF120_YawBody_Metallic.png",
+      "sha256": "4f59f4940cb08cd7aeec935654a9b5eef0af7709f055feb49d751fdd63d3c941"
+    },
+    {
+      "part": "BF120_YawBody",
+      "channel": "Metallic",
+      "cap": true,
+      "path": "C:\\Users\\user\\Documents\\OrbitalVanguardAssets\\Prepared\\PlayUI_R2_BF120_MaterialTrial_v1\\BF120_YawBody_Metallic_cap.png",
+      "sha256": "ab5140637b7f6192e92fac400e32e957c8a7b1682cddd128e96e0bfbaef50639"
+    },
+    {
+      "part": "BF120_PitchTrial",
+      "channel": "NORMAL",
+      "cap": false,
+      "path": "C:\\Users\\user\\Documents\\OrbitalVanguardAssets\\Prepared\\PlayUI_R2_BF120_MaterialTrial_v1\\BF120_PitchTrial_NORMAL.png",
+      "sha256": "d51f4078480408d9284b482dcba9727cab486dd8083aef76283677d00388e10c"
+    },
+    {
+      "part": "BF120_PitchTrial",
+      "channel": "NORMAL",
+      "cap": true,
+      "path": "C:\\Users\\user\\Documents\\OrbitalVanguardAssets\\Prepared\\PlayUI_R2_BF120_MaterialTrial_v1\\BF120_PitchTrial_NORMAL_cap.png",
+      "sha256": "b040c7869ddf1b7d3a2c871b6192435d0605f8777e14d73fdc80958f61f3a92f"
+    },
+    {
+      "part": "BF120_PitchTrial",
+      "channel": "Roughness",
+      "cap": false,
+      "path": "C:\\Users\\user\\Documents\\OrbitalVanguardAssets\\Prepared\\PlayUI_R2_BF120_MaterialTrial_v1\\BF120_PitchTrial_Roughness.png",
+      "sha256": "16fb338bc53fe31b7594bf64f61010f644072218c3392389f52319330f0f0d8a"
+    },
+    {
+      "part": "BF120_PitchTrial",
+      "channel": "Roughness",
+      "cap": true,
+      "path": "C:\\Users\\user\\Documents\\OrbitalVanguardAssets\\Prepared\\PlayUI_R2_BF120_MaterialTrial_v1\\BF120_PitchTrial_Roughness_cap.png",
+      "sha256": "de15071f0b8800cee852183c7151482bcf9f403aa8ec7f220d821f59fb9eac16"
+    },
+    {
+      "part": "BF120_PitchTrial",
+      "channel": "Metallic",
+      "cap": false,
+      "path": "C:\\Users\\user\\Documents\\OrbitalVanguardAssets\\Prepared\\PlayUI_R2_BF120_MaterialTrial_v1\\BF120_PitchTrial_Metallic.png",
+      "sha256": "4af665e8c2c3ded9606113b10a4d4f2ad8829e3832eaf9f501961245966ad301"
+    },
+    {
+      "part": "BF120_PitchTrial",
+      "channel": "Metallic",
+      "cap": true,
+      "path": "C:\\Users\\user\\Documents\\OrbitalVanguardAssets\\Prepared\\PlayUI_R2_BF120_MaterialTrial_v1\\BF120_PitchTrial_Metallic_cap.png",
+      "sha256": "57a83bd70aa6d76ff87aafaf0e2ab679403943bd3202926c5903529a9398ac10"
+    }
+  ],
+  "align_target": true,
+  "status": "trial only; material appearance and original normal detail not yet verified"
+}

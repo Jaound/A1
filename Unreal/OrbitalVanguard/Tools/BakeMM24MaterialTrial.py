@@ -11,9 +11,12 @@ import sys
 import bpy
 
 args=sys.argv[sys.argv.index('--')+1:]
+align_target='--align-target' in args;args=[a for a in args if a!='--align-target']
+parts=next((a.split('=',1)[1].split(',') for a in args if a.startswith('--parts=')),['BaseTrial','YawTrial'])
+args=[a for a in args if not a.startswith('--parts=')]
 if len(args) not in (2,3):raise ValueError('Pass high-poly blend, new output directory, optional part prefix')
 prefix=args[2] if len(args)==3 else 'MM24'
-if not prefix.replace('_','').isalnum():raise ValueError('Invalid part prefix')
+if not prefix.replace('_','').isalnum() or not parts or any(not p.replace('_','').isalnum() for p in parts):raise ValueError('Invalid part prefix or names')
 high=Path(args[0]).resolve();low=Path(bpy.data.filepath).resolve();out=Path(args[1]).resolve()
 if not high.is_file() or not low.is_file():raise FileNotFoundError('Missing input blend')
 if out.exists():raise FileExistsError(out)
@@ -24,7 +27,7 @@ scene=bpy.context.scene;scene.render.engine='CYCLES';scene.cycles.samples=1
 scene.render.bake.use_selected_to_active=True;scene.render.bake.cage_extrusion=.02
 scene.render.bake.max_ray_distance=.06;scene.render.bake.margin=8
 results=[]
-for name in (prefix+'_BaseTrial',prefix+'_YawTrial'):
+for name in (prefix+'_'+part for part in parts):
     target=bpy.data.objects.get(name)
     if not target or not target.data.uv_layers.get('TrialBakeUV'):raise RuntimeError('Missing target trial UV '+name)
     target.data.uv_layers.active=target.data.uv_layers['TrialBakeUV']
@@ -32,6 +35,8 @@ for name in (prefix+'_BaseTrial',prefix+'_YawTrial'):
         if name not in source.objects:raise RuntimeError('Missing source '+name)
         data.objects=[name]
     original=data.objects[0];bpy.context.collection.objects.link(original)
+    if align_target:
+        bpy.context.view_layer.update();original.matrix_world=target.matrix_world.copy();bpy.context.view_layer.update()
     for slot in target.material_slots:
         if not slot.material:raise RuntimeError('Missing target material')
         slot.material=slot.material.copy()
@@ -45,7 +50,7 @@ for name in (prefix+'_BaseTrial',prefix+'_YawTrial'):
         for slot in target.material_slots:
             nodes=slot.material.node_tree.nodes
             for node in nodes:node.select=False
-            node=nodes.new('ShaderNodeTexImage');node.image=cap if slot.material.name.startswith('TrialCutCap') else image
+            node=nodes.new('ShaderNodeTexImage');node.image=cap if slot.material.name.startswith(('TrialCutCap','TrialPitchCutCap','TrialBooleanSurface')) else image
             node.select=True;nodes.active=node
         if channel!='NORMAL':
             for slot in original.material_slots:
@@ -68,7 +73,7 @@ for name in (prefix+'_BaseTrial',prefix+'_YawTrial'):
     bpy.data.objects.remove(original,do_unlink=True)
 bpy.ops.wm.save_as_mainfile(filepath=str(out/(prefix+'_MaterialTrial.blend')))
 inputs.update(high_after=sha(high),low_after=sha(low))
-report={'inputs':inputs,'maps':results,'status':'trial only; material appearance and original normal detail not yet verified'}
+report={'inputs':inputs,'maps':results,'align_target':align_target,'status':'trial only; material appearance and original normal detail not yet verified'}
 (out/'report.json').write_text(json.dumps(report,ensure_ascii=False,indent=2),encoding='utf8')
 if inputs['high_before']!=inputs['high_after'] or inputs['low_before']!=inputs['low_after']:raise RuntimeError('Input changed')
 print('OV_MM24_MATERIAL_TRIAL',out)

@@ -7,20 +7,20 @@ import bpy
 from mathutils import Vector
 
 args=sys.argv[sys.argv.index('--')+1:]
-if len(args) not in (2,3) or args[1] not in ('source','trial'):raise ValueError('Pass new output directory, source or trial, optional part prefix')
-source=Path(bpy.data.filepath).resolve();out=Path(args[0]).resolve();mode=args[1];prefix=args[2] if len(args)==3 else 'MM24'
-if not prefix.replace('_','').isalnum():raise ValueError('Invalid part prefix')
+if len(args) not in (2,3,4) or args[1] not in ('source','trial'):raise ValueError('Pass output, source or trial, optional part prefix and comma-separated part names')
+source=Path(bpy.data.filepath).resolve();out=Path(args[0]).resolve();mode=args[1];prefix=args[2] if len(args)>=3 else 'MM24';parts=args[3].split(',') if len(args)==4 else ['BaseTrial','YawTrial']
+if not prefix.replace('_','').isalnum() or not parts or any(not p.replace('_','').isalnum() for p in parts):raise ValueError('Invalid part prefix or names')
 if out.exists():raise FileExistsError(out)
 def sha(p):
     with p.open('rb') as f:return hashlib.file_digest(f,'sha256').hexdigest()
 before=sha(source);out.mkdir(parents=True)
 if mode=='trial':
-    for name in (prefix+'_BaseTrial',prefix+'_YawTrial'):
+    for name in (prefix+'_'+part for part in parts):
         obj=bpy.data.objects.get(name)
         if not obj:raise RuntimeError('Missing '+name)
         for slot in obj.material_slots:
             mat=slot.material
-            if not mat or mat.name.startswith('TrialCutCap'):continue
+            if not mat or mat.name.startswith(('TrialCutCap','TrialPitchCutCap','TrialBooleanSurface')):continue
             nodes=mat.node_tree.nodes;links=mat.node_tree.links
             bsdf=next(n for n in nodes if n.type=='BSDF_PRINCIPLED')
             def image_node(prefix):

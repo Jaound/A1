@@ -1,0 +1,37 @@
+{
+  "inputs": {
+    "high_sha256_before": "003c6e87602842d35ff0a908985b19e8761c01c0fb10df0b43258a417ce583c9",
+    "low_sha256_before": "89aa76fdf8236b0b80083e9d11a1aa4dfe5e2148c45b0afb20fa95518f883d5f",
+    "high_sha256_after": "003c6e87602842d35ff0a908985b19e8761c01c0fb10df0b43258a417ce583c9",
+    "low_sha256_after": "89aa76fdf8236b0b80083e9d11a1aa4dfe5e2148c45b0afb20fa95518f883d5f"
+  },
+  "parts": [
+    {
+      "part": "BF120_BaseTrial",
+      "baked_file": "C:\\Users\\user\\Documents\\OrbitalVanguardAssets\\Prepared\\PlayUI_R2_BF120_ColorTrial_v2\\BF120_BaseTrial_baked.png",
+      "baked_sha256": "2bc4e5f5b9fe4340ab668c78376992f7bc2c53f5865be59c799e411d866b4b61",
+      "cap_file": "C:\\Users\\user\\Documents\\OrbitalVanguardAssets\\Prepared\\PlayUI_R2_BF120_ColorTrial_v2\\BF120_BaseTrial_cap_baked.png",
+      "cap_sha256": "04327a9c3e4080e742b901b9e80d4d88b4bc137e600978f964f72fe79c0246d6"
+    },
+    {
+      "part": "BF120_YawBody",
+      "baked_file": "C:\\Users\\user\\Documents\\OrbitalVanguardAssets\\Prepared\\PlayUI_R2_BF120_ColorTrial_v2\\BF120_YawBody_baked.png",
+      "baked_sha256": "df1cafe9d225a9faa6b1ecff74955785dcf35e692308c3d948f22014eef9f9a7",
+      "cap_file": "C:\\Users\\user\\Documents\\OrbitalVanguardAssets\\Prepared\\PlayUI_R2_BF120_ColorTrial_v2\\BF120_YawBody_cap_baked.png",
+      "cap_sha256": "348e9424d1edeb5ec2ff33bb8052674e9a3aefda33f6f27d4df81ac412b6a213"
+    },
+    {
+      "part": "BF120_PitchTrial",
+      "baked_file": "C:\\Users\\user\\Documents\\OrbitalVanguardAssets\\Prepared\\PlayUI_R2_BF120_ColorTrial_v2\\BF120_PitchTrial_baked.png",
+      "baked_sha256": "1f681778e1e5c47290aa79632e2df3872cb9a82779a59e76c65f1bd2baf0883a",
+      "cap_file": "C:\\Users\\user\\Documents\\OrbitalVanguardAssets\\Prepared\\PlayUI_R2_BF120_ColorTrial_v2\\BF120_PitchTrial_cap_baked.png",
+      "cap_sha256": "da250e535df326223cae7601941b6e63e07eab63ce264be3fa687c35d602aed2"
+    }
+  ],
+  "cage_extrusion": 0.02,
+  "max_ray_distance": 0.06,
+  "smart_uv": true,
+  "align_target": true,
+  "fill_empty_trial_material": true,
+  "status": "trial only; inspect texture, seam, joints and gameplay separately"
+}
