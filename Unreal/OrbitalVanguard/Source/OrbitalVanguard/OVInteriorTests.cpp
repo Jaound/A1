@@ -79,11 +79,15 @@ bool FOVInteriorHeroHitNotice::RunTest(const FString&)
         if(U.UnitId==Enemy){U.Damage=10;U.Evasion=0;}
     }
     R.Advance(5);
-    const auto* Feed=R.World->GetSubsystem<UOVBattleNotices>();
+    auto* Feed=R.World->GetSubsystem<UOVBattleNotices>();
     const auto* Hit=Feed->Notices.FindByPredicate([Hero](const FOVBattleNotice& N){return N.Kind==EOVBattleNoticeKind::HeroHit&&N.UnitId==Hero;});
     TestTrue(TEXT("실제 선내 공격 피해로 아군 영웅 알림"),R.Interior->GetUnit(Hero).HP<10000&&Hit!=nullptr);
     TestTrue(TEXT("같은 영웅의 반복 피격은 묶임"),Hit&&Hit->Count>1);
     TestFalse(TEXT("적 일반병의 피격은 아군 영웅으로 표시하지 않음"),Feed->Notices.ContainsByPredicate([Enemy](const FOVBattleNotice& N){return N.Kind==EOVBattleNoticeKind::HeroHit&&N.UnitId==Enemy;}));
+    const int32 Other=R.Interior->RegisterUnit(R.Origin,0,EOVInteriorRole::Melee,Room);
+    const int32 PreviousCount=Feed->Notices.Num();
+    Feed->RecordInteriorEvent(TEXT("Damage"),R.Interior->GetUnit(Other),R.Interior->GameTime);
+    TestTrue(TEXT("합성 피격 사건에서 서로 다른 영웅은 묶이지 않음"),Other>0&&Feed->Notices.Num()==PreviousCount+1&&Feed->Notices.Last().UnitId==Other&&Feed->Notices.Last().Count==1);
     return true;
 }
 

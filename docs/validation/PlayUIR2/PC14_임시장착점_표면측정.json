@@ -1,0 +1,37 @@
+{
+  "scope": "Blender prepared mesh surface rays, before FBX-to-UE conversion",
+  "source_modified": false,
+  "obb_half_extent_cm": [
+    175.0,
+    75.0,
+    30.0
+  ],
+  "prepared_mesh_half_extent_cm": [
+    175.0,
+    54.109561920166016,
+    38.79498291015625
+  ],
+  "presentation_uniform_scale": 0.7732958684239094,
+  "mounts": [
+    {
+      "id": "Weapon_0",
+      "local_x_cm": -46.6666667,
+      "side": "top",
+      "game_mount_z_cm": 42,
+      "surface_z_cm": -2.5506140066217156,
+      "origin_to_surface_cm": 44.550614006621714
+    },
+    {
+      "id": "Weapon_1",
+      "local_x_cm": 46.6666667,
+      "side": "bottom",
+      "game_mount_z_cm": -42,
+      "surface_z_cm": -29.390046572734644,
+      "origin_to_surface_cm": 12.609953427265356
+    }
+  ],
+  "limitations": [
+    "No collision, pivot, muzzle or axis validation in Unreal",
+    "Simplified mesh is not the final source-quality approval"
+  ]
+}
