@@ -85,6 +85,27 @@ bool FOVCarrierInventoryTest::RunTest(const FString&)
     return true;
 }
 
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(FOVCarrierOverviewTest, "OrbitalVanguard.Carrier.ReadOnlyAircraftOverview", EAutomationTestFlags::EditorContext | EAutomationTestFlags::EngineFilter)
+bool FOVCarrierOverviewTest::RunTest(const FString&)
+{
+    OVCarrierTest::FRange R(8);
+    if (!TestTrue(TEXT("Enough individual records"), R.Fleet->Aircraft.Num() >= 7)) return false;
+    auto& Aircraft = R.Fleet->Aircraft;
+    const EOVAircraftState States[] = {EOVAircraftState::Stored, EOVAircraftState::Sortie,
+        EOVAircraftState::Returning, EOVAircraftState::DockWaiting, EOVAircraftState::ControlLost,
+        EOVAircraftState::Wrecked};
+    for (int32 I=0; I<UE_ARRAY_COUNT(States); ++I) Aircraft[I].State=States[I];
+    for (int32 I=6; I<Aircraft.Num(); ++I) Aircraft[I].FactionId=1;
+    const int32 Id=Aircraft[0].AircraftId;
+    const float HP=Aircraft[0].HP;
+    const FOVAircraftOverview A=R.Fleet->GetAircraftOverview(R.Carrier);
+    const FOVAircraftOverview B=R.Fleet->GetAircraftOverview(R.Carrier);
+    TestTrue(TEXT("Disjoint state counts and same-faction records only"), A.Stored==1 && A.Sortie==1 && A.Returning==2 && A.ControlLost==1 && A.Wrecked==1 && A.Surviving==5);
+    TestTrue(TEXT("Repeated UI queries preserve records"), B.Surviving==5 && Aircraft[0].AircraftId==Id && Aircraft[0].HP==HP && Aircraft.Num()>=7);
+    TestEqual(TEXT("No carrier gives no inventory"), R.Fleet->GetAircraftOverview(nullptr).Surviving, 0);
+    return true;
+}
+
 IMPLEMENT_SIMPLE_AUTOMATION_TEST(FOVCarrierFacilitiesTest, "OrbitalVanguard.Carrier.FacilityControlAndDockQueue", EAutomationTestFlags::EditorContext | EAutomationTestFlags::EngineFilter)
 bool FOVCarrierFacilitiesTest::RunTest(const FString&)
 {

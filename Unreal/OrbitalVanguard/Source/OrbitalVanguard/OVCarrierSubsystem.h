@@ -8,6 +8,18 @@ class AOVShip;
 
 UENUM(BlueprintType)
 enum class EOVAircraftState : uint8 { Stored, Sortie, Returning, DockWaiting, ControlLost, Wrecked };
+
+USTRUCT(BlueprintType)
+struct ORBITALVANGUARD_API FOVAircraftOverview
+{
+    GENERATED_BODY()
+    UPROPERTY(VisibleAnywhere, BlueprintReadOnly) int32 Stored = 0;
+    UPROPERTY(VisibleAnywhere, BlueprintReadOnly) int32 Sortie = 0;
+    UPROPERTY(VisibleAnywhere, BlueprintReadOnly) int32 Returning = 0;
+    UPROPERTY(VisibleAnywhere, BlueprintReadOnly) int32 ControlLost = 0;
+    UPROPERTY(VisibleAnywhere, BlueprintReadOnly) int32 Wrecked = 0;
+    UPROPERTY(VisibleAnywhere, BlueprintReadOnly) int32 Surviving = 0;
+};
 UENUM(BlueprintType)
 enum class EOVAircraftLeg : uint8 { Ingress, Egress, Regroup };
 UENUM(BlueprintType)
@@ -175,6 +187,7 @@ public:
     // Explicit DEV supply; never called by recall, docking, profile switch or UI refresh.
     UFUNCTION(BlueprintCallable) int32 DebugSupplyRepair(AOVShip* Ship);
     UFUNCTION(BlueprintPure) FString GetCarrierStatus(AOVShip* Ship) const;
+    UFUNCTION(BlueprintPure) FOVAircraftOverview GetAircraftOverview(AOVShip* Ship) const;
     static bool IsAirborneState(EOVAircraftState State);
 private:
     double Accumulator = 0;

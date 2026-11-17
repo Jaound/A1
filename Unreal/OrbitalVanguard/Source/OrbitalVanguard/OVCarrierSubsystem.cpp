@@ -53,6 +53,27 @@ void UOVCarrierSubsystem::Reset(int32 Seed)
     PatternOffset = Random.FRandRange(0, 2 * PI);
 }
 
+FOVAircraftOverview UOVCarrierSubsystem::GetAircraftOverview(AOVShip* Ship) const
+{
+    FOVAircraftOverview Result;
+    if (!IsValid(Ship) || !Ship->Systems) return Result;
+    for (const FOVAircraftRecord& Craft : Aircraft)
+    {
+        if (Craft.Carrier != Ship || Craft.FactionId != Ship->Systems->FactionId) continue;
+        switch (Craft.State)
+        {
+        case EOVAircraftState::Stored: ++Result.Stored; break;
+        case EOVAircraftState::Sortie: ++Result.Sortie; break;
+        case EOVAircraftState::Returning:
+        case EOVAircraftState::DockWaiting: ++Result.Returning; break;
+        case EOVAircraftState::ControlLost: ++Result.ControlLost; break;
+        case EOVAircraftState::Wrecked: ++Result.Wrecked; break;
+        }
+    }
+    Result.Surviving = Result.Stored + Result.Sortie + Result.Returning + Result.ControlLost;
+    return Result;
+}
+
 bool UOVCarrierSubsystem::RegisterCarrier(AOVShip* Ship, int32 InitialPerHangar)
 {
     if (!LivingShip(Ship) || Ship->Systems->Layout->bSmallHull) return false;
