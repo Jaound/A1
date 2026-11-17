@@ -1,0 +1,92 @@
+{
+  "passed": true,
+  "ships": [
+    {
+      "id": "vector",
+      "triangles": 361894,
+      "mesh": "/Game/Presentation/Ships/VectorFull/SM_Hull",
+      "material": "/Game/Presentation/Ships/VectorFull/M_Readable",
+      "source_sha256": "0417bf76dd4ce1521cbef5b037335eeddf3eb79d6a3fa2825d479c806b94a234",
+      "images": [
+        {
+          "name": "Image_0.png",
+          "size": [
+            8192,
+            8192
+          ],
+          "sha256": "d0d885dc7d6b656be4ec8559d959de6780746b281b012f7fa50b8919ffc0be33"
+        },
+        {
+          "name": "Image_2.png",
+          "size": [
+            4096,
+            4096
+          ],
+          "sha256": "d7a388cc7bc458bdacca314f9fceb392018a659b36e3247851ef321d3732e421"
+        },
+        {
+          "name": "texture_0_metallic.png",
+          "size": [
+            4096,
+            4096
+          ],
+          "sha256": "418c6871c9295a6de360d2a29f11a90d6d73dca35d844f22a2858f3f5100bd1d"
+        },
+        {
+          "name": "texture_0_roughness.png",
+          "size": [
+            4096,
+            4096
+          ],
+          "sha256": "ee3a2f18f31bb13a51133d0cee4014fed83e3feb5bb99b5a7b8cde8701c5b96c"
+        }
+      ],
+      "forward_direction_validated": false,
+      "visibility_fill": 1.2
+    },
+    {
+      "id": "bastion",
+      "triangles": 421678,
+      "mesh": "/Game/Presentation/Ships/BastionFull/SM_Hull",
+      "material": "/Game/Presentation/Ships/BastionFull/M_Readable",
+      "source_sha256": "b8ee2988f97a00f03ca0ea95e73140b914969a13209ae24823a52c44de29dac8",
+      "images": [
+        {
+          "name": "Image_0.png",
+          "size": [
+            8192,
+            8192
+          ],
+          "sha256": "99b25c1a1526543df9404f5185911375664d20241e175c37cb7e1a229178b626"
+        },
+        {
+          "name": "Image_2.png",
+          "size": [
+            4096,
+            4096
+          ],
+          "sha256": "f425bd544c6e5276d2dd3099eee1796662585b9f4b0ba81bdaff364c2efbd053"
+        },
+        {
+          "name": "texture_0_metallic.png",
+          "size": [
+            4096,
+            4096
+          ],
+          "sha256": "ef87dc80d0f4976fcbd98086aa43a2065949000b28ab282a3f4ae03f1f9f5be8"
+        },
+        {
+          "name": "texture_0_roughness.png",
+          "size": [
+            4096,
+            4096
+          ],
+          "sha256": "43f91d515dc693e1e59cbd559ff58ea05816722579a13c4bf03e0093a91acf15"
+        }
+      ],
+      "forward_direction_validated": false,
+      "visibility_fill": 1.2
+    }
+  ],
+  "errors": []
+}

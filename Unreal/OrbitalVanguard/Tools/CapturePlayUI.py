@@ -19,6 +19,7 @@ if os.environ.get('OV_UI_TOOLTIP_TEST') == 'fleet': views = ['함대_긴이름']
 if os.environ.get('OV_UI_ONLY_PIN_HANGAR') == '1': views = ['항공대_핀']
 if os.environ.get('OV_UI_ONLY_PIN_FACILITY') == '1': views = ['핀_시설']
 if os.environ.get('OV_UI_DETAILS_PAGING') == '1': views = ['상세_시설페이지']
+if os.environ.get('OV_UI_ONLY_ORIGINAL_HULLS') == '1': views = ['백터_모델', '초계함_모델', '바스티온_모델']
 
 def prop(obj, key):
     return obj.get_editor_property(key)
@@ -140,13 +141,18 @@ def tick(_dt):
             elif name == '핀_무장':
                 hud.set_details_open(True);hud.execute_ui_action('PinnedWeaponNext_0')
                 check('PIN-WEAPON-INDEPENDENT',hud.get_pinned_weapon(0)==0 and hud.get_pinned_weapon(1)==-1)
-            elif name == '초계함_모델':
+            elif name in ('백터_모델', '초계함_모델', '바스티온_모델'):
                 # Inspect the default full-geometry mesh; surface anchors remain provisional.
                 pc.start_calibration_range(1)
-                pc.select_ship(prop(pc, 'ships')[1])
+                index={'백터_모델':0, '초계함_모델':1, '바스티온_모델':2}[name]
+                pc.select_ship(prop(pc, 'ships')[index])
                 hud.execute_ui_action('External')
                 mesh = prop(prop(prop(pc, 'selected'), 'hull'), 'static_mesh')
-                check('IMPORTED-HULL-IN-SCENE', mesh and mesh.get_path_name() == '/Game/Presentation/Ships/SM_PC14_FullMesh.SM_PC14_FullMesh')
+                paths={'백터_모델':'/Game/Presentation/Ships/VectorFull/SM_Hull.SM_Hull',
+                       '초계함_모델':'/Game/Presentation/Ships/SM_PC14_FullMesh.SM_PC14_FullMesh',
+                       '바스티온_모델':'/Game/Presentation/Ships/BastionFull/SM_Hull.SM_Hull'}
+                check('IMPORTED-HULL-IN-SCENE' if name == '초계함_모델' else 'IMPORTED-HULL-IN-SCENE-' + name,
+                      mesh and mesh.get_path_name() == paths[name])
             elif name == '격납고':
                 ships = prop(pc, 'ships')
                 carrier = prop(pc, 'carrier')
@@ -243,7 +249,7 @@ def tick(_dt):
                 check('FLEET-TOOLTIP-TEXT',hud.get_fleet_title_tooltip(center)=='아주 긴 이름을 가진 동일 함급의 함선 1')
                 pc.set_mouse_location(int(center.x*scale),int(center.y*scale))
                 state.update(tooltip_cursor_set=True,at=time.monotonic());return
-            if name == '초계함_모델' and time.monotonic()-state['at'] < 5:
+            if name in ('백터_모델', '초계함_모델', '바스티온_모델') and time.monotonic()-state['at'] < 5:
                 return  # First-time source texture/shader preparation can outlast a normal frame.
             if name == '외부_무장':
                 check('PREVIEW-MESH-MIRROR', hud.get_preview_mesh_count() > 0, hud.get_preview_mesh_count())

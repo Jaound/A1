@@ -1,0 +1,654 @@
+{
+  "kind": "Editor PIE API; not physical mouse/keyboard input",
+  "planning": "035a4fba81d26f1d67daa1f44bded0f7e8d3a434",
+  "seed": 260112,
+  "checks": [
+    {
+      "name": "Editor ControlRange loaded",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Real PIE game world",
+      "passed": true,
+      "detail": "/Game/Maps/UEDPIE_0_ControlRange.ControlRange"
+    },
+    {
+      "name": "R1 intent selection never fires",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "R1 enemy residents are not own-faction protection",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "R1 DEV state is explicit and faction-specific",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "R1 protection blocks real fire request",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "R1 completed objective releases goal policy",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "R1 exit policy retains completed residents",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "R1 explicit forced gun uses actual fire",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "R1 different movement order revokes force",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "R1 cancel clears attack target",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "R1 interior exit releases protection",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Opt-in range enabled and 2A camera profile preserved",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Combat fixture is transient; authored 2A assets remain separate",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Formal detection is default",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Manual target selection does not fire or switch mode",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Aligned live beam READY with detection source",
+      "passed": true,
+      "detail": "READY"
+    },
+    {
+      "name": "Fire action requests; UI does not directly apply damage",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Requested beam launches once and hits existing shield path",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Shield-only hit records event without independent hull damage",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Cooldown displayed by same launch evaluator",
+      "passed": true,
+      "detail": "COOLDOWN"
+    },
+    {
+      "name": "One manual request does not repeat after cooldown",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Auto fires while preserving Hold and manual hull posture",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Pause freezes request consumption and projectile simulation",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Range blocks actual launch and reports reason",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "No own or shared detection blocks new launch",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Radar support provides strongest valid shared source",
+      "passed": true,
+      "detail": "SUPPORT RADAR"
+    },
+    {
+      "name": "Local underside blind arc blocks top mount",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Stopped facility blocks live launch <OVFacilityType.WEAPON_CONTROL: 5>",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Stopped facility blocks live launch <OVFacilityType.CAPACITOR: 7>",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "FTL charging blocks beam, distinct from departure",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Individual mount HP blocks actual firing",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Explicit AUTO FREE releases Hold without altering camera or movement stats",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "AUTO FREE respects a deliberate manual hull posture",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "FTL departure removes selection and contact influence",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Same seed and game time give identical shots damage and active projectiles at 1/2/3x",
+      "passed": true,
+      "detail": "[(16, 16, 0, 4206.35, 18.3), (16, 16, 0, 4206.35, 18.3), (16, 16, 0, 4206.35, 18.3)]"
+    },
+    {
+      "name": "Real projectile launched <OVAttackKind.CANNON: 1>",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Source loss preserves in-flight attack <OVAttackKind.CANNON: 1>",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Cannon stays straight and guided missile follows target <OVAttackKind.CANNON: 1>",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Real projectile launched <OVAttackKind.MISSILE: 2>",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Source loss preserves in-flight attack <OVAttackKind.MISSILE: 2>",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Ordinary VLS path stays frozen despite target motion",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Real projectile launched <OVAttackKind.GUIDED_MISSILE: 3>",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Source loss preserves in-flight attack <OVAttackKind.GUIDED_MISSILE: 3>",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Cannon stays straight and guided missile follows target <OVAttackKind.GUIDED_MISSILE: 3>",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Guided FTL departure is a distinct result",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Supply loss cancels unlaunched salvo, preserves launched missile",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "D101 independent automation (False, False)",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "D101 independent automation (False, True)",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "D101 independent automation (True, False)",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "D101 independent automation (True, True)",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "D084 loss starts 3.5 seconds even when no shot preceded loss",
+      "passed": true,
+      "detail": "3.491666555404663"
+    },
+    {
+      "name": "D084 hidden target motion cannot update last-known point or permit fire",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "D084 lost target tracking expires",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "D089 real mount collision first consumes shield without mount damage",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "D089 unshielded real collision damages one mount without hull transfer",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Real PIE frames advance reciprocal player and enemy fire",
+      "passed": true,
+      "detail": "(4.958333591930568, 9, 11)"
+    },
+    {
+      "name": "Rendered detail/HUD observes paused combat without extra shots",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Foreground detail window consumes clicks over underlying FIRE button",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "D116 rejects unknown scenario without transition",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "D116 duel starts paused and preserves camera profile",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "D116 duel inactive ship removed from combat and selection",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "D116 vector and bastion keep distinct layouts and loadouts",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "D116 normalized ranges speeds and tier damage",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "D116 radar and hull candidates mapped",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "D116 repeated resets never multiply candidate units",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "D116 zoom reaches expanded camera bound while paused",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "D116 follow moves focus toward selected ship",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "D116 extended projection clamps XY at calibrated bounds",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "D116 altitude clamp retains anchored XY",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "D116 XYZ command reaches extended boundary",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "D116 duel identical seed and game time across 1/2/3x low FPS batches",
+      "passed": true,
+      "detail": "[{'game_seconds': 32.0, 'shots': 171, 'hits': 165, 'flying': 6, 'hull': [21252.0, 5400.0, 34188.0], 'shield': [95.0, 1408.0, 6930.0], 'first_impact_s': 0.125, 'mount_hits': 0, 'armor_hits': 165, 'explosions': 0, 'mounts_lost': [0, 0, 0], 'wrecked': [False, False, False], 'disabled_engines': [False, False, False], 'first_wreck_sample_s': None, 'missile_hits': 0, 'guided_hits': 0, 'cannon_hits': 93}, {'game_seconds': 32.0, 'shots': 171, 'hits': 165, 'flying': 6, 'hull': [21252.0, 5400.0, 34188.0], 'shield': [95.0, 1408.0, 6930.0], 'first_impact_s': 0.125, 'mount_hits': 0, 'armor_hits': 165, 'explosions': 0, 'mounts_lost': [0, 0, 0], 'wrecked': [False, False, False], 'disabled_engines': [False, False, False], 'first_wreck_sample_s': None, 'missile_hits': 0, 'guided_hits': 0, 'cannon_hits': 93}, {'game_seconds': 32.0, 'shots': 171, 'hits': 165, 'flying': 6, 'hull': [21252.0, 5400.0, 34188.0], 'shield': [95.0, 1408.0, 6930.0], 'first_impact_s': 0.125, 'mount_hits': 0, 'armor_hits': 165, 'explosions': 0, 'mounts_lost': [0, 0, 0], 'wrecked': [False, False, False], 'disabled_engines': [False, False, False], 'first_wreck_sample_s': None, 'missile_hits': 0, 'guided_hits': 0, 'cannon_hits': 93}]"
+    },
+    {
+      "name": "D116 high speed cannon sweeps hit actual duel ships",
+      "passed": true,
+      "detail": "{'game_seconds': 32.0, 'shots': 171, 'hits': 165, 'flying': 6, 'hull': [21252.0, 5400.0, 34188.0], 'shield': [95.0, 1408.0, 6930.0], 'first_impact_s': 0.125, 'mount_hits': 0, 'armor_hits': 165, 'explosions': 0, 'mounts_lost': [0, 0, 0], 'wrecked': [False, False, False], 'disabled_engines': [False, False, False], 'first_wreck_sample_s': None, 'missile_hits': 0, 'guided_hits': 0, 'cannon_hits': 93}"
+    },
+    {
+      "name": "D116 wing repeat compares only matching roster/seed/game time",
+      "passed": true,
+      "detail": "[{'game_seconds': 32.0, 'shots': 189, 'hits': 182, 'flying': 7, 'hull': [21252.0, 5400.0, 34188.0], 'shield': [95.0, 1408.0, 6420.0], 'first_impact_s': 0.125, 'mount_hits': 0, 'armor_hits': 182, 'explosions': 0, 'mounts_lost': [0, 0, 0], 'wrecked': [False, False, False], 'disabled_engines': [False, False, False], 'first_wreck_sample_s': None, 'missile_hits': 0, 'guided_hits': 0, 'cannon_hits': 110}, {'game_seconds': 32.0, 'shots': 189, 'hits': 182, 'flying': 7, 'hull': [21252.0, 5400.0, 34188.0], 'shield': [95.0, 1408.0, 6420.0], 'first_impact_s': 0.125, 'mount_hits': 0, 'armor_hits': 182, 'explosions': 0, 'mounts_lost': [0, 0, 0], 'wrecked': [False, False, False], 'disabled_engines': [False, False, False], 'first_wreck_sample_s': None, 'missile_hits': 0, 'guided_hits': 0, 'cannon_hits': 110}]"
+    },
+    {
+      "name": "D116 missile fixture executes live combat",
+      "passed": true,
+      "detail": "{'game_seconds': 32.0, 'shots': 270, 'hits': 263, 'flying': 7, 'hull': [3361.607, 5400.0, 130680.0], 'shield': [1027.307, 1408.0, 44260.0], 'first_impact_s': 0.117, 'mount_hits': 0, 'armor_hits': 263, 'explosions': 0, 'mounts_lost': [0, 0, 0], 'wrecked': [False, False, False], 'disabled_engines': [False, False, False], 'first_wreck_sample_s': None, 'missile_hits': 56, 'guided_hits': 48, 'cannon_hits': 51}"
+    },
+    {
+      "name": "D116 active missile profiles preserve real speeds and guidance",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "D116 F5 restores legacy tuning, dimensions and actor visibility",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "D116 return restores legacy XY command boundary",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Fresh paused combat range ready for user input",
+      "passed": true,
+      "detail": ""
+    }
+  ],
+  "errors": [],
+  "physical_input": "not performed by this script",
+  "scope": "D116 calibration, R1 commands and original 2B regression",
+  "fixture_adjustments": [
+    {
+      "case": "run_projectiles <OVAttackKind.GUIDED_MISSILE: 3>",
+      "alignment_frames": 7,
+      "reason": "포구 형상이 바뀐 프로필 교체 후 실제 유한 선회 대기; 발사 허용각/사거리 유지"
+    }
+  ],
+  "calibration": {
+    "seed": 260112,
+    "duel": [
+      {
+        "game_seconds": 32.0,
+        "shots": 171,
+        "hits": 165,
+        "flying": 6,
+        "hull": [
+          21252.0,
+          5400.0,
+          34188.0
+        ],
+        "shield": [
+          95.0,
+          1408.0,
+          6930.0
+        ],
+        "first_impact_s": 0.125,
+        "mount_hits": 0,
+        "armor_hits": 165,
+        "explosions": 0,
+        "mounts_lost": [
+          0,
+          0,
+          0
+        ],
+        "wrecked": [
+          false,
+          false,
+          false
+        ],
+        "disabled_engines": [
+          false,
+          false,
+          false
+        ],
+        "first_wreck_sample_s": null,
+        "missile_hits": 0,
+        "guided_hits": 0,
+        "cannon_hits": 93
+      },
+      {
+        "game_seconds": 32.0,
+        "shots": 171,
+        "hits": 165,
+        "flying": 6,
+        "hull": [
+          21252.0,
+          5400.0,
+          34188.0
+        ],
+        "shield": [
+          95.0,
+          1408.0,
+          6930.0
+        ],
+        "first_impact_s": 0.125,
+        "mount_hits": 0,
+        "armor_hits": 165,
+        "explosions": 0,
+        "mounts_lost": [
+          0,
+          0,
+          0
+        ],
+        "wrecked": [
+          false,
+          false,
+          false
+        ],
+        "disabled_engines": [
+          false,
+          false,
+          false
+        ],
+        "first_wreck_sample_s": null,
+        "missile_hits": 0,
+        "guided_hits": 0,
+        "cannon_hits": 93
+      },
+      {
+        "game_seconds": 32.0,
+        "shots": 171,
+        "hits": 165,
+        "flying": 6,
+        "hull": [
+          21252.0,
+          5400.0,
+          34188.0
+        ],
+        "shield": [
+          95.0,
+          1408.0,
+          6930.0
+        ],
+        "first_impact_s": 0.125,
+        "mount_hits": 0,
+        "armor_hits": 165,
+        "explosions": 0,
+        "mounts_lost": [
+          0,
+          0,
+          0
+        ],
+        "wrecked": [
+          false,
+          false,
+          false
+        ],
+        "disabled_engines": [
+          false,
+          false,
+          false
+        ],
+        "first_wreck_sample_s": null,
+        "missile_hits": 0,
+        "guided_hits": 0,
+        "cannon_hits": 93
+      }
+    ],
+    "wing": [
+      {
+        "game_seconds": 32.0,
+        "shots": 189,
+        "hits": 182,
+        "flying": 7,
+        "hull": [
+          21252.0,
+          5400.0,
+          34188.0
+        ],
+        "shield": [
+          95.0,
+          1408.0,
+          6420.0
+        ],
+        "first_impact_s": 0.125,
+        "mount_hits": 0,
+        "armor_hits": 182,
+        "explosions": 0,
+        "mounts_lost": [
+          0,
+          0,
+          0
+        ],
+        "wrecked": [
+          false,
+          false,
+          false
+        ],
+        "disabled_engines": [
+          false,
+          false,
+          false
+        ],
+        "first_wreck_sample_s": null,
+        "missile_hits": 0,
+        "guided_hits": 0,
+        "cannon_hits": 110
+      },
+      {
+        "game_seconds": 32.0,
+        "shots": 189,
+        "hits": 182,
+        "flying": 7,
+        "hull": [
+          21252.0,
+          5400.0,
+          34188.0
+        ],
+        "shield": [
+          95.0,
+          1408.0,
+          6420.0
+        ],
+        "first_impact_s": 0.125,
+        "mount_hits": 0,
+        "armor_hits": 182,
+        "explosions": 0,
+        "mounts_lost": [
+          0,
+          0,
+          0
+        ],
+        "wrecked": [
+          false,
+          false,
+          false
+        ],
+        "disabled_engines": [
+          false,
+          false,
+          false
+        ],
+        "first_wreck_sample_s": null,
+        "missile_hits": 0,
+        "guided_hits": 0,
+        "cannon_hits": 110
+      }
+    ],
+    "missile": {
+      "game_seconds": 32.0,
+      "shots": 270,
+      "hits": 263,
+      "flying": 7,
+      "hull": [
+        3361.607,
+        5400.0,
+        130680.0
+      ],
+      "shield": [
+        1027.307,
+        1408.0,
+        44260.0
+      ],
+      "first_impact_s": 0.117,
+      "mount_hits": 0,
+      "armor_hits": 263,
+      "explosions": 0,
+      "mounts_lost": [
+        0,
+        0,
+        0
+      ],
+      "wrecked": [
+        false,
+        false,
+        false
+      ],
+      "disabled_engines": [
+        false,
+        false,
+        false
+      ],
+      "first_wreck_sample_s": null,
+      "missile_hits": 56,
+      "guided_hits": 48,
+      "cannon_hits": 51
+    }
+  },
+  "passed": true
+}

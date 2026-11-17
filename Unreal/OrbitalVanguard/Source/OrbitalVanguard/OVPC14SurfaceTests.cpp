@@ -38,7 +38,12 @@ bool FOVPC14DefaultPresentation::RunTest(const FString&)
             TestEqual(TEXT("Original selection remains enabled"),Selection->GetCollisionEnabled(),ECollisionEnabled::QueryOnly);
             TestTrue(TEXT("Selection retains the calibration extent"),Selection->GetUnscaledBoxExtent().Equals(Ship->Systems->Layout->LocalHalfExtent,.01));
         }
-        TestTrue(TEXT("Other hull definitions do not receive the corvette mesh"),Ships[0]->Hull->GetStaticMesh()!=Expected);
+        auto* Vector=LoadObject<UStaticMesh>(nullptr,TEXT("/Game/Presentation/Ships/VectorFull/SM_Hull.SM_Hull"));
+        auto* Bastion=LoadObject<UStaticMesh>(nullptr,TEXT("/Game/Presentation/Ships/BastionFull/SM_Hull.SM_Hull"));
+        TestTrue(TEXT("Vector uses its own source mesh"),Vector&&Ships[0]->Hull->GetStaticMesh()==Vector);
+        TestTrue(TEXT("Bastion uses its own source mesh"),Bastion&&Ships[2]->Hull->GetStaticMesh()==Bastion);
+        for(const AOVShip* Vessel:Ships)
+            TestTrue(TEXT("Source hull bow is rotated toward gameplay forward"),Vessel->Hull->GetRelativeRotation().Equals(FRotator(0,180,0),.01));
     }
     Flag->Set(Previous,ECVF_SetByConsole);World->DestroyWorld(false);
     return true;
@@ -143,9 +148,11 @@ bool FOVPC14FullMeshMountSurface::RunTest(const FString&)
     const auto Bounds=Mesh->GetBounds();
     const double Scale=(FVector(175,75,30)/Bounds.BoxExtent.ComponentMax(FVector(1))).GetMin();
     const double Xs[]={-46.6666667,46.6666667},Signs[]={1,-1},TrialZ[]={-2.5506140066,-29.3900465727};
-    for(int32 M=0;M<2;++M)
+    for(int32 M=0;M<4;++M)
     {
-        const FVector Start(Xs[M],0,Signs[M]*100),End(Xs[M],0,-Signs[M]*100);
+        const int32 Mount=M%2;
+        const double X=M<2?Xs[Mount]:-Xs[Mount];
+        const FVector Start(X,0,Signs[Mount]*100),End(X,0,-Signs[Mount]*100);
         double Nearest=DBL_MAX,Surface=0;
         for(int32 I=0;I+2<LOD.IndexBuffer.GetNumIndices();I+=3)
         {
@@ -158,8 +165,8 @@ bool FOVPC14FullMeshMountSurface::RunTest(const FString&)
             }
         }
         TestTrue(TEXT("Mount ray reaches full geometry"),Nearest<DBL_MAX);
-        AddInfo(FString::Printf(TEXT("Mount %d full z=%.4f cm; preview z=%.4f cm; difference=%.4f cm"),M,Surface,TrialZ[M],FMath::Abs(Surface-TrialZ[M])));
-        TestTrue(TEXT("Provisional adapter remains close to full surface"),Nearest<DBL_MAX&&FMath::Abs(Surface-TrialZ[M])<2.0);
+        AddInfo(FString::Printf(TEXT("Mount %d mirrored=%d full z=%.4f cm; preview z=%.4f cm; difference=%.4f cm"),Mount,M>=2,Surface,TrialZ[Mount],FMath::Abs(Surface-TrialZ[Mount])));
+        if(M<2)TestTrue(TEXT("Provisional adapter remains close to full surface"),Nearest<DBL_MAX&&FMath::Abs(Surface-TrialZ[Mount])<2.0);
     }
     return true;
 }
@@ -197,8 +204,8 @@ bool FOVPC14MountAdapter::RunTest(const FString&)
             ++Supports;TestEqual(TEXT("Adapter never changes collision"),Component->GetCollisionEnabled(),ECollisionEnabled::NoCollision);
             const FVector P=Component->GetRelativeLocation(),Scale=Component->GetRelativeScale3D();
             const double HalfHeight=Scale.Z*50;
-            if(P.X<0)TestTrue(TEXT("Upper adapter reaches measured hull surface and gun base"),FMath::IsNearlyEqual(P.Z-HalfHeight,-2.7250,.01)&&FMath::IsNearlyEqual(P.Z+HalfHeight,33.68,.01));
-            else TestTrue(TEXT("Lower adapter reaches measured hull surface and gun base"),FMath::IsNearlyEqual(P.Z+HalfHeight,-29.3247,.01)&&FMath::IsNearlyEqual(P.Z-HalfHeight,-33.68,.01));
+            if(P.X<0)TestTrue(TEXT("Upper adapter reaches measured hull surface and gun base"),FMath::IsNearlyEqual(P.Z-HalfHeight,7.3664,.01)&&FMath::IsNearlyEqual(P.Z+HalfHeight,33.68,.01));
+            else TestTrue(TEXT("Lower adapter reaches measured hull surface and gun base"),FMath::IsNearlyEqual(P.Z+HalfHeight,-28.0984,.01)&&FMath::IsNearlyEqual(P.Z-HalfHeight,-33.68,.01));
         }
         TestEqual(TEXT("Upper and lower mount adapters exist"),Supports,2);
         TestTrue(TEXT("Presentation leaves actual muzzle unchanged"),Ship->GetWeaponMuzzleWorld(Gun).Equals(MuzzleBefore,.001));

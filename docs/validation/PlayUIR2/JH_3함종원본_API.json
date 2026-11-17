@@ -1,0 +1,78 @@
+{
+  "passed": true,
+  "kind": "PIE 렌더와 UI API",
+  "physical_input": false,
+  "requested_size": [
+    1280,
+    720
+  ],
+  "captures": [
+    {
+      "view": "백터_모델",
+      "path": "C:/Users/user/source/repos/A1/Unreal/OrbitalVanguard/Saved/Validation\\PlayUI\\20261118_074735\\01_백터_모델.png",
+      "viewport_size": [
+        1280,
+        722
+      ],
+      "exists": true
+    },
+    {
+      "view": "초계함_모델",
+      "path": "C:/Users/user/source/repos/A1/Unreal/OrbitalVanguard/Saved/Validation\\PlayUI\\20261118_074735\\02_초계함_모델.png",
+      "viewport_size": [
+        1280,
+        722
+      ],
+      "exists": true
+    },
+    {
+      "view": "바스티온_모델",
+      "path": "C:/Users/user/source/repos/A1/Unreal/OrbitalVanguard/Saved/Validation\\PlayUI\\20261118_074735\\03_바스티온_모델.png",
+      "viewport_size": [
+        1280,
+        722
+      ],
+      "exists": true
+    }
+  ],
+  "checks": [
+    {
+      "id": "PLAY-WINDOW",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "IMPORTED-HULL-IN-SCENE-백터_모델",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "RENDER-백터_모델",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "IMPORTED-HULL-IN-SCENE",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "RENDER-초계함_모델",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "IMPORTED-HULL-IN-SCENE-바스티온_모델",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "RENDER-바스티온_모델",
+      "passed": true,
+      "detail": ""
+    }
+  ],
+  "errors": [],
+  "preview_settings_restored": true,
+  "elapsed_seconds": 20.875
+}

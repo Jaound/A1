@@ -15,7 +15,7 @@
 // PC14 uses the full source mesh and source-resolution maps; mount surfaces
 // still need art alignment. Combat and selection geometry remain unchanged.
 static TAutoConsoleVariable<int32> CVarOVImportedHull(TEXT("ov.Presentation.ImportedHull"),1,
-    TEXT("PC14 source-derived preview: 1 enables it on the next scenario creation; 0 restores the placeholder. No combat geometry changes."));
+    TEXT("Source hulls: 1 enables available meshes on the next scenario creation; 0 restores the placeholders. No combat geometry changes."));
 static TAutoConsoleVariable<int32> CVarOVPC14SourceMaterial(TEXT("ov.Presentation.PC14SourceMaterial"),1,
     TEXT("PC14 source-map material with provisional visibility fill; 0 uses faction placeholder material."));
 
@@ -152,6 +152,7 @@ void AOVShip::SetCalibrationHull(const FVector* LocalHalfExtent)
     PresentationMountSupports.Reset();
     if(bSavedHullMaterial){Hull->SetMaterial(0,SavedHullMaterial);SavedHullMaterial=nullptr;bSavedHullMaterial=false;}
     Hull->SetStaticMesh(LoadObject<UStaticMesh>(nullptr,TEXT("/Engine/BasicShapes/Cube.Cube")));
+    Hull->SetRelativeRotation(FRotator::ZeroRotator);
     // Readable temporary silhouette inside the existing coarse combat OBB.
     // Selection retains exactly that OBB; neither actor scale nor combat dimensions change.
     CalibrationSelection->SetCollisionEnabled(LocalHalfExtent?ECollisionEnabled::QueryOnly:ECollisionEnabled::NoCollision);
@@ -180,14 +181,22 @@ void AOVShip::SetCalibrationHull(const FVector* LocalHalfExtent)
 
 void AOVShip::ApplyPresentationHull(FName DefinitionId)
 {
-    if(CVarOVImportedHull.GetValueOnGameThread()!=1 || DefinitionId!=TEXT("corvette") || !Systems || !Systems->Layout)return;
-    auto* Mesh=LoadObject<UStaticMesh>(nullptr,TEXT("/Game/Presentation/Ships/SM_PC14_FullMesh.SM_PC14_FullMesh"),nullptr,LOAD_NoWarn);
-    if(!Mesh)return;
+    if(CVarOVImportedHull.GetValueOnGameThread()!=1 || !Systems || !Systems->Layout)return;
+    const bool bCorvette=DefinitionId==TEXT("corvette");
+    const TCHAR* MeshPath=bCorvette?TEXT("/Game/Presentation/Ships/SM_PC14_FullMesh.SM_PC14_FullMesh"):
+        DefinitionId==TEXT("vector")?TEXT("/Game/Presentation/Ships/VectorFull/SM_Hull.SM_Hull"):
+        DefinitionId==TEXT("bastion")?TEXT("/Game/Presentation/Ships/BastionFull/SM_Hull.SM_Hull"):nullptr;
+    const TCHAR* MaterialPath=bCorvette?TEXT("/Game/Presentation/PC14Full/M_PC14_FullReadable.M_PC14_FullReadable"):
+        DefinitionId==TEXT("vector")?TEXT("/Game/Presentation/Ships/VectorFull/M_Readable.M_Readable"):
+        DefinitionId==TEXT("bastion")?TEXT("/Game/Presentation/Ships/BastionFull/M_Readable.M_Readable"):nullptr;
+    if(!MeshPath||!MaterialPath)return;
+    auto* Mesh=LoadObject<UStaticMesh>(nullptr,MeshPath,nullptr,LOAD_NoWarn);
+    auto* Material=LoadObject<UMaterialInterface>(nullptr,MaterialPath,nullptr,LOAD_NoWarn);
+    if(!Mesh||!Material)return;
     for(const auto& Support:PresentationMountSupports)if(IsValid(Support.Get()))Support->DestroyComponent();
     PresentationMountSupports.Reset();
     if(bSavedHullMaterial){Hull->SetMaterial(0,SavedHullMaterial);SavedHullMaterial=nullptr;bSavedHullMaterial=false;}
-    if(CVarOVPC14SourceMaterial.GetValueOnGameThread()==1)
-        if(auto* Material=LoadObject<UMaterialInterface>(nullptr,TEXT("/Game/Presentation/PC14Full/M_PC14_FullReadable.M_PC14_FullReadable"),nullptr,LOAD_NoWarn))
+    if(!bCorvette||CVarOVPC14SourceMaterial.GetValueOnGameThread()==1)
             if(auto* Instance=UMaterialInstanceDynamic::Create(Material,this)) {
                 SavedHullMaterial=Hull->GetMaterial(0);bSavedHullMaterial=true;
                 Instance->SetVectorParameterValue(TEXT("FactionTint"),bFriendly?FLinearColor(.8f,.9f,1.f):FLinearColor(1.f,.72f,.7f));
@@ -198,18 +207,22 @@ void AOVShip::ApplyPresentationHull(FName DefinitionId)
     const FVector Ratio=Available/Bounds.BoxExtent.ComponentMax(FVector(1));
     const double Scale=Ratio.GetMin();
     Hull->SetStaticMesh(Mesh);
+    // The source bows point toward -X; gameplay forward is +X.
+    const FRotator SourceRotation(0,180,0);
+    Hull->SetRelativeRotation(SourceRotation);
     Hull->SetRelativeScale3D(FVector(Scale));
-    Hull->SetRelativeLocation(-Bounds.Origin*Scale);
+    Hull->SetRelativeLocation(SourceRotation.RotateVector(-Bounds.Origin*Scale));
     Hull->SetCollisionEnabled(ECollisionEnabled::NoCollision);
     for(auto Part:AccentMeshes)Part->SetVisibility(false);
     // Provisional adapters measured against the full mesh and existing
     // corvette hardpoints. Final art alignment still requires review;
     // these do not alter the physical mount, muzzle or collision OBB.
+    if(!bCorvette)return;
     const FVector ExpectedExtent(175,75,30);
     const auto& Mounts=Systems->Layout->WeaponMounts;
     if(!Available.Equals(ExpectedExtent,.01)||Mounts.Num()<2)return;
     const FVector ExpectedPositions[]={FVector(-46.6666667,0,42),FVector(46.6666667,0,-42)};
-    const double SurfaceAtUnitScale[]={-2.7250/.7723395451,-29.3247/.7723395451};
+    const double SurfaceAtUnitScale[]={7.3664/.7723395451,-28.0984/.7723395451};
     for(int32 I=0;I<2;++I)
     {
         const auto& Mount=Mounts[I];

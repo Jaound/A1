@@ -1,2 +1,4 @@
 /Unreal/OrbitalVanguard/Content/Presentation/PC14Full/*.uasset filter=lfs diff=lfs merge=lfs -text
 /Unreal/OrbitalVanguard/Content/Presentation/Ships/SM_PC14_FullMesh.uasset filter=lfs diff=lfs merge=lfs -text
+/Unreal/OrbitalVanguard/Content/Presentation/Ships/VectorFull/*.uasset filter=lfs diff=lfs merge=lfs -text
+/Unreal/OrbitalVanguard/Content/Presentation/Ships/BastionFull/*.uasset filter=lfs diff=lfs merge=lfs -text
