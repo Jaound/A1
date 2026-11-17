@@ -10,16 +10,16 @@ import sys
 import bpy
 
 args=sys.argv[sys.argv.index('--')+1:]
-if len(args) not in (1,2):raise ValueError('Pass a new output directory and optional part prefix')
-prefix=args[1] if len(args)==2 else 'MM24'
-if not prefix.replace('_','').isalnum():raise ValueError('Invalid part prefix')
+if len(args) not in (1,2,3):raise ValueError('Pass output, optional part prefix and comma-separated part names')
+prefix=args[1] if len(args)>=2 else 'MM24';names=args[2].split(',') if len(args)==3 else ['BaseTrial','YawTrial']
+if not prefix.replace('_','').isalnum() or not names or any(not n.replace('_','').isalnum() for n in names):raise ValueError('Invalid part prefix or names')
 source=Path(bpy.data.filepath).resolve();out=Path(args[0]).resolve()
 if not source.is_file():raise FileNotFoundError(source)
 if out.exists():raise FileExistsError(out)
 def sha(path):
     with path.open('rb') as f:return hashlib.file_digest(f,'sha256').hexdigest()
 before=sha(source);out.mkdir(parents=True);parts=[]
-for name in (prefix+'_BaseTrial',prefix+'_YawTrial'):
+for name in (prefix+'_'+part for part in names):
     original=bpy.data.objects.get(name)
     if not original or not original.data.uv_layers.get('TrialBakeUV'):raise RuntimeError('Missing baked UV '+name)
     obj=original.copy();obj.data=original.data.copy();bpy.context.collection.objects.link(obj)
@@ -35,7 +35,7 @@ for name in (prefix+'_BaseTrial',prefix+'_YawTrial'):
                   'uv_layers':[u.name for u in obj.data.uv_layers]})
     bpy.data.objects.remove(obj,do_unlink=True)
 after=sha(source);report={'source':str(source),'source_before':before,'source_after':after,'parts':parts,
-                         'scope':'UE inspection trial only; pitch remains fused; art and gameplay unapproved'}
+                         'scope':'UE inspection trial only; axes, art and gameplay unapproved'}
 (out/'report.json').write_text(json.dumps(report,ensure_ascii=False,indent=2),encoding='utf8')
 if before!=after:raise RuntimeError('Source blend changed')
 print('OV_MM24_UE_EXPORT_TRIAL',out)

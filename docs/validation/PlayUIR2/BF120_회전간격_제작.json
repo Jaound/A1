@@ -1,0 +1,17 @@
+{
+  "source": "C:\\Users\\user\\Documents\\OrbitalVanguardAssets\\Prepared\\PlayUI_R2_BF120_MaterialTrial_v1\\BF120_MaterialTrial.blend",
+  "source_before": "d63d259e9a2f7202e5653bc7c9acca37c36416d85255de050f5cab1b4aa785e4",
+  "source_after": "d63d259e9a2f7202e5653bc7c9acca37c36416d85255de050f5cab1b4aa785e4",
+  "clearance_blender_units": 0.01,
+  "trial_yaw_pivot": [
+    0.9950000047683716,
+    -0.02500000037252903,
+    -0.4099999964237213
+  ],
+  "trial_pitch_pivot": [
+    0.07999998331069946,
+    0.0,
+    0.4999999701976776
+  ],
+  "scope": "explicit bearing gap trial, not final art or gameplay"
+}

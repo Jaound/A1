@@ -13,6 +13,9 @@ import unreal
 base=Path.home()/'Documents/OrbitalVanguardAssets/Prepared'
 prefix=os.environ.get('OV_TURRET_PREFIX','MM24')
 if not prefix.replace('_','').isalnum():raise ValueError('Invalid part prefix')
+raw_parts=os.environ.get('OV_TURRET_PARTS','')
+parts=[(name,name) for name in raw_parts.split(',')] if raw_parts else [('Base','BaseTrial'),('Yaw','YawTrial')]
+if any(not label.replace('_','').isalnum() or not suffix.replace('_','').isalnum() for label,suffix in parts):raise ValueError('Invalid part names')
 color=base/os.environ.get('OV_TURRET_COLOR_FOLDER','PlayUI_R2_MM24_BakeTrial_v4')
 maps=base/os.environ.get('OV_TURRET_MATERIAL_FOLDER','PlayUI_R2_MM24_MaterialTrial_v1')
 destination='/Game/Presentation/'+prefix+'Trial'
@@ -26,8 +29,8 @@ def sha(p):
     with p.open('rb') as f:return hashlib.file_digest(f,'sha256').hexdigest()
 try:
     entries=[]
-    for part in ('Base','Yaw'):
-        part_name=prefix+'_'+part+'Trial'
+    for part,suffix in parts:
+        part_name=prefix+'_'+suffix
         for kind,path in [('BaseColor',color/(part_name+'_baked.png')),('Normal',maps/(part_name+'_NORMAL.png')),
                           ('Roughness',maps/(part_name+'_Roughness.png')),('Metallic',maps/(part_name+'_Metallic.png'))]:
             entries.append((part,kind,path,'T_'+prefix+'_'+part+'_'+kind+'_Trial'))
@@ -49,7 +52,7 @@ try:
         check('SAVE-'+asset,unreal.EditorAssetLibrary.save_loaded_asset(texture,only_if_is_dirty=False));textures[(part,kind)]=texture
         report['assets'].append(destination+'/'+asset)
     library=unreal.MaterialEditingLibrary
-    for part in ('Base','Yaw'):
+    for part,suffix in parts:
         name='M_'+prefix+'_'+part+'_Trial';mat=tools.create_asset(name,destination,unreal.Material,unreal.MaterialFactoryNew())
         check('CREATE-'+name,isinstance(mat,unreal.Material))
         for index,(kind,prop) in enumerate([('BaseColor',unreal.MaterialProperty.MP_BASE_COLOR),('Normal',unreal.MaterialProperty.MP_NORMAL),
@@ -60,7 +63,7 @@ try:
                                      unreal.MaterialSamplerType.SAMPLERTYPE_COLOR if kind=='BaseColor' else unreal.MaterialSamplerType.SAMPLERTYPE_MASKS)
             check('CONNECT-'+part+'-'+kind,library.connect_material_property(node,'RGB' if kind in ('BaseColor','Normal') else 'R',prop))
         library.recompile_material(mat);check('SAVE-'+name,unreal.EditorAssetLibrary.save_loaded_asset(mat,only_if_is_dirty=False))
-        mesh=unreal.EditorAssetLibrary.load_asset(destination+'/SM_'+prefix+'_'+part+'Trial')
+        mesh=unreal.EditorAssetLibrary.load_asset(destination+'/SM_'+prefix+'_'+suffix)
         mesh.set_material(0,mat);check('SAVE-TRIAL-MESH-'+part,unreal.EditorAssetLibrary.save_loaded_asset(mesh,only_if_is_dirty=False))
         report['assets'].append(destination+'/'+name)
     check('SOURCE-IMAGES-UNCHANGED',all(sha(Path(p))==digest for p,digest in hashes.items()))

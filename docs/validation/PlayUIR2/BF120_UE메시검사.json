@@ -1,0 +1,187 @@
+{
+  "passed": true,
+  "checks": [
+    {
+      "id": "SOURCE-INPUT-UNCHANGED",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "SOURCE-HASH-SM_BF120_BaseTrial",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "NO-OVERWRITE-SM_BF120_BaseTrial",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "SOURCE-HASH-SM_BF120_YawBody",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "NO-OVERWRITE-SM_BF120_YawBody",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "SOURCE-HASH-SM_BF120_PitchTrial",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "NO-OVERWRITE-SM_BF120_PitchTrial",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "EDITOR",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "STATIC-MESH-SM_BF120_BaseTrial",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "TRIANGLES-SM_BF120_BaseTrial",
+      "passed": true,
+      "detail": "{'asset': '/Game/Presentation/BF120Trial/SM_BF120_BaseTrial', 'size_cm': [286.52053451538086, 282.5830841064453, 58.00019454956055], 'triangles': 70474, 'uv_channels': 1, 'simple_collisions': 0}"
+    },
+    {
+      "id": "UV-SM_BF120_BaseTrial",
+      "passed": true,
+      "detail": "{'asset': '/Game/Presentation/BF120Trial/SM_BF120_BaseTrial', 'size_cm': [286.52053451538086, 282.5830841064453, 58.00019454956055], 'triangles': 70474, 'uv_channels': 1, 'simple_collisions': 0}"
+    },
+    {
+      "id": "NO-COLLISION-SM_BF120_BaseTrial",
+      "passed": true,
+      "detail": "{'asset': '/Game/Presentation/BF120Trial/SM_BF120_BaseTrial', 'size_cm': [286.52053451538086, 282.5830841064453, 58.00019454956055], 'triangles': 70474, 'uv_channels': 1, 'simple_collisions': 0}"
+    },
+    {
+      "id": "SCALE-SM_BF120_BaseTrial",
+      "passed": true,
+      "detail": "{'asset': '/Game/Presentation/BF120Trial/SM_BF120_BaseTrial', 'size_cm': [286.52053451538086, 282.5830841064453, 58.00019454956055], 'triangles': 70474, 'uv_channels': 1, 'simple_collisions': 0}"
+    },
+    {
+      "id": "SAVE-SM_BF120_BaseTrial",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "SOURCE-STILL-SAME-SM_BF120_BaseTrial",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "STATIC-MESH-SM_BF120_YawBody",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "TRIANGLES-SM_BF120_YawBody",
+      "passed": true,
+      "detail": "{'asset': '/Game/Presentation/BF120Trial/SM_BF120_YawBody', 'size_cm': [238.4111843109131, 231.5620346069336, 141.98471450805664], 'triangles': 141414, 'uv_channels': 1, 'simple_collisions': 0}"
+    },
+    {
+      "id": "UV-SM_BF120_YawBody",
+      "passed": true,
+      "detail": "{'asset': '/Game/Presentation/BF120Trial/SM_BF120_YawBody', 'size_cm': [238.4111843109131, 231.5620346069336, 141.98471450805664], 'triangles': 141414, 'uv_channels': 1, 'simple_collisions': 0}"
+    },
+    {
+      "id": "NO-COLLISION-SM_BF120_YawBody",
+      "passed": true,
+      "detail": "{'asset': '/Game/Presentation/BF120Trial/SM_BF120_YawBody', 'size_cm': [238.4111843109131, 231.5620346069336, 141.98471450805664], 'triangles': 141414, 'uv_channels': 1, 'simple_collisions': 0}"
+    },
+    {
+      "id": "SCALE-SM_BF120_YawBody",
+      "passed": true,
+      "detail": "{'asset': '/Game/Presentation/BF120Trial/SM_BF120_YawBody', 'size_cm': [238.4111843109131, 231.5620346069336, 141.98471450805664], 'triangles': 141414, 'uv_channels': 1, 'simple_collisions': 0}"
+    },
+    {
+      "id": "SAVE-SM_BF120_YawBody",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "SOURCE-STILL-SAME-SM_BF120_YawBody",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "STATIC-MESH-SM_BF120_PitchTrial",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "TRIANGLES-SM_BF120_PitchTrial",
+      "passed": true,
+      "detail": "{'asset': '/Game/Presentation/BF120Trial/SM_BF120_PitchTrial', 'size_cm': [257.1507682800293, 119.69400787353516, 36.01493263244629], 'triangles': 71370, 'uv_channels': 1, 'simple_collisions': 0}"
+    },
+    {
+      "id": "UV-SM_BF120_PitchTrial",
+      "passed": true,
+      "detail": "{'asset': '/Game/Presentation/BF120Trial/SM_BF120_PitchTrial', 'size_cm': [257.1507682800293, 119.69400787353516, 36.01493263244629], 'triangles': 71370, 'uv_channels': 1, 'simple_collisions': 0}"
+    },
+    {
+      "id": "NO-COLLISION-SM_BF120_PitchTrial",
+      "passed": true,
+      "detail": "{'asset': '/Game/Presentation/BF120Trial/SM_BF120_PitchTrial', 'size_cm': [257.1507682800293, 119.69400787353516, 36.01493263244629], 'triangles': 71370, 'uv_channels': 1, 'simple_collisions': 0}"
+    },
+    {
+      "id": "SCALE-SM_BF120_PitchTrial",
+      "passed": true,
+      "detail": "{'asset': '/Game/Presentation/BF120Trial/SM_BF120_PitchTrial', 'size_cm': [257.1507682800293, 119.69400787353516, 36.01493263244629], 'triangles': 71370, 'uv_channels': 1, 'simple_collisions': 0}"
+    },
+    {
+      "id": "SAVE-SM_BF120_PitchTrial",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "SOURCE-STILL-SAME-SM_BF120_PitchTrial",
+      "passed": true,
+      "detail": ""
+    }
+  ],
+  "parts": [
+    {
+      "asset": "/Game/Presentation/BF120Trial/SM_BF120_BaseTrial",
+      "size_cm": [
+        286.52053451538086,
+        282.5830841064453,
+        58.00019454956055
+      ],
+      "triangles": 70474,
+      "uv_channels": 1,
+      "simple_collisions": 0
+    },
+    {
+      "asset": "/Game/Presentation/BF120Trial/SM_BF120_YawBody",
+      "size_cm": [
+        238.4111843109131,
+        231.5620346069336,
+        141.98471450805664
+      ],
+      "triangles": 141414,
+      "uv_channels": 1,
+      "simple_collisions": 0
+    },
+    {
+      "asset": "/Game/Presentation/BF120Trial/SM_BF120_PitchTrial",
+      "size_cm": [
+        257.1507682800293,
+        119.69400787353516,
+        36.01493263244629
+      ],
+      "triangles": 71370,
+      "uv_channels": 1,
+      "simple_collisions": 0
+    }
+  ],
+  "errors": [],
+  "scope": "isolated UE mesh inspection; not integrated into gameplay or final art"
+}

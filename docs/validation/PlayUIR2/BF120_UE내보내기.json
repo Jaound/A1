@@ -1,0 +1,35 @@
+{
+  "source": "C:\\Users\\user\\Documents\\OrbitalVanguardAssets\\Prepared\\PlayUI_R2_BF120_MaterialTrial_v1\\BF120_MaterialTrial.blend",
+  "source_before": "d63d259e9a2f7202e5653bc7c9acca37c36416d85255de050f5cab1b4aa785e4",
+  "source_after": "d63d259e9a2f7202e5653bc7c9acca37c36416d85255de050f5cab1b4aa785e4",
+  "parts": [
+    {
+      "name": "BF120_BaseTrial",
+      "fbx": "C:\\Users\\user\\Documents\\OrbitalVanguardAssets\\Prepared\\PlayUI_R2_BF120_UEExport_v1\\BF120_BaseTrial.fbx",
+      "sha256": "8e48aafdcdd0548455bcc3ae4232a127d2688eeb13d51c8e59fe551b522f1a36",
+      "faces": 70474,
+      "uv_layers": [
+        "TrialBakeUV"
+      ]
+    },
+    {
+      "name": "BF120_YawBody",
+      "fbx": "C:\\Users\\user\\Documents\\OrbitalVanguardAssets\\Prepared\\PlayUI_R2_BF120_UEExport_v1\\BF120_YawBody.fbx",
+      "sha256": "645140f87e18fad347d469648bcb72a0a7bef26c540dd756870fa45d6b2f40f5",
+      "faces": 141414,
+      "uv_layers": [
+        "TrialBakeUV"
+      ]
+    },
+    {
+      "name": "BF120_PitchTrial",
+      "fbx": "C:\\Users\\user\\Documents\\OrbitalVanguardAssets\\Prepared\\PlayUI_R2_BF120_UEExport_v1\\BF120_PitchTrial.fbx",
+      "sha256": "b8b6343ddcced29ce8527df429d951e8fe3e93b6dc1bba236e48a217b0e037ca",
+      "faces": 71370,
+      "uv_layers": [
+        "TrialBakeUV"
+      ]
+    }
+  ],
+  "scope": "UE inspection trial only; axes, art and gameplay unapproved"
+}

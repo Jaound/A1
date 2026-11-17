@@ -1,0 +1,418 @@
+{
+  "passed": true,
+  "checks": [
+    {
+      "id": "EXISTING-TRIAL-MESH-BaseTrial",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "NO-MATERIAL-OVERWRITE-BaseTrial",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "EXISTING-TRIAL-MESH-YawBody",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "NO-MATERIAL-OVERWRITE-YawBody",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "EXISTING-TRIAL-MESH-PitchTrial",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "NO-MATERIAL-OVERWRITE-PitchTrial",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "SOURCE-T_BF120_BaseTrial_BaseColor_Trial",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "NO-OVERWRITE-T_BF120_BaseTrial_BaseColor_Trial",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "SOURCE-T_BF120_BaseTrial_Normal_Trial",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "NO-OVERWRITE-T_BF120_BaseTrial_Normal_Trial",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "SOURCE-T_BF120_BaseTrial_Roughness_Trial",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "NO-OVERWRITE-T_BF120_BaseTrial_Roughness_Trial",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "SOURCE-T_BF120_BaseTrial_Metallic_Trial",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "NO-OVERWRITE-T_BF120_BaseTrial_Metallic_Trial",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "SOURCE-T_BF120_YawBody_BaseColor_Trial",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "NO-OVERWRITE-T_BF120_YawBody_BaseColor_Trial",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "SOURCE-T_BF120_YawBody_Normal_Trial",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "NO-OVERWRITE-T_BF120_YawBody_Normal_Trial",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "SOURCE-T_BF120_YawBody_Roughness_Trial",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "NO-OVERWRITE-T_BF120_YawBody_Roughness_Trial",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "SOURCE-T_BF120_YawBody_Metallic_Trial",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "NO-OVERWRITE-T_BF120_YawBody_Metallic_Trial",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "SOURCE-T_BF120_PitchTrial_BaseColor_Trial",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "NO-OVERWRITE-T_BF120_PitchTrial_BaseColor_Trial",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "SOURCE-T_BF120_PitchTrial_Normal_Trial",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "NO-OVERWRITE-T_BF120_PitchTrial_Normal_Trial",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "SOURCE-T_BF120_PitchTrial_Roughness_Trial",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "NO-OVERWRITE-T_BF120_PitchTrial_Roughness_Trial",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "SOURCE-T_BF120_PitchTrial_Metallic_Trial",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "NO-OVERWRITE-T_BF120_PitchTrial_Metallic_Trial",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "TEXTURE-T_BF120_BaseTrial_BaseColor_Trial",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "SAVE-T_BF120_BaseTrial_BaseColor_Trial",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "TEXTURE-T_BF120_BaseTrial_Normal_Trial",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "SAVE-T_BF120_BaseTrial_Normal_Trial",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "TEXTURE-T_BF120_BaseTrial_Roughness_Trial",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "SAVE-T_BF120_BaseTrial_Roughness_Trial",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "TEXTURE-T_BF120_BaseTrial_Metallic_Trial",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "SAVE-T_BF120_BaseTrial_Metallic_Trial",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "TEXTURE-T_BF120_YawBody_BaseColor_Trial",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "SAVE-T_BF120_YawBody_BaseColor_Trial",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "TEXTURE-T_BF120_YawBody_Normal_Trial",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "SAVE-T_BF120_YawBody_Normal_Trial",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "TEXTURE-T_BF120_YawBody_Roughness_Trial",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "SAVE-T_BF120_YawBody_Roughness_Trial",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "TEXTURE-T_BF120_YawBody_Metallic_Trial",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "SAVE-T_BF120_YawBody_Metallic_Trial",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "TEXTURE-T_BF120_PitchTrial_BaseColor_Trial",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "SAVE-T_BF120_PitchTrial_BaseColor_Trial",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "TEXTURE-T_BF120_PitchTrial_Normal_Trial",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "SAVE-T_BF120_PitchTrial_Normal_Trial",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "TEXTURE-T_BF120_PitchTrial_Roughness_Trial",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "SAVE-T_BF120_PitchTrial_Roughness_Trial",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "TEXTURE-T_BF120_PitchTrial_Metallic_Trial",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "SAVE-T_BF120_PitchTrial_Metallic_Trial",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "CREATE-M_BF120_BaseTrial_Trial",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "CONNECT-BaseTrial-BaseColor",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "CONNECT-BaseTrial-Normal",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "CONNECT-BaseTrial-Roughness",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "CONNECT-BaseTrial-Metallic",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "SAVE-M_BF120_BaseTrial_Trial",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "SAVE-TRIAL-MESH-BaseTrial",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "CREATE-M_BF120_YawBody_Trial",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "CONNECT-YawBody-BaseColor",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "CONNECT-YawBody-Normal",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "CONNECT-YawBody-Roughness",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "CONNECT-YawBody-Metallic",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "SAVE-M_BF120_YawBody_Trial",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "SAVE-TRIAL-MESH-YawBody",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "CREATE-M_BF120_PitchTrial_Trial",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "CONNECT-PitchTrial-BaseColor",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "CONNECT-PitchTrial-Normal",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "CONNECT-PitchTrial-Roughness",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "CONNECT-PitchTrial-Metallic",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "SAVE-M_BF120_PitchTrial_Trial",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "SAVE-TRIAL-MESH-PitchTrial",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "SOURCE-IMAGES-UNCHANGED",
+      "passed": true,
+      "detail": ""
+    }
+  ],
+  "assets": [
+    "/Game/Presentation/BF120Trial/T_BF120_BaseTrial_BaseColor_Trial",
+    "/Game/Presentation/BF120Trial/T_BF120_BaseTrial_Normal_Trial",
+    "/Game/Presentation/BF120Trial/T_BF120_BaseTrial_Roughness_Trial",
+    "/Game/Presentation/BF120Trial/T_BF120_BaseTrial_Metallic_Trial",
+    "/Game/Presentation/BF120Trial/T_BF120_YawBody_BaseColor_Trial",
+    "/Game/Presentation/BF120Trial/T_BF120_YawBody_Normal_Trial",
+    "/Game/Presentation/BF120Trial/T_BF120_YawBody_Roughness_Trial",
+    "/Game/Presentation/BF120Trial/T_BF120_YawBody_Metallic_Trial",
+    "/Game/Presentation/BF120Trial/T_BF120_PitchTrial_BaseColor_Trial",
+    "/Game/Presentation/BF120Trial/T_BF120_PitchTrial_Normal_Trial",
+    "/Game/Presentation/BF120Trial/T_BF120_PitchTrial_Roughness_Trial",
+    "/Game/Presentation/BF120Trial/T_BF120_PitchTrial_Metallic_Trial",
+    "/Game/Presentation/BF120Trial/M_BF120_BaseTrial_Trial",
+    "/Game/Presentation/BF120Trial/M_BF120_YawBody_Trial",
+    "/Game/Presentation/BF120Trial/M_BF120_PitchTrial_Trial"
+  ],
+  "errors": [],
+  "scope": "isolated baked trial materials, not final art or gameplay",
+  "source_sha256": {
+    "C:\\Users\\user\\Documents\\OrbitalVanguardAssets\\Prepared\\PlayUI_R2_BF120_ColorTrial_v2\\BF120_BaseTrial_baked.png": "2bc4e5f5b9fe4340ab668c78376992f7bc2c53f5865be59c799e411d866b4b61",
+    "C:\\Users\\user\\Documents\\OrbitalVanguardAssets\\Prepared\\PlayUI_R2_BF120_MaterialTrial_v1\\BF120_BaseTrial_NORMAL.png": "e673ced5f8c64b995c0812e0ccd3cb9603b96a037153f9bae5cb1751ccd4b8f1",
+    "C:\\Users\\user\\Documents\\OrbitalVanguardAssets\\Prepared\\PlayUI_R2_BF120_MaterialTrial_v1\\BF120_BaseTrial_Roughness.png": "8a3679d97d3daf842aca1e46ea784fc956873449a30bf3c195951a5983ac43e5",
+    "C:\\Users\\user\\Documents\\OrbitalVanguardAssets\\Prepared\\PlayUI_R2_BF120_MaterialTrial_v1\\BF120_BaseTrial_Metallic.png": "95ed0dd440367efd25ef5442d2ccce6094c2373c1e2c4d1677552438d4a6a6f0",
+    "C:\\Users\\user\\Documents\\OrbitalVanguardAssets\\Prepared\\PlayUI_R2_BF120_ColorTrial_v2\\BF120_YawBody_baked.png": "df1cafe9d225a9faa6b1ecff74955785dcf35e692308c3d948f22014eef9f9a7",
+    "C:\\Users\\user\\Documents\\OrbitalVanguardAssets\\Prepared\\PlayUI_R2_BF120_MaterialTrial_v1\\BF120_YawBody_NORMAL.png": "504f3ae643b28ba58411c3e8925dad21f22266762e5a2ae072b1b4a19a49b6df",
+    "C:\\Users\\user\\Documents\\OrbitalVanguardAssets\\Prepared\\PlayUI_R2_BF120_MaterialTrial_v1\\BF120_YawBody_Roughness.png": "3e061bb7ae459ea205c9c8d208e27b82f63f432b8d29d669076f6f4c938ea013",
+    "C:\\Users\\user\\Documents\\OrbitalVanguardAssets\\Prepared\\PlayUI_R2_BF120_MaterialTrial_v1\\BF120_YawBody_Metallic.png": "4f59f4940cb08cd7aeec935654a9b5eef0af7709f055feb49d751fdd63d3c941",
+    "C:\\Users\\user\\Documents\\OrbitalVanguardAssets\\Prepared\\PlayUI_R2_BF120_ColorTrial_v2\\BF120_PitchTrial_baked.png": "1f681778e1e5c47290aa79632e2df3872cb9a82779a59e76c65f1bd2baf0883a",
+    "C:\\Users\\user\\Documents\\OrbitalVanguardAssets\\Prepared\\PlayUI_R2_BF120_MaterialTrial_v1\\BF120_PitchTrial_NORMAL.png": "d51f4078480408d9284b482dcba9727cab486dd8083aef76283677d00388e10c",
+    "C:\\Users\\user\\Documents\\OrbitalVanguardAssets\\Prepared\\PlayUI_R2_BF120_MaterialTrial_v1\\BF120_PitchTrial_Roughness.png": "16fb338bc53fe31b7594bf64f61010f644072218c3392389f52319330f0f0d8a",
+    "C:\\Users\\user\\Documents\\OrbitalVanguardAssets\\Prepared\\PlayUI_R2_BF120_MaterialTrial_v1\\BF120_PitchTrial_Metallic.png": "4af665e8c2c3ded9606113b10a4d4f2ad8829e3832eaf9f501961245966ad301"
+  }
+}

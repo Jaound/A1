@@ -1,0 +1,71 @@
+{
+  "passed": false,
+  "checks": [
+    {
+      "id": "NEW-UNSAVED-WORLD",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "PITCH-PARENT",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "INITIAL-PITCH-PIVOT",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "MESH-BaseTrial",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "MESH-YawBody",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "ATTACH-YawBody",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "INITIAL-MESH-ORIGIN-YawBody",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "MESH-PitchTrial",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "ATTACH-PitchTrial",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "INITIAL-MESH-ORIGIN-PitchTrial",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "YAW-ROTATION-0",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "YAW-BODY-ROTATION-0",
+      "passed": true,
+      "detail": ""
+    }
+  ],
+  "errors": [
+    "Traceback (most recent call last):\n  File \"C:/Users/user/source/repos/A1/Unreal/OrbitalVanguard/Tools/RenderBF120UETrial.py\", line 44, in tick\n    check('PITCH-RELATIVE-'+str(pitch_angle),abs(state['pitch'].get_root_component().get_relative_rotation().pitch-pitch_angle)<.1)\n                                                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAttributeError: 'TargetPoint' object has no attribute 'get_root_component'\n"
+  ],
+  "physical_input": false,
+  "gameplay": false,
+  "scope": "unsaved isolated UE three-part pivot and render; no art/gameplay approval"
+}

@@ -1,0 +1,108 @@
+{
+  "source": "C:\\Users\\user\\Documents\\OrbitalVanguardAssets\\Prepared\\PlayUI_R2_BF120_YawClearance_v1\\BF120_ClearanceTrial.blend",
+  "source_before": "06c8fc61fd9fa678c5ade11c87094f97b0f46da6a03acad373fdaffbb9cefd54",
+  "source_after": "06c8fc61fd9fa678c5ade11c87094f97b0f46da6a03acad373fdaffbb9cefd54",
+  "angles": [
+    {
+      "degrees": -180,
+      "surface_intersections": 0
+    },
+    {
+      "degrees": -165,
+      "surface_intersections": 0
+    },
+    {
+      "degrees": -150,
+      "surface_intersections": 0
+    },
+    {
+      "degrees": -135,
+      "surface_intersections": 0
+    },
+    {
+      "degrees": -120,
+      "surface_intersections": 0
+    },
+    {
+      "degrees": -105,
+      "surface_intersections": 0
+    },
+    {
+      "degrees": -90,
+      "surface_intersections": 0
+    },
+    {
+      "degrees": -75,
+      "surface_intersections": 0
+    },
+    {
+      "degrees": -60,
+      "surface_intersections": 0
+    },
+    {
+      "degrees": -45,
+      "surface_intersections": 0
+    },
+    {
+      "degrees": -30,
+      "surface_intersections": 0
+    },
+    {
+      "degrees": -15,
+      "surface_intersections": 0
+    },
+    {
+      "degrees": 0,
+      "surface_intersections": 0
+    },
+    {
+      "degrees": 15,
+      "surface_intersections": 0
+    },
+    {
+      "degrees": 30,
+      "surface_intersections": 0
+    },
+    {
+      "degrees": 45,
+      "surface_intersections": 0
+    },
+    {
+      "degrees": 60,
+      "surface_intersections": 0
+    },
+    {
+      "degrees": 75,
+      "surface_intersections": 0
+    },
+    {
+      "degrees": 90,
+      "surface_intersections": 0
+    },
+    {
+      "degrees": 105,
+      "surface_intersections": 0
+    },
+    {
+      "degrees": 120,
+      "surface_intersections": 0
+    },
+    {
+      "degrees": 135,
+      "surface_intersections": 0
+    },
+    {
+      "degrees": 150,
+      "surface_intersections": 0
+    },
+    {
+      "degrees": 165,
+      "surface_intersections": 0
+    },
+    {
+      "degrees": 180,
+      "surface_intersections": 0
+    }
+  ],
+  "scope": "cap-free yaw-body/base surface contacts, sampled angles only; zero-degree contact may be coplanar"
+}
