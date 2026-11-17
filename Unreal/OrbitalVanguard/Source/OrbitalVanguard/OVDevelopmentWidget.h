@@ -32,6 +32,7 @@ public:
  virtual FReply NativeOnMouseMove(const FGeometry& Geometry,const FPointerEvent& Event) override;
  virtual void NativeOnMouseCaptureLost(const FCaptureLostEvent& Event) override;
  UFUNCTION(BlueprintCallable, Category="Development|Test") bool DebugFrameGesture(bool bResize,FVector2D Delta);
+ void SetFrameState(bool bMinimized,bool bMaximized);
  bool IsEditing() const;
  UFUNCTION(BlueprintCallable, Category="UI") bool OpenPage(int32 Index);
  /** Size: 0=all, 1..4 hull class; Role=None=all. Axis: -1=all, 0..5 planning/data/generation/role/automation/direct. Status: -1=all, otherwise EOVCatalogStatus numeric value. */
@@ -46,6 +47,10 @@ public:
  UFUNCTION(BlueprintCallable, Category="UI") void ExecuteSelectedCreation();
 private:
  bool bFrameDragging=false,bFrameResizing=false;
+ UPROPERTY() TObjectPtr<UVerticalBox> FrameContents;
+ UPROPERTY() TObjectPtr<UTextBlock> FrameMinText;
+ UPROPERTY() TObjectPtr<UTextBlock> FrameMaxText;
+ bool bDisplayedFrameMinimized=false,bDisplayedFrameMaximized=false;
  FVector2D FrameStartPointer,FrameStartPosition,FrameStartSize;
  int32 Page=1;
  bool bAdvanced=false;
@@ -136,6 +141,9 @@ private:
  UFUNCTION() void Heroes();
  UFUNCTION() void Weapons();
  UFUNCTION() void Close();
+ UFUNCTION() void MinimizeFrame();
+ UFUNCTION() void MaximizeFrame();
+ UFUNCTION() void ResetFrame();
  UFUNCTION() void SearchChanged(const FText& Text);
  UFUNCTION() void CategoryChanged(FString Item, ESelectInfo::Type Type);
  UFUNCTION() void FiltersChanged(FString Item, ESelectInfo::Type Type);

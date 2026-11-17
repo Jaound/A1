@@ -82,12 +82,12 @@ bool AOVHUD::HandlePointer(float X,float Y,bool Pressed,bool Down,float Wheel,bo
   const FVector2D Cursor(X,Y);
   if(Pressed&&DevelopmentRect.IsInsideOrOn(Cursor)) {
    const float Dpi=FMath::Max(.01f,UWidgetLayoutLibrary::GetViewportScale(this));
-   if(Cursor.Y<DevelopmentRect.Min.Y+28*Dpi) {bDevDragging=true;DevelopmentDragOffset=Cursor-DevelopmentRect.Min;}
-   else if(Cursor.X>DevelopmentRect.Max.X-20*Dpi&&Cursor.Y>DevelopmentRect.Max.Y-20*Dpi)bDevResizing=true;
+   if(Cursor.Y<DevelopmentRect.Min.Y+36*Dpi&&Cursor.X<DevelopmentRect.Max.X-200*Dpi) {bDevDragging=true;DevelopmentDragOffset=Cursor-DevelopmentRect.Min;}
+   else if(!bDevelopmentMinimized&&Cursor.X>DevelopmentRect.Max.X-20*Dpi&&Cursor.Y>DevelopmentRect.Max.Y-20*Dpi)bDevResizing=true;
   }
   if(!Down){bDevDragging=false;bDevResizing=false;}
-  if(bDevDragging){DevelopmentPosition=Cursor-DevelopmentDragOffset;SyncAddedUI();}
-  if(bDevResizing){DevelopmentPosition=DevelopmentRect.Min;DevelopmentSize=Cursor-DevelopmentRect.Min;SyncAddedUI();}
+  if(bDevDragging){bDevelopmentMaximized=false;DevelopmentPosition=Cursor-DevelopmentDragOffset;SyncAddedUI();}
+  if(bDevResizing){bDevelopmentMaximized=false;DevelopmentPosition=DevelopmentRect.Min;DevelopmentSize=Cursor-DevelopmentRect.Min;SyncAddedUI();}
   return Over||bDevDragging||bDevResizing;
  }
  bDevDragging=false;bDevResizing=false;
@@ -486,6 +486,14 @@ void AOVHUD::DrawPinned()
   DrawText(FString::Printf(TEXT("선체 %.0f%% · 쉴드 %.0f%%"),100*Ship->Systems->HullHP/FMath::Max(1.f,Ship->Systems->MaxHullHP),100*Ship->Systems->Shield/FMath::Max(1.f,Ship->Systems->MaxShield)),Ink,X+10,Y+144,GEngine->GetSmallFont());
  }
 }
+void AOVHUD::ToggleDevelopmentMinimized(){bDevelopmentMinimized=!bDevelopmentMinimized;CancelPointerDrag();SyncAddedUI();}
+void AOVHUD::ToggleDevelopmentMaximized()
+{
+ if(bDevelopmentMaximized){DevelopmentPosition=DevelopmentRestorePosition;DevelopmentSize=DevelopmentRestoreSize;bDevelopmentMaximized=false;}
+ else {DevelopmentRestorePosition=DevelopmentPosition;DevelopmentRestoreSize=DevelopmentSize;DevelopmentPosition=FVector2D(8,8);DevelopmentSize=ViewportPixels-FVector2D(16,16);bDevelopmentMaximized=true;}
+ bDevelopmentMinimized=false;CancelPointerDrag();SyncAddedUI();
+}
+void AOVHUD::ResetDevelopmentWindow(){DevelopmentPosition=FVector2D(-1,-1);DevelopmentSize=FVector2D(-1,-1);bDevelopmentMinimized=false;bDevelopmentMaximized=false;CancelPointerDrag();SyncAddedUI();}
 void AOVHUD::SyncAddedUI()
 {
  auto* PC=Cast<AOVController>(PlayerOwner);if(!PC)return;int32 W=0,H=0;PC->GetViewportSize(W,H);if(W<=0||H<=0)return;
@@ -493,12 +501,13 @@ void AOVHUD::SyncAddedUI()
  if(DevelopmentSize.X<0){DevelopmentSize=FVector2D(FMath::Min(760.f,W*.8f),FMath::Min(530.f,H*.78f));DevelopmentPosition=FVector2D((W-DevelopmentSize.X)*.5f,(H-DevelopmentSize.Y)*.5f);}
  DevelopmentSize.X=FMath::Clamp(DevelopmentSize.X,FMath::Min(480.,double(W-16)),FMath::Max(1.,double(W-16)));
  DevelopmentSize.Y=FMath::Clamp(DevelopmentSize.Y,FMath::Min(360.,double(H-16)),FMath::Max(1.,double(H-16)));
- DevelopmentPosition.X=FMath::Clamp(DevelopmentPosition.X,0.,FMath::Max(0.,W-DevelopmentSize.X));
- DevelopmentPosition.Y=FMath::Clamp(DevelopmentPosition.Y,0.,FMath::Max(0.,H-DevelopmentSize.Y));
- const FVector2D DevSize=DevelopmentSize,DevPos=DevelopmentPosition;DevelopmentRect=FBox2D(DevPos,DevPos+DevSize);
+ const FVector2D DevSize(DevelopmentSize.X,bDevelopmentMinimized?FMath::Min(50.*Dpi,double(H-16)):DevelopmentSize.Y);
+ DevelopmentPosition.X=FMath::Clamp(DevelopmentPosition.X,0.,FMath::Max(0.,W-DevSize.X));
+ DevelopmentPosition.Y=FMath::Clamp(DevelopmentPosition.Y,0.,FMath::Max(0.,H-DevSize.Y));
+ const FVector2D DevPos=DevelopmentPosition;DevelopmentRect=FBox2D(DevPos,DevPos+DevSize);
  const FVector2D HeroSize(FMath::Min(400.f,W*.34f),FMath::Max(260.f,H-240.f));
  const FVector2D HeroPos(W-HeroSize.X-12.f,76.f);HeroRect=FBox2D(HeroPos,HeroPos+HeroSize);
- if(DevelopmentWidget){DevelopmentWidget->SetPositionInViewport(DevPos/Dpi,false);DevelopmentWidget->SetDesiredSizeInViewport(DevSize/Dpi);DevelopmentWidget->SetVisibility(PC->bDeveloperMode?ESlateVisibility::Visible:ESlateVisibility::Collapsed);}
+ if(DevelopmentWidget){DevelopmentWidget->SetFrameState(bDevelopmentMinimized,bDevelopmentMaximized);DevelopmentWidget->SetPositionInViewport(DevPos/Dpi,false);DevelopmentWidget->SetDesiredSizeInViewport(DevSize/Dpi);DevelopmentWidget->SetVisibility(PC->bDeveloperMode?ESlateVisibility::Visible:ESlateVisibility::Collapsed);}
  if(HeroWidget){HeroWidget->SetPositionInViewport(HeroPos/Dpi,false);HeroWidget->SetDesiredSizeInViewport(HeroSize/Dpi);HeroWidget->SetVisibility(PC->bDeveloperMode||!bHeroPanelOpen?ESlateVisibility::Collapsed:ESlateVisibility::Visible);}
 }
 bool AOVHUD::IsOverAddedUI(float X,float Y) const

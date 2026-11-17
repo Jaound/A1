@@ -55,9 +55,10 @@ void UOVDevelopmentItem::Pick() { if(Owner)Owner->SelectItem(Id); }
 FReply UOVDevelopmentWidget::NativeOnMouseButtonDown(const FGeometry& Geometry,const FPointerEvent& Event)
 {
  const FVector2D Local=Geometry.AbsoluteToLocal(Event.GetScreenSpacePosition()),Size=Geometry.GetLocalSize();
- if(Event.GetEffectingButton()==EKeys::LeftMouseButton&&(Local.Y<28||(Local.X>Size.X-20&&Local.Y>Size.Y-20)))
+ if(Event.GetEffectingButton()==EKeys::LeftMouseButton&&((Local.Y<36&&Local.X<Size.X-200)||(Local.X>Size.X-20&&Local.Y>Size.Y-20)))
   if(auto* PC=GetOwningPlayer())if(auto* HUD=Cast<AOVHUD>(PC->GetHUD())) {
-   bFrameDragging=Local.Y<28;bFrameResizing=!bFrameDragging;
+   bFrameDragging=Local.Y<36&&Local.X<Size.X-200;bFrameResizing=!bFrameDragging;
+   if(bFrameResizing&&HUD->bDevelopmentMinimized)return Super::NativeOnMouseButtonDown(Geometry,Event);
    FrameStartPointer=Event.GetScreenSpacePosition();FrameStartPosition=HUD->GetDevelopmentWindowPosition();FrameStartSize=HUD->GetDevelopmentWindowSize();
    return FReply::Handled().CaptureMouse(TakeWidget());
   }
@@ -117,25 +118,47 @@ void UOVDevelopmentWidget::NativeOnInitialized()
  auto* Border=WidgetTree->ConstructWidget<UBorder>();
  Border->SetBrushColor(FLinearColor(.008f,.02f,.04f,.985f));Border->SetPadding(FMargin(10));WidgetTree->RootWidget=Border;
  auto* Root=WidgetTree->ConstructWidget<UVerticalBox>();Border->AddChild(Root);
- auto* Header=Label(WidgetTree,TEXT("개발 도구 · 제목을 끌어 이동"));
- Header->SetColorAndOpacity(FLinearColor(.45f,.85f,.95f));
- Root->AddChildToVerticalBox(Header)->SetPadding(FMargin(3,1,3,5));
- auto* Tabs=Row(WidgetTree,Root);
+ auto* Header=Row(WidgetTree,Root);
+ auto* HeaderText=Label(WidgetTree,TEXT("개발 도구 · 끌어 이동"));
+ HeaderText->SetColorAndOpacity(FLinearColor(.45f,.85f,.95f));
+ Header->AddChildToHorizontalBox(HeaderText)->SetSize(FSlateChildSize(ESlateSizeRule::Fill));
+ auto HeaderButton=[&](const TCHAR* Text){auto* B=WidgetTree->ConstructWidget<UButton>();StyleButton(B);B->AddChild(Label(WidgetTree,Text));Header->AddChildToHorizontalBox(B)->SetPadding(FMargin(2,0));return B;};
+ auto* MinButton=HeaderButton(TEXT("접기"));FrameMinText=Cast<UTextBlock>(MinButton->GetChildAt(0));MinButton->OnClicked.AddDynamic(this,&UOVDevelopmentWidget::MinimizeFrame);
+ auto* MaxButton=HeaderButton(TEXT("확대"));FrameMaxText=Cast<UTextBlock>(MaxButton->GetChildAt(0));MaxButton->OnClicked.AddDynamic(this,&UOVDevelopmentWidget::MaximizeFrame);
+ HeaderButton(TEXT("초기화"))->OnClicked.AddDynamic(this,&UOVDevelopmentWidget::ResetFrame);
+ HeaderButton(TEXT("닫기"))->OnClicked.AddDynamic(this,&UOVDevelopmentWidget::Close);
+ FrameContents=WidgetTree->ConstructWidget<UVerticalBox>();Root->AddChildToVerticalBox(FrameContents)->SetSize(FSlateChildSize(ESlateSizeRule::Fill));
+ auto* Tabs=Row(WidgetTree,FrameContents);
  AddButton(WidgetTree,Tabs,TEXT("함선"))->OnClicked.AddDynamic(this,&UOVDevelopmentWidget::Hulls);
  AddButton(WidgetTree,Tabs,TEXT("영웅"))->OnClicked.AddDynamic(this,&UOVDevelopmentWidget::Heroes);
  AddButton(WidgetTree,Tabs,TEXT("무장"))->OnClicked.AddDynamic(this,&UOVDevelopmentWidget::Weapons);
  AddButton(WidgetTree,Tabs,TEXT("시험"))->OnClicked.AddDynamic(this,&UOVDevelopmentWidget::Overview);
  AddButton(WidgetTree,Tabs,TEXT("닫기 ×"))->OnClicked.AddDynamic(this,&UOVDevelopmentWidget::Close);
  Feedback=Label(WidgetTree,TEXT("시험용 생성 · 실제 전투 규칙 적용"));
- Feedback->SetColorAndOpacity(FLinearColor(.45f,.85f,.95f));Root->AddChildToVerticalBox(Feedback)->SetPadding(FMargin(3,4));
- auto* Scroll=WidgetTree->ConstructWidget<UScrollBox>();Root->AddChildToVerticalBox(Scroll)->SetSize(FSlateChildSize(ESlateSizeRule::Fill));
+ Feedback->SetColorAndOpacity(FLinearColor(.45f,.85f,.95f));FrameContents->AddChildToVerticalBox(Feedback)->SetPadding(FMargin(3,4));
+ auto* Scroll=WidgetTree->ConstructWidget<UScrollBox>();FrameContents->AddChildToVerticalBox(Scroll)->SetSize(FSlateChildSize(ESlateSizeRule::Fill));
  Body=WidgetTree->ConstructWidget<UVerticalBox>();Scroll->AddChild(Body);
- AdvancedButton=AddButton(WidgetTree,Root,TEXT("고급 진단 펼치기"));AdvancedButton->OnClicked.AddDynamic(this,&UOVDevelopmentWidget::ToggleAdvanced);
+ AdvancedButton=AddButton(WidgetTree,FrameContents,TEXT("고급 진단 펼치기"));AdvancedButton->OnClicked.AddDynamic(this,&UOVDevelopmentWidget::ToggleAdvanced);
  auto* ResizeHint=Label(WidgetTree,TEXT("오른쪽 아래를 끌어 크기 조절"));
  ResizeHint->SetJustification(ETextJustify::Right);
- Root->AddChildToVerticalBox(ResizeHint);
+ FrameContents->AddChildToVerticalBox(ResizeHint);
  Rebuild();
 }
+void UOVDevelopmentWidget::SetFrameState(bool bMinimized,bool bMaximized)
+{
+ if(bDisplayedFrameMinimized!=bMinimized) {
+  bDisplayedFrameMinimized=bMinimized;
+  if(FrameContents)FrameContents->SetVisibility(bMinimized?ESlateVisibility::Collapsed:ESlateVisibility::Visible);
+  if(FrameMinText)FrameMinText->SetText(FText::FromString(bMinimized?TEXT("펼치기"):TEXT("접기")));
+ }
+ if(bDisplayedFrameMaximized!=bMaximized) {
+  bDisplayedFrameMaximized=bMaximized;
+  if(FrameMaxText)FrameMaxText->SetText(FText::FromString(bMaximized?TEXT("복원"):TEXT("확대")));
+ }
+}
+void UOVDevelopmentWidget::MinimizeFrame(){if(auto* PC=GetOwningPlayer())if(auto* HUD=Cast<AOVHUD>(PC->GetHUD()))HUD->ToggleDevelopmentMinimized();}
+void UOVDevelopmentWidget::MaximizeFrame(){if(auto* PC=GetOwningPlayer())if(auto* HUD=Cast<AOVHUD>(PC->GetHUD()))HUD->ToggleDevelopmentMaximized();}
+void UOVDevelopmentWidget::ResetFrame(){if(auto* PC=GetOwningPlayer())if(auto* HUD=Cast<AOVHUD>(PC->GetHUD()))HUD->ResetDevelopmentWindow();}
 void UOVDevelopmentWidget::Reply(const FString& Message)
 {
  if(!Feedback)return;

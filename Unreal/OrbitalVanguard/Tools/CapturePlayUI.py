@@ -13,7 +13,7 @@ width, height = map(int, size.split('x'))
 report = {'passed': None, 'kind': 'PIE 렌더와 UI API', 'physical_input': False, 'requested_size': [width, height], 'captures': [], 'checks': [], 'errors': []}
 state = {'stage': 'start', 'at': time.monotonic(), 'started': time.monotonic(), 'index': 0}
 editor = unreal.get_editor_subsystem(unreal.UnrealEditorSubsystem)
-views = ['전투_HUD', '영웅_카드', '외부_무장', '격납고', '선내_영웅', '개발_함선', '개발_영웅', '개발_무장', '개발_시험', '초계함_모델']
+views = ['전투_HUD', '영웅_카드', '외부_무장', '격납고', '선내_영웅', '개발_함선', '개발_영웅', '개발_무장', '개발_시험', '초계함_모델', '개발_접기', '개발_확대']
 
 def prop(obj, key):
     return obj.get_editor_property(key)
@@ -114,6 +114,14 @@ def tick(_dt):
                 hud.execute_ui_action('InteriorDeck_' + str(deck))
                 hud.execute_ui_action('InteriorUnit_' + str(prop(unit, 'unit_id')))
                 check('INTERIOR-HERO-DECK-SELECTED', prop(hud, 'interior_deck') == deck and prop(unit, 'unit_id') in prop(hud, 'interior_selected_units'))
+            elif name in ('개발_접기','개발_확대'):
+                pc.action('Developer');hud.reset_development_window()
+                if name == '개발_접기':
+                    hud.toggle_development_minimized()
+                    check('DEV-MINIMIZED', prop(hud,'development_minimized') and hud.get_development_window_size().y < 80)
+                else:
+                    hud.toggle_development_maximized()
+                    check('DEV-MAXIMIZED', hud.get_development_window_size().x > 1000)
             elif name.startswith('개발_'):
                 pc.action('Developer')
                 page = {'개발_함선': 1, '개발_영웅': 2, '개발_무장': 3, '개발_시험': 0}[name]

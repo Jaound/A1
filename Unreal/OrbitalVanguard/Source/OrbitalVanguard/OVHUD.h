@@ -46,7 +46,11 @@ public:
  UFUNCTION(BlueprintPure, Category="UI") FVector2D GetInteriorWindowSize() const { return InteriorBounds().GetSize(); }
  UFUNCTION(BlueprintPure, Category="UI") FVector2D GetDevelopmentWindowPosition() const { return DevelopmentRect.Min; }
  UFUNCTION(BlueprintPure, Category="UI") FVector2D GetDevelopmentWindowSize() const { return DevelopmentRect.GetSize(); }
- void SetDevelopmentWindowGeometry(FVector2D Position,FVector2D Size) { DevelopmentPosition=Position;DevelopmentSize=Size;SyncAddedUI(); }
+ UFUNCTION(BlueprintCallable, Category="UI") void ToggleDevelopmentMinimized();
+ UFUNCTION(BlueprintCallable, Category="UI") void ToggleDevelopmentMaximized();
+ UFUNCTION(BlueprintCallable, Category="UI") void ResetDevelopmentWindow();
+ UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="UI") bool bDevelopmentMinimized=false;
+ void SetDevelopmentWindowGeometry(FVector2D Position,FVector2D Size) { bDevelopmentMaximized=false;DevelopmentPosition=Position;if(!bDevelopmentMinimized)DevelopmentSize=Size;SyncAddedUI(); }
  UFUNCTION(BlueprintPure, Category="UI") bool IsOverMissionPanel(float X,float Y) const;
  UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="UI") bool bInteriorOpen=false;
  UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="UI") bool bInteriorMinimized=false;
@@ -89,6 +93,8 @@ private:
  bool bInteriorDragging=false,bInteriorResizing=false;
  bool bDevDragging=false,bDevResizing=false;
  FVector2D DevelopmentPosition=FVector2D(-1,-1),DevelopmentSize=FVector2D(-1,-1),DevelopmentDragOffset=FVector2D::ZeroVector;
+ bool bDevelopmentMaximized=false;
+ FVector2D DevelopmentRestorePosition=FVector2D(-1,-1),DevelopmentRestoreSize=FVector2D(-1,-1);
  FVector2D InteriorWindowPosition=FVector2D(-1,-1),InteriorWindowSize=FVector2D(780,550),InteriorDragOffset=FVector2D::ZeroVector;
  bool bInteriorMaximized=false;
  FVector2D InteriorRestorePosition=FVector2D(-1,-1),InteriorRestoreSize=FVector2D(780,550);
