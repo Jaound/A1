@@ -1,0 +1,10 @@
+{
+  "코드_SHA": "6c47ee9",
+  "성공": true,
+  "완료": true,
+  "사례수": 29,
+  "검사수": 316,
+  "원시결과_SHA256": "db9fe2aca7410df0dba33027a0737dca2a601714384bec5f1126e1051987a899",
+  "원시결과_로컬": "C:\\Users\\user\\source\\repos\\A1\\Unreal\\OrbitalVanguard\\Saved\\Validation\\IntegratedMission.json",
+  "기존_검사ID순서_일치": true
+}
