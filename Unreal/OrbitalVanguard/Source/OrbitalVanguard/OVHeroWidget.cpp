@@ -156,7 +156,7 @@ void UOVHeroWidget::NativeOnInitialized()
     }
     SkillButtons[0]->OnClicked.AddDynamic(this,&UOVHeroWidget::Skill0); SkillButtons[1]->OnClicked.AddDynamic(this,&UOVHeroWidget::Skill1);
     SkillButtons[2]->OnClicked.AddDynamic(this,&UOVHeroWidget::Skill2); SkillButtons[3]->OnClicked.AddDynamic(this,&UOVHeroWidget::Skill3);
-    Button(WidgetTree,Box,TEXT("편성 · 보직 ▾"))->OnClicked.AddDynamic(this,&UOVHeroWidget::ToggleFormation);
+    Button(WidgetTree,Box,TEXT("편성 · 보직 설정"))->OnClicked.AddDynamic(this,&UOVHeroWidget::ToggleFormation);
     FormationBox = WidgetTree->ConstructWidget<UVerticalBox>(); Box->AddChildToVerticalBox(FormationBox); FormationBox->SetVisibility(ESlateVisibility::Collapsed);
     auto* ReserveRow = WidgetTree->ConstructWidget<UHorizontalBox>(); FormationBox->AddChildToVerticalBox(ReserveRow);
     auto* Reserve = RowButton(WidgetTree,ReserveRow,TEXT("편성")); Reserve->OnClicked.AddDynamic(this,&UOVHeroWidget::Deploy); OwnedActions.Add(Reserve);

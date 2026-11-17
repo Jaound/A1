@@ -67,7 +67,7 @@ void UOVDevelopmentWidget::NativeOnInitialized()
  Feedback->SetColorAndOpacity(FLinearColor(.45f,.85f,.95f));Root->AddChildToVerticalBox(Feedback)->SetPadding(FMargin(3,4));
  auto* Scroll=WidgetTree->ConstructWidget<UScrollBox>();Root->AddChildToVerticalBox(Scroll)->SetSize(FSlateChildSize(ESlateSizeRule::Fill));
  Body=WidgetTree->ConstructWidget<UVerticalBox>();Scroll->AddChild(Body);
- AdvancedButton=AddButton(WidgetTree,Root,TEXT("고급 진단 ▸"));AdvancedButton->OnClicked.AddDynamic(this,&UOVDevelopmentWidget::ToggleAdvanced);
+ AdvancedButton=AddButton(WidgetTree,Root,TEXT("고급 진단 펼치기"));AdvancedButton->OnClicked.AddDynamic(this,&UOVDevelopmentWidget::ToggleAdvanced);
  Rebuild();
 }
 void UOVDevelopmentWidget::Reply(const FString& Message)
@@ -86,7 +86,7 @@ void UOVDevelopmentWidget::SetAdvancedDiagnostics(bool bEnabled)
 {
  bAdvanced=bEnabled;
  for(const auto& Group:AdvancedGroups)if(Group)Group->SetVisibility(bAdvanced?ESlateVisibility::Visible:ESlateVisibility::Collapsed);
- if(AdvancedButton)if(auto* Text=Cast<UTextBlock>(AdvancedButton->GetContent()))Text->SetText(FText::FromString(bAdvanced?TEXT("고급 진단 ▾"):TEXT("고급 진단 ▸")));
+ if(AdvancedButton)if(auto* Text=Cast<UTextBlock>(AdvancedButton->GetContent()))Text->SetText(FText::FromString(bAdvanced?TEXT("고급 진단 접기"):TEXT("고급 진단 펼치기")));
  if(!SelectedId.IsNone())SelectItem(SelectedId);
  RefreshRuntime();
 }
