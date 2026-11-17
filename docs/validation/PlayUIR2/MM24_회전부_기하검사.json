@@ -1,0 +1,77 @@
+{
+  "passed": true,
+  "source_unchanged": true,
+  "parts": {
+    "MM24_BaseTrial": {
+      "boundary_edges": 0,
+      "nonmanifold_edges": 0,
+      "uv_layers": [
+        "UVMap"
+      ],
+      "cap_faces": 17
+    },
+    "MM24_YawTrial": {
+      "boundary_edges": 0,
+      "nonmanifold_edges": 0,
+      "uv_layers": [
+        "UVMap"
+      ],
+      "cap_faces": 17
+    }
+  },
+  "angles": [
+    {
+      "yaw_degrees": -180,
+      "base_max_z": -0.9749929904937744,
+      "yaw_min_z": -0.9750087857246399,
+      "vertical_gap": -1.5795230865478516e-05
+    },
+    {
+      "yaw_degrees": -90,
+      "base_max_z": -0.9749929904937744,
+      "yaw_min_z": -0.9750087857246399,
+      "vertical_gap": -1.5795230865478516e-05
+    },
+    {
+      "yaw_degrees": -45,
+      "base_max_z": -0.9749929904937744,
+      "yaw_min_z": -0.9750087857246399,
+      "vertical_gap": -1.5795230865478516e-05
+    },
+    {
+      "yaw_degrees": 0,
+      "base_max_z": -0.9749929904937744,
+      "yaw_min_z": -0.9750087857246399,
+      "vertical_gap": -1.5795230865478516e-05
+    },
+    {
+      "yaw_degrees": 45,
+      "base_max_z": -0.9749929904937744,
+      "yaw_min_z": -0.9750087857246399,
+      "vertical_gap": -1.5795230865478516e-05
+    },
+    {
+      "yaw_degrees": 90,
+      "base_max_z": -0.9749929904937744,
+      "yaw_min_z": -0.9750087857246399,
+      "vertical_gap": -1.5795230865478516e-05
+    },
+    {
+      "yaw_degrees": 180,
+      "base_max_z": -0.9749929904937744,
+      "yaw_min_z": -0.9750087857246399,
+      "vertical_gap": -1.5795230865478516e-05
+    }
+  ],
+  "packed_images": [
+    "Image_0",
+    "Image_2",
+    "texture_0_metallic.png",
+    "texture_0_roughness.png"
+  ],
+  "limitations": [
+    "Cap material is provisional; UV quality is not certified",
+    "Coincident z boundaries do not prove lateral fit or visual acceptance",
+    "Pitch remains fused; UE import and gameplay are not tested"
+  ]
+}

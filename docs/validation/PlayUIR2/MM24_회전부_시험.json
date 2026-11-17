@@ -1,0 +1,33 @@
+{
+  "source": "C:\\Users\\user\\Documents\\OrbitalVanguardAssets\\Source\\PlayUI_R2_20261117_inspect\\missile_pod_mm24\\Meshy_AI_Missile_Pod_MM24_20261112_image-to-3d-texture_fbx\\Meshy_AI_Missile_Pod_MM24_20261112_image-to-3d-texture.fbx",
+  "source_sha256_before": "ecb56c3a2f079a47770670048e2327621c284c5ced2e88a7dc67d7455a9140cd",
+  "source_sha256_after": "ecb56c3a2f079a47770670048e2327621c284c5ced2e88a7dc67d7455a9140cd",
+  "source_unchanged": true,
+  "cut_z_blender": -0.975,
+  "evidence": "orthographic views and 60 vertical vertex slices around the lower rotating ring",
+  "parts": {
+    "MM24_BaseTrial": {
+      "vertices": 254657,
+      "faces": 503665,
+      "cut_boundary_edges": 3769,
+      "generated_cap_faces": 17,
+      "remaining_boundary_edges": 0,
+      "nonmanifold_edges": 0,
+      "uv_layers": [
+        "UVMap"
+      ]
+    },
+    "MM24_YawTrial": {
+      "vertices": 877185,
+      "faces": 1751096,
+      "cut_boundary_edges": 3769,
+      "generated_cap_faces": 17,
+      "remaining_boundary_edges": 0,
+      "nonmanifold_edges": 0,
+      "uv_layers": [
+        "UVMap"
+      ]
+    }
+  },
+  "status": "experimental base/yaw cut only; caps, gaps, intersections, UV and mechanical pivot require review; pitch not separated"
+}
