@@ -1,0 +1,162 @@
+{
+  "passed": true,
+  "checks": [
+    {
+      "id": "MM24_BaseTrial-TOPOLOGY",
+      "passed": true
+    },
+    {
+      "id": "MM24_BaseTrial-UV-NORMAL-CAP",
+      "passed": true
+    },
+    {
+      "id": "MM24_BaseTrial-FACE-BUDGET",
+      "passed": true
+    },
+    {
+      "id": "MM24_BaseTrial-FBX-HASH",
+      "passed": true
+    },
+    {
+      "id": "MM24_BaseTrial-TEXTURE-Image_0.jpg",
+      "passed": true
+    },
+    {
+      "id": "MM24_BaseTrial-TEXTURE-Image_2.jpg",
+      "passed": true
+    },
+    {
+      "id": "MM24_BaseTrial-TEXTURE-texture_0_metallic.png",
+      "passed": true
+    },
+    {
+      "id": "MM24_BaseTrial-TEXTURE-texture_0_roughness.png",
+      "passed": true
+    },
+    {
+      "id": "MM24_YawTrial-TOPOLOGY",
+      "passed": true
+    },
+    {
+      "id": "MM24_YawTrial-UV-NORMAL-CAP",
+      "passed": true
+    },
+    {
+      "id": "MM24_YawTrial-FACE-BUDGET",
+      "passed": true
+    },
+    {
+      "id": "MM24_YawTrial-FBX-HASH",
+      "passed": true
+    },
+    {
+      "id": "MM24_YawTrial-TEXTURE-Image_0.jpg",
+      "passed": true
+    },
+    {
+      "id": "MM24_YawTrial-TEXTURE-Image_2.jpg",
+      "passed": true
+    },
+    {
+      "id": "MM24_YawTrial-TEXTURE-texture_0_metallic.png",
+      "passed": true
+    },
+    {
+      "id": "MM24_YawTrial-TEXTURE-texture_0_roughness.png",
+      "passed": true
+    },
+    {
+      "id": "SEAM-Z--180",
+      "passed": true
+    },
+    {
+      "id": "SEAM-Z--90",
+      "passed": true
+    },
+    {
+      "id": "SEAM-Z--45",
+      "passed": true
+    },
+    {
+      "id": "SEAM-Z-0",
+      "passed": true
+    },
+    {
+      "id": "SEAM-Z-45",
+      "passed": true
+    },
+    {
+      "id": "SEAM-Z-90",
+      "passed": true
+    },
+    {
+      "id": "SEAM-Z-180",
+      "passed": true
+    },
+    {
+      "id": "SOURCE-BLEND-UNCHANGED",
+      "passed": true
+    },
+    {
+      "id": "PACKED-IMAGES",
+      "passed": true
+    }
+  ],
+  "parts": {
+    "MM24_BaseTrial": {
+      "faces": 151674,
+      "boundary_edges": 0,
+      "nonmanifold_edges": 0,
+      "uv_layers": [
+        "UVMap"
+      ],
+      "custom_normals": true,
+      "cap_faces": 1182
+    },
+    "MM24_YawTrial": {
+      "faces": 601900,
+      "boundary_edges": 0,
+      "nonmanifold_edges": 0,
+      "uv_layers": [
+        "UVMap"
+      ],
+      "custom_normals": true,
+      "cap_faces": 1220
+    }
+  },
+  "angles": [
+    {
+      "yaw_degrees": -180,
+      "vertical_gap": -8.118152618408203e-05
+    },
+    {
+      "yaw_degrees": -90,
+      "vertical_gap": -8.118152618408203e-05
+    },
+    {
+      "yaw_degrees": -45,
+      "vertical_gap": -8.118152618408203e-05
+    },
+    {
+      "yaw_degrees": 0,
+      "vertical_gap": -8.118152618408203e-05
+    },
+    {
+      "yaw_degrees": 45,
+      "vertical_gap": -8.118152618408203e-05
+    },
+    {
+      "yaw_degrees": 90,
+      "vertical_gap": -8.118152618408203e-05
+    },
+    {
+      "yaw_degrees": 180,
+      "vertical_gap": -8.118152618408203e-05
+    }
+  ],
+  "limitations": [
+    "Contact z bounds do not establish lateral collision clearance",
+    "Source-map visual quality, provisional caps and custom-normal appearance require review",
+    "Pitch remains fused and Unreal import, gameplay and performance are not verified"
+  ]
+}
