@@ -97,6 +97,12 @@ def tick(_dt):
                 hud.handle_pointer((x-55)*scale,y*scale,False,True,0,False,0,0)
                 hud.handle_pointer((x-55)*scale,y*scale,False,False,0,False,0,0)
                 check('PIN-COMPARE-DRAG-INDEPENDENT',hud.get_pinned_position(0).x<first.x-50 and hud.get_pinned_position(1)==second and prop(pc,'selected')==ships[1])
+                moved=hud.get_pinned_position(0);size=hud.get_pinned_size(0);other_size=hud.get_pinned_size(1)
+                x,y=moved.x+size.x-5,moved.y+size.y-5
+                hud.handle_pointer(x*scale,y*scale,True,True,0,False,0,0)
+                hud.handle_pointer((x+50)*scale,(y+5)*scale,False,True,0,False,0,0)
+                hud.handle_pointer((x+50)*scale,(y+5)*scale,False,False,0,False,0,0)
+                check('PIN-COMPARE-RESIZE-INDEPENDENT',hud.get_pinned_size(0).x>size.x+40 and hud.get_pinned_size(1)==other_size)
             elif name == '핀_시설':
                 hud.set_details_open(True);hud.execute_ui_action('PinnedDeck_0_1')
                 check('PIN-DECK-INDEPENDENT',hud.get_pinned_deck(0)==1 and hud.get_pinned_deck(1)==0)
