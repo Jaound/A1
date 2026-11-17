@@ -66,6 +66,7 @@ private:
  bool bDetailsPositioned=false;
  int32 FleetPage=0;
  int32 AircraftPage=0;
+ int32 AircraftFilter=0;
  TWeakObjectPtr<AOVShip> AircraftPageShip;
  FString LastNoticeSource;
  FString NoticeText;

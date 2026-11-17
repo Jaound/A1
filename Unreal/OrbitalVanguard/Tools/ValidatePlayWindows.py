@@ -207,11 +207,13 @@ def tick(_dt):
             records=[a for a in p(p(pc,'carrier'),'aircraft') if p(a,'carrier')==p(pc,'selected') and p(a,'faction_id')==0]
             check('WINDOW-AIRCRAFT-CARD-FIXTURE',bool(records))
             craft_id=p(records[0],'aircraft_id');card='AircraftCard_'+str(craft_id)
+            state['first_aircraft_id']=craft_id
             hit_button(hud,card);hud.execute_ui_action(card)
             check('WINDOW-AIRCRAFT-CARD-SELECTS-ID',p(hud,'selected_aircraft_id')==craft_id)
             check('WINDOW-AIRCRAFT-CARD-READONLY',observe_combat(pc)==state['mission_observation'])
             check('WINDOW-UNIQUE-HANGAR-OBSERVATION-NO-MUTATION',observe_combat(pc)==state['mission_observation'])
             check('WINDOW-AIRCRAFT-PAGE-FIXTURE',len(records)>15)
+            state['second_aircraft_id']=p(records[1],'aircraft_id')
             state['next_aircraft_id']=p(records[15],'aircraft_id')
             hud.execute_ui_action('AircraftNext')
             state.update(phase=111,at=time.monotonic());return
@@ -220,6 +222,31 @@ def tick(_dt):
             hit_button(hud,card);hud.execute_ui_action(card)
             check('WINDOW-AIRCRAFT-PAGE-SELECTS-STABLE-ID',p(hud,'selected_aircraft_id')==state['next_aircraft_id'])
             check('WINDOW-AIRCRAFT-PAGE-READONLY',observe_combat(pc)==state['mission_observation'])
+            for _ in range(3):hud.execute_ui_action('AircraftFilter')
+            state.update(phase=112,at=time.monotonic());return
+        if state['phase']==112:
+            check('WINDOW-AIRCRAFT-LOSS-FILTER-EMPTY',hud.get_action_center('AircraftCard_'+str(state['next_aircraft_id'])).x<0)
+            check('WINDOW-AIRCRAFT-FILTER-READONLY',observe_combat(pc)==state['mission_observation'])
+            wing=p(pc,'carrier')
+            check('WINDOW-AIRCRAFT-DAMAGE-FIXTURE',wing.apply_aircraft_damage(state['first_aircraft_id'],10))
+            check('WINDOW-AIRCRAFT-LOSS-FIXTURE',wing.apply_aircraft_damage(state['second_aircraft_id'],10000))
+            state['mission_observation']=observe_combat(pc)
+            hud.execute_ui_action('AircraftFilter')
+            state.update(phase=113,at=time.monotonic());return
+        if state['phase']==113:
+            check('WINDOW-AIRCRAFT-FILTER-RESTORES',hud.get_action_center('AircraftCard_'+str(state['first_aircraft_id'])).x>=0)
+            hud.execute_ui_action('AircraftFilter');hud.execute_ui_action('AircraftFilter')
+            state.update(phase=114,at=time.monotonic());return
+        if state['phase']==114:
+            check('WINDOW-AIRCRAFT-DAMAGED-INCLUDED',hud.get_action_center('AircraftCard_'+str(state['first_aircraft_id'])).x>=0)
+            check('WINDOW-AIRCRAFT-DESTROYED-NOT-DAMAGED',hud.get_action_center('AircraftCard_'+str(state['second_aircraft_id'])).x<0)
+            hud.execute_ui_action('AircraftFilter')
+            state.update(phase=115,at=time.monotonic());return
+        if state['phase']==115:
+            check('WINDOW-AIRCRAFT-LOSS-INCLUDED',hud.get_action_center('AircraftCard_'+str(state['second_aircraft_id'])).x>=0)
+            check('WINDOW-AIRCRAFT-DAMAGED-NOT-LOSS',hud.get_action_center('AircraftCard_'+str(state['first_aircraft_id'])).x<0)
+            check('WINDOW-AIRCRAFT-FILTER-AFTER-DAMAGE-READONLY',observe_combat(pc)==state['mission_observation'])
+            hud.execute_ui_action('AircraftFilter')
             hud.execute_ui_action('Deck1')
             state.update(phase=12,at=time.monotonic());return
         if state['phase']==12:

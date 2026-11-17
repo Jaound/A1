@@ -1,5 +1,9 @@
 # 최신 작업 — 플레이 UI R2 진행 중
 
+**기체 필터·원본 MM48 성분 분리:** 격납고에 전체/생존/손상(선체 또는 쉴드)/손실 필터를 추가했다. 필터 변경은 페이지를 초기화하며 기체 데이터에는 쓰지 않는다. 빌드 `PlayUI_R2_O_Build.log` 성공, 창 API101/101(`PlayUI_R2_P_ValidatePlayWindows.log`): 실제 기체에 시험 피해·완파 후 손상/손실의 포함·제외와 조회 불변을 확인했다. 1280 렌더23/23([화면](validation/PlayUIR2/기체필터_1280.png)). 직접 입력·대량 성능은 미검증이다.
+
+MM48 원본의 실제 연결 성분 3개를 원본 변경 없이 Blender 복사본 `Documents/OrbitalVanguardAssets/Prepared/PlayUI_R2_MM48_loose_components/MM48_ConnectedComponents.blend`로 분리·UV 보존했다([보고](validation/PlayUIR2/MM48_분리조사.json)). 가장 큰 성분이 전체 받침과 발사기 영역을 포함하므로 yaw/pitch 관절 분리나 UE 적용 완료가 아니다. 다음: 선체와 무장 접합부의 근거 있는 수작업 분리·정합, 함대 썸네일, 소형함 카드, 이동/리사이즈 창, 독립 핀·무장뷰·사건 알림과 종합 검증.
+
 **격납고 기체 카드:** 실제 해당 모함·현재 세력의 기체 레코드를 15개씩 페이지로 보여주고 개체 선택 시 실제 ID·상태·HP를 조회한다. 표시 번호는 화면 순서이며 실제 개체 ID는 유지한다. 상태 문구·내구 바와 임시 도식 기체 표시를 사용하고 이전 격납고 시설 목록은 전환하여 보존한다. 페이지 이동·선택은 재고/HP/시뮬레이션을 바꾸지 않는다. 빌드 `PlayUI_R2_L_Build.log`, 창 API91/91 `PlayUI_R2_M_ValidatePlayWindows.log`, 기존 2C API77/77 `PlayUI_R2_K_ValidatePhase2C.log`, 1280 렌더23/23 성공. [기체 화면](validation/PlayUIR2/기체카드_1280.png), [창 검사](validation/PlayUIR2/M_PlayWindows.json). 테스트 중간 J/K와 최종 L은 표시 글자/아이콘 변경으로 구분한다. 1920 렌더·직접 입력, 상태 필터/소형함 카드/개체 위치 찾기·대량 성능은 미구현 또는 미검증이다. 임시 기체 도식은 원본 모델이 아니다.
 
 다음: 기체 필터·시설/소형함 상태, 함대 썸네일, 창 프레임·핀 상세·무장뷰·사건 알림과 원본 모델 적용. 전체 R2 완료가 아니다.

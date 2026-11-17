@@ -1,0 +1,33 @@
+{
+  "source": "C:\\Users\\user\\Documents\\OrbitalVanguardAssets\\Source\\PlayUI_R2_20261117_inspect\\missile_pod_mm48\\Meshy_AI_Missile_Pod_MM48_20261112_image-to-3d-texture_fbx\\Meshy_AI_Missile_Pod_MM48_20261112_image-to-3d-texture.fbx",
+  "source_sha256": "dba02308c7b4da283f97f1022bf90a20185571a1520ff363fd06a7054aaaa300",
+  "source_unchanged": true,
+  "result": "C:\\Users\\user\\Documents\\OrbitalVanguardAssets\\Prepared\\PlayUI_R2_MM48_loose_components\\MM48_ConnectedComponents.blend",
+  "parts": [
+    {
+      "name": "OriginalConnectedComponent_1",
+      "vertices": 1612062,
+      "polygons": 3225196,
+      "uvs": [
+        "UVMap"
+      ]
+    },
+    {
+      "name": "OriginalConnectedComponent_2",
+      "vertices": 21468,
+      "polygons": 42944,
+      "uvs": [
+        "UVMap"
+      ]
+    },
+    {
+      "name": "OriginalConnectedComponent_3",
+      "vertices": 9362,
+      "polygons": 18724,
+      "uvs": [
+        "UVMap"
+      ]
+    }
+  ],
+  "status": "connected surfaces separated only; no validated turret joints or game import"
+}

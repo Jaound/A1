@@ -117,6 +117,7 @@ void AOVHUD::NotifyHitBoxClick(FName N)
  if(N==TEXT("FleetNext")) { ++FleetPage;return; }
  if(N==TEXT("AircraftPrevious")) { AircraftPage=FMath::Max(0,AircraftPage-1);return; }
  if(N==TEXT("AircraftNext")) { ++AircraftPage;return; }
+ if(N==TEXT("AircraftFilter")) { AircraftFilter=(AircraftFilter+1)%4;AircraftPage=0;return; }
  if(N.ToString().StartsWith(TEXT("AircraftCard_"))) {
   const int32 Id=FCString::Atoi(*N.ToString().Mid(13));
   auto* PC=Cast<AOVController>(PlayerOwner);
@@ -247,7 +248,7 @@ void AOVHUD::DrawDetails()
  if(bHangarView) {
   if(!Reveal) DrawText(TEXT("적 격납고 · 미확인"),Ink,X+16,Y+88,GEngine->GetSmallFont());
   else if(auto* Carrier=GetWorld()->GetSubsystem<UOVCarrierSubsystem>()) {
-   if(AircraftPageShip!=PC->Selected){AircraftPageShip=PC->Selected;AircraftPage=0;SelectedAircraftId=0;}
+   if(AircraftPageShip!=PC->Selected){AircraftPageShip=PC->Selected;AircraftPage=0;AircraftFilter=0;SelectedAircraftId=0;}
    const int32 Row=Carrier->Hangars.FilterByPredicate([&](const FOVHangarState& H){return H.Carrier==PC->Selected;}).Num();
    if(Row==0)DrawText(TEXT("장착된 격납고 없음"),Ink,X+16,Y+88,GEngine->GetSmallFont());
    else if(!bAircraftGrid) {
@@ -263,8 +264,16 @@ void AOVHUD::DrawDetails()
     const auto Overview=Carrier->GetAircraftOverview(PC->Selected);
     DrawText(FString::Printf(TEXT("격납고 %d · 기체 생존 %d · 손실 %d"),Row,Overview.Surviving,Overview.Wrecked),Ink,X+16,Y+80,GEngine->GetSmallFont());
     Button(TEXT("HangarDisplayMode"),TEXT("시설 보기"),X+W-105,Y+72,90);
+    const TCHAR* Filters[]={TEXT("전체"),TEXT("생존"),TEXT("손상"),TEXT("손실")};
+    Button(TEXT("AircraftFilter"),Filters[AircraftFilter],X+W-175,Y+72,65);
     TArray<const FOVAircraftRecord*> Records;
-    for(const auto& A:Carrier->Aircraft)if(A.Carrier==PC->Selected&&A.FactionId==S->FactionId)Records.Add(&A);
+    for(const auto& A:Carrier->Aircraft)if(A.Carrier==PC->Selected&&A.FactionId==S->FactionId) {
+     const bool Alive=A.State!=EOVAircraftState::Wrecked;
+     if(AircraftFilter==1&&!Alive)continue;
+     if(AircraftFilter==2&&(!Alive||(A.HP>=Carrier->Profile.Hull&&A.Shield>=Carrier->Profile.Shield)))continue;
+     if(AircraftFilter==3&&Alive)continue;
+     Records.Add(&A);
+    }
     const int32 Pages=FMath::Max(1,FMath::DivideAndRoundUp(Records.Num(),15));
     AircraftPage=FMath::Clamp(AircraftPage,0,Pages-1);
     const float CW=(W-38)/5;
