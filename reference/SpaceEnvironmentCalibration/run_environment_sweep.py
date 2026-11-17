@@ -94,6 +94,7 @@ def main():
     parser=argparse.ArgumentParser()
     parser.add_argument("--stage",choices=["pilot","evaluation","sensitivity"],required=True)
     parser.add_argument("--workers",type=int,default=min(4,os.cpu_count() or 1))
+    parser.add_argument("--reuse-unaffected",type=Path)
     args=parser.parse_args()
     all_rows=[];tasks=[]
     if args.stage=="pilot":
@@ -140,15 +141,37 @@ def main():
             for hazard in ("asteroid","radiation","flare","blackhole"):
                 tasks.append(dict(stage="sensitivity",case="mixed_100",seed=174200,hazard=hazard,
                                   variant="dt_0.5",parameters=selection[hazard],dt=.5,duration=600))
+    reused=0
+    if args.reuse_unaffected:
+        if args.stage!="evaluation":raise ValueError("Reuse is only for the independently seeded evaluation")
+        proof=json.loads((HERE/"reuse_proof.json").read_text())
+        if hashlib.sha256(args.reuse_unaffected.read_bytes()).hexdigest()!=proof["source_results_sha256"]:
+            raise ValueError("Reuse source checksum mismatch")
+        if hashlib.sha256((HERE/"environment_battle.py").read_bytes()).hexdigest()!=proof["new_code_sha256"]:
+            raise ValueError("New environment source differs from verified dependency proof")
+        previous=json.loads(args.reuse_unaffected.read_text())
+        if previous["hashes"]["reference/SpaceEnvironmentCalibration/environment_battle.py"]!=proof["old_code_sha256"]:
+            raise ValueError("Old code identity mismatch")
+        eligible=[r for r in previous["rows"] if r["environment"] in ("asteroid","radiation") or (r["environment"]=="none" and r["variant"]=="control")]
+        for r in eligible:
+            task=next(t for t in tasks if (t["hazard"],t["variant"],t["case"],t["seed"])==(r["environment"],r["variant"],r["case"],r["seed"]))
+            if r["parameters"]!={**DEFAULTS[r["environment"]],**task.get("parameters",{})}:
+                raise ValueError("Reused profile differs from selected profile")
+            r["reused_from_code"]=proof["source_code_commit"]
+            all_rows.append(r)
+        reused=len(eligible)
+        assert reused==60
     started=time.monotonic()
     output=HERE/f"{args.stage}_results.json"
     metadata={"stage":args.stage,"status":"running","hashes":hashes(),"tasks":len(tasks),
               "parameters":FAMILIES if args.stage=="pilot" else selection,
-              "one_environment_per_battle":True,"no_ue_execution":True}
+              "one_environment_per_battle":True,"no_ue_execution":True,
+              "reused_trials":reused,"new_trials_expected":len(tasks)-reused}
     # Hazard batches run sequentially; parallel workers only share the same hazard type.
     with ProcessPoolExecutor(max_workers=args.workers) as pool:
         for hazard in ("none","asteroid","radiation","flare","blackhole"):
-            batch=[x for x in tasks if x["hazard"]==hazard]
+            done={(r["environment"],r["variant"],r["case"],r["seed"]) for r in all_rows}
+            batch=[x for x in tasks if x["hazard"]==hazard and (x["hazard"],x["variant"],x["case"],x["seed"]) not in done]
             if not batch:continue
             print(f"START {args.stage}: {hazard}, {len(batch)} trials",flush=True)
             futures=[pool.submit(trial,t) for t in batch]

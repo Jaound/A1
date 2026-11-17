@@ -1,0 +1,29 @@
+test_aircraft_shutdown_independent_of_carrier_wave_contact (test_environments.Rules.test_aircraft_shutdown_independent_of_carrier_wave_contact) ... ok
+test_asteroid_contact_damage_has_cooldown (test_environments.Rules.test_asteroid_contact_damage_has_cooldown) ... ok
+test_blackhole_core_ignores_hp (test_environments.Rules.test_blackhole_core_ignores_hp) ... ok
+test_blackhole_engine_loss_keeps_drift (test_environments.Rules.test_blackhole_engine_loss_keeps_drift) ... ok
+test_control_lost_aircraft_still_take_radiation (test_environments.Rules.test_control_lost_aircraft_still_take_radiation) ... ok
+test_destroyed_asteroid_opens_line (test_environments.Rules.test_destroyed_asteroid_opens_line) ... ok
+test_engine_loss_reaches_core_before_timeout (test_environments.Rules.test_engine_loss_reaches_core_before_timeout) ... ok
+test_environment_core_wreck_attributed_once (test_environments.Rules.test_environment_core_wreck_attributed_once) ... ok
+test_flare_covered_partial_and_open (test_environments.Rules.test_flare_covered_partial_and_open) ... ok
+test_flare_no_duplicate_or_skip_on_long_frame (test_environments.Rules.test_flare_no_duplicate_or_skip_on_long_frame) ... ok
+test_flare_stops_functions_without_erasing_gauge (test_environments.Rules.test_flare_stops_functions_without_erasing_gauge) ... ok
+test_ftl_unchanged_far_and_wrecked_near (test_environments.Rules.test_ftl_unchanged_far_and_wrecked_near) ... ok
+test_hold_does_not_cancel_gravity (test_environments.Rules.test_hold_does_not_cancel_gravity) ... ok
+test_initial_geometry_has_clearance (test_environments.Rules.test_initial_geometry_has_clearance) ... ok
+test_no_environment_is_not_damage (test_environments.Rules.test_no_environment_is_not_damage) ... ok
+test_radiation_combat_and_no_regen_delay (test_environments.Rules.test_radiation_combat_and_no_regen_delay) ... ok
+test_radiation_only_exposed_cells (test_environments.Rules.test_radiation_only_exposed_cells) ... ok
+test_radiation_resistance_is_damage_reduction (test_environments.Rules.test_radiation_resistance_is_damage_reduction) ... ok
+test_radiation_time_integral (test_environments.Rules.test_radiation_time_integral) ... ok
+test_reject_combined_hazards (test_environments.Rules.test_reject_combined_hazards) ... ok
+test_shutdown_is_not_early_stalemate (test_environments.Rules.test_shutdown_is_not_early_stalemate) ... ok
+test_stopped_pod_waits_and_resumes (test_environments.Rules.test_stopped_pod_waits_and_resumes) ... ok
+test_swept_contact (test_environments.Rules.test_swept_contact) ... ok
+test_unit_identity_short_linked (test_environments.Rules.test_unit_identity_short_linked) ... ok
+
+----------------------------------------------------------------------
+Ran 24 tests in 0.330s
+
+OK

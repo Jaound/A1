@@ -200,6 +200,15 @@ class Rules(unittest.TestCase):
         self.assertEqual(r["seconds"],100)
         self.assertEqual(r["outcome"],"timeout")
 
+    def test_initial_geometry_has_clearance(self):
+        for hazard in ("asteroid","flare"):
+            for budget in (100,200,300):
+                b=EnvironmentBattle(legacy.roster(budget),legacy.roster(budget),171800,hazard=hazard,heroes=False)
+                for ship in b.ships:
+                    for body in b.bodies:
+                        import math
+                        self.assertGreater(math.dist(ship.pos,body["pos"]),body["radius"]+ship.d["radius"])
+
     def test_unit_identity_short_linked(self):
         b=EnvironmentBattle(legacy.roster(100),legacy.roster(100),171800,hazard="flare",
                             mode="assault",heroes=True,duration=10,retreat=False)

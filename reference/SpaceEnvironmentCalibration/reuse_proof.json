@@ -1,0 +1,12 @@
+{
+  "source_code_commit": "1bd1691852a37bdcdb7a321ac4399f482008c5f2",
+  "source_results_sha256": "418ca029fdcc0ad2fedadd3bc046d6d75bfe7e827d9498fa975cd1cfbea7dfbc",
+  "old_code_sha256": "32a4e99b0194d70e3b1d9f11e30c34491b88e1965b11aaf3532902542df006e1",
+  "new_code_sha256": "5fcd6abd91680e2c5f2c6e75ec29acd5ac859e3e45d8596c575dba5cee1a456a",
+  "all_other_module_ast_equal": true,
+  "asteroid_branch_ast_equal": true,
+  "legacy_model_input_hashes_equal": true,
+  "eligible_rows": 60,
+  "excluded": "All old permanent-shelter and flare rows; not reused",
+  "reason": "Only shelter positions and an initial-clearance assertion changed; no body exists in none/radiation, asteroid branch unchanged."
+}

@@ -2,8 +2,8 @@
   "stage": "pilot",
   "status": "completed",
   "hashes": {
-    "reference/SpaceEnvironmentCalibration/environment_battle.py": "3464e4f05b8f037cb2dba314be1cba71d4ce00e7553025874fa8ba7f9c706855",
-    "reference/SpaceEnvironmentCalibration/run_environment_sweep.py": "e09a917c5f5252c48d643b27a68f92b8805f613bfff8d5cb9e2cc888cb835cc9",
+    "reference/SpaceEnvironmentCalibration/environment_battle.py": "5fcd6abd91680e2c5f2c6e75ec29acd5ac859e3e45d8596c575dba5cee1a456a",
+    "reference/SpaceEnvironmentCalibration/run_environment_sweep.py": "60f3b009df247716098dfc7ad23e66b9d7c1dcae2091b99722edc39d56c4eb5d",
     "reference/IntegratedCombat/model.py": "c41581e721a4a022bf134206fcf5d2dbafd407e1ec1c9fa717b24d42aad72891",
     "reference/IntegratedCombat/indoor.py": "a59869faa14dc48a9886956c836e1cf7120920fc027a82b9063301a802ee319b",
     "reference/IntegratedCombat/profile.json": "639f0a233a3c0ed6bf97edc407754c304c3a4ff8499f1b75ec383a78d5f60d4b"
@@ -72,6 +72,8 @@
   },
   "one_environment_per_battle": true,
   "no_ue_execution": true,
+  "reused_trials": 0,
+  "new_trials_expected": 28,
   "rows": [
     {
       "seed": 172100,
@@ -345,7 +347,7 @@
       "case": "mixed_100",
       "variant": "standard",
       "dt": 0.5,
-      "wall_seconds": 8.838,
+      "wall_seconds": 10.709,
       "initial_roster": {
         "battleship": 1,
         "carrier": 1,
@@ -639,7 +641,7 @@
       "case": "mixed_100",
       "variant": "standard",
       "dt": 0.5,
-      "wall_seconds": 8.618,
+      "wall_seconds": 8.733,
       "initial_roster": {
         "battleship": 1,
         "carrier": 1,
@@ -932,7 +934,7 @@
       "case": "mixed_100",
       "variant": "strong",
       "dt": 0.5,
-      "wall_seconds": 6.87,
+      "wall_seconds": 5.846,
       "initial_roster": {
         "battleship": 1,
         "carrier": 1,
@@ -1220,7 +1222,7 @@
       "case": "mixed_100",
       "variant": "strong",
       "dt": 0.5,
-      "wall_seconds": 6.713,
+      "wall_seconds": 5.619,
       "initial_roster": {
         "battleship": 1,
         "carrier": 1,
@@ -1520,7 +1522,7 @@
       "case": "mixed_100",
       "variant": "weak",
       "dt": 0.5,
-      "wall_seconds": 9.134,
+      "wall_seconds": 11.044,
       "initial_roster": {
         "battleship": 1,
         "carrier": 1,
@@ -1809,7 +1811,7 @@
       "case": "mixed_100",
       "variant": "weak",
       "dt": 0.5,
-      "wall_seconds": 8.478,
+      "wall_seconds": 9.13,
       "initial_roster": {
         "battleship": 1,
         "carrier": 1,
@@ -2098,7 +2100,7 @@
       "case": "mixed_100",
       "variant": "standard",
       "dt": 0.5,
-      "wall_seconds": 10.634,
+      "wall_seconds": 10.855,
       "initial_roster": {
         "battleship": 1,
         "carrier": 1,
@@ -2387,7 +2389,7 @@
       "case": "mixed_100",
       "variant": "standard",
       "dt": 0.5,
-      "wall_seconds": 8.824,
+      "wall_seconds": 10.153,
       "initial_roster": {
         "battleship": 1,
         "carrier": 1,
@@ -2676,7 +2678,7 @@
       "case": "mixed_100",
       "variant": "strong",
       "dt": 0.5,
-      "wall_seconds": 6.853,
+      "wall_seconds": 4.103,
       "initial_roster": {
         "battleship": 1,
         "carrier": 1,
@@ -2965,7 +2967,7 @@
       "case": "mixed_100",
       "variant": "strong",
       "dt": 0.5,
-      "wall_seconds": 4.089,
+      "wall_seconds": 4.274,
       "initial_roster": {
         "battleship": 1,
         "carrier": 1,
@@ -3254,7 +3256,7 @@
       "case": "mixed_100",
       "variant": "weak",
       "dt": 0.5,
-      "wall_seconds": 4.42,
+      "wall_seconds": 8.223,
       "initial_roster": {
         "battleship": 1,
         "carrier": 1,
@@ -3544,7 +3546,7 @@
       "case": "mixed_100",
       "variant": "weak",
       "dt": 0.5,
-      "wall_seconds": 10.279,
+      "wall_seconds": 4.158,
       "initial_roster": {
         "battleship": 1,
         "carrier": 1,
@@ -3564,12 +3566,12 @@
       "seed": 172100,
       "seconds": 600.0,
       "main_seconds": null,
-      "first_loss_seconds": 317.5,
+      "first_loss_seconds": 223.0,
       "winner": null,
       "outcome": "timeout",
       "remaining_cost": [
-        78,
-        94
+        86,
+        93
       ],
       "initial_cost": [
         100,
@@ -3597,39 +3599,38 @@
       ],
       "hero_states": {},
       "metrics": {
-        "env_avoidance_steps": 6793.0,
+        "env_avoidance_steps": 12374.0,
         "fighter_losses": 80.0,
-        "env_los_reposition_steps": 16406.0,
-        "shots_launched": 29327.0,
-        "env_blocked_shots": 14863.0,
-        "repair_resource_0": 526.4559568089795,
-        "repair_resource_1": 11.380269938906581,
+        "env_los_reposition_steps": 23036.0,
+        "shots_launched": 28879.0,
+        "env_blocked_shots": 16440.0,
+        "env_flare_exposure_sum": 59.0,
+        "env_flare_contacts": 154.0,
+        "env_flare_fully_covered": 95.0,
+        "env_damage_input_flare": 120554.27999999918,
+        "env_shield_damage_flare": 88488.87999999986,
+        "repair_resource_0": 629.6182489196767,
+        "repair_resource_1": 4.727718138284315,
         "repair_resource_2": 0.0,
-        "repair_work": 14036.528404644389,
-        "repair_hull_hp": 6024.289875000004,
-        "env_flare_exposure_sum": 58.526315789473685,
-        "env_flare_contacts": 151.0,
-        "env_damage_input_flare": 154425.68842105428,
-        "env_shield_damage_flare": 129804.32842105249,
-        "env_flare_fully_covered": 92.0,
-        "pd_damage_missile": 4836.0,
-        "facility_destroyed": 240.0,
-        "explosions": 36.0,
-        "env_hull_damage_flare": 11722.78347710475,
-        "env_ship_shutdowns": 25.0,
-        "wreck_hull": 11.0,
-        "wreck_env_flare": 1.0,
-        "environment_wrecks": 1.0
+        "repair_work": 16233.12286466387,
+        "facility_destroyed": 192.0,
+        "explosions": 34.0,
+        "pd_damage_missile": 1800.0,
+        "repair_hull_hp": 7960.952652499999,
+        "wreck_hull": 10.0,
+        "env_hull_damage_flare": 13094.469212716198,
+        "env_ship_shutdowns": 29.0
       },
       "damage_by_target_size": {
-        "(1, 1)": 114514.78395276639,
-        "(1, 2)": 36435.95505124801,
-        "(0, 1)": 74685.0410722406,
-        "(0, 2)": 9944.00126972059
+        "(1, 1)": 106775.04337478614,
+        "(1, 2)": 45401.63684657584,
+        "(0, 1)": 61137.99777987191,
+        "(0, 2)": 17333.575615966613,
+        "(1, 3)": 260.61420015419407
       },
       "mounts_remaining": [
-        34,
-        59
+        45,
+        57
       ],
       "transport_log": [],
       "operation_timeline": [],
@@ -3703,262 +3704,277 @@
         {
           "t": 210,
           "remaining": [
-            100,
+            99,
             100
           ]
         },
         {
           "t": 240,
           "remaining": [
-            100,
+            98,
             100
           ]
         },
         {
           "t": 270,
           "remaining": [
-            99,
+            98,
             100
           ]
         },
         {
           "t": 300,
           "remaining": [
-            99,
-            99
+            98,
+            100
           ]
         },
         {
           "t": 330,
           "remaining": [
             96,
-            98
+            100
           ]
         },
         {
           "t": 360,
           "remaining": [
-            92,
-            98
+            96,
+            100
           ]
         },
         {
           "t": 390,
           "remaining": [
-            86,
-            98
+            96,
+            99
           ]
         },
         {
           "t": 420,
           "remaining": [
-            85,
+            94,
             98
           ]
         },
         {
           "t": 450,
           "remaining": [
-            83,
-            98
+            92,
+            96
           ]
         },
         {
           "t": 480,
           "remaining": [
-            82,
-            97
+            90,
+            96
           ]
         },
         {
           "t": 510,
           "remaining": [
-            82,
-            97
+            90,
+            96
           ]
         },
         {
           "t": 540,
           "remaining": [
-            81,
+            89,
             96
           ]
         },
         {
           "t": 570,
           "remaining": [
-            80,
+            89,
             95
           ]
         },
         {
           "t": 600,
           "remaining": [
-            78,
-            94
+            86,
+            93
           ]
         }
       ],
       "surviving_ship_positions": {
         "0": [
-          187.044,
-          -35.008,
-          -190.934
+          137.409,
+          -152.457,
+          57.435
         ],
         "1": [
-          -535.0,
-          -200.0,
-          -45.0
+          -40.252,
+          -59.559,
+          -320.204
+        ],
+        "2": [
+          150.436,
+          142.971,
+          255.844
         ],
         "3": [
-          -8.015,
-          471.031,
-          -181.675
+          175.803,
+          17.276,
+          2.243
         ],
         "4": [
-          188.131,
-          7.795,
-          -89.587
+          154.43,
+          154.205,
+          272.753
         ],
         "5": [
-          -31.328,
-          395.333,
-          -1.424
+          154.08,
+          113.125,
+          234.73
         ],
         "6": [
-          197.022,
-          -126.252,
-          -23.203
+          153.117,
+          166.381,
+          272.435
         ],
         "7": [
-          118.199,
-          -46.107,
-          -107.506
+          157.827,
+          165.295,
+          275.999
         ],
-        "18": [
-          -9.305,
-          45.535,
-          305.161
+        "10": [
+          186.203,
+          33.32,
+          0.013
+        ],
+        "15": [
+          185.481,
+          32.614,
+          -7.165
+        ],
+        "19": [
+          178.091,
+          196.392,
+          170.871
+        ],
+        "21": [
+          150.645,
+          154.584,
+          264.482
+        ],
+        "24": [
+          153.342,
+          165.236,
+          272.439
         ],
         "26": [
-          326.761,
-          -29.285,
-          -57.891
-        ],
-        "27": [
           180.0,
-          200.0,
-          -148.379
-        ],
-        "28": [
-          119.321,
-          371.123,
-          -72.314
-        ],
-        "29": [
-          535.0,
-          -200.0,
-          -45.0
-        ],
-        "30": [
-          333.033,
-          261.678,
-          7.124
-        ],
-        "31": [
-          188.827,
-          408.839,
-          5.774
-        ],
-        "32": [
-          184.546,
-          384.914,
-          1.94
-        ],
-        "33": [
-          184.859,
-          391.987,
-          2.301
-        ],
-        "34": [
-          372.726,
-          255.375,
-          10.113
-        ],
-        "35": [
-          369.434,
-          258.018,
-          9.708
-        ],
-        "36": [
-          173.023,
-          369.484,
-          -2.083
-        ],
-        "38": [
-          207.219,
-          237.637,
-          213.635
-        ],
-        "39": [
-          -515.514,
-          21.832,
-          -7.916
-        ],
-        "41": [
-          -205.252,
-          416.014,
-          6.045
-        ],
-        "42": [
-          -363.024,
-          177.263,
-          80.4
-        ],
-        "43": [
-          222.581,
-          239.026,
-          214.147
-        ],
-        "44": [
-          180.0,
-          358.457,
+          356.851,
           0.0
         ],
+        "28": [
+          604.684,
+          329.587,
+          -59.196
+        ],
+        "29": [
+          607.284,
+          325.686,
+          -57.801
+        ],
+        "30": [
+          357.289,
+          410.803,
+          198.371
+        ],
+        "31": [
+          181.528,
+          204.488,
+          -182.333
+        ],
+        "32": [
+          179.781,
+          200.349,
+          -194.923
+        ],
+        "33": [
+          185.079,
+          406.494,
+          -61.283
+        ],
+        "34": [
+          182.874,
+          322.598,
+          -101.058
+        ],
+        "35": [
+          180.308,
+          377.498,
+          -12.389
+        ],
+        "41": [
+          188.564,
+          445.828,
+          -46.027
+        ],
+        "42": [
+          190.802,
+          433.676,
+          -15.394
+        ],
+        "43": [
+          226.747,
+          465.073,
+          227.897
+        ],
         "45": [
-          214.473,
-          242.557,
-          236.198
+          177.418,
+          192.101,
+          -141.038
         ],
         "46": [
-          307.08,
-          335.694,
-          -195.702
+          189.75,
+          421.285,
+          -82.398
+        ],
+        "47": [
+          178.691,
+          370.34,
+          4.849
         ],
         "48": [
-          290.515,
-          279.975,
-          -246.113
+          181.805,
+          382.142,
+          -2.595
         ],
         "49": [
-          -294.996,
-          -44.868,
-          15.263
+          178.744,
+          369.474,
+          4.743
+        ],
+        "50": [
+          184.51,
+          406.966,
+          -17.161
+        ],
+        "51": [
+          186.73,
+          453.364,
+          -26.76
         ],
         "53": [
-          174.102,
-          369.878,
-          -2.172
+          444.778,
+          293.984,
+          -36.569
         ],
         "54": [
-          75.59,
-          82.346,
-          44.795
+          183.941,
+          344.035,
+          -77.7
         ],
         "55": [
-          307.709,
-          195.651,
-          -2.95
+          307.412,
+          190.789,
+          4.228
         ]
       },
       "initial_total_hull_hp": 1218276,
@@ -3977,7 +3993,7 @@
       "case": "mixed_100",
       "variant": "standard",
       "dt": 0.5,
-      "wall_seconds": 32.574,
+      "wall_seconds": 36.107,
       "initial_roster": {
         "battleship": 1,
         "carrier": 1,
@@ -3997,11 +4013,1855 @@
       "seed": 172101,
       "seconds": 600.0,
       "main_seconds": null,
-      "first_loss_seconds": 149.5,
+      "first_loss_seconds": 116.0,
+      "winner": null,
+      "outcome": "timeout",
+      "remaining_cost": [
+        91,
+        75
+      ],
+      "initial_cost": [
+        100,
+        100
+      ],
+      "initial_heroes": [
+        0,
+        0
+      ],
+      "initial_fighters": [
+        40,
+        40
+      ],
+      "fighter_package_cost": [
+        [
+          1200,
+          240,
+          0
+        ],
+        [
+          1200,
+          240,
+          0
+        ]
+      ],
+      "hero_states": {},
+      "metrics": {
+        "env_avoidance_steps": 6894.0,
+        "fighter_losses": 80.0,
+        "env_los_reposition_steps": 16221.0,
+        "shots_launched": 29064.0,
+        "env_blocked_shots": 13392.0,
+        "pd_damage_missile": 7176.0,
+        "env_flare_exposure_sum": 37.0,
+        "env_flare_contacts": 142.0,
+        "env_flare_fully_covered": 105.0,
+        "env_damage_input_flare": 46421.75999999963,
+        "env_shield_damage_flare": 38030.359999999906,
+        "repair_resource_0": 883.9076407446465,
+        "repair_resource_1": 17.47219016108349,
+        "repair_resource_2": 0.0,
+        "repair_hull_hp": 13015.039,
+        "repair_work": 23460.699825461226,
+        "facility_destroyed": 262.0,
+        "explosions": 41.0,
+        "wreck_hull": 18.0,
+        "env_hull_damage_flare": 3813.105382394462,
+        "env_ship_shutdowns": 9.0,
+        "wreck_env_flare": 1.0,
+        "environment_wrecks": 1.0
+      },
+      "damage_by_target_size": {
+        "(0, 1)": 135986.33115086198,
+        "(1, 1)": 81436.75927047692,
+        "(0, 2)": 72784.75850119279,
+        "(1, 2)": 11171.65052946678
+      },
+      "mounts_remaining": [
+        55,
+        32
+      ],
+      "transport_log": [],
+      "operation_timeline": [],
+      "target_survival_after_entry": null,
+      "target_wreck_before_exit": false,
+      "environment": "flare",
+      "active_environment_count": 1,
+      "parameters": {
+        "warning": 45.0,
+        "period": 210.0,
+        "speed": 1200.0,
+        "thickness": 60.0,
+        "shield_fraction": 0.35,
+        "emp_seconds": 3.0,
+        "radar_seconds": 6.0,
+        "radar_scale": 0.5,
+        "cover_radius": 120.0
+      },
+      "avoidance": true,
+      "resistance": 0,
+      "environment_trace": [
+        {
+          "t": 0,
+          "remaining": [
+            100,
+            100
+          ]
+        },
+        {
+          "t": 30,
+          "remaining": [
+            100,
+            100
+          ]
+        },
+        {
+          "t": 60,
+          "remaining": [
+            100,
+            100
+          ]
+        },
+        {
+          "t": 90,
+          "remaining": [
+            100,
+            100
+          ]
+        },
+        {
+          "t": 120,
+          "remaining": [
+            100,
+            99
+          ]
+        },
+        {
+          "t": 150,
+          "remaining": [
+            100,
+            99
+          ]
+        },
+        {
+          "t": 180,
+          "remaining": [
+            100,
+            98
+          ]
+        },
+        {
+          "t": 210,
+          "remaining": [
+            100,
+            97
+          ]
+        },
+        {
+          "t": 240,
+          "remaining": [
+            99,
+            97
+          ]
+        },
+        {
+          "t": 270,
+          "remaining": [
+            99,
+            95
+          ]
+        },
+        {
+          "t": 300,
+          "remaining": [
+            98,
+            95
+          ]
+        },
+        {
+          "t": 330,
+          "remaining": [
+            97,
+            93
+          ]
+        },
+        {
+          "t": 360,
+          "remaining": [
+            97,
+            92
+          ]
+        },
+        {
+          "t": 390,
+          "remaining": [
+            97,
+            83
+          ]
+        },
+        {
+          "t": 420,
+          "remaining": [
+            96,
+            83
+          ]
+        },
+        {
+          "t": 450,
+          "remaining": [
+            94,
+            82
+          ]
+        },
+        {
+          "t": 480,
+          "remaining": [
+            94,
+            78
+          ]
+        },
+        {
+          "t": 510,
+          "remaining": [
+            94,
+            77
+          ]
+        },
+        {
+          "t": 540,
+          "remaining": [
+            94,
+            76
+          ]
+        },
+        {
+          "t": 570,
+          "remaining": [
+            92,
+            76
+          ]
+        },
+        {
+          "t": 600,
+          "remaining": [
+            91,
+            75
+          ]
+        }
+      ],
+      "surviving_ship_positions": {
+        "0": [
+          -322.539,
+          298.749,
+          146.471
+        ],
+        "1": [
+          -614.984,
+          264.962,
+          -9.749
+        ],
+        "2": [
+          -300.471,
+          284.823,
+          280.001
+        ],
+        "3": [
+          -198.217,
+          246.693,
+          -239.655
+        ],
+        "4": [
+          -275.561,
+          198.139,
+          -246.58
+        ],
+        "5": [
+          -178.19,
+          385.841,
+          1.717
+        ],
+        "6": [
+          -262.272,
+          209.906,
+          -268.884
+        ],
+        "7": [
+          -206.124,
+          300.821,
+          189.153
+        ],
+        "8": [
+          -214.808,
+          291.97,
+          223.429
+        ],
+        "12": [
+          -207.77,
+          276.229,
+          211.205
+        ],
+        "13": [
+          -210.482,
+          284.679,
+          222.819
+        ],
+        "14": [
+          -182.536,
+          362.907,
+          -1.385
+        ],
+        "15": [
+          -194.426,
+          258.188,
+          -210.1
+        ],
+        "16": [
+          -219.314,
+          302.317,
+          232.272
+        ],
+        "18": [
+          -182.164,
+          367.133,
+          0.315
+        ],
+        "20": [
+          -295.498,
+          190.709,
+          -239.004
+        ],
+        "21": [
+          -272.439,
+          246.421,
+          -287.061
+        ],
+        "24": [
+          -267.856,
+          268.131,
+          -303.17
+        ],
+        "27": [
+          -307.774,
+          197.004,
+          -1.051
+        ],
+        "28": [
+          -92.168,
+          -216.757,
+          86.678
+        ],
+        "29": [
+          -78.277,
+          -215.58,
+          -76.823
+        ],
+        "31": [
+          112.175,
+          341.775,
+          -4.735
+        ],
+        "32": [
+          -131.712,
+          -29.594,
+          71.227
+        ],
+        "33": [
+          -149.566,
+          -77.237,
+          7.58
+        ],
+        "34": [
+          -152.66,
+          -68.308,
+          -2.5
+        ],
+        "35": [
+          -147.099,
+          36.155,
+          115.571
+        ]
+      },
+      "initial_total_hull_hp": 1218276,
+      "asteroids_remaining": null,
+      "aircraft_surviving": 0,
+      "aircraft_records": 80,
+      "hero_id_set_unchanged": true,
+      "pending_pods": 0,
+      "limitations": [
+        "legacy aggregate fighter damage/PD; per-ID exposure uses proxy flight",
+        "temporary room/armor face samples, not UE mesh raycasts",
+        "blackhole contact uses sphere surface; tow is not implemented",
+        "flare eligibility uses shield state before/after pulse; life support and indoor units not EMP-stunned"
+      ],
+      "stage": "pilot",
+      "case": "mixed_100",
+      "variant": "standard",
+      "dt": 0.5,
+      "wall_seconds": 21.159,
+      "initial_roster": {
+        "battleship": 1,
+        "carrier": 1,
+        "vector": 1,
+        "bastion": 1,
+        "cruiser": 2,
+        "air_defense": 1,
+        "radar": 1,
+        "corvette": 10,
+        "frigate": 8,
+        "repair": 1,
+        "assault": 1
+      },
+      "initial_signature": "100:mixed:0:none:172101"
+    },
+    {
+      "seed": 172100,
+      "seconds": 600.0,
+      "main_seconds": null,
+      "first_loss_seconds": 232.0,
+      "winner": null,
+      "outcome": "timeout",
+      "remaining_cost": [
+        97,
+        98
+      ],
+      "initial_cost": [
+        100,
+        100
+      ],
+      "initial_heroes": [
+        0,
+        0
+      ],
+      "initial_fighters": [
+        40,
+        40
+      ],
+      "fighter_package_cost": [
+        [
+          1200,
+          240,
+          0
+        ],
+        [
+          1200,
+          240,
+          0
+        ]
+      ],
+      "hero_states": {},
+      "metrics": {
+        "env_avoidance_steps": 22954.0,
+        "fighter_losses": 80.0,
+        "env_los_reposition_steps": 29545.0,
+        "shots_launched": 34863.0,
+        "env_blocked_shots": 24224.0,
+        "env_flare_exposure_sum": 71.0,
+        "env_flare_contacts": 165.0,
+        "env_flare_fully_covered": 94.0,
+        "env_damage_input_flare": 264448.79999999725,
+        "env_shield_damage_flare": 210418.39999999903,
+        "pd_damage_missile": 3120.0,
+        "repair_resource_0": 581.0954334318121,
+        "repair_resource_1": 37.705815476983545,
+        "repair_resource_2": 0.0,
+        "repair_work": 14585.434153363729,
+        "repair_hull_hp": 8207.416788812507,
+        "facility_destroyed": 99.0,
+        "explosions": 17.0,
+        "wreck_hull": 4.0,
+        "env_hull_damage_flare": 20526.699903022643,
+        "env_ship_shutdowns": 43.0
+      },
+      "damage_by_target_size": {
+        "(0, 1)": 41427.7717729106,
+        "(1, 1)": 54932.87103028211,
+        "(0, 2)": 26627.85139025548,
+        "(1, 2)": 9743.370403991488,
+        "(0, 3)": 5338.596886831087
+      },
+      "mounts_remaining": [
+        65,
+        67
+      ],
+      "transport_log": [],
+      "operation_timeline": [],
+      "target_survival_after_entry": null,
+      "target_wreck_before_exit": false,
+      "environment": "flare",
+      "active_environment_count": 1,
+      "parameters": {
+        "warning": 60.0,
+        "period": 180.0,
+        "speed": 1200.0,
+        "thickness": 90.0,
+        "shield_fraction": 0.5,
+        "emp_seconds": 5.0,
+        "radar_seconds": 8.0,
+        "radar_scale": 0.35,
+        "cover_radius": 120.0
+      },
+      "avoidance": true,
+      "resistance": 0,
+      "environment_trace": [
+        {
+          "t": 0,
+          "remaining": [
+            100,
+            100
+          ]
+        },
+        {
+          "t": 30,
+          "remaining": [
+            100,
+            100
+          ]
+        },
+        {
+          "t": 60,
+          "remaining": [
+            100,
+            100
+          ]
+        },
+        {
+          "t": 90,
+          "remaining": [
+            100,
+            100
+          ]
+        },
+        {
+          "t": 120,
+          "remaining": [
+            100,
+            100
+          ]
+        },
+        {
+          "t": 150,
+          "remaining": [
+            100,
+            100
+          ]
+        },
+        {
+          "t": 180,
+          "remaining": [
+            100,
+            100
+          ]
+        },
+        {
+          "t": 210,
+          "remaining": [
+            100,
+            100
+          ]
+        },
+        {
+          "t": 240,
+          "remaining": [
+            99,
+            100
+          ]
+        },
+        {
+          "t": 270,
+          "remaining": [
+            99,
+            100
+          ]
+        },
+        {
+          "t": 300,
+          "remaining": [
+            99,
+            100
+          ]
+        },
+        {
+          "t": 330,
+          "remaining": [
+            99,
+            100
+          ]
+        },
+        {
+          "t": 360,
+          "remaining": [
+            99,
+            100
+          ]
+        },
+        {
+          "t": 390,
+          "remaining": [
+            99,
+            99
+          ]
+        },
+        {
+          "t": 420,
+          "remaining": [
+            99,
+            99
+          ]
+        },
+        {
+          "t": 450,
+          "remaining": [
+            99,
+            99
+          ]
+        },
+        {
+          "t": 480,
+          "remaining": [
+            99,
+            99
+          ]
+        },
+        {
+          "t": 510,
+          "remaining": [
+            99,
+            99
+          ]
+        },
+        {
+          "t": 540,
+          "remaining": [
+            99,
+            98
+          ]
+        },
+        {
+          "t": 570,
+          "remaining": [
+            98,
+            98
+          ]
+        },
+        {
+          "t": 600,
+          "remaining": [
+            97,
+            98
+          ]
+        }
+      ],
+      "surviving_ship_positions": {
+        "0": [
+          372.0,
+          200.0,
+          0.0
+        ],
+        "1": [
+          377.0,
+          200.0,
+          0.0
+        ],
+        "2": [
+          179.74,
+          201.173,
+          -158.505
+        ],
+        "3": [
+          178.929,
+          42.705,
+          0.486
+        ],
+        "4": [
+          179.988,
+          34.951,
+          0.06
+        ],
+        "5": [
+          343.0,
+          200.0,
+          0.0
+        ],
+        "6": [
+          179.497,
+          40.337,
+          0.483
+        ],
+        "7": [
+          179.698,
+          31.214,
+          -1.225
+        ],
+        "8": [
+          178.795,
+          49.714,
+          7.011
+        ],
+        "9": [
+          182.587,
+          190.736,
+          -160.181
+        ],
+        "10": [
+          179.982,
+          200.061,
+          -151.408
+        ],
+        "11": [
+          220.192,
+          106.146,
+          -278.663
+        ],
+        "12": [
+          179.441,
+          201.512,
+          147.608
+        ],
+        "14": [
+          -180.63,
+          200.924,
+          145.784
+        ],
+        "15": [
+          -180.228,
+          48.637,
+          0.136
+        ],
+        "16": [
+          278.114,
+          158.711,
+          125.742
+        ],
+        "17": [
+          -180.906,
+          51.524,
+          -0.62
+        ],
+        "18": [
+          181.128,
+          40.254,
+          -0.567
+        ],
+        "21": [
+          207.315,
+          108.731,
+          -272.335
+        ],
+        "22": [
+          178.269,
+          56.175,
+          0.868
+        ],
+        "23": [
+          180.312,
+          44.285,
+          -0.625
+        ],
+        "24": [
+          192.769,
+          101.185,
+          297.364
+        ],
+        "25": [
+          179.377,
+          202.803,
+          -151.703
+        ],
+        "26": [
+          180.169,
+          198.9,
+          153.615
+        ],
+        "27": [
+          -36.0,
+          200.0,
+          0.0
+        ],
+        "28": [
+          372.0,
+          200.0,
+          0.0
+        ],
+        "29": [
+          377.0,
+          200.0,
+          0.0
+        ],
+        "30": [
+          181.563,
+          201.599,
+          -161.141
+        ],
+        "31": [
+          -19.4,
+          200.0,
+          0.0
+        ],
+        "32": [
+          185.407,
+          204.345,
+          167.775
+        ],
+        "33": [
+          177.203,
+          197.652,
+          164.472
+        ],
+        "34": [
+          180.838,
+          201.412,
+          163.627
+        ],
+        "35": [
+          187.811,
+          450.846,
+          0.363
+        ],
+        "36": [
+          -178.573,
+          202.047,
+          151.316
+        ],
+        "37": [
+          180.0,
+          351.508,
+          0.0
+        ],
+        "38": [
+          179.994,
+          352.028,
+          0.167
+        ],
+        "39": [
+          -180.135,
+          350.782,
+          0.003
+        ],
+        "41": [
+          179.682,
+          199.029,
+          150.547
+        ],
+        "42": [
+          179.992,
+          199.973,
+          -155.326
+        ],
+        "43": [
+          183.871,
+          439.311,
+          -3.893
+        ],
+        "44": [
+          -183.425,
+          350.752,
+          1.871
+        ],
+        "45": [
+          -181.262,
+          350.908,
+          0.07
+        ],
+        "46": [
+          -35.0,
+          200.0,
+          0.0
+        ],
+        "47": [
+          180.193,
+          200.336,
+          153.742
+        ],
+        "48": [
+          325.0,
+          200.0,
+          0.0
+        ],
+        "49": [
+          177.009,
+          194.371,
+          147.435
+        ],
+        "50": [
+          185.713,
+          372.855,
+          -234.393
+        ],
+        "51": [
+          181.982,
+          204.718,
+          156.158
+        ],
+        "53": [
+          179.799,
+          349.338,
+          0.036
+        ],
+        "54": [
+          180.046,
+          356.487,
+          0.791
+        ],
+        "55": [
+          324.0,
+          200.0,
+          0.0
+        ]
+      },
+      "initial_total_hull_hp": 1218276,
+      "asteroids_remaining": null,
+      "aircraft_surviving": 0,
+      "aircraft_records": 80,
+      "hero_id_set_unchanged": true,
+      "pending_pods": 0,
+      "limitations": [
+        "legacy aggregate fighter damage/PD; per-ID exposure uses proxy flight",
+        "temporary room/armor face samples, not UE mesh raycasts",
+        "blackhole contact uses sphere surface; tow is not implemented",
+        "flare eligibility uses shield state before/after pulse; life support and indoor units not EMP-stunned"
+      ],
+      "stage": "pilot",
+      "case": "mixed_100",
+      "variant": "strong",
+      "dt": 0.5,
+      "wall_seconds": 21.097,
+      "initial_roster": {
+        "battleship": 1,
+        "carrier": 1,
+        "vector": 1,
+        "bastion": 1,
+        "cruiser": 2,
+        "air_defense": 1,
+        "radar": 1,
+        "corvette": 10,
+        "frigate": 8,
+        "repair": 1,
+        "assault": 1
+      },
+      "initial_signature": "100:mixed:0:none:172100"
+    },
+    {
+      "seed": 172101,
+      "seconds": 600.0,
+      "main_seconds": null,
+      "first_loss_seconds": 164.5,
+      "winner": null,
+      "outcome": "timeout",
+      "remaining_cost": [
+        90,
+        93
+      ],
+      "initial_cost": [
+        100,
+        100
+      ],
+      "initial_heroes": [
+        0,
+        0
+      ],
+      "initial_fighters": [
+        40,
+        40
+      ],
+      "fighter_package_cost": [
+        [
+          1200,
+          240,
+          0
+        ],
+        [
+          1200,
+          240,
+          0
+        ]
+      ],
+      "hero_states": {},
+      "metrics": {
+        "env_avoidance_steps": 22323.0,
+        "fighter_losses": 80.0,
+        "env_los_reposition_steps": 30742.0,
+        "shots_launched": 35327.0,
+        "env_blocked_shots": 25888.0,
+        "pd_damage_missile": 1536.0,
+        "repair_resource_0": 551.6465866649752,
+        "repair_resource_1": 47.95813808548998,
+        "repair_resource_2": 0.0,
+        "repair_hull_hp": 8308.544452890626,
+        "repair_work": 14394.471367724453,
+        "env_flare_exposure_sum": 52.0,
+        "env_flare_contacts": 157.0,
+        "env_flare_fully_covered": 105.0,
+        "env_damage_input_flare": 167833.59999999954,
+        "env_shield_damage_flare": 120794.4000000001,
+        "facility_destroyed": 115.0,
+        "explosions": 18.0,
+        "wreck_hull": 7.0,
+        "env_hull_damage_flare": 18675.531532347595,
+        "env_ship_shutdowns": 33.0
+      },
+      "damage_by_target_size": {
+        "(0, 1)": 51260.813632034165,
+        "(1, 1)": 55680.706925767874,
+        "(0, 2)": 12856.734679985002,
+        "(1, 2)": 31302.51081752866,
+        "(0, 3)": 201.20905136718747
+      },
+      "mounts_remaining": [
+        60,
+        61
+      ],
+      "transport_log": [],
+      "operation_timeline": [],
+      "target_survival_after_entry": null,
+      "target_wreck_before_exit": false,
+      "environment": "flare",
+      "active_environment_count": 1,
+      "parameters": {
+        "warning": 60.0,
+        "period": 180.0,
+        "speed": 1200.0,
+        "thickness": 90.0,
+        "shield_fraction": 0.5,
+        "emp_seconds": 5.0,
+        "radar_seconds": 8.0,
+        "radar_scale": 0.35,
+        "cover_radius": 120.0
+      },
+      "avoidance": true,
+      "resistance": 0,
+      "environment_trace": [
+        {
+          "t": 0,
+          "remaining": [
+            100,
+            100
+          ]
+        },
+        {
+          "t": 30,
+          "remaining": [
+            100,
+            100
+          ]
+        },
+        {
+          "t": 60,
+          "remaining": [
+            100,
+            100
+          ]
+        },
+        {
+          "t": 90,
+          "remaining": [
+            100,
+            100
+          ]
+        },
+        {
+          "t": 120,
+          "remaining": [
+            100,
+            100
+          ]
+        },
+        {
+          "t": 150,
+          "remaining": [
+            100,
+            100
+          ]
+        },
+        {
+          "t": 180,
+          "remaining": [
+            100,
+            99
+          ]
+        },
+        {
+          "t": 210,
+          "remaining": [
+            100,
+            98
+          ]
+        },
+        {
+          "t": 240,
+          "remaining": [
+            100,
+            96
+          ]
+        },
+        {
+          "t": 270,
+          "remaining": [
+            100,
+            96
+          ]
+        },
+        {
+          "t": 300,
+          "remaining": [
+            100,
+            96
+          ]
+        },
+        {
+          "t": 330,
+          "remaining": [
+            100,
+            96
+          ]
+        },
+        {
+          "t": 360,
+          "remaining": [
+            100,
+            96
+          ]
+        },
+        {
+          "t": 390,
+          "remaining": [
+            99,
+            94
+          ]
+        },
+        {
+          "t": 420,
+          "remaining": [
+            99,
+            94
+          ]
+        },
+        {
+          "t": 450,
+          "remaining": [
+            99,
+            94
+          ]
+        },
+        {
+          "t": 480,
+          "remaining": [
+            99,
+            94
+          ]
+        },
+        {
+          "t": 510,
+          "remaining": [
+            99,
+            93
+          ]
+        },
+        {
+          "t": 540,
+          "remaining": [
+            93,
+            93
+          ]
+        },
+        {
+          "t": 570,
+          "remaining": [
+            92,
+            93
+          ]
+        },
+        {
+          "t": 600,
+          "remaining": [
+            90,
+            93
+          ]
+        }
+      ],
+      "surviving_ship_positions": {
+        "0": [
+          -181.157,
+          196.392,
+          -182.027
+        ],
+        "1": [
+          -180.069,
+          387.271,
+          -2.945
+        ],
+        "2": [
+          -180.754,
+          368.516,
+          -1.705
+        ],
+        "3": [
+          -180.033,
+          202.801,
+          -163.331
+        ],
+        "4": [
+          -179.996,
+          365.267,
+          0.327
+        ],
+        "5": [
+          -179.432,
+          197.592,
+          -163.198
+        ],
+        "6": [
+          -179.95,
+          360.866,
+          0.406
+        ],
+        "8": [
+          -179.621,
+          197.391,
+          -139.659
+        ],
+        "9": [
+          -180.022,
+          200.243,
+          -151.246
+        ],
+        "10": [
+          -179.821,
+          355.107,
+          1.916
+        ],
+        "14": [
+          -185.097,
+          272.796,
+          -254.306
+        ],
+        "15": [
+          -180.013,
+          200.028,
+          -151.564
+        ],
+        "16": [
+          -179.97,
+          346.838,
+          3.261
+        ],
+        "17": [
+          -179.862,
+          347.984,
+          1.127
+        ],
+        "18": [
+          -180.11,
+          357.88,
+          -0.326
+        ],
+        "19": [
+          -183.591,
+          381.053,
+          289.941
+        ],
+        "20": [
+          -179.822,
+          356.527,
+          1.498
+        ],
+        "21": [
+          -179.749,
+          358.847,
+          2.056
+        ],
+        "23": [
+          -179.969,
+          354.02,
+          0.281
+        ],
+        "24": [
+          -181.66,
+          209.07,
+          159.059
+        ],
+        "26": [
+          -179.99,
+          199.475,
+          152.4
+        ],
+        "27": [
+          -324.0,
+          200.0,
+          -0.0
+        ],
+        "28": [
+          -12.0,
+          200.0,
+          -0.0
+        ],
+        "29": [
+          -179.986,
+          11.342,
+          0.164
+        ],
+        "30": [
+          -179.804,
+          32.549,
+          1.28
+        ],
+        "31": [
+          -182.212,
+          197.367,
+          168.202
+        ],
+        "32": [
+          -180.15,
+          203.06,
+          160.541
+        ],
+        "33": [
+          -179.888,
+          195.162,
+          167.241
+        ],
+        "34": [
+          -180.076,
+          39.938,
+          -0.513
+        ],
+        "35": [
+          -179.975,
+          197.684,
+          163.925
+        ],
+        "36": [
+          -180.0,
+          43.333,
+          -0.0
+        ],
+        "38": [
+          -179.71,
+          37.134,
+          1.931
+        ],
+        "40": [
+          -180.022,
+          200.44,
+          148.608
+        ],
+        "42": [
+          -179.971,
+          47.368,
+          0.19
+        ],
+        "44": [
+          -180.0,
+          41.898,
+          0.002
+        ],
+        "45": [
+          -180.0,
+          57.659,
+          -0.0
+        ],
+        "46": [
+          -179.897,
+          41.062,
+          0.536
+        ],
+        "47": [
+          -180.234,
+          55.696,
+          -1.558
+        ],
+        "49": [
+          -179.972,
+          199.419,
+          156.562
+        ],
+        "50": [
+          -180.202,
+          202.578,
+          146.919
+        ],
+        "51": [
+          -179.991,
+          199.573,
+          156.106
+        ],
+        "52": [
+          -180.196,
+          54.236,
+          -1.302
+        ],
+        "53": [
+          -179.957,
+          199.316,
+          154.893
+        ]
+      },
+      "initial_total_hull_hp": 1218276,
+      "asteroids_remaining": null,
+      "aircraft_surviving": 0,
+      "aircraft_records": 80,
+      "hero_id_set_unchanged": true,
+      "pending_pods": 0,
+      "limitations": [
+        "legacy aggregate fighter damage/PD; per-ID exposure uses proxy flight",
+        "temporary room/armor face samples, not UE mesh raycasts",
+        "blackhole contact uses sphere surface; tow is not implemented",
+        "flare eligibility uses shield state before/after pulse; life support and indoor units not EMP-stunned"
+      ],
+      "stage": "pilot",
+      "case": "mixed_100",
+      "variant": "strong",
+      "dt": 0.5,
+      "wall_seconds": 19.417,
+      "initial_roster": {
+        "battleship": 1,
+        "carrier": 1,
+        "vector": 1,
+        "bastion": 1,
+        "cruiser": 2,
+        "air_defense": 1,
+        "radar": 1,
+        "corvette": 10,
+        "frigate": 8,
+        "repair": 1,
+        "assault": 1
+      },
+      "initial_signature": "100:mixed:0:none:172101"
+    },
+    {
+      "seed": 172100,
+      "seconds": 600.0,
+      "main_seconds": null,
+      "first_loss_seconds": 171.0,
       "winner": null,
       "outcome": "timeout",
       "remaining_cost": [
         87,
+        88
+      ],
+      "initial_cost": [
+        100,
+        100
+      ],
+      "initial_heroes": [
+        0,
+        0
+      ],
+      "initial_fighters": [
+        40,
+        40
+      ],
+      "fighter_package_cost": [
+        [
+          1200,
+          240,
+          0
+        ],
+        [
+          1200,
+          240,
+          0
+        ]
+      ],
+      "hero_states": {},
+      "metrics": {
+        "env_avoidance_steps": 10303.0,
+        "fighter_losses": 80.0,
+        "env_los_reposition_steps": 21447.0,
+        "shots_launched": 29400.0,
+        "env_blocked_shots": 15884.0,
+        "env_flare_exposure_sum": 55.0,
+        "env_flare_contacts": 144.0,
+        "env_flare_fully_covered": 89.0,
+        "env_damage_input_flare": 58578.07999999948,
+        "env_shield_damage_flare": 45513.96000000011,
+        "repair_resource_0": 148.37425260053945,
+        "repair_resource_1": 1.7077672416128196,
+        "repair_resource_2": 0.0,
+        "repair_work": 3611.2070012618024,
+        "facility_destroyed": 242.0,
+        "explosions": 41.0,
+        "pd_damage_missile": 4788.0,
+        "repair_hull_hp": 1185.3588048437496,
+        "wreck_hull": 15.0,
+        "env_hull_damage_flare": 6330.3143090776975,
+        "env_ship_shutdowns": 25.0,
+        "wreck_core": 2.0
+      },
+      "damage_by_target_size": {
+        "(1, 1)": 108934.20366254753,
+        "(1, 2)": 19154.144073429892,
+        "(0, 1)": 86839.31285097924,
+        "(0, 2)": 21467.307996489184
+      },
+      "mounts_remaining": [
+        47,
+        47
+      ],
+      "transport_log": [],
+      "operation_timeline": [],
+      "target_survival_after_entry": null,
+      "target_wreck_before_exit": false,
+      "environment": "flare",
+      "active_environment_count": 1,
+      "parameters": {
+        "warning": 45.0,
+        "period": 240.0,
+        "speed": 1200.0,
+        "thickness": 60.0,
+        "shield_fraction": 0.2,
+        "emp_seconds": 2.0,
+        "radar_seconds": 4.0,
+        "radar_scale": 0.75,
+        "cover_radius": 120.0
+      },
+      "avoidance": true,
+      "resistance": 0,
+      "environment_trace": [
+        {
+          "t": 0,
+          "remaining": [
+            100,
+            100
+          ]
+        },
+        {
+          "t": 30,
+          "remaining": [
+            100,
+            100
+          ]
+        },
+        {
+          "t": 60,
+          "remaining": [
+            100,
+            100
+          ]
+        },
+        {
+          "t": 90,
+          "remaining": [
+            100,
+            100
+          ]
+        },
+        {
+          "t": 120,
+          "remaining": [
+            100,
+            100
+          ]
+        },
+        {
+          "t": 150,
+          "remaining": [
+            100,
+            100
+          ]
+        },
+        {
+          "t": 180,
+          "remaining": [
+            99,
+            100
+          ]
+        },
+        {
+          "t": 210,
+          "remaining": [
+            99,
+            100
+          ]
+        },
+        {
+          "t": 240,
+          "remaining": [
+            97,
+            100
+          ]
+        },
+        {
+          "t": 270,
+          "remaining": [
+            96,
+            99
+          ]
+        },
+        {
+          "t": 300,
+          "remaining": [
+            96,
+            99
+          ]
+        },
+        {
+          "t": 330,
+          "remaining": [
+            95,
+            97
+          ]
+        },
+        {
+          "t": 360,
+          "remaining": [
+            95,
+            97
+          ]
+        },
+        {
+          "t": 390,
+          "remaining": [
+            95,
+            96
+          ]
+        },
+        {
+          "t": 420,
+          "remaining": [
+            95,
+            95
+          ]
+        },
+        {
+          "t": 450,
+          "remaining": [
+            92,
+            93
+          ]
+        },
+        {
+          "t": 480,
+          "remaining": [
+            92,
+            92
+          ]
+        },
+        {
+          "t": 510,
+          "remaining": [
+            92,
+            92
+          ]
+        },
+        {
+          "t": 540,
+          "remaining": [
+            91,
+            89
+          ]
+        },
+        {
+          "t": 570,
+          "remaining": [
+            89,
+            88
+          ]
+        },
+        {
+          "t": 600,
+          "remaining": [
+            87,
+            88
+          ]
+        }
+      ],
+      "surviving_ship_positions": {
+        "0": [
+          -21.06,
+          199.079,
+          4.435
+        ],
+        "1": [
+          21.206,
+          110.584,
+          -311.711
+        ],
+        "2": [
+          93.924,
+          123.06,
+          -272.689
+        ],
+        "3": [
+          -68.165,
+          421.883,
+          8.166
+        ],
+        "4": [
+          -75.158,
+          394.567,
+          30.807
+        ],
+        "5": [
+          110.164,
+          83.778,
+          139.109
+        ],
+        "6": [
+          137.951,
+          89.297,
+          175.888
+        ],
+        "7": [
+          -74.137,
+          413.972,
+          35.266
+        ],
+        "8": [
+          45.018,
+          172.183,
+          -300.272
+        ],
+        "21": [
+          95.596,
+          60.544,
+          -206.595
+        ],
+        "22": [
+          162.706,
+          195.494,
+          190.669
+        ],
+        "23": [
+          142.776,
+          -43.988,
+          4.31
+        ],
+        "24": [
+          111.859,
+          -83.717,
+          24.641
+        ],
+        "25": [
+          177.455,
+          140.935,
+          126.838
+        ],
+        "27": [
+          58.32,
+          201.071,
+          39.118
+        ],
+        "28": [
+          290.415,
+          485.526,
+          81.857
+        ],
+        "29": [
+          570.912,
+          312.636,
+          -4.395
+        ],
+        "30": [
+          183.477,
+          200.977,
+          173.701
+        ],
+        "31": [
+          228.315,
+          387.912,
+          62.166
+        ],
+        "32": [
+          292.597,
+          263.946,
+          -92.506
+        ],
+        "33": [
+          269.33,
+          213.474,
+          -306.823
+        ],
+        "34": [
+          290.805,
+          269.185,
+          282.134
+        ],
+        "35": [
+          313.747,
+          87.619,
+          -282.987
+        ],
+        "42": [
+          322.459,
+          250.922,
+          327.299
+        ],
+        "43": [
+          313.905,
+          493.372,
+          -31.603
+        ],
+        "46": [
+          254.264,
+          393.747,
+          -29.825
+        ],
+        "47": [
+          226.738,
+          446.027,
+          5.479
+        ],
+        "48": [
+          272.171,
+          203.532,
+          -328.101
+        ],
+        "51": [
+          232.639,
+          361.246,
+          74.685
+        ],
+        "54": [
+          222.299,
+          292.673,
+          104.263
+        ],
+        "55": [
+          307.806,
+          198.575,
+          1.347
+        ]
+      },
+      "initial_total_hull_hp": 1218276,
+      "asteroids_remaining": null,
+      "aircraft_surviving": 0,
+      "aircraft_records": 80,
+      "hero_id_set_unchanged": true,
+      "pending_pods": 0,
+      "limitations": [
+        "legacy aggregate fighter damage/PD; per-ID exposure uses proxy flight",
+        "temporary room/armor face samples, not UE mesh raycasts",
+        "blackhole contact uses sphere surface; tow is not implemented",
+        "flare eligibility uses shield state before/after pulse; life support and indoor units not EMP-stunned"
+      ],
+      "stage": "pilot",
+      "case": "mixed_100",
+      "variant": "weak",
+      "dt": 0.5,
+      "wall_seconds": 43.477,
+      "initial_roster": {
+        "battleship": 1,
+        "carrier": 1,
+        "vector": 1,
+        "bastion": 1,
+        "cruiser": 2,
+        "air_defense": 1,
+        "radar": 1,
+        "corvette": 10,
+        "frigate": 8,
+        "repair": 1,
+        "assault": 1
+      },
+      "initial_signature": "100:mixed:0:none:172100"
+    },
+    {
+      "seed": 172101,
+      "seconds": 600.0,
+      "main_seconds": null,
+      "first_loss_seconds": 234.5,
+      "winner": null,
+      "outcome": "timeout",
+      "remaining_cost": [
+        89,
         84
       ],
       "initial_cost": [
@@ -4030,38 +5890,38 @@
       ],
       "hero_states": {},
       "metrics": {
-        "env_avoidance_steps": 5482.0,
+        "env_avoidance_steps": 7417.0,
         "fighter_losses": 80.0,
-        "env_los_reposition_steps": 17107.0,
-        "shots_launched": 28693.0,
-        "env_blocked_shots": 14933.0,
-        "pd_damage_missile": 3888.0,
-        "repair_resource_0": 490.7298114402647,
-        "repair_resource_1": 3.92521868708799,
+        "env_los_reposition_steps": 18208.0,
+        "shots_launched": 30149.0,
+        "env_blocked_shots": 14809.0,
+        "pd_damage_missile": 7440.0,
+        "env_flare_exposure_sum": 35.0,
+        "env_flare_contacts": 144.0,
+        "env_flare_fully_covered": 109.0,
+        "env_damage_input_flare": 54616.31999999966,
+        "env_shield_damage_flare": 50572.91999999987,
+        "repair_resource_0": 938.6866688557042,
+        "repair_resource_1": 0.0,
         "repair_resource_2": 0.0,
-        "repair_work": 13408.691668241081,
-        "repair_hull_hp": 8515.20520489063,
-        "env_flare_exposure_sum": 34.0,
-        "env_flare_contacts": 149.0,
-        "env_damage_input_flare": 74662.27999999926,
-        "env_shield_damage_flare": 66062.47999999979,
-        "env_flare_fully_covered": 115.0,
-        "facility_destroyed": 220.0,
-        "explosions": 38.0,
-        "wreck_hull": 17.0,
-        "env_hull_damage_flare": 4115.870863812505,
-        "env_ship_shutdowns": 17.0
+        "repair_hull_hp": 14747.874668125001,
+        "repair_work": 24676.981892174583,
+        "facility_destroyed": 264.0,
+        "explosions": 43.0,
+        "wreck_hull": 16.0,
+        "env_hull_damage_flare": 2202.213369970394,
+        "env_ship_shutdowns": 13.0
       },
       "damage_by_target_size": {
-        "(0, 1)": 86058.850875461,
-        "(1, 1)": 90740.66718010428,
-        "(0, 2)": 22527.844473884685,
-        "(1, 2)": 27234.35760197587,
-        "(0, 3)": 2897.9307566625093
+        "(0, 1)": 123184.65216871233,
+        "(1, 1)": 90252.7564521518,
+        "(0, 2)": 46127.84295231545,
+        "(1, 2)": 9825.86487060259,
+        "(0, 3)": 3018.955161015641
       },
       "mounts_remaining": [
-        45,
-        46
+        49,
+        43
       ],
       "transport_log": [],
       "operation_timeline": [],
@@ -4071,13 +5931,13 @@
       "active_environment_count": 1,
       "parameters": {
         "warning": 45.0,
-        "period": 210.0,
+        "period": 240.0,
         "speed": 1200.0,
         "thickness": 60.0,
-        "shield_fraction": 0.35,
-        "emp_seconds": 3.0,
-        "radar_seconds": 6.0,
-        "radar_scale": 0.5,
+        "shield_fraction": 0.2,
+        "emp_seconds": 2.0,
+        "radar_seconds": 4.0,
+        "radar_scale": 0.75,
         "cover_radius": 120.0
       },
       "avoidance": true,
@@ -4121,78 +5981,78 @@
         {
           "t": 150,
           "remaining": [
-            99,
+            100,
             100
           ]
         },
         {
           "t": 180,
           "remaining": [
-            98,
+            100,
             100
           ]
         },
         {
           "t": 210,
           "remaining": [
-            98,
+            100,
             100
           ]
         },
         {
           "t": 240,
           "remaining": [
-            98,
-            100
+            99,
+            99
           ]
         },
         {
           "t": 270,
           "remaining": [
-            98,
+            97,
             99
           ]
         },
         {
           "t": 300,
           "remaining": [
-            98,
-            99
+            97,
+            98
           ]
         },
         {
           "t": 330,
           "remaining": [
-            98,
-            99
+            97,
+            96
           ]
         },
         {
           "t": 360,
           "remaining": [
-            98,
-            99
+            97,
+            94
           ]
         },
         {
           "t": 390,
           "remaining": [
-            96,
-            97
+            97,
+            93
           ]
         },
         {
           "t": 420,
           "remaining": [
-            94,
-            95
+            97,
+            92
           ]
         },
         {
           "t": 450,
           "remaining": [
-            94,
-            92
+            95,
+            91
           ]
         },
         {
@@ -4205,1459 +6065,177 @@
         {
           "t": 510,
           "remaining": [
-            91,
-            90
+            93,
+            89
           ]
         },
         {
           "t": 540,
           "remaining": [
-            91,
-            90
+            92,
+            87
           ]
         },
         {
           "t": 570,
           "remaining": [
-            89,
-            90
+            92,
+            86
           ]
         },
         {
           "t": 600,
           "remaining": [
-            87,
+            89,
             84
           ]
         }
       ],
       "surviving_ship_positions": {
         "0": [
-          -238.773,
-          -9.687,
-          -363.475
+          -361.413,
+          385.594,
+          449.943
         ],
         "1": [
-          -535.0,
-          -200.0,
-          -45.0
+          -182.229,
+          422.127,
+          -1.267
         ],
         "2": [
-          -269.516,
-          521.793,
-          -131.279
+          -211.995,
+          224.626,
+          -272.506
         ],
         "3": [
-          -218.441,
-          -88.828,
-          -32.257
+          -307.446,
+          337.78,
+          -11.755
         ],
         "4": [
-          -272.254,
-          -72.779,
-          115.258
+          -179.007,
+          385.897,
+          -0.319
         ],
         "5": [
-          -200.233,
-          169.215,
-          -216.775
+          -250.459,
+          425.481,
+          -19.723
         ],
         "6": [
-          -188.447,
-          167.653,
-          -223.558
+          -196.616,
+          384.032,
+          -0.161
         ],
         "7": [
-          -218.373,
-          169.022,
-          -276.492
-        ],
-        "8": [
-          -210.204,
-          174.853,
-          -218.88
+          -225.888,
+          255.904,
+          -263.892
         ],
         "9": [
-          -61.386,
-          357.661,
-          -129.422
-        ],
-        "19": [
-          -278.95,
-          274.718,
-          -222.843
-        ],
-        "22": [
-          -194.206,
-          176.791,
-          -186.725
-        ],
-        "23": [
-          -172.673,
-          379.019,
-          -297.692
-        ],
-        "26": [
-          -179.997,
-          199.999,
-          -166.998
-        ],
-        "27": [
-          -307.806,
-          198.802,
-          1.31
-        ],
-        "28": [
-          149.078,
-          -177.733,
-          -55.626
-        ],
-        "29": [
-          535.0,
-          -200.0,
-          -45.0
-        ],
-        "31": [
-          -154.168,
-          461.811,
-          69.105
-        ],
-        "32": [
-          -106.154,
-          336.404,
-          153.557
-        ],
-        "33": [
-          -140.697,
-          508.607,
-          72.931
-        ],
-        "34": [
-          -129.713,
-          528.106,
-          75.101
-        ],
-        "35": [
-          -150.801,
-          390.657,
-          125.822
-        ],
-        "37": [
-          -177.472,
-          201.565,
-          164.757
-        ],
-        "43": [
-          -85.351,
-          549.661,
-          48.531
-        ],
-        "46": [
-          -176.723,
-          201.994,
-          170.626
-        ],
-        "48": [
-          -166.636,
-          -15.405,
-          46.884
-        ],
-        "50": [
-          -147.188,
-          457.115,
-          73.415
-        ],
-        "51": [
-          -180.0,
-          200.0,
-          161.998
-        ],
-        "52": [
-          -181.889,
-          29.862,
-          -4.353
-        ],
-        "54": [
-          -307.805,
-          200.018,
-          0.037
-        ],
-        "55": [
-          -180.0,
-          373.491,
-          -0.0
-        ]
-      },
-      "initial_total_hull_hp": 1218276,
-      "asteroids_remaining": null,
-      "aircraft_surviving": 0,
-      "aircraft_records": 80,
-      "hero_id_set_unchanged": true,
-      "pending_pods": 0,
-      "limitations": [
-        "legacy aggregate fighter damage/PD; per-ID exposure uses proxy flight",
-        "temporary room/armor face samples, not UE mesh raycasts",
-        "blackhole contact uses sphere surface; tow is not implemented",
-        "flare eligibility uses shield state before/after pulse; life support and indoor units not EMP-stunned"
-      ],
-      "stage": "pilot",
-      "case": "mixed_100",
-      "variant": "standard",
-      "dt": 0.5,
-      "wall_seconds": 33.105,
-      "initial_roster": {
-        "battleship": 1,
-        "carrier": 1,
-        "vector": 1,
-        "bastion": 1,
-        "cruiser": 2,
-        "air_defense": 1,
-        "radar": 1,
-        "corvette": 10,
-        "frigate": 8,
-        "repair": 1,
-        "assault": 1
-      },
-      "initial_signature": "100:mixed:0:none:172101"
-    },
-    {
-      "seed": 172100,
-      "seconds": 600.0,
-      "main_seconds": null,
-      "first_loss_seconds": 286.5,
-      "winner": null,
-      "outcome": "timeout",
-      "remaining_cost": [
-        89,
-        89
-      ],
-      "initial_cost": [
-        100,
-        100
-      ],
-      "initial_heroes": [
-        0,
-        0
-      ],
-      "initial_fighters": [
-        40,
-        40
-      ],
-      "fighter_package_cost": [
-        [
-          1200,
-          240,
-          0
-        ],
-        [
-          1200,
-          240,
-          0
-        ]
-      ],
-      "hero_states": {},
-      "metrics": {
-        "env_avoidance_steps": 5984.0,
-        "fighter_losses": 80.0,
-        "env_los_reposition_steps": 14978.0,
-        "shots_launched": 30964.0,
-        "env_blocked_shots": 16446.0,
-        "repair_resource_0": 519.2545703118052,
-        "repair_resource_1": 6.074640555593303,
-        "repair_resource_2": 0.0,
-        "repair_work": 14404.32237328779,
-        "repair_hull_hp": 8553.539625000001,
-        "env_flare_exposure_sum": 33.0,
-        "env_flare_contacts": 158.0,
-        "env_damage_input_flare": 162764.8000000001,
-        "env_shield_damage_flare": 133957.40000000052,
-        "env_flare_fully_covered": 125.0,
-        "pd_damage_missile": 7164.0,
-        "facility_destroyed": 216.0,
-        "explosions": 37.0,
-        "env_hull_damage_flare": 11443.438268880931,
-        "env_ship_shutdowns": 19.0,
-        "wreck_hull": 12.0,
-        "wreck_core": 1.0
-      },
-      "damage_by_target_size": {
-        "(1, 1)": 88400.29756454761,
-        "(1, 2)": 36826.32939806284,
-        "(0, 1)": 83422.1921167406,
-        "(0, 3)": 4246.355081095263,
-        "(0, 2)": 30152.98982290569
-      },
-      "mounts_remaining": [
-        49,
-        49
-      ],
-      "transport_log": [],
-      "operation_timeline": [],
-      "target_survival_after_entry": null,
-      "target_wreck_before_exit": false,
-      "environment": "flare",
-      "active_environment_count": 1,
-      "parameters": {
-        "warning": 60.0,
-        "period": 180.0,
-        "speed": 1200.0,
-        "thickness": 90.0,
-        "shield_fraction": 0.5,
-        "emp_seconds": 5.0,
-        "radar_seconds": 8.0,
-        "radar_scale": 0.35,
-        "cover_radius": 120.0
-      },
-      "avoidance": true,
-      "resistance": 0,
-      "environment_trace": [
-        {
-          "t": 0,
-          "remaining": [
-            100,
-            100
-          ]
-        },
-        {
-          "t": 30,
-          "remaining": [
-            100,
-            100
-          ]
-        },
-        {
-          "t": 60,
-          "remaining": [
-            100,
-            100
-          ]
-        },
-        {
-          "t": 90,
-          "remaining": [
-            100,
-            100
-          ]
-        },
-        {
-          "t": 120,
-          "remaining": [
-            100,
-            100
-          ]
-        },
-        {
-          "t": 150,
-          "remaining": [
-            100,
-            100
-          ]
-        },
-        {
-          "t": 180,
-          "remaining": [
-            100,
-            100
-          ]
-        },
-        {
-          "t": 210,
-          "remaining": [
-            100,
-            100
-          ]
-        },
-        {
-          "t": 240,
-          "remaining": [
-            99,
-            100
-          ]
-        },
-        {
-          "t": 270,
-          "remaining": [
-            99,
-            100
-          ]
-        },
-        {
-          "t": 300,
-          "remaining": [
-            98,
-            99
-          ]
-        },
-        {
-          "t": 330,
-          "remaining": [
-            97,
-            98
-          ]
-        },
-        {
-          "t": 360,
-          "remaining": [
-            97,
-            97
-          ]
-        },
-        {
-          "t": 390,
-          "remaining": [
-            96,
-            97
-          ]
-        },
-        {
-          "t": 420,
-          "remaining": [
-            96,
-            96
-          ]
-        },
-        {
-          "t": 450,
-          "remaining": [
-            95,
-            95
-          ]
-        },
-        {
-          "t": 480,
-          "remaining": [
-            95,
-            92
-          ]
-        },
-        {
-          "t": 510,
-          "remaining": [
-            92,
-            91
-          ]
-        },
-        {
-          "t": 540,
-          "remaining": [
-            89,
-            91
-          ]
-        },
-        {
-          "t": 570,
-          "remaining": [
-            89,
-            90
-          ]
-        },
-        {
-          "t": 600,
-          "remaining": [
-            89,
-            89
-          ]
-        }
-      ],
-      "surviving_ship_positions": {
-        "0": [
-          12.0,
-          200.0,
-          0.0
-        ],
-        "1": [
-          -535.0,
-          -200.0,
-          -45.0
-        ],
-        "2": [
-          -26.0,
-          200.0,
-          0.0
-        ],
-        "3": [
-          -19.4,
-          200.0,
-          0.0
-        ],
-        "4": [
-          -17.0,
-          200.0,
-          0.0
-        ],
-        "5": [
-          185.791,
-          368.758,
-          -0.01
-        ],
-        "6": [
-          -20.0,
-          200.0,
-          0.0
-        ],
-        "7": [
-          -18.0,
-          200.0,
-          -0.0
+          -331.824,
+          368.371,
+          255.543
         ],
         "10": [
-          -38.0,
-          200.0,
-          0.0
+          -210.158,
+          223.941,
+          -248.344
         ],
         "11": [
-          91.967,
-          182.339,
-          255.251
+          -356.885,
+          360.033,
+          -25.343
+        ],
+        "16": [
+          -202.383,
+          206.421,
+          -206.791
         ],
         "20": [
-          98.273,
-          175.418,
-          234.853
-        ],
-        "21": [
-          -35.0,
-          200.0,
-          0.0
+          -217.995,
+          234.137,
+          -222.809
         ],
         "22": [
-          -35.0,
-          200.0,
-          0.0
+          -178.158,
+          351.313,
+          0.49
         ],
         "23": [
-          83.465,
-          146.529,
-          289.812
-        ],
-        "25": [
-          622.218,
-          -152.169,
-          -153.983
+          -234.109,
+          475.109,
+          -34.801
         ],
         "26": [
-          179.985,
-          47.196,
-          0.02
+          -180.0,
+          200.0,
+          -167.85
         ],
         "27": [
-          174.531,
-          352.745,
-          0.429
+          -307.588,
+          192.521,
+          1.649
         ],
         "28": [
-          619.802,
-          -333.928,
-          0.009
+          21.08,
+          196.072,
+          3.355
         ],
         "29": [
-          535.0,
-          -200.0,
-          -45.0
+          -30.879,
+          179.1,
+          421.537
         ],
         "30": [
-          334.0,
-          200.0,
-          0.0
+          87.941,
+          470.196,
+          64.412
         ],
         "31": [
-          -19.4,
-          200.0,
-          0.0
+          -174.883,
+          11.669,
+          3.15
         ],
         "32": [
-          343.0,
-          200.0,
-          0.0
+          -169.835,
+          43.45,
+          71.431
         ],
         "33": [
-          343.0,
-          200.0,
-          0.0
+          131.111,
+          344.128,
+          0.264
         ],
         "34": [
-          340.0,
-          200.0,
-          0.0
+          41.82,
+          197.98,
+          1.829
         ],
         "35": [
-          342.0,
-          200.0,
-          0.0
+          107.333,
+          336.591,
+          0.351
         ],
-        "37": [
-          268.579,
-          475.039,
-          -37.914
-        ],
-        "43": [
-          322.0,
-          200.0,
-          0.0
-        ],
-        "44": [
-          322.0,
-          200.0,
-          0.0
-        ],
-        "48": [
-          325.0,
-          200.0,
-          -0.0
-        ],
-        "50": [
-          181.662,
-          355.882,
-          -7.116
-        ],
-        "51": [
-          325.0,
-          200.0,
-          -0.0
-        ],
-        "52": [
-          325.0,
-          200.0,
-          0.0
-        ],
-        "54": [
-          324.0,
-          200.0,
-          0.0
-        ],
-        "55": [
-          324.0,
-          200.0,
-          0.0
-        ]
-      },
-      "initial_total_hull_hp": 1218276,
-      "asteroids_remaining": null,
-      "aircraft_surviving": 0,
-      "aircraft_records": 80,
-      "hero_id_set_unchanged": true,
-      "pending_pods": 0,
-      "limitations": [
-        "legacy aggregate fighter damage/PD; per-ID exposure uses proxy flight",
-        "temporary room/armor face samples, not UE mesh raycasts",
-        "blackhole contact uses sphere surface; tow is not implemented",
-        "flare eligibility uses shield state before/after pulse; life support and indoor units not EMP-stunned"
-      ],
-      "stage": "pilot",
-      "case": "mixed_100",
-      "variant": "strong",
-      "dt": 0.5,
-      "wall_seconds": 17.006,
-      "initial_roster": {
-        "battleship": 1,
-        "carrier": 1,
-        "vector": 1,
-        "bastion": 1,
-        "cruiser": 2,
-        "air_defense": 1,
-        "radar": 1,
-        "corvette": 10,
-        "frigate": 8,
-        "repair": 1,
-        "assault": 1
-      },
-      "initial_signature": "100:mixed:0:none:172100"
-    },
-    {
-      "seed": 172101,
-      "seconds": 600.0,
-      "main_seconds": null,
-      "first_loss_seconds": 96.0,
-      "winner": null,
-      "outcome": "timeout",
-      "remaining_cost": [
-        87,
-        81
-      ],
-      "initial_cost": [
-        100,
-        100
-      ],
-      "initial_heroes": [
-        0,
-        0
-      ],
-      "initial_fighters": [
-        40,
-        40
-      ],
-      "fighter_package_cost": [
-        [
-          1200,
-          240,
-          0
-        ],
-        [
-          1200,
-          240,
-          0
-        ]
-      ],
-      "hero_states": {},
-      "metrics": {
-        "env_avoidance_steps": 9633.0,
-        "fighter_losses": 80.0,
-        "env_los_reposition_steps": 16977.0,
-        "shots_launched": 29130.0,
-        "env_blocked_shots": 15195.0,
-        "pd_damage_missile": 5436.0,
-        "repair_resource_0": 784.4319007268028,
-        "repair_resource_1": 55.73745601601133,
-        "repair_resource_2": 0.0,
-        "repair_work": 19292.333561108942,
-        "repair_hull_hp": 8571.434375,
-        "env_flare_exposure_sum": 50.0,
-        "env_flare_contacts": 152.0,
-        "env_damage_input_flare": 265289.2000000005,
-        "env_shield_damage_flare": 210249.00000000058,
-        "env_flare_fully_covered": 102.0,
-        "facility_destroyed": 228.0,
-        "explosions": 37.0,
-        "wreck_hull": 12.0,
-        "env_hull_damage_flare": 22120.16267074483,
-        "env_ship_shutdowns": 28.0
-      },
-      "damage_by_target_size": {
-        "(0, 1)": 116732.79078910673,
-        "(1, 2)": 36895.93543127726,
-        "(1, 1)": 55549.83716720978,
-        "(0, 2)": 53029.747536134084,
-        "(0, 3)": 736.6233974851972,
-        "(1, 3)": 670.384543519737
-      },
-      "mounts_remaining": [
-        52,
-        35
-      ],
-      "transport_log": [],
-      "operation_timeline": [],
-      "target_survival_after_entry": null,
-      "target_wreck_before_exit": false,
-      "environment": "flare",
-      "active_environment_count": 1,
-      "parameters": {
-        "warning": 60.0,
-        "period": 180.0,
-        "speed": 1200.0,
-        "thickness": 90.0,
-        "shield_fraction": 0.5,
-        "emp_seconds": 5.0,
-        "radar_seconds": 8.0,
-        "radar_scale": 0.35,
-        "cover_radius": 120.0
-      },
-      "avoidance": true,
-      "resistance": 0,
-      "environment_trace": [
-        {
-          "t": 0,
-          "remaining": [
-            100,
-            100
-          ]
-        },
-        {
-          "t": 30,
-          "remaining": [
-            100,
-            100
-          ]
-        },
-        {
-          "t": 60,
-          "remaining": [
-            100,
-            100
-          ]
-        },
-        {
-          "t": 90,
-          "remaining": [
-            100,
-            100
-          ]
-        },
-        {
-          "t": 120,
-          "remaining": [
-            100,
-            99
-          ]
-        },
-        {
-          "t": 150,
-          "remaining": [
-            100,
-            99
-          ]
-        },
-        {
-          "t": 180,
-          "remaining": [
-            100,
-            99
-          ]
-        },
-        {
-          "t": 210,
-          "remaining": [
-            99,
-            99
-          ]
-        },
-        {
-          "t": 240,
-          "remaining": [
-            99,
-            98
-          ]
-        },
-        {
-          "t": 270,
-          "remaining": [
-            99,
-            98
-          ]
-        },
-        {
-          "t": 300,
-          "remaining": [
-            99,
-            96
-          ]
-        },
-        {
-          "t": 330,
-          "remaining": [
-            99,
-            94
-          ]
-        },
-        {
-          "t": 360,
-          "remaining": [
-            94,
-            92
-          ]
-        },
-        {
-          "t": 390,
-          "remaining": [
-            94,
-            91
-          ]
-        },
-        {
-          "t": 420,
-          "remaining": [
-            92,
-            91
-          ]
-        },
-        {
-          "t": 450,
-          "remaining": [
-            91,
-            89
-          ]
-        },
-        {
-          "t": 480,
-          "remaining": [
-            89,
-            85
-          ]
-        },
-        {
-          "t": 510,
-          "remaining": [
-            89,
-            83
-          ]
-        },
-        {
-          "t": 540,
-          "remaining": [
-            89,
-            82
-          ]
-        },
-        {
-          "t": 570,
-          "remaining": [
-            88,
-            81
-          ]
-        },
-        {
-          "t": 600,
-          "remaining": [
-            87,
-            81
-          ]
-        }
-      ],
-      "surviving_ship_positions": {
-        "0": [
-          -624.014,
-          -334.147,
-          -0.155
-        ],
-        "1": [
-          -535.0,
-          -200.0,
-          -45.0
-        ],
-        "3": [
-          -340.6,
-          200.0,
-          0.0
-        ],
-        "4": [
-          -343.0,
-          200.0,
-          0.0
-        ],
-        "5": [
-          17.0,
-          200.0,
-          0.0
-        ],
-        "6": [
-          -178.498,
-          197.363,
-          160.878
-        ],
-        "7": [
-          -180.26,
-          365.962,
-          -0.026
-        ],
-        "8": [
-          -183.615,
-          205.059,
-          156.694
-        ],
-        "10": [
-          181.249,
-          200.475,
-          -154.456
-        ],
-        "11": [
-          -360.135,
-          239.156,
-          251.171
-        ],
-        "12": [
-          38.0,
-          200.0,
-          -0.0
-        ],
-        "13": [
-          -184.427,
-          364.941,
-          -1.96
-        ],
-        "15": [
-          -178.65,
-          348.464,
-          0.706
-        ],
-        "18": [
-          -181.278,
-          352.934,
-          -7.017
-        ],
-        "19": [
-          -185.692,
-          361.286,
-          0.076
-        ],
-        "21": [
-          -236.21,
-          199.396,
-          -204.699
-        ],
-        "24": [
-          -180.05,
-          200.17,
-          -153.534
-        ],
-        "26": [
-          180.0,
-          358.916,
-          0.0
-        ],
-        "27": [
-          -324.0,
-          200.0,
-          0.0
-        ],
-        "28": [
-          -12.0,
-          200.0,
-          0.0
-        ],
-        "29": [
-          535.0,
-          -200.0,
-          -45.0
-        ],
-        "30": [
-          -333.833,
-          67.471,
-          -99.664
-        ],
-        "31": [
-          -180.001,
-          36.569,
-          0.001
-        ],
-        "32": [
-          -179.03,
-          194.482,
-          169.079
-        ],
-        "33": [
-          17.0,
-          200.0,
-          0.0
-        ],
-        "34": [
-          -177.358,
-          38.565,
-          -2.917
-        ],
-        "35": [
-          18.0,
-          200.0,
-          0.0
-        ],
-        "54": [
-          -178.911,
-          41.377,
-          1.096
-        ]
-      },
-      "initial_total_hull_hp": 1218276,
-      "asteroids_remaining": null,
-      "aircraft_surviving": 0,
-      "aircraft_records": 80,
-      "hero_id_set_unchanged": true,
-      "pending_pods": 0,
-      "limitations": [
-        "legacy aggregate fighter damage/PD; per-ID exposure uses proxy flight",
-        "temporary room/armor face samples, not UE mesh raycasts",
-        "blackhole contact uses sphere surface; tow is not implemented",
-        "flare eligibility uses shield state before/after pulse; life support and indoor units not EMP-stunned"
-      ],
-      "stage": "pilot",
-      "case": "mixed_100",
-      "variant": "strong",
-      "dt": 0.5,
-      "wall_seconds": 17.042,
-      "initial_roster": {
-        "battleship": 1,
-        "carrier": 1,
-        "vector": 1,
-        "bastion": 1,
-        "cruiser": 2,
-        "air_defense": 1,
-        "radar": 1,
-        "corvette": 10,
-        "frigate": 8,
-        "repair": 1,
-        "assault": 1
-      },
-      "initial_signature": "100:mixed:0:none:172101"
-    },
-    {
-      "seed": 172100,
-      "seconds": 600.0,
-      "main_seconds": null,
-      "first_loss_seconds": 275.0,
-      "winner": null,
-      "outcome": "timeout",
-      "remaining_cost": [
-        73,
-        92
-      ],
-      "initial_cost": [
-        100,
-        100
-      ],
-      "initial_heroes": [
-        0,
-        0
-      ],
-      "initial_fighters": [
-        40,
-        40
-      ],
-      "fighter_package_cost": [
-        [
-          1200,
-          240,
-          0
-        ],
-        [
-          1200,
-          240,
-          0
-        ]
-      ],
-      "hero_states": {},
-      "metrics": {
-        "env_avoidance_steps": 5025.0,
-        "fighter_losses": 80.0,
-        "env_los_reposition_steps": 15429.0,
-        "shots_launched": 29040.0,
-        "env_blocked_shots": 13086.0,
-        "repair_resource_0": 458.89419764595385,
-        "repair_resource_1": 7.0790349453586865,
-        "repair_resource_2": 0.0,
-        "repair_work": 11736.220593932958,
-        "repair_hull_hp": 5679.676000000003,
-        "env_flare_exposure_sum": 43.0,
-        "env_flare_contacts": 147.0,
-        "env_damage_input_flare": 60406.719999999186,
-        "env_shield_damage_flare": 52998.79999999972,
-        "env_flare_fully_covered": 104.0,
-        "pd_damage_missile": 7956.0,
-        "facility_destroyed": 244.0,
-        "explosions": 42.0,
-        "wreck_hull": 16.0,
-        "env_hull_damage_flare": 4232.278544587121,
-        "env_ship_shutdowns": 21.0
-      },
-      "damage_by_target_size": {
-        "(1, 1)": 118733.11016236873,
-        "(1, 2)": 43424.2564913665,
-        "(0, 1)": 80761.16046607861,
-        "(0, 2)": 4900.643665723723
-      },
-      "mounts_remaining": [
-        35,
-        55
-      ],
-      "transport_log": [],
-      "operation_timeline": [],
-      "target_survival_after_entry": null,
-      "target_wreck_before_exit": false,
-      "environment": "flare",
-      "active_environment_count": 1,
-      "parameters": {
-        "warning": 45.0,
-        "period": 240.0,
-        "speed": 1200.0,
-        "thickness": 60.0,
-        "shield_fraction": 0.2,
-        "emp_seconds": 2.0,
-        "radar_seconds": 4.0,
-        "radar_scale": 0.75,
-        "cover_radius": 120.0
-      },
-      "avoidance": true,
-      "resistance": 0,
-      "environment_trace": [
-        {
-          "t": 0,
-          "remaining": [
-            100,
-            100
-          ]
-        },
-        {
-          "t": 30,
-          "remaining": [
-            100,
-            100
-          ]
-        },
-        {
-          "t": 60,
-          "remaining": [
-            100,
-            100
-          ]
-        },
-        {
-          "t": 90,
-          "remaining": [
-            100,
-            100
-          ]
-        },
-        {
-          "t": 120,
-          "remaining": [
-            100,
-            100
-          ]
-        },
-        {
-          "t": 150,
-          "remaining": [
-            100,
-            100
-          ]
-        },
-        {
-          "t": 180,
-          "remaining": [
-            100,
-            100
-          ]
-        },
-        {
-          "t": 210,
-          "remaining": [
-            100,
-            100
-          ]
-        },
-        {
-          "t": 240,
-          "remaining": [
-            100,
-            100
-          ]
-        },
-        {
-          "t": 270,
-          "remaining": [
-            100,
-            100
-          ]
-        },
-        {
-          "t": 300,
-          "remaining": [
-            99,
-            100
-          ]
-        },
-        {
-          "t": 330,
-          "remaining": [
-            99,
-            99
-          ]
-        },
-        {
-          "t": 360,
-          "remaining": [
-            98,
-            99
-          ]
-        },
-        {
-          "t": 390,
-          "remaining": [
-            97,
-            99
-          ]
-        },
-        {
-          "t": 420,
-          "remaining": [
-            95,
-            98
-          ]
-        },
-        {
-          "t": 450,
-          "remaining": [
-            93,
-            97
-          ]
-        },
-        {
-          "t": 480,
-          "remaining": [
-            90,
-            94
-          ]
-        },
-        {
-          "t": 510,
-          "remaining": [
-            88,
-            94
-          ]
-        },
-        {
-          "t": 540,
-          "remaining": [
-            86,
-            93
-          ]
-        },
-        {
-          "t": 570,
-          "remaining": [
-            74,
-            93
-          ]
-        },
-        {
-          "t": 600,
-          "remaining": [
-            73,
-            92
-          ]
-        }
-      ],
-      "surviving_ship_positions": {
-        "0": [
-          -21.023,
-          197.988,
-          2.129
-        ],
-        "1": [
-          -535.0,
-          -200.0,
-          -45.0
-        ],
-        "3": [
-          42.534,
-          -208.141,
-          60.96
-        ],
-        "4": [
-          -36.727,
-          219.058,
-          248.431
-        ],
-        "5": [
-          -39.855,
-          198.752,
-          1.293
-        ],
-        "6": [
-          575.559,
-          186.5,
-          31.782
-        ],
-        "18": [
-          -51.546,
-          199.155,
-          0.87
-        ],
-        "20": [
-          -35.0,
-          200.0,
-          0.0
-        ],
-        "27": [
-          180.0,
-          200.0,
-          -170.913
-        ],
-        "28": [
-          509.879,
-          221.947,
-          -145.306
-        ],
-        "29": [
-          535.0,
-          -200.0,
-          -45.0
-        ],
-        "30": [
-          334.173,
-          -84.588,
-          -4.147
-        ],
-        "31": [
-          274.21,
-          223.153,
-          -225.382
-        ],
-        "32": [
-          266.124,
-          -12.379,
-          2.145
-        ],
-        "33": [
-          159.043,
-          131.199,
-          -323.806
-        ],
-        "34": [
-          248.549,
-          388.52,
-          98.643
-        ],
-        "35": [
-          311.279,
-          -103.399,
-          -1.602
-        ],
-        "37": [
-          304.083,
-          483.206,
-          -7.342
-        ],
-        "39": [
-          313.516,
-          -110.421,
-          -12.67
-        ],
-        "40": [
-          -53.498,
-          199.0,
-          -0.815
-        ],
-        "43": [
-          -202.006,
-          79.087,
-          -64.074
-        ],
-        "44": [
-          -53.498,
-          199.002,
-          -0.815
+        "36": [
+          -122.048,
+          -86.152,
+          17.564
         ],
         "46": [
-          -186.707,
-          198.613,
-          -159.767
+          -176.958,
+          33.319,
+          1.984
         ],
         "47": [
-          301.511,
-          511.89,
-          -61.864
+          -151.137,
+          158.966,
+          245.187
         ],
-        "48": [
-          268.492,
-          185.342,
-          158.214
-        ],
-        "51": [
-          -253.003,
-          226.839,
-          -228.977
-        ],
-        "53": [
-          126.264,
-          -239.087,
-          -67.222
-        ],
-        "54": [
-          -213.22,
-          39.955,
-          -31.536
-        ],
-        "55": [
-          307.819,
-          200.296,
-          0.332
+        "52": [
+          -174.942,
+          31.002,
+          1.67
         ]
       },
       "initial_total_hull_hp": 1218276,
@@ -5676,439 +6254,7 @@
       "case": "mixed_100",
       "variant": "weak",
       "dt": 0.5,
-      "wall_seconds": 30.635,
-      "initial_roster": {
-        "battleship": 1,
-        "carrier": 1,
-        "vector": 1,
-        "bastion": 1,
-        "cruiser": 2,
-        "air_defense": 1,
-        "radar": 1,
-        "corvette": 10,
-        "frigate": 8,
-        "repair": 1,
-        "assault": 1
-      },
-      "initial_signature": "100:mixed:0:none:172100"
-    },
-    {
-      "seed": 172101,
-      "seconds": 600.0,
-      "main_seconds": null,
-      "first_loss_seconds": 164.0,
-      "winner": null,
-      "outcome": "timeout",
-      "remaining_cost": [
-        89,
-        87
-      ],
-      "initial_cost": [
-        100,
-        100
-      ],
-      "initial_heroes": [
-        0,
-        0
-      ],
-      "initial_fighters": [
-        40,
-        40
-      ],
-      "fighter_package_cost": [
-        [
-          1200,
-          240,
-          0
-        ],
-        [
-          1200,
-          240,
-          0
-        ]
-      ],
-      "hero_states": {},
-      "metrics": {
-        "env_avoidance_steps": 5721.0,
-        "fighter_losses": 80.0,
-        "env_los_reposition_steps": 15670.0,
-        "shots_launched": 28525.0,
-        "env_blocked_shots": 13664.0,
-        "pd_damage_missile": 4812.0,
-        "repair_resource_0": 800.2391545336735,
-        "repair_resource_1": 6.440031632142077,
-        "repair_resource_2": 0.0,
-        "repair_work": 22235.896190017647,
-        "repair_hull_hp": 12475.098195468749,
-        "env_flare_exposure_sum": 47.473684210526315,
-        "env_flare_contacts": 145.0,
-        "env_damage_input_flare": 73567.62947368402,
-        "env_shield_damage_flare": 62551.109473683995,
-        "env_flare_fully_covered": 97.0,
-        "facility_destroyed": 208.0,
-        "explosions": 35.0,
-        "wreck_explosion": 1.0,
-        "wreck_hull": 13.0,
-        "env_hull_damage_flare": 5469.756500048759,
-        "env_ship_shutdowns": 22.0
-      },
-      "damage_by_target_size": {
-        "(0, 1)": 96041.81833988692,
-        "(1, 1)": 83309.31621255462,
-        "(0, 2)": 50325.63128109492,
-        "(1, 2)": 23909.859377146782
-      },
-      "mounts_remaining": [
-        49,
-        45
-      ],
-      "transport_log": [],
-      "operation_timeline": [],
-      "target_survival_after_entry": null,
-      "target_wreck_before_exit": false,
-      "environment": "flare",
-      "active_environment_count": 1,
-      "parameters": {
-        "warning": 45.0,
-        "period": 240.0,
-        "speed": 1200.0,
-        "thickness": 60.0,
-        "shield_fraction": 0.2,
-        "emp_seconds": 2.0,
-        "radar_seconds": 4.0,
-        "radar_scale": 0.75,
-        "cover_radius": 120.0
-      },
-      "avoidance": true,
-      "resistance": 0,
-      "environment_trace": [
-        {
-          "t": 0,
-          "remaining": [
-            100,
-            100
-          ]
-        },
-        {
-          "t": 30,
-          "remaining": [
-            100,
-            100
-          ]
-        },
-        {
-          "t": 60,
-          "remaining": [
-            100,
-            100
-          ]
-        },
-        {
-          "t": 90,
-          "remaining": [
-            100,
-            100
-          ]
-        },
-        {
-          "t": 120,
-          "remaining": [
-            100,
-            100
-          ]
-        },
-        {
-          "t": 150,
-          "remaining": [
-            100,
-            100
-          ]
-        },
-        {
-          "t": 180,
-          "remaining": [
-            100,
-            99
-          ]
-        },
-        {
-          "t": 210,
-          "remaining": [
-            99,
-            99
-          ]
-        },
-        {
-          "t": 240,
-          "remaining": [
-            99,
-            99
-          ]
-        },
-        {
-          "t": 270,
-          "remaining": [
-            98,
-            98
-          ]
-        },
-        {
-          "t": 300,
-          "remaining": [
-            97,
-            97
-          ]
-        },
-        {
-          "t": 330,
-          "remaining": [
-            97,
-            97
-          ]
-        },
-        {
-          "t": 360,
-          "remaining": [
-            97,
-            97
-          ]
-        },
-        {
-          "t": 390,
-          "remaining": [
-            96,
-            94
-          ]
-        },
-        {
-          "t": 420,
-          "remaining": [
-            96,
-            94
-          ]
-        },
-        {
-          "t": 450,
-          "remaining": [
-            96,
-            92
-          ]
-        },
-        {
-          "t": 480,
-          "remaining": [
-            94,
-            91
-          ]
-        },
-        {
-          "t": 510,
-          "remaining": [
-            93,
-            89
-          ]
-        },
-        {
-          "t": 540,
-          "remaining": [
-            91,
-            88
-          ]
-        },
-        {
-          "t": 570,
-          "remaining": [
-            89,
-            88
-          ]
-        },
-        {
-          "t": 600,
-          "remaining": [
-            89,
-            87
-          ]
-        }
-      ],
-      "surviving_ship_positions": {
-        "0": [
-          -625.07,
-          226.585,
-          -6.175
-        ],
-        "1": [
-          -535.0,
-          -200.0,
-          -45.0
-        ],
-        "2": [
-          -154.249,
-          220.942,
-          374.67
-        ],
-        "3": [
-          -491.379,
-          215.415,
-          3.203
-        ],
-        "4": [
-          65.292,
-          -189.427,
-          -98.105
-        ],
-        "5": [
-          -276.219,
-          278.149,
-          296.896
-        ],
-        "6": [
-          42.095,
-          206.436,
-          6.466
-        ],
-        "7": [
-          40.832,
-          206.841,
-          6.885
-        ],
-        "8": [
-          -491.048,
-          217.57,
-          21.006
-        ],
-        "10": [
-          -172.333,
-          195.917,
-          169.504
-        ],
-        "15": [
-          -228.644,
-          503.568,
-          -14.258
-        ],
-        "17": [
-          -490.902,
-          226.891,
-          77.894
-        ],
-        "18": [
-          -185.041,
-          202.595,
-          -166.818
-        ],
-        "19": [
-          -192.32,
-          385.746,
-          3.11
-        ],
-        "23": [
-          -241.263,
-          500.877,
-          -22.035
-        ],
-        "26": [
-          -177.568,
-          334.386,
-          130.666
-        ],
-        "27": [
-          -307.81,
-          198.873,
-          -1.193
-        ],
-        "28": [
-          -300.003,
-          -211.517,
-          217.777
-        ],
-        "29": [
-          535.0,
-          -200.0,
-          -45.0
-        ],
-        "30": [
-          31.832,
-          190.864,
-          279.276
-        ],
-        "31": [
-          -121.015,
-          -122.062,
-          -33.081
-        ],
-        "32": [
-          -38.149,
-          291.108,
-          259.672
-        ],
-        "33": [
-          90.709,
-          195.01,
-          179.624
-        ],
-        "34": [
-          4.779,
-          472.246,
-          -45.677
-        ],
-        "35": [
-          53.476,
-          243.342,
-          242.336
-        ],
-        "38": [
-          -104.408,
-          224.812,
-          -257.804
-        ],
-        "46": [
-          -149.107,
-          190.166,
-          -188.395
-        ],
-        "47": [
-          -333.744,
-          -140.556,
-          -69.352
-        ],
-        "50": [
-          4.227,
-          464.467,
-          -55.563
-        ],
-        "51": [
-          -175.356,
-          33.937,
-          -2.763
-        ],
-        "54": [
-          -170.742,
-          202.171,
-          -173.434
-        ],
-        "55": [
-          -180.0,
-          368.219,
-          0.0
-        ]
-      },
-      "initial_total_hull_hp": 1218276,
-      "asteroids_remaining": null,
-      "aircraft_surviving": 0,
-      "aircraft_records": 80,
-      "hero_id_set_unchanged": true,
-      "pending_pods": 0,
-      "limitations": [
-        "legacy aggregate fighter damage/PD; per-ID exposure uses proxy flight",
-        "temporary room/armor face samples, not UE mesh raycasts",
-        "blackhole contact uses sphere surface; tow is not implemented",
-        "flare eligibility uses shield state before/after pulse; life support and indoor units not EMP-stunned"
-      ],
-      "stage": "pilot",
-      "case": "mixed_100",
-      "variant": "weak",
-      "dt": 0.5,
-      "wall_seconds": 29.732,
+      "wall_seconds": 34.484,
       "initial_roster": {
         "battleship": 1,
         "carrier": 1,
@@ -6381,7 +6527,7 @@
       "case": "mixed_100",
       "variant": "control",
       "dt": 0.5,
-      "wall_seconds": 6.497,
+      "wall_seconds": 8.945,
       "initial_roster": {
         "battleship": 1,
         "carrier": 1,
@@ -6654,7 +6800,7 @@
       "case": "mixed_100",
       "variant": "control",
       "dt": 0.5,
-      "wall_seconds": 8.686,
+      "wall_seconds": 6.565,
       "initial_roster": {
         "battleship": 1,
         "carrier": 1,
@@ -6674,12 +6820,12 @@
       "seed": 172100,
       "seconds": 600.0,
       "main_seconds": null,
-      "first_loss_seconds": 78.5,
+      "first_loss_seconds": 62.0,
       "winner": null,
       "outcome": "timeout",
       "remaining_cost": [
-        70,
-        75
+        51,
+        66
       ],
       "initial_cost": [
         100,
@@ -6707,32 +6853,32 @@
       ],
       "hero_states": {},
       "metrics": {
-        "env_avoidance_steps": 1349.0,
+        "env_avoidance_steps": 1497.0,
         "fighter_losses": 80.0,
-        "env_los_reposition_steps": 4329.0,
-        "shots_launched": 24253.0,
-        "env_blocked_shots": 4496.0,
-        "facility_destroyed": 351.0,
-        "repair_resource_0": 505.5024655976878,
-        "repair_resource_1": 11.978211674011533,
+        "env_los_reposition_steps": 2838.0,
+        "shots_launched": 23887.0,
+        "env_blocked_shots": 3021.0,
+        "facility_destroyed": 371.0,
+        "repair_resource_0": 695.5398699476677,
+        "repair_resource_1": 31.108548672028586,
         "repair_resource_2": 0.0,
-        "repair_work": 13288.3909083952,
-        "pd_damage_missile": 11652.0,
-        "explosions": 55.0,
-        "repair_hull_hp": 6880.0,
-        "wreck_hull": 20.0
+        "repair_hull_hp": 9936.0,
+        "repair_work": 17891.911336123205,
+        "pd_damage_missile": 11232.0,
+        "explosions": 60.0,
+        "wreck_hull": 34.0
       },
       "damage_by_target_size": {
-        "(1, 1)": 131705.83783479745,
-        "(0, 1)": 119339.05958749534,
-        "(1, 2)": 101428.48880437107,
-        "(0, 2)": 90228.75501263798,
-        "(0, 3)": 2217.4488943750002,
-        "(1, 3)": 5008.436408706249
+        "(1, 1)": 127502.3656430258,
+        "(0, 1)": 131419.11390694501,
+        "(0, 2)": 144027.5539792972,
+        "(1, 2)": 166409.38389568517,
+        "(0, 3)": 29621.992855609384,
+        "(1, 3)": 12317.333998124988
       },
       "mounts_remaining": [
-        29,
-        37
+        14,
+        29
       ],
       "transport_log": [],
       "operation_timeline": [],
@@ -6771,215 +6917,175 @@
         {
           "t": 90,
           "remaining": [
-            98,
-            100
+            99,
+            98
           ]
         },
         {
           "t": 120,
           "remaining": [
             98,
-            100
+            95
           ]
         },
         {
           "t": 150,
           "remaining": [
             97,
-            100
+            95
           ]
         },
         {
           "t": 180,
           "remaining": [
-            96,
-            98
+            95,
+            91
           ]
         },
         {
           "t": 210,
           "remaining": [
-            90,
-            98
+            93,
+            90
           ]
         },
         {
           "t": 240,
           "remaining": [
-            85,
-            97
+            89,
+            87
           ]
         },
         {
           "t": 270,
           "remaining": [
-            84,
-            96
+            86,
+            83
           ]
         },
         {
           "t": 300,
           "remaining": [
-            84,
-            92
+            86,
+            83
           ]
         },
         {
           "t": 330,
           "remaining": [
-            82,
-            91
+            80,
+            82
           ]
         },
         {
           "t": 360,
           "remaining": [
-            81,
-            84
+            75,
+            82
           ]
         },
         {
           "t": 390,
           "remaining": [
-            80,
-            84
+            74,
+            72
           ]
         },
         {
           "t": 420,
           "remaining": [
-            72,
-            78
+            74,
+            72
           ]
         },
         {
           "t": 450,
           "remaining": [
-            71,
-            77
+            72,
+            72
           ]
         },
         {
           "t": 480,
           "remaining": [
-            71,
-            77
+            67,
+            71
           ]
         },
         {
           "t": 510,
           "remaining": [
-            71,
-            75
+            61,
+            71
           ]
         },
         {
           "t": 540,
           "remaining": [
-            70,
-            75
+            51,
+            71
           ]
         },
         {
           "t": 570,
           "remaining": [
-            70,
-            75
+            51,
+            71
           ]
         },
         {
           "t": 600,
           "remaining": [
-            70,
-            75
+            51,
+            66
           ]
         }
       ],
       "surviving_ship_positions": {
         "0": [
-          253.857,
-          -435.877,
-          -24.383
+          -333.428,
+          -217.226,
+          -34.554
         ],
         "1": [
-          -535.0,
-          -200.0,
-          -45.0
+          -362.654,
+          -145.051,
+          -40.916
         ],
-        "2": [
-          -197.904,
-          323.118,
-          -116.094
-        ],
-        "4": [
-          -68.08,
-          227.784,
-          256.696
-        ],
-        "5": [
-          -68.155,
-          187.071,
-          194.947
-        ],
-        "6": [
-          291.109,
-          127.03,
-          186.666
+        "27": [
+          180.0,
+          348.495,
+          -0.0
         ],
         "28": [
-          1.221,
-          -443.682,
-          -89.8
+          353.216,
+          -0.894,
+          -66.507
         ],
         "29": [
-          535.0,
-          -200.0,
-          -45.0
+          312.363,
+          39.864,
+          -121.772
         ],
         "31": [
-          -618.127,
-          -149.371,
-          -182.736
+          189.958,
+          16.796,
+          0.712
         ],
         "32": [
-          222.644,
-          -64.298,
-          -152.138
+          184.62,
+          14.244,
+          0.33
         ],
         "33": [
-          153.511,
-          -66.906,
-          -169.044
-        ],
-        "34": [
-          268.1,
-          50.35,
-          -107.552
-        ],
-        "41": [
-          -521.299,
-          10.932,
-          0.476
-        ],
-        "45": [
-          -65.815,
-          382.95,
-          53.809
-        ],
-        "48": [
-          -250.274,
-          350.94,
-          200.441
-        ],
-        "54": [
-          -411.059,
-          20.098,
-          -6.506
+          287.652,
+          114.192,
+          -26.29
         ],
         "55": [
-          69.91,
-          62.476,
-          -8.898
+          -174.204,
+          133.191,
+          -120.293
         ]
       },
       "initial_total_hull_hp": 1218276,
@@ -6998,7 +7104,7 @@
       "case": "mixed_100",
       "variant": "shelter_control",
       "dt": 0.5,
-      "wall_seconds": 11.156,
+      "wall_seconds": 9.359,
       "initial_roster": {
         "battleship": 1,
         "carrier": 1,
@@ -7018,12 +7124,12 @@
       "seed": 172101,
       "seconds": 600.0,
       "main_seconds": null,
-      "first_loss_seconds": 64.0,
+      "first_loss_seconds": 55.0,
       "winner": null,
       "outcome": "timeout",
       "remaining_cost": [
-        72,
-        61
+        55,
+        56
       ],
       "initial_cost": [
         100,
@@ -7051,32 +7157,32 @@
       ],
       "hero_states": {},
       "metrics": {
-        "env_avoidance_steps": 1388.0,
+        "env_avoidance_steps": 1040.0,
         "fighter_losses": 80.0,
-        "env_los_reposition_steps": 4428.0,
-        "shots_launched": 24483.0,
-        "env_blocked_shots": 4644.0,
-        "pd_damage_missile": 11112.0,
-        "repair_resource_0": 433.58970551150446,
-        "repair_resource_1": 3.8345179941085634,
+        "env_los_reposition_steps": 3531.0,
+        "shots_launched": 24329.0,
+        "env_blocked_shots": 3101.0,
+        "pd_damage_missile": 12312.0,
+        "repair_resource_0": 376.44859016645046,
+        "repair_resource_1": 3.2532726980728506,
         "repair_resource_2": 0.0,
-        "repair_work": 12074.916342741457,
-        "repair_hull_hp": 6423.132125,
-        "facility_destroyed": 330.0,
-        "explosions": 55.0,
-        "wreck_hull": 28.0,
-        "wreck_explosion": 1.0
+        "repair_work": 9993.364308860771,
+        "facility_destroyed": 352.0,
+        "explosions": 58.0,
+        "repair_hull_hp": 3888.0,
+        "wreck_hull": 36.0
       },
       "damage_by_target_size": {
-        "(1, 2)": 94186.96014837263,
-        "(0, 1)": 124349.28265698029,
-        "(1, 1)": 127761.1526848518,
-        "(0, 2)": 128298.5404413628,
-        "(1, 3)": 7220.888744631253
+        "(1, 1)": 130205.69905159353,
+        "(1, 2)": 132743.5603382807,
+        "(0, 1)": 126224.78115985107,
+        "(0, 2)": 150538.16422988562,
+        "(1, 3)": 35414.661924281245,
+        "(0, 3)": 8817.585070632813
       },
       "mounts_remaining": [
-        33,
-        21
+        19,
+        19
       ],
       "transport_log": [],
       "operation_timeline": [],
@@ -7109,7 +7215,7 @@
           "t": 60,
           "remaining": [
             100,
-            100
+            98
           ]
         },
         {
@@ -7122,188 +7228,158 @@
         {
           "t": 120,
           "remaining": [
-            100,
+            98,
             98
           ]
         },
         {
           "t": 150,
           "remaining": [
-            99,
+            96,
             97
           ]
         },
         {
           "t": 180,
           "remaining": [
-            90,
-            97
+            93,
+            96
           ]
         },
         {
           "t": 210,
           "remaining": [
-            89,
-            96
+            91,
+            93
           ]
         },
         {
           "t": 240,
           "remaining": [
-            87,
-            95
+            90,
+            90
           ]
         },
         {
           "t": 270,
           "remaining": [
-            84,
-            94
+            87,
+            88
           ]
         },
         {
           "t": 300,
           "remaining": [
-            83,
-            91
+            86,
+            87
           ]
         },
         {
           "t": 330,
           "remaining": [
-            82,
-            89
+            84,
+            87
           ]
         },
         {
           "t": 360,
           "remaining": [
-            80,
-            87
+            82,
+            86
           ]
         },
         {
           "t": 390,
           "remaining": [
-            80,
+            77,
             85
           ]
         },
         {
           "t": 420,
           "remaining": [
-            74,
-            84
+            67,
+            85
           ]
         },
         {
           "t": 450,
           "remaining": [
-            72,
-            73
+            66,
+            84
           ]
         },
         {
           "t": 480,
           "remaining": [
-            72,
-            71
+            66,
+            78
           ]
         },
         {
           "t": 510,
           "remaining": [
-            72,
-            71
+            61,
+            73
           ]
         },
         {
           "t": 540,
           "remaining": [
-            72,
+            55,
             66
           ]
         },
         {
           "t": 570,
           "remaining": [
-            72,
+            55,
             61
           ]
         },
         {
           "t": 600,
           "remaining": [
-            72,
-            61
+            55,
+            56
           ]
         }
       ],
       "surviving_ship_positions": {
         "0": [
-          -257.243,
-          -217.588,
-          -205.408
+          -579.446,
+          -101.396,
+          -167.214
         ],
         "1": [
-          -535.0,
-          -200.0,
-          -45.0
-        ],
-        "3": [
-          -184.517,
-          16.12,
-          0.903
-        ],
-        "4": [
-          -181.614,
-          200.486,
-          185.672
+          -591.404,
+          -52.645,
+          -142.956
         ],
         "5": [
-          -83.945,
-          -83.119,
-          -166.725
-        ],
-        "6": [
-          398.794,
-          199.909,
-          176.932
-        ],
-        "19": [
-          -194.713,
-          213.455,
-          181.061
-        ],
-        "27": [
-          405.228,
-          -55.703,
-          -111.786
+          -407.499,
+          82.077,
+          67.904
         ],
         "28": [
-          316.491,
-          -316.859,
-          -182.819
+          88.858,
+          -84.764,
+          -110.783
         ],
         "29": [
-          535.0,
-          -200.0,
-          -45.0
+          86.967,
+          -91.01,
+          -46.045
         ],
-        "31": [
-          327.466,
-          10.747,
-          -15.019
-        ],
-        "34": [
-          -182.738,
-          400.199,
-          -3.704
+        "33": [
+          -67.923,
+          51.008,
+          -109.876
         ],
         "55": [
-          -164.212,
-          360.005,
-          -7.324
+          -358.332,
+          9.302,
+          -87.302
         ]
       },
       "initial_total_hull_hp": 1218276,
@@ -7322,7 +7398,7 @@
       "case": "mixed_100",
       "variant": "shelter_control",
       "dt": 0.5,
-      "wall_seconds": 12.126,
+      "wall_seconds": 12.121,
       "initial_roster": {
         "battleship": 1,
         "carrier": 1,
@@ -7606,7 +7682,7 @@
       "case": "mixed_100",
       "variant": "standard",
       "dt": 0.5,
-      "wall_seconds": 20.107,
+      "wall_seconds": 15.417,
       "initial_roster": {
         "battleship": 1,
         "carrier": 1,
@@ -7889,7 +7965,7 @@
       "case": "mixed_100",
       "variant": "standard",
       "dt": 0.5,
-      "wall_seconds": 17.405,
+      "wall_seconds": 8.052,
       "initial_roster": {
         "battleship": 1,
         "carrier": 1,
@@ -8168,7 +8244,7 @@
       "case": "mixed_100",
       "variant": "strong",
       "dt": 0.5,
-      "wall_seconds": 7.246,
+      "wall_seconds": 7.562,
       "initial_roster": {
         "battleship": 1,
         "carrier": 1,
@@ -8452,7 +8528,7 @@
       "case": "mixed_100",
       "variant": "strong",
       "dt": 0.5,
-      "wall_seconds": 7.522,
+      "wall_seconds": 8.117,
       "initial_roster": {
         "battleship": 1,
         "carrier": 1,
@@ -8735,7 +8811,7 @@
       "case": "mixed_100",
       "variant": "weak",
       "dt": 0.5,
-      "wall_seconds": 15.194,
+      "wall_seconds": 19.28,
       "initial_roster": {
         "battleship": 1,
         "carrier": 1,
@@ -9020,7 +9096,7 @@
       "case": "mixed_100",
       "variant": "weak",
       "dt": 0.5,
-      "wall_seconds": 20.487,
+      "wall_seconds": 21.285,
       "initial_roster": {
         "battleship": 1,
         "carrier": 1,
@@ -9076,26 +9152,59 @@
       "left_wins": 0,
       "right_wins": 0,
       "unresolved": 2,
-      "mean_remaining_total_cost": 139,
+      "mean_remaining_total_cost": 114,
       "mean_environment_hull_fraction": 0.0,
       "mean_aircraft_surviving": 0,
       "hero_ids_preserved": true,
       "metrics_mean": {
-        "env_avoidance_steps": 1368.5,
-        "env_blocked_shots": 4570.0,
-        "env_los_reposition_steps": 4378.5,
-        "explosions": 55.0,
-        "facility_destroyed": 340.5,
+        "env_avoidance_steps": 1268.5,
+        "env_blocked_shots": 3061.0,
+        "env_los_reposition_steps": 3184.5,
+        "explosions": 59.0,
+        "facility_destroyed": 361.5,
         "fighter_losses": 80.0,
-        "pd_damage_missile": 11382.0,
-        "repair_hull_hp": 6651.5660625,
-        "repair_resource_0": 469.5460855545961,
-        "repair_resource_1": 7.906364834060048,
+        "pd_damage_missile": 11772.0,
+        "repair_hull_hp": 6912.0,
+        "repair_resource_0": 535.9942300570591,
+        "repair_resource_1": 17.18091068505072,
         "repair_resource_2": 0.0,
-        "repair_work": 12681.653625568328,
-        "shots_launched": 24368.0,
-        "wreck_explosion": 0.5,
-        "wreck_hull": 24.0
+        "repair_work": 13942.637822491988,
+        "shots_launched": 24108.0,
+        "wreck_hull": 35.0
+      }
+    },
+    "asteroid/standard/mixed_100": {
+      "n": 2,
+      "median_observed_end_seconds": 600.0,
+      "median_main_end_seconds": null,
+      "outcomes": {
+        "timeout": 2
+      },
+      "left_wins": 0,
+      "right_wins": 0,
+      "unresolved": 2,
+      "mean_remaining_total_cost": 102.5,
+      "mean_environment_hull_fraction": 0.0,
+      "mean_aircraft_surviving": 0,
+      "hero_ids_preserved": true,
+      "metrics_mean": {
+        "env_asteroid_damage": 19725.0,
+        "env_asteroids_destroyed": 5.0,
+        "env_avoidance_steps": 258.5,
+        "env_blocked_shots": 609.5,
+        "env_topology_version": 5.0,
+        "explosions": 66.0,
+        "facility_destroyed": 386.0,
+        "fighter_losses": 80.0,
+        "pd_damage_missile": 16176.0,
+        "repair_hull_hp": 5016.0,
+        "repair_resource_0": 447.8189189291584,
+        "repair_resource_1": 15.700264053869194,
+        "repair_resource_2": 0.0,
+        "repair_work": 12029.282918685647,
+        "shots_launched": 24537.5,
+        "wreck_core": 0.5,
+        "wreck_hull": 41.5
       }
     },
     "asteroid/weak/mixed_100": {
@@ -9133,40 +9242,6 @@
         "wreck_hull": 39.0
       }
     },
-    "asteroid/standard/mixed_100": {
-      "n": 2,
-      "median_observed_end_seconds": 600.0,
-      "median_main_end_seconds": null,
-      "outcomes": {
-        "timeout": 2
-      },
-      "left_wins": 0,
-      "right_wins": 0,
-      "unresolved": 2,
-      "mean_remaining_total_cost": 102.5,
-      "mean_environment_hull_fraction": 0.0,
-      "mean_aircraft_surviving": 0,
-      "hero_ids_preserved": true,
-      "metrics_mean": {
-        "env_asteroid_damage": 19725.0,
-        "env_asteroids_destroyed": 5.0,
-        "env_avoidance_steps": 258.5,
-        "env_blocked_shots": 609.5,
-        "env_topology_version": 5.0,
-        "explosions": 66.0,
-        "facility_destroyed": 386.0,
-        "fighter_losses": 80.0,
-        "pd_damage_missile": 16176.0,
-        "repair_hull_hp": 5016.0,
-        "repair_resource_0": 447.8189189291584,
-        "repair_resource_1": 15.700264053869194,
-        "repair_resource_2": 0.0,
-        "repair_work": 12029.282918685647,
-        "shots_launched": 24537.5,
-        "wreck_core": 0.5,
-        "wreck_hull": 41.5
-      }
-    },
     "asteroid/strong/mixed_100": {
       "n": 2,
       "median_observed_end_seconds": 600.0,
@@ -9198,41 +9273,6 @@
         "repair_work": 9884.680626965215,
         "shots_launched": 25796.5,
         "wreck_hull": 45.0
-      }
-    },
-    "radiation/weak/mixed_100": {
-      "n": 2,
-      "median_observed_end_seconds": 600.0,
-      "median_main_end_seconds": null,
-      "outcomes": {
-        "timeout": 2
-      },
-      "left_wins": 0,
-      "right_wins": 0,
-      "unresolved": 2,
-      "mean_remaining_total_cost": 100,
-      "mean_environment_hull_fraction": 0.04343872774943709,
-      "mean_aircraft_surviving": 0,
-      "hero_ids_preserved": true,
-      "metrics_mean": {
-        "env_damage_input_radiation": 265222.8196057784,
-        "env_hull_damage_radiation": 52920.35948767322,
-        "env_radiation_exposed_cell_seconds": 303224.0,
-        "env_shield_damage_radiation": 150465.80225726299,
-        "environment_wrecks": 1.5,
-        "explosions": 66.0,
-        "facility_destroyed": 386.5,
-        "fighter_losses": 80.0,
-        "pd_damage_missile": 13848.0,
-        "repair_hull_hp": 40.0,
-        "repair_resource_0": 168.98718230084728,
-        "repair_resource_1": 2.283758077133922,
-        "repair_resource_2": 0.0,
-        "repair_work": 4240.225446475543,
-        "shots_launched": 23627.0,
-        "wreck_env_radiation": 1.5,
-        "wreck_explosion": 0.5,
-        "wreck_hull": 42.0
       }
     },
     "radiation/standard/mixed_100": {
@@ -9303,7 +9343,7 @@
         "wreck_hull": 34.0
       }
     },
-    "flare/weak/mixed_100": {
+    "radiation/weak/mixed_100": {
       "n": 2,
       "median_observed_end_seconds": 600.0,
       "median_main_end_seconds": null,
@@ -9313,33 +9353,29 @@
       "left_wins": 0,
       "right_wins": 0,
       "unresolved": 2,
-      "mean_remaining_total_cost": 170.5,
-      "mean_environment_hull_fraction": 0.0039818707110030405,
+      "mean_remaining_total_cost": 100,
+      "mean_environment_hull_fraction": 0.04343872774943709,
       "mean_aircraft_surviving": 0,
       "hero_ids_preserved": true,
       "metrics_mean": {
-        "env_avoidance_steps": 5373.0,
-        "env_blocked_shots": 13375.0,
-        "env_damage_input_flare": 66987.17473684161,
-        "env_flare_contacts": 146.0,
-        "env_flare_exposure_sum": 45.23684210526316,
-        "env_flare_fully_covered": 100.5,
-        "env_hull_damage_flare": 4851.01752231794,
-        "env_los_reposition_steps": 15549.5,
-        "env_shield_damage_flare": 57774.95473684186,
-        "env_ship_shutdowns": 21.5,
-        "explosions": 38.5,
-        "facility_destroyed": 226.0,
+        "env_damage_input_radiation": 265222.8196057784,
+        "env_hull_damage_radiation": 52920.35948767322,
+        "env_radiation_exposed_cell_seconds": 303224.0,
+        "env_shield_damage_radiation": 150465.80225726299,
+        "environment_wrecks": 1.5,
+        "explosions": 66.0,
+        "facility_destroyed": 386.5,
         "fighter_losses": 80.0,
-        "pd_damage_missile": 6384.0,
-        "repair_hull_hp": 9077.387097734376,
-        "repair_resource_0": 629.5666760898137,
-        "repair_resource_1": 6.759533288750381,
+        "pd_damage_missile": 13848.0,
+        "repair_hull_hp": 40.0,
+        "repair_resource_0": 168.98718230084728,
+        "repair_resource_1": 2.283758077133922,
         "repair_resource_2": 0.0,
-        "repair_work": 16986.058391975304,
-        "shots_launched": 28782.5,
+        "repair_work": 4240.225446475543,
+        "shots_launched": 23627.0,
+        "wreck_env_radiation": 1.5,
         "wreck_explosion": 0.5,
-        "wreck_hull": 14.5
+        "wreck_hull": 42.0
       }
     },
     "flare/standard/mixed_100": {
@@ -9352,34 +9388,73 @@
       "left_wins": 0,
       "right_wins": 0,
       "unresolved": 2,
-      "mean_remaining_total_cost": 171.5,
-      "mean_environment_hull_fraction": 0.006500437643406442,
+      "mean_remaining_total_cost": 172.5,
+      "mean_environment_hull_fraction": 0.006939139651076874,
       "mean_aircraft_surviving": 0,
       "hero_ids_preserved": true,
       "metrics_mean": {
-        "env_avoidance_steps": 6137.5,
-        "env_blocked_shots": 14898.0,
-        "env_damage_input_flare": 114543.98421052677,
-        "env_flare_contacts": 150.0,
-        "env_flare_exposure_sum": 46.26315789473684,
-        "env_flare_fully_covered": 103.5,
-        "env_hull_damage_flare": 7919.327170458628,
-        "env_los_reposition_steps": 16756.5,
-        "env_shield_damage_flare": 97933.40421052615,
-        "env_ship_shutdowns": 21.0,
+        "env_avoidance_steps": 9634.0,
+        "env_blocked_shots": 14916.0,
+        "env_damage_input_flare": 83488.01999999941,
+        "env_flare_contacts": 148.0,
+        "env_flare_exposure_sum": 48.0,
+        "env_flare_fully_covered": 100.0,
+        "env_hull_damage_flare": 8453.78729755533,
+        "env_los_reposition_steps": 19628.5,
+        "env_shield_damage_flare": 63259.61999999988,
+        "env_ship_shutdowns": 19.0,
         "environment_wrecks": 0.5,
-        "explosions": 37.0,
-        "facility_destroyed": 230.0,
+        "explosions": 37.5,
+        "facility_destroyed": 227.0,
         "fighter_losses": 80.0,
-        "pd_damage_missile": 4362.0,
-        "repair_hull_hp": 7269.747539945317,
-        "repair_resource_0": 508.5928841246221,
-        "repair_resource_1": 7.652744312997285,
+        "pd_damage_missile": 4488.0,
+        "repair_hull_hp": 10487.99582625,
+        "repair_resource_0": 756.7629448321616,
+        "repair_resource_1": 11.099954149683903,
         "repair_resource_2": 0.0,
-        "repair_work": 13722.610036442735,
-        "shots_launched": 29010.0,
+        "repair_work": 19846.91134506255,
+        "shots_launched": 28971.5,
         "wreck_env_flare": 0.5,
         "wreck_hull": 14.0
+      }
+    },
+    "flare/weak/mixed_100": {
+      "n": 2,
+      "median_observed_end_seconds": 600.0,
+      "median_main_end_seconds": null,
+      "outcomes": {
+        "timeout": 2
+      },
+      "left_wins": 0,
+      "right_wins": 0,
+      "unresolved": 2,
+      "mean_remaining_total_cost": 174,
+      "mean_environment_hull_fraction": 0.00350188614035247,
+      "mean_aircraft_surviving": 0,
+      "hero_ids_preserved": true,
+      "metrics_mean": {
+        "env_avoidance_steps": 8860.0,
+        "env_blocked_shots": 15346.5,
+        "env_damage_input_flare": 56597.19999999957,
+        "env_flare_contacts": 144.0,
+        "env_flare_exposure_sum": 45.0,
+        "env_flare_fully_covered": 99.0,
+        "env_hull_damage_flare": 4266.263839524046,
+        "env_los_reposition_steps": 19827.5,
+        "env_shield_damage_flare": 48043.43999999999,
+        "env_ship_shutdowns": 19.0,
+        "explosions": 42.0,
+        "facility_destroyed": 253.0,
+        "fighter_losses": 80.0,
+        "pd_damage_missile": 6114.0,
+        "repair_hull_hp": 7966.616736484375,
+        "repair_resource_0": 543.5304607281219,
+        "repair_resource_1": 0.8538836208064098,
+        "repair_resource_2": 0.0,
+        "repair_work": 14144.094446718193,
+        "shots_launched": 29774.5,
+        "wreck_core": 1.0,
+        "wreck_hull": 15.5
       }
     },
     "flare/strong/mixed_100": {
@@ -9392,33 +9467,32 @@
       "left_wins": 0,
       "right_wins": 0,
       "unresolved": 2,
-      "mean_remaining_total_cost": 173,
-      "mean_environment_hull_fraction": 0.01377503986765961,
+      "mean_remaining_total_cost": 189,
+      "mean_environment_hull_fraction": 0.01608922421330234,
       "mean_aircraft_surviving": 0,
       "hero_ids_preserved": true,
       "metrics_mean": {
-        "env_avoidance_steps": 7808.5,
-        "env_blocked_shots": 15820.5,
-        "env_damage_input_flare": 214027.0000000003,
-        "env_flare_contacts": 155.0,
-        "env_flare_exposure_sum": 41.5,
-        "env_flare_fully_covered": 113.5,
-        "env_hull_damage_flare": 16781.80046981288,
-        "env_los_reposition_steps": 15977.5,
-        "env_shield_damage_flare": 172103.20000000054,
-        "env_ship_shutdowns": 23.5,
-        "explosions": 37.0,
-        "facility_destroyed": 222.0,
+        "env_avoidance_steps": 22638.5,
+        "env_blocked_shots": 25056.0,
+        "env_damage_input_flare": 216141.19999999838,
+        "env_flare_contacts": 161.0,
+        "env_flare_exposure_sum": 61.5,
+        "env_flare_fully_covered": 99.5,
+        "env_hull_damage_flare": 19601.11571768512,
+        "env_los_reposition_steps": 30143.5,
+        "env_shield_damage_flare": 165606.39999999956,
+        "env_ship_shutdowns": 38.0,
+        "explosions": 17.5,
+        "facility_destroyed": 107.0,
         "fighter_losses": 80.0,
-        "pd_damage_missile": 6300.0,
-        "repair_hull_hp": 8562.487000000001,
-        "repair_resource_0": 651.843235519304,
-        "repair_resource_1": 30.906048285802317,
+        "pd_damage_missile": 2328.0,
+        "repair_hull_hp": 8257.980620851566,
+        "repair_resource_0": 566.3710100483936,
+        "repair_resource_1": 42.83197678123676,
         "repair_resource_2": 0.0,
-        "repair_work": 16848.327967198366,
-        "shots_launched": 30047.0,
-        "wreck_core": 0.5,
-        "wreck_hull": 12.0
+        "repair_work": 14489.95276054409,
+        "shots_launched": 35095.0,
+        "wreck_hull": 5.5
       }
     },
     "blackhole/weak/mixed_100": {
@@ -9454,38 +9528,6 @@
         "wreck_hull": 27.0
       }
     },
-    "blackhole/standard/mixed_100": {
-      "n": 2,
-      "median_observed_end_seconds": 600.0,
-      "median_main_end_seconds": null,
-      "outcomes": {
-        "timeout": 2
-      },
-      "left_wins": 0,
-      "right_wins": 0,
-      "unresolved": 2,
-      "mean_remaining_total_cost": 100,
-      "mean_environment_hull_fraction": 0.0,
-      "mean_aircraft_surviving": 0,
-      "hero_ids_preserved": true,
-      "metrics_mean": {
-        "env_gravity_impulse_sum": 6321.656372529109,
-        "env_gravity_ship_seconds": 13156.25,
-        "environment_wrecks": 26.0,
-        "explosions": 52.5,
-        "facility_destroyed": 332.0,
-        "fighter_losses": 80.0,
-        "pd_damage_missile": 14736.0,
-        "repair_hull_hp": 2728.0,
-        "repair_resource_0": 252.22338881421757,
-        "repair_resource_1": 1.634164542983507,
-        "repair_resource_2": 0.0,
-        "repair_work": 6553.567496452396,
-        "shots_launched": 23758.5,
-        "wreck_env_blackhole": 26.0,
-        "wreck_hull": 24.0
-      }
-    },
     "blackhole/strong/mixed_100": {
       "n": 2,
       "median_observed_end_seconds": 600.0,
@@ -9517,7 +9559,39 @@
         "wreck_env_blackhole": 30.0,
         "wreck_hull": 22.0
       }
+    },
+    "blackhole/standard/mixed_100": {
+      "n": 2,
+      "median_observed_end_seconds": 600.0,
+      "median_main_end_seconds": null,
+      "outcomes": {
+        "timeout": 2
+      },
+      "left_wins": 0,
+      "right_wins": 0,
+      "unresolved": 2,
+      "mean_remaining_total_cost": 100,
+      "mean_environment_hull_fraction": 0.0,
+      "mean_aircraft_surviving": 0,
+      "hero_ids_preserved": true,
+      "metrics_mean": {
+        "env_gravity_impulse_sum": 6321.656372529109,
+        "env_gravity_ship_seconds": 13156.25,
+        "environment_wrecks": 26.0,
+        "explosions": 52.5,
+        "facility_destroyed": 332.0,
+        "fighter_losses": 80.0,
+        "pd_damage_missile": 14736.0,
+        "repair_hull_hp": 2728.0,
+        "repair_resource_0": 252.22338881421757,
+        "repair_resource_1": 1.634164542983507,
+        "repair_resource_2": 0.0,
+        "repair_work": 6553.567496452396,
+        "shots_launched": 23758.5,
+        "wreck_env_blackhole": 26.0,
+        "wreck_hull": 24.0
+      }
     }
   },
-  "wall_seconds": 113.09
+  "wall_seconds": 116.92
 }

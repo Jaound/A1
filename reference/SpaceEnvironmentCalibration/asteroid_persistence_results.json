@@ -1,0 +1,221 @@
+{
+  "status": "completed",
+  "scope": "12 terrain-removal episodes; not full battle win-rate samples",
+  "rows": [
+    {
+      "hp_50m": 1800.0,
+      "budget": 100,
+      "seed": 175200,
+      "destruction_seconds": {
+        "0": 4.5,
+        "3": 7.5,
+        "4": 9.5,
+        "1": 55.5,
+        "2": 116.5
+      },
+      "last_removal_seconds": 116.5,
+      "remaining_asteroids": 0,
+      "blocked_shots": 596.0,
+      "active_environment_count": 1
+    },
+    {
+      "hp_50m": 1800.0,
+      "budget": 100,
+      "seed": 175201,
+      "destruction_seconds": {
+        "0": 3.5,
+        "3": 5.5,
+        "4": 7.5,
+        "1": 38.0,
+        "2": 172.5
+      },
+      "last_removal_seconds": 172.5,
+      "remaining_asteroids": 0,
+      "blocked_shots": 604.0,
+      "active_environment_count": 1
+    },
+    {
+      "hp_50m": 1800.0,
+      "budget": 300,
+      "seed": 175200,
+      "destruction_seconds": {
+        "3": 4.0,
+        "1": 6.0,
+        "4": 7.5,
+        "0": 9.0,
+        "2": 31.5
+      },
+      "last_removal_seconds": 31.5,
+      "remaining_asteroids": 0,
+      "blocked_shots": 465.0,
+      "active_environment_count": 1
+    },
+    {
+      "hp_50m": 1800.0,
+      "budget": 300,
+      "seed": 175201,
+      "destruction_seconds": {
+        "0": 4.0,
+        "3": 5.0,
+        "4": 6.0,
+        "1": 15.0,
+        "2": 37.0
+      },
+      "last_removal_seconds": 37.0,
+      "remaining_asteroids": 0,
+      "blocked_shots": 374.0,
+      "active_environment_count": 1
+    },
+    {
+      "hp_50m": 6000.0,
+      "budget": 100,
+      "seed": 175200,
+      "destruction_seconds": {
+        "0": 8.5,
+        "3": 21.0,
+        "4": 30.5,
+        "1": 122.0,
+        "2": 155.5
+      },
+      "last_removal_seconds": 155.5,
+      "remaining_asteroids": 0,
+      "blocked_shots": 1674.0,
+      "active_environment_count": 1
+    },
+    {
+      "hp_50m": 6000.0,
+      "budget": 100,
+      "seed": 175201,
+      "destruction_seconds": {
+        "0": 7.0,
+        "3": 17.5,
+        "4": 31.5,
+        "1": 142.0,
+        "2": 203.0
+      },
+      "last_removal_seconds": 203.0,
+      "remaining_asteroids": 0,
+      "blocked_shots": 1672.0,
+      "active_environment_count": 1
+    },
+    {
+      "hp_50m": 6000.0,
+      "budget": 300,
+      "seed": 175200,
+      "destruction_seconds": {
+        "3": 11.0,
+        "0": 14.0,
+        "1": 15.0,
+        "4": 19.0,
+        "2": 42.5
+      },
+      "last_removal_seconds": 42.5,
+      "remaining_asteroids": 0,
+      "blocked_shots": 1035.0,
+      "active_environment_count": 1
+    },
+    {
+      "hp_50m": 6000.0,
+      "budget": 300,
+      "seed": 175201,
+      "destruction_seconds": {
+        "0": 5.0,
+        "3": 7.0,
+        "4": 16.0,
+        "2": 72.0,
+        "1": 83.5
+      },
+      "last_removal_seconds": 83.5,
+      "remaining_asteroids": 0,
+      "blocked_shots": 1515.0,
+      "active_environment_count": 1
+    },
+    {
+      "hp_50m": 18000.0,
+      "budget": 100,
+      "seed": 175200,
+      "destruction_seconds": {
+        "0": 74.5,
+        "3": 113.5,
+        "4": 116.5
+      },
+      "last_removal_seconds": null,
+      "remaining_asteroids": 2,
+      "blocked_shots": 2437.0,
+      "active_environment_count": 1
+    },
+    {
+      "hp_50m": 18000.0,
+      "budget": 100,
+      "seed": 175201,
+      "destruction_seconds": {
+        "0": 62.5,
+        "3": 98.5,
+        "4": 155.0
+      },
+      "last_removal_seconds": null,
+      "remaining_asteroids": 2,
+      "blocked_shots": 3912.0,
+      "active_environment_count": 1
+    },
+    {
+      "hp_50m": 18000.0,
+      "budget": 300,
+      "seed": 175200,
+      "destruction_seconds": {
+        "0": 17.5,
+        "3": 21.0,
+        "4": 32.5,
+        "1": 101.0,
+        "2": 166.0
+      },
+      "last_removal_seconds": 166.0,
+      "remaining_asteroids": 0,
+      "blocked_shots": 2574.0,
+      "active_environment_count": 1
+    },
+    {
+      "hp_50m": 18000.0,
+      "budget": 300,
+      "seed": 175201,
+      "destruction_seconds": {
+        "0": 5.5,
+        "3": 19.5,
+        "4": 88.5,
+        "2": 94.5,
+        "1": 150.5
+      },
+      "last_removal_seconds": 150.5,
+      "remaining_asteroids": 0,
+      "blocked_shots": 3081.0,
+      "active_environment_count": 1
+    }
+  ],
+  "summary": {
+    "1800.0/100": {
+      "median_last_removal_seconds": 144.5,
+      "censored": 0
+    },
+    "1800.0/300": {
+      "median_last_removal_seconds": 34.25,
+      "censored": 0
+    },
+    "6000.0/100": {
+      "median_last_removal_seconds": 179.25,
+      "censored": 0
+    },
+    "6000.0/300": {
+      "median_last_removal_seconds": 63.0,
+      "censored": 0
+    },
+    "18000.0/100": {
+      "median_last_removal_seconds": null,
+      "censored": 2
+    },
+    "18000.0/300": {
+      "median_last_removal_seconds": 158.25,
+      "censored": 0
+    }
+  },
+  "environment_sha256": "5fcd6abd91680e2c5f2c6e75ec29acd5ac859e3e45d8596c575dba5cee1a456a"
+}

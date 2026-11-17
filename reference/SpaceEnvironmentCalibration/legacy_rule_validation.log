@@ -1,0 +1,41 @@
+test_active_hero_count_is_faction_wide (test_rules.Rules.test_active_hero_count_is_faction_wide) ... ok
+test_all_hulls_cost_and_exact_budgets (test_rules.Rules.test_all_hulls_cost_and_exact_budgets) ... ok
+test_already_fired_hit_survives_capture (test_rules.Rules.test_already_fired_hit_survives_capture) ... ok
+test_assault_extraction_reuses_transport_not_new_pods (test_rules.Rules.test_assault_extraction_reuses_transport_not_new_pods) ... ok
+test_assault_is_small_and_pd_immune (test_rules.Rules.test_assault_is_small_and_pd_immune) ... ok
+test_capacity_adds_slots_not_free_extra_initial_inventory (test_rules.Rules.test_capacity_adds_slots_not_free_extra_initial_inventory) ... ok
+test_capture_clears_orders_not_health_or_units (test_rules.Rules.test_capture_clears_orders_not_health_or_units) ... ok
+test_crew_changes_regeneration (test_rules.Rules.test_crew_changes_regeneration) ... ok
+test_crew_zero_without_humans_neutralizes (test_rules.Rules.test_crew_zero_without_humans_neutralizes) ... ok
+test_destroyed_shield_cannot_recover (test_rules.Rules.test_destroyed_shield_cannot_recover) ... ok
+test_external_facility_destruction_clears_linked_armor (test_rules.Rules.test_external_facility_destruction_clears_linked_armor) ... ok
+test_facility_crew_independent_from_hp (test_rules.Rules.test_facility_crew_independent_from_hp) ... ok
+test_friendly_boarders_protect_enemy_target (test_rules.Rules.test_friendly_boarders_protect_enemy_target) ... ok
+test_graph_deck_distance_and_core (test_rules.Rules.test_graph_deck_distance_and_core) ... ok
+test_hit_does_not_reset_regeneration (test_rules.Rules.test_hit_does_not_reset_regeneration) ... ok
+test_level_growth_and_legal_skill_budget (test_rules.Rules.test_level_growth_and_legal_skill_budget) ... ok
+test_lost_contact_prevents_new_targeting (test_rules.Rules.test_lost_contact_prevents_new_targeting) ... ok
+test_lost_transport_requires_emergency_preparation (test_rules.Rules.test_lost_transport_requires_emergency_preparation) ... ok
+test_no_timer_only_recapture (test_rules.Rules.test_no_timer_only_recapture) ... ok
+test_noncombat_rate_and_half_restart (test_rules.Rules.test_noncombat_rate_and_half_restart) ... ok
+test_observation_does_not_leak_hidden_data (test_rules.Rules.test_observation_does_not_leak_hidden_data) ... ok
+test_personal_pods_have_individual_events (test_rules.Rules.test_personal_pods_have_individual_events) ... ok
+test_precise_sabotage_preserves_external_armor (test_rules.Rules.test_precise_sabotage_preserves_external_armor) ... ok
+test_real_bridge_occupation_recaptures (test_rules.Rules.test_real_bridge_occupation_recaptures) ... ok
+test_repair_actual_price_speed_and_no_crew_restore (test_rules.Rules.test_repair_actual_price_speed_and_no_crew_restore) ... ok
+test_repair_cannot_use_missing_resource (test_rules.Rules.test_repair_cannot_use_missing_resource) ... ok
+test_repaired_magazine_can_explode_in_a_new_event (test_rules.Rules.test_repaired_magazine_can_explode_in_a_new_event) ... ok
+test_same_seed_replays (test_rules.Rules.test_same_seed_replays) ... ok
+test_shield_active_never_regenerates (test_rules.Rules.test_shield_active_never_regenerates) ... ok
+test_support_consumable_capacity_not_free_refill (test_rules.Rules.test_support_consumable_capacity_not_free_refill) ... ok
+test_two_repair_ships_do_not_stack (test_rules.Rules.test_two_repair_ships_do_not_stack) ... ok
+test_uncommanded_room_presence_is_not_automatic_capture (test_rules.Rules.test_uncommanded_room_presence_is_not_automatic_capture) ... ok
+test_unfired_salvo_cancels_when_attacker_is_captured (test_rules.Rules.test_unfired_salvo_cancels_when_attacker_is_captured) ... ok
+test_weapon_overkill_never_damages_hull (test_rules.Rules.test_weapon_overkill_never_damages_hull) ... ok
+test_wreck_kills_everyone_aboard (test_rules.Rules.test_wreck_kills_everyone_aboard) ... ok
+test_xl_weapons_unchanged (test_rules.Rules.test_xl_weapons_unchanged) ... ok
+
+----------------------------------------------------------------------
+Ran 36 tests in 0.217s
+
+OK

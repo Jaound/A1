@@ -136,10 +136,15 @@ class EnvironmentBattle(legacy.Battle):
                                     "destroyed": False})
         elif self.hazard == "flare" or self.params.get("static_shelter", False):
             # Static shelter geometry only: no second asteroid hazard or collision damage.
-            for i, (x, y) in enumerate(((-620., -150.), (-180., 200.), (180., 200.), (620., -150.))):
+            for i, (x, y) in enumerate(((-800., 0.), (-180., 200.), (180., 200.), (800., 0.))):
                 self.bodies.append({"id": i, "pos": [x, y, 0.],
                                     "radius": self.params["cover_radius"],
                                     "hp": math.inf, "destroyed": False})
+
+        for ship in self.ships:
+            for body in self.bodies:
+                if math.dist(ship.pos,body["pos"]) <= body["radius"]+ship.d["radius"]:
+                    raise ValueError(f"Initial ship {ship.uid} overlaps body {body['id']}")
 
     def samples(self, ship):
         r = ship.d["radius"]
