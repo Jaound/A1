@@ -16,6 +16,7 @@ import bmesh
 parser=argparse.ArgumentParser();parser.add_argument('--output',required=True)
 parser.add_argument('--base-faces',type=int,default=10000);parser.add_argument('--yaw-faces',type=int,default=20000)
 parser.add_argument('--weighted-normals',action='store_true')
+parser.add_argument('--transfer-uv',action='store_true')
 args=parser.parse_args(sys.argv[sys.argv.index('--')+1:])
 source=Path(bpy.data.filepath).resolve();out=Path(args.output).resolve()
 if min(args.base_faces,args.yaw_faces)<=0:raise ValueError('Target face counts must be positive')
@@ -36,10 +37,21 @@ for name,target in [('MM24_BaseTrial',args.base_faces),('MM24_YawTrial',args.yaw
     obj=bpy.data.objects.get(name)
     if not obj or obj.type!='MESH':raise RuntimeError('Missing '+name)
     before_faces=len(obj.data.polygons);before_uv=[u.name for u in obj.data.uv_layers]
+    source_uv=None
+    if args.transfer_uv:
+        source_uv=obj.copy();source_uv.data=obj.data.copy()
+        bpy.context.collection.objects.link(source_uv)
+        source_uv.hide_render=True
     bpy.ops.object.select_all(action='DESELECT');obj.select_set(True);bpy.context.view_layer.objects.active=obj
     modifier=obj.modifiers.new('TrialSimplification','DECIMATE');modifier.decimate_type='COLLAPSE'
     modifier.ratio=min(1.0,target/max(1,before_faces));modifier.use_collapse_triangulate=True
     bpy.ops.object.modifier_apply(modifier=modifier.name)
+    if source_uv:
+        transfer=obj.modifiers.new('TrialSourceUV','DATA_TRANSFER')
+        transfer.object=source_uv;transfer.use_loop_data=True
+        transfer.data_types_loops={'UV'};transfer.loop_mapping='POLYINTERP_NEAREST'
+        bpy.ops.object.modifier_apply(modifier=transfer.name)
+        bpy.data.objects.remove(source_uv,do_unlink=True)
     sharp_count=0
     if args.weighted_normals:
         bm=bmesh.new();bm.from_mesh(obj.data);bm.normal_update()
@@ -50,7 +62,7 @@ for name,target in [('MM24_BaseTrial',args.base_faces),('MM24_YawTrial',args.yaw
         bpy.ops.object.modifier_apply(modifier=normal.name)
     results[name]={'source_faces':before_faces,'target_faces':target,'output_faces':len(obj.data.polygons),
                    'source_uv_layers':before_uv,'output_uv_layers':[u.name for u in obj.data.uv_layers],
-                   'weighted_normals':args.weighted_normals,'sharp_edges_by_28deg':sharp_count}
+                   'weighted_normals':args.weighted_normals,'uv_transfer':args.transfer_uv,'sharp_edges_by_28deg':sharp_count}
     fbx=out/(name+'.fbx')
     bpy.ops.export_scene.fbx(filepath=str(fbx),use_selection=True,object_types={'MESH'},apply_unit_scale=True,
                              global_scale=1.0,axis_forward='-Y',axis_up='Z',add_leaf_bones=False,bake_anim=False,
