@@ -204,6 +204,7 @@ private:
     static int32 WarningSeverity(const FAirWarningGroup& Group);
     void RebaseWarningGroup(FAirWarningGroup& Group);
     void UpdateWarningOwnership(AOVShip* Ship);
+    void SyncCarrierOwnership(FOVCarrierState& State);
     void NotifyAircraftLoss(const FOVAircraftRecord& Craft);
     double Accumulator = 0;
     int32 NextAircraftId = 1, NextHangarId = 1, NextBoltId = 1;

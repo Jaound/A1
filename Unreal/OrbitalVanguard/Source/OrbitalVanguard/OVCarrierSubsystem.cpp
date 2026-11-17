@@ -224,6 +224,7 @@ FVector UOVCarrierSubsystem::HangarPosition(const FOVHangarState& Hangar) const
 int32 UOVCarrierSubsystem::Launch(AOVShip* Ship)
 {
     auto* State = Carriers.FindByPredicate([Ship](const FOVCarrierState& S) { return S.Carrier == Ship; });
+    if(State)SyncCarrierOwnership(*State);
     if (!State || !HasControl(Ship) || Ship->bFTLCharging) return 0;
     State->bRecallOrdered = State->bAbandonOutstanding = false;
     int32 Count = 0;
@@ -344,10 +345,26 @@ bool UOVCarrierSubsystem::ApplyAircraftDamage(int32 AircraftId, float Damage)
 {
     auto* Craft = Aircraft.FindByPredicate([AircraftId](const FOVAircraftRecord& C) { return C.AircraftId == AircraftId; });
     if (!Craft || !IsAirborneState(Craft->State) || !FMath::IsFinite(Damage) || Damage <= 0) return false;
+    if(auto* State=Carriers.FindByPredicate([&](const FOVCarrierState& S){return S.Carrier==Craft->Carrier;}))SyncCarrierOwnership(*State);
     const float Absorbed = FMath::Min(Craft->Shield, Damage);
     Craft->Shield -= Absorbed; Craft->HP = FMath::Max(0.f, Craft->HP - (Damage - Absorbed));
     if (Craft->HP <= 0) DestroyAircraft(*Craft);
     return true;
+}
+
+void UOVCarrierSubsystem::SyncCarrierOwnership(FOVCarrierState& State)
+{
+    auto* Ship=State.Carrier.Get();
+    if(!IsValid(Ship)||!Ship->Systems||Ship->Systems->bWrecked||Ship->Systems->FactionId==State.LastFaction)return;
+    State.LastFaction=Ship->Systems->FactionId;State.bAbandonOutstanding=false;
+    for(auto& Craft:Aircraft)if(Craft.Carrier==Ship&&Craft.State!=EOVAircraftState::Wrecked)
+    {
+        Craft.FactionId=State.LastFaction;Craft.StrikeTarget.Reset();Craft.InterceptTargetId=0;
+        Craft.Maneuver=EOVAircraftManeuver::Approach;Craft.Leg=EOVAircraftLeg::Ingress;
+        Craft.DefensiveRemaining=0;Craft.RejoinRemaining=0;
+    }
+    UpdateWarningOwnership(Ship);
+    // Already launched bolts deliberately keep their original faction.
 }
 
 FOVHangarState* UOVCarrierSubsystem::FindDock(FOVAircraftRecord& Craft)
@@ -385,20 +402,7 @@ void UOVCarrierSubsystem::Step(float Delta)
         // Ownership is independent of operational crew/control. A captured, uncrewed
         // carrier transfers its surviving inventory immediately but cannot make it fly.
         if (!IsValid(Ship) || !Ship->Systems || Ship->Systems->bWrecked) continue;
-        if (Ship->Systems->FactionId != State.LastFaction)
-        {
-            State.LastFaction = Ship->Systems->FactionId;
-            State.bAbandonOutstanding = false;
-            for (auto& Craft : Aircraft)
-                if (Craft.Carrier == Ship && Craft.State != EOVAircraftState::Wrecked)
-                {
-                    Craft.FactionId = State.LastFaction; Craft.StrikeTarget.Reset(); Craft.InterceptTargetId = 0;
-                    Craft.Maneuver = EOVAircraftManeuver::Approach; Craft.Leg = EOVAircraftLeg::Ingress;
-                    Craft.DefensiveRemaining = 0; Craft.RejoinRemaining = 0;
-                }
-            UpdateWarningOwnership(Ship);
-            // Launched Bolts intentionally retain their immutable previous faction.
-        }
+        SyncCarrierOwnership(State);
         if (!LivingShip(Ship)) continue;
         if (Ship->bFTLCharging && !State.bWasFTLCharging) Recall(Ship);
         State.bWasFTLCharging = Ship->bFTLCharging;

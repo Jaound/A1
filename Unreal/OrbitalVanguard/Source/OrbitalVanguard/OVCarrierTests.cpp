@@ -105,6 +105,17 @@ bool FOVAircraftLossWarning::RunTest(const FString&)
     for(const auto& Craft:Tiny.Fleet->Aircraft)Tiny.Fleet->ApplyAircraftDamage(Craft.AircraftId,100000);
     const auto* Final=TinyFeed->Notices.FindByPredicate([](const FOVBattleNotice& N){return N.bFleetScope&&N.Kind==EOVBattleNoticeKind::AircraftEliminated;});
     TestTrue(TEXT("마지막 격추의 10%·전멸 동시 통과 근거 보존"),Final&&(Final->CrossedThresholdMask&6)==6);
+    OVCarrierTest::FRange Immediate(4);auto* ImmediateFeed=Immediate.World->GetSubsystem<UOVBattleNotices>();
+    Immediate.Fleet->Launch(Immediate.Carrier);Immediate.Advance(.02f);
+    const int32 FirstId=Immediate.Fleet->Aircraft[0].AircraftId,SecondId=Immediate.Fleet->Aircraft[1].AircraftId;
+    Immediate.Carrier->Systems->FactionId=1;
+    TestTrue(TEXT("나포 직후 고정 단계 이전 실제 기체 피해"),Immediate.Fleet->ApplyAircraftDamage(FirstId,100000));
+    TestEqual(TEXT("피해보다 먼저 실제 기체 소속을 동기화"),Immediate.Fleet->Aircraft[0].FactionId,1);
+    TestFalse(TEXT("적 소속으로 이전된 기체 손실을 아군 전멸로 표시하지 않음"),ImmediateFeed->Notices.ContainsByPredicate([](const FOVBattleNotice& N){return N.Kind==EOVBattleNoticeKind::AircraftEliminated;}));
+    Immediate.Carrier->Systems->FactionId=0;
+    TestTrue(TEXT("탈환 직후 고정 단계 이전 실제 기체 피해"),Immediate.Fleet->ApplyAircraftDamage(SecondId,100000));
+    TestEqual(TEXT("탈환 후 피격은 재편된 아군 기체 ID에 귀속"),Immediate.Fleet->Aircraft[1].FactionId,0);
+    TestEqual(TEXT("고정 단계 이전 소유권 변경도 편제 조정으로 기록"),ImmediateFeed->Notices.FilterByPredicate([](const FOVBattleNotice& N){return N.Kind==EOVBattleNoticeKind::AircraftAdjusted;}).Num(),2);
     return true;
 }
 
