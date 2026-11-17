@@ -1,0 +1,247 @@
+{
+  "passed": true,
+  "kind": "실제 진입 영웅 이동·교전 정지 렌더",
+  "physical_input": false,
+  "time_progression": "정상 자동 명령 + API 0.05초 전진",
+  "scope": "정지 화면과 상태·이동·사격 기록. 연속 애니메이션·직접 조작감 검증 아님",
+  "seed": 260112,
+  "requested_size": [
+    1920,
+    1080
+  ],
+  "dev_shortcuts": [],
+  "game_limit": 600.0,
+  "wall_limit": 180.0,
+  "captures": [
+    {
+      "category": "Moving",
+      "path": "C:/Users/user/source/repos/A1/Unreal/OrbitalVanguard/Saved/Validation\\InteriorPresentation\\20261117_190526_011369\\01_실제_선내_이동.png",
+      "observation": {
+        "unit_id": 51,
+        "person_id": 51,
+        "name": "역장 돌격 영웅",
+        "role": "<OVInteriorRole.MELEE: 1>",
+        "state": "<OVInteriorState.MOVING: 1>",
+        "hero_id": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "ship": "/Game/Maps/UEDPIE_0_ControlRange.ControlRange:PersistentLevel.OVShip_3",
+        "node_id": "D2_X4_Y1",
+        "local_position": [
+          172.27272699479818,
+          1.9761345952858988e-14,
+          0.0
+        ],
+        "path": [
+          "D2_X4_Y1",
+          "D2_X3_Y1",
+          "D2_X2_Y1",
+          "D2_X1_Y1",
+          "D1_X1_Y1",
+          "D1_X2_Y1",
+          "D1_X3_Y1",
+          "D1_X4_Y1"
+        ],
+        "hp": 300.0,
+        "max_hp": 300.0,
+        "progress": 0.0,
+        "distance_travelled": 60.000003814697266,
+        "shots": 0,
+        "hits": 0,
+        "skill_uses": 0,
+        "enemy_id": 0,
+        "interior_time": 52.20000272244215
+      },
+      "previous_step_distance": 42.000003814697266,
+      "step_distance": 18.0,
+      "score": {
+        "game_time": 52.20000272244215,
+        "shield_break_at": 50.81666931696236,
+        "first_entry_at": 52.116669384762645,
+        "shield_operation_at": -1.0,
+        "bridge_capture_at": -1.0,
+        "launched": 6,
+        "entered": 1,
+        "returned": 0,
+        "returned_after_entry": 0
+      },
+      "deck": 2,
+      "viewport_size": [
+        1920,
+        1082
+      ],
+      "paused_before_render": true,
+      "exists": true,
+      "state_stable": true
+    },
+    {
+      "category": "Fighting",
+      "path": "C:/Users/user/source/repos/A1/Unreal/OrbitalVanguard/Saved/Validation\\InteriorPresentation\\20261117_190526_011369\\02_실제_선내_교전.png",
+      "observation": {
+        "unit_id": 52,
+        "person_id": 52,
+        "name": "초감각 사격 영웅",
+        "role": "<OVInteriorRole.RANGED: 2>",
+        "state": "<OVInteriorState.FIGHTING: 2>",
+        "hero_id": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "ship": "/Game/Maps/UEDPIE_0_ControlRange.ControlRange:PersistentLevel.OVShip_3",
+        "node_id": "D2_X3_Y1",
+        "local_position": [
+          70.0,
+          0.0,
+          0.0
+        ],
+        "path": [
+          "D2_X4_Y1",
+          "D2_X3_Y1",
+          "D2_X2_Y1",
+          "D2_X1_Y1",
+          "D1_X1_Y1",
+          "D1_X2_Y1",
+          "D1_X3_Y1",
+          "D1_X4_Y1"
+        ],
+        "hp": 240.0,
+        "max_hp": 240.0,
+        "progress": 0.0,
+        "distance_travelled": 2270.000244140625,
+        "shots": 1,
+        "hits": 1,
+        "skill_uses": 1,
+        "enemy_id": 29,
+        "interior_time": 59.900003124028444
+      },
+      "previous_step_distance": 2270.000244140625,
+      "step_distance": 0.0,
+      "score": {
+        "game_time": 59.900003124028444,
+        "shield_break_at": 50.81666931696236,
+        "first_entry_at": 52.116669384762645,
+        "shield_operation_at": -1.0,
+        "bridge_capture_at": -1.0,
+        "launched": 10,
+        "entered": 10,
+        "returned": 0,
+        "returned_after_entry": 0
+      },
+      "deck": 2,
+      "viewport_size": [
+        1920,
+        1082
+      ],
+      "paused_before_render": true,
+      "exists": true,
+      "state_stable": true
+    }
+  ],
+  "checks": [
+    {
+      "id": "SEPARATE-1920-WINDOW",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "NORMAL-MISSION",
+      "passed": true,
+      "detail": "실제 교전 준비 · 쉴드 제거 후 강습 · F1 시작"
+    },
+    {
+      "id": "Moving-ACTUAL-HERO-SELECTION",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "Moving-ACTUAL-DECK",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "Moving-HUD-BINDING",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "Moving-NORMAL-ENTRY",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "Moving-FROZEN-BEFORE-SHOT",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "Moving-ACTUAL-RENDER",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "Moving-FROZEN-AFTER-SHOT",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "Fighting-ACTUAL-HERO-SELECTION",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "Fighting-ACTUAL-DECK",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "Fighting-HUD-BINDING",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "Fighting-NORMAL-ENTRY",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "Fighting-FROZEN-BEFORE-SHOT",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "Fighting-ACTUAL-RENDER",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "Fighting-FROZEN-AFTER-SHOT",
+      "passed": true,
+      "detail": ""
+    }
+  ],
+  "errors": [],
+  "observed_state_samples": {
+    "Moving": 566,
+    "Fighting": 32
+  },
+  "final_score": {
+    "game_time": 59.900003124028444,
+    "shield_break_at": 50.81666931696236,
+    "first_entry_at": 52.116669384762645,
+    "shield_operation_at": -1.0,
+    "bridge_capture_at": -1.0,
+    "launched": 10,
+    "entered": 10,
+    "returned": 0,
+    "returned_after_entry": 0
+  },
+  "mission_result": "<OVMissionResult.ONGOING: 0>",
+  "preview_settings_restored": true,
+  "elapsed_wall_seconds": 7.203000000000429,
+  "output_directory": "C:/Users/user/source/repos/A1/Unreal/OrbitalVanguard/Saved/Validation\\InteriorPresentation\\20261117_190526_011369"
+}

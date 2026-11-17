@@ -1,0 +1,189 @@
+{
+  "passed": true,
+  "kind": "간소화 개발창 PIE API",
+  "checks": [
+    {
+      "id": "CDEV-DEFAULT-SHIP-TAB",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "CDEV-DEFAULT-NO-ADVANCED",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "CDEV-SCENE",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "CDEV-SHIP-PAGE",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "CDEV-SHORT-NO-INTERNAL-ID",
+      "passed": true,
+      "detail": "백터급 구축함  ·  중형  ·  코스트 5"
+    },
+    {
+      "id": "CDEV-16-HULL-CARDS",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "CDEV-UI-CREATE-ONE",
+      "passed": true,
+      "detail": "시험 함선 1척 생성 · 최초 재고/병력만 공급 · 캠페인 획득 아님"
+    },
+    {
+      "id": "CDEV-CREATE-SELECTED",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "CDEV-CREATE-FOLLOW",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "CDEV-ADVANCED-EVIDENCE-00",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "CDEV-ADVANCED-EVIDENCE-01",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "CDEV-ADVANCED-EVIDENCE-02",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "CDEV-ADVANCED-EVIDENCE-03",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "CDEV-ADVANCED-EVIDENCE-04",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "CDEV-ADVANCED-EVIDENCE-05",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "CDEV-ADVANCED-EVIDENCE-06",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "CDEV-ADVANCED-EVIDENCE-07",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "CDEV-ADVANCED-EVIDENCE-08",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "CDEV-ADVANCED-EVIDENCE-09",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "CDEV-ADVANCED-EVIDENCE-10",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "CDEV-ADVANCED-EVIDENCE-11",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "CDEV-TOGGLE-FILTER-STABLE",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "CDEV-TOGGLE-NO-HP",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "CDEV-TOGGLE-NO-FIRE",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "CDEV-OVERVIEW-API",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "CDEV-HIDDEN-DIAGNOSTIC-FILTER",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "CDEV-XL-FILTER",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "CDEV-RESET-FILTER",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "CDEV-DELETE-REAL",
+      "passed": true,
+      "detail": "시험 함선과 해당 격납 시험 재고를 명시적으로 폐기 · 기발사 공격 기록은 유지"
+    },
+    {
+      "id": "CDEV-ROSTER-ROOM",
+      "passed": true,
+      "detail": "비전투 편성실 · 영웅 HP/성장/손실/소모품 유지 · 임무 시작 시 선택 편제만 배치"
+    },
+    {
+      "id": "CDEV-HERO-PAGE",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "CDEV-HERO-CREATE-ONE",
+      "passed": true,
+      "detail": "시험 영웅 생성 · 후보 수치"
+    },
+    {
+      "id": "CDEV-HERO-ROLE",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "CDEV-24-PAGES-NO-ROSTER-MUTATION",
+      "passed": true,
+      "detail": "{'before': [((-1026983838, 1315821901, -1475406461, -1276313235), 0, -1.0, '<OVHeroStatus.RESERVE: 0>', 4)], 'after': [((-1026983838, 1315821901, -1475406461, -1276313235), 0, -1.0, '<OVHeroStatus.RESERVE: 0>', 4)]}"
+    },
+    {
+      "id": "CDEV-HERO-NO-ID-WALL",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "CDEV-INVALID-PAGE",
+      "passed": true,
+      "detail": ""
+    }
+  ],
+  "errors": [],
+  "scope": "기존 생성/필터/명단 규칙을 사용하는 공개 UI 명령. 직접 입력 검증 아님",
+  "elapsed_seconds": 1.1869999999998981
+}

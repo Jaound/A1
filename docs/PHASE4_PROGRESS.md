@@ -1,5 +1,7 @@
 # 개발 현황·카탈로그·영웅 운용 확장 진행
 
+후속 플레이 UI·영웅 카드·가동 포탑의 현재 상태는 [PLAY_UI_PROGRESS.md](PLAY_UI_PROGRESS.md)와 [검증 결과](PLAY_UI_VALIDATION.md)를 따른다. 이 문서 아래는 화면 개편 전 단계의 완료 이력이다.
+
 ## 최신 상태 — 2026-11-17, 구현·빌드/API 검증 완료 / 직접 입력 미검증
 
 - 브랜치 `codex/phase1-playground`. 시작 `cadf3affc6f23217ce083a2febac0ab3ffca9934`, 구현 `261159c9e65f7bc0c3c19e0a6ee5d388e70e2240`. 단계별 `4b9c9dc`→`f9227de`→`261159c`를 푸시했다. 문서/검증 메타데이터 최종 제출은 이 구현 이후다.

@@ -1,0 +1,177 @@
+{
+  "passed": true,
+  "checks": [
+    {
+      "id": "WINDOW-MESH-MIRROR",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "WINDOW-MIRROR-NO-DAMAGE",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "WINDOW-PIN-LIMIT-0",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "WINDOW-PIN-LIMIT-1",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "WINDOW-PIN-LIMIT-2",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "WINDOW-UNPIN",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "WINDOW-REFRESH-NO-SIMULATION",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "WINDOW-REAL-SHIP-COUNT",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "WINDOW-EMPTY-GUTTER-CONSUMES",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "WINDOW-PAUSED-CLOCK",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "WINDOW-SCENE-SWITCH-MIRROR",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "WINDOW-SCENE-NO-SHIP-CLONE",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "WINDOW-PIN-RESET-FIXTURE",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "WINDOW-PROTECTION-BUTTON-VISIBLE",
+      "passed": true,
+      "detail": "<Struct 'Vector2D' (0x000002636C8DCAA0) {x: 629.000000, y: 1018.940430}>"
+    },
+    {
+      "id": "WINDOW-PROTECTION-BUTTON-HIT",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "WINDOW-FORCEGUN-BUTTON-VISIBLE",
+      "passed": true,
+      "detail": "<Struct 'Vector2D' (0x000002636C8DC860) {x: 805.000000, y: 1018.940430}>"
+    },
+    {
+      "id": "WINDOW-FORCEGUN-BUTTON-HIT",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "WINDOW-PROTECTION-UI-CHANGES-POLICY",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "WINDOW-PROTECTION-CYCLE-RETURNS",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "WINDOW-FORCED-UI-SELECTED-MOUNT",
+      "passed": true,
+      "detail": "['Weapon_0']"
+    },
+    {
+      "id": "WINDOW-FORCED-UI-NO-PAUSED-SHOT",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "WINDOW-FORCED-UI-CANCEL-RECOVERY",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "WINDOW-TWO-SIMULTANEOUS-PINS",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "WINDOW-FTL-PIN-REMOVED",
+      "passed": true,
+      "detail": "1"
+    },
+    {
+      "id": "WINDOW-HIDDEN-PIN-REMOVED",
+      "passed": true,
+      "detail": "0"
+    },
+    {
+      "id": "WINDOW-PINS-NO-SHIP-CLONES",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "WINDOW-DEV-OVERLAY-VISIBLE-PREVIEW-FIXTURE",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "WINDOW-DEV-OVERLAY-VIEWPORT-FIXTURE",
+      "passed": true,
+      "detail": "(1133, 936)"
+    },
+    {
+      "id": "WINDOW-DEV-OVERLAY-NO-ORBIT-PREVIEW",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "WINDOW-DEV-OVERLAY-ROTATION-UNCHANGED",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "WINDOW-DEV-OVERLAY-ZOOM-UNCHANGED",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "WINDOW-DEV-OVERLAY-POSITION-UNCHANGED",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "WINDOW-DEV-OVERLAY-NO-SIMULATION",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "WINDOW-DEV-OVERLAY-PREVIEW-RESTORED",
+      "passed": true,
+      "detail": ""
+    }
+  ],
+  "errors": [],
+  "physical_input": false
+}

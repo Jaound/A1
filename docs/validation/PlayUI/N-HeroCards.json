@@ -1,0 +1,294 @@
+{
+  "passed": true,
+  "kind": "영웅 카드 PIE API",
+  "checks": [
+    {
+      "id": "HC-ROOM",
+      "passed": true,
+      "detail": "비전투 편성실 · 영웅 HP/성장/손실/소모품 유지 · 임무 시작 시 선택 편제만 배치"
+    },
+    {
+      "id": "HC-RESERVE-0",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "HC-RESERVE-1",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "HC-RESERVE-2",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "HC-RESERVE-3",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "HC-XP-FIXTURE",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "HC-FOUR-OWNED",
+      "passed": true,
+      "detail": "4"
+    },
+    {
+      "id": "HC-OWNED-IDS",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "HC-FOUR-ROLE-PORTRAITS",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "HC-RESERVE-UNKNOWN-HP",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "HC-OWNED-SELECT",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "HC-ONE-SELECTED",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "HC-RESERVE-NO-FAKE-LOCATION",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "HC-REFRESH-NO-REBUILD",
+      "passed": true,
+      "detail": "1"
+    },
+    {
+      "id": "HC-REFRESH-NO-GROWTH-OR-HEAL",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "HC-OWNED-MISSION",
+      "passed": true,
+      "detail": "보유 영웅 임무 준비 · 동일 ID/HP/스킬/소모품으로 실제 운송과 작전 수행"
+    },
+    {
+      "id": "HC-NO-TEMPLATE-DUPLICATE",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "HC-LIVE-IDENTITY-0",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "HC-LIVE-HP-0",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "HC-LIVE-IDENTITY-1",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "HC-LIVE-HP-1",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "HC-LIVE-IDENTITY-2",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "HC-LIVE-HP-2",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "HC-LIVE-IDENTITY-3",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "HC-LIVE-HP-3",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "HC-SELECT-LIVE",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "HC-LOCATE-LIVE",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "HC-LOCATE-FOCUS",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "HC-80-SELECTIONS-NO-REBUILD",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "HC-UI-DOES-NOT-SIMULATE",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "HC-MOVEMENT-ORDER",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "HC-ACTUAL-MOVEMENT-STATE",
+      "passed": true,
+      "detail": "이동"
+    },
+    {
+      "id": "HC-LOCATION-NO-INTERNAL-NODE-ID",
+      "passed": true,
+      "detail": "아군 항공모함 · 2층 코어"
+    },
+    {
+      "id": "HC-EXAMPLE-MISSION",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "HC-EXAMPLES-SEPARATE",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "HC-EXAMPLES-NO-ROSTER-GRANT",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "HC-EXAMPLE-SELECTION",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "HC-EXAMPLE-LOCATE",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "HC-ENEMY-NOT-DISCLOSED",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "HC-ENEMY-NOT-SELECTABLE",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "HC-TROOPS-NOT-HERO-CARDS",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "HC-INVALID-ID-REJECT",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "HC-EXAMPLE-RESTART-PRESERVED",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "HC-COMBAT-FIXTURE",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "HC-ACTUAL-SKILL-COOLDOWN",
+      "passed": true,
+      "detail": "['역장 방어\\n1등급 · 15.9초', '역장 엄호\\n0등급 · 잠김', '강화 돌입\\n0등급 · 잠김', '생존 한계 해방\\n0등급 · 잠김']"
+    },
+    {
+      "id": "HC-SKILL-NAME",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "HC-PAUSED-UI-NO-COOLDOWN-TICK",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "HC-COOLDOWN-GAME-CLOCK",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "HC-POD-QUEUE",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "HC-ACTUAL-POD-TRANSIT",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "HC-POD-PERSON-LINK",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "HC-POD-LOCATION",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "HC-POD-NOT-INTERIOR-LOCATION",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "HC-REAL-POD-LOSS",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "HC-RESCUE-NOT-DEATH-OR-RETURN",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "HC-RESCUE-NO-FAKE-LOCATION",
+      "passed": true,
+      "detail": ""
+    }
+  ],
+  "errors": [],
+  "scope": "카드 선택·실제 위치·상태·수명 API; 실제 마우스/키보드 및 초상화 외관 확인 아님",
+  "counts": {
+    "owned": 4,
+    "mission_only": 4,
+    "card_rebuilds": 4
+  },
+  "elapsed_seconds": 0.875
+}

@@ -1,0 +1,221 @@
+{
+  "passed": true,
+  "kind": "PIE 렌더와 UI API",
+  "physical_input": false,
+  "requested_size": [
+    1920,
+    1080
+  ],
+  "captures": [
+    {
+      "view": "전투_HUD",
+      "path": "C:/Users/user/source/repos/A1/Unreal/OrbitalVanguard/Saved/Validation\\PlayUI\\20261117_190622\\01_전투_HUD.png",
+      "viewport_size": [
+        1920,
+        1082
+      ],
+      "exists": true
+    },
+    {
+      "view": "영웅_카드",
+      "path": "C:/Users/user/source/repos/A1/Unreal/OrbitalVanguard/Saved/Validation\\PlayUI\\20261117_190622\\02_영웅_카드.png",
+      "viewport_size": [
+        1920,
+        1082
+      ],
+      "exists": true
+    },
+    {
+      "view": "외부_무장",
+      "path": "C:/Users/user/source/repos/A1/Unreal/OrbitalVanguard/Saved/Validation\\PlayUI\\20261117_190622\\03_외부_무장.png",
+      "viewport_size": [
+        1920,
+        1082
+      ],
+      "exists": true
+    },
+    {
+      "view": "격납고",
+      "path": "C:/Users/user/source/repos/A1/Unreal/OrbitalVanguard/Saved/Validation\\PlayUI\\20261117_190622\\04_격납고.png",
+      "viewport_size": [
+        1920,
+        1082
+      ],
+      "exists": true
+    },
+    {
+      "view": "선내_영웅",
+      "path": "C:/Users/user/source/repos/A1/Unreal/OrbitalVanguard/Saved/Validation\\PlayUI\\20261117_190622\\05_선내_영웅.png",
+      "viewport_size": [
+        1920,
+        1082
+      ],
+      "exists": true
+    },
+    {
+      "view": "개발_함선",
+      "path": "C:/Users/user/source/repos/A1/Unreal/OrbitalVanguard/Saved/Validation\\PlayUI\\20261117_190622\\06_개발_함선.png",
+      "viewport_size": [
+        1920,
+        1082
+      ],
+      "exists": true
+    },
+    {
+      "view": "개발_영웅",
+      "path": "C:/Users/user/source/repos/A1/Unreal/OrbitalVanguard/Saved/Validation\\PlayUI\\20261117_190622\\07_개발_영웅.png",
+      "viewport_size": [
+        1920,
+        1082
+      ],
+      "exists": true
+    },
+    {
+      "view": "개발_무장",
+      "path": "C:/Users/user/source/repos/A1/Unreal/OrbitalVanguard/Saved/Validation\\PlayUI\\20261117_190622\\08_개발_무장.png",
+      "viewport_size": [
+        1920,
+        1082
+      ],
+      "exists": true
+    },
+    {
+      "view": "개발_시험",
+      "path": "C:/Users/user/source/repos/A1/Unreal/OrbitalVanguard/Saved/Validation\\PlayUI\\20261117_190622\\09_개발_시험.png",
+      "viewport_size": [
+        1920,
+        1082
+      ],
+      "exists": true
+    },
+    {
+      "view": "초계함_모델",
+      "path": "C:/Users/user/source/repos/A1/Unreal/OrbitalVanguard/Saved/Validation\\PlayUI\\20261117_190622\\10_초계함_모델.png",
+      "viewport_size": [
+        1920,
+        1082
+      ],
+      "exists": true
+    }
+  ],
+  "checks": [
+    {
+      "id": "PLAY-WINDOW",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "RENDER-전투_HUD",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "HERO-MISSION-CARDS",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "HERO-CARD-SELECTION",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "RENDER-영웅_카드",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "PREVIEW-MESH-MIRROR",
+      "passed": true,
+      "detail": "50"
+    },
+    {
+      "id": "PREVIEW-NO-DAMAGE",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "RENDER-외부_무장",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "RENDER-격납고",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "INTERIOR-WINDOW-OPEN",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "INTERIOR-ACTUAL-HEROES",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "INTERIOR-HERO-DECK-SELECTED",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "RENDER-선내_영웅",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "DEV-PAGE-1",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "RENDER-개발_함선",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "DEV-PAGE-2",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "RENDER-개발_영웅",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "DEV-PAGE-3",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "RENDER-개발_무장",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "DEV-PAGE-0",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "RENDER-개발_시험",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "IMPORTED-HULL-IN-SCENE",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "RENDER-초계함_모델",
+      "passed": true,
+      "detail": ""
+    }
+  ],
+  "errors": [],
+  "preview_settings_restored": true,
+  "elapsed_seconds": 25.265000000000327
+}

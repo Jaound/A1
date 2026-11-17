@@ -1,0 +1,1078 @@
+{
+  "기준": "플레이 UI 최종 증거. 파일 접두 C/D/G/I/J는 실제 검사 실행 단위이며 모든 API를 한 바이너리에서 동시에 실행한 뜻이 아니다.",
+  "생성시각": "2026-11-17T19:32:18.370051+09:00",
+  "시작코드": "f8f4d7a3106805d77040ce9091913cebf0d2f374",
+  "구현코드": "374508aec0fc20e0a8646edf7a42c45234405af3",
+  "성능코드": "a0d0915d4e4fcf763c95c2e1f738750683a3dbfa",
+  "최종차이": "성능 측정 이후 변경은 UMG 접기 아이콘 세 문자열의 한국어 표시 교정이며 전투/입력/프리뷰 로직은 동일하다",
+  "기획": "ce06643f4029a6d60200406363e148a396f11234",
+  "빌드식별": {
+    "code_sha": "374508aec0fc20e0a8646edf7a42c45234405af3",
+    "source_sha256": "27017eb8cbc07be735a7c171ba3eca4dafea2604e0c2ba277ff9e29e5936ec95",
+    "dirty": true,
+    "generated_at": "2026-11-17T19:23:55.3016761+09:00",
+    "description": "Source 상대 경로:개별 SHA-256 목록의 SHA-256. 생성물이며 검증 성공 표시가 아님."
+  },
+  "직접입력": false,
+  "직접입력한계": "새 빈 메모장의 AX 연결 성공, screenshot 1회 channel timeout. UE 키/마우스 미실행.",
+  "SHA규칙": "텍스트는 Git 저장 정규형 LF 기준, PNG/MP4/uasset는 원본 바이트. 원시 로그/영상 프레임/Trace는 Saved 아래 보존.",
+  "API": [
+    {
+      "경로": "C-Development.json",
+      "성공": true,
+      "검사": 96,
+      "사례": 0
+    },
+    {
+      "경로": "C-DevelopmentFilters.json",
+      "성공": true,
+      "검사": 96,
+      "사례": 0
+    },
+    {
+      "경로": "C-HeroBoarding.json",
+      "성공": true,
+      "검사": 33,
+      "사례": 0
+    },
+    {
+      "경로": "C-HeroRoster.json",
+      "성공": true,
+      "검사": 70,
+      "사례": 0
+    },
+    {
+      "경로": "C-IntegratedMission.json",
+      "성공": true,
+      "검사": 316,
+      "사례": 29
+    },
+    {
+      "경로": "C-Phase3Interior.json",
+      "성공": true,
+      "검사": 36,
+      "사례": 0
+    },
+    {
+      "경로": "D-HullRoles.json",
+      "성공": true,
+      "검사": 270,
+      "사례": 0
+    },
+    {
+      "경로": "G-DevelopmentRepeat.json",
+      "성공": true,
+      "검사": 33,
+      "사례": 0
+    },
+    {
+      "경로": "G-Phase2C.json",
+      "성공": true,
+      "검사": 77,
+      "사례": 0
+    },
+    {
+      "경로": "I-CompactDevelopment.json",
+      "성공": true,
+      "검사": 36,
+      "사례": 0
+    },
+    {
+      "경로": "I-HeroCards.json",
+      "성공": true,
+      "검사": 56,
+      "사례": 0
+    },
+    {
+      "경로": "I-OwnedMission.json",
+      "성공": true,
+      "검사": 21,
+      "사례": 0
+    },
+    {
+      "경로": "I-Phase2BRCalibration.json",
+      "성공": true,
+      "검사": 79,
+      "사례": 0
+    },
+    {
+      "경로": "I-PlayWindows.json",
+      "성공": true,
+      "검사": 34,
+      "사례": 0
+    },
+    {
+      "경로": "J-Phase2AControls.json",
+      "성공": false,
+      "검사": 38,
+      "사례": 0
+    },
+    {
+      "경로": "J-WeaponPresentation.json",
+      "성공": true,
+      "검사": 39,
+      "사례": 0
+    },
+    {
+      "경로": "L-Phase2AControls.json",
+      "성공": false,
+      "검사": 38,
+      "사례": 0
+    },
+    {
+      "경로": "L-Phase2BRCalibration.json",
+      "성공": true,
+      "검사": 79,
+      "사례": 0
+    },
+    {
+      "경로": "M-PlayWindows.json",
+      "성공": true,
+      "검사": 60,
+      "사례": 0
+    },
+    {
+      "경로": "N-CompactDevelopment.json",
+      "성공": true,
+      "검사": 36,
+      "사례": 0
+    },
+    {
+      "경로": "N-HeroCards.json",
+      "성공": true,
+      "검사": 56,
+      "사례": 0
+    },
+    {
+      "경로": "O-Phase2AControls.json",
+      "성공": true,
+      "검사": 57,
+      "사례": 0
+    }
+  ],
+  "파일": [
+    {
+      "경로": "BuildIdentity.json",
+      "바이트": 343,
+      "SHA256": "9b4bdfe2e04ff0b571f2bc890d7e4d86a8ce17661c0dd6e1c2338843fba113c4"
+    },
+    {
+      "경로": "C-Development.json",
+      "바이트": 13887,
+      "SHA256": "5fa08185a7fe2c3c9e3b6a5cc883498eede748449f4e7128e47afa62a3559557"
+    },
+    {
+      "경로": "C-DevelopmentFilters.json",
+      "바이트": 10531,
+      "SHA256": "c171cc9e5bbf09ebf24ef66751dad211c42e5c8dbec55c25556c4ccfb76d8a97"
+    },
+    {
+      "경로": "C-HeroBoarding.json",
+      "바이트": 3612,
+      "SHA256": "62928e1e5b59f6b2c4bb6ba579997ff346db992ee2dcb791056de5c6789389e7"
+    },
+    {
+      "경로": "C-HeroRoster.json",
+      "바이트": 7354,
+      "SHA256": "2e6ea60f28a42f7a6e13906605529f7c1a315f9297eb8bfd4de6b41fc4dbdb32"
+    },
+    {
+      "경로": "C-IntegratedMission.json",
+      "바이트": 843218,
+      "SHA256": "b8438615eafe0047bee2b056c3946116c095749095687d1022308f5260d711a1"
+    },
+    {
+      "경로": "C-Phase3Interior.json",
+      "바이트": 6190,
+      "SHA256": "baa9c13f45524fa3e3afb932719d9108d750baf66ad22c188917d6952cbcf2de"
+    },
+    {
+      "경로": "D-HullRoles.json",
+      "바이트": 41688,
+      "SHA256": "ef3cd6edee82df9eeca30ffd2a05b827a67414e3eb3820bb60fb88e09a501e6a"
+    },
+    {
+      "경로": "G-DevelopmentRepeat.json",
+      "바이트": 3220,
+      "SHA256": "ac81f2bf04c2925a4fd853be6aa8197a371e3fa6cab94636342f14a7444fe830"
+    },
+    {
+      "경로": "G-Phase2C.json",
+      "바이트": 19722,
+      "SHA256": "1277d0f4d3231057cc9012ecd09e932f74051fa642bdc2c4dfa637ef79b9e1a6"
+    },
+    {
+      "경로": "I-CompactDevelopment.json",
+      "바이트": 4117,
+      "SHA256": "8426351d46ff648d47be3c89d8d70192432e84dc8cbb6f62aeb7824a79cfa022"
+    },
+    {
+      "경로": "I-HeroCards.json",
+      "바이트": 5716,
+      "SHA256": "44f419c72a69226d6247152bf49c0b331b3abddd5b6cb426ecf26dcf237ea0b6"
+    },
+    {
+      "경로": "I-OwnedMission.json",
+      "바이트": 3126,
+      "SHA256": "1beeaa29df7c1725a3c7ca22100b662f7f6b1a27aa4f779bcf0000231cad4b43"
+    },
+    {
+      "경로": "I-Phase2BRCalibration.json",
+      "바이트": 17892,
+      "SHA256": "7814b840e5a16844a660d9ada37a69672c5a0d92a4dd744470017452754e70e4"
+    },
+    {
+      "경로": "I-PlayWindows.json",
+      "바이트": 3573,
+      "SHA256": "832796c67e965efca18e906aa6ace4298aa35e6edd468047010310ff345a360a"
+    },
+    {
+      "경로": "ImportedCorvette.json",
+      "바이트": 2575,
+      "SHA256": "f145beaa26162cfaee3df110073e7d25fcbbe8b7301dc72d7b7376acecfff5e6"
+    },
+    {
+      "경로": "Interior/01_실제_선내_이동.png",
+      "바이트": 204497,
+      "SHA256": "412e9e86e77548435866d5ef203b52aecc62bc0a98b9854efef6fbe85378070a"
+    },
+    {
+      "경로": "Interior/02_실제_선내_교전.png",
+      "바이트": 211800,
+      "SHA256": "873d70c978bfa2fae586ca4a3598f2f4edc51589606b4c03502daa3d101af0a3"
+    },
+    {
+      "경로": "Interior/report.json",
+      "바이트": 6172,
+      "SHA256": "a7f2fdaa4670d74628c8cfca5246c5011a35644e5753b96924a04e7b80ddea66"
+    },
+    {
+      "경로": "J-Phase2AControls.json",
+      "바이트": 4736,
+      "SHA256": "af584647c9f5c43db37e9d70c63bdf60f2a8efae7d48a09cd600c5fb366f6f21"
+    },
+    {
+      "경로": "J-WeaponPresentation.json",
+      "바이트": 4738,
+      "SHA256": "99a3e9d3509329fd9f727fc943ee02701294d8c3b10bf3a3ba4783b1f578ad42"
+    },
+    {
+      "경로": "L-Phase2AControls.json",
+      "바이트": 4736,
+      "SHA256": "81b40c5b32153dfb3bfc6e867d948e143c98ba165b6f2fc3eb66bbb8d5eb127f"
+    },
+    {
+      "경로": "L-Phase2BRCalibration.json",
+      "바이트": 17892,
+      "SHA256": "9eea327eb5fc0e2078979178c4aed0e04f5ae186c745464fd812813688d5a145"
+    },
+    {
+      "경로": "M-PlayWindows.json",
+      "바이트": 7108,
+      "SHA256": "764fed5bb7b242725885f04daf546a60589b65fd4a1ed1b71060a5c4317ee415"
+    },
+    {
+      "경로": "N-CompactDevelopment.json",
+      "바이트": 4123,
+      "SHA256": "accb5d98a7d285c4843351aaff008a8a4ce14fa731ef80f59ba74f19d8fd3dd6"
+    },
+    {
+      "경로": "N-HeroCards.json",
+      "바이트": 5703,
+      "SHA256": "33eb48be4545e0237c345db30673e7e5d764274d5b71bb3bf63f28414f6b4409"
+    },
+    {
+      "경로": "O-Phase2AControls.json",
+      "바이트": 7495,
+      "SHA256": "4305b35c63c90140a6f1fb9f17d7890c1dabba115152246c4d6720296a2cf007"
+    },
+    {
+      "경로": "Performance/PlayUIAfter/상태시계열.csv",
+      "바이트": 5156,
+      "SHA256": "bd55f76c726a232abe812b57e1393d40dba4542f2ffe725ce4975745efff3050"
+    },
+    {
+      "경로": "Performance/PlayUIAfter/선내시계열.csv",
+      "바이트": 7289,
+      "SHA256": "eb7f369d40abb5a1fff0049393b702e2012a7c725f4b26a3410131b732dea5b9"
+    },
+    {
+      "경로": "Performance/PlayUIAfter/성능요약.json",
+      "바이트": 1282,
+      "SHA256": "490ec579f5b8e6b65c32ea092b33fe5b5e6c564e3030bfa24f8c9278ca77bc5a"
+    },
+    {
+      "경로": "Performance/PlayUIAfter/프로세스측정.json",
+      "바이트": 10118,
+      "SHA256": "44b47728ec951455b3599ec2bf5930c8553f752ea2adb3a95b7a96f5c06795fc"
+    },
+    {
+      "경로": "Performance/PlayUIAfter/프로파일요약.json",
+      "바이트": 8281,
+      "SHA256": "e2583654aaca336c0e89b51b867cc22c927ad2ef1c1de1689d5f44a7b5d1d168"
+    },
+    {
+      "경로": "Performance/PlayUIBefore/상태시계열.csv",
+      "바이트": 5161,
+      "SHA256": "2d7247c50b0b45acd39c83db2861f7c513dbf36a513a4df2165a9b1afdc7f67b"
+    },
+    {
+      "경로": "Performance/PlayUIBefore/선내시계열.csv",
+      "바이트": 7285,
+      "SHA256": "e59e42a3a4a66cc74bce09930323cdc499736a7d00d4072ede4ef0d24a0ca56f"
+    },
+    {
+      "경로": "Performance/PlayUIBefore/성능요약.json",
+      "바이트": 1282,
+      "SHA256": "c85a40338f79fa5c0a7be8ca3b5e214fd54836e27de2f0efdd42f86b89d26db9"
+    },
+    {
+      "경로": "Performance/PlayUIBefore/프로세스측정.json",
+      "바이트": 26503,
+      "SHA256": "398726a156242e5120ced83778766c5d60e32431d0408932c154bfa7fa7da1e6"
+    },
+    {
+      "경로": "Performance/PlayUIBefore/프로파일요약.json",
+      "바이트": 9129,
+      "SHA256": "8f1b8e5ba0a7bc20a973842ea51a4c85f0dcc3e88ba6508cd17e41222cf68a73"
+    },
+    {
+      "경로": "Performance/PlayUICycle600/상태시계열.csv",
+      "바이트": 50277,
+      "SHA256": "b7af06a4edf31ae2bdb50d3c7a73958004848d65c92b17c2bfdde80ac0ec26a2"
+    },
+    {
+      "경로": "Performance/PlayUICycle600/선내시계열.csv",
+      "바이트": 74322,
+      "SHA256": "911d00bd2d674efb2cf32ec663a8b40147a70e54de7d04fdceaff3df376e3490"
+    },
+    {
+      "경로": "Performance/PlayUICycle600/성능요약.json",
+      "바이트": 1285,
+      "SHA256": "8c55730b2b91d06f4ec7c4936c646bb4e6ff0b8135fa46170389a772f1627af1"
+    },
+    {
+      "경로": "Performance/PlayUICycle600/프로세스측정.json",
+      "바이트": 70606,
+      "SHA256": "c4efe7f66ad4def4465ce14328fa6ffee73c3c63817391180749ebdbfba73b7a"
+    },
+    {
+      "경로": "Performance/PlayUICycle600/프로파일요약.json",
+      "바이트": 8319,
+      "SHA256": "2e4951d426c10f76f8faaf1b4458d78f4d9bda6143081d39f7e47c1a6aaf3551"
+    },
+    {
+      "경로": "Performance/PlayUIFinalAfter/상태시계열.csv",
+      "바이트": 5160,
+      "SHA256": "bcd39d1da8a3555623733e98c4ae5a284a7d4a4e91b52d56e881945ec59e17bc"
+    },
+    {
+      "경로": "Performance/PlayUIFinalAfter/선내시계열.csv",
+      "바이트": 7289,
+      "SHA256": "2843acc54f8834cce044fc443b9940a0c79b47d06e03cc14a628b5e43fa00fbf"
+    },
+    {
+      "경로": "Performance/PlayUIFinalAfter/성능요약.json",
+      "바이트": 1282,
+      "SHA256": "fb30af61c269b8d0262202b8f49b0f3298329e08367572e7950d8fc19ba863b9"
+    },
+    {
+      "경로": "Performance/PlayUIFinalAfter/프로세스측정.json",
+      "바이트": 10269,
+      "SHA256": "71b57208e59bdb8f43eaaacef92a15d1ef813dd88d1c730d409ab8f96bf251e2"
+    },
+    {
+      "경로": "Performance/PlayUIFinalAfter/프로파일요약.json",
+      "바이트": 8275,
+      "SHA256": "37649cdd0f54060dcc7873d876aee2508f034e0492c9a13d9145f0ff21dfd56d"
+    },
+    {
+      "경로": "Performance/PlayUIFinalCycle600/상태시계열.csv",
+      "바이트": 50363,
+      "SHA256": "7616510486e4cd327996e33b2c6a1fbefbf0564ffde7278c899b795ef668e8c3"
+    },
+    {
+      "경로": "Performance/PlayUIFinalCycle600/선내시계열.csv",
+      "바이트": 74323,
+      "SHA256": "94db1313ce86a90c416da8f7f7e516e40bd9daf45d930ca30436fa9612102173"
+    },
+    {
+      "경로": "Performance/PlayUIFinalCycle600/성능요약.json",
+      "바이트": 1285,
+      "SHA256": "8c9d9a77d751d78728c5922787472c910b400bd862cf5d94f84c2b882bf5e4e9"
+    },
+    {
+      "경로": "Performance/PlayUIFinalCycle600/프로세스측정.json",
+      "바이트": 70788,
+      "SHA256": "5d1d67d8fb72d6d3eb271beee36c6ab5028c0d525b4ffe2e177e2de8d838f95e"
+    },
+    {
+      "경로": "Performance/PlayUIFinalCycle600/프로파일요약.json",
+      "바이트": 8315,
+      "SHA256": "c0f4c0a691c969d49c9d78506a3a1452322563e649752881b27c0673252b96d6"
+    },
+    {
+      "경로": "Performance/PlayUIFinalHeroes/상태시계열.csv",
+      "바이트": 1778,
+      "SHA256": "e6cd15ee5bab891400c5ffee06cab6f0bfcec176df65d425b354273a8b6b658c"
+    },
+    {
+      "경로": "Performance/PlayUIFinalHeroes/선내시계열.csv",
+      "바이트": 2582,
+      "SHA256": "641c300341a4d324b4f075567e2f0eaadeaaf8f0534e8d1bbb9a9ddf5fc17ebd"
+    },
+    {
+      "경로": "Performance/PlayUIFinalHeroes/성능요약.json",
+      "바이트": 1279,
+      "SHA256": "9b385a36ab78f5a9f5a2aceb73b8f2a918a25ee5f72e38e60416f4650fa79bce"
+    },
+    {
+      "경로": "Performance/PlayUIFinalHeroes/프로세스측정.json",
+      "바이트": 5336,
+      "SHA256": "a257a1a336c3c545c1575dea55235766f79f323dc483b6840217048d0124495a"
+    },
+    {
+      "경로": "Performance/PlayUIFinalHeroes/프로파일요약.json",
+      "바이트": 8283,
+      "SHA256": "b86cb05f7d11d4222ca027772d81be811b7c4f177ea71db398426522c4b39619"
+    },
+    {
+      "경로": "Performance/PlayUIFinalPreview/상태시계열.csv",
+      "바이트": 1778,
+      "SHA256": "66d3de44904002b3a6ca1cb0dc7e50782a419c7a48aa8af8e563f025c8e38c8a"
+    },
+    {
+      "경로": "Performance/PlayUIFinalPreview/선내시계열.csv",
+      "바이트": 2582,
+      "SHA256": "2f7ad2447dc8294c6644b680360cb8a984459ec8a6000c8d189ff507956b26f5"
+    },
+    {
+      "경로": "Performance/PlayUIFinalPreview/성능요약.json",
+      "바이트": 1280,
+      "SHA256": "2b522b501be217f248b7700394629bf0ec6f8d3cbcaf179ef7183bc7019f86a2"
+    },
+    {
+      "경로": "Performance/PlayUIFinalPreview/프로세스측정.json",
+      "바이트": 5343,
+      "SHA256": "56d1b3d3323e9d1dd18fe05f0ece2903873a19651e3e8d666c3c18f857d41ed1"
+    },
+    {
+      "경로": "Performance/PlayUIFinalPreview/프로파일요약.json",
+      "바이트": 9367,
+      "SHA256": "a1544fc1248cb682eb62edb030b1128a1c6d695aec344f5ee91d2525640b77ef"
+    },
+    {
+      "경로": "Performance/PlayUIFleet3x/상태시계열.csv",
+      "바이트": 5001,
+      "SHA256": "3888c656dc9eba18784531a99ec889c22456ce719595f5f0906e124540cde9f8"
+    },
+    {
+      "경로": "Performance/PlayUIFleet3x/성능요약.json",
+      "바이트": 2157,
+      "SHA256": "23f79ac2f88db5c170f2c44423d4c3f46437583a59a68a930701207dd8322158"
+    },
+    {
+      "경로": "Performance/PlayUIFleet3x/프로세스측정.json",
+      "바이트": 9793,
+      "SHA256": "21ee0b9bbd9505e96c3bf4481f9d68c55dba2c79109e5bcbb389e865c825e344"
+    },
+    {
+      "경로": "Performance/PlayUIFleet3x/프로파일요약.json",
+      "바이트": 13747,
+      "SHA256": "8ad8458c4b4edbd11f378fb038b3d33dcb5cc50d4de3b44108fbe45ee39df7c6"
+    },
+    {
+      "경로": "Performance/PlayUIHeroes/상태시계열.csv",
+      "바이트": 1772,
+      "SHA256": "ad08e1e720e8eba848ce04c2441b749fb704a022da11c46c275273a0a0070d2e"
+    },
+    {
+      "경로": "Performance/PlayUIHeroes/선내시계열.csv",
+      "바이트": 2582,
+      "SHA256": "9eec27eb0cd678e70bdf7bf6598cdd45ab575972befaceb33099cd39f5aed8a8"
+    },
+    {
+      "경로": "Performance/PlayUIHeroes/성능요약.json",
+      "바이트": 1279,
+      "SHA256": "878c9517d7d9aa9456b4e42ea3f36260acc6a21fa9e44f9856fb64b6b5f80318"
+    },
+    {
+      "경로": "Performance/PlayUIHeroes/프로세스측정.json",
+      "바이트": 5169,
+      "SHA256": "6f0d4af87f05b206d5b69ac94e0fff3fcc6a7dfd29ce3f9a3c0ce5476cb54b36"
+    },
+    {
+      "경로": "Performance/PlayUIHeroes/프로파일요약.json",
+      "바이트": 8263,
+      "SHA256": "c6a33d1818267a1c9bdaee0c58ed6c70d571563edf1b216ba9f7053f8efb283d"
+    },
+    {
+      "경로": "Performance/PlayUIPreview/상태시계열.csv",
+      "바이트": 1777,
+      "SHA256": "9068e520d64f4150bff426bd968c337aca98a5cd32ef78d4116744e0639ec1dc"
+    },
+    {
+      "경로": "Performance/PlayUIPreview/선내시계열.csv",
+      "바이트": 2582,
+      "SHA256": "a0aee58aadbafc3240f6dac062209180c687fbe935bc69e1d39290c2875d1348"
+    },
+    {
+      "경로": "Performance/PlayUIPreview/성능요약.json",
+      "바이트": 1280,
+      "SHA256": "39a009ef863d43b6a4543d879013ea1cb93a5aef4f2aa5b6a770f9f6973697ae"
+    },
+    {
+      "경로": "Performance/PlayUIPreview/프로세스측정.json",
+      "바이트": 5174,
+      "SHA256": "43c5b003278d8ba11fd8e136004b0259411aa9dd5d0c2bb3189a59deaf6c5280"
+    },
+    {
+      "경로": "Performance/PlayUIPreview/프로파일요약.json",
+      "바이트": 9377,
+      "SHA256": "2166ed2dc96f1d66a9261744dc353401399c0a7345153c1d54e5ebeecae657ae"
+    },
+    {
+      "경로": "PlayUI_I_Automation.log",
+      "바이트": 406100,
+      "SHA256": "1cdf5e9188dd3cfa7cea2a112b2cd63cbba9467f4adba7239e518d323edd7635"
+    },
+    {
+      "경로": "PlayUI_J_Automation.log",
+      "바이트": 405558,
+      "SHA256": "9e98b01803547a77462b65041598a576f42839865c089ae6dd15f3d580e55554"
+    },
+    {
+      "경로": "PlayUI_J_Build.log",
+      "바이트": 4131,
+      "SHA256": "0825fa5032e9842da457847c5f5b1aefb6351eba43caf98c1b1cf53f469ffd78"
+    },
+    {
+      "경로": "PlayUI_L_Build.log",
+      "바이트": 3592,
+      "SHA256": "60e415353901abe00a8d421d6f26f4211deb7206ae79d3fbc3922ed57baa0afa"
+    },
+    {
+      "경로": "PlayUI_M_Automation.log",
+      "바이트": 405558,
+      "SHA256": "5534f26fcd0a9a3cf2397006f8475d28c9a94cc3deff10d16f6b6eba72c76f89"
+    },
+    {
+      "경로": "PlayUI_M_Build.log",
+      "바이트": 3563,
+      "SHA256": "75f61521753343127144c95bf0b751a35d6b4bdf9016a46ddf5ee38384ab6f9d"
+    },
+    {
+      "경로": "PlayUI_M_CaptureInteriorPresentation.log",
+      "바이트": 445605,
+      "SHA256": "c5295ed1f3555a6d1f3c15991c939fa041f5a4079f74d01a68c6012e8ac43b37"
+    },
+    {
+      "경로": "PlayUI_M_ValidatePlayWindows.log",
+      "바이트": 273143,
+      "SHA256": "5cf8b8ec6ded83e0208a0816d4f162989d932efb02395a91139623f051c7be66"
+    },
+    {
+      "경로": "PlayUI_N_720_CapturePlayUI.log",
+      "바이트": 270558,
+      "SHA256": "1bc588e1f018bdcc12db8f554939d00d267a7c4999c2b867e65b67c006759656"
+    },
+    {
+      "경로": "PlayUI_N_Build.log",
+      "바이트": 3606,
+      "SHA256": "cc8385cfc8c438972a9f30a4fe1913e32685b031285ca786e19b418d4c1ca85a"
+    },
+    {
+      "경로": "PlayUI_N_CapturePlayUI.log",
+      "바이트": 270363,
+      "SHA256": "76c665279a1347a11b2aa20c73a6f13d33fc8dce44957f5941179b0f796ab825"
+    },
+    {
+      "경로": "PlayUI_N_ValidateCompactDevelopment.log",
+      "바이트": 268589,
+      "SHA256": "bd3eefddd86e8aaaba2d213cd917b8ccab7f72e822e3a80d3d9fa916ea28613b"
+    },
+    {
+      "경로": "PlayUI_N_ValidateHeroCards.log",
+      "바이트": 271192,
+      "SHA256": "09d8ea3c5f8a1436283698931edeacb88dbe9a2b5599c317cc7a2bff4d887dfc"
+    },
+    {
+      "경로": "PlayUI_NCheckpoint_Build.log",
+      "바이트": 1307,
+      "SHA256": "cff2c1f63e28d0fdbb8e722544a21e8d96b1442d57f012cadbbb44ea68908ea9"
+    },
+    {
+      "경로": "PlayUI_O_ValidatePhase2A.log",
+      "바이트": 280071,
+      "SHA256": "8f95855ebc36864a2fd5f9758d166f223669328e657bfccddafedb1a03891516"
+    },
+    {
+      "경로": "PlayUI_Prototype.json",
+      "바이트": 1017,
+      "SHA256": "4d59902505413a0d453c38f610c78bc856077104c92949679b2b65f3aa7fb0dc"
+    },
+    {
+      "경로": "PlayUI_SourceInventory.json",
+      "바이트": 48217,
+      "SHA256": "ad9f4d23b0cf5872255d00ad803734f4ee0a81021cca0331e1fe48de918f7983"
+    },
+    {
+      "경로": "PlayUI_v1_20261117b_Blender.json",
+      "바이트": 15268,
+      "SHA256": "ddd2f09b6da8b54cec68dbce01558c81a610a573b6cedb42be209c2f1322ad13"
+    },
+    {
+      "경로": "PlayUI_v1_20261117b_PrepareConfig.json",
+      "바이트": 2055,
+      "SHA256": "52eea8130b0708cce77fd670a7b4bb2bd8d0160f1032c1e90c436e8afa45bf44"
+    },
+    {
+      "경로": "README.md",
+      "바이트": 2524,
+      "SHA256": "47f240ecb708b8b09f59c8ffa4b784eea7b51d5c1ba257a8b7aedfe74a315714"
+    },
+    {
+      "경로": "UI1920/01_전투_HUD.png",
+      "바이트": 199523,
+      "SHA256": "1db5eeb0451e8ea96d051bd48d00f695970e4d2b700ebbb9f106d5398eeb05fc"
+    },
+    {
+      "경로": "UI1920/02_영웅_카드.png",
+      "바이트": 258289,
+      "SHA256": "fa17d69b6abe333e8ebdcbfc999d11c36f58ee775bc9c9364f1c32ba23abab56"
+    },
+    {
+      "경로": "UI1920/03_외부_무장.png",
+      "바이트": 218848,
+      "SHA256": "aa21b2ada20f9543201c08502e0cf47ec410ff597e5cdf5c050c16a924f20ff5"
+    },
+    {
+      "경로": "UI1920/04_격납고.png",
+      "바이트": 214855,
+      "SHA256": "b2ea5c309dedd0f6998c5622f4d61f3199d27b614d4f21b52796b997cf14235e"
+    },
+    {
+      "경로": "UI1920/05_선내_영웅.png",
+      "바이트": 204761,
+      "SHA256": "97997300dec3627ae8259e7d550865706e4d479ef269aefe2a3249d0fd59901f"
+    },
+    {
+      "경로": "UI1920/06_개발_함선.png",
+      "바이트": 189028,
+      "SHA256": "05ef785d111a953840d0498a5dbb9b2de17c57d314162377b88c3ed20e6d2fbe"
+    },
+    {
+      "경로": "UI1920/07_개발_영웅.png",
+      "바이트": 179596,
+      "SHA256": "b2104ccfdfca3a00a21ae83416fa4e90de4c3160bd2fe2e47f2b71eac9b758d3"
+    },
+    {
+      "경로": "UI1920/08_개발_무장.png",
+      "바이트": 185426,
+      "SHA256": "a0bbe1e493dd47e9b9e04a8b3e77ba214022ea21674de738033b0250e767a9bf"
+    },
+    {
+      "경로": "UI1920/09_개발_시험.png",
+      "바이트": 177881,
+      "SHA256": "438276fe430ea942c7eac080acdeec913080bc51d54cbb264ae038e7382e6efe"
+    },
+    {
+      "경로": "UI1920/10_초계함_모델.png",
+      "바이트": 144260,
+      "SHA256": "59ef5a992612d543b9ca9afa544f8392c19a0b5c6363e1ef390db31233001b42"
+    },
+    {
+      "경로": "UI1920/report.json",
+      "바이트": 4873,
+      "SHA256": "828e7c76e9a46594b910f496e33ed2e2cf2891eb12aa252fc7cfa6c543da7120"
+    },
+    {
+      "경로": "UI1920_M/01_전투_HUD.png",
+      "바이트": 199398,
+      "SHA256": "3f8872f4debc900e01e11d792cc36dded55661e00e348d56306464474ad37ea4"
+    },
+    {
+      "경로": "UI1920_M/02_영웅_카드.png",
+      "바이트": 258323,
+      "SHA256": "bdfa177a2733e43c7c4e0355dfc83f361817e7d97cfce2097e70295f866bcfac"
+    },
+    {
+      "경로": "UI1920_M/03_외부_무장.png",
+      "바이트": 218713,
+      "SHA256": "d6b9693bed21074be33decc78d9372b81ba603c37039a3be75ac3bcb5037c254"
+    },
+    {
+      "경로": "UI1920_M/04_격납고.png",
+      "바이트": 214902,
+      "SHA256": "86e79b1e1bc89c7dfaa51d2cd46db0dbfa6a9f6a7b73f77e260dd899bfe5ef03"
+    },
+    {
+      "경로": "UI1920_M/05_선내_영웅.png",
+      "바이트": 204600,
+      "SHA256": "84583c840436312b2e731a5e824d0da55ac7e19dd3ca03986624fa763e779a4c"
+    },
+    {
+      "경로": "UI1920_M/06_개발_함선.png",
+      "바이트": 189006,
+      "SHA256": "ce36fcfa8d0545f74dd747cfe721c0b0818d4b843c398b3f7bf3064740f3a0cf"
+    },
+    {
+      "경로": "UI1920_M/07_개발_영웅.png",
+      "바이트": 179529,
+      "SHA256": "8c12a05d9f9630d3cc48c47fb5604b728228d562f029cbbc68f4d3237e74e77e"
+    },
+    {
+      "경로": "UI1920_M/08_개발_무장.png",
+      "바이트": 185416,
+      "SHA256": "d8d9912ee5fb00e56b162ae7c3845214ad6dbf7b4f4aafea21c1e6d3e46302f7"
+    },
+    {
+      "경로": "UI1920_M/09_개발_시험.png",
+      "바이트": 177778,
+      "SHA256": "4c05b0fe42d8df26ab18277e15d2aa31a066453eb694d6c5a52602b76ea3a887"
+    },
+    {
+      "경로": "UI1920_M/10_초계함_모델.png",
+      "바이트": 144253,
+      "SHA256": "eb00c2bebbe1b031c993df890376f290029963272cccde5f85b6c85afa03ab6b"
+    },
+    {
+      "경로": "UI1920_M/report.json",
+      "바이트": 4874,
+      "SHA256": "c09b4de6896f7670aa72b5c94fca061198dbceaceeb012417bdc20ff8f3e1085"
+    },
+    {
+      "경로": "UI1920_N/01_전투_HUD.png",
+      "바이트": 199523,
+      "SHA256": "1db5eeb0451e8ea96d051bd48d00f695970e4d2b700ebbb9f106d5398eeb05fc"
+    },
+    {
+      "경로": "UI1920_N/02_영웅_카드.png",
+      "바이트": 256651,
+      "SHA256": "03dd076e60ee02b5d875f23fc82d121280f6bb4e218394110334bb6919bf7da0"
+    },
+    {
+      "경로": "UI1920_N/03_외부_무장.png",
+      "바이트": 218713,
+      "SHA256": "d6b9693bed21074be33decc78d9372b81ba603c37039a3be75ac3bcb5037c254"
+    },
+    {
+      "경로": "UI1920_N/04_격납고.png",
+      "바이트": 215186,
+      "SHA256": "06701b0f49568cc1c2da37940fdf01c4574e624b8f9ddaa3af2e21243c48e008"
+    },
+    {
+      "경로": "UI1920_N/05_선내_영웅.png",
+      "바이트": 204661,
+      "SHA256": "c364cae071d294e7404d1adda454c80bd7a9e6ff4b8f2370be3a2e932af5e4b0"
+    },
+    {
+      "경로": "UI1920_N/06_개발_함선.png",
+      "바이트": 189165,
+      "SHA256": "08d5e758c54e9655ea54cbc92de5682af8c270b690ad6613da98ccfcdb4f913a"
+    },
+    {
+      "경로": "UI1920_N/07_개발_영웅.png",
+      "바이트": 179722,
+      "SHA256": "a0ac05280a7507ddf9fd1c2e67aca1b6b1f468c6e6026acb4d3e9664da260fcb"
+    },
+    {
+      "경로": "UI1920_N/08_개발_무장.png",
+      "바이트": 185537,
+      "SHA256": "f5284c61dae8509a1b0750614d1e7f9715567dd7da83bb933228da982bba136c"
+    },
+    {
+      "경로": "UI1920_N/09_개발_시험.png",
+      "바이트": 178026,
+      "SHA256": "c82818329f0d87a6beed1fcb4804d3046ab0471752a79bade6721a3b0fb2ec17"
+    },
+    {
+      "경로": "UI1920_N/10_초계함_모델.png",
+      "바이트": 144178,
+      "SHA256": "4eddfec28d365fbcbeefeeac3a413dc7736412b0abba662c3e1e93f5057c2205"
+    },
+    {
+      "경로": "UI1920_N/report.json",
+      "바이트": 4873,
+      "SHA256": "33a3c1954cc6381b9f3bc2b7a4b7ccd4bf33cf3d7e6c2e6307af2044d688c40e"
+    },
+    {
+      "경로": "UI2560/01_전투_HUD.png",
+      "바이트": 280452,
+      "SHA256": "169cf33f7dd86f1aba419c2e1838416fc7c878ce7bf86e4e70957ab75db5aa44"
+    },
+    {
+      "경로": "UI2560/02_영웅_카드.png",
+      "바이트": 353432,
+      "SHA256": "76c2508a22b489738de7c88a2c99dabd8160642d30bdcbbbc39356f54e9b976f"
+    },
+    {
+      "경로": "UI2560/03_외부_무장.png",
+      "바이트": 301754,
+      "SHA256": "f8f6767b2a4919d54b4b54f112336a294962066b60c56974c139131bae6de3b2"
+    },
+    {
+      "경로": "UI2560/04_격납고.png",
+      "바이트": 297803,
+      "SHA256": "79ab1ca98a7b51f243562a05947ce9796674e232c9c64c9b37da9f6e6212b34f"
+    },
+    {
+      "경로": "UI2560/05_선내_영웅.png",
+      "바이트": 307492,
+      "SHA256": "2c2370d33e14fce85a43e437ec1f3a06a32b387331640528ad3d46e8c80c95f6"
+    },
+    {
+      "경로": "UI2560/06_개발_함선.png",
+      "바이트": 247093,
+      "SHA256": "23add818f5c2c0d709819eefd253e545078f3f7abad78d08339d8778a61119da"
+    },
+    {
+      "경로": "UI2560/07_개발_영웅.png",
+      "바이트": 236300,
+      "SHA256": "229daec8dfef57241cb3ca51d92b2b640a06d0eeb7aebcfc9e079ccd61469c7a"
+    },
+    {
+      "경로": "UI2560/08_개발_무장.png",
+      "바이트": 246527,
+      "SHA256": "0d338d887d959db3e0673bd6289785349130d365ea4841cc07ffbe41cd4b3407"
+    },
+    {
+      "경로": "UI2560/09_개발_시험.png",
+      "바이트": 247792,
+      "SHA256": "5389d7cb421e5029766e40d4549ed84458f22650147b7ca6ca5bc9b977549530"
+    },
+    {
+      "경로": "UI2560/10_초계함_모델.png",
+      "바이트": 188402,
+      "SHA256": "59a13797156292f9db21ab5fb04be9806eaa572aa6e2c5f65fd37e23d0fc388f"
+    },
+    {
+      "경로": "UI2560/report.json",
+      "바이트": 4873,
+      "SHA256": "5c94c0993c446d6e51baa5984c38d3959402ca8e220e297f7e46887233fb6cbb"
+    },
+    {
+      "경로": "UI720/01_전투_HUD.png",
+      "바이트": 146758,
+      "SHA256": "b831c5fc0eee675f5789c45ccd2431173715084f0ba40d3ac7bf5013ead574aa"
+    },
+    {
+      "경로": "UI720/02_영웅_카드.png",
+      "바이트": 164418,
+      "SHA256": "5fae948292103ee89b28ef66866da02502c744a21f7e743eb002f59c2210f21b"
+    },
+    {
+      "경로": "UI720/03_외부_무장.png",
+      "바이트": 168228,
+      "SHA256": "0efda5dcbad08b7d7778b2e5b80849c46d79c1dd55064cc272a0649e638e2e7a"
+    },
+    {
+      "경로": "UI720/04_격납고.png",
+      "바이트": 167604,
+      "SHA256": "e1980d4d9e309d66dfe9cf039a5c5ec2567bfe4ebd6466e67a27d8c1f514aad1"
+    },
+    {
+      "경로": "UI720/05_선내_영웅.png",
+      "바이트": 162593,
+      "SHA256": "3ffe336010112062b2bac71981e005fe0dab19ed7304e8492a57f3548f6b5780"
+    },
+    {
+      "경로": "UI720/06_개발_함선.png",
+      "바이트": 132803,
+      "SHA256": "8681c278a29e6290ecee46185a9c424f27dd06fe67cc0831c0c6e973e30772b4"
+    },
+    {
+      "경로": "UI720/07_개발_영웅.png",
+      "바이트": 116974,
+      "SHA256": "879dc9e5f74bc8419350fadcebf0aeac1d4311334e0ec76159177bfafd2b873a"
+    },
+    {
+      "경로": "UI720/08_개발_무장.png",
+      "바이트": 125790,
+      "SHA256": "da07ed629428cb0757c6a13ff5f557e98b2b50d562c74f5b9d084247d4a955ac"
+    },
+    {
+      "경로": "UI720/09_개발_시험.png",
+      "바이트": 113017,
+      "SHA256": "cf93af4618442032cb88c0e2eba2d95506a6ceb58ef973fd8f3e0220286c731a"
+    },
+    {
+      "경로": "UI720/10_초계함_모델.png",
+      "바이트": 120426,
+      "SHA256": "f8f444cee1e8ff9624a66ffef163d07de78afbb6c593d23bb14b37358d749952"
+    },
+    {
+      "경로": "UI720/report.json",
+      "바이트": 4850,
+      "SHA256": "e68ccc8522f3ba9acb0eeb6aacdca9d089d25839284842e06c000c4a6cd67361"
+    },
+    {
+      "경로": "UI720_N/01_전투_HUD.png",
+      "바이트": 146758,
+      "SHA256": "b831c5fc0eee675f5789c45ccd2431173715084f0ba40d3ac7bf5013ead574aa"
+    },
+    {
+      "경로": "UI720_N/02_영웅_카드.png",
+      "바이트": 164495,
+      "SHA256": "cf2be82e01ff6415e1345ccc5f665ab7066d22168419330e73457a09e5234644"
+    },
+    {
+      "경로": "UI720_N/03_외부_무장.png",
+      "바이트": 168176,
+      "SHA256": "b684e987550a80d7a298870beca16c71f2dce915afb98bab1ed2babb5a7f912d"
+    },
+    {
+      "경로": "UI720_N/04_격납고.png",
+      "바이트": 167766,
+      "SHA256": "2ea8fa373cbe9dd70fdd6ac8744560be5f569c96f8997411c1d523cc08c1b818"
+    },
+    {
+      "경로": "UI720_N/05_선내_영웅.png",
+      "바이트": 162646,
+      "SHA256": "ea4a856274f36d0096be3cd0ae615788f4b084780d776a05ba706c5e2976a2ca"
+    },
+    {
+      "경로": "UI720_N/06_개발_함선.png",
+      "바이트": 133042,
+      "SHA256": "0cd121eb84b9515ace6d6f6d1635c62aef296c1a772b50f95d79089e618e25b1"
+    },
+    {
+      "경로": "UI720_N/07_개발_영웅.png",
+      "바이트": 117213,
+      "SHA256": "170cddaf6dddb5c3f334d55a2ebe560e538b15d1f5dbed23ab1c5460548e9ed8"
+    },
+    {
+      "경로": "UI720_N/08_개발_무장.png",
+      "바이트": 126039,
+      "SHA256": "ff657b37eac11cad760025556b3dd689d4340ce62ee0f1184682f9ebf82b89ea"
+    },
+    {
+      "경로": "UI720_N/09_개발_시험.png",
+      "바이트": 113230,
+      "SHA256": "b40941e9f78c004fd513e1a4f1673d2f0f82a13c5052713a1273ea4f482e3fc7"
+    },
+    {
+      "경로": "UI720_N/10_초계함_모델.png",
+      "바이트": 120519,
+      "SHA256": "e6a98f49f6d83d70cece755056bda31ef8e2944c6f259634092b166603e07017"
+    },
+    {
+      "경로": "UI720_N/report.json",
+      "바이트": 4862,
+      "SHA256": "66cad309cd8a502eb92afb7e5727bc176721feac41ff50d89e621dcca15c4d4d"
+    },
+    {
+      "경로": "Video/frame_0000.png",
+      "바이트": 269491,
+      "SHA256": "9c7cc285e02342d4438d36f792be303b226ce87125bc947f4758f50846c0cfb4"
+    },
+    {
+      "경로": "Video/frame_0059.png",
+      "바이트": 267127,
+      "SHA256": "ef8fde4ae87e44645961bfec2c29b8c2368d34586a3b9e8709b69b5c2e8b229b"
+    },
+    {
+      "경로": "Video/report.json",
+      "바이트": 319052,
+      "SHA256": "cc997edf02751dd720bf94a65b217a15389168beb1965a85efb145d3fbdb207b"
+    },
+    {
+      "경로": "Video/포탑_실제렌더.mp4",
+      "바이트": 397375,
+      "SHA256": "b0f79840fcc7cbc79d3fabf541c937162e0545c5ae008ee27cb063310135d5a2"
+    }
+  ],
+  "DLL_SHA256": "e8824661a9ba27ca8cb109a61530a1753f1ed39c4732588cf460790a0a55ab35",
+  "자동검사": {
+    "성공": 85,
+    "실패": 0,
+    "엔진자체오류": 15,
+    "검사ID": [
+      "OrbitalVanguard.Carrier.AlternateHangarAndExclusiveModes",
+      "OrbitalVanguard.Carrier.DogfightAndMotherLoss",
+      "OrbitalVanguard.Carrier.FacilityControlAndDockQueue",
+      "OrbitalVanguard.Carrier.InteriorProtectionAndInFlightLifetime",
+      "OrbitalVanguard.Carrier.InventoryCapacityAndRecall",
+      "OrbitalVanguard.Carrier.MultipleCarrierSectionsAndPureDogfight",
+      "OrbitalVanguard.Carrier.OwnershipFTLAndLaunchAttribution",
+      "OrbitalVanguard.Carrier.RealProjectilesAndFixedTime",
+      "OrbitalVanguard.Carrier.StrikeDefensiveRejoinAndInvalidation",
+      "OrbitalVanguard.Carrier.StrikeMovingHullEnvelope",
+      "OrbitalVanguard.Combat.DataProfilesAndTierLimits",
+      "OrbitalVanguard.Combat.DetectionLossStartsLastKnownTracking",
+      "OrbitalVanguard.Combat.DetectionLossWreckDepartureAndExpiry",
+      "OrbitalVanguard.Combat.DetectionSourcesAndInvalidation",
+      "OrbitalVanguard.Combat.FixedVLSPathAndContinuousSpread",
+      "OrbitalVanguard.Combat.IndependentMovementAndAttackAutomation",
+      "OrbitalVanguard.Combat.LaunchedDamageChainAndSingleImpact",
+      "OrbitalVanguard.Combat.LocalArcsTraverseAndManualAttitude",
+      "OrbitalVanguard.Combat.OrdersAndFriendlyClearance",
+      "OrbitalVanguard.Combat.ReadinessAndFacilityGates",
+      "OrbitalVanguard.Combat.RealMountImpactShieldThenMountOnly",
+      "OrbitalVanguard.Combat.SalvoCancellationAndGeometricMiss",
+      "OrbitalVanguard.Combat.SeededTimeScalePauseAndManualControl",
+      "OrbitalVanguard.Combat.TrajectoryLifetimeAndLaunchOwnership",
+      "OrbitalVanguard.Controls.OrbitOwnerAndReset",
+      "OrbitalVanguard.Controls.RightMoveAnchorAndRelease",
+      "OrbitalVanguard.Development.CatalogueDefinitions",
+      "OrbitalVanguard.Development.FiniteLogistics",
+      "OrbitalVanguard.Development.TimedRepair",
+      "OrbitalVanguard.Hero.CandidateGrowthAndDuplicateAward",
+      "OrbitalVanguard.Input.AnchoredAltitudeAndUI",
+      "OrbitalVanguard.Input.ProjectionGuards",
+      "OrbitalVanguard.Interior.ActualEntryCaptureAndOriginalPodReturn",
+      "OrbitalVanguard.Interior.ActualOperationContributors",
+      "OrbitalVanguard.Interior.BridgeCapturePhysicalRetakeAndDestruction",
+      "OrbitalVanguard.Interior.CommanderAdvancedSkills",
+      "OrbitalVanguard.Interior.FixedClockBlockedRouteAndOrders",
+      "OrbitalVanguard.Interior.FourRolesCombatAndFiniteHealing",
+      "OrbitalVanguard.Interior.GraphVersionAndFactionRoster",
+      "OrbitalVanguard.Interior.ImmediateProtectionAndMixedPresenceSources",
+      "OrbitalVanguard.Interior.MeleeAdvancedSkills",
+      "OrbitalVanguard.Interior.PassiveAuraSkills",
+      "OrbitalVanguard.Interior.RangedAdvancedSkills",
+      "OrbitalVanguard.Interior.RuntimeResidentDepartureSuspendsAndPreserves",
+      "OrbitalVanguard.Interior.RuntimeShuttleCaptureWreckAndDeparture",
+      "OrbitalVanguard.Interior.SabotageCheckpointAndDamagePath",
+      "OrbitalVanguard.Interior.SupportDutyFiniteRepair",
+      "OrbitalVanguard.Interior.SupportFiniteSkills",
+      "OrbitalVanguard.Layout.RejectInvalidAuthoring",
+      "OrbitalVanguard.Layout.SixFacesAndBoundaryMapping",
+      "OrbitalVanguard.Mission.PauseManualPriorityAndTimeout",
+      "OrbitalVanguard.Mission.PreEntryRecallIsNotInteriorExtraction",
+      "OrbitalVanguard.Mission.RealRosterShieldAndTransportGate",
+      "OrbitalVanguard.Mission.RestartDefenseAndLegacyPreservation",
+      "OrbitalVanguard.PointDefense.FacilityRangeOwnershipAndCrew",
+      "OrbitalVanguard.PointDefense.LaunchedMissileSingleOpportunityAndImpact",
+      "OrbitalVanguard.PointDefense.PriorityAndAlliedCoverage",
+      "OrbitalVanguard.PointDefense.ProbabilityAndTargetBoundary",
+      "OrbitalVanguard.Presentation.MuzzleAttackEventAndGameClock",
+      "OrbitalVanguard.Presentation.PDActualTargetMuzzleAndOpportunity",
+      "OrbitalVanguard.Presentation.ProfileReplacementRechecksActualMuzzle",
+      "OrbitalVanguard.Presentation.TurretPoseOwnershipAndLifecycle",
+      "OrbitalVanguard.Presentation.UpperLowerVLSAndDestroyedTracking",
+      "OrbitalVanguard.Revision.D116CandidateCatalog",
+      "OrbitalVanguard.Revision.DisableObservedWeapons",
+      "OrbitalVanguard.Revision.FactionProtectionAndForceScope",
+      "OrbitalVanguard.Revision.ProtectionSalvoAndSurvivorBoundary",
+      "OrbitalVanguard.Ship.ClassTurnRates",
+      "OrbitalVanguard.Ship.FiniteTurnXYZArrival",
+      "OrbitalVanguard.Ship.TimeScaleAndStoppedArrival",
+      "OrbitalVanguard.Systems.ArmorCausesAndSingleHullDamage",
+      "OrbitalVanguard.Systems.D116NoDelayCrewAndDamage",
+      "OrbitalVanguard.Systems.ExplosionQueueAndWeaponIndependence",
+      "OrbitalVanguard.Systems.IndependentInstancesAndCrew",
+      "OrbitalVanguard.Systems.PartialShieldCapacityTransition",
+      "OrbitalVanguard.Systems.RejectInvalidRuntimeLayout",
+      "OrbitalVanguard.Systems.ShieldStateAndTime",
+      "OrbitalVanguard.Systems.ThreeDeckDestructionFaces",
+      "OrbitalVanguard.Systems.VerticalPenetrationAndEmptySlots",
+      "OrbitalVanguard.Transport.FixedTimePauseAndLowFps",
+      "OrbitalVanguard.Transport.InterceptionShieldAndSingleCasualty",
+      "OrbitalVanguard.Transport.LocalEntryOriginalPodAndProtection",
+      "OrbitalVanguard.Transport.PersonalLaunchScheduleAndFacilityRecheck",
+      "OrbitalVanguard.Transport.ShuttleDeliveryRecoveryAndLoss",
+      "OrbitalVanguard.Transport.TargetDepartureReturnFallbackAndResidentDeath"
+    ]
+  }
+}

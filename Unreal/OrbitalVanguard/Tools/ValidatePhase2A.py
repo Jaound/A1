@@ -111,6 +111,11 @@ def run(pc, ships, world):
     pc.action('Developer'); pc.action('Deck3'); check('Enemy floors blocked outside DEV', p(pc, 'viewed_deck') == 0)
     pc.action('Developer'); pc.clear_selection(); check('Deselect clears selection and orders', not p(pc, 'selected') and not p(pc, 'placing'))
     pc.select_ship(a); pc.action('Move')
+    # 간소 개발창이 열린 동안 숨은 전장 상세창은 입력을 받지 않는다.
+    # 창 조작 회귀는 실제 상세창이 보이는 일반 플레이 상태에서 수행한다.
+    pc.set_editor_property('developer_mode', False)
+    hud.set_details_open(True)
+    hud.set_hero_panel_open(False)
     # HUD API receives pixels, not OS mouse events. Fixed high corner is within its top bar.
     old = p(pc, 'preview'); check('HUD top bar consumes pointer API', hud.handle_pointer(20, 20, True, True, 1, True, 15, 15))
     check('HUD API does not mutate world preview', near(old, p(pc, 'preview')))

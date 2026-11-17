@@ -1,0 +1,32 @@
+{
+  "asset_root": "C:\\Users\\user\\Documents\\OrbitalVanguardAssets",
+  "tag": "PlayUI_v1_20261117b",
+  "models": [
+    {
+      "id": "naval_gun_bf120",
+      "source_fbx": "C:\\Users\\user\\Documents\\OrbitalVanguardAssets\\Source\\PlayUI_v1_20261117\\naval_gun_bf120\\Meshy_AI_Naval_Gun_Turret_BF120_20261112_image-to-3d-texture_fbx\\Meshy_AI_Naval_Gun_Turret_BF120_20261112_image-to-3d-texture.fbx",
+      "archive": "C:\\Users\\user\\Documents\\OrbitalVanguardAssets\\Incoming\\naval_gun_bf120.zip",
+      "archive_sha256": "d8d91ade09c66ab6de659cccef1f268da0302b535df67798ca1d16f0533496f8",
+      "nested_sha256": "a6b14a856c534cea26c43c199335f191a72b008ea04c00b8d169a08c9d200cbe"
+    },
+    {
+      "id": "laser_turret_lb30",
+      "source_fbx": "C:\\Users\\user\\Documents\\OrbitalVanguardAssets\\Source\\PlayUI_v1_20261117\\laser_turret_lb30\\Meshy_AI_Laser_Turret_LB30_20261112_image-to-3d-texture_fbx\\Meshy_AI_Laser_Turret_LB30_20261112_image-to-3d-texture.fbx",
+      "archive": "C:\\Users\\user\\Documents\\OrbitalVanguardAssets\\Incoming\\laser_turret_lb30.zip",
+      "archive_sha256": "dec2d35c09c067e092f3229def0bddf2b7a1e89267ba812d4c45616861844fb8",
+      "nested_sha256": "30c4464af007fafa599031288efbfe8d8a596e4ab3bfcf763dcf3d6b26e6f2e7"
+    },
+    {
+      "id": "ciws_gatling_6",
+      "source_fbx": "C:\\Users\\user\\Documents\\OrbitalVanguardAssets\\Source\\PlayUI_v1_20261117\\ciws_gatling_6\\Meshy_AI_CIWS_Gatling_6_20261112_image-to-3d-texture_fbx\\Meshy_AI_CIWS_Gatling_6_20261112_image-to-3d-texture.fbx",
+      "archive": "C:\\Users\\user\\Documents\\OrbitalVanguardAssets\\Incoming\\ciws_gatling_6.zip",
+      "archive_sha256": "6cac4b528f55d318ed9aaa98253e333b7c16836477bf52b9bd58fe8706bdfdc3",
+      "nested_sha256": "84a685238c20f527e87a060d7d545c4a252b33f909c1b7377930e7d1ffe15820"
+    },
+    {
+      "id": "corvette_pc14",
+      "source_fbx": "C:\\Users\\user\\Documents\\OrbitalVanguardAssets\\Source\\초계함\\Meshy_AI_scifi_patrol_corvette_pc14_20261112_image-to-3d-texture.fbx",
+      "prepare": true
+    }
+  ]
+}

@@ -1,0 +1,21 @@
+{
+  "archive": "C:\\Users\\user\\Downloads\\Play_Game_3.zip",
+  "sha256": "bc65912ae558c70ef163ee68e2d6ac767c16de25497cc4e38d197c64f8a80c25",
+  "sources": [
+    {
+      "archive_path": "Play Game/src/ui/BoardingBlueprintPanel.gd",
+      "path": "C:\\Users\\user\\Documents\\OrbitalVanguardAssets\\Reports\\Prototype_ReadOnly\\BoardingBlueprintPanel_56b8ba9728.gd",
+      "sha256": "56b8ba97280f64699f2cf6648e8e9303a8292d1ba2326653b1ed413c19e4c4bd"
+    },
+    {
+      "archive_path": "Play Game/src/ui/MainGame.gd",
+      "path": "C:\\Users\\user\\Documents\\OrbitalVanguardAssets\\Reports\\Prototype_ReadOnly\\MainGame_17f523db62.gd",
+      "sha256": "17f523db627c35084dd0ffe0a39d618223a46a43db5104da6766b2d80d036f3d"
+    },
+    {
+      "archive_path": "Play Game/src/view3d/ShipMeshFactory.gd",
+      "path": "C:\\Users\\user\\Documents\\OrbitalVanguardAssets\\Reports\\Prototype_ReadOnly\\ShipMeshFactory_4fb5caeed2.gd",
+      "sha256": "4fb5caeed2322580c3c33178e3b75b5cfc7869fa579a60ca631e9fbfc3f029bc"
+    }
+  ]
+}

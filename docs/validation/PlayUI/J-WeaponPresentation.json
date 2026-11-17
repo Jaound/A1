@@ -1,0 +1,239 @@
+{
+  "passed": true,
+  "kind": "포탑 표시 PIE API",
+  "physical_input": false,
+  "scope": "임시 가동 포탑, 실제 발사 경로, 읽기 전용 프리뷰; 최종 메시/직접 입력 제외",
+  "checks": [
+    {
+      "id": "WVP-TARGET-REQUEST",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "WVP-REGISTERED",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "WVP-REAL-ROTATION",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "WVP-NO-SECOND-INTERPOLATION",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "WVP-MUZZLE-QUERY",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "WVP-PAUSE-AIM",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "WVP-PAUSE-CLOCK",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "WVP-ALIGNED-READY",
+      "passed": true,
+      "detail": "READY"
+    },
+    {
+      "id": "WVP-FIRE-REQUEST",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "WVP-SINGLE-SHOT",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "WVP-REAL-EVENT-ID",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "WVP-REAL-MUZZLE",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "WVP-FLASH",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "WVP-NO-REPLAY",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "WVP-FLASH-GAME-TIME",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "WVP-VLS-FIXED",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "WVP-LOWER-MOUNT",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "WVP-DESTROYED-TRACKING",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "WVP-DESTROYED-FIRE-GATE",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "WVP-REPAIRED-TRACKING",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "WVP-PD-SUMMARY-SCENE",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "WVP-PD-SUMMARY-REGISTERED",
+      "passed": true,
+      "detail": "시험 함선 1척 생성 · 최초 재고/병력만 공급 · 캠페인 획득 아님"
+    },
+    {
+      "id": "WVP-PD-SUMMARY-MULTIPLE-MOUNTS",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "WVP-PD-SUMMARY-READY",
+      "passed": true,
+      "detail": "빔 요격 · T2 · 166m\nHP 100/100 · 자동 방어"
+    },
+    {
+      "id": "WVP-PD-SUMMARY-RANGE",
+      "passed": true,
+      "detail": "빔 요격 · T2 · 166m\nHP 100/100 · 자동 방어"
+    },
+    {
+      "id": "WVP-PD-SUMMARY-INDIVIDUAL-DESTROYED",
+      "passed": true,
+      "detail": "빔 요격 · T2 · 166m\nHP 0/100 · 무장 파괴"
+    },
+    {
+      "id": "WVP-PD-SUMMARY-OTHERS-ACTIVE",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "WVP-PD-SUMMARY-REPAIRED",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "WVP-PD-SUMMARY-ENEMY-PRIVACY",
+      "passed": true,
+      "detail": "요격 · T2 · 외장 관측\nHP 100/100 · 운영 정보 미확인"
+    },
+    {
+      "id": "WVP-TARGET-REQUEST",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "WVP-SPEED-1-POSE",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "WVP-TARGET-REQUEST",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "WVP-SPEED-2-POSE",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "WVP-TARGET-REQUEST",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "WVP-SPEED-3-POSE",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "WVP-SPEED-2-EQUIVALENT",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "WVP-SPEED-3-EQUIVALENT",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "WVP-PREVIEW-REAL-MESH",
+      "passed": true,
+      "detail": "25"
+    },
+    {
+      "id": "WVP-PREVIEW-READ-ONLY",
+      "passed": true,
+      "detail": "((12, 4000.0, 0, 3), (12, 4000.0, 0, 3))"
+    }
+  ],
+  "errors": [],
+  "speed_samples": [
+    {
+      "speed": 1,
+      "game_seconds": 4.000000208616257,
+      "shots": 12,
+      "hits": 6,
+      "target_hp": 4998.75,
+      "aim": [
+        7.994861271478283,
+        20.556045219583464
+      ]
+    },
+    {
+      "speed": 2,
+      "game_seconds": 4.000000208616257,
+      "shots": 12,
+      "hits": 6,
+      "target_hp": 4998.75,
+      "aim": [
+        7.994861271478283,
+        20.556045219583464
+      ]
+    },
+    {
+      "speed": 3,
+      "game_seconds": 4.000000208616257,
+      "shots": 12,
+      "hits": 6,
+      "target_hp": 4998.75,
+      "aim": [
+        7.994861271478283,
+        20.556045219583464
+      ]
+    }
+  ]
+}

@@ -1,0 +1,97 @@
+{
+  "passed": true,
+  "scope": "UE 정적 메시 임포트. 실제 전장 적용/조작 검증은 별도.",
+  "source": "C:\\Users\\user\\Documents\\OrbitalVanguardAssets\\Prepared\\PlayUI_v1_20261117b\\corvette_pc14\\OV_PC14_Preview.fbx",
+  "asset": "/Game/Presentation/Ships/SM_PC14",
+  "source_modified": false,
+  "textures_imported": false,
+  "materials_imported": false,
+  "auto_collision": false,
+  "material_policy": "기존 진영 임시 재질 사용. 원본 텍스처는 Prepared에 보존하나 UE에는 미적용.",
+  "checks": [
+    {
+      "id": "MODEL-SOURCE-BYTES",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "MODEL-NO-OVERWRITE",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "MODEL-ONE-ASSET",
+      "passed": true,
+      "detail": "['/Game/Presentation/Ships/SM_PC14.SM_PC14']"
+    },
+    {
+      "id": "MODEL-STATIC-MESH",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "MODEL-TRIANGLE-BUDGET",
+      "passed": true,
+      "detail": "10000"
+    },
+    {
+      "id": "MODEL-UV-PRESERVED",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "MODEL-X-LONGEST",
+      "passed": true,
+      "detail": "[349.99998474121094, 108.21913146972656, 77.58996200561523]"
+    },
+    {
+      "id": "MODEL-CENTIMETER-SCALE",
+      "passed": true,
+      "detail": "[349.99998474121094, 108.21913146972656, 77.58996200561523]"
+    },
+    {
+      "id": "MODEL-CENTERED",
+      "passed": true,
+      "detail": "[-7.62939453125e-06, -7.62939453125e-06, 1.9073486328125e-06]"
+    },
+    {
+      "id": "MODEL-NO-AUTO-COLLISION",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "MODEL-SAVE",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "MODEL-SOURCE-UNCHANGED",
+      "passed": true,
+      "detail": ""
+    }
+  ],
+  "errors": [],
+  "validation_only": true,
+  "source_sha256": "ee64b76ca2d28a1529bf7d2d4f5e606cd0d02119f18eea75d02365d489214768",
+  "imported_paths": [
+    "/Game/Presentation/Ships/SM_PC14.SM_PC14"
+  ],
+  "bounds_size_cm": [
+    349.99998474121094,
+    108.21913146972656,
+    77.58996200561523
+  ],
+  "bounds_center_cm": [
+    -7.62939453125e-06,
+    -7.62939453125e-06,
+    1.9073486328125e-06
+  ],
+  "lods": 1,
+  "triangles_lod0": 10000,
+  "vertices_lod0": 11331,
+  "uv_channels": 1,
+  "simple_collisions": 0,
+  "uasset": "C:\\Users\\user\\source\\repos\\A1\\Unreal\\OrbitalVanguard\\Content\\Presentation\\Ships\\SM_PC14.uasset",
+  "uasset_bytes": 509958,
+  "uasset_sha256": "8273d9e37b14b77b83e11d1f90c6464d9f3d5b4c6a759b8b9181841afa588021"
+}

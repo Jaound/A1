@@ -1,0 +1,1009 @@
+{
+  "description": "실제 원본 바이트 확인·원본 비변경. FBX/텍스처 연결의 시각 검증과는 별도.",
+  "archives": [
+    {
+      "path": "C:\\Users\\user\\Documents\\OrbitalVanguardAssets\\Incoming\\anti_ship_missile_launcher.zip",
+      "bytes": 150395619,
+      "sha256": "17afd8e72095dafecf3a38f0f9192a795e7c790d2d3013a8a8937ce3315722ab",
+      "lfs_pointer": false,
+      "entries": [
+        {
+          "path": "대함미사일모듈.zip",
+          "bytes": 150366217
+        }
+      ]
+    },
+    {
+      "path": "C:\\Users\\user\\Documents\\OrbitalVanguardAssets\\Incoming\\ciws_beam_b.zip",
+      "bytes": 112673211,
+      "sha256": "5efd5109679f4e3daae478bc46e652b8caad1624700645e3307eca297938c666",
+      "lfs_pointer": false,
+      "entries": [
+        {
+          "path": ".gitkeep",
+          "bytes": 0
+        },
+        {
+          "path": "Meshy_AI_CIWS_Beam_B_20261112_image-to-3d-texture_fbx.zip",
+          "bytes": 114051665
+        }
+      ]
+    },
+    {
+      "path": "C:\\Users\\user\\Documents\\OrbitalVanguardAssets\\Incoming\\ciws_gatling_6.zip",
+      "bytes": 110815262,
+      "sha256": "6cac4b528f55d318ed9aaa98253e333b7c16836477bf52b9bd58fe8706bdfdc3",
+      "lfs_pointer": false,
+      "entries": [
+        {
+          "path": ".gitkeep",
+          "bytes": 0
+        },
+        {
+          "path": "Meshy_AI_CIWS_Gatling_6_20261112_image-to-3d-texture_fbx.zip",
+          "bytes": 112323085
+        }
+      ]
+    },
+    {
+      "path": "C:\\Users\\user\\Documents\\OrbitalVanguardAssets\\Incoming\\heavy_cannon_shc400.zip",
+      "bytes": 108179492,
+      "sha256": "5bc00872a2d546ebccb905e98ea53d73232d0649d35046fdf78125d6313e95e7",
+      "lfs_pointer": false,
+      "entries": [
+        {
+          "path": ".gitkeep",
+          "bytes": 0
+        },
+        {
+          "path": "Meshy_AI_Heavy_Cannon_SHC400_20261112_image-to-3d-texture_fbx.zip",
+          "bytes": 109467498
+        }
+      ]
+    },
+    {
+      "path": "C:\\Users\\user\\Documents\\OrbitalVanguardAssets\\Incoming\\laser_turret_lb30.zip",
+      "bytes": 120065359,
+      "sha256": "dec2d35c09c067e092f3229def0bddf2b7a1e89267ba812d4c45616861844fb8",
+      "lfs_pointer": false,
+      "entries": [
+        {
+          "path": ".gitkeep",
+          "bytes": 0
+        },
+        {
+          "path": "Meshy_AI_Laser_Turret_LB30_20261112_image-to-3d-texture_fbx.zip",
+          "bytes": 121711487
+        }
+      ]
+    },
+    {
+      "path": "C:\\Users\\user\\Documents\\OrbitalVanguardAssets\\Incoming\\missile_pod_mm24.zip",
+      "bytes": 150748348,
+      "sha256": "5497efbcfd2bca0defad2337a3e9466c956b7be3ffb142324518b272f52ced21",
+      "lfs_pointer": false,
+      "entries": [
+        {
+          "path": ".gitkeep",
+          "bytes": 0
+        },
+        {
+          "path": "Meshy_AI_Missile_Pod_MM24_20261112_image-to-3d-texture_fbx.zip",
+          "bytes": 153322375
+        }
+      ]
+    },
+    {
+      "path": "C:\\Users\\user\\Documents\\OrbitalVanguardAssets\\Incoming\\missile_pod_mm48.zip",
+      "bytes": 190843553,
+      "sha256": "b09edfcff6761ca1122ceca757cbb3b38fbf0aa4499e9fe4d9c5f4f2841e5cc6",
+      "lfs_pointer": false,
+      "entries": [
+        {
+          "path": ".gitkeep",
+          "bytes": 0
+        },
+        {
+          "path": "Meshy_AI_Missile_Pod_MM48_20261112_image-to-3d-texture_fbx.zip",
+          "bytes": 191058755
+        }
+      ]
+    },
+    {
+      "path": "C:\\Users\\user\\Documents\\OrbitalVanguardAssets\\Incoming\\naval_gun_bf120.zip",
+      "bytes": 103399192,
+      "sha256": "d8d91ade09c66ab6de659cccef1f268da0302b535df67798ca1d16f0533496f8",
+      "lfs_pointer": false,
+      "entries": [
+        {
+          "path": ".gitkeep",
+          "bytes": 0
+        },
+        {
+          "path": "Meshy_AI_Naval_Gun_Turret_BF120_20261112_image-to-3d-texture_fbx.zip",
+          "bytes": 104601364
+        }
+      ]
+    },
+    {
+      "path": "C:\\Users\\user\\Documents\\OrbitalVanguardAssets\\Incoming\\plasma_heavy_cannon.zip",
+      "bytes": 169039468,
+      "sha256": "ec901df75a1aaabb5ec5b819159a683c6819daa74a8e6c2c06c681d4c156a04d",
+      "lfs_pointer": false,
+      "entries": [
+        {
+          "path": ".gitkeep",
+          "bytes": 0
+        },
+        {
+          "path": "Meshy_AI_Plasma_Heavy_Cannon_20261112_image-to-3d-texture_fbx.zip",
+          "bytes": 170077618
+        }
+      ]
+    },
+    {
+      "path": "C:\\Users\\user\\Documents\\OrbitalVanguardAssets\\Incoming\\railgun_rg200.zip",
+      "bytes": 144807299,
+      "sha256": "e4d2cf6627f9983eb0f979cdcdeaaddb889b0dcc219c9025ddd1a5c573e0e493",
+      "lfs_pointer": false,
+      "entries": [
+        {
+          "path": ".gitkeep",
+          "bytes": 0
+        },
+        {
+          "path": "Meshy_AI_Railgun_RG200_20261112_image-to-3d-texture_fbx.zip",
+          "bytes": 147274221
+        }
+      ]
+    },
+    {
+      "path": "C:\\Users\\user\\Documents\\OrbitalVanguardAssets\\Incoming\\강습 포드.zip",
+      "bytes": 141001694,
+      "sha256": "b493663bf710fec44daddbc1bfbc826aa0bfee5610bfebf097b8728b16bb743b",
+      "lfs_pointer": false,
+      "entries": [
+        {
+          "path": "Meshy_AI_scifi_breaching_pod_20261117_image-to-3d-texture_fbx/Meshy_AI_scifi_breaching_pod_20261117_image-to-3d-texture_fbx/Meshy_AI_scifi_breaching_pod_20261117_generate.fbx",
+          "bytes": 32753276
+        },
+        {
+          "path": "Meshy_AI_scifi_breaching_pod_20261117_image-to-3d-texture_fbx/Meshy_AI_scifi_breaching_pod_20261117_image-to-3d-texture_fbx/Meshy_AI_scifi_breaching_pod_20261117_image-to-3d-texture.fbx",
+          "bytes": 68447420
+        },
+        {
+          "path": "Meshy_AI_scifi_breaching_pod_20261117_image-to-3d-texture_fbx/Meshy_AI_scifi_breaching_pod_20261117_image-to-3d-texture_fbx/Meshy_AI_scifi_breaching_pod_20261117_image-to-3d-texture.png",
+          "bytes": 18568067
+        },
+        {
+          "path": "Meshy_AI_scifi_breaching_pod_20261117_image-to-3d-texture_fbx/Meshy_AI_scifi_breaching_pod_20261117_image-to-3d-texture_fbx/Meshy_AI_scifi_breaching_pod_20261117_image-to-3d-texture_metallic.png",
+          "bytes": 2877880
+        },
+        {
+          "path": "Meshy_AI_scifi_breaching_pod_20261117_image-to-3d-texture_fbx/Meshy_AI_scifi_breaching_pod_20261117_image-to-3d-texture_fbx/Meshy_AI_scifi_breaching_pod_20261117_image-to-3d-texture_normal.png",
+          "bytes": 18121887
+        },
+        {
+          "path": "Meshy_AI_scifi_breaching_pod_20261117_image-to-3d-texture_fbx/Meshy_AI_scifi_breaching_pod_20261117_image-to-3d-texture_fbx/Meshy_AI_scifi_breaching_pod_20261117_image-to-3d-texture_roughness.png",
+          "bytes": 3018722
+        }
+      ]
+    },
+    {
+      "path": "C:\\Users\\user\\Documents\\OrbitalVanguardAssets\\Incoming\\강습선.zip",
+      "bytes": 148291892,
+      "sha256": "cdbf22d274ad60dd18cd634cffcc405a7579125bd62cf1870b580418cc4e54e1",
+      "lfs_pointer": false,
+      "entries": [
+        {
+          "path": "Meshy_AI_scifi_assault_ship_20261117_image-to-3d-texture_fbx/Meshy_AI_scifi_assault_ship_20261117_image-to-3d-texture_fbx/Meshy_AI_scifi_assault_ship_20261117_generate.fbx",
+          "bytes": 32988860
+        },
+        {
+          "path": "Meshy_AI_scifi_assault_ship_20261117_image-to-3d-texture_fbx/Meshy_AI_scifi_assault_ship_20261117_image-to-3d-texture_fbx/Meshy_AI_scifi_assault_ship_20261117_image-to-3d-texture.fbx",
+          "bytes": 71031484
+        },
+        {
+          "path": "Meshy_AI_scifi_assault_ship_20261117_image-to-3d-texture_fbx/Meshy_AI_scifi_assault_ship_20261117_image-to-3d-texture_fbx/Meshy_AI_scifi_assault_ship_20261117_image-to-3d-texture.png",
+          "bytes": 20396037
+        },
+        {
+          "path": "Meshy_AI_scifi_assault_ship_20261117_image-to-3d-texture_fbx/Meshy_AI_scifi_assault_ship_20261117_image-to-3d-texture_fbx/Meshy_AI_scifi_assault_ship_20261117_image-to-3d-texture_metallic.png",
+          "bytes": 2809285
+        },
+        {
+          "path": "Meshy_AI_scifi_assault_ship_20261117_image-to-3d-texture_fbx/Meshy_AI_scifi_assault_ship_20261117_image-to-3d-texture_fbx/Meshy_AI_scifi_assault_ship_20261117_image-to-3d-texture_normal.png",
+          "bytes": 20449551
+        },
+        {
+          "path": "Meshy_AI_scifi_assault_ship_20261117_image-to-3d-texture_fbx/Meshy_AI_scifi_assault_ship_20261117_image-to-3d-texture_fbx/Meshy_AI_scifi_assault_ship_20261117_image-to-3d-texture_roughness.png",
+          "bytes": 3416438
+        }
+      ]
+    },
+    {
+      "path": "C:\\Users\\user\\Documents\\OrbitalVanguardAssets\\Incoming\\구축전함.zip",
+      "bytes": 96108801,
+      "sha256": "9f9da6266df179927c67df0e2ab40756bf102b6855e4e4f9670357bfd657b086",
+      "lfs_pointer": false,
+      "entries": [
+        {
+          "path": "Meshy_AI_scifi_battlecruiser_bc300_20261117_image-to-3d-texture_fbx/Meshy_AI_scifi_battlecruiser_bc300_20261117_image-to-3d-texture.fbx",
+          "bytes": 51854908
+        },
+        {
+          "path": "Meshy_AI_scifi_battlecruiser_bc300_20261117_image-to-3d-texture_fbx/Meshy_AI_scifi_battlecruiser_bc300_20261117_image-to-3d-texture.png",
+          "bytes": 18792093
+        },
+        {
+          "path": "Meshy_AI_scifi_battlecruiser_bc300_20261117_image-to-3d-texture_fbx/Meshy_AI_scifi_battlecruiser_bc300_20261117_image-to-3d-texture_metallic.png",
+          "bytes": 3600874
+        },
+        {
+          "path": "Meshy_AI_scifi_battlecruiser_bc300_20261117_image-to-3d-texture_fbx/Meshy_AI_scifi_battlecruiser_bc300_20261117_image-to-3d-texture_normal.png",
+          "bytes": 18364228
+        },
+        {
+          "path": "Meshy_AI_scifi_battlecruiser_bc300_20261117_image-to-3d-texture_fbx/Meshy_AI_scifi_battlecruiser_bc300_20261117_image-to-3d-texture_roughness.png",
+          "bytes": 3494894
+        }
+      ]
+    },
+    {
+      "path": "C:\\Users\\user\\Documents\\OrbitalVanguardAssets\\Incoming\\대함 미사일.zip",
+      "bytes": 101575104,
+      "sha256": "eff544b7f30dd91ae228d864209af97bb976637bca9304a5d45d84b180f9ad78",
+      "lfs_pointer": false,
+      "entries": [
+        {
+          "path": "┤δ╟╘ ╣╠╗τ└╧/Meshy_AI_scifi_antiship_heavy_missile_20261117_image-to-3d-texture_fbx/Meshy_AI_scifi_antiship_heavy_missile_20261117_generate.fbx",
+          "bytes": 21618060
+        },
+        {
+          "path": "┤δ╟╘ ╣╠╗τ└╧/Meshy_AI_scifi_antiship_heavy_missile_20261117_image-to-3d-texture_fbx/Meshy_AI_scifi_antiship_heavy_missile_20261117_image-to-3d-texture.fbx",
+          "bytes": 47459692
+        },
+        {
+          "path": "┤δ╟╘ ╣╠╗τ└╧/Meshy_AI_scifi_antiship_heavy_missile_20261117_image-to-3d-texture_fbx/Meshy_AI_scifi_antiship_heavy_missile_20261117_image-to-3d-texture.png",
+          "bytes": 16004493
+        },
+        {
+          "path": "┤δ╟╘ ╣╠╗τ└╧/Meshy_AI_scifi_antiship_heavy_missile_20261117_image-to-3d-texture_fbx/Meshy_AI_scifi_antiship_heavy_missile_20261117_image-to-3d-texture_metallic.png",
+          "bytes": 1165307
+        },
+        {
+          "path": "┤δ╟╘ ╣╠╗τ└╧/Meshy_AI_scifi_antiship_heavy_missile_20261117_image-to-3d-texture_fbx/Meshy_AI_scifi_antiship_heavy_missile_20261117_image-to-3d-texture_normal.png",
+          "bytes": 15156936
+        },
+        {
+          "path": "┤δ╟╘ ╣╠╗τ└╧/Meshy_AI_scifi_antiship_heavy_missile_20261117_image-to-3d-texture_fbx/Meshy_AI_scifi_antiship_heavy_missile_20261117_image-to-3d-texture_roughness.png",
+          "bytes": 2024729
+        }
+      ]
+    },
+    {
+      "path": "C:\\Users\\user\\Documents\\OrbitalVanguardAssets\\Incoming\\대함미사일모듈.zip",
+      "bytes": 150366217,
+      "sha256": "3e2e49e733159f5f515430554e3d23825227fe74f678e1fb12730cfb5ad6ec6a",
+      "lfs_pointer": false,
+      "entries": [
+        {
+          "path": "┤δ╟╘╣╠╗τ└╧╕≡╡Γ/Meshy_AI_scifi_antiship_missile_module_20261117_image-to-3d-texture_fbx/Meshy_AI_scifi_antiship_missile_module_20261117_generate.fbx",
+          "bytes": 36108204
+        },
+        {
+          "path": "┤δ╟╘╣╠╗τ└╧╕≡╡Γ/Meshy_AI_scifi_antiship_missile_module_20261117_image-to-3d-texture_fbx/Meshy_AI_scifi_antiship_missile_module_20261117_image-to-3d-texture.fbx",
+          "bytes": 73442508
+        },
+        {
+          "path": "┤δ╟╘╣╠╗τ└╧╕≡╡Γ/Meshy_AI_scifi_antiship_missile_module_20261117_image-to-3d-texture_fbx/Meshy_AI_scifi_antiship_missile_module_20261117_image-to-3d-texture.png",
+          "bytes": 18977843
+        },
+        {
+          "path": "┤δ╟╘╣╠╗τ└╧╕≡╡Γ/Meshy_AI_scifi_antiship_missile_module_20261117_image-to-3d-texture_fbx/Meshy_AI_scifi_antiship_missile_module_20261117_image-to-3d-texture_metallic.png",
+          "bytes": 3099025
+        },
+        {
+          "path": "┤δ╟╘╣╠╗τ└╧╕≡╡Γ/Meshy_AI_scifi_antiship_missile_module_20261117_image-to-3d-texture_fbx/Meshy_AI_scifi_antiship_missile_module_20261117_image-to-3d-texture_normal.png",
+          "bytes": 18152187
+        },
+        {
+          "path": "┤δ╟╘╣╠╗τ└╧╕≡╡Γ/Meshy_AI_scifi_antiship_missile_module_20261117_image-to-3d-texture_fbx/Meshy_AI_scifi_antiship_missile_module_20261117_image-to-3d-texture_roughness.png",
+          "bytes": 3581395
+        }
+      ]
+    },
+    {
+      "path": "C:\\Users\\user\\Documents\\OrbitalVanguardAssets\\Incoming\\레이더 함.zip",
+      "bytes": 314899980,
+      "sha256": "a6bd6a96a17e6e65215c20dfc7ac4ff15dff8f7af9f34e2aac1caf9a0f312650",
+      "lfs_pointer": false,
+      "entries": [
+        {
+          "path": "╖╣└╠┤⌡ ╟╘/Meshy_AI_model_20261112_texture_fbx/Meshy_AI_model_20261112_texture.fbx",
+          "bytes": 147719372
+        },
+        {
+          "path": "╖╣└╠┤⌡ ╟╘/Meshy_AI_model_20261112_texture_fbx/Meshy_AI_model_20261112_texture.png",
+          "bytes": 72144581
+        },
+        {
+          "path": "╖╣└╠┤⌡ ╟╘/Meshy_AI_model_20261112_texture_fbx/Meshy_AI_model_20261112_texture_metallic.png",
+          "bytes": 12995047
+        },
+        {
+          "path": "╖╣└╠┤⌡ ╟╘/Meshy_AI_model_20261112_texture_fbx/Meshy_AI_model_20261112_texture_normal.png",
+          "bytes": 17684178
+        },
+        {
+          "path": "╖╣└╠┤⌡ ╟╘/Meshy_AI_model_20261112_texture_fbx/Meshy_AI_model_20261112_texture_roughness.png",
+          "bytes": 10943336
+        },
+        {
+          "path": "╖╣└╠┤⌡ ╟╘/Meshy_AI_model_20261112_texture_fbx/Meshy_AI_scifi_radar_cruiser_rd37_20261112_generate.fbx",
+          "bytes": 58354236
+        }
+      ]
+    },
+    {
+      "path": "C:\\Users\\user\\Documents\\OrbitalVanguardAssets\\Incoming\\바스티온급 구축함.zip",
+      "bytes": 201966947,
+      "sha256": "9ded116bda6670d89a4622937f2846480ba5c46b9a2e07fab3b0385ee6dda2d6",
+      "lfs_pointer": false,
+      "entries": [
+        {
+          "path": "╣┘╜║╞╝┐┬▒▐ ▒╕├α╟╘/Meshy_AI_model_20261112_texture_fbx/Meshy_AI_model_20261112_texture.fbx",
+          "bytes": 82988636
+        },
+        {
+          "path": "╣┘╜║╞╝┐┬▒▐ ▒╕├α╟╘/Meshy_AI_model_20261112_texture_fbx/Meshy_AI_model_20261112_texture.png",
+          "bytes": 69196641
+        },
+        {
+          "path": "╣┘╜║╞╝┐┬▒▐ ▒╕├α╟╘/Meshy_AI_model_20261112_texture_fbx/Meshy_AI_model_20261112_texture_metallic.png",
+          "bytes": 10953409
+        },
+        {
+          "path": "╣┘╜║╞╝┐┬▒▐ ▒╕├α╟╘/Meshy_AI_model_20261112_texture_fbx/Meshy_AI_model_20261112_texture_normal.png",
+          "bytes": 18215909
+        },
+        {
+          "path": "╣┘╜║╞╝┐┬▒▐ ▒╕├α╟╘/Meshy_AI_model_20261112_texture_fbx/Meshy_AI_model_20261112_texture_roughness.png",
+          "bytes": 10114805
+        },
+        {
+          "path": "╣┘╜║╞╝┐┬▒▐ ▒╕├α╟╘/Meshy_AI_model_20261112_texture_fbx/Meshy_AI_scifi_destroyer_dd42_bastion_20261112_generate.fbx",
+          "bytes": 11648492
+        }
+      ]
+    },
+    {
+      "path": "C:\\Users\\user\\Documents\\OrbitalVanguardAssets\\Incoming\\방공함.zip",
+      "bytes": 204260273,
+      "sha256": "37c3c0b3d773bc77d490c69d5dbd5c3af3fd0672b834ffc9183a15e569a1b3ed",
+      "lfs_pointer": false,
+      "entries": [
+        {
+          "path": "╣µ░°╟╘/Meshy_AI_model_20261112_texture_fbx/Meshy_AI_model_20261112_texture.fbx",
+          "bytes": 84060236
+        },
+        {
+          "path": "╣µ░°╟╘/Meshy_AI_model_20261112_texture_fbx/Meshy_AI_model_20261112_texture.png",
+          "bytes": 70113736
+        },
+        {
+          "path": "╣µ░°╟╘/Meshy_AI_model_20261112_texture_fbx/Meshy_AI_model_20261112_texture_metallic.png",
+          "bytes": 10729150
+        },
+        {
+          "path": "╣µ░°╟╘/Meshy_AI_model_20261112_texture_fbx/Meshy_AI_model_20261112_texture_normal.png",
+          "bytes": 18511400
+        },
+        {
+          "path": "╣µ░°╟╘/Meshy_AI_model_20261112_texture_fbx/Meshy_AI_model_20261112_texture_roughness.png",
+          "bytes": 9478776
+        },
+        {
+          "path": "╣µ░°╟╘/Meshy_AI_model_20261112_texture_fbx/Meshy_AI_scifi_airdefense_ad36_20261112_generate.fbx",
+          "bytes": 12593516
+        }
+      ]
+    },
+    {
+      "path": "C:\\Users\\user\\Documents\\OrbitalVanguardAssets\\Incoming\\백터급 구축함.zip",
+      "bytes": 193413512,
+      "sha256": "74b64bcb0499938896e3d3f9124a169b2ff66d8c2f07fc510cb543c9039be154",
+      "lfs_pointer": false,
+      "entries": [
+        {
+          "path": "╣Θ┼═▒▐ ▒╕├α╟╘/Meshy_AI_model_20261112_texture_fbx/Meshy_AI_model_20261112_texture.fbx",
+          "bytes": 77981180
+        },
+        {
+          "path": "╣Θ┼═▒▐ ▒╕├α╟╘/Meshy_AI_model_20261112_texture_fbx/Meshy_AI_model_20261112_texture.png",
+          "bytes": 67788284
+        },
+        {
+          "path": "╣Θ┼═▒▐ ▒╕├α╟╘/Meshy_AI_model_20261112_texture_fbx/Meshy_AI_model_20261112_texture_metallic.png",
+          "bytes": 10605500
+        },
+        {
+          "path": "╣Θ┼═▒▐ ▒╕├α╟╘/Meshy_AI_model_20261112_texture_fbx/Meshy_AI_model_20261112_texture_normal.png",
+          "bytes": 17770694
+        },
+        {
+          "path": "╣Θ┼═▒▐ ▒╕├α╟╘/Meshy_AI_model_20261112_texture_fbx/Meshy_AI_model_20261112_texture_roughness.png",
+          "bytes": 10330582
+        },
+        {
+          "path": "╣Θ┼═▒▐ ▒╕├α╟╘/Meshy_AI_model_20261112_texture_fbx/Meshy_AI_scifi_destroyer_dd31_20261112_generate.fbx",
+          "bytes": 9931148
+        }
+      ]
+    },
+    {
+      "path": "C:\\Users\\user\\Documents\\OrbitalVanguardAssets\\Incoming\\보급수리선.zip",
+      "bytes": 160947542,
+      "sha256": "fc8c58d4fb284eb47558d43a474dec65a5fd2345e454af49c8142fc3df8e2137",
+      "lfs_pointer": false,
+      "entries": [
+        {
+          "path": "║╕▒▐╝÷╕«╝▒/Meshy_AI_scifi_support_repair_ship_20261117_image-to-3d-texture_fbx/Meshy_AI_scifi_support_repair_ship_20261117_generate.fbx",
+          "bytes": 42254988
+        },
+        {
+          "path": "║╕▒▐╝÷╕«╝▒/Meshy_AI_scifi_support_repair_ship_20261117_image-to-3d-texture_fbx/Meshy_AI_scifi_support_repair_ship_20261117_image-to-3d-texture.fbx",
+          "bytes": 81406332
+        },
+        {
+          "path": "║╕▒▐╝÷╕«╝▒/Meshy_AI_scifi_support_repair_ship_20261117_image-to-3d-texture_fbx/Meshy_AI_scifi_support_repair_ship_20261117_image-to-3d-texture.png",
+          "bytes": 17562441
+        },
+        {
+          "path": "║╕▒▐╝÷╕«╝▒/Meshy_AI_scifi_support_repair_ship_20261117_image-to-3d-texture_fbx/Meshy_AI_scifi_support_repair_ship_20261117_image-to-3d-texture_metallic.png",
+          "bytes": 2853041
+        },
+        {
+          "path": "║╕▒▐╝÷╕«╝▒/Meshy_AI_scifi_support_repair_ship_20261117_image-to-3d-texture_fbx/Meshy_AI_scifi_support_repair_ship_20261117_image-to-3d-texture_normal.png",
+          "bytes": 17289829
+        },
+        {
+          "path": "║╕▒▐╝÷╕«╝▒/Meshy_AI_scifi_support_repair_ship_20261117_image-to-3d-texture_fbx/Meshy_AI_scifi_support_repair_ship_20261117_image-to-3d-texture_roughness.png",
+          "bytes": 3049554
+        }
+      ]
+    },
+    {
+      "path": "C:\\Users\\user\\Documents\\OrbitalVanguardAssets\\Incoming\\수송선.zip",
+      "bytes": 137978427,
+      "sha256": "9b62585982be273142917c4aa92919291b82e9d642e24bdc9547a4f1461581dc",
+      "lfs_pointer": false,
+      "entries": [
+        {
+          "path": "╝÷╝█╝▒/Meshy_AI_scifi_medium_transport_ship_20261117_image-to-3d-texture_fbx/Meshy_AI_scifi_medium_transport_ship_20261117_generate.fbx",
+          "bytes": 30021484
+        },
+        {
+          "path": "╝÷╝█╝▒/Meshy_AI_scifi_medium_transport_ship_20261117_image-to-3d-texture_fbx/Meshy_AI_scifi_medium_transport_ship_20261117_image-to-3d-texture.fbx",
+          "bytes": 65303084
+        },
+        {
+          "path": "╝÷╝█╝▒/Meshy_AI_scifi_medium_transport_ship_20261117_image-to-3d-texture_fbx/Meshy_AI_scifi_medium_transport_ship_20261117_image-to-3d-texture.png",
+          "bytes": 20314847
+        },
+        {
+          "path": "╝÷╝█╝▒/Meshy_AI_scifi_medium_transport_ship_20261117_image-to-3d-texture_fbx/Meshy_AI_scifi_medium_transport_ship_20261117_image-to-3d-texture_metallic.png",
+          "bytes": 1801771
+        },
+        {
+          "path": "╝÷╝█╝▒/Meshy_AI_scifi_medium_transport_ship_20261117_image-to-3d-texture_fbx/Meshy_AI_scifi_medium_transport_ship_20261117_image-to-3d-texture_normal.png",
+          "bytes": 20161683
+        },
+        {
+          "path": "╝÷╝█╝▒/Meshy_AI_scifi_medium_transport_ship_20261117_image-to-3d-texture_fbx/Meshy_AI_scifi_medium_transport_ship_20261117_image-to-3d-texture_roughness.png",
+          "bytes": 2915998
+        }
+      ]
+    },
+    {
+      "path": "C:\\Users\\user\\Documents\\OrbitalVanguardAssets\\Incoming\\순양함.zip",
+      "bytes": 94303683,
+      "sha256": "3d0d1e31ed4df6b94165fb4b645ff6008d33012a797f32326ba82adc3943cdad",
+      "lfs_pointer": false,
+      "entries": [
+        {
+          "path": "Meshy_AI_SciFi_Cruiser_Spaceship_20261112_image-to-3d-texture_fbx/Meshy_AI_SciFi_Cruiser_Spaceship_20261112_image-to-3d-texture.fbx",
+          "bytes": 50410300
+        },
+        {
+          "path": "Meshy_AI_SciFi_Cruiser_Spaceship_20261112_image-to-3d-texture_fbx/Meshy_AI_SciFi_Cruiser_Spaceship_20261112_image-to-3d-texture.png",
+          "bytes": 19633090
+        },
+        {
+          "path": "Meshy_AI_SciFi_Cruiser_Spaceship_20261112_image-to-3d-texture_fbx/Meshy_AI_SciFi_Cruiser_Spaceship_20261112_image-to-3d-texture_metallic.png",
+          "bytes": 1641431
+        },
+        {
+          "path": "Meshy_AI_SciFi_Cruiser_Spaceship_20261112_image-to-3d-texture_fbx/Meshy_AI_SciFi_Cruiser_Spaceship_20261112_image-to-3d-texture_normal.png",
+          "bytes": 19659363
+        },
+        {
+          "path": "Meshy_AI_SciFi_Cruiser_Spaceship_20261112_image-to-3d-texture_fbx/Meshy_AI_SciFi_Cruiser_Spaceship_20261112_image-to-3d-texture_roughness.png",
+          "bytes": 2957735
+        }
+      ]
+    },
+    {
+      "path": "C:\\Users\\user\\Documents\\OrbitalVanguardAssets\\Incoming\\일반 미사일.zip",
+      "bytes": 63258786,
+      "sha256": "208dd3062c2998cbb68a2a4c8aa8faf9e5384a14de7e1d8bc70f69aa5cf306e1",
+      "lfs_pointer": false,
+      "entries": [
+        {
+          "path": "└╧╣▌ ╣╠╗τ└╧/Meshy_AI_scifi_standard_missile_20261117_image-to-3d-texture_fbx/Meshy_AI_scifi_standard_missile_20261117_generate.fbx",
+          "bytes": 11352844
+        },
+        {
+          "path": "└╧╣▌ ╣╠╗τ└╧/Meshy_AI_scifi_standard_missile_20261117_image-to-3d-texture_fbx/Meshy_AI_scifi_standard_missile_20261117_image-to-3d-texture.fbx",
+          "bytes": 29576748
+        },
+        {
+          "path": "└╧╣▌ ╣╠╗τ└╧/Meshy_AI_scifi_standard_missile_20261117_image-to-3d-texture_fbx/Meshy_AI_scifi_standard_missile_20261117_image-to-3d-texture.png",
+          "bytes": 10377455
+        },
+        {
+          "path": "└╧╣▌ ╣╠╗τ└╧/Meshy_AI_scifi_standard_missile_20261117_image-to-3d-texture_fbx/Meshy_AI_scifi_standard_missile_20261117_image-to-3d-texture_metallic.png",
+          "bytes": 1585518
+        },
+        {
+          "path": "└╧╣▌ ╣╠╗τ└╧/Meshy_AI_scifi_standard_missile_20261117_image-to-3d-texture_fbx/Meshy_AI_scifi_standard_missile_20261117_image-to-3d-texture_normal.png",
+          "bytes": 9802912
+        },
+        {
+          "path": "└╧╣▌ ╣╠╗τ└╧/Meshy_AI_scifi_standard_missile_20261117_image-to-3d-texture_fbx/Meshy_AI_scifi_standard_missile_20261117_image-to-3d-texture_roughness.png",
+          "bytes": 1630241
+        }
+      ]
+    },
+    {
+      "path": "C:\\Users\\user\\Documents\\OrbitalVanguardAssets\\Incoming\\전략미사일함.zip",
+      "bytes": 116517227,
+      "sha256": "fcac1f1994313d4661c9e9af6478da412235573e3b19715e670898932d0c2591",
+      "lfs_pointer": false,
+      "entries": [
+        {
+          "path": "└ⁿ╖½╣╠╗τ└╧╟╘/Meshy_AI_scifi_missile_cruiser_20261117_image-to-3d-texture_fbx/Meshy_AI_scifi_missile_cruiser_20261117_generate.fbx",
+          "bytes": 23458300
+        },
+        {
+          "path": "└ⁿ╖½╣╠╗τ└╧╟╘/Meshy_AI_scifi_missile_cruiser_20261117_image-to-3d-texture_fbx/Meshy_AI_scifi_missile_cruiser_20261117_image-to-3d-texture.fbx",
+          "bytes": 53989868
+        },
+        {
+          "path": "└ⁿ╖½╣╠╗τ└╧╟╘/Meshy_AI_scifi_missile_cruiser_20261117_image-to-3d-texture_fbx/Meshy_AI_scifi_missile_cruiser_20261117_image-to-3d-texture.png",
+          "bytes": 18141819
+        },
+        {
+          "path": "└ⁿ╖½╣╠╗τ└╧╟╘/Meshy_AI_scifi_missile_cruiser_20261117_image-to-3d-texture_fbx/Meshy_AI_scifi_missile_cruiser_20261117_image-to-3d-texture_metallic.png",
+          "bytes": 2506033
+        },
+        {
+          "path": "└ⁿ╖½╣╠╗τ└╧╟╘/Meshy_AI_scifi_missile_cruiser_20261117_image-to-3d-texture_fbx/Meshy_AI_scifi_missile_cruiser_20261117_image-to-3d-texture_normal.png",
+          "bytes": 17783824
+        },
+        {
+          "path": "└ⁿ╖½╣╠╗τ└╧╟╘/Meshy_AI_scifi_missile_cruiser_20261117_image-to-3d-texture_fbx/Meshy_AI_scifi_missile_cruiser_20261117_image-to-3d-texture_roughness.png",
+          "bytes": 2664071
+        }
+      ]
+    },
+    {
+      "path": "C:\\Users\\user\\Documents\\OrbitalVanguardAssets\\Incoming\\전함.zip",
+      "bytes": 243348233,
+      "sha256": "cd55b5431da02fa426d00444f56e863001942a9b91749461c266e232ca164508",
+      "lfs_pointer": false,
+      "entries": [
+        {
+          "path": "└ⁿ╟╘/Meshy_AI_model_20261112_texture_fbx/Meshy_AI_model_20261112_texture.fbx",
+          "bytes": 102828092
+        },
+        {
+          "path": "└ⁿ╟╘/Meshy_AI_model_20261112_texture_fbx/Meshy_AI_model_20261112_texture.png",
+          "bytes": 78244560
+        },
+        {
+          "path": "└ⁿ╟╘/Meshy_AI_model_20261112_texture_fbx/Meshy_AI_model_20261112_texture_metallic.png",
+          "bytes": 12087954
+        },
+        {
+          "path": "└ⁿ╟╘/Meshy_AI_model_20261112_texture_fbx/Meshy_AI_model_20261112_texture_normal.png",
+          "bytes": 21059562
+        },
+        {
+          "path": "└ⁿ╟╘/Meshy_AI_model_20261112_texture_fbx/Meshy_AI_model_20261112_texture_roughness.png",
+          "bytes": 10113205
+        },
+        {
+          "path": "└ⁿ╟╘/Meshy_AI_model_20261112_texture_fbx/Meshy_AI_scifi_battleship_bb90_leviathan_20261112_generate.fbx",
+          "bytes": 20969804
+        }
+      ]
+    },
+    {
+      "path": "C:\\Users\\user\\Documents\\OrbitalVanguardAssets\\Incoming\\채굴선.zip",
+      "bytes": 147986477,
+      "sha256": "317e08f279e3506da5e08855cba17de4ac5b9e58a38df4faed88b0259df5e210",
+      "lfs_pointer": false,
+      "entries": [
+        {
+          "path": "├ñ▒╝╝▒/Meshy_AI_scifi_mining_ship_20261117_image-to-3d-texture_fbx/Meshy_AI_scifi_mining_ship_20261117_generate.fbx",
+          "bytes": 41463820
+        },
+        {
+          "path": "├ñ▒╝╝▒/Meshy_AI_scifi_mining_ship_20261117_image-to-3d-texture_fbx/Meshy_AI_scifi_mining_ship_20261117_image-to-3d-texture.fbx",
+          "bytes": 76412972
+        },
+        {
+          "path": "├ñ▒╝╝▒/Meshy_AI_scifi_mining_ship_20261117_image-to-3d-texture_fbx/Meshy_AI_scifi_mining_ship_20261117_image-to-3d-texture.png",
+          "bytes": 15126796
+        },
+        {
+          "path": "├ñ▒╝╝▒/Meshy_AI_scifi_mining_ship_20261117_image-to-3d-texture_fbx/Meshy_AI_scifi_mining_ship_20261117_image-to-3d-texture_metallic.png",
+          "bytes": 1202062
+        },
+        {
+          "path": "├ñ▒╝╝▒/Meshy_AI_scifi_mining_ship_20261117_image-to-3d-texture_fbx/Meshy_AI_scifi_mining_ship_20261117_image-to-3d-texture_normal.png",
+          "bytes": 14414532
+        },
+        {
+          "path": "├ñ▒╝╝▒/Meshy_AI_scifi_mining_ship_20261117_image-to-3d-texture_fbx/Meshy_AI_scifi_mining_ship_20261117_image-to-3d-texture_roughness.png",
+          "bytes": 2827600
+        }
+      ]
+    },
+    {
+      "path": "C:\\Users\\user\\Documents\\OrbitalVanguardAssets\\Incoming\\초계함.zip",
+      "bytes": 74303969,
+      "sha256": "764ad9075b4d775e5d737d1296878d3238de5e114e853051f0eeeab9f007b8ec",
+      "lfs_pointer": false,
+      "entries": [
+        {
+          "path": "Meshy_AI_scifi_patrol_corvette_pc14_20261112_image-to-3d-texture_fbx/Meshy_AI_scifi_patrol_corvette_pc14_20261112_image-to-3d-texture.fbx",
+          "bytes": 33515564
+        },
+        {
+          "path": "Meshy_AI_scifi_patrol_corvette_pc14_20261112_image-to-3d-texture_fbx/Meshy_AI_scifi_patrol_corvette_pc14_20261112_image-to-3d-texture.png",
+          "bytes": 18606186
+        },
+        {
+          "path": "Meshy_AI_scifi_patrol_corvette_pc14_20261112_image-to-3d-texture_fbx/Meshy_AI_scifi_patrol_corvette_pc14_20261112_image-to-3d-texture_metallic.png",
+          "bytes": 1332820
+        },
+        {
+          "path": "Meshy_AI_scifi_patrol_corvette_pc14_20261112_image-to-3d-texture_fbx/Meshy_AI_scifi_patrol_corvette_pc14_20261112_image-to-3d-texture_normal.png",
+          "bytes": 18788946
+        },
+        {
+          "path": "Meshy_AI_scifi_patrol_corvette_pc14_20261112_image-to-3d-texture_fbx/Meshy_AI_scifi_patrol_corvette_pc14_20261112_image-to-3d-texture_roughness.png",
+          "bytes": 2058629
+        }
+      ]
+    },
+    {
+      "path": "C:\\Users\\user\\Documents\\OrbitalVanguardAssets\\Incoming\\함재기.zip",
+      "bytes": 105841992,
+      "sha256": "854f3762c5cd494b4d4eefb14f6a7cd6bde9c68851e24f6c530b9734c9cfbc69",
+      "lfs_pointer": false,
+      "entries": [
+        {
+          "path": "╟╘└τ▒Γ/Meshy_AI_scifi_fighter_interceptor_20261117_image-to-3d-texture_fbx/Meshy_AI_scifi_fighter_interceptor_20261117_generate.fbx",
+          "bytes": 21030764
+        },
+        {
+          "path": "╟╘└τ▒Γ/Meshy_AI_scifi_fighter_interceptor_20261117_image-to-3d-texture_fbx/Meshy_AI_scifi_fighter_interceptor_20261117_image-to-3d-texture.fbx",
+          "bytes": 48576700
+        },
+        {
+          "path": "╟╘└τ▒Γ/Meshy_AI_scifi_fighter_interceptor_20261117_image-to-3d-texture_fbx/Meshy_AI_scifi_fighter_interceptor_20261117_image-to-3d-texture.png",
+          "bytes": 17980897
+        },
+        {
+          "path": "╟╘└τ▒Γ/Meshy_AI_scifi_fighter_interceptor_20261117_image-to-3d-texture_fbx/Meshy_AI_scifi_fighter_interceptor_20261117_image-to-3d-texture_metallic.png",
+          "bytes": 431839
+        },
+        {
+          "path": "╟╘└τ▒Γ/Meshy_AI_scifi_fighter_interceptor_20261117_image-to-3d-texture_fbx/Meshy_AI_scifi_fighter_interceptor_20261117_image-to-3d-texture_normal.png",
+          "bytes": 17255874
+        },
+        {
+          "path": "╟╘└τ▒Γ/Meshy_AI_scifi_fighter_interceptor_20261117_image-to-3d-texture_fbx/Meshy_AI_scifi_fighter_interceptor_20261117_image-to-3d-texture_roughness.png",
+          "bytes": 2369095
+        }
+      ]
+    },
+    {
+      "path": "C:\\Users\\user\\Documents\\OrbitalVanguardAssets\\Incoming\\항공모함.zip",
+      "bytes": 259500984,
+      "sha256": "2f58cddd6deb68302344cc6041606e8185cba8c8fdc93d1b7a19d07f10acf5e3",
+      "lfs_pointer": false,
+      "entries": [
+        {
+          "path": "Meshy_AI_model_20261112_texture_fbx/Meshy_AI_model_20261112_texture.fbx",
+          "bytes": 126769420
+        },
+        {
+          "path": "Meshy_AI_model_20261112_texture_fbx/Meshy_AI_model_20261112_texture.png",
+          "bytes": 84815864
+        },
+        {
+          "path": "Meshy_AI_model_20261112_texture_fbx/Meshy_AI_model_20261112_texture_metallic.png",
+          "bytes": 13503555
+        },
+        {
+          "path": "Meshy_AI_model_20261112_texture_fbx/Meshy_AI_model_20261112_texture_normal.png",
+          "bytes": 21892958
+        },
+        {
+          "path": "Meshy_AI_model_20261112_texture_fbx/Meshy_AI_model_20261112_texture_roughness.png",
+          "bytes": 12518023
+        }
+      ]
+    },
+    {
+      "path": "C:\\Users\\user\\Documents\\OrbitalVanguardAssets\\Incoming\\항공순양함.zip",
+      "bytes": 215899847,
+      "sha256": "b896d23cdba0acbb0cdd4d17963bfaaf5e6bf11da7791878e2a0e1fc454020fe",
+      "lfs_pointer": false,
+      "entries": [
+        {
+          "path": "╟╫░°╝°╛τ╟╘/Meshy_AI_model_20261117_texture_fbx/Meshy_AI_model_20261117_texture.fbx",
+          "bytes": 90199548
+        },
+        {
+          "path": "╟╫░°╝°╛τ╟╘/Meshy_AI_model_20261117_texture_fbx/Meshy_AI_model_20261117_texture.png",
+          "bytes": 73740732
+        },
+        {
+          "path": "╟╫░°╝°╛τ╟╘/Meshy_AI_model_20261117_texture_fbx/Meshy_AI_model_20261117_texture_metallic.png",
+          "bytes": 7558470
+        },
+        {
+          "path": "╟╫░°╝°╛τ╟╘/Meshy_AI_model_20261117_texture_fbx/Meshy_AI_model_20261117_texture_normal.png",
+          "bytes": 18967724
+        },
+        {
+          "path": "╟╫░°╝°╛τ╟╘/Meshy_AI_model_20261117_texture_fbx/Meshy_AI_model_20261117_texture_roughness.png",
+          "bytes": 8358367
+        },
+        {
+          "path": "╟╫░°╝°╛τ╟╘/Meshy_AI_model_20261117_texture_fbx/Meshy_AI_scifi_aviation_cruiser_20261117_generate.fbx",
+          "bytes": 18718172
+        }
+      ]
+    },
+    {
+      "path": "C:\\Users\\user\\Documents\\OrbitalVanguardAssets\\Incoming\\호위함.zip",
+      "bytes": 172433859,
+      "sha256": "906134bec7f53887a53ed8cea05a05544e8a03aaae8e1baf1cf9f134fd768971",
+      "lfs_pointer": false,
+      "entries": [
+        {
+          "path": "╚ú└º╟╘/Meshy_AI_model_20261112_texture_fbx/Meshy_AI_model_20261112_texture.fbx",
+          "bytes": 70503564
+        },
+        {
+          "path": "╚ú└º╟╘/Meshy_AI_model_20261112_texture_fbx/Meshy_AI_model_20261112_texture.png",
+          "bytes": 58458209
+        },
+        {
+          "path": "╚ú└º╟╘/Meshy_AI_model_20261112_texture_fbx/Meshy_AI_model_20261112_texture_metallic.png",
+          "bytes": 10045247
+        },
+        {
+          "path": "╚ú└º╟╘/Meshy_AI_model_20261112_texture_fbx/Meshy_AI_model_20261112_texture_normal.png",
+          "bytes": 14292783
+        },
+        {
+          "path": "╚ú└º╟╘/Meshy_AI_model_20261112_texture_fbx/Meshy_AI_model_20261112_texture_roughness.png",
+          "bytes": 9835699
+        },
+        {
+          "path": "╚ú└º╟╘/Meshy_AI_model_20261112_texture_fbx/Meshy_AI_scifi_frigate_ff28_20261112_generate.fbx",
+          "bytes": 10321228
+        }
+      ]
+    }
+  ],
+  "fbx": [
+    {
+      "path": "C:\\Users\\user\\Documents\\OrbitalVanguardAssets\\Source\\구축전함\\Meshy_AI_scifi_battlecruiser_bc300_20261117_image-to-3d-texture.fbx",
+      "bytes": 51854908,
+      "sha256": "6249066fe9ee601008dda6d1ef16699b613103280b46c7cb78d3d4cf47be4b33"
+    },
+    {
+      "path": "C:\\Users\\user\\Documents\\OrbitalVanguardAssets\\Source\\순양함\\Meshy_AI_SciFi_Cruiser_Spaceship_20261112_image-to-3d-texture.fbx",
+      "bytes": 50410300,
+      "sha256": "94e28015eb731a13c4ea5499f43ff6aa645bd7dc850ff16607a9c559bf6071f1"
+    },
+    {
+      "path": "C:\\Users\\user\\Documents\\OrbitalVanguardAssets\\Source\\초계함\\Meshy_AI_scifi_patrol_corvette_pc14_20261112_image-to-3d-texture.fbx",
+      "bytes": 33515564,
+      "sha256": "ba2d8690f1253d9dbe51c9345481796ece30e3385d9538d8dea2793a7020239f"
+    },
+    {
+      "path": "C:\\Users\\user\\Documents\\OrbitalVanguardAssets\\Source\\항공모함\\Meshy_AI_model_20261112_texture.fbx",
+      "bytes": 126769420,
+      "sha256": "7217992b7d3b89980b9aae6d39ea27f3a14d8e75eacbaecfe6dd2688a9c50d97"
+    },
+    {
+      "path": "C:\\Users\\user\\Documents\\OrbitalVanguardAssets\\Source\\호위함\\Meshy_AI_model_20261112_texture_fbx\\Meshy_AI_model_20261112_texture.fbx",
+      "bytes": 70503564,
+      "sha256": "562dde59aa573133be119d93dd2adc8e52f075ba041c0f536a29133e2a25295a"
+    },
+    {
+      "path": "C:\\Users\\user\\Documents\\OrbitalVanguardAssets\\Source\\호위함\\Meshy_AI_model_20261112_texture_fbx\\Meshy_AI_scifi_frigate_ff28_20261112_generate.fbx",
+      "bytes": 10321228,
+      "sha256": "f08b5e93a94c69e6a1816b62c0a206a0a1b6d47c5238b4244f1e7787dcade703"
+    },
+    {
+      "path": "C:\\Users\\user\\Documents\\OrbitalVanguardAssets\\Source\\항공순양함\\Meshy_AI_model_20261117_texture_fbx\\Meshy_AI_model_20261117_texture.fbx",
+      "bytes": 90199548,
+      "sha256": "df2b661082a19fd7f5ab775e86a37c8dabe4f9a2cb3902d3216d2ba0b745875e"
+    },
+    {
+      "path": "C:\\Users\\user\\Documents\\OrbitalVanguardAssets\\Source\\항공순양함\\Meshy_AI_model_20261117_texture_fbx\\Meshy_AI_scifi_aviation_cruiser_20261117_generate.fbx",
+      "bytes": 18718172,
+      "sha256": "89d5d0b9330bba407d8f9a5287823697e5e557f3bf7e5df9873657559ad3e75d"
+    },
+    {
+      "path": "C:\\Users\\user\\Documents\\OrbitalVanguardAssets\\Source\\함재기\\Meshy_AI_scifi_fighter_interceptor_20261117_image-to-3d-texture_fbx\\Meshy_AI_scifi_fighter_interceptor_20261117_generate.fbx",
+      "bytes": 21030764,
+      "sha256": "b02ace68b190890ae68ff7542aa6696b8d449bb3b8c032e99a6ab699127600b4"
+    },
+    {
+      "path": "C:\\Users\\user\\Documents\\OrbitalVanguardAssets\\Source\\함재기\\Meshy_AI_scifi_fighter_interceptor_20261117_image-to-3d-texture_fbx\\Meshy_AI_scifi_fighter_interceptor_20261117_image-to-3d-texture.fbx",
+      "bytes": 48576700,
+      "sha256": "bde7b8fedd08796f510c28b6b3f9c89a4307e792be651c5a8f845123bf08fd3f"
+    },
+    {
+      "path": "C:\\Users\\user\\Documents\\OrbitalVanguardAssets\\Source\\채굴선\\Meshy_AI_scifi_mining_ship_20261117_image-to-3d-texture_fbx\\Meshy_AI_scifi_mining_ship_20261117_generate.fbx",
+      "bytes": 41463820,
+      "sha256": "a0e36e1d8dcd6cadfa5bf581907e6a2adacf3c0d79bd2187fff62668b65887b8"
+    },
+    {
+      "path": "C:\\Users\\user\\Documents\\OrbitalVanguardAssets\\Source\\채굴선\\Meshy_AI_scifi_mining_ship_20261117_image-to-3d-texture_fbx\\Meshy_AI_scifi_mining_ship_20261117_image-to-3d-texture.fbx",
+      "bytes": 76412972,
+      "sha256": "9863beb97f23e8c07d53621d3080459593ab58e9e5d592192f16856dfa83c578"
+    },
+    {
+      "path": "C:\\Users\\user\\Documents\\OrbitalVanguardAssets\\Source\\전함\\Meshy_AI_model_20261112_texture_fbx\\Meshy_AI_model_20261112_texture.fbx",
+      "bytes": 102828092,
+      "sha256": "df19cf5198f8b2a1d2afac2586782909a8308df472f18390eef0e6ec30ab2801"
+    },
+    {
+      "path": "C:\\Users\\user\\Documents\\OrbitalVanguardAssets\\Source\\전함\\Meshy_AI_model_20261112_texture_fbx\\Meshy_AI_scifi_battleship_bb90_leviathan_20261112_generate.fbx",
+      "bytes": 20969804,
+      "sha256": "79e05f5539adc50ff1ffe9dd13583ecd37e826c6e252dda2087ed8cbe0a8a1b1"
+    },
+    {
+      "path": "C:\\Users\\user\\Documents\\OrbitalVanguardAssets\\Source\\전략미사일함\\Meshy_AI_scifi_missile_cruiser_20261117_image-to-3d-texture_fbx\\Meshy_AI_scifi_missile_cruiser_20261117_generate.fbx",
+      "bytes": 23458300,
+      "sha256": "420317f6a36c3510b89cf942c40681ebe3e528707bbd36a637715090032b0d3b"
+    },
+    {
+      "path": "C:\\Users\\user\\Documents\\OrbitalVanguardAssets\\Source\\전략미사일함\\Meshy_AI_scifi_missile_cruiser_20261117_image-to-3d-texture_fbx\\Meshy_AI_scifi_missile_cruiser_20261117_image-to-3d-texture.fbx",
+      "bytes": 53989868,
+      "sha256": "539a6704c932c7ddf3392ebdd037ed60845dcdd8e55f609ac6524c39ba187c82"
+    },
+    {
+      "path": "C:\\Users\\user\\Documents\\OrbitalVanguardAssets\\Source\\일반 미사일\\Meshy_AI_scifi_standard_missile_20261117_image-to-3d-texture_fbx\\Meshy_AI_scifi_standard_missile_20261117_generate.fbx",
+      "bytes": 11352844,
+      "sha256": "390148251d0a728815cf6b3cddcb9f7a552a2f0c3ea96fdff77d86823a05284d"
+    },
+    {
+      "path": "C:\\Users\\user\\Documents\\OrbitalVanguardAssets\\Source\\일반 미사일\\Meshy_AI_scifi_standard_missile_20261117_image-to-3d-texture_fbx\\Meshy_AI_scifi_standard_missile_20261117_image-to-3d-texture.fbx",
+      "bytes": 29576748,
+      "sha256": "f40f9c0a21742048a24c8ca4d1f11b48e8ce9ea524b28fa220a79056023781ff"
+    },
+    {
+      "path": "C:\\Users\\user\\Documents\\OrbitalVanguardAssets\\Source\\수송선\\Meshy_AI_scifi_medium_transport_ship_20261117_image-to-3d-texture_fbx\\Meshy_AI_scifi_medium_transport_ship_20261117_generate.fbx",
+      "bytes": 30021484,
+      "sha256": "1a3f21005a4d7e1eecca06fef56ba7679541ec84c01c7f581c1e79a584ebf86f"
+    },
+    {
+      "path": "C:\\Users\\user\\Documents\\OrbitalVanguardAssets\\Source\\수송선\\Meshy_AI_scifi_medium_transport_ship_20261117_image-to-3d-texture_fbx\\Meshy_AI_scifi_medium_transport_ship_20261117_image-to-3d-texture.fbx",
+      "bytes": 65303084,
+      "sha256": "df264e289274de2b78c0e3c1e8095a201c7a642fea755abfea6874d2ccd58840"
+    },
+    {
+      "path": "C:\\Users\\user\\Documents\\OrbitalVanguardAssets\\Source\\보급수리선\\Meshy_AI_scifi_support_repair_ship_20261117_image-to-3d-texture_fbx\\Meshy_AI_scifi_support_repair_ship_20261117_generate.fbx",
+      "bytes": 42254988,
+      "sha256": "b32c5ce714658eeeaff97236d074f80bb0bae9410518c01ba90ad3756161f28f"
+    },
+    {
+      "path": "C:\\Users\\user\\Documents\\OrbitalVanguardAssets\\Source\\보급수리선\\Meshy_AI_scifi_support_repair_ship_20261117_image-to-3d-texture_fbx\\Meshy_AI_scifi_support_repair_ship_20261117_image-to-3d-texture.fbx",
+      "bytes": 81406332,
+      "sha256": "df5a1232ba6ce66f94e2ef208b365698e1fb337800c6f68ddc23390f71c48d8f"
+    },
+    {
+      "path": "C:\\Users\\user\\Documents\\OrbitalVanguardAssets\\Source\\백터급 구축함\\Meshy_AI_model_20261112_texture_fbx\\Meshy_AI_model_20261112_texture.fbx",
+      "bytes": 77981180,
+      "sha256": "0417bf76dd4ce1521cbef5b037335eeddf3eb79d6a3fa2825d479c806b94a234"
+    },
+    {
+      "path": "C:\\Users\\user\\Documents\\OrbitalVanguardAssets\\Source\\백터급 구축함\\Meshy_AI_model_20261112_texture_fbx\\Meshy_AI_scifi_destroyer_dd31_20261112_generate.fbx",
+      "bytes": 9931148,
+      "sha256": "ef866e77caf80c7d42785fd94a899ef798cff47eab9d63459284a1e7a528cd36"
+    },
+    {
+      "path": "C:\\Users\\user\\Documents\\OrbitalVanguardAssets\\Source\\방공함\\Meshy_AI_model_20261112_texture_fbx\\Meshy_AI_model_20261112_texture.fbx",
+      "bytes": 84060236,
+      "sha256": "389a9d3a7b18ef8aacd29350d8ff8f36b4807752256143f57098824a20356274"
+    },
+    {
+      "path": "C:\\Users\\user\\Documents\\OrbitalVanguardAssets\\Source\\방공함\\Meshy_AI_model_20261112_texture_fbx\\Meshy_AI_scifi_airdefense_ad36_20261112_generate.fbx",
+      "bytes": 12593516,
+      "sha256": "653a083e9f7081564c99f736141452ab7a46d2667b0fc5d00797198e4500dc2a"
+    },
+    {
+      "path": "C:\\Users\\user\\Documents\\OrbitalVanguardAssets\\Source\\바스티온급 구축함\\Meshy_AI_model_20261112_texture_fbx\\Meshy_AI_model_20261112_texture.fbx",
+      "bytes": 82988636,
+      "sha256": "b8ee2988f97a00f03ca0ea95e73140b914969a13209ae24823a52c44de29dac8"
+    },
+    {
+      "path": "C:\\Users\\user\\Documents\\OrbitalVanguardAssets\\Source\\바스티온급 구축함\\Meshy_AI_model_20261112_texture_fbx\\Meshy_AI_scifi_destroyer_dd42_bastion_20261112_generate.fbx",
+      "bytes": 11648492,
+      "sha256": "b64580e2c0690488b354b7bc652e0269ca4a8ea52cc10c0b0864d53db674489f"
+    },
+    {
+      "path": "C:\\Users\\user\\Documents\\OrbitalVanguardAssets\\Source\\레이더 함\\Meshy_AI_model_20261112_texture_fbx\\Meshy_AI_model_20261112_texture.fbx",
+      "bytes": 147719372,
+      "sha256": "1108743a32e2c0e9cb23ee3bb6f8ececc64ea547fa02bd41d7ea399cad79118b"
+    },
+    {
+      "path": "C:\\Users\\user\\Documents\\OrbitalVanguardAssets\\Source\\레이더 함\\Meshy_AI_model_20261112_texture_fbx\\Meshy_AI_scifi_radar_cruiser_rd37_20261112_generate.fbx",
+      "bytes": 58354236,
+      "sha256": "538ab79b2fd3fd5050843e71687cc79aa9b9b5f8d62193983c234eb5b8e2d5e7"
+    },
+    {
+      "path": "C:\\Users\\user\\Documents\\OrbitalVanguardAssets\\Source\\대함미사일모듈\\Meshy_AI_scifi_antiship_missile_module_20261117_image-to-3d-texture_fbx\\Meshy_AI_scifi_antiship_missile_module_20261117_generate.fbx",
+      "bytes": 36108204,
+      "sha256": "f80086821af31804e07a7e0cb3386eceaa7a108353f74166cf6e0bd8b87a4579"
+    },
+    {
+      "path": "C:\\Users\\user\\Documents\\OrbitalVanguardAssets\\Source\\대함미사일모듈\\Meshy_AI_scifi_antiship_missile_module_20261117_image-to-3d-texture_fbx\\Meshy_AI_scifi_antiship_missile_module_20261117_image-to-3d-texture.fbx",
+      "bytes": 73442508,
+      "sha256": "880e0eaba2f0dfe6c20c2827aa6c3b4090f8ab311b262f30bc905f57f00dee5d"
+    },
+    {
+      "path": "C:\\Users\\user\\Documents\\OrbitalVanguardAssets\\Source\\대함 미사일\\Meshy_AI_scifi_antiship_heavy_missile_20261117_image-to-3d-texture_fbx\\Meshy_AI_scifi_antiship_heavy_missile_20261117_generate.fbx",
+      "bytes": 21618060,
+      "sha256": "16dd6867212713dcf2e6fdc0354d072048acc1e999b3a59f3e1b1a771b2fe7f1"
+    },
+    {
+      "path": "C:\\Users\\user\\Documents\\OrbitalVanguardAssets\\Source\\대함 미사일\\Meshy_AI_scifi_antiship_heavy_missile_20261117_image-to-3d-texture_fbx\\Meshy_AI_scifi_antiship_heavy_missile_20261117_image-to-3d-texture.fbx",
+      "bytes": 47459692,
+      "sha256": "7dbb968afcd94ef34baa0e8daf43c6fdf4a802c0b3a8f8be8c27414860bd1cdb"
+    },
+    {
+      "path": "C:\\Users\\user\\Documents\\OrbitalVanguardAssets\\Source\\강습선\\Meshy_AI_scifi_assault_ship_20261117_image-to-3d-texture_fbx\\Meshy_AI_scifi_assault_ship_20261117_generate.fbx",
+      "bytes": 32988860,
+      "sha256": "1c2daed1c97cbde59dce0bca13326fe0362045ffbabd55e74cfad329b7095415"
+    },
+    {
+      "path": "C:\\Users\\user\\Documents\\OrbitalVanguardAssets\\Source\\강습선\\Meshy_AI_scifi_assault_ship_20261117_image-to-3d-texture_fbx\\Meshy_AI_scifi_assault_ship_20261117_image-to-3d-texture.fbx",
+      "bytes": 71031484,
+      "sha256": "d912656a3c04e870107addcfb708eb11d9fb8f2e0cfde3c1e674236344a4ea0e"
+    },
+    {
+      "path": "C:\\Users\\user\\Documents\\OrbitalVanguardAssets\\Source\\강습 포드\\Meshy_AI_scifi_breaching_pod_20261117_image-to-3d-texture_fbx\\Meshy_AI_scifi_breaching_pod_20261117_generate.fbx",
+      "bytes": 32753276,
+      "sha256": "68f05148fc029814ac5fdb848ed77cfe7c95474c236b3f246eeb6dbe16a9b83f"
+    },
+    {
+      "path": "C:\\Users\\user\\Documents\\OrbitalVanguardAssets\\Source\\강습 포드\\Meshy_AI_scifi_breaching_pod_20261117_image-to-3d-texture_fbx\\Meshy_AI_scifi_breaching_pod_20261117_image-to-3d-texture.fbx",
+      "bytes": 68447420,
+      "sha256": "d1b9906ea4974dea909ab99a816f9ab9ccca1e27d6bb5eeb322acaac9a6eb09c"
+    }
+  ]
+}
