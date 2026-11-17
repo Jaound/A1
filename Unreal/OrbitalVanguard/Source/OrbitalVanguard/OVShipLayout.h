@@ -43,6 +43,14 @@ struct ORBITALVANGUARD_API FOVArmorDefinition
 };
 
 USTRUCT(BlueprintType)
+struct ORBITALVANGUARD_API FOVCombatHullBox
+{
+    GENERATED_BODY()
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Collision") FVector LocalCenter = FVector::ZeroVector;
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Collision") FVector HalfExtent = FVector::OneVector;
+};
+
+USTRUCT(BlueprintType)
 struct ORBITALVANGUARD_API FOVWeaponMountDefinition
 {
     GENERATED_BODY()
@@ -105,6 +113,9 @@ public:
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Layout") TArray<FOVArmorDefinition> ArmorSections;
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Layout") TArray<FOVWeaponMountDefinition> WeaponMounts;
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Layout") FVector LocalHalfExtent = FVector(175, 75, 30);
+    // Optional authored combat-only boxes inside the original selection/clearance OBB.
+    // Empty keeps the original single-OBB behavior and existing save data.
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Collision") TArray<FOVCombatHullBox> CombatHullBoxes;
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Layout") int32 CannonSlots = 0;
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Layout") int32 BeamSlots = 0;
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Layout") int32 MissileSlots = 0;

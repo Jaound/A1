@@ -680,13 +680,36 @@ IMPLEMENT_SIMPLE_AUTOMATION_TEST(FOVCombatPC14MountOcclusionTest, "OrbitalVangua
     EAutomationTestFlags::EditorContext | EAutomationTestFlags::EngineFilter)
 bool FOVCombatPC14MountOcclusionTest::RunTest(const FString&)
 {
+    {
+        auto* Layout=UShipLayoutDataAsset::MakeTestLayout(GetTransientPackage(),1);
+        TArray<FString> Errors;FOVCombatHullBox Box;
+        Box.HalfExtent=FVector(20,20,20);Layout->CombatHullBoxes.Add(Box);
+        TestTrue(TEXT("Valid optional combat box preserves layout validation"),Layout->ValidateLayout(Errors));
+        Layout->CombatHullBoxes[0].LocalCenter=FVector(180,0,0);
+        TestFalse(TEXT("Combat box extending beyond original bounds is rejected"),Layout->ValidateLayout(Errors));
+        Layout->CombatHullBoxes[0].LocalCenter=FVector::ZeroVector;Layout->CombatHullBoxes[0].HalfExtent.Z=0;
+        TestFalse(TEXT("Degenerate combat box is rejected"),Layout->ValidateLayout(Errors));
+    }
     for (const EOVAttackKind Kind : {EOVAttackKind::Beam, EOVAttackKind::Cannon})
-        for (const bool bFlush : {false, true})
+        for (int32 Variant=0;Variant<3;++Variant)
         {
+            const bool bFlush=Variant!=0,bBoxes=Variant==2;
             OVCombatTest::FRange R;
             auto* Layout=DuplicateObject<UShipLayoutDataAsset>(R.B->Systems->Layout,R.B);
             Layout->LocalHalfExtent=FVector(175,75,30);
             Layout->WeaponMounts[0].LocalPosition=FVector(-46.6666667,0,bFlush?3.606237:42.0);
+            if(bBoxes)
+            {
+                // Explicitly provisional test boxes; not a final PC14 collision mesh.
+                auto Add=[&](FVector Center,FVector Extent){FOVCombatHullBox Box;Box.LocalCenter=Center;Box.HalfExtent=Extent;Layout->CombatHullBoxes.Add(Box);};
+                Add(FVector(0,0,-16.275307),FVector(175,75,13.724693));
+                Add(FVector(-120,0,13.724693),FVector(55,75,16.275307));
+                Add(FVector(73.5,0,13.724693),FVector(101.5,75,16.275307));
+                Add(FVector(-46.5,-46.5,13.724693),FVector(18.5,28.5,16.275307));
+                Add(FVector(-46.5,46.5,13.724693),FVector(18.5,28.5,16.275307));
+                const int32 Armor=Layout->ResolveArmor(FVector(-46.5,0,-2.550614),FVector::UpVector);
+                TestTrue(TEXT("Recessed upper surface maps to upper armor using actual normal"),Layout->ArmorSections.IsValidIndex(Armor)&&Layout->ArmorSections[Armor].Face==EOVArmorFace::Top);
+            }
             R.B->Systems->Initialize(Layout);
             R.B->Systems->Shield=0;R.B->Systems->bShieldActive=false;
             R.A->SetActorLocation(FVector(953.3333333,0,1300));R.A->SetActorRotation(FRotator(-90,0,0));
@@ -701,8 +724,8 @@ bool FOVCombatPC14MountOcclusionTest::RunTest(const FString&)
             R.Combat->Simulate(.1f);
             if(!TestTrue(TEXT("One real attack resolves"),R.Combat->HitCount==1&&!R.Combat->RecentEvents.IsEmpty()))continue;
             const FOVAttackState& Event=R.Combat->RecentEvents.Last();
-            TestTrue(TEXT("Control mount is hit; lower candidate is occluded by hull"),
-                bFlush?Event.ImpactWeaponId.IsNone():Event.ImpactWeaponId==Layout->WeaponMounts[0].WeaponId);
+            TestTrue(TEXT("Control or trial boxes expose mount; old hull occludes flush candidate"),
+                bFlush&&!bBoxes?Event.ImpactWeaponId.IsNone():Event.ImpactWeaponId==Layout->WeaponMounts[0].WeaponId);
         }
     return true;
 }

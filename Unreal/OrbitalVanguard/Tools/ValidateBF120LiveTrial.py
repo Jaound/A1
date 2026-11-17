@@ -5,7 +5,8 @@ import unreal
 saved = unreal.Paths.convert_relative_path_to_full(unreal.Paths.project_saved_dir())
 pc14_trial = os.environ.get('OV_BF120_PC14') == '1'
 flush_trial = pc14_trial and os.environ.get('OV_BF120_FLUSH') == '1'
-stem = 'BF120PC14FlushTrial' if flush_trial else 'BF120PC14Trial' if pc14_trial else 'BF120LiveTrial'
+boxes_trial = flush_trial and os.environ.get('OV_BF120_BOXES') == '1'
+stem = 'BF120PC14BoxesTrial' if boxes_trial else 'BF120PC14FlushTrial' if flush_trial else 'BF120PC14Trial' if pc14_trial else 'BF120LiveTrial'
 out = os.path.join(saved, 'Validation', stem + '.json')
 png = os.path.join(saved, 'Validation', stem + '.png').replace('\\', '/')
 os.makedirs(os.path.dirname(out), exist_ok=True)
@@ -62,6 +63,15 @@ def tick(_):
                 report['trial_hardpoint']={'original_z_cm':original_z,'candidate_z_cm':position.z,'base_lower_offset_cm':lower_offset,'surface_z_cm':-2.5506140066}
                 for component in source.get_components_by_class(unreal.StaticMeshComponent):
                     if component.get_name().startswith('PC14MountSupport_'): component.set_visibility(False,True)
+                if boxes_trial:
+                    boxes=[]
+                    for center,half in [((0,0,-16.275307),(175,75,13.724693)),((-120,0,13.724693),(55,75,16.275307)),
+                                        ((73.5,0,13.724693),(101.5,75,16.275307)),((-46.5,-46.5,13.724693),(18.5,28.5,16.275307)),
+                                        ((-46.5,46.5,13.724693),(18.5,28.5,16.275307))]:
+                        box=unreal.OVCombatHullBox(); box.set_editor_property('local_center',unreal.Vector(*center))
+                        box.set_editor_property('half_extent',unreal.Vector(*half)); boxes.append(box)
+                    layout.set_editor_property('combat_hull_boxes',boxes)
+                    check('PROVISIONAL_BOXES',len(p(layout,'combat_hull_boxes'))==5)
             definition.set_editor_property('presentation_profile','BF120Trial'); definitions[index]=definition
             layout.set_editor_property('weapon_mounts',definitions)
             check('OPT_IN_PROFILE',str(p(p(layout,'weapon_mounts')[index],'presentation_profile'))=='BF120Trial')

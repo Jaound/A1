@@ -654,9 +654,20 @@ bool UOVCombatSubsystem::SweepAttack(FOVAttackState& Attack, FVector End)
         if (!IsValid(Ship) || Ship == Attack.Attacker.Get() || !Ship->Systems || !Ship->Systems->Layout
             || Ship->Systems->bWrecked || State.bDeparted) continue;
         float Fraction; FVector Normal;
-        if (SegmentBox(Attack.Position, End, Ship->GetActorTransform(), Ship->Systems->Layout->LocalHalfExtent, Fraction, Normal)
-            && Fraction <= BestFraction)
-        { Closest = Ship; BestFraction = Fraction; BestNormal = Normal; HitWeaponId = NAME_None; }
+        const auto& Boxes=Ship->Systems->Layout->CombatHullBoxes;
+        if (Boxes.IsEmpty())
+        {
+            if (SegmentBox(Attack.Position, End, Ship->GetActorTransform(), Ship->Systems->Layout->LocalHalfExtent, Fraction, Normal)
+                && Fraction <= BestFraction)
+            { Closest = Ship; BestFraction = Fraction; BestNormal = Normal; HitWeaponId = NAME_None; }
+        }
+        else for (const FOVCombatHullBox& Box : Boxes)
+        {
+            FTransform BoxTransform=Ship->GetActorTransform();
+            BoxTransform.SetLocation(BoxTransform.TransformPosition(Box.LocalCenter));
+            if (SegmentBox(Attack.Position, End, BoxTransform, Box.HalfExtent, Fraction, Normal) && Fraction <= BestFraction)
+            { Closest = Ship; BestFraction = Fraction; BestNormal = Normal; HitWeaponId = NAME_None; }
+        }
         // These small local sphere proxies are provisional geometry, not the final turret model.
         for (const FOVWeaponMountDefinition& Mount : Ship->Systems->Layout->WeaponMounts)
         {

@@ -1,0 +1,87 @@
+{
+  "passed": true,
+  "physical_input": false,
+  "scope": "F6 PC14 PIE API 시험 프로필, 실제 입력 및 기본 모델 적용 아님",
+  "checks": [
+    {
+      "id": "PC14_SCENE",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "TRANSIENT_LAYOUT",
+      "passed": true,
+      "detail": "/Game/Maps/UEDPIE_0_ControlRange.ControlRange:PersistentLevel.OVShip_1.ShipLayoutDataAsset_0"
+    },
+    {
+      "id": "PROVISIONAL_BOXES",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "OPT_IN_PROFILE",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "PROFILE_REGISTERED",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "TARGET_SET",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "REQUEST",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "ONE_SHOT",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "ACTUAL_ORIGIN",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "FLASH",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "HIT",
+      "passed": true,
+      "detail": "(1, 0)"
+    },
+    {
+      "id": "SHIELD_DAMAGE",
+      "passed": true,
+      "detail": "(10560.0, 10530.0)"
+    },
+    {
+      "id": "RENDER_FILE",
+      "passed": true,
+      "detail": ""
+    }
+  ],
+  "errors": [],
+  "image": "C:/Users/user/source/repos/A1/Unreal/OrbitalVanguard/Saved/Validation/BF120PC14BoxesTrial.png",
+  "trial_hardpoint": {
+    "original_z_cm": 42.0,
+    "candidate_z_cm": 3.6062369788711637,
+    "base_lower_offset_cm": -6.156850985471164,
+    "surface_z_cm": -2.5506140066,
+    "firing_origin_local_z_cm": 12.90558177032913,
+    "combat_obb_half_height_cm": 30.0,
+    "origin_inside_combat_obb_height": true,
+    "mount_proxy_radius_cm": 18.0,
+    "mount_proxy_top_cm": 21.606236978871163,
+    "proxy_below_obb_top": true
+  },
+  "play_settings_restored": true
+}

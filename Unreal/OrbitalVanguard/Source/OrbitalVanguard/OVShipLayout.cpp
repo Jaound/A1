@@ -198,7 +198,8 @@ int32 UShipLayoutDataAsset::ResolveArmor(FVector LocalPoint, FVector LocalNormal
     if (!OVLayout::Finite(LocalPoint) || !OVLayout::Finite(LocalNormal) || !OVLayout::Finite(LocalHalfExtent)
         || LocalHalfExtent.GetMin() <= 0) return INDEX_NONE;
     const FVector Normalized = LocalPoint / LocalHalfExtent;
-    const FVector Direction = Normalized.IsNearlyZero() ? LocalNormal : Normalized;
+    const FVector Direction = !CombatHullBoxes.IsEmpty() && !LocalNormal.IsNearlyZero() ? LocalNormal
+        : Normalized.IsNearlyZero() ? LocalNormal : Normalized;
     if (Direction.IsNearlyZero()) return INDEX_NONE;
     const FVector Magnitude = Direction.GetAbs();
     EOVArmorFace Face;
@@ -257,6 +258,14 @@ bool UShipLayoutDataAsset::ValidateLayout(TArray<FString>& Errors) const
     auto Require = [&](bool Condition, const FString& Error) { if (!Condition) Errors.Add(Error); };
     Require(DeckCount >= 1 && DeckCount <= 3, TEXT("DeckCount must be 1..3"));
     Require(OVLayout::Finite(LocalHalfExtent) && LocalHalfExtent.GetMin() > 0, TEXT("Local bounds must be finite and positive"));
+    Require(CombatHullBoxes.Num() <= 32, TEXT("Too many authored combat hull boxes"));
+    for (const FOVCombatHullBox& Box : CombatHullBoxes)
+    {
+        const FVector Edge=Box.LocalCenter.GetAbs()+Box.HalfExtent;
+        Require(OVLayout::Finite(Box.LocalCenter) && OVLayout::Finite(Box.HalfExtent) && Box.HalfExtent.GetMin() > 0
+            && Edge.X<=LocalHalfExtent.X+.01 && Edge.Y<=LocalHalfExtent.Y+.01 && Edge.Z<=LocalHalfExtent.Z+.01,
+            TEXT("Combat hull box must be finite, positive and inside original bounds"));
+    }
     Require(FMath::IsFinite(HalfHeight) && HalfHeight > 0 && FMath::IsNearlyEqual(double(HalfHeight), LocalHalfExtent.Z), TEXT("HalfHeight must match local bounds"));
     Require(FMath::IsFinite(MaxHullHP) && MaxHullHP > 0, TEXT("Hull HP must be positive"));
     Require(FMath::IsFinite(BaseRadarRange) && BaseRadarRange >= 0 && FMath::IsFinite(WeaponTier) && WeaponTier > 0, TEXT("Invalid radar range or weapon tier"));
