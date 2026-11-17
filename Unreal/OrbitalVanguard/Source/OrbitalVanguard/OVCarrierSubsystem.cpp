@@ -129,6 +129,14 @@ bool UOVCarrierSubsystem::IsHangarDestroyed(const FOVHangarState& Hangar) const
     return !Ship->Systems->Slots.IsValidIndex(I) || Ship->Systems->Slots[I].HP <= 0;
 }
 
+EOVHangarAvailability UOVCarrierSubsystem::GetHangarAvailability(int32 HangarId) const
+{
+    const FOVHangarState* Hangar=Hangars.FindByPredicate([HangarId](const FOVHangarState& H){return H.HangarId==HangarId;});
+    if (!Hangar) return EOVHangarAvailability::Unknown;
+    if (IsHangarDestroyed(*Hangar)) return EOVHangarAvailability::Destroyed;
+    return IsHangarOperational(*Hangar)?EOVHangarAvailability::Ready:EOVHangarAvailability::Offline;
+}
+
 bool UOVCarrierSubsystem::HasControl(AOVShip* Ship) const
 {
     const auto* Combat = GetWorld()->GetSubsystem<UOVCombatSubsystem>();

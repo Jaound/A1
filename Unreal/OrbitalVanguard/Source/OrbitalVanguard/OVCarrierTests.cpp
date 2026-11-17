@@ -106,6 +106,21 @@ bool FOVCarrierOverviewTest::RunTest(const FString&)
     return true;
 }
 
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(FOVHangarAvailabilityTest, "OrbitalVanguard.Carrier.HangarAvailabilityPresentation", EAutomationTestFlags::EditorContext | EAutomationTestFlags::EngineFilter)
+bool FOVHangarAvailabilityTest::RunTest(const FString&)
+{
+    OVCarrierTest::FRange R(1);
+    if (!TestTrue(TEXT("A real hangar exists"), R.Fleet->Hangars.Num()>0)) return false;
+    const auto Hangar=R.Fleet->Hangars[0];
+    TestEqual(TEXT("Unknown identifier is unknown"), R.Fleet->GetHangarAvailability(-1), EOVHangarAvailability::Unknown);
+    TestEqual(TEXT("Operational facility is ready"), R.Fleet->GetHangarAvailability(Hangar.HangarId), EOVHangarAvailability::Ready);
+    R.Facility(EOVFacilityType::Hangar,0);
+    TestEqual(TEXT("Crew loss is offline, not destroyed"), R.Fleet->GetHangarAvailability(Hangar.HangarId), EOVHangarAvailability::Offline);
+    R.Carrier->Systems->DebugDestroySlot(Hangar.SlotId,EOVDamageCause::Sabotage);
+    TestEqual(TEXT("Physical damage is destroyed"), R.Fleet->GetHangarAvailability(Hangar.HangarId), EOVHangarAvailability::Destroyed);
+    return true;
+}
+
 IMPLEMENT_SIMPLE_AUTOMATION_TEST(FOVCarrierFacilitiesTest, "OrbitalVanguard.Carrier.FacilityControlAndDockQueue", EAutomationTestFlags::EditorContext | EAutomationTestFlags::EngineFilter)
 bool FOVCarrierFacilitiesTest::RunTest(const FString&)
 {

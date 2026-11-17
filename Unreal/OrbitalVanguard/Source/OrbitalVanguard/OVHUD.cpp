@@ -267,7 +267,14 @@ void AOVHUD::DrawDetails()
     int32 I=0;
     for(const auto& Hangar:Carrier->Hangars)if(Hangar.Carrier==PC->Selected) {
      const int32 Stored=Carrier->Aircraft.FilterByPredicate([&](const auto& A){return A.HangarId==Hangar.HangarId&&A.State==EOVAircraftState::Stored;}).Num();
-     DrawText(FString::Printf(TEXT("격납고 %d · %s · %d / %d"),++I,Hangar.Mode==EOVHangarMode::Aircraft?TEXT("함재기"):TEXT("소형함"),Hangar.Mode==EOVHangarMode::Aircraft?Stored:(Hangar.StoredSmallShip.IsValid()?1:0),Hangar.Mode==EOVHangarMode::Aircraft?20+Hangar.ExtraAircraftCapacity:1),Ink,X+16,Y+105+(I-1)*19,GEngine->GetSmallFont());
+     const auto Availability=Carrier->GetHangarAvailability(Hangar.HangarId);
+     const TCHAR* FacilityState=Availability==EOVHangarAvailability::Ready?TEXT("가동"):Availability==EOVHangarAvailability::Destroyed?TEXT("파괴"):TEXT("정지");
+     FString Contents;
+     if(Hangar.Mode==EOVHangarMode::Aircraft) Contents=FString::Printf(TEXT("함재기 %d/%d"),Stored,20+Hangar.ExtraAircraftCapacity);
+     else if(const AOVShip* Small=Hangar.StoredSmallShip.Get();Small&&Small->Systems)
+      Contents=FString::Printf(TEXT("%s · 선체 %.0f%% · 출격 미지원"),*Small->ShipName.Left(8),100.f*Small->Systems->HullHP/FMath::Max(1.f,Small->Systems->MaxHullHP));
+     else Contents=TEXT("소형함 보관 미지원");
+     DrawText(FString::Printf(TEXT("격납고 %d · %s · %s"),++I,FacilityState,*Contents),Ink,X+16,Y+105+(I-1)*19,GEngine->GetSmallFont());
     }
     Button(TEXT("HangarLaunchAircraft"),TEXT("출격"),X+W-180,Y+250,78);
     Button(TEXT("HangarRecallAircraft"),TEXT("귀환"),X+W-96,Y+250,78);

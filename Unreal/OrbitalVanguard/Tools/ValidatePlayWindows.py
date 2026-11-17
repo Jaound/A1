@@ -263,6 +263,13 @@ def tick(_dt):
             check('WINDOW-AIRCRAFT-DAMAGED-NOT-LOSS',hud.get_action_center('AircraftCard_'+str(state['first_aircraft_id'])).x<0)
             check('WINDOW-AIRCRAFT-FILTER-AFTER-DAMAGE-READONLY',observe_combat(pc)==state['mission_observation'])
             hud.execute_ui_action('AircraftFilter')
+            hud.execute_ui_action('HangarDisplayMode')
+            state.update(phase=116,at=time.monotonic());return
+        if state['phase']==116:
+            hit_button(hud,'HangarDisplayMode')
+            check('WINDOW-HANGAR-FACILITY-VIEW',hud.get_action_center('AircraftCard_'+str(state['first_aircraft_id'])).x<0)
+            check('WINDOW-HANGAR-FACILITY-READONLY',observe_combat(pc)==state['mission_observation'])
+            hud.execute_ui_action('HangarDisplayMode')
             hud.execute_ui_action('Deck1')
             pc.set_editor_property('camera_focus',unreal.Vector(987,654,321));hud.execute_ui_action('AircraftLocate')
             check('WINDOW-AIRCRAFT-LOCATE-HIDDEN-BLOCKED',(p(pc,'camera_focus')-unreal.Vector(987,654,321)).length()<.1)

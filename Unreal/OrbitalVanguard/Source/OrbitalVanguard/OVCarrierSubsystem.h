@@ -26,6 +26,8 @@ UENUM(BlueprintType)
 enum class EOVAircraftManeuver : uint8 { Approach, AttackRun, ShortEgress, Regroup, Dogfight, Patrol };
 UENUM(BlueprintType)
 enum class EOVHangarMode : uint8 { Aircraft, SmallShip };
+UENUM(BlueprintType)
+enum class EOVHangarAvailability : uint8 { Unknown, Ready, Offline, Destroyed };
 
 /** D116 fighter candidate, not an economic/production implementation. All distances are cm. */
 USTRUCT(BlueprintType)
@@ -188,6 +190,7 @@ public:
     UFUNCTION(BlueprintCallable) int32 DebugSupplyRepair(AOVShip* Ship);
     UFUNCTION(BlueprintPure) FString GetCarrierStatus(AOVShip* Ship) const;
     UFUNCTION(BlueprintPure) FOVAircraftOverview GetAircraftOverview(AOVShip* Ship) const;
+    UFUNCTION(BlueprintPure) EOVHangarAvailability GetHangarAvailability(int32 HangarId) const;
     static bool IsAirborneState(EOVAircraftState State);
 private:
     double Accumulator = 0;
