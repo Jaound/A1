@@ -1,5 +1,10 @@
 # 최근 검사: BF120 양포구와 상하 장착
 
+## 최신 전체 회귀와 기획 비교 (IS~IV)
+
+코드 `339430b3b3c7d76475601446f1bb0cbbd314be1c`에서 [2A 57/57](validation/PlayUIR2/IS_2A회귀_API.json), [2B 50/50](validation/PlayUIR2/IT_2B회귀_API.json), [2C 77/77](validation/PlayUIR2/IU_2C회귀_API.json), [통합 임무 29사례·316/316](validation/PlayUIR2/IV_통합임무_요약.json)을 확인했다. 통합 검사의 ID 순서는 기존 DE 결과와 같다. API 시험이며 직접 입력이 아니다. 최신 원격 work `f0ac7fbd51f1888e1d74552e6ff302e8a464acfa`의 D123~D125 환경 추가는 이번 범위 밖이다. 문서의 기존 이동 후 상대 링크와 의도된 안내 파일 처리를 정리해 `python tools/check_docs.py` 78문서·1,433링크 검사 통과.
+
+
 **MM24 원본 지지대 칼라 시험 — 적용 보류 (IP~IR):** 초기 지지대 복사본에서 회전축 주변 형상을 추출해 포드에 연결하고 더 큰 공간을 지지대에 만들었다([제작](validation/PlayUIR2/IP_MM24칼라_제작.json)). 두 입력 해시는 보존되고 지지대·포드의 경계/비다양체 간선은 0이었다. [5각도 검사](validation/PlayUIR2/IQ_MM24칼라_간섭.json)는 -30/-15/0/+15/+30도 교차 0/0/51/135/0쌍이다. [교차면 범위](validation/PlayUIR2/IR_MM24칼라_간섭위치.json)에서 +15도는 한 지지대 삼각형 중심에 집중됐으나 실제 접촉 위치와 관통은 별도 확인이 필요하다. [+15도](validation/PlayUIR2/IP_MM24칼라_15.png)·[-15도](validation/PlayUIR2/IP_MM24칼라_-15.png)에 여전히 큰 빈 공간이 보여 채택하지 않았다. 시험본 `C:/Users/user/Documents/OrbitalVanguardAssets/Prepared/PlayUI_R2_MM24_CollarTrial_v1`; 원본·기존 게임은 변경하지 않았다. 다음은 큰 절단 형상을 되돌린 복사본에서 실제 회전축·연결면을 근거로 지지 형상을 재설계하고 여러 각도/재질을 검증한다.
 
 

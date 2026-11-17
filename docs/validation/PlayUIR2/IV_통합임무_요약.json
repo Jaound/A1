@@ -1,0 +1,11 @@
+{
+  "코드_SHA": "339430b3b3c7d76475601446f1bb0cbbd314be1c",
+  "성공": true,
+  "완료": true,
+  "사례수": 29,
+  "검사수": 316,
+  "원시결과_SHA256": "04bb73dc2304edfddecd4532532b203ab908798cdbc15a20e26514c7e828d187",
+  "원시결과_로컬": "C:\\Users\\user\\source\\repos\\A1\\Unreal\\OrbitalVanguard\\Saved\\Validation\\IntegratedMission.json",
+  "기존_DE_검사ID순서_일치": true,
+  "참고": "PIE API; 직접 입력 또는 렌더 성능이 아님"
+}

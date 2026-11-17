@@ -1,6 +1,6 @@
 # 3D 조작 시험장 실행·조작 안내
 
-이 문서는 [IMPLEMENTATION_PLAN.md](IMPLEMENTATION_PLAN.md)의 **첫 제작 단계: 3D 조작 시험장**을 위한 로컬 구현 안내다. 정식 전투·성장 규칙은 [GDD](GDD.md)와 [결정 기록](DECISIONS.md)을 우선한다. 아래 속도·선회 수치와 입력 방식은 시험을 위한 임시 값이다.
+이 문서는 [IMPLEMENTATION_PLAN.md](03_development/IMPLEMENTATION_PLAN.md)의 **첫 제작 단계: 3D 조작 시험장**을 위한 로컬 구현 안내다. 정식 전투·성장 규칙은 [GDD](00_overview/GDD.md)와 [결정 기록](00_overview/DECISIONS.md)을 우선한다. 아래 속도·선회 수치와 입력 방식은 시험을 위한 임시 값이다.
 
 실제 빌드·에디터 실행·PIE 조작의 검증 결과는 별도 문서 [PLAYGROUND_VALIDATION.md](PLAYGROUND_VALIDATION.md)에 기록한다. 이 안내에 기능이 기술되어 있다는 사실만으로 모든 실행 검증이 완료되었다는 뜻은 아니다.
 

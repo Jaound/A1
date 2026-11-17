@@ -1,6 +1,6 @@
 # 2A 시험장 실행·조작 안내
 
-기획 기준은 `work`의 `cb96d2c62d272552044d236a4401330e8854aa7d`다. [최신 기획 통합 검토](PLANNING_REVIEW.md), [UE5 공통 기준](UE5_IMPLEMENTATION_CONTRACT.md), [2단계 계획](PHASE2_PLAN.md)에 맞춰 기존 ControlRange를 확장했다. 이 문서는 현재 코드의 조작법과 임시 규칙을 설명한다. 빌드·자동 검사·PIE API·직접 입력의 실제 결과는 [PHASE2A_VALIDATION.md](PHASE2A_VALIDATION.md)에서 각각 확인한다. 안내에 적힌 기능을 직접 입력 검증 완료로 간주하지 않는다.
+기획 기준은 `work`의 `cb96d2c62d272552044d236a4401330e8854aa7d`다. [최신 기획 통합 검토](04_analysis/PLANNING_REVIEW.md), [UE5 공통 기준](03_development/UE5_IMPLEMENTATION_CONTRACT.md), [2단계 계획](PHASE2_PLAN.md)에 맞춰 기존 ControlRange를 확장했다. 이 문서는 현재 코드의 조작법과 임시 규칙을 설명한다. 빌드·자동 검사·PIE API·직접 입력의 실제 결과는 [PHASE2A_VALIDATION.md](PHASE2A_VALIDATION.md)에서 각각 확인한다. 안내에 적힌 기능을 직접 입력 검증 완료로 간주하지 않는다.
 
 이 문서의 입력표가 1단계 [PLAYGROUND_GUIDE.md](PLAYGROUND_GUIDE.md)의 입력표를 대체한다. 특히 `F1~F4`는 시간 제어, 숫자 `1~9`는 부대, `V`는 이동, `T`는 표적, `R`은 향후 보급수리용이다.
 

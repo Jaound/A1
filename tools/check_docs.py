@@ -40,8 +40,13 @@ for path in paths:
 
 moves = json.loads((ROOT / 'docs/DOCUMENT_PATHS.json').read_text(encoding='utf-8'))['moved']
 assert len(moves) == len(set(moves.values())), 'Duplicate document destinations'
+# The implementation branch intentionally retains this short redirect so existing
+# local guides/bookmarks keep working; the moved design document remains canonical.
+implementation_redirects = {'docs/PHASE2_PLAN.md': '03_development/PHASE2_PLAN.md'}
 for old, new in moves.items():
-    if (ROOT / old).exists() or not (ROOT / new).is_file():
+    redirect = implementation_redirects.get(old)
+    retained = (ROOT / old).is_file() and redirect and f']({redirect})' in (ROOT / old).read_text(encoding='utf-8')
+    if ((ROOT / old).exists() and not retained) or not (ROOT / new).is_file():
         errors.append(f'Invalid move: {old} -> {new}')
 
 reports = {
