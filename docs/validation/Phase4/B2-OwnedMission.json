@@ -1,0 +1,140 @@
+{
+  "passed": true,
+  "kind": "보유 편제 PIE API",
+  "checks": [
+    {
+      "id": "OWN-ROOM",
+      "passed": true,
+      "detail": "비전투 편성실 · 영웅 HP/성장/손실/소모품 유지 · 임무 시작 시 선택 편제만 배치"
+    },
+    {
+      "id": "OWN-RESERVE-<OVInteriorRole.MELEE: 1>",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "OWN-RESERVE-<OVInteriorRole.RANGED: 2>",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "OWN-RESERVE-<OVInteriorRole.SUPPORT: 3>",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "OWN-RESERVE-<OVInteriorRole.COMMANDER: 4>",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "OWN-START",
+      "passed": true,
+      "detail": "보유 영웅 임무 준비 · 동일 ID/HP/스킬/소모품으로 실제 운송과 작전 수행"
+    },
+    {
+      "id": "OWN-AIM-PROFILE",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "OWN-UNIQUE-4",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "OWN-INITIAL-REAL-UNITS",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "OWN-REAL-SHIELD-DOWN",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "OWN-REAL-ENTRY",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "OWN-REAL-OPERATION",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "OWN-ORIGINAL-TRANSPORT-RETURN",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "OWN-RESULT",
+      "passed": true,
+      "detail": "<OVMissionResult.VICTORY: 1>"
+    },
+    {
+      "id": "OWN-PARTICIPATION",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "OWN-XP-REAL-RESULT",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "OWN-XP-ONCE",
+      "passed": true,
+      "detail": ""
+    }
+  ],
+  "errors": [],
+  "game_seconds": 203.9166773017496,
+  "returned": 10,
+  "heroes": [
+    {
+      "id": [
+        -1604506565,
+        1236951993,
+        -1368201317,
+        1951022344
+      ],
+      "level": 5,
+      "xp": 375,
+      "participation": 141.25424194335938
+    },
+    {
+      "id": [
+        -233965910,
+        1232635456,
+        451040950,
+        -1987848481
+      ],
+      "level": 5,
+      "xp": 384,
+      "participation": 146.65292358398438
+    },
+    {
+      "id": [
+        384757696,
+        1293706951,
+        -1265987157,
+        -813540945
+      ],
+      "level": 5,
+      "xp": 384,
+      "participation": 146.40298461914062
+    },
+    {
+      "id": [
+        -1087580635,
+        1340943737,
+        -1151404627,
+        -703879774
+      ],
+      "level": 5,
+      "xp": 381,
+      "participation": 145.15328979492188
+    }
+  ]
+}

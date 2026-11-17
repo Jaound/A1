@@ -339,9 +339,12 @@ FOVFireReadiness UOVCombatSubsystem::Evaluate(const FOVCombatShipState& State, c
     const float ControlBonus = Settings->ControlAccuracyBonus * (Systems->GetEfficiency(EOVFacilityType::WeaponControl) - 1.f);
     const auto Duty = GetWorld()->GetSubsystem<UOVInteriorSubsystem>()->GetDutyBonuses(State.Ship);
     R.Accuracy = FMath::Clamp(Mount.Profile.Accuracy + R.Detection.AccuracyBonus + ControlBonus + Duty.AccuracyBonus, 0.f,
-        Mount.Profile.Kind == EOVAttackKind::Beam ? 0.995f : 1.f);
+        Mount.Profile.Kind == EOVAttackKind::Beam ? (Settings->bHeroD114Aim?0.98f:0.995f) : 1.f);
     R.AimSpreadDegrees = Mount.Profile.Kind == EOVAttackKind::Beam ? 0.f
         : FMath::Clamp(Mount.Profile.AimSpreadDegrees * (1.f - R.Accuracy), 0.f, 45.f);
+    if(Settings->bHeroD114Aim && Mount.Profile.Kind!=EOVAttackKind::Beam)
+        R.AimSpreadDegrees=FMath::Clamp(Mount.Profile.AimSpreadDegrees /
+            (1.f+4.f*FMath::Max(0.f,R.Detection.AccuracyBonus+Duty.AccuracyBonus)),0.f,45.f);
     const FVector LocalDirection = Ship->GetActorQuat().UnrotateVector(Offset).GetSafeNormal();
     const float Elevation = LocalDirection.Rotation().Pitch;
     if ((Def->LocalPosition.Z >= 0 && Elevation < -NeutralElevation)

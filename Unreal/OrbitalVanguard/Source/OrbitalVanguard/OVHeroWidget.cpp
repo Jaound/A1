@@ -32,6 +32,7 @@ void UOVHeroWidget::NativeOnInitialized()
  auto* Border=WidgetTree->ConstructWidget<UBorder>(); Border->SetBrushColor(FLinearColor(.008f,.02f,.04f,.96f)); WidgetTree->RootWidget=Border;
  auto* Outer=WidgetTree->ConstructWidget<UScrollBox>();Border->AddChild(Outer);auto* Box=WidgetTree->ConstructWidget<UVerticalBox>(); Outer->AddChild(Box);
  Box->AddChildToVerticalBox(Text(WidgetTree,TEXT("아군 영웅 / 병력")));
+ auto* CloseButton=Button(WidgetTree,Box,TEXT("영웅 명단 닫기"));CloseButton->OnClicked.AddDynamic(this,&UOVHeroWidget::Close);
  Choice=WidgetTree->ConstructWidget<UComboBoxString>(); Box->AddChildToVerticalBox(Choice); Choice->OnSelectionChanged.AddDynamic(this,&UOVHeroWidget::SelectionChanged);
  Roster=WidgetTree->ConstructWidget<UScrollBox>(); auto* RosterSize=WidgetTree->ConstructWidget<USizeBox>();RosterSize->SetHeightOverride(105);RosterSize->AddChild(Roster);Box->AddChildToVerticalBox(RosterSize);
  Detail=Text(WidgetTree,TEXT("영웅을 선택하세요.")); Box->AddChildToVerticalBox(Detail);
@@ -71,7 +72,7 @@ void UOVHeroWidget::Refresh()
  FString Ranks;for(int32 Rank:H.SkillRanks)Ranks+=FString::Printf(TEXT(" %d"),Rank);
  const TCHAR* Status[]={TEXT("예비"),TEXT("편성 예약"),TEXT("구조 대기"),TEXT("포로"),TEXT("실종"),TEXT("사망")};
  const TCHAR* L1[]={TEXT("없음"),TEXT("역장 방어"),TEXT("초감각 조준"),TEXT("생체 재구성"),TEXT("신경 공명")};
- Detail->SetText(FText::FromString(FString::Printf(TEXT("%s · %s · %s · Lv%d / XP%d\n스킬 %s · 등급:%s / 잔여 %d\n%s\n보직: %s"),*H.Name,*Role(H.Role),Status[FMath::Clamp(int32(H.Status),0,5)],H.Level,H.XP,L1[FMath::Clamp(int32(H.Role),0,4)],*Ranks,H.SkillPoints,*Position,*Duty)));
+ FString Summary=FString::Printf(TEXT("%s · %s · %s · Lv%d / XP%d\n스킬 %s · 등급:%s / 잔여 %d\n%s\n보직: %s"),*H.Name,*Role(H.Role),Status[FMath::Clamp(int32(H.Status),0,5)],H.Level,H.XP,L1[FMath::Clamp(int32(H.Role),0,4)],*Ranks,H.SkillPoints,*Position,*Duty);for(int32 I=0;I<4;++I)Summary+=TEXT("\n")+Heroes->GetSkillDescription(Id,I);Detail->SetText(FText::FromString(Summary));
 }
 void UOVHeroWidget::SelectionChanged(FString, ESelectInfo::Type) { Refresh(); }
 void UOVHeroWidget::Deploy() { if(auto* S=GetGameInstance()->GetSubsystem<UOVHeroSubsystem>()){S->SetDeployment(SelectedId(),true);Feedback->SetText(FText::FromString(S->LastMessage));Refresh();} }
@@ -85,3 +86,5 @@ void UOVHeroWidget::Spend(int32 I){if(auto* S=GetGameInstance()->GetSubsystem<UO
 void UOVHeroWidget::Skill0(){Spend(0);}void UOVHeroWidget::Skill1(){Spend(1);}void UOVHeroWidget::Skill2(){Spend(2);}void UOVHeroWidget::Skill3(){Spend(3);}
 void UOVHeroWidget::RosterRoom(){if(auto* S=GetWorld()->GetSubsystem<UOVDevelopmentSubsystem>()){S->OpenRosterRoom();Feedback->SetText(FText::FromString(S->LastMessage));}}
 void UOVHeroWidget::StartMission(){auto* PC=Cast<AOVController>(GetOwningPlayer());if(PC&&PC->Mission){PC->Mission->StartRosterMission(PC,false,260112,false);Feedback->SetText(FText::FromString(PC->Mission->Status));}}
+
+void UOVHeroWidget::Close(){if(auto* PC=Cast<AOVController>(GetOwningPlayer()))if(auto* HUD=Cast<AOVHUD>(PC->GetHUD()))HUD->SetHeroPanelOpen(false);}

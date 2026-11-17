@@ -21,6 +21,7 @@ TArray<FName> GetHullIds();
 FString GetHullName(FName HullId);
 double GetHullGeometryScale(FName HullId);
 TArray<FName> GetWeaponProfileIds();
+FString GetWeaponProfileDescription(FName ProfileId);
 FString GetSourceHash();
 // Returns false before initializing any runtime profile if the requested roster is invalid.
 bool Start(UOVCombatSubsystem& Combat, const TArray<AOVShip*>& Ships, int32 Scenario);

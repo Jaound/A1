@@ -46,9 +46,13 @@ def execute(pc):
     by_category = collections.Counter(str(p(d, "category")) for d in definitions)
     hulls = [d for d in definitions if p(d, "category") == unreal.OVCatalogCategory.HULL]
     weapons = [d for d in definitions if p(d, "category") == unreal.OVCatalogCategory.WEAPON]
-    check("카탈로그 수량과 구분", len(hulls) == 16 and len(weapons) == 25 and len(definitions) == 47, by_category)
+    check("카탈로그 수량과 구분", len(hulls) == 16 and len(weapons) == 25 and len(definitions) == 49, by_category)
     check("정의 ID 고유성", len({str(p(d, "definition_id")) for d in definitions}) == len(definitions))
-    check("검증 SHA 허위 기입 없음", all(not p(p(d, "automated_verification"), "verification_sha") for d in definitions))
+    check("검증 근거 상태 구분", all(
+        (p(p(d, "automated_verification"), "status") == unreal.OVCatalogStatus.UNKNOWN and not p(p(d, "automated_verification"), "verification_sha")) or
+        (p(p(d, "automated_verification"), "status") == unreal.OVCatalogStatus.PARTIAL and len(p(p(d, "automated_verification"), "verification_sha")) == 40)
+        for d in definitions))
+    check("과거 자동 검증과 직접 입력 분리", all(p(p(d, "direct_input"), "status") == unreal.OVCatalogStatus.UNKNOWN for d in hulls))
     if len(hulls) != 16:
         abort("16 함체 카탈로그 필요")
     ids = [str(p(d, "definition_id")) for d in hulls]

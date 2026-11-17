@@ -1,6 +1,7 @@
 #include "OVInteriorSubsystem.h"
 #include "OVTransportSubsystem.h"
 #include "OVCombatSubsystem.h"
+#include "OVLogisticsSubsystem.h"
 #include "OVShip.h"
 #include "OVShipSystemsComponent.h"
 #include "Engine/World.h"
@@ -46,6 +47,168 @@ struct FRange
     TArray<int32> Enter(int32 Heroes=1,int32 Troops=0)
     {auto Ids=Interior->RegisterBoardingTeam(Origin,0,Heroes,Troops);Transport->LaunchPods(Origin,Target);Advance(3);return Ids;}
 };
+}
+
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(FOVInteriorOperationContributors,"OrbitalVanguard.Interior.ActualOperationContributors",EAutomationTestFlags::EditorContext|EAutomationTestFlags::EngineFilter)
+bool FOVInteriorOperationContributors::RunTest(const FString&)
+{
+    OVInteriorTest::FRange R;
+    const FName Slot=R.Slot(EOVFacilityType::ShieldControl);
+    const int32 Worker=R.Interior->RegisterUnit(R.Target,0,EOVInteriorRole::Melee,Slot);
+    const int32 Bystander=R.Interior->RegisterUnit(R.Target,0,EOVInteriorRole::Support,Slot);
+    TestTrue(TEXT("작업자와 비참가자 생성"),Worker>0 && Bystander>0);
+    TestTrue(TEXT("작업 명령"),R.Interior->IssueOrder({Worker},EOVInteriorOrder::Capture,Slot));
+    R.Interior->IssueOrder({Bystander},EOVInteriorOrder::None);
+    R.Advance(25);
+    const auto* Event=R.Interior->Events.FindByPredicate([Slot](const FOVInteriorEvent& E){return E.Kind==TEXT("Capture") && E.SlotId==Slot;});
+    TestNotNull(TEXT("실제 점령 완료 사건"),Event);
+    if(Event)
+    {
+        TestTrue(TEXT("실제 작업자 기록"),Event->ParticipantUnitIds.Contains(Worker));
+        TestFalse(TEXT("같은 방 대기자는 기여하지 않음"),Event->ParticipantUnitIds.Contains(Bystander));
+    }
+    return true;
+}
+
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(FOVInteriorSupportFiniteSkills,"OrbitalVanguard.Interior.SupportFiniteSkills",EAutomationTestFlags::EditorContext|EAutomationTestFlags::EngineFilter)
+bool FOVInteriorSupportFiniteSkills::RunTest(const FString&)
+{
+    OVInteriorTest::FRange R;
+    const int32 Healer=R.Interior->RegisterUnit(R.Origin,0,EOVInteriorRole::Support);
+    const int32 Patient=R.Interior->RegisterUnit(R.Origin,0,EOVInteriorRole::Melee);
+    auto* H=R.Interior->Units.FindByPredicate([Healer](const auto& U){return U.UnitId==Healer;});
+    auto* P=R.Interior->Units.FindByPredicate([Patient](const auto& U){return U.UnitId==Patient;});
+    TestTrue(TEXT("실제 선내 영웅 생성"),H && P);
+    if(!H || !P)return false;
+    H->HeroSkillRanks={1,1,1,1};P->HP=P->MaxHP*.2f;
+    R.Advance(.2f);
+    const auto After=R.Interior->GetUnit(Healer);
+    TestEqual(TEXT("단일 회복과 공명장에 촉매 3개 사용"),After.Medkits,1);
+    TestTrue(TEXT("두 재사용 대기시간 각각 설정"),After.SkillReadyAt>R.Interior->GameTime && After.Skill3ReadyAt>R.Interior->GameTime);
+    TestTrue(TEXT("실제 생존 대상 HP 회복"),R.Interior->GetUnit(Patient).HP>P->MaxHP*.2f);
+    R.Advance(1);
+    TestEqual(TEXT("공명장 유지 중 자동 무료 충전 없음"),R.Interior->GetUnit(Healer).Medkits,1);
+    return true;
+}
+
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(FOVInteriorMeleeAdvancedSkills,"OrbitalVanguard.Interior.MeleeAdvancedSkills",EAutomationTestFlags::EditorContext|EAutomationTestFlags::EngineFilter)
+bool FOVInteriorMeleeAdvancedSkills::RunTest(const FString&)
+{
+    OVInteriorTest::FRange R;
+    const int32 Hero=R.Interior->RegisterUnit(R.Origin,0,EOVInteriorRole::Melee);
+    const int32 Enemy=R.Interior->RegisterUnit(R.Origin,1,EOVInteriorRole::Trooper);
+    auto* H=R.Interior->Units.FindByPredicate([Hero](const auto& U){return U.UnitId==Hero;});
+    auto* E=R.Interior->Units.FindByPredicate([Enemy](const auto& U){return U.UnitId==Enemy;});
+    if(!TestNotNull(TEXT("근거리 영웅"),H) || !TestNotNull(TEXT("상대"),E))return false;
+    H->HeroSkillRanks={1,1,1,1};H->HP=H->MaxHP*.26f;H->LocalPosition+=FVector(400,0,0);
+    E->HP=E->MaxHP=10000;
+    R.Advance(3);
+    const auto After=R.Interior->GetUnit(Hero);
+    TestTrue(TEXT("강화 돌입 이동과 재사용 대기"),After.DistanceTravelled>0 && After.Skill3ReadyAt>R.Interior->GameTime);
+    TestTrue(TEXT("25% 미만 생존 한계 발동"),After.Skill4ReadyAt>R.Interior->GameTime && !After.bSkill4Armed);
+    TestTrue(TEXT("실제 적에게 공격 피해"),R.Interior->GetUnit(Enemy).HP<10000);
+    return true;
+}
+
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(FOVInteriorRangedAdvancedSkills,"OrbitalVanguard.Interior.RangedAdvancedSkills",EAutomationTestFlags::EditorContext|EAutomationTestFlags::EngineFilter)
+bool FOVInteriorRangedAdvancedSkills::RunTest(const FString&)
+{
+    OVInteriorTest::FRange R;
+    const int32 Hero=R.Interior->RegisterUnit(R.Origin,0,EOVInteriorRole::Ranged);
+    const int32 Enemy=R.Interior->RegisterUnit(R.Origin,1,EOVInteriorRole::Trooper);
+    auto* H=R.Interior->Units.FindByPredicate([Hero](const auto& U){return U.UnitId==Hero;});
+    auto* E=R.Interior->Units.FindByPredicate([Enemy](const auto& U){return U.UnitId==Enemy;});
+    if(!TestNotNull(TEXT("원거리 영웅"),H) || !TestNotNull(TEXT("상대"),E))return false;
+    H->HeroSkillRanks={1,1,1,1};E->HP=E->MaxHP=10000;E->Damage=0;E->Evasion=0;
+    R.Advance(5);
+    const auto After=R.Interior->GetUnit(Hero),Target=R.Interior->GetUnit(Enemy);
+    TestTrue(TEXT("제압 3발과 재사용 대기"),After.Shots>=3 && After.Skill3ReadyAt>R.Interior->GameTime);
+    TestTrue(TEXT("제압 명중 시 대상 감속 이력"),Target.SlowUntil>0 && Target.SlowFraction>=.2f);
+    TestTrue(TEXT("동일 적 4초 추적"),After.TrackedEnemy==Enemy && R.Interior->GameTime-After.TrackedSince>=4);
+    TestTrue(TEXT("실제 사격 피해"),Target.HP<10000);
+    return true;
+}
+
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(FOVInteriorCommanderAdvancedSkills,"OrbitalVanguard.Interior.CommanderAdvancedSkills",EAutomationTestFlags::EditorContext|EAutomationTestFlags::EngineFilter)
+bool FOVInteriorCommanderAdvancedSkills::RunTest(const FString&)
+{
+    OVInteriorTest::FRange R;
+    const FName Slot=R.Slot(EOVFacilityType::ShieldControl);
+    const int32 Hero=R.Interior->RegisterUnit(R.Target,0,EOVInteriorRole::Commander,Slot);
+    auto* H=R.Interior->Units.FindByPredicate([Hero](const auto& U){return U.UnitId==Hero;});
+    if(!TestNotNull(TEXT("지휘 영웅"),H))return false;
+    H->HeroSkillRanks={1,1,1,1};
+    R.Interior->IssueOrder({Hero},EOVInteriorOrder::Capture,Slot);R.Advance(6);
+    const auto* Op=R.Interior->Operations.FindByPredicate([Slot](const auto& O){return O.SlotId==Slot;});
+    TestNotNull(TEXT("실제 점령 진행"),Op);
+    if(Op)TestTrue(TEXT("신경 접속 10% 작업 기여"),Op->Progress>6.f/18.f+.02f);
+    const int32 Enemy=R.Interior->RegisterUnit(R.Target,1,EOVInteriorRole::Trooper,Slot);
+    auto* E=R.Interior->Units.FindByPredicate([Enemy](const auto& U){return U.UnitId==Enemy;});
+    if(E){E->HP=E->MaxHP=10000;E->Damage=0;}
+    R.Advance(.5f);
+    const auto After=R.Interior->GetUnit(Hero);
+    TestTrue(TEXT("전투 동조 활성 및 재사용 대기"),After.Skill3ActiveUntil>R.Interior->GameTime && After.Skill3ReadyAt>R.Interior->GameTime);
+    return true;
+}
+
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(FOVInteriorPassiveAuraSkills,"OrbitalVanguard.Interior.PassiveAuraSkills",EAutomationTestFlags::EditorContext|EAutomationTestFlags::EngineFilter)
+bool FOVInteriorPassiveAuraSkills::RunTest(const FString&)
+{
+    auto TargetHP=[](bool bCover)
+    {
+        OVInteriorTest::FRange R;
+        const int32 Target=R.Interior->RegisterUnit(R.Origin,0,EOVInteriorRole::Trooper);
+        const int32 Cover=R.Interior->RegisterUnit(R.Origin,0,EOVInteriorRole::Melee);
+        const int32 Enemy=R.Interior->RegisterUnit(R.Origin,1,EOVInteriorRole::Trooper);
+        for(auto& U:R.Interior->Units)
+        {if(U.UnitId==Cover)U.HeroSkillRanks={1,bCover?1:0,0,0};if(U.UnitId==Enemy)U.HP=U.MaxHP=10000;}
+        R.Advance(3);return R.Interior->GetUnit(Target).HP;
+    };
+    const float Uncovered=TargetHP(false),Covered=TargetHP(true);
+    TestTrue(TEXT("근거리 엄호는 다른 아군의 실제 교전 피해를 감소"),Covered>Uncovered);
+    auto Travel=[](bool bAura)
+    {
+        OVInteriorTest::FRange R;
+        const int32 Commander=R.Interior->RegisterUnit(R.Origin,0,EOVInteriorRole::Commander);
+        const int32 Ally=R.Interior->RegisterUnit(R.Origin,0,EOVInteriorRole::Trooper);
+        for(auto& U:R.Interior->Units)if(U.UnitId==Commander)U.HeroSkillRanks={1,0,0,bAura?1:0};
+        FName Destination=NAME_None;
+        for(const auto& Slot:R.Origin->Systems->Layout->Slots)if(Slot.Facility==EOVFacilityType::LifeSupport){Destination=Slot.SlotId;break;}
+        R.Interior->IssueOrder({Ally},EOVInteriorOrder::Defend,Destination);R.Advance(.5f);
+        return R.Interior->GetUnit(Ally).DistanceTravelled;
+    };
+    const float Plain=Travel(false),Boosted=Travel(true);
+    TestTrue(TEXT("지휘 기동 예지는 방어 이동의 실제 거리를 증가"),Plain>0 && Boosted>Plain);
+    return true;
+}
+
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(FOVInteriorSupportDutyResources,"OrbitalVanguard.Interior.SupportDutyFiniteRepair",EAutomationTestFlags::EditorContext|EAutomationTestFlags::EngineFilter)
+bool FOVInteriorSupportDutyResources::RunTest(const FString&)
+{
+    OVInteriorTest::FRange R;
+    auto* Logistics=R.World->GetSubsystem<UOVLogisticsSubsystem>();
+    const int32 Id=R.Interior->RegisterUnit(R.Origin,0,EOVInteriorRole::Support);
+    auto* H=R.Interior->Units.FindByPredicate([Id](const auto& U){return U.UnitId==Id;});
+    if(!TestNotNull(TEXT("지원 영웅"),H))return false;
+    H->HeroId=FGuid::NewGuid();H->HeroSkillRanks={1,1,1,1};H->AmplifierCharges=2;H->DevRepairBaseCost=FVector(1,0,0);
+    R.Origin->Systems->HullHP=R.Origin->Systems->MaxHullHP*.5f;
+    TestTrue(TEXT("유한 선내 자재 등록"),Logistics->RegisterDevShip(R.Origin,EOVDevLogisticsRole::Transport,200,100));
+    const FName Slot=R.Slot(EOVFacilityType::LifeSupport);
+    TestTrue(TEXT("지원 보직 지시"),R.Interior->SetHeroDuty(Id,true,Slot));
+    for(int32 I=0;I<1200 && R.Interior->GetUnit(Id).Skill3ReadyAt<=0;++I)
+    {R.Interior->Simulate(1.f/60);Logistics->Simulate(1.f/60);}
+    auto After=R.Interior->GetUnit(Id);
+    TestEqual(TEXT("수리 시작 성공 시에만 충전 1회 차감"),After.AmplifierCharges,1);
+    TestTrue(TEXT("실제 유한 수리 링크"),Logistics->RepairLinks.ContainsByPredicate([Id,&R](const auto& L){return L.bHero && L.HeroId==R.Interior->GetUnit(Id).HeroId;}));
+    const float BeforeHP=R.Origin->Systems->HullHP;
+    for(int32 I=0;I<60;++I){R.Interior->Simulate(1.f/60);Logistics->Simulate(1.f/60);}
+    TestTrue(TEXT("선체만 실제 회복"),R.Origin->Systems->HullHP>BeforeHP);
+    const auto* Cargo=Logistics->Cargo.FindByPredicate([&R](const auto& C){return C.Ship==R.Origin;});
+    TestTrue(TEXT("회복분의 실제 자재 소모"),Cargo && Cargo->Amount<100);
+    R.Origin->Systems->DebugDestroySlot(Slot,EOVDamageCause::External);
+    R.Interior->Simulate(1.f/60);Logistics->Simulate(1.f/60);
+    TestTrue(TEXT("보직 시설 파괴 시 수리 링크 해제"),Logistics->RepairLinks.IsEmpty());
+    return true;
 }
 
 IMPLEMENT_SIMPLE_AUTOMATION_TEST(FOVInteriorGraphAndRoster,"OrbitalVanguard.Interior.GraphVersionAndFactionRoster",EAutomationTestFlags::EditorContext|EAutomationTestFlags::EngineFilter)

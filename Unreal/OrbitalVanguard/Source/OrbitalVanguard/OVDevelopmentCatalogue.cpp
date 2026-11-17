@@ -2,9 +2,65 @@
 #include "OVCalibration.h"
 #include "OVCarrierSubsystem.h"
 #include "OVTransportSubsystem.h"
+#include "OVPointDefenseSubsystem.h"
+#include "Dom/JsonObject.h"
+#include "Serialization/JsonReader.h"
+#include "Serialization/JsonSerializer.h"
+#include "Misc/FileHelper.h"
+#include "Misc/Paths.h"
 
 namespace
 {
+bool IsHexDigest(const FString& Value, int32 Length)
+{
+    if (Value.Len() != Length) return false;
+    for (TCHAR C : Value)
+        if (!((C >= TEXT('0') && C <= TEXT('9')) || (C >= TEXT('a') && C <= TEXT('f')) || (C >= TEXT('A') && C <= TEXT('F')))) return false;
+    return true;
+}
+
+void ApplyHistoricalEvidence(TArray<FOVCatalogDefinition>& Definitions)
+{
+    FString Data;
+    const FString Path = FPaths::Combine(FPaths::ProjectConfigDir(), TEXT("DevelopmentEvidence.json"));
+    if (!FFileHelper::LoadFileToString(Data, *Path) || Data.Len() > 2000000) return;
+    TSharedPtr<FJsonObject> Root;
+    const TSharedRef<TJsonReader<>> Reader = TJsonReaderFactory<>::Create(Data);
+    if (!FJsonSerializer::Deserialize(Reader, Root) || !Root.IsValid()) return;
+    double Version = 0;
+    FString CodeSHA, TreeSHA, BinarySHA, ReportPath, ReportSHA;
+    const TArray<TSharedPtr<FJsonValue>>* Checks = nullptr;
+    if (!Root->TryGetNumberField(TEXT("schema_version"), Version) || Version != 1 ||
+        !Root->TryGetStringField(TEXT("code_sha"), CodeSHA) || !IsHexDigest(CodeSHA, 40) ||
+        !Root->TryGetStringField(TEXT("source_archive_sha256"), TreeSHA) || !IsHexDigest(TreeSHA, 64) ||
+        !Root->TryGetStringField(TEXT("binary_sha256"), BinarySHA) || !IsHexDigest(BinarySHA, 64) ||
+        !Root->TryGetStringField(TEXT("report"), ReportPath) || ReportPath.IsEmpty() ||
+        !Root->TryGetStringField(TEXT("report_sha256"), ReportSHA) || !IsHexDigest(ReportSHA, 64) ||
+        !Root->TryGetArrayField(TEXT("checks"), Checks) || !Checks) return;
+    // Only individual, unambiguous observed spawn checks update historical status.
+    for (FOVCatalogDefinition& Definition : Definitions)
+    {
+        if (Definition.Category != EOVCatalogCategory::Hull) continue;
+        const FString Expected = TEXT("생성 ") + Definition.DefinitionId.ToString();
+        int32 Matches = 0; bool bPassed = false;
+        for (const auto& Value : *Checks)
+        {
+            const TSharedPtr<FJsonObject> Row = Value.IsValid() ? Value->AsObject() : nullptr;
+            FString CheckId; bool Result = false;
+            if (Row.IsValid() && Row->TryGetStringField(TEXT("id"), CheckId) && CheckId == Expected && Row->TryGetBoolField(TEXT("passed"), Result))
+            { ++Matches; bPassed = Result; }
+        }
+        if (Matches != 1) continue;
+        FOVCatalogEvidence Historic;
+        Historic.Status = EOVCatalogStatus::Partial;
+        Historic.VerificationSHA = CodeSHA;
+        Historic.Reason = FString::Printf(TEXT("기록된 빌드의 개별 생성 검사 %s. 현재 실행 바이너리와 일치 검증은 미실시. 보고서: %s / 보고서 SHA-256: %s / 소스 아카이브 SHA-256: %s / 바이너리 SHA-256: %s"),
+            bPassed ? TEXT("성공") : TEXT("실패"), *ReportPath, *ReportSHA, *TreeSHA, *BinarySHA);
+        Definition.Generation = Historic;
+        Definition.AutomatedVerification = Historic;
+    }
+}
+
 FOVCatalogEvidence Evidence(EOVCatalogStatus Status, const TCHAR* Reason)
 {
     FOVCatalogEvidence E; E.Status = Status; E.Reason = Reason; return E;
@@ -43,8 +99,20 @@ TArray<FOVCatalogDefinition> UOVDevelopmentCatalogue::GetDefinitions() const
     }
     for (FName Id : OVCalibration::GetWeaponProfileIds())
     {
-        auto D = Base(Id, EOVCatalogCategory::Weapon, WeaponName(Id), TEXT("D116 시험 무장 프로필. 이름의 T는 무장 티어다."), CalibrationSource);
+        auto D = Base(Id, EOVCatalogCategory::Weapon, WeaponName(Id), OVCalibration::GetWeaponProfileDescription(Id), CalibrationSource);
         D.Generation = Evidence(EOVCatalogStatus::NotApplicable, TEXT("무장 프로필은 독립 함체가 아니라 장착 데이터다."));
+        Out.Add(MoveTemp(D));
+    }
+    for (EOVPDWeaponKind Kind : {EOVPDWeaponKind::Beam, EOVPDWeaponKind::Kinetic})
+    {
+        const FOVPDProfile Profile = UOVPointDefenseSubsystem::DefaultProfile(Kind);
+        const FString Description = FString::Printf(TEXT("2C 시험 방공 · 사거리 %.0fcm · 명중 계수 %.2f · 주기 %.2f초 · 피해 %.1f · 장착점 HP %.1f"),
+            Profile.Range, Profile.Accuracy, Profile.Interval, Profile.Damage, Profile.MountHP);
+        auto D = Base(Profile.ProfileId, EOVCatalogCategory::PointDefense,
+            Kind == EOVPDWeaponKind::Beam ? TEXT("방공 빔") : TEXT("방공 실탄"), Description,
+            TEXT("OVPointDefenseSubsystem.cpp: DefaultProfile; OVPointDefenseSubsystem.h: FOVPDProfile"));
+        D.Generation = Evidence(EOVCatalogStatus::NotApplicable, TEXT("독립 함체가 아니라 방공 장착점 시험 프로필이다."));
+        D.DirectInput = Evidence(EOVCatalogStatus::Unavailable, TEXT("방공 종류를 직접 교체하는 DEV 명령은 아직 제공되지 않는다."));
         Out.Add(MoveTemp(D));
     }
     const FOVAircraftProfile Aircraft;
@@ -61,5 +129,6 @@ TArray<FOVCatalogDefinition> UOVDevelopmentCatalogue::GetDefinitions() const
         D.Data = Evidence(EOVCatalogStatus::Partial, TEXT("유형 열거형과 시험 프로필이 있으나 전체 기획 능력의 검증은 별도다."));
         Out.Add(MoveTemp(D));
     }
+    ApplyHistoricalEvidence(Out);
     return Out;
 }

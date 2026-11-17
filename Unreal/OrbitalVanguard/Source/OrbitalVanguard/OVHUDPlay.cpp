@@ -49,6 +49,7 @@ void AOVHUD::DrawPlayHUD()
  Button(TEXT("Speed2"),TEXT("2배"),548,16,52,PC->SimulationSpeed==2);
  Button(TEXT("Speed3"),TEXT("3배"),608,16,52,PC->SimulationSpeed==3);
  Button(TEXT("Overview"),TEXT("Home 전체 보기"),676,16,134);
+ Button(TEXT("HeroPanel"),bHeroPanelOpen?TEXT("영웅 명단 닫기"):TEXT("영웅 명단"),W-280,16,128,bHeroPanelOpen);
  Button(TEXT("Developer"),TEXT("Insert 개발"),W-144,16,122);
  Button(TEXT("CombatRange"),TEXT("F5 기본 전투"),22,55,130);
  Button(TEXT("CalibrationRange"),TEXT("F6 교정 전투"),160,55,130);

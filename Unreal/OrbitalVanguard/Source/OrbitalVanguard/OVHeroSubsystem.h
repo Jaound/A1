@@ -55,6 +55,7 @@ public:
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly) FString LastMessage;
     UFUNCTION(BlueprintCallable) FGuid CreateDevHero(int32 FactionId, EOVInteriorRole Role, const FString& Name);
     UFUNCTION(BlueprintPure) FOVHeroRecord GetHero(FGuid HeroId) const;
+    UFUNCTION(BlueprintPure) FString GetSkillDescription(FGuid HeroId, int32 SkillIndex) const;
     UFUNCTION(BlueprintPure) TArray<FOVHeroRecord> GetHeroes(int32 FactionId) const;
     UFUNCTION(BlueprintPure) int32 CountDeployed(int32 FactionId) const;
     UFUNCTION(BlueprintCallable) bool SetDeployment(FGuid HeroId, bool bDeploy);

@@ -31,6 +31,7 @@ private:
  float RefreshElapsed=0;
  void Refresh();
  FGuid SelectedId() const;
+ UFUNCTION() void Close();
  UFUNCTION() void Deploy();
  UFUNCTION() void Release();
  UFUNCTION() void OpenInterior();

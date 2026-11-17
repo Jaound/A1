@@ -4,7 +4,7 @@
 #include "OVDevelopmentCatalogue.generated.h"
 
 UENUM(BlueprintType)
-enum class EOVCatalogCategory : uint8 { Hull, Weapon, Fighter, Pod, Hero };
+enum class EOVCatalogCategory : uint8 { Hull, Weapon, Fighter, Pod, Hero, PointDefense };
 UENUM(BlueprintType)
 enum class EOVCatalogStatus : uint8 { Unknown, Available, Partial, Unavailable, NotApplicable };
 

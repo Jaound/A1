@@ -1,0 +1,49 @@
+Using bundled DotNet SDK version: 10.0 win-x64
+Running UnrealBuildTool: dotnet "..\..\Engine\Binaries\DotNET\UnrealBuildTool\UnrealBuildTool.dll" OrbitalVanguardEditor Win64 Development -Project=C:\Users\user\source\repos\A1\Unreal\OrbitalVanguard\OrbitalVanguard.uproject -WaitMutex -NoHotReloadFromIDE
+Log file: C:\Users\user\AppData\Local\UnrealBuildTool\Log.txt
+Determining max actions to execute in parallel (6 physical cores, 12 logical cores)
+  Executing up to 6 processes, one per physical core
+UbaServer - Listening on 0.0.0.0:1345
+Available x64 toolchains (1):
+ * C:\Program Files (x86)\Microsoft Visual Studio\18\BuildTools\VC\Tools\MSVC\14.51.36231
+    (Family=14.51.36231, FamilyRank=2, Version=14.51.36260, HostArchitecture=x64, ReleaseChannel=Latest, Architecture=x64)
+Visual Studio compiler version 14.51.36260 is newer than latest preferred version 14.50.35717. Please use caution as this compiler has not been heavily tested
+UHT compiled-in object format Default
+Building OrbitalVanguardEditor...
+===== Toolchain Information =====
+Using ISPC compiler (E:\UE_5.8\Engine\Source\ThirdParty\Intel\ISPC\bin\Windows\ispc.exe)
+  Intel(r) Implicit SPMD Program Compiler (Intel(r) ISPC), 1.24.0 (build commit  @ 20250404, LLVM 18.1.2)
+Using Visual Studio 14.51.36260 toolchain (C:\Program Files (x86)\Microsoft Visual Studio\18\BuildTools\VC\Tools\MSVC\14.51.36231) and Windows 10.0.26100.0 SDK (C:\Program Files (x86)\Windows Kits\10).
+Warning: Visual Studio compiler 14.51.36260 is not a preferred version
+[Adaptive Build] Excluded from OrbitalVanguard unity file: OrbitalVanguard.cpp, OVCalibration.cpp, OVCarrierSubsystem.cpp, OVCarrierTests.cpp, OVCombatSubsystem.cpp, OVCombatTests.cpp, OVController.cpp, OVController2C.cpp, OVControlProfileTests.cpp, OVDevelopmentCatalogue.cpp, OVDevelopmentCatalogueTests.cpp, OVDevelopmentSubsystem.cpp, OVDevelopmentWidget.cpp, OVGameMode.cpp, OVHeroSubsystem.cpp, OVHeroTests.cpp, OVHeroWidget.cpp, OVHUD.cpp, OVHUD2C.cpp, OVHUDInterior.cpp, OVHUDMission.cpp, OVHUDPlay.cpp, OVInteriorSubsystem.cpp, OVInteriorTests.cpp, OVLogisticsSubsystem.cpp, OVLogisticsTests.cpp, OVMissionSubsystem.cpp, OVOrderInputTests.cpp, OVPerformanceProbe.cpp, OVPointDefenseSubsystem.cpp, OVPointDefenseTests.cpp, OVShip.cpp, OVShipLayout.cpp, OVShipSystemsComponent.cpp, OVSystemsTests.cpp, OVTransportSubsystem.cpp, OVTransportTests.cpp
+===== End Toolchain Information =====
+Using Unreal Build Accelerator local executor to run 18 action(s)
+  CPU 6 physical cores, 12 logical cores
+  Memory 63.95 GB physical, 19.49 GB/72.32 GB committed
+  UBA Storage capacity 40 GB
+[1/18] Compile [x64] OVGameMode.cpp
+[2/18] Compile [x64] OVDevelopmentSubsystem.cpp
+[3/18] Compile [x64] OVController2C.cpp
+[4/18] Compile [x64] OVController.cpp
+[5/18] Compile [x64] OVDevelopmentWidget.cpp
+[6/18] Compile [x64] OVHUD2C.cpp
+[7/18] Compile [x64] Module.OrbitalVanguard.cpp
+[8/18] Compile [x64] OVHUDInterior.cpp
+[9/18] Compile [x64] OVHUD.cpp
+[10/18] Compile [x64] OVHUDMission.cpp
+[11/18] Compile [x64] OVHUDPlay.cpp
+[12/18] Compile [x64] OVMissionSubsystem.cpp
+[13/18] Compile [x64] OVInteriorSubsystem.cpp
+[14/18] Compile [x64] OVPerformanceProbe.cpp
+[15/18] Compile [x64] OVHeroWidget.cpp
+[16/18] Link [x64] UnrealEditor-OrbitalVanguard.lib
+   C:/Users/user/source/repos/A1/Unreal/OrbitalVanguard/Intermediate/Build/Win64/x64/UnrealEditor/Development/OrbitalVanguard/UnrealEditor-OrbitalVanguard.lib 라이브러리 및 C:/Users/user/source/repos/A1/Unreal/OrbitalVanguard/Intermediate/Build/Win64/x64/UnrealEditor/Development/OrbitalVanguard/UnrealEditor-OrbitalVanguard.exp 개체를 생성하고 있습니다.
+[17/18] Link [x64] UnrealEditor-OrbitalVanguard.dll
+[18/18] WriteMetadata OrbitalVanguardEditor.target [NoUba]
+
+Total time in Unreal Build Accelerator local executor: 14.39 seconds
+Output binary: E:\UE_5.8\Engine\Binaries\Win64\UnrealEditor.exe
+
+Result: Succeeded
+Total execution time: 17.80 seconds
+Trace written to file C:\Users\user\AppData\Local\UnrealBuildTool\Trace.uba with size 10.2kb

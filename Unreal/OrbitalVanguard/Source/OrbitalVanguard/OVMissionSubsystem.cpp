@@ -122,20 +122,46 @@ bool UOVMissionSubsystem::StartRosterMission(AOVController* PC,bool bDefense,int
     return true;
 }
 
+float UOVMissionSubsystem::GetHeroParticipationSeconds(FGuid HeroId) const
+{return HeroParticipation.FindRef(HeroId);}
+int32 UOVMissionSubsystem::GetHeroObjectiveXP(FGuid HeroId) const
+{return HeroObjectiveXP.FindRef(HeroId);}
+
 void UOVMissionSubsystem::TrackHeroes(float Delta)
 {
     if(!bUsesOwnedRoster || Result!=EOVMissionResult::Ongoing)return;
     auto* Interior=GetWorld()->GetSubsystem<UOVInteriorSubsystem>();
+    auto* Combat=GetWorld()->GetSubsystem<UOVCombatSubsystem>();
+    auto* Transport=GetWorld()->GetSubsystem<UOVTransportSubsystem>();
+    auto Engaged=[Combat](AOVShip* Ship)
+    {
+        if(!Ship || !Combat)return false;
+        for(const auto& A:Combat->Attacks)if(A.Result==EOVAttackResult::Flying && (A.Attacker.Get()==Ship || A.Target.Get()==Ship))return true;
+        for(const auto& S:Combat->Ships)if(S.Ship==Ship)
+            for(const auto& Mount:S.Mounts)if(Mount.ShotsFired>0 && Mount.Cooldown>0)return true;
+        return false;
+    };
     for(const auto& U:Interior->Units)if(U.HeroId.IsValid() && HeroParticipation.Contains(U.HeroId) && Living(U))
-        HeroParticipation[U.HeroId]+=Delta;
+    {
+        const auto Passenger=Transport->GetPerson(U.PersonId);
+        const bool bBoarding=Passenger.State==EOVPassengerState::InPod || Passenger.State==EOVPassengerState::InShuttle ||
+            Passenger.State==EOVPassengerState::InsideTarget || Passenger.State==EOVPassengerState::AwaitingRecovery;
+        const bool bOperation=U.OperationContributedAt>=Interior->GameTime-1.e-4;
+        const bool bFighting=U.State==EOVInteriorState::Fighting;
+        const bool bDuty=U.bDutyActive && Engaged(U.Ship.Get());
+        if(bBoarding || bOperation || bFighting || bDuty)HeroParticipation[U.HeroId]+=Delta;
+    }
     for(const auto& E:Interior->Events)if(E.Serial>LastHeroEvent)
     {
         if(E.Kind==TEXT("Capture")||E.Kind==TEXT("Sabotage"))
         {
             const int32 Bonus=E.SlotId==BridgeSlot?400:E.Kind==TEXT("Sabotage")?300:200;
-            for(const auto& U:Interior->Units)if(U.HeroId.IsValid() && HeroParticipation.Contains(U.HeroId) && Living(U) &&
-                U.Ship==E.Ship && U.NodeId==E.SlotId && U.FactionId==E.FactionId)
-                HeroObjectiveXP.FindOrAdd(U.HeroId)=FMath::Max(HeroObjectiveXP.FindRef(U.HeroId),Bonus);
+            for(int32 UnitId:E.ParticipantUnitIds)
+            {
+                const auto U=Interior->GetUnit(UnitId);
+                if(U.HeroId.IsValid() && HeroParticipation.Contains(U.HeroId))
+                    HeroObjectiveXP.FindOrAdd(U.HeroId)=FMath::Max(HeroObjectiveXP.FindRef(U.HeroId),Bonus);
+            }
         }
         LastHeroEvent=FMath::Max(LastHeroEvent,E.Serial);
     }
@@ -309,7 +335,7 @@ void UOVMissionSubsystem::Finish(EOVMissionResult Outcome,const FString& Message
 {
     if(Result!=EOVMissionResult::Ongoing)return;
     Result=Outcome;Phase=EOVMissionPhase::Completed;Score.FinishedAt=GameTime;Status=Message;
-    if(bUsesOwnedRoster && GetWorld()->GetGameInstance())
+    if(bUsesOwnedRoster && (Outcome==EOVMissionResult::Victory || Outcome==EOVMissionResult::Defeat) && GetWorld()->GetGameInstance())
     {
         auto* Heroes=GetWorld()->GetGameInstance()->GetSubsystem<UOVHeroSubsystem>();
         for(const auto& Pair:HeroParticipation)if(Pair.Value>0)

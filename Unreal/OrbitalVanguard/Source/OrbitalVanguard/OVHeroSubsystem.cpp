@@ -13,6 +13,35 @@ FOVHeroRecord UOVHeroSubsystem::GetHero(FGuid Id) const
     return H?*H:FOVHeroRecord();
 }
 
+FString UOVHeroSubsystem::GetSkillDescription(FGuid HeroId,int32 SkillIndex) const
+{
+    const auto H=GetHero(HeroId);
+    if(!H.HeroId.IsValid() || SkillIndex<0 || SkillIndex>=4 || H.SkillRanks.Num()!=4)return TEXT("스킬 정보가 없습니다");
+    static const TCHAR* const Melee[]={
+        TEXT("역장 방어: 자신 피해 경감 +20/25/30%p, 4초 · 재사용 16초 · 총 경감 65% 상한"),
+        TEXT("역장 엄호: 3m 이내 다른 아군의 선내 피해 8/10/12% 감소 · 같은 효과 최고값"),
+        TEXT("강화 돌입: 6/7/8m 내 적에게 이동속도 1.5배로 최대 2초 접근, 다음 공격 +20/30/40% · 재사용 30초"),
+        TEXT("생존 한계 해방: HP 25% 미만에서 경감 +10/15/20%p, 3초 · 재사용 120초 · HP 40% 이상 회복 후 재발동")};
+    static const TCHAR* const Ranged[]={
+        TEXT("초감각 조준: 다음 기본공격 2/2.25/2.5배 · 재사용 12초"),
+        TEXT("약점 감지: 개인 공격이 대상의 선내 피해 경감 8/12/16%p 무시"),
+        TEXT("전자기 제압: 기본공격 대신 0.6초 동안 0.5배 피해 3발, 적 이동 20/25/30% 감소 4초 · 재사용 30초; 보직 시 연사 +15/20/25% 8초 · 재사용 60초"),
+        TEXT("인지 가속: 같은 적을 4초 추적한 뒤 개인 피해 +10/15/20% · 표적 변경이나 시야 상실 시 초기화")};
+    static const TCHAR* const Support[]={
+        TEXT("생체 재구성: HP 성장 배율을 적용한 85/100/115 회복 · 대상 HP 50% 이하 · 촉매 1개 · 재사용 6/5.5/5초"),
+        TEXT("생존장 전개: 같은 방 아군 재난 틱 피해 15/22.5/30% 감소 · 같은 효과 최고값"),
+        TEXT("재생 공명장: 6m 아군 최대 HP의 2/3/4%를 초당 회복, 5초 · 촉매 2개 · 재사용 90초; 보직 수리는 개발용 견적·재료·충전 필요"),
+        TEXT("촉매 동조: 개인 촉매 보유상한 +1/2/3 · 상한 증가 시 무료 충전 없음")};
+    static const TCHAR* const Commander[]={
+        TEXT("신경 공명: 14m 아군 피해 +12/15/18% · 같은 효과 최고값"),
+        TEXT("신경 접속: 자신의 점령·공작 기여 +10/15/20% · 작업속도 2배 상한"),
+        TEXT("전투 동조: 14m 아군 공격속도 +10/12.5/15%, 8초 · 재사용 60초; 보직 시 선회 +10/15/20% 10초"),
+        TEXT("집단 기동 예지: 같은 방의 후퇴·방어 이동 +5/7.5/10% · 이동 버프 20% 상한")};
+    const TCHAR* const* Rows=H.Role==EOVInteriorRole::Melee?Melee:H.Role==EOVInteriorRole::Ranged?Ranged:H.Role==EOVInteriorRole::Support?Support:Commander;
+    const int32 Unlock=SkillIndex==0?1:SkillIndex==1?5:SkillIndex==2?10:15;
+    return FString::Printf(TEXT("%s · %s · 현재 랭크 %d/3 · 후보 수치"),Rows[SkillIndex],H.Level>=Unlock?TEXT("해금됨"):*FString::Printf(TEXT("레벨 %d 해금"),Unlock),H.SkillRanks[SkillIndex]);
+}
+
 TArray<FOVHeroRecord> UOVHeroSubsystem::GetHeroes(int32 FactionId) const
 {
     TArray<FOVHeroRecord> Result;

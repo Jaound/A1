@@ -1,0 +1,77 @@
+{
+  "schema_version": 1,
+  "code_sha": "4b9c9dcd30607b59c4349fed3f94a2e8d678b468",
+  "source_archive_sha256": "b56ab8b0e24f70633f12e4513bb18d3ef794736d52dc8b436cc54c575f53a5d2",
+  "source_archive_command": "git archive --format=tar 4b9c9dcd30607b59c4349fed3f94a2e8d678b468 Unreal/OrbitalVanguard/Source",
+  "binary_sha256": "91c1c6c237cd9294a45a324190674ce60c004ef6e801434bc18c5f0aaf953d73",
+  "report": "Saved/Validation/Development.json",
+  "report_sha256": "b5571a1faeba3eb39ac4f6465a6aa9f9930bcf535e11a9bb434d354bf411ad87",
+  "report_scope": "DEV PIE API; 물리 입력/실제 게임 밸런스 제외",
+  "report_passed": true,
+  "checks": [
+    {
+      "id": "생성 corvette",
+      "passed": true
+    },
+    {
+      "id": "생성 frigate",
+      "passed": true
+    },
+    {
+      "id": "생성 vector",
+      "passed": true
+    },
+    {
+      "id": "생성 bastion",
+      "passed": true
+    },
+    {
+      "id": "생성 cruiser",
+      "passed": true
+    },
+    {
+      "id": "생성 air_defense",
+      "passed": true
+    },
+    {
+      "id": "생성 radar",
+      "passed": true
+    },
+    {
+      "id": "생성 battleship",
+      "passed": true
+    },
+    {
+      "id": "생성 carrier",
+      "passed": true
+    },
+    {
+      "id": "생성 missile_ship",
+      "passed": true
+    },
+    {
+      "id": "생성 dreadnought",
+      "passed": true
+    },
+    {
+      "id": "생성 battlecarrier",
+      "passed": true
+    },
+    {
+      "id": "생성 repair",
+      "passed": true
+    },
+    {
+      "id": "생성 mining",
+      "passed": true
+    },
+    {
+      "id": "생성 transport",
+      "passed": true
+    },
+    {
+      "id": "생성 assault",
+      "passed": true
+    }
+  ]
+}

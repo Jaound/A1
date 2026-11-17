@@ -53,7 +53,7 @@ bool UOVTransportSubsystem::CanRemoveShip(AOVShip* Ship) const
     for(const auto& P:Persons)
         if(P.State!=EOVPassengerState::Dead && (P.CurrentShip==Ship || P.Shuttle==Ship))return false;
     for(const auto& P:Pods)
-        if((OVTransport::IsFlying(P.State)||P.State==EOVPodFlightState::Queued||P.State==EOVPodFlightState::Attached) &&
+        if(P.HP>0 && P.State!=EOVPodFlightState::Destroyed &&
             (P.Origin==Ship||P.Target==Ship||P.ReturnDestination==Ship))return false;
     return true;
 }

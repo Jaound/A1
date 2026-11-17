@@ -66,6 +66,8 @@ public:
     UPROPERTY(Config, EditAnywhere, BlueprintReadWrite, Category="Provisional 2B") float GuidedTrackingSeconds = 8;
     UPROPERTY(Config, EditAnywhere, BlueprintReadWrite, Category="Provisional 2B") float MissOffsetRadiusFactor = 2.5f;
     UPROPERTY(Config, EditAnywhere, BlueprintReadWrite, Category="Provisional 2B") float ControlAccuracyBonus = 0.02f;
+    /** D114 owned-hero profile. Historical test fixtures retain their original aim model. */
+    UPROPERTY(EditAnywhere, BlueprintReadWrite) bool bHeroD114Aim = false;
     UPROPERTY(Config, EditAnywhere, BlueprintReadWrite, Category="Provisional 2B") float AutoClearanceHeight = 600;
     UPROPERTY(Config, EditAnywhere, BlueprintReadWrite, Category="Provisional 2B") float MountCollisionRadius = 18;
     // Only for the first executable checkpoint. Final 2B defaults to formal detection.

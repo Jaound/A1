@@ -14,6 +14,8 @@ public:
  void SyncAddedUI();
  bool IsOverAddedUI(float X,float Y) const;
  bool IsAddedUIEditing() const;
+ void SetHeroPanelOpen(bool bOpen) { bHeroPanelOpen=bOpen; SyncAddedUI(); }
+ bool IsHeroPanelOpen() const { return bHeroPanelOpen; }
  virtual void NotifyHitBoxClick(FName BoxName) override;
  UFUNCTION(BlueprintPure, Category="UI") bool IsOverPanel(float X,float Y) const;
  UFUNCTION(BlueprintPure, Category="UI") FName GetHitActionAtCanvasPoint(FVector2D Point) const;
@@ -43,6 +45,7 @@ private:
  UPROPERTY() TObjectPtr<UOVDevelopmentWidget> DevelopmentWidget;
  UPROPERTY() TObjectPtr<UOVHeroWidget> HeroWidget;
  FBox2D DevelopmentRect, HeroRect;
+ bool bHeroPanelOpen=true;
  TMap<FName,FVector2D> ActionCenters;
  float UIScale=1.f;
  FVector2D ViewportPixels=FVector2D(1280,740);

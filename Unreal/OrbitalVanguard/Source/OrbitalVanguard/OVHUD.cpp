@@ -98,6 +98,7 @@ bool AOVHUD::HandlePointer(float X,float Y,bool Pressed,bool Down,float Wheel,bo
 void AOVHUD::NotifyHitBoxClick(FName N)
 {
  if(HandleInteriorAction(N)) return;
+ if(N==TEXT("HeroPanel")) { SetHeroPanelOpen(!bHeroPanelOpen);return; }
  if(N==TEXT("MissionBackground")) return;
  if(N==TEXT("WindowBackground")) return;
  if(N==TEXT("WindowClose")) { bDetailsOpen=false;return; }
@@ -321,12 +322,12 @@ void AOVHUD::SyncAddedUI()
  const FVector2D HeroSize(FMath::Min(310.f,W*.27f),FMath::Min(310.f,H*.48f));
  const FVector2D HeroPos(W-HeroSize.X-12.f,100.f);HeroRect=FBox2D(HeroPos,HeroPos+HeroSize);
  if(DevelopmentWidget){DevelopmentWidget->SetPositionInViewport(DevPos/Dpi,false);DevelopmentWidget->SetDesiredSizeInViewport(DevSize/Dpi);DevelopmentWidget->SetVisibility(PC->bDeveloperMode?ESlateVisibility::Visible:ESlateVisibility::Collapsed);}
- if(HeroWidget){HeroWidget->SetPositionInViewport(HeroPos/Dpi,false);HeroWidget->SetDesiredSizeInViewport(HeroSize/Dpi);HeroWidget->SetVisibility(PC->bDeveloperMode?ESlateVisibility::Collapsed:ESlateVisibility::Visible);}
+ if(HeroWidget){HeroWidget->SetPositionInViewport(HeroPos/Dpi,false);HeroWidget->SetDesiredSizeInViewport(HeroSize/Dpi);HeroWidget->SetVisibility(PC->bDeveloperMode||!bHeroPanelOpen?ESlateVisibility::Collapsed:ESlateVisibility::Visible);}
 }
 bool AOVHUD::IsOverAddedUI(float X,float Y) const
 {
  const auto* PC=Cast<AOVController>(PlayerOwner);if(!PC)return false;const FVector2D P(X,Y);
- return PC->bDeveloperMode?DevelopmentWidget&&DevelopmentRect.IsInsideOrOn(P):HeroWidget&&HeroRect.IsInsideOrOn(P);
+ return PC->bDeveloperMode?DevelopmentWidget&&DevelopmentRect.IsInsideOrOn(P):bHeroPanelOpen&&HeroWidget&&HeroRect.IsInsideOrOn(P);
 }
 bool AOVHUD::IsAddedUIEditing() const
 {

@@ -105,6 +105,8 @@ public:
     UFUNCTION(BlueprintPure) TArray<int32> GetPlayerUnitIds() const;
     /** 전체 결과는 검증/임무 종료용. 진행 중 HUD는 적 로스터 수치를 공개하면 안 된다. */
     UFUNCTION(BlueprintPure) FOVMissionScore GetScore() const;
+    UFUNCTION(BlueprintPure) float GetHeroParticipationSeconds(FGuid HeroId) const;
+    UFUNCTION(BlueprintPure) int32 GetHeroObjectiveXP(FGuid HeroId) const;
     UFUNCTION(BlueprintPure) FString GetPublicStatus() const;
     UFUNCTION(BlueprintCallable) void MarkComparisonTimeout();
 private:

@@ -23,7 +23,8 @@ bool UOVDevelopmentSubsystem::OpenRosterRoom()
     for(const auto& U:Interior->Units)if(U.HeroId.IsValid() && U.HP>0 && U.State!=EOVInteriorState::Dead)
     {
         if((Mission->bEnabled && Mission->Result==EOVMissionResult::Ongoing && Mission->GameTime>0) ||
-            !U.Ship.IsValid() || U.Ship->Systems->FactionId!=U.FactionId || U.State==EOVInteriorState::InTransit || U.State==EOVInteriorState::AwaitingRecovery)
+            !U.Ship.IsValid() || PC->Combat->IsDeparted(U.Ship.Get()) || U.Ship->bFTLCharging ||
+            U.Ship->Systems->FactionId!=U.FactionId || U.State==EOVInteriorState::InTransit || U.State==EOVInteriorState::AwaitingRecovery)
         {LastMessage=TEXT("운용 중 영웅은 먼저 실제 철수·회수해야 합니다. 전투를 종료하지 않은 채 편성실로 무료 귀환할 수 없습니다.");return false;}
     }
     // Detach before Mission::Disable so unfinished operations cannot be hidden from persistence.
@@ -103,7 +104,7 @@ bool UOVDevelopmentSubsystem::DeleteShip(AOVShip* Ship)
     auto* Interior=GetWorld()->GetSubsystem<UOVInteriorSubsystem>();
     if(!Interior->RemoveShip(Ship)){LastMessage=Interior->LastMessage;return false;}
     auto* Combat=GetWorld()->GetSubsystem<UOVCombatSubsystem>();
-    for(AOVShip* Other:PC->Ships)if(IsValid(Other)&&Other->AttackTarget==Ship)Combat->SetTarget(Other,nullptr);
+    for(AOVShip* Other:PC->Ships)if(IsValid(Other)&&Other->AttackTarget==Ship)Combat->CancelAttackOrder(Other);
     Combat->CancelAttackOrder(Ship);
     // Emitted attacks retain their immutable attacker/faction/profile snapshots.
     Combat->Ships.RemoveAll([Ship](const auto& S){return S.Ship==Ship;});
@@ -114,11 +115,13 @@ bool UOVDevelopmentSubsystem::DeleteShip(AOVShip* Ship)
     Transit->RemoveShip(Ship); GetWorld()->GetSubsystem<UOVLogisticsSubsystem>()->RemoveDevShip(Ship);
     if(PC->Selected==Ship)PC->ClearSelection(); else PC->Selection.Remove(Ship);
     PC->Ships.Remove(Ship); PC->TrialFTLRemaining.Remove(Ship); SpawnedShips.Remove(Ship); Ship->Destroy();
-    LastMessage=TEXT("시험 함선 삭제 · 기발사 공격 기록은 유지");return true;
+    LastMessage=TEXT("시험 함선과 해당 격납 시험 재고를 명시적으로 폐기 · 기발사 공격 기록은 유지");return true;
 }
 
 bool UOVDevelopmentSubsystem::EquipWeapon(AOVShip* Ship,FName MountId,FName ProfileId)
 {
+    const auto* PC=Cast<AOVController>(GetWorld()->GetFirstPlayerController());
+    if(!PC||!PC->bDeveloperMode){LastMessage=TEXT("개발 모드에서만 시험 장착할 수 있습니다.");return false;}
     auto* Combat=GetWorld()->GetSubsystem<UOVCombatSubsystem>();
     const bool Result=IsValid(Ship)&&Combat->SetWeaponProfile(Ship,MountId,ProfileId);
     LastMessage=Result?TEXT("무장 교체 · 기존 장착 계열/티어/상하부 제약 유지 · HP 회복 없음"):
@@ -126,11 +129,15 @@ bool UOVDevelopmentSubsystem::EquipWeapon(AOVShip* Ship,FName MountId,FName Prof
 }
 bool UOVDevelopmentSubsystem::SetShipTarget(AOVShip* Ship,AOVShip* Target)
 {
+    const auto* PC=Cast<AOVController>(GetWorld()->GetFirstPlayerController());
+    if(!PC||!PC->bDeveloperMode){LastMessage=TEXT("개발 모드를 먼저 켜세요.");return false;}
     const bool Result=IsValid(Ship)&&GetWorld()->GetSubsystem<UOVCombatSubsystem>()->SetTarget(Ship,Target);
     LastMessage=Result?TEXT("표적 지정 수락 · 발사 명령과 별개"):TEXT("표적 지정 불가: 소속·지휘·이탈·완파 상태 확인");return Result;
 }
 bool UOVDevelopmentSubsystem::FireWeapon(AOVShip* Ship,FName MountId)
 {
+    const auto* PC=Cast<AOVController>(GetWorld()->GetFirstPlayerController());
+    if(!PC||!PC->bDeveloperMode){LastMessage=TEXT("개발 모드를 먼저 켜세요.");return false;}
     auto* Combat=GetWorld()->GetSubsystem<UOVCombatSubsystem>();
     const bool Result=IsValid(Ship)&&Combat->RequestFire(Ship,MountId);
     LastMessage=Result?TEXT("발사 요청 수락 · 실제 발사 가능 조건은 별도 검사"):

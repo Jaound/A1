@@ -19,6 +19,10 @@ def p(obj, key):
     return obj.get_editor_property(key)
 
 
+def guid_key(value):
+    return tuple(p(value, key) for key in ("a", "b", "c", "d"))
+
+
 def check(name, condition, detail=""):
     report["checks"].append({"id": name, "passed": bool(condition), "detail": str(detail)})
     unreal.log("OVHERO " + name + " = " + str(bool(condition)) + " " + str(detail))
@@ -40,7 +44,7 @@ def run(pc):
     role = unreal.OVInteriorRole.COMMANDER
     ids = [heroes.create_dev_hero(0, role, "검사 영웅 %d" % i) for i in range(16)]
     records = list(heroes.get_heroes(0))
-    check("H-UNIQUE-16-PEOPLE", len(records) == 16 and len({str(p(h, "hero_id")) for h in records}) == 16)
+    check("H-UNIQUE-16-PEOPLE", len(records) == 16 and len({guid_key(p(h, "hero_id")) for h in records}) == 16)
     for hero_id in ids[:15]:
         check("H-DEPLOY-" + str(len(report["checks"])), heroes.set_deployment(hero_id, True), p(heroes, "last_message"))
     check("H-FACTION-15-LIMIT", heroes.count_deployed(0) == 15 and not heroes.set_deployment(ids[15], True))
@@ -52,15 +56,29 @@ def run(pc):
     check("H-MUTATE-AFTER-SAVE", heroes.spend_skill_point(ids[0], 0))
     check("H-LOAD", heroes.load_roster(state["slot"], 0), p(heroes, "last_message"))
     loaded = heroes.get_hero(ids[0])
-    check("H-SAVE-ID-AND-SKILLS", str(p(loaded, "hero_id")) == str(ids[0]) and list(p(loaded, "skill_ranks")) == [2, 1, 1, 1] and p(loaded, "skill_points") == 5)
+    loaded_id, expected_id = guid_key(p(loaded, "hero_id")), guid_key(ids[0])
+    loaded_ranks, loaded_points = list(p(loaded, "skill_ranks")), p(loaded, "skill_points")
+    check("H-SAVE-ID-AND-SKILLS", loaded_id == expected_id and loaded_ranks == [2, 1, 1, 1] and loaded_points == 5,
+          "loaded_id=%s expected_id=%s ranks=%s points=%s" % (loaded_id, expected_id, loaded_ranks, loaded_points))
     for hero_id in ids[1:15]:
         check("H-RELEASE-" + str(len(report["checks"])), heroes.set_deployment(hero_id, False))
+    start2c = getattr(pc, "start_phase2c_range", None) or getattr(pc, "start_phase2_c_range")
+    start2c(3)
+    fixture_ships = list(p(pc, "ships"))
+    fixture_transport, fixture_interior = p(pc, "transport"), p(pc, "interior")
+    fixture_transport.reset_scenario(fixture_ships)
+    fixture_interior.reset_scenario(fixture_ships, 260112)
+    check("H-DIRECT-ENEMY-SPAWN-REFUSED", fixture_interior.spawn_roster_hero(fixture_ships[2], ids[0], "") == 0)
+    check("H-OWN-SHIP-SPAWN-ALLOWED", fixture_interior.spawn_roster_hero(fixture_ships[0], ids[0], "") > 0, p(fixture_interior, "last_message"))
+    check("H-RETURN-TO-ROSTER-ROOM", dev.open_roster_room(), p(dev, "last_message"))
     mission = p(pc, "mission")
     check("H-OWNED-MISSION", mission.start_roster_mission(pc, False, 260112, False), p(mission, "status"))
     interior = p(pc, "interior")
     own = p(mission, "origin")
     bound = heroes.get_hero(ids[0]); uid = p(bound, "runtime_unit_id"); person = p(bound, "runtime_person_id")
-    check("H-RUNTIME-IDS", uid > 0 and person > 0 and str(p(interior.get_unit(uid), "hero_id")) == str(ids[0]))
+    check("H-RUNTIME-IDS", uid > 0 and person > 0 and guid_key(p(interior.get_unit(uid), "hero_id")) == guid_key(ids[0]))
+    mission.simulate(1.0)
+    check("H-IDLE-NO-PARTICIPATION-XP", mission.get_hero_participation_seconds(ids[0]) == 0 and mission.get_hero_objective_xp(ids[0]) == 0)
     check("H-NO-DUPLICATE-RUNTIME", interior.spawn_roster_hero(own, ids[0], "") == 0)
     check("H-NO-SAVE-IN-COMBAT", not heroes.save_roster(state["slot"], 0))
     bridge = next(s for s in p(p(p(own, "systems"), "layout"), "slots") if p(s, "facility") == unreal.OVFacilityType.BRIDGE)

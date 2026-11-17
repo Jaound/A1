@@ -71,8 +71,10 @@ void UOVInteriorSubsystem::PersistRoster(bool bDetach)
             if(U.Ship.IsValid())if(auto* Logistics=GetWorld()->GetSubsystem<UOVLogisticsSubsystem>())Logistics->CancelDevRepair(U.Ship.Get(),U.HeroId);
             const auto* Mission=GetWorld()->GetSubsystem<UOVMissionSubsystem>();
             const bool bUnfinished=Mission && Mission->bEnabled && Mission->GameTime>0 && Mission->Result==EOVMissionResult::Ongoing;
+            const auto* Combat=GetWorld()->GetSubsystem<UOVCombatSubsystem>();
             if(H->Status==EOVHeroStatus::Deployed && (bUnfinished || !U.Ship.IsValid() ||
                 U.State==EOVInteriorState::InTransit || U.State==EOVInteriorState::AwaitingRecovery ||
+                U.Ship->bFTLCharging || (Combat && Combat->IsDeparted(U.Ship.Get())) ||
                 U.Ship->Systems->FactionId!=U.FactionId)) H->Status=EOVHeroStatus::Missing;
             H->RuntimeUnitId=0;H->RuntimePersonId=0;
         }
@@ -84,7 +86,10 @@ int32 UOVInteriorSubsystem::SpawnRosterHero(AOVShip* Ship,FGuid HeroId,FName Slo
     auto* GI=GetWorld()?GetWorld()->GetGameInstance():nullptr;
     auto* Roster=GI?GI->GetSubsystem<UOVHeroSubsystem>():nullptr;
     auto* H=Roster?Roster->FindHero(HeroId):nullptr;
-    if(!H || !H->bDeploymentReserved || H->Status!=EOVHeroStatus::Deployed || H->RuntimeUnitId!=0 || H->RuntimePersonId!=0)
+    if(!H || !IsValid(Ship) || !Ship->Systems || Ship->Systems->bWrecked || Ship->Systems->bNeutral ||
+       Ship->Systems->FactionId!=H->FactionId || Ship->bFTLCharging ||
+       GetWorld()->GetSubsystem<UOVCombatSubsystem>()->IsDeparted(Ship) ||
+       !H->bDeploymentReserved || H->Status!=EOVHeroStatus::Deployed || H->RuntimeUnitId!=0 || H->RuntimePersonId!=0)
     {LastMessage=TEXT("영웅 배치 불가: 편제, 상태 또는 기존 실행 연결 확인");return 0;}
     const int32 Id=RegisterUnit(Ship,H->FactionId,H->Role,SlotId);
     auto* U=FindUnit(Id);if(!U)return 0;
@@ -95,6 +100,7 @@ int32 UOVInteriorSubsystem::SpawnRosterHero(AOVShip* Ship,FGuid HeroId,FName Slo
     U->Medkits=H->Catalysts;
     if(H->CooldownRemaining.Num()==4){U->SkillReadyAt=GameTime+H->CooldownRemaining[0];U->Skill3ReadyAt=GameTime+H->CooldownRemaining[2];U->Skill4ReadyAt=GameTime+H->CooldownRemaining[3];}
     H->RuntimeUnitId=U->UnitId;H->RuntimePersonId=U->PersonId;
+    if(auto* Combat=GetWorld()->GetSubsystem<UOVCombatSubsystem>())if(Combat->Settings)Combat->Settings->bHeroD114Aim=true;
     return Id;
 }
 
@@ -128,7 +134,9 @@ FOVHeroDutyBonuses UOVInteriorSubsystem::GetDutyBonuses(AOVShip* Ship) const
     if(!IsValid(Ship) || !Ship->Systems || Ship->Systems->bWrecked || GetWorld()->GetSubsystem<UOVCombatSubsystem>()->IsDeparted(Ship))return B;
     for(const auto& U:Units)
     {
-        if(!U.bDutyActive || U.Ship!=Ship || U.FactionId!=Ship->Systems->FactionId || !IsOnboard(U))continue;
+        if(!U.bDutyActive || U.Ship!=Ship || U.NodeId!=U.DutySlot || U.FactionId!=Ship->Systems->FactionId || !IsOnboard(U))continue;
+        const auto P=GetWorld()->GetSubsystem<UOVTransportSubsystem>()->GetPerson(U.PersonId);
+        if(P.CurrentShip.Get()!=Ship || (P.State!=EOVPassengerState::Aboard && P.State!=EOVPassengerState::InsideTarget))continue;
         const auto State=Ship->Systems->GetSlotState(U.DutySlot);
         if(State.HP<=0 || State.Crew<=0 || (State.OccupyingFaction>=0 && State.OccupyingFaction!=U.FactionId))continue;
         const int32 Rank=OVInterior::Rank(U,0), SkillRank=OVInterior::Rank(U,2);
@@ -566,7 +574,7 @@ void UOVInteriorSubsystem::AdvanceOperations(float Delta)
         const auto Kind=U.Order==EOVInteriorOrder::Sabotage?EOVInteriorOrder::Sabotage:EOVInteriorOrder::Capture;
         int32 Op=Operations.IndexOfByPredicate([&](const auto& O){return O.Ship==U.Ship&&O.SlotId==U.TargetSlot&&O.FactionId==U.FactionId&&O.Kind==Kind;});
         if(Op==INDEX_NONE){FOVInteriorOperation O;O.Ship=U.Ship;O.SlotId=U.TargetSlot;O.FactionId=U.FactionId;O.Kind=Kind;Op=Operations.Add(O);}
-        if(Operations[Op].bCompleted){Operations[Op].bCompleted=false;Operations[Op].Progress=Operations[Op].Checkpoint=0;}
+        if(Operations[Op].bCompleted){Operations[Op].bCompleted=false;Operations[Op].Progress=Operations[Op].Checkpoint=0;Operations[Op].ParticipantUnitIds.Reset();}
         Workers.FindOrAdd(Op).Add(I);U.State=EOVInteriorState::Operating;
     }
     for(int32 I=0;I<Operations.Num();++I)
@@ -576,6 +584,7 @@ void UOVInteriorSubsystem::AdvanceOperations(float Delta)
         {if(!O.bCompleted)O.Progress=O.Kind==EOVInteriorOrder::Sabotage?O.Checkpoint:0;continue;}
         if(!O.Ship.IsValid()||O.Ship->Systems->bWrecked)continue;
         const auto* L=O.Ship->Systems->Layout.Get();const int32 Slot=L->GetSlotIndex(O.SlotId);
+        for(int32 Unit:*W){O.ParticipantUnitIds.AddUnique(Units[Unit].UnitId);Units[Unit].OperationContributedAt=GameTime;}
         const float Duration=O.Kind==EOVInteriorOrder::Sabotage?Settings.SabotageSeconds:L->Slots[Slot].Facility==EOVFacilityType::Bridge?Settings.BridgeSeconds:Settings.CaptureSeconds;
         float Command=0;
         for(int32 Unit:*W)if(Units[Unit].Role==EOVInteriorRole::Commander && OVInterior::Rank(Units[Unit],1)>0)
@@ -591,6 +600,7 @@ void UOVInteriorSubsystem::AdvanceOperations(float Delta)
             if(auto* G=FindGraph(O.Ship.Get()))G->CompletedBy.Add(O.FactionId);
             for(int32 Unit:*W){Units[Unit].Order=EOVInteriorOrder::Defend;Units[Unit].State=EOVInteriorState::Defending;Units[Unit].Reason=TEXT("실제 시설 작전 완료 · 현재 방 수호");}
             Emit(O.Kind==EOVInteriorOrder::Sabotage?TEXT("Sabotage"):TEXT("Capture"),Units[(*W)[0]],TEXT("시설 작전 완료: 외부 기능에 반영"));
+            Events.Last().ParticipantUnitIds=O.ParticipantUnitIds;
         }
     }
 }

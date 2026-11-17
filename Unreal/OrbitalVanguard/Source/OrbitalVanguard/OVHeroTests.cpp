@@ -24,6 +24,9 @@ bool FOVHeroGrowthTest::RunTest(const FString&)
     TestEqual(TEXT("레벨 상한"),Result.Level,20);
     TestEqual(TEXT("6개의 성장 포인트"),Result.SkillPoints,6);
     TestEqual(TEXT("15레벨 네 번째 기술 해금"),Result.SkillRanks[3],1);
+    Roster->Heroes[0].Role=EOVInteriorRole::Support;Roster->Heroes[0].SkillRanks[3]=3;Roster->Heroes[0].Catalysts=1;
+    TestEqual(TEXT("지원 촉매 최대 7개"),Roster->GetCatalystCapacity(H.HeroId),7);
+    TestEqual(TEXT("상한 상승 시 무료 촉매 없음"),Roster->GetHero(H.HeroId).Catalysts,1);
     Roster->Heroes[0].Status=EOVHeroStatus::Dead;
     TestFalse(TEXT("사망한 영웅에게 성장 지급 금지"),Roster->AwardBattleXP(H.HeroId,TEXT("battle-c"),true,0,0));
     return true;

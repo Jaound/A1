@@ -117,6 +117,7 @@ struct ORBITALVANGUARD_API FOVInteriorUnitRecord
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly) double SkillReadyAt = 0;
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly) double SkillActiveUntil = 0;
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly) double LastDamagedAt = -1000;
+    UPROPERTY(VisibleAnywhere, BlueprintReadOnly) double OperationContributedAt = -1000;
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly) int32 EnemyId = 0;
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly) TArray<FName> Path;
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly) TWeakObjectPtr<AOVShip> EntryShip;
@@ -155,6 +156,7 @@ struct ORBITALVANGUARD_API FOVInteriorOperation
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly) float Progress = 0;
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly) float Checkpoint = 0;
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly) bool bCompleted = false;
+    UPROPERTY(VisibleAnywhere, BlueprintReadOnly) TArray<int32> ParticipantUnitIds;
 };
 
 USTRUCT(BlueprintType)
@@ -169,6 +171,7 @@ struct ORBITALVANGUARD_API FOVInteriorEvent
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly) TWeakObjectPtr<AOVShip> Ship;
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly) FName SlotId;
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly) FString Message;
+    UPROPERTY(VisibleAnywhere, BlueprintReadOnly) TArray<int32> ParticipantUnitIds;
 };
 
 /** Actual units, navigation and operations. DEV transport tokens never become units implicitly. */

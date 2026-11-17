@@ -176,6 +176,16 @@ TArray<FName> OVCalibration::GetWeaponProfileIds()
     return Result;
 }
 
+FString OVCalibration::GetWeaponProfileDescription(FName RequestedId)
+{
+    for (const FWeapon& Weapon : Weapons)
+        for (int32 Tier = Weapon.MinTier; Tier <= 4; ++Tier)
+            if (ProfileId(Weapon, Tier) == RequestedId)
+                return FString::Printf(TEXT("D116 후보 T%d · 피해 %.1f · 주기 %.2f초 · 사거리 %.0fcm · 속도 %.0fcm/s · 일제사 %d발"),
+                    Tier, Weapon.Damage * TierDamage[Tier - 1], Weapon.Period, Weapon.Range, Weapon.Speed, Weapon.Salvo);
+    return FString();
+}
+
 FString OVCalibration::GetSourceHash() { return SourceHash; }
 
 bool OVCalibration::Start(UOVCombatSubsystem& Combat, const TArray<AOVShip*>& Ships, int32 Scenario)
@@ -269,7 +279,7 @@ bool OVCalibration::ConfigureHull(UOVCombatSubsystem& Combat, AOVShip& Ship, FNa
     S.FactionId=Friendly?0:1; S.Initialize(Layout);
     Ship.SetActorHiddenInGame(false); Ship.SetActorEnableCollision(true);
     Ship.SetActorLocationAndRotation(Position,FRotator(0,Friendly?0:180,0)); Ship.DebugResetMotion(); Ship.SetAutomation(false,false);
-    Combat.RegisterShip(&Ship,Hull->RadarTier,false,Hull->Size);
+    Combat.RegisterShip(&Ship,Hull->RadarTier,HullId==TEXT("radar"),Hull->Size);
     for(int32 I=0;I<Hull->MountCount;++I) Combat.SetWeaponProfile(&Ship,Layout->WeaponMounts[I].WeaponId,ProfileId(Weapons[Hull->Mounts[I].Weapon],Hull->Mounts[I].Tier));
     return true;
 }
