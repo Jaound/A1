@@ -41,6 +41,19 @@ bool AOVHUD::IsOverWorldMarker(FVector2D Pixel) const
  return Hit && Hit->GetName().ToString().StartsWith(TEXT("WorldPick_"));
 }
 
+FString AOVHUD::GetFleetDisplayLabel(AOVShip* Ship) const
+{
+ const auto* PC=Cast<AOVController>(PlayerOwner);
+ if(!PC||!Ship)return FString();
+ int32 Same=0,Ordinal=0;
+ for(const auto& Entry:PC->Ships) {
+  const auto* Other=Entry.Get();
+  if(!Other||Other->bFriendly!=Ship->bFriendly||Other->ShipName!=Ship->ShipName)continue;
+  ++Same;if(Other==Ship)Ordinal=Same;
+ }
+ return Ship->ShipName.Left(10)+(Same>1?FString::Printf(TEXT(" %d"),Ordinal):FString());
+}
+
 void AOVHUD::DrawPlayHUD()
 {
  auto* PC=Cast<AOVController>(PlayerOwner);
@@ -85,7 +98,14 @@ void AOVHUD::DrawPlayHUD()
   const auto* Ship=PC->Ships[I].Get();if(!Ship||!Ship->Systems)continue;
   if(PC->Combat&&PC->Combat->bEnabled&&PC->Combat->IsDeparted(PC->Ships[I]))continue;
   const float Y=104+Row*58; const FLinearColor Color=Ship->bFriendly?PlayAccent:FLinearColor(1,.38f,.26f);
-  Button(FName(*FString::Printf(TEXT("Pick_%d"),I)),(Ship->bFriendly?TEXT("◆ "):TEXT("◇ "))+Ship->ShipName.Left(15),18,Y,174,Ship==PC->Selected);
+  Button(FName(*FString::Printf(TEXT("Pick_%d"),I)),TEXT(""),18,Y,174,Ship==PC->Selected);
+  const FLinearColor LabelColor=Ship==PC->Selected?FLinearColor::White:Color;
+  DrawText(GetFleetDisplayLabel(PC->Ships[I]),LabelColor,52,Y+5,GEngine->GetSmallFont());
+  // Schematic outline uses the actual layout proportions; this is not the final model.
+  const FVector Half=Ship->Systems->Layout?Ship->Systems->Layout->LocalHalfExtent:FVector(175,75,30);
+  const float HalfWidth=FMath::Clamp(float(11.0*Half.Y/FMath::Max(1.0,Half.X)),3.f,9.f);
+  DrawLine(25,Y+14,34,Y+14-HalfWidth,Color,1.5f);DrawLine(34,Y+14-HalfWidth,45,Y+14-HalfWidth*.5f,Color,1.5f);
+  DrawLine(45,Y+14-HalfWidth*.5f,45,Y+14+HalfWidth*.5f,Color,1.5f);DrawLine(45,Y+14+HalfWidth*.5f,34,Y+14+HalfWidth,Color,1.5f);DrawLine(34,Y+14+HalfWidth,25,Y+14,Color,1.5f);
   DrawRect(Color,18,Y,3,48);
   DrawRect(FLinearColor(.05f,.1f,.16f),26,Y+32,158,10);
   DrawRect(Color,26,Y+32,158*FMath::Clamp(Ship->Systems->HullHP/FMath::Max(1.f,Ship->Systems->MaxHullHP),0.f,1.f),4);

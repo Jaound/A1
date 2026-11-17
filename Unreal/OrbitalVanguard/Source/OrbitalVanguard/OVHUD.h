@@ -37,6 +37,7 @@ public:
  UFUNCTION(BlueprintCallable, Category="UI") bool HandlePointer(float X,float Y,bool Pressed,bool Down,float Wheel,bool Orbit,float DX,float DY);
  UFUNCTION(BlueprintCallable, Category="UI") void SetDetailsOpen(bool Open) { bDetailsOpen=Open; bMinimized=false; }
  UFUNCTION(BlueprintPure, Category="UI") FVector2D GetActionCenter(FName Action) const;
+ UFUNCTION(BlueprintPure, Category="UI") FString GetFleetDisplayLabel(AOVShip* Ship) const;
  UFUNCTION(BlueprintPure, Category="UI") bool IsOverWorldMarker(FVector2D Pixel) const;
  UFUNCTION(BlueprintCallable, Category="UI") bool HandleInteriorAction(FName Action);
  UFUNCTION(BlueprintPure, Category="UI") bool IsOverInteriorPanel(float X,float Y) const;

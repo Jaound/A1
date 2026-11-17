@@ -54,6 +54,12 @@ def tick(_dt):
             check('WINDOW-MESH-MIRROR',hud.get_preview_mesh_count()>0)
             check('WINDOW-MIRROR-NO-DAMAGE',state['snapshot']==snapshot(pc))
             ships=list(p(pc,'ships'))
+            old_names=[p(s,'ship_name') for s in ships[:2]]
+            for ship in ships[:2]:ship.set_editor_property('ship_name','같은 함선')
+            first,second=(hud.get_fleet_display_label(s) for s in ships[:2])
+            check('WINDOW-FLEET-DUPLICATE-NAMES-DISTINCT',first!=second and first.endswith('1') and second.endswith('2'),(first,second))
+            for ship,name in zip(ships[:2],old_names):ship.set_editor_property('ship_name',name)
+            check('WINDOW-FLEET-LABEL-READONLY',state['snapshot']==snapshot(pc))
             hud.set_details_open(False);pc.action('Pick_0')
             check('WINDOW-USER-PICK-OPENS',p(hud,'details_open') and p(pc,'selected')==ships[0])
             hud.execute_ui_action('WindowClose');pc.step_simulation(.1)
