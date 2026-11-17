@@ -1,0 +1,97 @@
+{
+  "passed": true,
+  "checks": [
+    {
+      "id": "PITCH-PARENT-IS-YAW",
+      "passed": true
+    },
+    {
+      "id": "BODY-CLOSED",
+      "passed": true
+    },
+    {
+      "id": "BODY-CAP-UV",
+      "passed": true
+    },
+    {
+      "id": "PITCH-CLOSED",
+      "passed": true
+    },
+    {
+      "id": "PITCH-CAP-UV",
+      "passed": true
+    },
+    {
+      "id": "ZERO-PITCH-PIVOT",
+      "passed": true
+    },
+    {
+      "id": "ZERO-YAW-PIVOT",
+      "passed": true
+    },
+    {
+      "id": "PITCH-PIVOT-STATIONARY",
+      "passed": true
+    },
+    {
+      "id": "PITCH-ACTUALLY-ROTATES",
+      "passed": true
+    },
+    {
+      "id": "YAW-CARRIES-PITCH-PIVOT",
+      "passed": true
+    },
+    {
+      "id": "BASE-REMAINS-FIXED",
+      "passed": true
+    },
+    {
+      "id": "SOURCE-UNCHANGED",
+      "passed": true
+    }
+  ],
+  "parts": {
+    "BODY": {
+      "boundary_edges": 0,
+      "nonmanifold_edges": 0,
+      "pitch_cap_faces": 2,
+      "uv_layers": [
+        "UVMap"
+      ]
+    },
+    "PITCH": {
+      "boundary_edges": 0,
+      "nonmanifold_edges": 0,
+      "pitch_cap_faces": 2,
+      "uv_layers": [
+        "UVMap"
+      ]
+    }
+  },
+  "angles": [
+    {
+      "degrees": -30,
+      "surface_intersections": 0
+    },
+    {
+      "degrees": -15,
+      "surface_intersections": 0
+    },
+    {
+      "degrees": 0,
+      "surface_intersections": 129
+    },
+    {
+      "degrees": 15,
+      "surface_intersections": 5
+    },
+    {
+      "degrees": 30,
+      "surface_intersections": 13
+    }
+  ],
+  "source": "C:\\Users\\user\\Documents\\OrbitalVanguardAssets\\Prepared\\PlayUI_R2_BF120_PitchTrial_v5\\BF120_PitchTrial.blend",
+  "source_before": "9daebbcf818e2b1bb1adeb776db235942f2626050719ec9d2c7596b733b1832d",
+  "source_after": "9daebbcf818e2b1bb1adeb776db235942f2626050719ec9d2c7596b733b1832d",
+  "scope": "hierarchy/closed meshes and sampled cap-free intersections only; visual joint, materials, continuous range, muzzle and gameplay unapproved"
+}

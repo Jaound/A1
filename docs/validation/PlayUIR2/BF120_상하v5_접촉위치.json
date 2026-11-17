@@ -1,0 +1,58 @@
+{
+  "source": "C:\\Users\\user\\Documents\\OrbitalVanguardAssets\\Prepared\\PlayUI_R2_BF120_PitchTrial_v5\\BF120_PitchTrial.blend",
+  "source_before": "9daebbcf818e2b1bb1adeb776db235942f2626050719ec9d2c7596b733b1832d",
+  "source_after": "9daebbcf818e2b1bb1adeb776db235942f2626050719ec9d2c7596b733b1832d",
+  "angles": [
+    {
+      "degrees": -30,
+      "pairs": 0
+    },
+    {
+      "degrees": -15,
+      "pairs": 0
+    },
+    {
+      "degrees": 0,
+      "pairs": 129,
+      "min": [
+        -0.1358991116285324,
+        -0.5825262069702148,
+        0.3290559947490692
+      ],
+      "max": [
+        -0.09214365482330322,
+        0.5855202078819275,
+        0.6603489518165588
+      ]
+    },
+    {
+      "degrees": 15,
+      "pairs": 5,
+      "min": [
+        -0.13560883700847626,
+        -0.5809735059738159,
+        0.5196741819381714
+      ],
+      "max": [
+        -0.1306464672088623,
+        0.5839669704437256,
+        0.5326170921325684
+      ]
+    },
+    {
+      "degrees": 30,
+      "pairs": 13,
+      "min": [
+        -0.13545820116996765,
+        -0.5708522796630859,
+        0.5509476661682129
+      ],
+      "max": [
+        -0.12934164702892303,
+        0.5723430514335632,
+        0.5641968846321106
+      ]
+    }
+  ],
+  "scope": "triangle contact face centers; no clearance or joint approval"
+}
