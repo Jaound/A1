@@ -1,0 +1,8 @@
+{
+  "mode": "trial",
+  "input": "C:\\Users\\user\\Documents\\OrbitalVanguardAssets\\Prepared\\PlayUI_R2_MM24_MaterialTrial_v1\\MM24_MaterialTrial.blend",
+  "sha256_before": "b903b8ce812bf14d7bad687df7a6ab3fbcc03d7bf8dc4685904f13cc5eccdee1",
+  "sha256_after": "b903b8ce812bf14d7bad687df7a6ab3fbcc03d7bf8dc4685904f13cc5eccdee1",
+  "unchanged": true,
+  "scope": "Blender trial lighting only; no UE, animation, performance or art approval"
+}

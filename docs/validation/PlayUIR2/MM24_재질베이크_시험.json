@@ -1,0 +1,95 @@
+{
+  "inputs": {
+    "high_before": "002e4b296e1f5e35aebdf98092ab4f53acc65a42954e00a52009e9d0f632a425",
+    "low_before": "b86272676e69505b1560389f36dea8c9c81e82516751282b01348f20b7f9d990",
+    "high_after": "002e4b296e1f5e35aebdf98092ab4f53acc65a42954e00a52009e9d0f632a425",
+    "low_after": "b86272676e69505b1560389f36dea8c9c81e82516751282b01348f20b7f9d990"
+  },
+  "maps": [
+    {
+      "part": "MM24_BaseTrial",
+      "channel": "NORMAL",
+      "cap": false,
+      "path": "C:\\Users\\user\\Documents\\OrbitalVanguardAssets\\Prepared\\PlayUI_R2_MM24_MaterialTrial_v1\\MM24_BaseTrial_NORMAL.png",
+      "sha256": "4b4b5c876517beeb5c30797036836a1c41e8f6758441617ed227fe7fdf51fac5"
+    },
+    {
+      "part": "MM24_BaseTrial",
+      "channel": "NORMAL",
+      "cap": true,
+      "path": "C:\\Users\\user\\Documents\\OrbitalVanguardAssets\\Prepared\\PlayUI_R2_MM24_MaterialTrial_v1\\MM24_BaseTrial_NORMAL_cap.png",
+      "sha256": "395fdf494f22bc34b1f7303adce8f1f720c5469614916fa70e4f5324e1454f1d"
+    },
+    {
+      "part": "MM24_BaseTrial",
+      "channel": "Roughness",
+      "cap": false,
+      "path": "C:\\Users\\user\\Documents\\OrbitalVanguardAssets\\Prepared\\PlayUI_R2_MM24_MaterialTrial_v1\\MM24_BaseTrial_Roughness.png",
+      "sha256": "e1b857e773f7b5a8db2bca9c6026597dcdfd02dc8fe8136787af158f4bd47d09"
+    },
+    {
+      "part": "MM24_BaseTrial",
+      "channel": "Roughness",
+      "cap": true,
+      "path": "C:\\Users\\user\\Documents\\OrbitalVanguardAssets\\Prepared\\PlayUI_R2_MM24_MaterialTrial_v1\\MM24_BaseTrial_Roughness_cap.png",
+      "sha256": "f5332b5de5a4eed90cb137459478def72f04c764ecd0acaa645d5d63950e3a14"
+    },
+    {
+      "part": "MM24_BaseTrial",
+      "channel": "Metallic",
+      "cap": false,
+      "path": "C:\\Users\\user\\Documents\\OrbitalVanguardAssets\\Prepared\\PlayUI_R2_MM24_MaterialTrial_v1\\MM24_BaseTrial_Metallic.png",
+      "sha256": "e748505a1bbb64d14cd1c013f0e170711efc786b7472f67753aed4507c80b312"
+    },
+    {
+      "part": "MM24_BaseTrial",
+      "channel": "Metallic",
+      "cap": true,
+      "path": "C:\\Users\\user\\Documents\\OrbitalVanguardAssets\\Prepared\\PlayUI_R2_MM24_MaterialTrial_v1\\MM24_BaseTrial_Metallic_cap.png",
+      "sha256": "ab5140637b7f6192e92fac400e32e957c8a7b1682cddd128e96e0bfbaef50639"
+    },
+    {
+      "part": "MM24_YawTrial",
+      "channel": "NORMAL",
+      "cap": false,
+      "path": "C:\\Users\\user\\Documents\\OrbitalVanguardAssets\\Prepared\\PlayUI_R2_MM24_MaterialTrial_v1\\MM24_YawTrial_NORMAL.png",
+      "sha256": "ee04946d7a4291eb6bde3684b5278cdca3581bee3afceaed1d968d82f846a6d5"
+    },
+    {
+      "part": "MM24_YawTrial",
+      "channel": "NORMAL",
+      "cap": true,
+      "path": "C:\\Users\\user\\Documents\\OrbitalVanguardAssets\\Prepared\\PlayUI_R2_MM24_MaterialTrial_v1\\MM24_YawTrial_NORMAL_cap.png",
+      "sha256": "6d2d148ed84f15976f96da71d0bb31c308eef00d9ae5ee34369d1712bb018221"
+    },
+    {
+      "part": "MM24_YawTrial",
+      "channel": "Roughness",
+      "cap": false,
+      "path": "C:\\Users\\user\\Documents\\OrbitalVanguardAssets\\Prepared\\PlayUI_R2_MM24_MaterialTrial_v1\\MM24_YawTrial_Roughness.png",
+      "sha256": "e4adfd30f35ebf6482a4360275b08b6ca5593f7e09011296df9ad40cf5ea9d50"
+    },
+    {
+      "part": "MM24_YawTrial",
+      "channel": "Roughness",
+      "cap": true,
+      "path": "C:\\Users\\user\\Documents\\OrbitalVanguardAssets\\Prepared\\PlayUI_R2_MM24_MaterialTrial_v1\\MM24_YawTrial_Roughness_cap.png",
+      "sha256": "2caa5812c66f0a37eda55cd12ad40aee8d470e6cb5e1a6769f0d63a17d79a2fb"
+    },
+    {
+      "part": "MM24_YawTrial",
+      "channel": "Metallic",
+      "cap": false,
+      "path": "C:\\Users\\user\\Documents\\OrbitalVanguardAssets\\Prepared\\PlayUI_R2_MM24_MaterialTrial_v1\\MM24_YawTrial_Metallic.png",
+      "sha256": "e6f6ce18f7e3280bd050ad236aa5b0069604d4c99e1bb9fab4abd1cf10e6e3c1"
+    },
+    {
+      "part": "MM24_YawTrial",
+      "channel": "Metallic",
+      "cap": true,
+      "path": "C:\\Users\\user\\Documents\\OrbitalVanguardAssets\\Prepared\\PlayUI_R2_MM24_MaterialTrial_v1\\MM24_YawTrial_Metallic_cap.png",
+      "sha256": "ab5140637b7f6192e92fac400e32e957c8a7b1682cddd128e96e0bfbaef50639"
+    }
+  ],
+  "status": "trial only; material appearance and original normal detail not yet verified"
+}
