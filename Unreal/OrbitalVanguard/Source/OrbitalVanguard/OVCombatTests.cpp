@@ -100,6 +100,13 @@ bool FOVBattleNoticeTest::RunTest(const FString&)
     R.B->Systems->Shield=1;R.B->Systems->bShieldActive=true;
     R.Fire();
     TestTrue(TEXT("Real shield depletion creates separate notice"),Feed->Notices.ContainsByPredicate([](const FOVBattleNotice& N){return N.Kind==EOVBattleNoticeKind::ShieldDepleted;}));
+    R.B->Systems->Tuning.ShieldRegenFraction=1.f;
+    R.B->Systems->Tuning.ShieldNonCombatRegenFraction=1.f;
+    R.B->Systems->RefreshDerivedState();R.B->Systems->Simulate(1.f);
+    const int32 AfterRecovery=Feed->Notices.Num();
+    TestTrue(TEXT("Natural shield recovery creates notice"),R.B->Systems->bShieldActive&&Feed->Notices.ContainsByPredicate([](const FOVBattleNotice& N){return N.Kind==EOVBattleNoticeKind::ShieldRestored;}));
+    R.B->Systems->Simulate(1.f);
+    TestEqual(TEXT("Active shield does not repeat recovery notice"),Feed->Notices.Num(),AfterRecovery);
     R.B->Systems->Shield=0;R.B->Systems->bShieldActive=false;
     for(auto& Armor:R.B->Systems->ArmorSections)Armor.HP=1;
     R.Gun().Profile.Damage=300;R.Fire();

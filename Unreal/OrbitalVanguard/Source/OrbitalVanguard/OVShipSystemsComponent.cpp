@@ -2,6 +2,7 @@
 #include "GameFramework/Actor.h"
 #include "OVShip.h"
 #include "OVCombatSubsystem.h"
+#include "OVBattleNotices.h"
 #include "Engine/World.h"
 
 namespace
@@ -180,7 +181,11 @@ void UOVShipSystemsComponent::Simulate(float SimDelta)
         + MaxShield * FMath::Max(0.f, Tuning.ShieldNonCombatRegenFraction) * ShieldCrewEfficiency * NonCombatTime;
     const float Half = 0.5f * MaxShield;
     Shield = FMath::Min(Half, Shield + Recovery);
-    if (Shield + UE_KINDA_SMALL_NUMBER >= Half) { Shield = Half; bShieldActive = true; }
+    if (Shield + UE_KINDA_SMALL_NUMBER >= Half) {
+        Shield = Half; bShieldActive = true;
+        if(auto* World=GetWorld())if(auto* Combat=World->GetSubsystem<UOVCombatSubsystem>())if(Combat->bEnabled)
+            if(auto* Feed=World->GetSubsystem<UOVBattleNotices>())Feed->RecordShieldRestored(Cast<AOVShip>(GetOwner()),Combat->GameTime);
+    }
 }
 
 FOVFacilityState UOVShipSystemsComponent::GetSlotState(FName SlotId) const

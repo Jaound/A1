@@ -22,6 +22,13 @@ void UOVBattleNotices::RecordCombatHit(const FOVAttackState& Attack,AOVShip* Vic
     if(Attack.FacilitiesDestroyed>0)Append(Attack,Victim,EOVBattleNoticeKind::FacilityDestroyed,Attack.FacilitiesDestroyed);
 }
 
+void UOVBattleNotices::RecordShieldRestored(AOVShip* Ship,double GameTime)
+{
+    if(!IsValid(Ship)||!Ship->Systems||Ship->Systems->FactionId!=0||Ship->Systems->bWrecked)return;
+    FOVAttackState Event;Event.HitShipId=Ship->GetFName();Event.Position=Ship->GetActorLocation();Event.ResolvedAt=GameTime;
+    Append(Event,Ship,EOVBattleNoticeKind::ShieldRestored,1);
+}
+
 void UOVBattleNotices::Append(const FOVAttackState& Attack,AOVShip* Victim,EOVBattleNoticeKind Kind,int32 Count)
 {
     const bool bWrecked=Kind==EOVBattleNoticeKind::ShipWrecked;

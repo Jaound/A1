@@ -685,7 +685,7 @@ bool UOVCombatSubsystem::ResolveImpact(FOVAttackState& Attack, AOVShip* HitShip,
     TArray<bool,TInlineAllocator<64>> ArmorWasAlive,FacilityWasAlive;
     if(Systems->FactionId==0) {
         for(const auto& Armor:Systems->ArmorSections)ArmorWasAlive.Add(Armor.HP>0);
-        for(const auto& Slot:Systems->Slots)FacilityWasAlive.Add(Slot.HP>0);
+        for(int32 I=0;I<Systems->Slots.Num();++I)FacilityWasAlive.Add(Systems->Layout&&Systems->Layout->Slots.IsValidIndex(I)&&Systems->Layout->Slots[I].Facility!=EOVFacilityType::None&&Systems->Slots[I].HP>0);
     }
     Systems->IncomingSourceId = Attack.AttackerId;
     Systems->IncomingFactionId = Attack.FactionId;

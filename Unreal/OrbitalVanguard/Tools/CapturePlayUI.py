@@ -13,7 +13,7 @@ width, height = map(int, size.split('x'))
 report = {'passed': None, 'kind': 'PIE 렌더와 UI API', 'physical_input': False, 'requested_size': [width, height], 'captures': [], 'checks': [], 'errors': []}
 state = {'stage': 'start', 'at': time.monotonic(), 'started': time.monotonic(), 'index': 0}
 editor = unreal.get_editor_subsystem(unreal.UnrealEditorSubsystem)
-views = ['전투_HUD', '영웅_카드', '외부_무장', '격납고', '선내_영웅', '개발_함선', '개발_영웅', '개발_무장', '개발_시험', '초계함_모델', '개발_접기', '개발_확대', '전투_알림']
+views = ['전투_HUD', '영웅_카드', '외부_무장', '격납고', '선내_영웅', '개발_함선', '개발_영웅', '개발_무장', '개발_시험', '초계함_모델', '개발_접기', '개발_확대', '전투_알림', '쉴드_고갈_알림']
 
 def prop(obj, key):
     return obj.get_editor_property(key)
@@ -114,16 +114,25 @@ def tick(_dt):
                 hud.execute_ui_action('InteriorDeck_' + str(deck))
                 hud.execute_ui_action('InteriorUnit_' + str(prop(unit, 'unit_id')))
                 check('INTERIOR-HERO-DECK-SELECTED', prop(hud, 'interior_deck') == deck and prop(unit, 'unit_id') in prop(hud, 'interior_selected_units'))
-            elif name == '전투_알림':
+            elif name in ('전투_알림','쉴드_고갈_알림'):
                 pc.action('MissionAttack')
                 if prop(pc,'simulation_paused'):pc.action('Pause')
                 pc.action('Speed1')
                 feed=hud.get_battle_notice_feed()
+                if name == '쉴드_고갈_알림':
+                    for ship in prop(pc,'ships'):
+                        if prop(ship,'friendly'):
+                            systems=prop(ship,'systems');initial=prop(systems,'shield')
+                            if initial>1:systems.apply_world_hit(ship.get_actor_location(),unreal.Vector(1,0,0),initial-1,unreal.OVDamageCause.EXTERNAL,True)
                 for _ in range(1800):
                     pc.step_simulation(.1)
-                    if prop(feed,'notices'):break
-                check('NOTICE-ACTUAL-COMBAT-HIT',bool(prop(feed,'notices')))
-                pc.action('Pause');hud.execute_ui_action('BattleFeedToggle')
+                    notices=prop(feed,'notices')
+                    if name=='전투_알림' and notices:break
+                    if name=='쉴드_고갈_알림' and any(prop(n,'kind')==unreal.OVBattleNoticeKind.SHIELD_DEPLETED for n in notices):break
+                if name=='전투_알림':check('NOTICE-ACTUAL-COMBAT-HIT',bool(prop(feed,'notices')))
+                else:check('NOTICE-ACTUAL-SHIELD-DEPLETION',any(prop(n,'kind')==unreal.OVBattleNoticeKind.SHIELD_DEPLETED for n in prop(feed,'notices')))
+                pc.action('Pause')
+                if not hud.is_battle_feed_open():hud.execute_ui_action('BattleFeedToggle')
                 state['notice_count']=len(prop(feed,'notices'))
             elif name in ('개발_접기','개발_확대'):
                 pc.action('Developer');hud.reset_development_window()
@@ -144,7 +153,7 @@ def tick(_dt):
             if name == '외부_무장':
                 check('PREVIEW-MESH-MIRROR', hud.get_preview_mesh_count() > 0, hud.get_preview_mesh_count())
                 check('PREVIEW-NO-DAMAGE', state['before_preview'] == snapshot(pc))
-            if name == '전투_알림':
+            if name in ('전투_알림','쉴드_고갈_알림'):
                 index=state['notice_count']-1;action='BattleNotice_'+str(index)
                 center=hud.get_action_center(action)
                 check('NOTICE-VISIBLE-HITBOX',center.x>=0 and str(hud.get_hit_action_at_canvas_point(center))==action)

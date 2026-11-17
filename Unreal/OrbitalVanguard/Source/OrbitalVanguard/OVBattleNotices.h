@@ -8,7 +8,7 @@ class AOVShip;
 struct FOVAttackState;
 
 UENUM(BlueprintType)
-enum class EOVBattleNoticeKind : uint8 { Hit, ShipWrecked, ShieldDepleted, ArmorDestroyed, FacilityDestroyed };
+enum class EOVBattleNoticeKind : uint8 { Hit, ShipWrecked, ShieldDepleted, ArmorDestroyed, FacilityDestroyed, ShieldRestored };
 
 USTRUCT(BlueprintType)
 struct ORBITALVANGUARD_API FOVBattleNotice
@@ -36,6 +36,7 @@ public:
     double LastCriticalDisplayTime=-1000;
     void Reset();
     void RecordCombatHit(const FOVAttackState& Attack,AOVShip* Victim);
+    void RecordShieldRestored(AOVShip* Ship,double GameTime);
 private:
     TArray<int32> RecentAttackIds;
     void Append(const FOVAttackState& Attack,AOVShip* Victim,EOVBattleNoticeKind Kind,int32 Count);
