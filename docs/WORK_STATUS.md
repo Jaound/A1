@@ -2,6 +2,8 @@
 
 ## 현재 상태와 재개 지점 (2026-11-18)
 
+**MM48 좌우 분리 시험 — 채택 보류:** 원본 측면과 단면의 지지대 경계에 근거해 복사본을 z=-0.79에서 나눴다. [v1 구조 13/13](validation/PlayUIR2/MM48_분리v1_구조.json), [v2 구조 13/13](validation/PlayUIR2/MM48_분리v2_구조.json)이지만 이는 폐합·높이 검사일 뿐 외형 승인이 아니다. 주 절단면 범위는 x=-0.899~0.897, y=-0.999~0.608([단면](validation/PlayUIR2/MM48_절단면_분석.json))이므로 v2 축을 (-0.001,-0.1955)로 옮겨 비교했다. 캡 제외 표면 교차는 [v1](validation/PlayUIR2/MM48_회전v1_교차.json) -45도 3쌍·0도 239쌍, [v2](validation/PlayUIR2/MM48_회전v2_교차.json) -90/-45/+45/+90도 1/3/1/1쌍·0도 229쌍이다. 0도는 접촉인지 관통인지 구분하지 못한다. [v1 화면](validation/PlayUIR2/MM48_회전v1_-45.png) / [v2 화면](validation/PlayUIR2/MM48_회전v2_-45.png) 모두 접합부 빈틈이 보이며 축 이동으로 해결되지 않았다. 수작업 접합·정확한 피벗·상하 관절·재질·성능·게임 연결이 남았다. 원본은 보존되고 두 시험본은 Prepared에만 있다.
+
 **MM48 회전 구조 관찰:** [원본 측면](validation/PlayUIR2/MM48_원본측면.png)에는 경사 발사부와 측면 원형 지지대가 보이고 [정면](validation/PlayUIR2/MM48_원본정면.png)과 [높이 단면](validation/PlayUIR2/MM48_원본단면.json)을 함께 기록했다. 원본 해시는 변경되지 않았다. 회전축·분리선·가동 범위를 입증한 것은 아니며 세 개의 연결 성분 중 큰 성분은 기존 조사에서 전체 정점의 98.1%였다. 원본 분리나 게임 적용 완료가 아니다.
 
 **통합 임무 항공대 버튼 결함 수정:** 통합 임무에서 화면의 `출격`/`귀환` 명령은 기존 임무 전용 명령과 이름이 달라 실행되지 않았다. [수정 전 재현](validation/PlayUIR2/EG_임무항공대_수정전.json)에서는 출격 40기 중 귀환 0기였다. 임무 시스템이 두 명령 이름을 같은 실제 항공대 경로로 처리하고 출격 0대와 아군 모함 미선택을 알린다. `PlayUI_R2_EH_Build.log` 성공, [새 PIE API 11/11](validation/PlayUIR2/EH_임무항공대_API.json): 격납고/하단 버튼, 40기 실제 귀환·도킹·재출격, ID·HP 보존, 0대 알림, 적 모함 차단. 도킹 검사는 항공대 서브시스템 시간만 직접 30초씩 진행한 시험이며 실제 마우스 입력이 아니다. [통합 임무 회귀 29사례·316검사](validation/PlayUIR2/EH_통합임무_요약.json), `PlayUI_R2_EH_Automation.log` 자동 98/98, [2C API 77/77](validation/PlayUIR2/EI_2C_API.json) 통과. 2C 첫 실행은 NullRHI에서 HUD 버튼 좌표가 생성되지 않아 [68번째 검사에서 실패](validation/PlayUIR2/EH_2C_API.json)했고 Direct3D 11로 재실행해 통과했다.

@@ -1,0 +1,28 @@
+{
+  "source": "C:\\Users\\user\\Documents\\OrbitalVanguardAssets\\Prepared\\PlayUI_R2_MM48_YawTrial_v1\\MM48_YawTrial.blend",
+  "source_before": "02a45109e718a8082dc94aee2b13cc1517cab7ad1b1f77fa90cfbb142df84091",
+  "source_after": "02a45109e718a8082dc94aee2b13cc1517cab7ad1b1f77fa90cfbb142df84091",
+  "angles": [
+    {
+      "degrees": -90,
+      "surface_intersections": 0
+    },
+    {
+      "degrees": -45,
+      "surface_intersections": 3
+    },
+    {
+      "degrees": 0,
+      "surface_intersections": 239
+    },
+    {
+      "degrees": 45,
+      "surface_intersections": 0
+    },
+    {
+      "degrees": 90,
+      "surface_intersections": 0
+    }
+  ],
+  "scope": "surface intersections with caps omitted; no clearance, pitch, material or gameplay approval"
+}
