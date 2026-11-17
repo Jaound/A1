@@ -115,14 +115,27 @@ void AOVController::AdvancePhase2C(float Delta)
  for(auto& Item:TrialFTLRemaining) if(IsValid(Item.Key)&&Item.Key->bFTLCharging)Item.Value=FMath::Max(0.f,Item.Value-Delta);
 }
 
+bool AOVController::CommandCarrier(AOVShip* Ship,bool bLaunch)
+{
+ auto* Wing=GetWorld()?GetWorld()->GetSubsystem<UOVCarrierSubsystem>():nullptr;
+ if(!IsValid(Ship)||!Ship->bFriendly||!Ship->Systems||Ship->Systems->FactionId!=0||!Wing||
+    !Wing->Carriers.ContainsByPredicate([Ship](const FOVCarrierState& C){return C.Carrier==Ship;})) {
+  LastAction=bLaunch?TEXT("출격 불가 · 아군 모함을 선택하세요"):TEXT("귀환 불가 · 아군 모함을 선택하세요");return false;
+ }
+ if(bLaunch) {
+  const int32 Count=Wing->Launch(Ship);
+  LastAction=Count>0?FString::Printf(TEXT("함재기 출격 %d대"),Count):TEXT("출격 0대 · 기체·시설·충전 상태 확인");
+ } else {Wing->Recall(Ship);LastAction=TEXT("함재기 귀환 명령");}
+ return true;
+}
 bool AOVController::Phase2CAction(FName Name)
 {
  if(Phase2CScenario<0||!Selected||!Selected->bFriendly)return false;
  auto* Wing=GetWorld()->GetSubsystem<UOVCarrierSubsystem>();
  auto* Transit=GetWorld()->GetSubsystem<UOVTransportSubsystem>();
  auto* PD=GetWorld()->GetSubsystem<UOVPointDefenseSubsystem>();
- if(Name==TEXT("LaunchAircraft")) { const int32 Count=Wing->Launch(Selected); LastAction=FString::Printf(TEXT("출격 %d대 · 보유 기체 이동, 신규 생성 없음"),Count); return true; }
- if(Name==TEXT("RecallAircraft")) { Wing->Recall(Selected); LastAction=TEXT("함재기 복귀 명령 · 도킹만으로 무료 수리되지 않음"); return true; }
+ if(Name==TEXT("LaunchAircraft")) { CommandCarrier(Selected,true);return true; }
+ if(Name==TEXT("RecallAircraft")) { CommandCarrier(Selected,false);return true; }
  if(Name==TEXT("PDPriority")) {
   auto Priority=PD->GetShipState(Selected).Priority;
   if(Priority.Num()==3) { const auto First=Priority[0];Priority.RemoveAt(0);Priority.Add(First);PD->SetPriority(Selected,Priority); }

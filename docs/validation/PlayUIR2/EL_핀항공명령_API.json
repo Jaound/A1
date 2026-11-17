@@ -1,0 +1,82 @@
+{
+  "passed": true,
+  "checks": [
+    {
+      "id": "FIXTURE-AIRBORNE",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "MISSION-HANGAR-RECALL-ACTUAL",
+      "passed": true,
+      "detail": "(40, 40)"
+    },
+    {
+      "id": "RECALL-IDS-HP-PRESERVED",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "REAL-DOCKING",
+      "passed": true,
+      "detail": "40"
+    },
+    {
+      "id": "MISSION-HANGAR-LAUNCH-ACTUAL",
+      "passed": true,
+      "detail": "(40, 40, 0)"
+    },
+    {
+      "id": "RELAUNCH-IDS-HP-PRESERVED",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "MISSION-EMPTY-LAUNCH-FEEDBACK",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "MISSION-COMMAND-CARD-RECALL",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "MISSION-COMMAND-CARD-DOCKING",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "MISSION-COMMAND-CARD-LAUNCH",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "ENEMY-CARRIER-COMMAND-BLOCKED",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "PIN-ENEMY-COMMAND-BLOCKED",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "PIN-RECALL-OWN-CARRIER-ONLY",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "PIN-REAL-DOCKING",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "PIN-LAUNCH-OWN-CARRIER-ONLY",
+      "passed": true,
+      "detail": ""
+    }
+  ],
+  "errors": [],
+  "physical_input": false
+}

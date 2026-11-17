@@ -390,6 +390,7 @@ def tick(_dt):
             state.update(phase=102,at=time.monotonic());return
         if state['phase']==102:
             overview=p(pc,'carrier').get_aircraft_overview(hud.get_pinned_ship(0));summary=hud.get_pinned_carrier_summary(0)
+            hit_button(hud,'PinnedLaunch_0');hit_button(hud,'PinnedRecall_0')
             check('WINDOW-PIN-CARRIER-ACTUAL-COUNTS',hud.get_pinned_deck(0)==-1 and ('생존 '+str(p(overview,'surviving'))) in summary and ('손실 '+str(p(overview,'wrecked'))) in summary)
             systems=p(hud.get_pinned_ship(0),'systems');systems.set_editor_property('faction_id',1)
             check('WINDOW-PIN-CARRIER-OWNERSHIP-PRIVACY',hud.get_pinned_carrier_summary(0)=='')

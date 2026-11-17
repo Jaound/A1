@@ -251,6 +251,14 @@ void AOVHUD::NotifyHitBoxClick(FName N)
   }
   return;
  }
+ if(N.ToString().StartsWith(TEXT("PinnedLaunch_"))||N.ToString().StartsWith(TEXT("PinnedRecall_"))) {
+  const bool bLaunch=N.ToString().StartsWith(TEXT("PinnedLaunch_"));
+  const int32 Index=FCString::Atoi(*N.ToString().Mid(13));
+  auto* PC=Cast<AOVController>(PlayerOwner);
+  if(PC&&PinnedShips.IsValidIndex(Index)&&PinnedDecks.IsValidIndex(Index)&&PinnedDecks[Index]==-1&&!GetPinnedCarrierSummary(Index).IsEmpty())
+   PC->CommandCarrier(PinnedShips[Index].Get(),bLaunch);
+  return;
+ }
  if(N.ToString().StartsWith(TEXT("PinnedGrip_"))||N.ToString().StartsWith(TEXT("PinnedResize_")))return;
  if(N.ToString().StartsWith(TEXT("PinnedPage_"))) {
   TArray<FString> Parts;N.ToString().ParseIntoArray(Parts,TEXT("_"),true);
@@ -743,7 +751,11 @@ void AOVHUD::DrawPinned()
   } else if(PinnedDecks[I]==-1&&Systems->FactionId==0) {
    if(PinnedPreviews[I])PinnedPreviews[I]->Release();
    TArray<FString> Lines;GetPinnedCarrierSummary(I).ParseIntoArrayLines(Lines);
-   for(int32 Line=0;Line<Lines.Num();++Line)DrawText(Lines[Line],Ink,X+10,Y+65+Line*19,GEngine->GetSmallFont());
+   for(int32 Line=0;Line<Lines.Num();++Line)DrawText(Lines[Line],Ink,X+10,Y+64+Line*15,GEngine->GetSmallFont(),.9f);
+   if(HasHangar) {
+    Button(FName(*FString::Printf(TEXT("PinnedLaunch_%d"),I)),TEXT("출격"),X+10,Y+H-30,68);
+    Button(FName(*FString::Printf(TEXT("PinnedRecall_%d"),I)),TEXT("귀환"),X+84,Y+H-30,68);
+   }
   } else if(Systems->FactionId==0) {
    if(PinnedPreviews[I])PinnedPreviews[I]->Release();
    int32 DeckSlots=0;for(int32 S=0;S<Layout->Slots.Num()&&S<Systems->Slots.Num();++S)if(Layout->Slots[S].DeckId==PinnedDecks[I])++DeckSlots;

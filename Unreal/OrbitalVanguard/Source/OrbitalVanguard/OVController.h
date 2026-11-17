@@ -91,6 +91,7 @@ public:
  UFUNCTION(BlueprintPure, Category="Combat") FString GetScenarioLabel() const;
  UFUNCTION(BlueprintCallable, Category="Combat") void ResetPhase2C();
  UFUNCTION(BlueprintCallable) void AdvancePhase2C(float GameDelta);
+ bool CommandCarrier(AOVShip* Ship, bool bLaunch);
  UPROPERTY(VisibleAnywhere, BlueprintReadOnly) TMap<AOVShip*,float> TrialFTLRemaining;
  bool Phase2CAction(FName Name);
  void ResolveContacts(float SimDelta);

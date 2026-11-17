@@ -442,20 +442,11 @@ bool UOVMissionSubsystem::HandleAction(FName Action)
     else if(Action==TEXT("MissionRetreat"))OrderTeam(EOVInteriorOrder::Retreat);
     else if(Action==TEXT("MissionAircraftLaunch")||Action==TEXT("LaunchAircraft"))
     {
-        auto* Wing=GetWorld()->GetSubsystem<UOVCarrierSubsystem>();
-        if(PC->Selected&&PC->Selected->bFriendly&&Wing&&Wing->Carriers.ContainsByPredicate([&](const FOVCarrierState& C){return C.Carrier==PC->Selected;}))
-        {
-            const int32 Count=Wing->Launch(PC->Selected);
-            Status=Count>0?FString::Printf(TEXT("함재기 출격 %d대"),Count):TEXT("출격 0대 · 기체·시설·충전 상태 확인");
-        }
-        else Status=TEXT("출격 불가 · 아군 모함을 선택하세요");
+        PC->CommandCarrier(PC->Selected,true);Status=PC->LastAction;
     }
     else if(Action==TEXT("MissionAircraftRecall")||Action==TEXT("RecallAircraft"))
     {
-        auto* Wing=GetWorld()->GetSubsystem<UOVCarrierSubsystem>();
-        if(PC->Selected&&PC->Selected->bFriendly&&Wing&&Wing->Carriers.ContainsByPredicate([&](const FOVCarrierState& C){return C.Carrier==PC->Selected;}))
-        { Wing->Recall(PC->Selected);Status=TEXT("함재기 귀환 명령"); }
-        else Status=TEXT("귀환 불가 · 아군 모함을 선택하세요");
+        PC->CommandCarrier(PC->Selected,false);Status=PC->LastAction;
     }
     else Handled=false;
     if(Handled)PC->LastAction=Status;

@@ -1,0 +1,45 @@
+{
+  "passed": true,
+  "kind": "PIE 렌더와 UI API",
+  "physical_input": false,
+  "requested_size": [
+    1280,
+    720
+  ],
+  "captures": [
+    {
+      "view": "항공대_핀",
+      "path": "C:/Users/user/source/repos/A1/Unreal/OrbitalVanguard/Saved/Validation\\PlayUI\\20261118_035621\\01_항공대_핀.png",
+      "viewport_size": [
+        1280,
+        722
+      ],
+      "exists": true
+    }
+  ],
+  "checks": [
+    {
+      "id": "PLAY-WINDOW",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "PIN-AIR-CARRIER-FIXTURE",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "PIN-AIR-LIVE-SUMMARY",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "RENDER-항공대_핀",
+      "passed": true,
+      "detail": ""
+    }
+  ],
+  "errors": [],
+  "preview_settings_restored": true,
+  "elapsed_seconds": 3.2819999999992433
+}
