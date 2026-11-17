@@ -33,7 +33,7 @@ FBox2D AOVHUD::InteriorBounds() const
  const FVector2D Size(FMath::Clamp(InteriorWindowSize.X,620.,FMath::Max(620.,Width-32)),FMath::Clamp(InteriorWindowSize.Y,500.,FMath::Max(500.,Height-100)));
  const FVector2D Desired=InteriorWindowPosition.X<0?FVector2D(Width-Size.X-16,90):InteriorWindowPosition;
  const FVector2D Position(FMath::Clamp(Desired.X,0.,FMath::Max(0.,Width-Size.X)),FMath::Clamp(Desired.Y,62.,FMath::Max(62.,Height-Size.Y)));
- return FBox2D(Position,Position+Size);
+ return FBox2D(Position,Position+FVector2D(Size.X,bInteriorMinimized?32:Size.Y));
 }
 
 bool AOVHUD::IsOverInteriorPanel(float X,float Y) const
@@ -53,6 +53,12 @@ bool AOVHUD::HandleInteriorAction(FName Action)
  auto ViewShip=[&](AOVShip* Ship) { InteriorShip=Ship;InteriorDeck=1;InteriorTargetSlot=NAME_None;InteriorUnitPage=0;InteriorSelectedUnits.Reset(); };
  if(Action==TEXT("InteriorToggle")||Action==TEXT("InteriorMissionToggle")) { bInteriorOpen=!bInteriorOpen;if(bInteriorOpen)ViewShip(PC->Selected);else CancelPointerDrag();return true; }
  if(Action==TEXT("InteriorClose")) { bInteriorOpen=false;CancelPointerDrag();return true; }
+ if(Action==TEXT("InteriorMin")) { bInteriorMinimized=!bInteriorMinimized;CancelPointerDrag();return true; }
+ if(Action==TEXT("InteriorMax")) {
+  if(bInteriorMaximized){InteriorWindowPosition=InteriorRestorePosition;InteriorWindowSize=InteriorRestoreSize;bInteriorMaximized=false;}
+  else {InteriorRestorePosition=InteriorBounds().Min;InteriorRestoreSize=InteriorWindowSize;InteriorWindowPosition=FVector2D(16,70);InteriorWindowSize=FVector2D(ViewportPixels.X/UIScale-32,ViewportPixels.Y/UIScale-100);bInteriorMaximized=true;}
+  bInteriorMinimized=false;CancelPointerDrag();return true;
+ }
  if(Action==TEXT("InteriorBackground"))return true;
  if(!bInteriorOpen)return true;
  if(Action==TEXT("InteriorSelectedShip")) { ViewShip(PC->Selected);return true; }
@@ -125,11 +131,14 @@ void AOVHUD::DrawInterior()
  TGuardValue<bool> Layer(bDrawingInterior,true);
  AddHitBox(Bounds.Min*UIScale,Bounds.GetSize()*UIScale,TEXT("InteriorBackground"),true,200);
  DrawRect(Panel,X,Y,W,H);
- DrawLine(X+W-14,Y+H-2,X+W-2,Y+H-14,Accent,2);
+ if(!bInteriorMinimized)DrawLine(X+W-14,Y+H-2,X+W-2,Y+H-14,Accent,2);
  AOVShip* Ship=InteriorShip.Get();
  DrawText(TEXT("선내 작전 · ")+(Ship?Ship->ShipName:TEXT("함선 선택")),Accent,X+12,Y+10,GEngine->GetSmallFont());
- Button(TEXT("InteriorClose"),TEXT("닫기"),X+W-66,Y+5,56);
- Button(TEXT("InteriorHeroPanel"),TEXT("영웅"),X+W-132,Y+5,60);
+ Button(TEXT("InteriorClose"),TEXT("X"),X+W-30,Y+2,26);
+ Button(TEXT("InteriorMin"),bInteriorMinimized?TEXT("+"):TEXT("_"),X+W-60,Y+2,26);
+ Button(TEXT("InteriorMax"),TEXT("[]"),X+W-90,Y+2,26);
+ Button(TEXT("InteriorHeroPanel"),TEXT("영웅"),X+W-158,Y+2,60);
+ if(bInteriorMinimized)return;
  Button(TEXT("InteriorSelectedShip"),TEXT("선택 함선 보기"),X+12,Y+37,140);
  Button(TEXT("InteriorShipNext"),TEXT("다음 알려진 함선"),X+160,Y+37,150);
  if(!IsValid(Ship)||!Ship->Systems||!Ship->Systems->Layout||!Interior->IsStructureKnown(0,Ship))

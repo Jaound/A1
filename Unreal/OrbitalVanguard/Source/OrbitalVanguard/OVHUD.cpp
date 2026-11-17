@@ -83,12 +83,12 @@ bool AOVHUD::HandlePointer(float X,float Y,bool Pressed,bool Down,float Wheel,bo
  if(!bDragging&&!bResizing&&(bInteriorDragging||bInteriorResizing||IsOverInteriorPanel(X,Y))) {
   const FBox2D Bounds=InteriorBounds();
   if(Pressed) {
-   if(P.X>=Bounds.Min.X&&P.X<Bounds.Max.X-140&&P.Y>=Bounds.Min.Y&&P.Y<Bounds.Min.Y+30) {bInteriorDragging=true;InteriorDragOffset=P-Bounds.Min;}
-   else if(P.X>=Bounds.Max.X-18&&P.Y>=Bounds.Max.Y-18) bInteriorResizing=true;
+   if(P.X>=Bounds.Min.X&&P.X<Bounds.Max.X-164&&P.Y>=Bounds.Min.Y&&P.Y<Bounds.Min.Y+30) {bInteriorDragging=true;InteriorDragOffset=P-Bounds.Min;}
+   else if(!bInteriorMinimized&&P.X>=Bounds.Max.X-18&&P.Y>=Bounds.Max.Y-18) bInteriorResizing=true;
   }
   if(!Down){bInteriorDragging=false;bInteriorResizing=false;}
-  if(bInteriorDragging)InteriorWindowPosition=P-InteriorDragOffset;
-  if(bInteriorResizing){InteriorWindowPosition=Bounds.Min;InteriorWindowSize=FVector2D(FMath::Max(620.,P.X-Bounds.Min.X),FMath::Max(500.,P.Y-Bounds.Min.Y));}
+  if(bInteriorDragging){bInteriorMaximized=false;InteriorWindowPosition=P-InteriorDragOffset;}
+  if(bInteriorResizing){bInteriorMaximized=false;InteriorWindowPosition=Bounds.Min;InteriorWindowSize=FVector2D(FMath::Max(620.,P.X-Bounds.Min.X),FMath::Max(500.,P.Y-Bounds.Min.Y));}
   return true;
  }
  if(!PC||!PC->Selected||!bDetailsOpen) { bDragging=false;bResizing=false;return Over; }

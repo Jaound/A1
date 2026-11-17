@@ -46,6 +46,7 @@ public:
  UFUNCTION(BlueprintPure, Category="UI") FVector2D GetInteriorWindowSize() const { return InteriorBounds().GetSize(); }
  UFUNCTION(BlueprintPure, Category="UI") bool IsOverMissionPanel(float X,float Y) const;
  UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="UI") bool bInteriorOpen=false;
+ UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="UI") bool bInteriorMinimized=false;
  UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="UI") int32 InteriorDeck=1;
  UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="UI") TArray<int32> InteriorSelectedUnits;
  UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="UI") FName InteriorTargetSlot;
@@ -84,6 +85,8 @@ private:
  bool bDragging=false,bResizing=false;
  bool bInteriorDragging=false,bInteriorResizing=false;
  FVector2D InteriorWindowPosition=FVector2D(-1,-1),InteriorWindowSize=FVector2D(780,550),InteriorDragOffset=FVector2D::ZeroVector;
+ bool bInteriorMaximized=false;
+ FVector2D InteriorRestorePosition=FVector2D(-1,-1),InteriorRestoreSize=FVector2D(780,550);
  bool bDrawingDetails=false;
  bool bDrawingInterior=false;
  int32 InteriorUnitPage=0;
