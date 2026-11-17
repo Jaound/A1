@@ -1,5 +1,8 @@
 # 최근 검사: BF120 양포구와 상하 장착
 
+**고정 창 시설 정보 (IW~IZ):** 아군 고정 함선의 시설 칸에 마우스를 올리면 전체 시설명·가동/점령/운영 인원 없음/파괴 상태·내구·필요 시 인원을 표시한다. 적 소속으로 바뀌면 기존 칸이 남아 있는 순간에도 내부 정보를 반환하지 않는다. [창 API 206/206](validation/PlayUIR2/IX_핀시설회귀_API.json)은 실제 시설의 인원 0·점령 전환과 프라이버시를 확인했고, [1280 렌더/API 9/9](validation/PlayUIR2/IY_핀시설렌더_API.json)·[화면](validation/PlayUIR2/IY_핀시설_1280.png), [1920 렌더/API 9/9](validation/PlayUIR2/IZ_핀시설렌더_API.json)·[화면](validation/PlayUIR2/IZ_핀시설_1920.png)을 확인했다. `PlayUI_R2_IW_Build.log` 성공, `PlayUI_R2_IZ_Automation.log` 전체 자동 104/104. 커서는 API로 이동했으며 실제 마우스 입력 검증이 아니다. 고정 창 전체 상세 기능이 완성됐다는 뜻은 아니다.
+
+
 ## 최신 전체 회귀와 기획 비교 (IS~IV)
 
 코드 `339430b3b3c7d76475601446f1bb0cbbd314be1c`에서 [2A 57/57](validation/PlayUIR2/IS_2A회귀_API.json), [2B 50/50](validation/PlayUIR2/IT_2B회귀_API.json), [2C 77/77](validation/PlayUIR2/IU_2C회귀_API.json), [통합 임무 29사례·316/316](validation/PlayUIR2/IV_통합임무_요약.json)을 확인했다. 통합 검사의 ID 순서는 기존 DE 결과와 같다. API 시험이며 직접 입력이 아니다. 최신 원격 work `f0ac7fbd51f1888e1d74552e6ff302e8a464acfa`의 D123~D125 환경 추가는 이번 범위 밖이다. 문서의 기존 이동 후 상대 링크와 의도된 안내 파일 처리를 정리해 `python tools/check_docs.py` 78문서·1,433링크 검사 통과.

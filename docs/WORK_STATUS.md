@@ -1,5 +1,8 @@
 # 최신 작업 — 플레이 UI R2 진행 중
 
+**고정 창 시설 정보 (IW~IZ):** 아군 고정 함선의 시설 칸에 마우스를 올리면 전체 시설명·가동/점령/운영 인원 없음/파괴 상태·내구·필요 시 인원을 표시한다. 적 소속으로 바뀌면 기존 칸이 남아 있는 순간에도 내부 정보를 반환하지 않는다. [창 API 206/206](validation/PlayUIR2/IX_핀시설회귀_API.json)은 실제 시설의 인원 0·점령 전환과 프라이버시를 확인했고, [1280 렌더/API 9/9](validation/PlayUIR2/IY_핀시설렌더_API.json)·[화면](validation/PlayUIR2/IY_핀시설_1280.png), [1920 렌더/API 9/9](validation/PlayUIR2/IZ_핀시설렌더_API.json)·[화면](validation/PlayUIR2/IZ_핀시설_1920.png)을 확인했다. `PlayUI_R2_IW_Build.log` 성공, `PlayUI_R2_IZ_Automation.log` 전체 자동 104/104. 커서는 API로 이동했으며 실제 마우스 입력 검증이 아니다. 고정 창 전체 상세 기능이 완성됐다는 뜻은 아니다.
+
+
 ## 현재 요약과 다음 작업 — 2026-11-18
 
 - **진행 중:** PLAY UI R2. 작업 브랜치 `codex/phase1-playground`, 이번 통합 회귀에 사용한 코드 `339430b3b3c7d76475601446f1bb0cbbd314be1c`. 최신 원격 `work`는 fetch 직후 기록한 `f0ac7fbd51f1888e1d74552e6ff302e8a464acfa`이며 `b7becc4` 이후 변경은 D123~D125 환경 규칙·환경 시험 및 관련 환경 UI다. 사용자가 이번 범위에서 환경 확장을 제외했으므로 코드에 구현하거나 기획 문서 전체를 덮어쓰지 않았다. 기존 PLAY UI R2 구현의 적용 기획 기준은 `b7becc4f7c785ad64657ef771ffff1c43546b540`이다. `git fetch origin work`에서는 로컬 `origin/work` 추적 참조가 자동 갱신되지 않았으므로 비교에는 기록한 `FETCH_HEAD` SHA를 사용했다.

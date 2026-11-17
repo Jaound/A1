@@ -1,0 +1,70 @@
+{
+  "passed": true,
+  "kind": "PIE 렌더와 UI API",
+  "physical_input": false,
+  "requested_size": [
+    1920,
+    1080
+  ],
+  "captures": [
+    {
+      "view": "핀_시설",
+      "path": "C:/Users/user/source/repos/A1/Unreal/OrbitalVanguard/Saved/Validation\\PlayUI\\20261118_071842\\01_핀_시설.png",
+      "viewport_size": [
+        1920,
+        1082
+      ],
+      "exists": true
+    }
+  ],
+  "checks": [
+    {
+      "id": "PLAY-WINDOW",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "PIN-DECK-INDEPENDENT",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "PIN-FACILITY-HITBOX",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "PIN-FACILITY-SELECTED",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "PIN-FACILITY-TOOLTIP",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "PIN-FACILITY-HITBOX",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "PIN-FACILITY-SELECTED",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "PIN-FACILITY-TOOLTIP",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "RENDER-핀_시설",
+      "passed": true,
+      "detail": ""
+    }
+  ],
+  "errors": [],
+  "preview_settings_restored": true,
+  "elapsed_seconds": 4.078000000001339
+}

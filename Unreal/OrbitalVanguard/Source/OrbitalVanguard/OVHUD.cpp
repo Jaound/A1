@@ -558,6 +558,7 @@ void AOVHUD::DrawHUD()
  if(DraggedPin==INDEX_NONE && PC->GetMousePosition(MouseX,MouseY) && !IsOverAddedUI(MouseX,MouseY)) {
   const FVector2D Mouse(MouseX/UIScale,MouseY/UIScale);
   FString Name=GetPinnedTitleTooltip(Mouse);
+  if(Name.IsEmpty())Name=GetPinnedFacilityTooltip(Mouse);
   if(Name.IsEmpty())Name=GetFleetTitleTooltip(Mouse);
   if(Name.IsEmpty()&&!bDragging&&!bResizing)Name=GetDetailsTitleTooltip(Mouse);
   if(Name.IsEmpty()&&!bDragging&&!bResizing)Name=GetCommandTitleTooltip(Mouse);
@@ -742,6 +743,26 @@ FString AOVHUD::GetPinnedTitleTooltip(FVector2D CanvasPoint) const
   return Name.Len()>Limit?Name:FString();
  }
  return FString();
+}
+FString AOVHUD::GetPinnedFacilityTooltip(FVector2D CanvasPoint) const
+{
+ const auto* PC=Cast<AOVController>(PlayerOwner);
+ if(!PC||PC->bDeveloperMode||bHeroPanelOpen)return FString();
+ TArray<FString> Parts;GetHitActionAtCanvasPoint(CanvasPoint).ToString().ParseIntoArray(Parts,TEXT("_"));
+ if(Parts.Num()!=3||Parts[0]!=TEXT("PinnedSlot")||!Parts[1].IsNumeric()||!Parts[2].IsNumeric())return FString();
+ const int32 Pin=FCString::Atoi(*Parts[1]),Index=FCString::Atoi(*Parts[2]);
+ if(!PinnedShips.IsValidIndex(Pin)||!PinnedShips[Pin].IsValid()||!PinnedDecks.IsValidIndex(Pin))return FString();
+ const auto* S=PinnedShips[Pin]->Systems.Get();
+ if(!S||S->FactionId!=0||!S->Layout||!S->Layout->Slots.IsValidIndex(Index)||!S->Slots.IsValidIndex(Index))return FString();
+ const auto& Def=S->Layout->Slots[Index];const auto& State=S->Slots[Index];
+ if(Def.DeckId!=PinnedDecks[Pin])return FString();
+ if(Def.Facility==EOVFacilityType::None)return TEXT("빈 공간");
+ const FString Status=S->GetSlotStatus(Def.SlotId);
+ const TCHAR* StatusText=Status==TEXT("Destroyed")?TEXT("파괴"):Status==TEXT("Occupied")?TEXT("점령됨"):
+     Status==TEXT("Uncrewed")?TEXT("운영 인원 없음"):Status==TEXT("Operational")?TEXT("가동"):TEXT("상태 확인 불가");
+ FString Text=FString::Printf(TEXT("%s · %s · 내구 %.0f/%.0f"),*Facility(Def.Facility),StatusText,State.HP,Def.MaxFacilityHP);
+ if(Def.RequiredCrew>0)Text+=FString::Printf(TEXT(" · 운영 인원 %.0f/%.0f"),State.Crew,Def.RequiredCrew);
+ return Text;
 }
 FString AOVHUD::GetDetailsTitleTooltip(FVector2D CanvasPoint) const
 {

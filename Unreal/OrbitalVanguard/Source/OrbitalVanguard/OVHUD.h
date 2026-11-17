@@ -32,6 +32,7 @@ public:
  UFUNCTION(BlueprintPure, Category="UI") FVector2D GetPinnedPosition(int32 Index) const;
  UFUNCTION(BlueprintPure, Category="UI") FVector2D GetPinnedSize(int32 Index) const;
  UFUNCTION(BlueprintPure, Category="UI") FString GetPinnedTitleTooltip(FVector2D CanvasPoint) const;
+ UFUNCTION(BlueprintPure, Category="UI") FString GetPinnedFacilityTooltip(FVector2D CanvasPoint) const;
  UFUNCTION(BlueprintPure, Category="UI") FString GetFleetTitleTooltip(FVector2D CanvasPoint) const;
  UFUNCTION(BlueprintPure, Category="UI") FString GetCommandTitleTooltip(FVector2D CanvasPoint) const;
  UFUNCTION(BlueprintPure, Category="UI") FString GetDetailsTitleTooltip(FVector2D CanvasPoint) const;

@@ -17,6 +17,7 @@ views = ['전투_HUD', '영웅_카드', '외부_무장', '핀_비교', '핀_무�
 if os.environ.get('OV_UI_ONLY_PIN') == '1': views = ['핀_비교']
 if os.environ.get('OV_UI_TOOLTIP_TEST') == 'fleet': views = ['함대_긴이름']
 if os.environ.get('OV_UI_ONLY_PIN_HANGAR') == '1': views = ['항공대_핀']
+if os.environ.get('OV_UI_ONLY_PIN_FACILITY') == '1': views = ['핀_시설']
 if os.environ.get('OV_UI_DETAILS_PAGING') == '1': views = ['상세_시설페이지']
 
 def prop(obj, key):
@@ -130,6 +131,10 @@ def tick(_dt):
                 hud.handle_pointer((x+50)*scale,(y+5)*scale,False,False,0,False,0,0)
                 check('PIN-COMPARE-RESIZE-INDEPENDENT',hud.get_pinned_size(0).x>size.x+40 and hud.get_pinned_size(1)==other_size)
             elif name == '핀_시설':
+                if os.environ.get('OV_UI_ONLY_PIN_FACILITY') == '1':
+                    ships=prop(pc,'ships')
+                    for ship in (ships[0],ships[2]):pc.select_ship(ship);hud.execute_ui_action('WindowPin')
+                    pc.select_ship(ships[1])
                 hud.set_details_open(True);hud.execute_ui_action('PinnedDeck_0_1')
                 check('PIN-DECK-INDEPENDENT',hud.get_pinned_deck(0)==1 and hud.get_pinned_deck(1)==0)
             elif name == '핀_무장':
@@ -265,10 +270,15 @@ def tick(_dt):
                     state.update(tooltip_cursor_set=True,at=time.monotonic());return
             if name == '핀_시설':
                 slots=prop(prop(prop(hud.get_pinned_ship(0),'systems'),'layout'),'slots')
-                index=next(i for i,s in enumerate(slots) if prop(s,'deck_id')==1)
+                index=next(i for i,s in enumerate(slots) if prop(s,'deck_id')==1 and prop(s,'facility')!=unreal.OVFacilityType.NONE)
                 action='PinnedSlot_0_'+str(index);center=hud.get_action_center(action)
                 check('PIN-FACILITY-HITBOX',center.x>=0 and str(hud.get_hit_action_at_canvas_point(center))==action)
                 hud.execute_ui_action(action);check('PIN-FACILITY-SELECTED',hud.get_pinned_slot(0)==index)
+                check('PIN-FACILITY-TOOLTIP','내구' in hud.get_pinned_facility_tooltip(center))
+                if not state.get('facility_tooltip_cursor'):
+                    w,h=pc.get_viewport_size();scale=max(.25,min(1,w/1280,h/740))
+                    pc.set_mouse_location(int(center.x*scale),int(center.y*scale))
+                    state.update(facility_tooltip_cursor=True,at=time.monotonic());return
             if name == '핀_무장':
                 check('PIN-WEAPON-LIVE-FOCUS',hud.get_pinned_preview_focus(0)==hud.get_pinned_weapon(0) and 'HP' in hud.get_pinned_weapon_summary(0))
             if name == '항공대_필터':
