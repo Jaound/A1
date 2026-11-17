@@ -1,0 +1,19 @@
+{
+  "passed": false,
+  "checks": [
+    {
+      "id": "FIXTURE-AIRBORNE",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "MISSION-HANGAR-RECALL-ACTUAL",
+      "passed": false,
+      "detail": "(40, 0)"
+    }
+  ],
+  "errors": [
+    "Traceback (most recent call last):\n  File \"ValidateMissionAircraftButtons.py\", line 27, in tick\n  File \"ValidateMissionAircraftButtons.py\", line 9, in check\nAssertionError: MISSION-HANGAR-RECALL-ACTUAL: (40, 0)\n"
+  ],
+  "physical_input": false
+}
