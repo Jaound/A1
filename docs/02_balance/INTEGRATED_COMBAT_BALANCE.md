@@ -2,6 +2,8 @@
 
 > 사용자 채택 규칙과 이를 시험하기 위한 설계자 절대값을 구분한다. [원본 프로필](../../reference/IntegratedCombat/profile.json) · [실행/재현](../../reference/IntegratedCombat/README.md) · [결과](../04_analysis/INTEGRATED_COMBAT_RESULTS.md). 실제 UE/최종3D 에셋의 밸런스 확정이 아니다.
 
+> **후속D119:** 수송선은 현행 중형 임무선이다. 이 v0.6 프로필이 계승한 수송선 소형 입력과 관련 결과는 이전 시험 재현용이며 중형 수송선의 수치/검증으로 사용하지 않는다. 새 함체/가격/물류·전투 비교는 [R37](../00_overview/OPEN_QUESTIONS.md#r37)에서 재산정한다.
+
 ## 이번에 확정된 방향
 
 - 일반 혼성전 목표는1배속10~15분. 승패·퇴각·나포/임무·교착/시간 초과와 개별 강습 대상의 생존 시간을 구분한다.

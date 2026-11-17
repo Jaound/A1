@@ -2,6 +2,8 @@
 
 > **적용 범위:** 아래는 당시 v0.3 모형 결과다. 현재 [영웅 v0.5](../01_design/boarding/HERO_SYSTEMS.md)·[수리 v0.5](../01_design/fleet/REPAIR_LOGISTICS.md) 및 [D113 강습 재검토](BOARDING_REVIEW.md)의 새 조건을 모두 통합한 검증 결과가 아니다.
 
+> **후속D119:** 당시 수송선은 소형 시험 입력이었다. 현행 중형 수송선의 코스트·생존성·물류 효과를 이 결과로 검증했다고 보지 않는다. [R37](../00_overview/OPEN_QUESTIONS.md#r37) 참조.
+
 > 사용자 목표: 1배속 일반 함대전10~15분. 주 평가912회(38조건×24회), 동시드 대조72회, 시간 간격 비교18회. 핵심1002회·추가 반례48회·선내 방어224회, 경로 스트레스36회를 더해 총1310개 유효 결과이며 탐색/이전 후보를 합산하지 않았다. **통계 집계 모형 결과**이며 UE/Godot 실행 결과가 아니다. [수치](../02_balance/FLEET_ENDURANCE_BALANCE.md) · [재현](../../reference/FleetEndurance/README.md) · [원시 데이터](../../reference/FleetEndurance/results.json).
 
 ![장기전 결과 그래프](../../reference/FleetEndurance/results.png)
