@@ -30,8 +30,8 @@ bool Living(const FOVInteriorUnitRecord& U) { return U.HP>0 && U.State!=EOVInter
 FBox2D AOVHUD::InteriorBounds() const
 {
  const double Width=ViewportPixels.X/UIScale,Height=ViewportPixels.Y/UIScale;
- const FVector2D Size(FMath::Min(760.,Width-32),FMath::Min(590.,Height-240));
- const FVector2D Position(Width-Size.X-16,104);
+ const FVector2D Size(FMath::Min(780.,Width-32),FMath::Min(550.,Height-180));
+ const FVector2D Position(Width-Size.X-16,90);
  return FBox2D(Position,Position+Size);
 }
 
@@ -128,7 +128,6 @@ void AOVHUD::DrawInterior()
  Button(TEXT("InteriorClose"),TEXT("닫기"),X+W-66,Y+5,56);
  Button(TEXT("InteriorSelectedShip"),TEXT("선택 함선 보기"),X+12,Y+37,140);
  Button(TEXT("InteriorShipNext"),TEXT("다음 알려진 함선"),X+160,Y+37,150);
- DrawText(Interior->GetSummary(0),Ink,X+320,Y+44,GEngine->GetSmallFont());
  if(!IsValid(Ship)||!Ship->Systems||!Ship->Systems->Layout||!Interior->IsStructureKnown(0,Ship))
  {
   DrawText(TEXT("내부 구조 미관측 · 아군의 실제 진입 후 표시됩니다."),Ink,X+24,Y+110,GEngine->GetSmallFont());
@@ -145,20 +144,26 @@ void AOVHUD::DrawInterior()
  {
   const int32 Index=InteriorUnitPage*6+Row;if(!Own.IsValidIndex(Index))break;
   const auto& U=*Own[Index];const float RY=Y+114+Row*38;
-  Button(FName(*FString::Printf(TEXT("InteriorUnit_%d"),U.UnitId)),FString::Printf(TEXT("%s %d · %s%s"),*OVInteriorUI::Role(U.Role),U.UnitId,*OVInteriorUI::State(U.State),U.bWounded?TEXT(" · 부상"):TEXT("")),X+12,RY,208,InteriorSelectedUnits.Contains(U.UnitId));
+  const FString ShortName=U.Name.IsEmpty()?OVInteriorUI::Role(U.Role):U.Name;
+  Button(FName(*FString::Printf(TEXT("InteriorUnit_%d"),U.UnitId)),FString::Printf(TEXT("%s · %s"),*ShortName.Left(9),*OVInteriorUI::State(U.State)),X+12,RY,208,InteriorSelectedUnits.Contains(U.UnitId));
   DrawRect(FLinearColor(.1f,.13f,.17f),X+14,RY+29,202,4);
   DrawRect(Living(U)?Accent:FLinearColor::Gray,X+14,RY+29,202*FMath::Clamp(U.HP/FMath::Max(1.f,U.MaxHP),0.f,1.f),4);
  }
  Button(TEXT("InteriorPrev"),TEXT("이전"),X+12,Y+346,62);
  Button(TEXT("InteriorNext"),TEXT("다음"),X+158,Y+346,62);
  DrawText(FString::Printf(TEXT("%d / %d"),InteriorUnitPage+1,FMath::Max(1,(Own.Num()+5)/6)),Ink,X+86,Y+353,GEngine->GetSmallFont());
- DrawText(FString::Printf(TEXT("선택 %d명 · 인원 클릭으로 추가/해제"),InteriorSelectedUnits.Num()),Ink,X+12,Y+386,GEngine->GetSmallFont());
+ DrawText(FString::Printf(TEXT("선택 %d명"),InteriorSelectedUnits.Num()),Ink,X+12,Y+386,GEngine->GetSmallFont());
  const auto* FocusEntry=Own.FindByPredicate([&](const auto* U){return InteriorSelectedUnits.Contains(U->UnitId);});
  const FOVInteriorUnitRecord* Focus=FocusEntry?*FocusEntry:nullptr;
  if(Focus)
  {
   DrawText(Focus->Name,Accent,X+12,Y+408,GEngine->GetSmallFont());
-  DrawText(FString::Printf(TEXT("HP %.0f/%.0f · 진행 %.0f%%"),Focus->HP,Focus->MaxHP,Focus->Progress*100),Ink,X+12,Y+428,GEngine->GetSmallFont());
+  DrawText(FString::Printf(TEXT("HP %.0f / %.0f"),Focus->HP,Focus->MaxHP),Ink,X+12,Y+428,GEngine->GetSmallFont());
+  if(Focus->State==EOVInteriorState::Operating)
+  {
+   DrawRect(FLinearColor(.1f,.15f,.2f),X+12,Y+450,204,6);
+   DrawRect(Accent,X+12,Y+450,204*FMath::Clamp(Focus->Progress,0.f,1.f),6);
+  }
  }
  // Static layout is known; enemy units and room runtime state still need observation.
  auto Project=[&](FVector Local)
@@ -190,10 +195,58 @@ void AOVHUD::DrawInterior()
  for(const auto& U:Interior->Units)if(U.Ship==Ship&&Interior->CanObserve(0,U.UnitId))
  {
   const int32 Node=L->GetSlotIndex(U.NodeId);if(!L->Slots.IsValidIndex(Node)||L->Slots[Node].DeckId!=InteriorDeck)continue;
-  const FVector2D P=Project(U.LocalPosition);const FLinearColor C=U.State==EOVInteriorState::Dead?FLinearColor::Gray:U.FactionId==0?Accent:Enemy;
-  const float Offset=(U.UnitId%4)*5;
-  DrawRect(C,P.X-7+Offset,P.Y+17+(U.UnitId%2)*5,4,4);
-  if(U.FactionId!=0)DrawText(TEXT(" 적"),C,P.X+12,P.Y+12,GEngine->GetSmallFont());
+  const bool Hero=U.Role!=EOVInteriorRole::Trooper,Selected=InteriorSelectedUnits.Contains(U.UnitId);
+  const bool Moving=U.State==EOVInteriorState::Moving||U.State==EOVInteriorState::Retreating;
+  const float Step=Moving?FMath::Sin(Interior->GameTime*10+U.UnitId)*2.f:0.f;
+  const FVector2D P=Project(U.LocalPosition)+FVector2D((U.UnitId%4-1.5f)*14,27+(U.UnitId%3)*16);
+  const FLinearColor RoleColors[]={Ink,FLinearColor(.2f,.75f,1),FLinearColor(1,.65f,.2f),FLinearColor(.25f,1,.6f),FLinearColor(.75f,.55f,1)};
+  FLinearColor C=U.FactionId==0?RoleColors[FMath::Clamp(int32(U.Role),0,4)]:Enemy;
+  if(U.State==EOVInteriorState::Dead)C=FLinearColor(.45f,.45f,.5f);
+  if(Interior->GameTime-U.LastDamagedAt<.18)C=FLinearColor(1,.2f,.18f);
+  const float Body=Hero?8.f:5.f;
+  if(Selected)
+  {
+   DrawLine(P.X-10,P.Y-12,P.X+11,P.Y-12,Accent,2);
+   DrawLine(P.X-10,P.Y+16,P.X+11,P.Y+16,Accent,2);
+   DrawLine(P.X-10,P.Y-12,P.X-10,P.Y+16,Accent,2);
+   DrawLine(P.X+11,P.Y-12,P.X+11,P.Y+16,Accent,2);
+  }
+  if(U.State==EOVInteriorState::Dead)
+  {
+   DrawLine(P.X-6,P.Y-4,P.X+6,P.Y+7,C,3);DrawLine(P.X-6,P.Y+7,P.X+6,P.Y-4,C,3);
+  }
+  else
+  {
+   DrawRect(FLinearColor(.75f,.61f,.52f),P.X-2.5f,P.Y-8+Step,5,5);
+   DrawRect(C,P.X-Body*.5f,P.Y-2+Step,Body,8);
+   DrawLine(P.X-2,P.Y+5+Step,P.X-4-Step,P.Y+11,C,2);
+   DrawLine(P.X+2,P.Y+5+Step,P.X+4+Step,P.Y+11,C,2);
+   if(Hero)
+   {
+    // Role equipment is readable independently of faction color.
+    if(U.Role==EOVInteriorRole::Melee)DrawRect(C*.7f,P.X-9,P.Y-1+Step,4,11);
+    else if(U.Role==EOVInteriorRole::Ranged)DrawLine(P.X+4,P.Y+1+Step,P.X+13,P.Y-2+Step,C,3);
+    else if(U.Role==EOVInteriorRole::Support){DrawLine(P.X+7,P.Y-4+Step,P.X+7,P.Y+4+Step,C,2);DrawLine(P.X+3,P.Y+Step,P.X+11,P.Y+Step,C,2);}
+    else {DrawLine(P.X-7,P.Y-11+Step,P.X+7,P.Y-11+Step,C,2);DrawLine(P.X-7,P.Y-11+Step,P.X-4,P.Y-15+Step,C,2);DrawLine(P.X+7,P.Y-11+Step,P.X+4,P.Y-15+Step,C,2);}
+   }
+   const double SinceShot=Interior->GameTime-(U.AttackReadyAt-U.Period);
+   if(U.Shots>0&&U.State==EOVInteriorState::Fighting&&SinceShot>=0&&SinceShot<.16)
+   {
+    DrawLine(P.X+8,P.Y,P.X+17,P.Y-4,FLinearColor(1,.9f,.4f),2);
+    DrawLine(P.X+13,P.Y-7,P.X+13,P.Y+1,FLinearColor(1,.9f,.4f),2);
+   }
+   if(U.State==EOVInteriorState::Operating)
+   {
+    const float Pulse=.55f+.45f*FMath::Sin(Interior->GameTime*5);
+    DrawRect(FLinearColor(.3f,1,.65f)*Pulse,P.X-9,P.Y+18,18*FMath::Clamp(U.Progress,0.f,1.f),3);
+   }
+  }
+  if(Hero||Selected||U.HP<U.MaxHP)
+  {
+   DrawRect(FLinearColor(.06f,.1f,.14f),P.X-9,P.Y+14,18,2);
+   DrawRect(C,P.X-9,P.Y+14,18*FMath::Clamp(U.HP/FMath::Max(1.f,U.MaxHP),0.f,1.f),2);
+  }
+  if(U.FactionId==0)AddHitBox(FVector2D(P.X-11,P.Y-16)*UIScale,FVector2D(24,34)*UIScale,FName(*FString::Printf(TEXT("InteriorUnit_%d"),U.UnitId)),true,205);
  }
  const int32 SlotIndex=L->GetSlotIndex(InteriorTargetSlot);
  if(L->Slots.IsValidIndex(SlotIndex)&&Ship->Systems->Slots.IsValidIndex(SlotIndex))
@@ -204,17 +257,17 @@ void AOVHUD::DrawInterior()
   if(Observed)
   {
    DrawText(FString::Printf(TEXT("물리 HP %.0f/%.0f · 운영 인원 %.0f/%.0f"),S.HP,Slot.MaxFacilityHP,S.Crew,Slot.RequiredCrew),Ink,X+234,Y+308,GEngine->GetSmallFont());
-   DrawText(S.OccupyingFaction<0?TEXT("점령: 없음 · 운영 인원은 전투 병력과 별도"):S.OccupyingFaction==0?TEXT("점령: 아군 · 파괴/인원 상태는 별도"):TEXT("점령: 적 · 파괴/인원 상태는 별도"),Ink,X+234,Y+328,GEngine->GetSmallFont());
+   DrawText(S.OccupyingFaction<0?TEXT("점령 없음"):S.OccupyingFaction==0?TEXT("아군 점령"):TEXT("적 점령"),Ink,X+234,Y+328,GEngine->GetSmallFont());
   }
   else DrawText(TEXT("시설 상태 미관측 · 아군 도착 시 확인"),Ink,X+234,Y+312,GEngine->GetSmallFont());
  }
  else DrawText(TEXT("층과 목표 시설을 선택하세요."),Ink,X+234,Y+300,GEngine->GetSmallFont());
  const FName Commands[]={TEXT("InteriorCapture"),TEXT("InteriorSabotage"),TEXT("InteriorDefend"),TEXT("InteriorRetreat"),TEXT("InteriorCancel")};
- const TCHAR* Labels[]={TEXT("점령"),TEXT("공작/파괴"),TEXT("수호"),TEXT("실제 철수"),TEXT("명령 취소")};
- for(int32 I=0;I<5;++I)Button(Commands[I],Labels[I],X+234+I*99,Y+364,92);
- DrawText(TEXT("철수는 원 진입점까지 이동 후 원 포드/강습선으로 회수합니다."),Ink,X+234,Y+401,GEngine->GetSmallFont());
- DrawText(TEXT("쉴드 재가동·수송선 상실은 귀환을 위험하게 할 수 있습니다."),Ink,X+234,Y+422,GEngine->GetSmallFont());
+ const TCHAR* Labels[]={TEXT("점령"),TEXT("공작"),TEXT("수호"),TEXT("철수"),TEXT("취소")};
+ const float CommandWidth=(W-246)/5;
+ for(int32 I=0;I<5;++I)Button(Commands[I],Labels[I],X+234+I*CommandWidth,Y+364,CommandWidth-5);
+ if(Focus&&Focus->State==EOVInteriorState::Retreating)DrawText(TEXT("원 진입점으로 철수 중"),Accent,X+234,Y+408,GEngine->GetSmallFont());
  const FString Feedback=Focus&&!Focus->Reason.IsEmpty()?Focus->Reason:InteriorFeedback;
- DrawText(Feedback.Left(92),FLinearColor(1,.8f,.25f),X+12,Y+H-33,GEngine->GetSmallFont());
+ DrawText(Feedback.Left(58),FLinearColor(1,.8f,.25f),X+12,Y+H-28,GEngine->GetSmallFont());
  if(PC->bDeveloperMode)DrawText(TEXT("배치 ")+L->LayoutVersion.ToString(),Ink,X+234,Y+H-53,GEngine->GetSmallFont());
 }
