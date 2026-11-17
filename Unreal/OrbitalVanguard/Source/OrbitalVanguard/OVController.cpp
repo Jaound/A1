@@ -176,6 +176,13 @@ void AOVController::ClearSelection()
  for(AOVShip* Ship:Ships) Ship->bSelected=false;
  Selection.Reset(); Selected=nullptr; bPlacing=false; InputMode=EOVInputMode::None; bFollow=false;
 }
+void AOVController::SelectShipFromUser(AOVShip* Ship, bool bAdditive)
+{
+ if(bAdditive && Ship) SelectAdditional(Ship); else SelectShip(Ship);
+ if(auto* HUD=Cast<AOVHUD>(GetHUD())) {
+  if(Selected) HUD->OpenDetails(); else HUD->SetDetailsOpen(false);
+ }
+}
 void AOVController::SelectAdditional(AOVShip* Ship)
 {
  if(!Ship) return;
@@ -214,7 +221,7 @@ void AOVController::Action(FName Name)
  if(Name==TEXT("Overview")) { FrameEngagement(); return; }
  if(Name.ToString().StartsWith(TEXT("Pick_")) || Name.ToString().StartsWith(TEXT("WorldPick_"))) {
   const int32 Index=FCString::Atoi(*Name.ToString().Mid(Name.ToString().StartsWith(TEXT("WorldPick_"))?10:5));
-  if(Ships.IsValidIndex(Index)) { if(InputMode==EOVInputMode::Target) SetTarget(Ships[Index]); else SelectShip(Ships[Index]); } return;
+  if(Ships.IsValidIndex(Index)) { if(InputMode==EOVInputMode::Target) SetTarget(Ships[Index]); else SelectShipFromUser(Ships[Index],false); } return;
  }
  if(Name==TEXT("CalibrationRange")) { StartCalibrationRange((CalibrationScenario+1)%3); return; }
  if(Name==TEXT("CombatRange")) { StartCombatRange(); return; }
@@ -748,7 +755,7 @@ void AOVController::PlayerTick(float DeltaTime)
   else if(InputMode==EOVInputMode::Heading) { FVector O,D,P; if(DeprojectMousePositionToWorld(O,D)&&FOVOrderInput::Project(O,D,PlacementPlaneZ,P,ProjectionNearDistance,CommandRayLength())) IssueHeading(P); }
   else { FHitResult Hit; AOVShip* Ship=nullptr; if(GetHitResultUnderCursor(ECC_Visibility,false,Hit)) Ship=Cast<AOVShip>(Hit.GetActor());
    if(InputMode==EOVInputMode::Target) { if(Ship) SetTarget(Ship); }
-   else if(Shift&&Ship) SelectAdditional(Ship); else SelectShip(Ship);
+   else SelectShipFromUser(Ship,Shift);
   }
  }
  StepSimulation(DeltaTime);

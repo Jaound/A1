@@ -62,6 +62,7 @@ public:
  UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Control Range") FString LastAction=TEXT("Select a ship to begin");
  UFUNCTION(BlueprintCallable, Category="Control Range")
  void SelectShip(AOVShip* Ship);
+ UFUNCTION(BlueprintCallable, Category="Control Range") void SelectShipFromUser(AOVShip* Ship, bool bAdditive);
  UFUNCTION(BlueprintCallable, Category="Control Range") void ClearSelection();
  UFUNCTION(BlueprintCallable, Category="Control Range") void SelectAdditional(AOVShip* Ship);
  UFUNCTION(BlueprintCallable, Category="Control Range") void SetTarget(AOVShip* Ship);
