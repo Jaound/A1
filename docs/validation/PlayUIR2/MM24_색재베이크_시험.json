@@ -1,0 +1,21 @@
+{
+  "inputs": {
+    "high_sha256_before": "002e4b296e1f5e35aebdf98092ab4f53acc65a42954e00a52009e9d0f632a425",
+    "low_sha256_before": "f6a83f930f97195d3d14c4bec34be17ccce9fbdf09ff88a66cf4171183d8e6a7",
+    "high_sha256_after": "002e4b296e1f5e35aebdf98092ab4f53acc65a42954e00a52009e9d0f632a425",
+    "low_sha256_after": "f6a83f930f97195d3d14c4bec34be17ccce9fbdf09ff88a66cf4171183d8e6a7"
+  },
+  "parts": [
+    {
+      "part": "MM24_BaseTrial",
+      "baked_file": "C:\\Users\\user\\Documents\\OrbitalVanguardAssets\\Prepared\\PlayUI_R2_MM24_BakeTrial_v1\\MM24_BaseTrial_baked.png",
+      "baked_sha256": "f172535808ba93800113b9c6ba3b72e5f6712d16dbbb2589c5040fab07f4a202"
+    },
+    {
+      "part": "MM24_YawTrial",
+      "baked_file": "C:\\Users\\user\\Documents\\OrbitalVanguardAssets\\Prepared\\PlayUI_R2_MM24_BakeTrial_v1\\MM24_YawTrial_baked.png",
+      "baked_sha256": "d992c173ef9b43d89f0e6477d09c44df76fe1d45e33408e997d96d8557a58f0e"
+    }
+  ],
+  "status": "trial only; inspect texture, seam, joints and gameplay separately"
+}
