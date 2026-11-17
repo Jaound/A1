@@ -1,0 +1,27 @@
+{
+  "inputs": {
+    "high_sha256_before": "002e4b296e1f5e35aebdf98092ab4f53acc65a42954e00a52009e9d0f632a425",
+    "low_sha256_before": "f6a83f930f97195d3d14c4bec34be17ccce9fbdf09ff88a66cf4171183d8e6a7",
+    "high_sha256_after": "002e4b296e1f5e35aebdf98092ab4f53acc65a42954e00a52009e9d0f632a425",
+    "low_sha256_after": "f6a83f930f97195d3d14c4bec34be17ccce9fbdf09ff88a66cf4171183d8e6a7"
+  },
+  "parts": [
+    {
+      "part": "MM24_BaseTrial",
+      "baked_file": "C:\\Users\\user\\Documents\\OrbitalVanguardAssets\\Prepared\\PlayUI_R2_MM24_BakeTrial_v3\\MM24_BaseTrial_baked.png",
+      "baked_sha256": "473bb4f025ed8750c240e6447c9061f58bc37932620d3cb85885fd594cf2082e",
+      "cap_file": "C:\\Users\\user\\Documents\\OrbitalVanguardAssets\\Prepared\\PlayUI_R2_MM24_BakeTrial_v3\\MM24_BaseTrial_cap_baked.png",
+      "cap_sha256": "7eb7ff53b28fe44196d19c48f49e82d7444ed22a5a5fbab8379ef791240f98b2"
+    },
+    {
+      "part": "MM24_YawTrial",
+      "baked_file": "C:\\Users\\user\\Documents\\OrbitalVanguardAssets\\Prepared\\PlayUI_R2_MM24_BakeTrial_v3\\MM24_YawTrial_baked.png",
+      "baked_sha256": "3e45b8c3149be95b5e2c207cc45526738b4ef02682168c7d7c30f5d479416214",
+      "cap_file": "C:\\Users\\user\\Documents\\OrbitalVanguardAssets\\Prepared\\PlayUI_R2_MM24_BakeTrial_v3\\MM24_YawTrial_cap_baked.png",
+      "cap_sha256": "cf13802a95133b354a87a3a624c945d02d1cfbacddcf26fa744c5d00103a8cf0"
+    }
+  ],
+  "cage_extrusion": 0.02,
+  "max_ray_distance": 0.06,
+  "status": "trial only; inspect texture, seam, joints and gameplay separately"
+}
