@@ -1,0 +1,21 @@
+{
+  "passed": false,
+  "physical_input": false,
+  "checks": [
+    {
+      "id": "PREVIEW",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "TARGET",
+      "passed": true,
+      "detail": ""
+    }
+  ],
+  "errors": [
+    "Traceback (most recent call last):\n  File \"ValidateBF120Developer.py\", line 27, in tick\nAttributeError: 'World' object has no attribute 'get_subsystem'\n"
+  ],
+  "scope": "개발 도구 명령 API. 원본 적용 완료나 직접 클릭 검증이 아님",
+  "play_settings_restored": true
+}

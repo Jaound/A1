@@ -17,6 +17,7 @@ public:
         FVector Location, float Spacing, int32 AircraftPerHangar, int32 Troops, bool bMoveAuto, bool bFireAuto);
     UFUNCTION(BlueprintCallable) bool DeleteShip(AOVShip* Ship);
     UFUNCTION(BlueprintCallable) bool EquipWeapon(AOVShip* Ship, FName MountId, FName ProfileId);
+    UFUNCTION(BlueprintCallable) bool SetBF120Trial(AOVShip* Ship, FName MountId, bool bEnable);
     UFUNCTION(BlueprintCallable) bool SetShipTarget(AOVShip* Ship, AOVShip* Target);
     UFUNCTION(BlueprintCallable) bool FireWeapon(AOVShip* Ship, FName MountId);
     UFUNCTION(BlueprintPure) FString GetShipDetails(AOVShip* Ship) const;

@@ -32,6 +32,8 @@ public:
  virtual FReply NativeOnMouseMove(const FGeometry& Geometry,const FPointerEvent& Event) override;
  virtual void NativeOnMouseCaptureLost(const FCaptureLostEvent& Event) override;
  UFUNCTION(BlueprintCallable, Category="Development|Test") bool DebugFrameGesture(bool bResize,FVector2D Delta);
+ UFUNCTION(BlueprintCallable, Category="Development|Test") bool DebugShowBF120TrialControls();
+ UFUNCTION(BlueprintCallable, Category="Development|Test") bool DebugActivateBF120TrialControl(bool bEnable);
  void SetFrameState(bool bMinimized,bool bMaximized);
  bool IsEditing() const;
  UFUNCTION(BlueprintCallable, Category="UI") bool OpenPage(int32 Index);
@@ -73,6 +75,8 @@ private:
  UPROPERTY() TObjectPtr<UComboBoxString> HeroDestination;
  UPROPERTY() TObjectPtr<UButton> AdvancedButton;
  UPROPERTY() TObjectPtr<UButton> EquipButton;
+ UPROPERTY() TObjectPtr<UButton> BF120TrialButton;
+ UPROPERTY() TObjectPtr<UButton> BF120DisableButton;
  UPROPERTY() TArray<TObjectPtr<UWidget>> AdvancedGroups;
  UPROPERTY() TObjectPtr<UScrollBox> List;
  UPROPERTY() TObjectPtr<UEditableTextBox> Search;
@@ -166,6 +170,8 @@ private:
  UFUNCTION() void HeroChanged(FString Item, ESelectInfo::Type Type);
  UFUNCTION() void MountChanged(FString Item, ESelectInfo::Type Type);
  UFUNCTION() void Equip();
+ UFUNCTION() void EnableBF120Trial();
+ UFUNCTION() void DisableBF120Trial();
  UFUNCTION() void Target();
  UFUNCTION() void Fire();
  UFUNCTION() void Delete();

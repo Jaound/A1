@@ -144,6 +144,18 @@ void UOVDevelopmentWidget::NativeOnInitialized()
  FrameContents->AddChildToVerticalBox(ResizeHint);
  Rebuild();
 }
+bool UOVDevelopmentWidget::DebugShowBF120TrialControls()
+{
+ auto* Scroll=Body?Cast<UScrollBox>(Body->GetParent()):nullptr;
+ if(Page!=3||!Scroll||!BF120TrialButton)return false;
+ Scroll->ScrollToEnd();return true;
+}
+bool UOVDevelopmentWidget::DebugActivateBF120TrialControl(bool bEnable)
+{
+ auto* Button=bEnable?BF120TrialButton.Get():BF120DisableButton.Get();
+ if(Page!=3||!Button||!Button->GetIsEnabled())return false;
+ Button->OnClicked.Broadcast();return true;
+}
 void UOVDevelopmentWidget::SetFrameState(bool bMinimized,bool bMaximized)
 {
  if(bDisplayedFrameMinimized!=bMinimized) {
@@ -285,7 +297,7 @@ void UOVDevelopmentWidget::Rebuild()
  SideChoice=nullptr;PresetChoice=nullptr;HeroDestination=nullptr;VisibleDefinitionIds.Reset();SelectedId=NAME_None;
  HeroName=nullptr;XPAmount=nullptr;SupportBasic=nullptr;SupportAdvanced=nullptr;SupportRare=nullptr;SupportCharges=nullptr;
  Quantity=nullptr;X=nullptr;Y=nullptr;Z=nullptr;Spacing=nullptr;Faction=nullptr;Inventory=nullptr;Troops=nullptr;
- MoveAuto=nullptr;FireAuto=nullptr;MountChoice=nullptr;TargetChoice=nullptr;EquipButton=nullptr;
+ MoveAuto=nullptr;FireAuto=nullptr;MountChoice=nullptr;TargetChoice=nullptr;EquipButton=nullptr;BF120TrialButton=nullptr;BF120DisableButton=nullptr;
  DevAmount=nullptr;DevRange=nullptr;DevNode=nullptr;DevBasic=nullptr;DevAdvanced=nullptr;DevRare=nullptr;DevQuoteBasic=nullptr;DevQuoteAdvanced=nullptr;DevQuoteRare=nullptr;
  auto* PC=Cast<AOVController>(GetOwningPlayer());
  auto Advanced=[&](UVerticalBox* Parent,const TCHAR* Title)
@@ -420,6 +432,10 @@ void UOVDevelopmentWidget::Rebuild()
    EquipButton=AddButton(WidgetTree,Actions,TEXT("장착 / 교체"));EquipButton->SetIsEnabled(false);EquipButton->OnClicked.AddDynamic(this,&UOVDevelopmentWidget::Equip);
    AddButton(WidgetTree,Actions,TEXT("표적 지정"))->OnClicked.AddDynamic(this,&UOVDevelopmentWidget::Target);
    AddButton(WidgetTree,Actions,TEXT("발사 요청"))->OnClicked.AddDynamic(this,&UOVDevelopmentWidget::Fire);
+   auto* Trial=Row(WidgetTree,Mounts);
+   BF120TrialButton=AddButton(WidgetTree,Trial,TEXT("BF120 시험"));BF120TrialButton->OnClicked.AddDynamic(this,&UOVDevelopmentWidget::EnableBF120Trial);
+   BF120DisableButton=AddButton(WidgetTree,Trial,TEXT("시험 해제"));BF120DisableButton->OnClicked.AddDynamic(this,&UOVDevelopmentWidget::DisableBF120Trial);
+   Mounts->AddChildToVerticalBox(Label(WidgetTree,TEXT("시험 외형 · 포구 위치 변경 · 최종 모델 아님")));
    AddButton(WidgetTree,Mounts,TEXT("선택 함선 다시 읽기"))->OnClicked.AddDynamic(this,&UOVDevelopmentWidget::Weapons);
   }
   RefreshRuntime();return;
@@ -592,6 +608,8 @@ void UOVDevelopmentWidget::Spawn()
 }
 void UOVDevelopmentWidget::Delete(){auto* PC=Cast<AOVController>(GetOwningPlayer());auto* S=GetWorld()?GetWorld()->GetSubsystem<UOVDevelopmentSubsystem>():nullptr;if(S&&PC){S->DeleteShip(PC->Selected);Reply(S->LastMessage);RefreshShips();}}
 void UOVDevelopmentWidget::Equip(){auto* PC=Cast<AOVController>(GetOwningPlayer());auto* S=GetWorld()?GetWorld()->GetSubsystem<UOVDevelopmentSubsystem>():nullptr;if(S&&PC){const int32 I=MountChoice->GetSelectedIndex();S->EquipWeapon(WeaponSubject.Get(),MountIds.IsValidIndex(I)?MountIds[I]:NAME_None,SelectedId);Reply(S->LastMessage);RefreshRuntime();}}
+void UOVDevelopmentWidget::EnableBF120Trial(){auto* S=GetWorld()?GetWorld()->GetSubsystem<UOVDevelopmentSubsystem>():nullptr;if(S&&MountChoice){const int32 I=MountChoice->GetSelectedIndex();S->SetBF120Trial(WeaponSubject.Get(),MountIds.IsValidIndex(I)?MountIds[I]:NAME_None,true);Reply(S->LastMessage);RefreshRuntime();}}
+void UOVDevelopmentWidget::DisableBF120Trial(){auto* S=GetWorld()?GetWorld()->GetSubsystem<UOVDevelopmentSubsystem>():nullptr;if(S&&MountChoice){const int32 I=MountChoice->GetSelectedIndex();S->SetBF120Trial(WeaponSubject.Get(),MountIds.IsValidIndex(I)?MountIds[I]:NAME_None,false);Reply(S->LastMessage);RefreshRuntime();}}
 void UOVDevelopmentWidget::Target(){auto* PC=Cast<AOVController>(GetOwningPlayer());auto* S=GetWorld()?GetWorld()->GetSubsystem<UOVDevelopmentSubsystem>():nullptr;if(S&&PC){const int32 I=TargetChoice->GetSelectedIndex();S->SetShipTarget(WeaponSubject.Get(),Targets.IsValidIndex(I)?Targets[I].Get():nullptr);Reply(S->LastMessage);RefreshRuntime();}}
 void UOVDevelopmentWidget::Fire(){auto* PC=Cast<AOVController>(GetOwningPlayer());auto* S=GetWorld()?GetWorld()->GetSubsystem<UOVDevelopmentSubsystem>():nullptr;if(S&&PC){const int32 I=MountChoice->GetSelectedIndex();S->FireWeapon(WeaponSubject.Get(),MountIds.IsValidIndex(I)?MountIds[I]:NAME_None);Reply(S->LastMessage);RefreshRuntime();}}
 void UOVDevelopmentWidget::SpawnHero(){auto* PC=Cast<AOVController>(GetOwningPlayer());if(PC&&PC->Interior){PC->Interior->SpawnRosterHero(PC->Selected,HeroId(),NAME_None);Reply(PC->Interior->LastMessage);}else if(Feedback)Reply(TEXT("실제 배치 불가: 선내 시스템을 사용할 수 없습니다."));}

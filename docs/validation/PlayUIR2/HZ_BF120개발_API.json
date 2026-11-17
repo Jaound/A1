@@ -1,0 +1,105 @@
+{
+  "passed": true,
+  "physical_input": false,
+  "checks": [
+    {
+      "id": "PREVIEW",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "TARGET",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "DENY_OUTSIDE_DEV",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "DEV_OPEN",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "DENY_OTHER_WEAPON",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "DENY_ENEMY",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "ENABLE",
+      "passed": true,
+      "detail": "BF120 원본 기반 시험 · 포구 위치 변경 · 최종 모델 아님"
+    },
+    {
+      "id": "NEW_ISOLATED_LAYOUT",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "ORIGINAL_UNCHANGED",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "ENABLE_IDEMPOTENT",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "OTHER_SHIP_UNCHANGED",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "NO_GAMEPLAY_EVENT",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "DISABLE",
+      "passed": true,
+      "detail": "시험 해제 · 기존 포탑과 발사 위치로 복귀"
+    },
+    {
+      "id": "FALLBACK",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "DISABLE_AGAIN_REJECTED",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "ENABLE_AGAIN",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "WEAPON_PAGE",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "SCROLL_TO_CONTROLS",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "RENDER",
+      "passed": true,
+      "detail": ""
+    }
+  ],
+  "errors": [],
+  "image": "C:/Users/user/source/repos/A1/Unreal/OrbitalVanguard/Saved/Validation/BF120Developer.png",
+  "scope": "개발 도구 명령 API. 원본 적용 완료나 직접 클릭 검증이 아님",
+  "play_settings_restored": true
+}

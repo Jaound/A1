@@ -127,6 +127,34 @@ bool UOVDevelopmentSubsystem::EquipWeapon(AOVShip* Ship,FName MountId,FName Prof
     LastMessage=Result?TEXT("무장 교체 · 기존 장착 계열/티어/상하부 제약 유지 · HP 회복 없음"):
         TEXT("교체 불가: 장착점·계열·티어·함체 제한 또는 프로필을 확인하세요.");return Result;
 }
+bool UOVDevelopmentSubsystem::SetBF120Trial(AOVShip* Ship,FName MountId,bool bEnable)
+{
+    const auto* PC=Cast<AOVController>(GetWorld()->GetFirstPlayerController());
+    if(!PC||!PC->bDeveloperMode){LastMessage=TEXT("개발 모드를 먼저 켜세요.");return false;}
+    if(!IsValid(Ship)||!Ship->Systems||!Ship->Systems->Layout||Ship->Systems->FactionId!=0||Ship->Systems->bWrecked)
+    {LastMessage=TEXT("사용 가능한 아군 함선의 함포를 선택하세요.");return false;}
+    const auto* Combat=GetWorld()->GetSubsystem<UOVCombatSubsystem>();
+    const auto State=Combat?Combat->GetShipState(Ship):FOVCombatShipState();
+    const auto* Mount=State.Mounts.FindByPredicate([MountId](const auto& M){return M.MountId==MountId;});
+    const int32 Index=Ship->Systems->Layout->WeaponMounts.IndexOfByPredicate([MountId](const auto& M){return M.WeaponId==MountId;});
+    if(!Mount||Mount->Profile.Kind!=EOVAttackKind::Cannon||!Ship->Systems->Layout->WeaponMounts.IsValidIndex(Index)
+       ||Ship->Systems->Layout->WeaponMounts[Index].Type!=EOVWeaponType::Cannon)
+    {LastMessage=TEXT("현재 장착된 함포에서만 시험할 수 있습니다.");return false;}
+    const FName Existing=Ship->Systems->Layout->WeaponMounts[Index].PresentationProfile;
+    if((bEnable&&!Existing.IsNone()&&Existing!=TEXT("BF120Trial"))||(!bEnable&&Existing!=TEXT("BF120Trial")))
+    {LastMessage=TEXT("해당 장착점은 BF120 시험 상태가 아닙니다.");return false;}
+    FOVWeaponMountDefinition Candidate=Ship->Systems->Layout->WeaponMounts[Index];Candidate.PresentationProfile=TEXT("BF120Trial");
+    if(bEnable&&!OVWeaponGeometry::HasBF120Trial(Candidate))
+    {LastMessage=TEXT("BF120 시험 자산을 찾을 수 없습니다.");return false;}
+    if((bEnable&&Existing==TEXT("BF120Trial"))||(!bEnable&&Existing.IsNone()))
+    {LastMessage=TEXT("이미 요청한 시험 상태입니다.");return true;}
+    auto* Copy=DuplicateObject<UShipLayoutDataAsset>(Ship->Systems->Layout,Ship);
+    if(!Copy){LastMessage=TEXT("시험 레이아웃을 만들 수 없습니다.");return false;}
+    Copy->WeaponMounts[Index].PresentationProfile=bEnable?FName(TEXT("BF120Trial")):NAME_None;
+    Ship->Systems->Layout=Copy;Ship->RefreshWeaponVisuals();
+    LastMessage=bEnable?TEXT("BF120 원본 기반 시험 · 포구 위치 변경 · 최종 모델 아님"):TEXT("시험 해제 · 기존 포탑과 발사 위치로 복귀");
+    return true;
+}
 bool UOVDevelopmentSubsystem::SetShipTarget(AOVShip* Ship,AOVShip* Target)
 {
     const auto* PC=Cast<AOVController>(GetWorld()->GetFirstPlayerController());

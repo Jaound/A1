@@ -1,5 +1,8 @@
 # 최근 진행: BF120 286조합 간섭 검사
 
+**BF120 개발 창 시험 적용 (ID/IE):** 아군 함포를 선택해 개발 도구 `무장` 탭의 `BF120 시험`/`시험 해제`로 원본 기반 포탑을 시험할 수 있다. 복사한 레이아웃의 해당 무장에만 적용하고 다른 함선·원본 레이아웃·HP·발사 횟수를 바꾸지 않는다. 포구 위치는 실제 발사에 반영되므로 시험 상태임을 화면에 표시한다. [1920 API 23/23](validation/PlayUIR2/ID_BF120개발_API.json)·[화면](validation/PlayUIR2/ID_BF120개발_1920.png), [1280 API 23/23](validation/PlayUIR2/IE_BF120개발_API.json)·[화면](validation/PlayUIR2/IE_BF120개발_1280.png), [개발 창 기존 API 36/36](validation/PlayUIR2/IC_개발창회귀_API.json), `PlayUI_R2_ID_Build.log` 빌드 성공·`PlayUI_R2_IE_Automation.log` 전체 자동 104/104. 버튼 이벤트는 테스트 API로 발생시켰고 직접 마우스 클릭은 미검증이다. 첫 HW 검사는 잘못된 Python 서브시스템 API, HY는 보호된 UI 속성 조회로 실패해 [증거](validation/PlayUIR2/HW_무장개발_초기실패.json)·[증거](validation/PlayUIR2/HY_BF120개발_렌더실패.json)를 남겼다. IB 화면은 버튼이 하단에 걸려 가려져 [기록](validation/PlayUIR2/IB_BF120개발_1920.png)했고, 끝까지 스크롤한 ID 화면에서 보이는 것을 확인했다. [사용법](PLAY_UI_GUIDE.md). 여전히 시험본이고 기본 원본 적용이나 대량 성능·패키지 검증은 아니다.
+
+
 **PC14 충돌 후보 교전 비교 (HV):** 같은 F6 편성·시드 260112·정지 함선·30초 API 시뮬레이션에서 기존 OBB/장착점과 측정 27상자/표면 장착점을 비교했다([결과](validation/PlayUIR2/HV_PC14충돌전투비교.json)). 두 경우 발사 178·명중 172였고 세 함선의 선체 HP는 같았으며 초계함 쉴드는 192.756/192.685였다. 무장 직접 명중은 두 경우 모두 0이다. 표본 하나이므로 충돌 범위·밸런스 동등이나 대규모 성능을 뜻하지 않는다. 기록된 시뮬레이션 벽시각은 렌더 프레임/성능 벤치마크가 아니다. 후보는 기본 적용하지 않았다. 재실행: `powershell -ExecutionPolicy Bypass -File Unreal/OrbitalVanguard/Tools/RunPlayUIValidation.ps1 -Label PlayUI_R2_HV -Validators ComparePC14Collision.py -Resolution 1280x720`.
 
 
