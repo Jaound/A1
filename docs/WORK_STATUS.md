@@ -1,5 +1,8 @@
 # 최신 작업 — 플레이 UI R2 진행 중
 
+**PC14 무장 가림 실사격 확인 (GU):** 신규 `OrbitalVanguard.Combat.PC14TrialMountOcclusion`은 기존 OBB와 PC14 후보 장착점 높이로 구성한 시험 함체에 실제 빔·포탄을 각각 요청한다. 기존 Z=42cm에서는 두 공격이 무장에, 표면 후보 Z=3.606cm에서는 두 공격이 먼저 선체에 맞는 것을 확인했다. 이는 해당 수직 방향의 통제된 비교이며 모든 각도의 결과는 아니다. `PlayUI_R2_GU_Build.log` 빌드 성공, 신규 시험 성공, `PlayUI_R2_GU_Automation.log` 전체 자동 101/101 성공. 표면 후보는 여전히 기본 모델에 적용하지 않았다. 다음: 원본 선체 표면에 맞는 충돌 형상 후보를 별도 데이터/시험으로 만들고 상하·측면 실제 발사와 장갑/시설·선택·기존 OBB 회귀를 비교한다.
+
+
 **PC14 표면 장착 실험 및 충돌상 문제 (GT):** F6 임시 레이아웃만 변경해 BF120 받침대 밑면을 측정된 선체 표면 Z=-2.551cm에 맞췄다. 장착점 Z=42→3.606cm, 발사 원점도 이동했으며 긴 임시 받침대는 시험에서만 숨겼다. [PIE API 12/12](validation/PlayUIR2/GT_PC14표면_API.json), [화면](validation/PlayUIR2/GT_PC14표면_1280.png): 실제 발사·쉴드 명중을 확인했다. 그러나 발사 원점 높이 12.906cm는 기존 선체 OBB 상단 30cm 아래이고, 무장 피격 구체의 상단도 21.606cm로 OBB 아래다. `SweepAttack`은 OBB와 무장 구체 중 먼저 맞는 표면을 선택하므로 외부 상방 피격에서 이 무장 구체가 가려질 우려가 있다(직접 피격 실험은 미실행). 이 배치를 기본값에 적용하지 않았다. 다음: 각도별 실제 포탄/빔의 무장·장갑 충돌을 시험하고 OBB-외형 차이와 별도 충돌 형상 대안을 비교, 기존 피해·선택·저장 호환성을 검증한다. 예제 실행은 `$env:OV_BF120_PC14='1'; $env:OV_BF120_FLUSH='1'; powershell -ExecutionPolicy Bypass -File Unreal/OrbitalVanguard/Tools/RunPlayUIValidation.ps1 -Label PlayUI_R2_GT -Validators ValidateBF120LiveTrial.py -Resolution 1280x720`. 직접 입력·대량 성능·모델 최종 적용은 미검증이다.
 
 

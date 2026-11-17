@@ -676,6 +676,37 @@ bool FOVCombatMountImpactTest::RunTest(const FString&)
     return true;
 }
 
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(FOVCombatPC14MountOcclusionTest, "OrbitalVanguard.Combat.PC14TrialMountOcclusion",
+    EAutomationTestFlags::EditorContext | EAutomationTestFlags::EngineFilter)
+bool FOVCombatPC14MountOcclusionTest::RunTest(const FString&)
+{
+    for (const EOVAttackKind Kind : {EOVAttackKind::Beam, EOVAttackKind::Cannon})
+        for (const bool bFlush : {false, true})
+        {
+            OVCombatTest::FRange R;
+            auto* Layout=DuplicateObject<UShipLayoutDataAsset>(R.B->Systems->Layout,R.B);
+            Layout->LocalHalfExtent=FVector(175,75,30);
+            Layout->WeaponMounts[0].LocalPosition=FVector(-46.6666667,0,bFlush?3.606237:42.0);
+            R.B->Systems->Initialize(Layout);
+            R.B->Systems->Shield=0;R.B->Systems->bShieldActive=false;
+            R.A->SetActorLocation(FVector(953.3333333,0,1300));R.A->SetActorRotation(FRotator(-90,0,0));
+            R.Combat->Settings->GuaranteedRange=100000;
+            R.Combat->SetTarget(R.A,R.B);
+            R.Combat->SetAttackIntent(R.A,EOVAttackIntent::DisableWeapons);
+            auto& Gun=R.Gun();Gun.Profile.Kind=Kind;Gun.Profile.Accuracy=1;Gun.Profile.AimSpreadDegrees=0;
+            Gun.Profile.Range=100000;Gun.Profile.FireTolerance=180;Gun.Profile.Speed=60000;
+            Gun.Profile.TraverseSpeed=10000;Gun.Profile.TraverseAcceleration=100000;Gun.Profile.Damage=50;Gun.Profile.Salvo=1;
+            R.Combat->Simulate(.2f);
+            TestTrue(TEXT("Actual targeted attack is requested"),R.Combat->RequestFire(R.A,Gun.MountId));
+            R.Combat->Simulate(.1f);
+            if(!TestTrue(TEXT("One real attack resolves"),R.Combat->HitCount==1&&!R.Combat->RecentEvents.IsEmpty()))continue;
+            const FOVAttackState& Event=R.Combat->RecentEvents.Last();
+            TestTrue(TEXT("Control mount is hit; lower candidate is occluded by hull"),
+                bFlush?Event.ImpactWeaponId.IsNone():Event.ImpactWeaponId==Layout->WeaponMounts[0].WeaponId);
+        }
+    return true;
+}
+
 IMPLEMENT_SIMPLE_AUTOMATION_TEST(FOVCombatFixedPathTest, "OrbitalVanguard.Combat.FixedVLSPathAndContinuousSpread", EAutomationTestFlags::EditorContext | EAutomationTestFlags::EngineFilter)
 bool FOVCombatFixedPathTest::RunTest(const FString&)
 {
