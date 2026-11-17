@@ -33,7 +33,13 @@ EOVFacilityType SupplyFor(EOVWeaponType Type)
 
 FVector MountOrigin(const FOVCombatShipState& State, const FOVWeaponMountDefinition& Def)
 {
-    return State.Ship->GetActorTransform().TransformPosition(Def.LocalPosition);
+    const FOVCombatMountState* Mount = State.Mounts.FindByPredicate(
+        [&Def](const FOVCombatMountState& M) { return M.MountId == Def.WeaponId; });
+    const FVector Local = OVWeaponGeometry::MuzzleLocal(Def.LocalPosition,
+        Mount ? Mount->LocalAim : FRotator::ZeroRotator,
+        OVWeaponGeometry::BarrelLength(State.Ship->Systems->Layout->LocalHalfExtent, Def.Tier, false),
+        Mount && Mount->Profile.Kind == EOVAttackKind::Missile);
+    return State.Ship->GetActorTransform().TransformPosition(Local);
 }
 
 float TargetRadius(const AOVShip* Ship)
@@ -141,6 +147,7 @@ void UOVCombatSubsystem::EnableCombat(const TArray<AOVShip*>& InShips, int32 See
 
 void UOVCombatSubsystem::DisableCombat()
 {
+    for (const auto& State : Ships) if (IsValid(State.Ship)) State.Ship->ClearWeaponVisuals();
     bEnabled = false; GameTime = 0; Accumulator = 0;
     ShotCount = 0; HitCount = 0; Ships.Reset(); Attacks.Reset(); RecentEvents.Reset();
     ResolvedAttackIds.Reset();
@@ -182,6 +189,7 @@ void UOVCombatSubsystem::RegisterShip(AOVShip* Ship, int32 RadarTier, bool bRada
         State.Mounts.Add(Mount);
     }
     Ships.Add(State);
+    Ship->RefreshWeaponVisuals();
 }
 
 FOVCombatShipState UOVCombatSubsystem::GetShipState(AOVShip* Ship) const
@@ -389,6 +397,8 @@ void UOVCombatSubsystem::Simulate(float GameDelta)
         Step(FixedStep); Accumulator -= FixedStep;
         if (Accumulator < 0) Accumulator = 0;
     }
+    // Display synchronizes once per outer frame, not for every 120 Hz combat substep.
+    for (const auto& State : Ships) if (IsValid(State.Ship)) State.Ship->RefreshWeaponVisuals();
 }
 
 void UOVCombatSubsystem::Step(float Delta)
@@ -504,6 +514,14 @@ void UOVCombatSubsystem::UpdateAim(FOVCombatShipState& State, FOVCombatMountStat
     const FOVWeaponMountDefinition* Def = MountDefinition(State, Mount.MountId);
     if (!Def) return;
     AOVShip* Ship = State.Ship;
+    const auto* Health = Ship->Systems->WeaponMountStates.FindByPredicate(
+        [&Mount](const FOVWeaponMountState& H) { return H.WeaponMountId == Mount.MountId; });
+    if (!Health || Health->HP <= 0)
+    {
+        Mount.AngularVelocity = FVector2D::ZeroVector;
+        Mount.bHadDetection = false; Mount.TrackingRemaining = 0;
+        return;
+    }
     FVector ObservedPoint;
     const bool bDetected = ResolveAimPoint(State,Ship->AttackTarget,ObservedPoint);
     if (bDetected)
@@ -577,6 +595,8 @@ void UOVCombatSubsystem::Launch(FOVCombatShipState& State, FOVCombatMountState& 
     }
     State.Ship->Systems->NotifyCombatParticipation();
     ++Mount.ShotsFired;
+    Mount.LastShotId = Attack.AttackId;
+    Mount.LastShotTime = GameTime;
     const float Efficiency = State.Ship->Systems->GetEfficiency(EOVFacilityType::WeaponControl)
         * State.Ship->Systems->GetEfficiency(SupplyFor(Def->Type));
     if (Mount.SalvoRemaining <= 0)

@@ -2,6 +2,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
+#include "OVWeaponVisualComponent.h"
 #include "OVShip.generated.h"
 
 class UStaticMeshComponent;
@@ -73,6 +74,11 @@ public:
     void SetCalibrationHull(const FVector* LocalHalfExtent);
     void Configure(const FString& Name, bool Friendly, float Speed, float RotationRate,
         const FVector& Scale, const FLinearColor& Color);
+    /** Read-only rendering synchronization, called once after a simulation batch, never a second simulation. */
+    UFUNCTION(BlueprintCallable, Category="Presentation") void RefreshWeaponVisuals();
+    UFUNCTION(BlueprintPure, Category="Presentation") TArray<FOVWeaponVisualState> GetWeaponVisualStates() const;
+    UFUNCTION(BlueprintPure, Category="Presentation") FVector GetWeaponMuzzleWorld(FName MountId) const;
+    void ClearWeaponVisuals();
 
 private:
     // Detect legacy direct bManual writes while preserving the four D101 combinations.
@@ -80,4 +86,5 @@ private:
     UPROPERTY()
     TArray<TObjectPtr<UStaticMeshComponent>> AccentMeshes;
     UPROPERTY() TObjectPtr<UBoxComponent> CalibrationSelection;
+    UPROPERTY() TArray<TObjectPtr<UOVWeaponVisualComponent>> WeaponVisuals;
 };

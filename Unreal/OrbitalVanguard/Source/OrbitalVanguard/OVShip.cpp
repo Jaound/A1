@@ -1,5 +1,7 @@
 #include "OVShip.h"
 #include "OVInteriorSubsystem.h"
+#include "OVCombatSubsystem.h"
+#include "OVPointDefenseSubsystem.h"
 #include "Engine/World.h"
 #include "OVShipSystemsComponent.h"
 #include "Components/SceneComponent.h"
@@ -181,6 +183,103 @@ void AOVShip::Configure(const FString& Name, bool Friendly, float Speed, float R
         Accent->SetVectorParameterValue(TEXT("Color"), FLinearColor(Color.R * 0.5f + 0.15f, Color.G * 0.5f + 0.15f, Color.B * 0.5f + 0.15f));
         for (UStaticMeshComponent* Part : AccentMeshes) Part->SetMaterial(0, Accent);
     }
+}
+
+void AOVShip::ClearWeaponVisuals()
+{
+    for (UOVWeaponVisualComponent* Visual : WeaponVisuals)
+        if (IsValid(Visual)) Visual->DestroyComponent();
+    WeaponVisuals.Reset();
+}
+
+void AOVShip::RefreshWeaponVisuals()
+{
+    if (!Systems || !Systems->Layout || !GetWorld()) { ClearWeaponVisuals(); return; }
+    const auto* Combat = GetWorld()->GetSubsystem<UOVCombatSubsystem>();
+    const auto* PD = GetWorld()->GetSubsystem<UOVPointDefenseSubsystem>();
+    const FOVCombatShipState* CombatState = Combat && Combat->bEnabled ? Combat->Ships.FindByPredicate(
+        [this](const FOVCombatShipState& S) { return S.Ship == this; }) : nullptr;
+    const FOVPDShipState* PDState = PD && PD->bEnabled ? PD->Ships.FindByPredicate(
+        [this](const FOVPDShipState& S) { return S.Ship == this; }) : nullptr;
+    TArray<FName, TInlineAllocator<32>> Active;
+    auto Sync = [&](const FOVWeaponMountDefinition& Def, FRotator Aim, bool bFixedVLS,
+        bool bDestroyed, int32 ShotId, double ShotTime, double Clock)
+    {
+        Active.Add(Def.WeaponId);
+        UOVWeaponVisualComponent* Visual = nullptr;
+        for (auto& Existing : WeaponVisuals)
+            if (Existing && Existing->GetMountId() == Def.WeaponId)
+            {
+                if (Existing->Matches(Def, Systems->Layout->LocalHalfExtent)) Visual = Existing;
+                else { Existing->DestroyComponent(); Existing = nullptr; }
+                break;
+            }
+        if (!Visual)
+        {
+            Visual = NewObject<UOVWeaponVisualComponent>(this);
+            AddInstanceComponent(Visual);
+            Visual->SetupAttachment(GetRootComponent());
+            Visual->RegisterComponent();
+            Visual->Initialize(Def, Systems->Layout->LocalHalfExtent);
+            WeaponVisuals.Add(Visual);
+        }
+        Visual->Synchronize(Aim, bFixedVLS, bDestroyed, Systems->FactionId == 0, ShotId, ShotTime, Clock);
+    };
+    if (CombatState)
+        for (const FOVCombatMountState& Mount : CombatState->Mounts)
+        {
+            const auto* Def = Systems->Layout->WeaponMounts.FindByPredicate(
+                [&Mount](const FOVWeaponMountDefinition& D) { return D.WeaponId == Mount.MountId; });
+            if (!Def) continue;
+            const auto* Health = Systems->WeaponMountStates.FindByPredicate(
+                [&Mount](const FOVWeaponMountState& H) { return H.WeaponMountId == Mount.MountId; });
+            Sync(*Def, Mount.LocalAim, Mount.Profile.Kind == EOVAttackKind::Missile,
+                Systems->bWrecked || !Health || Health->HP <= 0, Mount.LastShotId, Mount.LastShotTime, Combat->GameTime);
+        }
+    if (PDState)
+        for (const FOVPDMountState& Mount : PDState->Mounts)
+        {
+            FOVWeaponMountDefinition Def;
+            Def.WeaponId = Mount.MountId; Def.Type = EOVWeaponType::Interception;
+            Def.LocalPosition = Mount.LocalPosition; Def.Tier = Systems->Layout->WeaponTier;
+            const auto* Health = Systems->WeaponMountStates.FindByPredicate(
+                [&Mount](const FOVWeaponMountState& H) { return H.WeaponMountId == Mount.MountId; });
+            Sync(Def, Mount.LocalAim, false, Systems->bWrecked || Mount.HP <= 0
+                || (Mount.bLayoutMount && (!Health || Health->HP <= 0)), Mount.LastShotId, Mount.LastShotTime, PD->GameTime);
+        }
+    for (int32 I = WeaponVisuals.Num() - 1; I >= 0; --I)
+        if (!WeaponVisuals[I] || !Active.Contains(WeaponVisuals[I]->GetMountId()))
+        {
+            if (WeaponVisuals[I]) WeaponVisuals[I]->DestroyComponent();
+            WeaponVisuals.RemoveAt(I);
+        }
+}
+
+TArray<FOVWeaponVisualState> AOVShip::GetWeaponVisualStates() const
+{
+    TArray<FOVWeaponVisualState> Result;
+    for (const UOVWeaponVisualComponent* Visual : WeaponVisuals)
+        if (IsValid(Visual)) Result.Add(Visual->ReadState());
+    return Result;
+}
+
+FVector AOVShip::GetWeaponMuzzleWorld(FName MountId) const
+{
+    if (!Systems || !Systems->Layout || !GetWorld()) return GetActorLocation();
+    const auto* Combat = GetWorld()->GetSubsystem<UOVCombatSubsystem>();
+    if (Combat)
+        if (const auto* State = Combat->Ships.FindByPredicate([this](const FOVCombatShipState& S) { return S.Ship == this; }))
+            if (const auto* Mount = State->Mounts.FindByPredicate([MountId](const FOVCombatMountState& M) { return M.MountId == MountId; }))
+                if (const auto* Def = Systems->Layout->WeaponMounts.FindByPredicate([MountId](const FOVWeaponMountDefinition& D) { return D.WeaponId == MountId; }))
+                    return GetActorTransform().TransformPosition(OVWeaponGeometry::MuzzleLocal(Def->LocalPosition, Mount->LocalAim,
+                        OVWeaponGeometry::BarrelLength(Systems->Layout->LocalHalfExtent, Def->Tier, false), Mount->Profile.Kind == EOVAttackKind::Missile));
+    const auto* PD = GetWorld()->GetSubsystem<UOVPointDefenseSubsystem>();
+    if (PD)
+        if (const auto* State = PD->Ships.FindByPredicate([this](const FOVPDShipState& S) { return S.Ship == this; }))
+            if (const auto* Mount = State->Mounts.FindByPredicate([MountId](const FOVPDMountState& M) { return M.MountId == MountId; }))
+                return GetActorTransform().TransformPosition(OVWeaponGeometry::MuzzleLocal(Mount->LocalPosition, Mount->LocalAim,
+                    OVWeaponGeometry::BarrelLength(Systems->Layout->LocalHalfExtent, Systems->Layout->WeaponTier, true), false));
+    return GetActorLocation();
 }
 
 void AOVShip::SetDestination(const FVector& Location)

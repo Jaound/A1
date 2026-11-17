@@ -117,6 +117,8 @@ struct ORBITALVANGUARD_API FOVCombatMountState
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly) bool bHadDetection = false;
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly) FVector LastTrackedWorldPoint = FVector::ZeroVector;
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly) int32 ShotsFired = 0;
+    UPROPERTY(VisibleAnywhere, BlueprintReadOnly) int32 LastShotId = 0;
+    UPROPERTY(VisibleAnywhere, BlueprintReadOnly) double LastShotTime = -1;
 };
 
 UENUM(BlueprintType)

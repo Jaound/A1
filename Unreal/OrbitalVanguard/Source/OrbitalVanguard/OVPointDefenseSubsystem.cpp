@@ -117,6 +117,7 @@ bool UOVPointDefenseSubsystem::RegisterShip(AOVShip* Ship, int32 MountCount, flo
         State.Mounts.Add(Mount);
     }
     Ships.Add(State);
+    Ship->RefreshWeaponVisuals();
     return true;
 }
 
@@ -180,7 +181,11 @@ void UOVPointDefenseSubsystem::Step(float GameDelta)
             for (const FTarget& Target : Targets)
             {
                 if (Target.Faction < 0 || Target.Faction == Ship->Systems->FactionId) continue;
-                const double Distance = FVector::DistSquared(Origin, Target.Position);
+                const FRotator CandidateAim = Ship->GetActorQuat().UnrotateVector(Target.Position - Origin).Rotation();
+                const FVector CandidateMuzzle = Ship->GetActorTransform().TransformPosition(OVWeaponGeometry::MuzzleLocal(
+                    Mount.LocalPosition, CandidateAim, OVWeaponGeometry::BarrelLength(Ship->Systems->Layout->LocalHalfExtent,
+                        Ship->Systems->Layout->WeaponTier, true), false));
+                const double Distance = FVector::DistSquared(CandidateMuzzle, Target.Position);
                 if (Distance > FMath::Square(Range)) continue;
                 const int32 Rank = State.Priority.IndexOfByKey(Target.Kind);
                 if (Rank == INDEX_NONE) continue;
@@ -190,12 +195,13 @@ void UOVPointDefenseSubsystem::Step(float GameDelta)
             }
             if (!Best) continue;
             const FTarget Chosen = *Best;
+            Mount.LocalAim = Ship->GetActorQuat().UnrotateVector(Chosen.Position - Origin).Rotation();
             FOVPDEvent Event;
             Event.EventId = ++ShotCount;
             Event.GameTime = GameTime;
             Event.DefenderId = Ship->GetFName(); Event.DefenderFaction = Ship->Systems->FactionId;
             Event.MountId = Mount.MountId; Event.WeaponKind = Mount.Profile.Kind;
-            Event.Origin = Origin; Event.TargetPosition = Chosen.Position;
+            Event.Origin = Ship->GetWeaponMuzzleWorld(Mount.MountId); Event.TargetPosition = Chosen.Position;
             Event.TargetKind = Chosen.Kind; Event.TargetId = Chosen.Id;
             Event.HitProbability = HitProbability(Mount.Profile.Accuracy, Chosen.Evasion);
             // Exactly one roll. No second evasion check in the target's damage path.
@@ -208,6 +214,7 @@ void UOVPointDefenseSubsystem::Step(float GameDelta)
                 if (Event.bDestroyed) ++KillCount;
             }
             ++Mount.ShotCount;
+            Mount.LastShotId = Event.EventId; Mount.LastShotTime = GameTime;
             Mount.Cooldown = Mount.Profile.Interval;
             Ship->Systems->NotifyCombatParticipation();
             RecentEvents.Add(Event);

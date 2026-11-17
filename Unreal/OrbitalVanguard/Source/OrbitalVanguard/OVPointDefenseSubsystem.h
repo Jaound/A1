@@ -37,6 +37,10 @@ struct ORBITALVANGUARD_API FOVPDMountState
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly) float Cooldown = 0;
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly) int32 ShotCount = 0;
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly) bool bLayoutMount = false;
+    /** Existing PD has instantaneous acquisition; display must not invent a separate target or turn delay. */
+    UPROPERTY(VisibleAnywhere, BlueprintReadOnly) FRotator LocalAim = FRotator::ZeroRotator;
+    UPROPERTY(VisibleAnywhere, BlueprintReadOnly) int32 LastShotId = 0;
+    UPROPERTY(VisibleAnywhere, BlueprintReadOnly) double LastShotTime = -1;
 };
 
 USTRUCT(BlueprintType)
