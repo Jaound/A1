@@ -99,6 +99,15 @@ def tick(_dt):
                          shots=p(combat,'shot_count'));return
         if state['phase']==5:
             combat=p(pc,'combat');attacker=state['attacker'];target=state['target']
+            width,height=pc.get_viewport_size()
+            scale=max(.25,min(1,width/1280,height/740))
+            for action in ('Move','Stop','Target','FireAll','MoveAuto','FireAuto','Fire','NextWeapon','CancelAttack'):
+                center=hud.get_action_center(action)
+                check('WINDOW-COMMAND-CARD-'+action,
+                      center.x<620 and center.y>height/scale-220
+                      and str(hud.get_hit_action_at_canvas_point(center))==action
+                      and hud.is_over_panel(center.x*scale,center.y*scale))
+            check('WINDOW-BOTTOM-RIGHT-WORLD-AVAILABLE',not hud.is_over_panel(width-10,height-30))
             for action in ('Protection','ForceGun'):
                 center=hud.get_action_center(action)
                 check('WINDOW-'+action.upper()+'-BUTTON-VISIBLE',center.x>=0 and center.y>=0,center)

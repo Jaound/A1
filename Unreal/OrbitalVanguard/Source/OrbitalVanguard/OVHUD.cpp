@@ -47,7 +47,7 @@ bool AOVHUD::IsOverPanel(float X,float Y) const
  if(!PC->bDeveloperMode&&!bSceneMenuOpen&&PC->Phase2CScenario>=0&&P.X>=212&&P.X<=484&&P.Y>=76&&P.Y<=224)return true;
  if(!PC->bDeveloperMode&&!bHeroPanelOpen&&!bDetailsOpen&&PinnedShips.Num()>0&&P.X>=ViewportPixels.X/UIScale-278&&P.Y>=76&&P.Y<=76+PinnedShips.Num()*170)return true;
  // The basic HUD remains visible under the separate developer window.
- if(P.Y<62 || P.Y>ViewportPixels.Y/UIScale-160 || (P.X<204 && P.Y<ViewportPixels.Y/UIScale-170) || (bSceneMenuOpen && P.X>=210 && P.X<=650 && P.Y<=205)) return true;
+ if(P.Y<62 || (P.X<620 && P.Y>ViewportPixels.Y/UIScale-220) || (P.X<204 && P.Y<ViewportPixels.Y/UIScale-230) || (bSceneMenuOpen && P.X>=210 && P.X<=650 && P.Y<=205)) return true;
  return !PC->bDeveloperMode&&PC->Selected&&bDetailsOpen&&P.X>=WindowPosition.X&&P.X<=WindowPosition.X+WindowSize.X&&P.Y>=WindowPosition.Y&&P.Y<=WindowPosition.Y+(bMinimized?32:WindowSize.Y);
 }
 bool AOVHUD::HasOrbitPreview() const
