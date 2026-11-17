@@ -1,5 +1,8 @@
 # 최신 작업 — 플레이 UI R2 진행 중
 
+**PC14·BF120 결합 시험 (GQ):** F6 초계함의 원본 기반 선체 및 BF120 시험 포탑을 함께 표시하고 API 12/12로 실제 발사·쉴드 명중을 확인했다. [시험 결과](validation/PlayUIR2/GQ_PC14전장_API.json), [별도 PIE 화면](validation/PlayUIR2/GQ_PC14전장_적정거리.png). 첫 화면은 적 함체가 카메라를 가렸고([GN](validation/PlayUIR2/GN_PC14전장_가림.png)), 두 번째는 카메라가 시험 선체에 지나치게 가까워 포탑이 과장되어 보였다([GO](validation/PlayUIR2/GO_PC14전장_근접.png)). 거리 교정 후 포탑 크기는 확인됐으나 기존 물리 장착점과 표면 간 차이로 긴 임시 받침대가 노출된다. **원본 모델의 정상 접합·기본 적용 완료가 아니다.** 다음: 원본 면에 맞는 신규 장착점을 시험 레이아웃에서 교정하고 발사 원점·사선·피격·상하 설치 및 기존 물리/세이브 영향 비교, 적절한 어댑터 형상/재질 검증. GQ는 API와 렌더이며 실제 마우스·키보드 미검증이다.
+
+
 **BF120 F5 전장 시험 (GK/GL):** F5의 임시 레이아웃에만 시험 프로필을 넣고 실제 함포 1발의 발사 원점·표시·적 쉴드 명중을 확인했다. [1280 API 11/11](validation/PlayUIR2/GK_BF120전장_API.json), [1920 API 11/11](validation/PlayUIR2/GL_BF120전장_API.json), [1280 화면](validation/PlayUIR2/GK_BF120전장_1280.png)·[1920 화면](validation/PlayUIR2/GL_BF120전장_1920.png). [기존 포탑 PIE API 39/39](validation/PlayUIR2/GM_포탑회귀_API.json). 첫 GJ 캡처는 에디터 화면을 잘못 찍어 화면 근거에서 제외하고 별도 플레이 창으로 재시도했다. 스크린샷은 F5 임시 함체와 시험 포탑이며 원본 함선 적용 완료가 아니다. 실제 입력·패키징·적절한 함체 접합·대량 성능·다른 원본 무장 등은 미검증이다. 재실행: `powershell -ExecutionPolicy Bypass -File Unreal/OrbitalVanguard/Tools/RunPlayUIValidation.ps1 -Label PlayUI_R2_GK -Validators ValidateBF120LiveTrial.py -Resolution 1280x720`.
 
 

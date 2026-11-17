@@ -1,5 +1,8 @@
 # 최근 검사: BF120 양포구와 상하 장착
 
+**PC14·BF120 결합 시험 (GQ):** F6 초계함의 원본 기반 선체 및 BF120 시험 포탑을 함께 표시하고 API 12/12로 실제 발사·쉴드 명중을 확인했다. [시험 결과](validation/PlayUIR2/GQ_PC14전장_API.json), [별도 PIE 화면](validation/PlayUIR2/GQ_PC14전장_적정거리.png). 첫 화면은 적 함체가 카메라를 가렸고([GN](validation/PlayUIR2/GN_PC14전장_가림.png)), 두 번째는 카메라가 시험 선체에 지나치게 가까워 포탑이 과장되어 보였다([GO](validation/PlayUIR2/GO_PC14전장_근접.png)). 거리 교정 후 포탑 크기는 확인됐으나 기존 물리 장착점과 표면 간 차이로 긴 임시 받침대가 노출된다. **원본 모델의 정상 접합·기본 적용 완료가 아니다.** 다음: 원본 면에 맞는 신규 장착점을 시험 레이아웃에서 교정하고 발사 원점·사선·피격·상하 설치 및 기존 물리/세이브 영향 비교, 적절한 어댑터 형상/재질 검증. GQ는 API와 렌더이며 실제 마우스·키보드 미검증이다.
+
+
 ## BF120 F5 전장 연결 — 2026-11-18
 
 [1280 API 11/11](validation/PlayUIR2/GK_BF120전장_API.json), [1920 API 11/11](validation/PlayUIR2/GL_BF120전장_API.json): 임시 레이아웃에 시험 프로필 적용 후 실제 발사 원점·발사 효과·적 쉴드 감소 확인. [1280 화면](validation/PlayUIR2/GK_BF120전장_1280.png), [1920 화면](validation/PlayUIR2/GL_BF120전장_1920.png)은 별도 PIE 창 렌더다. 첫 캡처는 에디터 화면이어서 전장 렌더 근거에서 제외했다. [기존 포탑 API 39/39](validation/PlayUIR2/GM_포탑회귀_API.json). 화면에 보이는 함체는 임시 모델이고 API 제어는 직접 마우스·키보드 검증이 아니다.

@@ -1,0 +1,70 @@
+{
+  "passed": true,
+  "physical_input": false,
+  "scope": "F6 PC14 PIE API 시험 프로필, 실제 입력 및 기본 모델 적용 아님",
+  "checks": [
+    {
+      "id": "PC14_SCENE",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "TRANSIENT_LAYOUT",
+      "passed": true,
+      "detail": "/Game/Maps/UEDPIE_0_ControlRange.ControlRange:PersistentLevel.OVShip_1.ShipLayoutDataAsset_0"
+    },
+    {
+      "id": "OPT_IN_PROFILE",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "PROFILE_REGISTERED",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "TARGET_SET",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "REQUEST",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "ONE_SHOT",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "ACTUAL_ORIGIN",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "FLASH",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "HIT",
+      "passed": true,
+      "detail": "(1, 0)"
+    },
+    {
+      "id": "SHIELD_DAMAGE",
+      "passed": true,
+      "detail": "(10560.0, 10530.0)"
+    },
+    {
+      "id": "RENDER_FILE",
+      "passed": true,
+      "detail": ""
+    }
+  ],
+  "errors": [],
+  "image": "C:/Users/user/source/repos/A1/Unreal/OrbitalVanguard/Saved/Validation/BF120PC14Trial.png",
+  "play_settings_restored": true
+}

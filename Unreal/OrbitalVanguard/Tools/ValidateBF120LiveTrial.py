@@ -3,13 +3,14 @@ import json, os, time, traceback
 import unreal
 
 saved = unreal.Paths.convert_relative_path_to_full(unreal.Paths.project_saved_dir())
-out = os.path.join(saved, 'Validation', 'BF120LiveTrial.json')
-png = os.path.join(saved, 'Validation', 'BF120LiveTrial.png').replace('\\', '/')
+pc14_trial = os.environ.get('OV_BF120_PC14') == '1'
+stem = 'BF120PC14Trial' if pc14_trial else 'BF120LiveTrial'
+out = os.path.join(saved, 'Validation', stem + '.json')
+png = os.path.join(saved, 'Validation', stem + '.png').replace('\\', '/')
 os.makedirs(os.path.dirname(out), exist_ok=True)
-report = {'passed': None, 'physical_input': False, 'scope': 'F5 PIE API 시험 프로필, 실제 입력 및 기본 모델 적용 아님', 'checks': [], 'errors': [], 'image': png}
+report = {'passed': None, 'physical_input': False, 'scope': ('F6 PC14' if pc14_trial else 'F5') + ' PIE API 시험 프로필, 실제 입력 및 기본 모델 적용 아님', 'checks': [], 'errors': [], 'image': png}
 state = {'phase': 'start', 'started': time.monotonic()}
 editor = unreal.get_editor_subsystem(unreal.UnrealEditorSubsystem)
-level = unreal.get_editor_subsystem(unreal.LevelEditorSubsystem)
 def p(obj, key): return obj.get_editor_property(key)
 def check(key, condition, detail=''):
     report['checks'].append({'id': key, 'passed': bool(condition), 'detail': str(detail)})
@@ -32,13 +33,16 @@ def tick(_):
         pc = unreal.GameplayStatics.get_player_controller(world, 0) if world else None
         if not pc or len(p(pc, 'ships')) < 3: return
         if state['phase'] == 'wait':
-            pc.start_combat_range()
+            if pc14_trial:
+                unreal.SystemLibrary.execute_console_command(world,'ov.Presentation.ImportedHull 1',pc)
+                check('PC14_SCENE',pc.start_calibration_range(1))
+            else: pc.start_combat_range()
             ships = list(p(pc, 'ships')); source, target = ships[1], ships[2]
             for ship in ships:
                 ship.set_automation(False, False); ship.stop_movement(); ship.debug_reset_motion()
                 ship.set_actor_rotation(unreal.Rotator(), False)
             source.set_actor_location(unreal.Vector(0,0,300),False,False)
-            target.set_actor_location(unreal.Vector(1200,0,300),False,False)
+            target.set_actor_location(unreal.Vector(12000 if pc14_trial else 1200,0,300),False,False)
             ships[0].set_actor_location(unreal.Vector(-15000,10000,300),False,False)
             systems=p(source,'systems'); layout=p(systems,'layout')
             check('TRANSIENT_LAYOUT', not layout.get_path_name().startswith('/Game/Layouts/'),layout.get_path_name())
@@ -58,7 +62,7 @@ def tick(_):
             p(settings,'guaranteed_range')
             settings.set_editor_property('guaranteed_range',100000.0)
             source.refresh_weapon_visuals(); pc.select_ship(source)
-            pc.set_editor_property('camera_focus',source.get_actor_location()); pc.set_editor_property('camera_distance',700)
+            pc.set_editor_property('camera_focus',source.get_actor_location()); pc.set_editor_property('camera_distance',4000 if pc14_trial else 700)
             pc.set_editor_property('camera_yaw',-45); pc.set_editor_property('camera_pitch',-30); pc.update_camera()
             combat.simulate(1.0)
             before=p(p(target,'systems'),'shield'); shots=p(combat,'shot_count'); hits=p(combat,'hit_count')
