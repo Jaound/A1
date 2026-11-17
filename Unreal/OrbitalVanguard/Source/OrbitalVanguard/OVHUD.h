@@ -35,6 +35,7 @@ public:
  UFUNCTION(BlueprintPure, Category="UI") FString GetFleetTitleTooltip(FVector2D CanvasPoint) const;
  UFUNCTION(BlueprintPure, Category="UI") FString GetDetailsTitleTooltip(FVector2D CanvasPoint) const;
  UFUNCTION(BlueprintPure, Category="UI") FString GetPinnedCarrierSummary(int32 Index) const;
+ UFUNCTION(BlueprintPure, Category="UI") int32 GetDetailsSlotPage() const { return DetailsSlotPage; }
  UFUNCTION(BlueprintPure, Category="UI") int32 GetWarningLevel() const { return WarningLevel; }
  UFUNCTION(BlueprintPure, Category="UI") FString GetPinnedWeaponSummary(int32 Index) const;
  UFUNCTION(BlueprintPure, Category="UI") int32 GetPinnedPreviewFocus(int32 Index) const;
@@ -102,6 +103,8 @@ private:
  bool bHeroPanelOpen=false;
  bool bSceneMenuOpen=false;
  bool bHangarView=false;
+ int32 DetailsSlotPage=0,DetailsPageDeck=INDEX_NONE;
+ TWeakObjectPtr<AOVShip> DetailsPageShip;
  bool bAircraftGrid=true;
  bool bFleetAirOverview=false;
  bool bBattleFeedOpen=false;

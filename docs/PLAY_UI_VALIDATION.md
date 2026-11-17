@@ -1,3 +1,7 @@
+# 최근 검사: 상세창 시설 페이지
+
+**상세창 시설 페이지:** 한 층이 15칸을 넘으면 시설을 15칸씩 표시하고 이전·다음으로 나머지 시설을 선택할 수 있다. 다른 함선이나 층으로 바꾸면 페이지를 초기화하고, 적 함선에는 내부 시설을 공개하지 않는다. 런타임 상태와 정의의 개수가 다를 때 범위를 벗어나지 않도록 표시 범위를 함께 제한했다. `PlayUI_R2_EY_Build.log` 성공, EZ 자동 98/98, [창 API 198/198](validation/PlayUIR2/EZ_상세시설_API.json), 렌더/API [1280 4/4](validation/PlayUIR2/EZ_상세시설_렌더.json) / [1920 4/4](validation/PlayUIR2/FA_상세시설_렌더.json), [1280 화면](validation/PlayUIR2/EZ_상세시설_1280.png) / [1920 화면](validation/PlayUIR2/FA_상세시설_1920.png). 검사는 PIE에서만 16번째 시설을 추가하고 종료 전에 제거했다. 직접 마우스 입력은 미검증이다.
+
 # 최근 검사: 상세창 긴 이름
 
 **상세창의 긴 이름:** 함선명이 창 제어 버튼을 가리지 않도록 제목을 줄이고, 제목에 마우스를 올리면 전체 이름을 표시한다. 제목 클릭은 선택을 바꾸지 않고 창 드래그 동작을 유지한다. 처음 렌더는 한 글자가 다음 줄로 떨어져 [기록](validation/PlayUIR2/EN_상세제목_1280.png)했으며, 글자 수 대신 실제 폭으로 줄을 나누도록 수정했다. `PlayUI_R2_EO_Build.log` 성공, EO 자동 98/98, [창 API 191/191](validation/PlayUIR2/EO_상세제목_API.json), 렌더/API [1280 10/10](validation/PlayUIR2/EO_상세제목_렌더.json) / [1920 10/10](validation/PlayUIR2/EP_상세제목_렌더.json), [1280 화면](validation/PlayUIR2/EO_상세제목_1280.png) / [1920 화면](validation/PlayUIR2/EP_상세제목_1920.png). 포인터는 API로 이동했으며 직접 마우스 입력은 미검증이다.

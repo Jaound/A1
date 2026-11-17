@@ -250,18 +250,32 @@ def tick(_dt):
             p(layout,'slots').append(definitions[index])
             p(systems,'slots').append(runtime[index])
             check('WINDOW-PIN-PAGE-FIXTURE',len(p(layout,'slots'))==len(definitions)+1 and len(p(systems,'slots'))==len(runtime)+1)
+            pc.select_ship(attacker);hud.set_details_open(True);hud.execute_ui_action('Deck1')
             state.update(phase=560,at=time.monotonic());return
         if state['phase']==560:
             center=hud.get_action_center('PinnedPage_0_1')
             check('WINDOW-PIN-PAGE-NEXT-HIT',center.x>=0 and str(hud.get_hit_action_at_canvas_point(center))=='PinnedPage_0_1')
             hud.execute_ui_action('PinnedPage_0_1')
+            hit_button(hud,'DetailsPageNext');hud.execute_ui_action('DetailsPageNext')
+            check('WINDOW-DETAIL-PAGE-NEXT',hud.get_details_slot_page()==1)
             state.update(phase=561,at=time.monotonic());return
         if state['phase']==561:
             action='PinnedSlot_0_'+str(state['extra_index']);center=hud.get_action_center(action)
             check('WINDOW-PIN-PAGE-EXTRA-HIT',center.x>=0 and str(hud.get_hit_action_at_canvas_point(center))==action)
             hud.execute_ui_action(action)
             check('WINDOW-PIN-PAGE-EXTRA-SELECT',hud.get_pinned_slot(0)==state['extra_index'])
+            detail_action='Slot_'+str(state['extra_index']);hit_button(hud,detail_action);hud.execute_ui_action(detail_action)
+            check('WINDOW-DETAIL-PAGE-EXTRA-SELECT',p(pc,'selected_slot')==state['extra_index'])
             hud.execute_ui_action('PinnedPage_0_-1')
+            hud.execute_ui_action('DetailsPagePrevious');check('WINDOW-DETAIL-PAGE-PREVIOUS',hud.get_details_slot_page()==0)
+            hud.execute_ui_action('DetailsPageNext');pc.select_ship(state['target']);hud.set_details_open(True)
+            state.update(phase=5611,at=time.monotonic());return
+        if state['phase']==5611:
+            check('WINDOW-DETAIL-PAGE-RESET-ON-ENEMY',hud.get_details_slot_page()==0 and hud.get_action_center('DetailsPageNext').x<0)
+            pc.select_ship(state['attacker']);hud.execute_ui_action('Deck1')
+            state.update(phase=5612,at=time.monotonic());return
+        if state['phase']==5612:
+            check('WINDOW-DETAIL-PAGE-RESET-ON-RETURN',hud.get_details_slot_page()==0)
             state.update(phase=562,at=time.monotonic());return
         if state['phase']==562:
             attacker=state['attacker'];target=state['target'];combat=p(pc,'combat')

@@ -224,6 +224,15 @@ void AOVHUD::NotifyHitBoxClick(FName N)
  }
  if(N==TEXT("HangarView")) { bHangarView=true;return; }
  if(N==TEXT("HangarDisplayMode")) { bAircraftGrid=!bAircraftGrid;return; }
+ if(N==TEXT("DetailsPagePrevious")||N==TEXT("DetailsPageNext")) {
+  const auto* PC=Cast<AOVController>(PlayerOwner);
+  if(PC&&PC->Selected&&PC->Selected==DetailsPageShip&&PC->ViewedDeck>0&&PC->ViewedDeck==DetailsPageDeck&&PC->Selected->bFriendly&&bDetailsOpen&&!bMinimized&&!bHangarView) {
+   const auto* Systems=PC->Selected->Systems.Get();const auto* Layout=Systems?Systems->Layout.Get():nullptr;int32 Count=0;
+   if(Layout)for(int32 I=0;I<Layout->Slots.Num()&&I<Systems->Slots.Num();++I)if(Layout->Slots[I].DeckId==PC->ViewedDeck)++Count;
+   DetailsSlotPage=FMath::Clamp(DetailsSlotPage+(N==TEXT("DetailsPageNext")?1:-1),0,FMath::Max(0,(Count-1)/15));
+  }
+  return;
+ }
  if(N==TEXT("External")||N.ToString().StartsWith(TEXT("Deck")))bHangarView=false;
  if(N==TEXT("WindowPin")) {
   auto* PC=Cast<AOVController>(PlayerOwner);
@@ -398,6 +407,7 @@ void AOVHUD::DrawDetails()
  WindowPosition.X=FMath::Clamp(WindowPosition.X,0.0,FMath::Max(0.0,ViewportPixels.X/UIScale-WindowSize.X-12));
  WindowPosition.Y=FMath::Clamp(WindowPosition.Y,68.0,FMath::Max(68.0,ViewportPixels.Y/UIScale-WindowSize.Y-168));
  const auto* S=PC->Selected->Systems.Get();const auto* L=S->Layout.Get();if(!L)return;
+ if(DetailsPageShip!=PC->Selected||DetailsPageDeck!=PC->ViewedDeck){DetailsPageShip=PC->Selected;DetailsPageDeck=PC->ViewedDeck;DetailsSlotPage=0;}
  TGuardValue<bool> DetailLayer(bDrawingDetails,true);
  const float X=WindowPosition.X,Y=WindowPosition.Y,W=WindowSize.X;
  // The foreground window consumes blank-area clicks too, including over fire buttons.
@@ -483,13 +493,20 @@ void AOVHUD::DrawDetails()
  }
  else if(PC->ViewedDeck==0)DrawExternal(X+10,Y+72,W-20);
  else if(Reveal) {
-  int32 Cell=0;
-  for(int32 I=0;I<L->Slots.Num();++I)if(L->Slots[I].DeckId==PC->ViewedDeck) {
+  int32 Count=0;for(int32 I=0;I<L->Slots.Num()&&I<S->Slots.Num();++I)if(L->Slots[I].DeckId==PC->ViewedDeck)++Count;
+  DetailsSlotPage=FMath::Clamp(DetailsSlotPage,0,FMath::Max(0,(Count-1)/15));int32 Cell=0,Seen=0;
+  for(int32 I=0;I<L->Slots.Num()&&I<S->Slots.Num()&&Cell<15;++I)if(L->Slots[I].DeckId==PC->ViewedDeck) {
+   if(Seen++<DetailsSlotPage*15)continue;
    const float CX=X+10+(Cell%5)*(W-20)/5,CY=Y+78+(Cell/5)*54;++Cell;
    const auto& D=L->Slots[I];const auto& State=S->Slots[I];
    Button(FName(*FString::Printf(TEXT("Slot_%d"),I)),PC->bDeveloperMode?D.SlotId.ToString():Facility(D.Facility),CX,CY,(W-30)/5,I==PC->SelectedSlot);
    DrawRect(Health(D.MaxFacilityHP>0?State.HP/D.MaxFacilityHP:0),CX,CY+30,(W-30)/5,4);
    DrawText(Facility(D.Facility).Left(10),Ink,CX,CY+36,GEngine->GetSmallFont());
+  }
+  if(Count>15) {
+   Button(TEXT("DetailsPagePrevious"),TEXT("이전"),X+10,Y+246,60);
+   DrawText(FString::Printf(TEXT("%d / %d"),DetailsSlotPage+1,FMath::DivideAndRoundUp(Count,15)),Ink,X+82,Y+252,GEngine->GetSmallFont());
+   Button(TEXT("DetailsPageNext"),TEXT("다음"),X+135,Y+246,60);
   }
  }
  DrawText(FString::Printf(TEXT("선체 %.0f/%.0f | 쉴드 %.0f/%.0f %s"),S->HullHP,S->MaxHullHP,S->Shield,S->MaxShield,S->bShieldActive?TEXT("활성"):TEXT("비활성")),Ink,X+10,Y+280,GEngine->GetSmallFont());

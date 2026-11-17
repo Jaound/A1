@@ -17,6 +17,7 @@ views = ['전투_HUD', '영웅_카드', '외부_무장', '핀_비교', '핀_무�
 if os.environ.get('OV_UI_ONLY_PIN') == '1': views = ['핀_비교']
 if os.environ.get('OV_UI_TOOLTIP_TEST') == 'fleet': views = ['함대_긴이름']
 if os.environ.get('OV_UI_ONLY_PIN_HANGAR') == '1': views = ['항공대_핀']
+if os.environ.get('OV_UI_DETAILS_PAGING') == '1': views = ['상세_시설페이지']
 
 def prop(obj, key):
     return obj.get_editor_property(key)
@@ -36,6 +37,9 @@ def show_heroes(hud, value):
         hud.execute_ui_action('HeroPanel')
 
 def finish():
+    if state.get('page_fixture'):
+        definitions,runtime=state.pop('page_fixture')
+        definitions.pop();runtime.pop()
     try:
         report['preview_settings_restored'] = bool(unreal.OVDevelopmentEditorLibrary.restore_preview_settings())
     except Exception:
@@ -93,6 +97,12 @@ def tick(_dt):
                 check('PIN-AIR-LIVE-SUMMARY',hud.get_pinned_deck(0)==-1 and '생존' in hud.get_pinned_carrier_summary(0))
                 other=next(s for s in prop(pc,'ships') if s!=carriers[0] and prop(s,'friendly'))
                 pc.select_ship(other);hud.set_details_open(True)
+            elif name == '상세_시설페이지':
+                ship=next(s for s in prop(pc,'ships') if prop(s,'friendly') and len([slot for slot in prop(prop(prop(s,'systems'),'layout'),'slots') if prop(slot,'deck_id')==1])>=15)
+                systems=prop(ship,'systems');definitions=prop(prop(systems,'layout'),'slots');runtime=prop(systems,'slots')
+                index=next(i for i,slot in enumerate(definitions) if prop(slot,'deck_id')==1)
+                definitions.append(definitions[index]);runtime.append(runtime[index]);state['page_fixture']=(definitions,runtime)
+                pc.select_ship(ship);hud.set_details_open(True);hud.execute_ui_action('Deck1')
             elif name == '외부_무장':
                 hud.execute_ui_action('External')
                 state['before_preview'] = snapshot(pc)
@@ -220,6 +230,10 @@ def tick(_dt):
             state.update(stage='capture', at=time.monotonic())
             return
         if state['stage'] == 'capture':
+            if name == '상세_시설페이지' and not state.get('detail_page_set'):
+                center=hud.get_action_center('DetailsPageNext');check('DETAIL-PAGE-NEXT-HIT',center.x>=0 and str(hud.get_hit_action_at_canvas_point(center))=='DetailsPageNext')
+                hud.execute_ui_action('DetailsPageNext');check('DETAIL-PAGE-TWO',hud.get_details_slot_page()==1)
+                state.update(detail_page_set=True,at=time.monotonic());return
             if name == '함대_긴이름' and not state.get('tooltip_cursor_set'):
                 center=hud.get_action_center('Pick_0');w,h=pc.get_viewport_size();scale=max(.25,min(1,w/1280,h/740))
                 check('FLEET-TOOLTIP-TEXT',hud.get_fleet_title_tooltip(center)=='아주 긴 이름을 가진 동일 함급의 함선 1')

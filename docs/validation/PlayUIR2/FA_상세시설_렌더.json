@@ -1,0 +1,45 @@
+{
+  "passed": true,
+  "kind": "PIE 렌더와 UI API",
+  "physical_input": false,
+  "requested_size": [
+    1920,
+    1080
+  ],
+  "captures": [
+    {
+      "view": "상세_시설페이지",
+      "path": "C:/Users/user/source/repos/A1/Unreal/OrbitalVanguard/Saved/Validation\\PlayUI\\20261118_042930\\01_상세_시설페이지.png",
+      "viewport_size": [
+        1920,
+        1082
+      ],
+      "exists": true
+    }
+  ],
+  "checks": [
+    {
+      "id": "PLAY-WINDOW",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "DETAIL-PAGE-NEXT-HIT",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "DETAIL-PAGE-TWO",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "RENDER-상세_시설페이지",
+      "passed": true,
+      "detail": ""
+    }
+  ],
+  "errors": [],
+  "preview_settings_restored": true,
+  "elapsed_seconds": 4.061999999998079
+}
