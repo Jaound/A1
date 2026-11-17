@@ -27,6 +27,11 @@ class ORBITALVANGUARD_API UOVDevelopmentWidget : public UUserWidget
  GENERATED_BODY()
 public:
  virtual void NativeOnInitialized() override;
+ virtual FReply NativeOnMouseButtonDown(const FGeometry& Geometry,const FPointerEvent& Event) override;
+ virtual FReply NativeOnMouseButtonUp(const FGeometry& Geometry,const FPointerEvent& Event) override;
+ virtual FReply NativeOnMouseMove(const FGeometry& Geometry,const FPointerEvent& Event) override;
+ virtual void NativeOnMouseCaptureLost(const FCaptureLostEvent& Event) override;
+ UFUNCTION(BlueprintCallable, Category="Development|Test") bool DebugFrameGesture(bool bResize,FVector2D Delta);
  bool IsEditing() const;
  UFUNCTION(BlueprintCallable, Category="UI") bool OpenPage(int32 Index);
  /** Size: 0=all, 1..4 hull class; Role=None=all. Axis: -1=all, 0..5 planning/data/generation/role/automation/direct. Status: -1=all, otherwise EOVCatalogStatus numeric value. */
@@ -40,6 +45,8 @@ public:
  UFUNCTION(BlueprintCallable, Category="UI") void SelectItem(FName Id);
  UFUNCTION(BlueprintCallable, Category="UI") void ExecuteSelectedCreation();
 private:
+ bool bFrameDragging=false,bFrameResizing=false;
+ FVector2D FrameStartPointer,FrameStartPosition,FrameStartSize;
  int32 Page=1;
  bool bAdvanced=false;
  int32 HeroFaction=0;

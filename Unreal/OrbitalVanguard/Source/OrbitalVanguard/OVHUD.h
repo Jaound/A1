@@ -46,6 +46,7 @@ public:
  UFUNCTION(BlueprintPure, Category="UI") FVector2D GetInteriorWindowSize() const { return InteriorBounds().GetSize(); }
  UFUNCTION(BlueprintPure, Category="UI") FVector2D GetDevelopmentWindowPosition() const { return DevelopmentRect.Min; }
  UFUNCTION(BlueprintPure, Category="UI") FVector2D GetDevelopmentWindowSize() const { return DevelopmentRect.GetSize(); }
+ void SetDevelopmentWindowGeometry(FVector2D Position,FVector2D Size) { DevelopmentPosition=Position;DevelopmentSize=Size;SyncAddedUI(); }
  UFUNCTION(BlueprintPure, Category="UI") bool IsOverMissionPanel(float X,float Y) const;
  UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="UI") bool bInteriorOpen=false;
  UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="UI") bool bInteriorMinimized=false;

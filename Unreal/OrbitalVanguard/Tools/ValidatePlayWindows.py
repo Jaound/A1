@@ -189,6 +189,18 @@ def tick(_dt):
             resized=hud.get_development_window_size()
             check('WINDOW-DEV-CORNER-RESIZES',resized.x<dev_size.x-45 and resized.y<dev_size.y-25)
             check('WINDOW-DEV-FRAME-READONLY',snapshot(pc)==before_simulation)
+            state.update(phase=81,at=time.monotonic(),dev_snapshot=before_simulation);return
+        if state['phase']==81:
+            before_simulation=state['dev_snapshot']
+            panel=hud.get_development_panel();before_native=hud.get_development_window_position()
+            check('WINDOW-DEV-NATIVE-DRAG-DISPATCH',panel.debug_frame_gesture(False,unreal.Vector2D(30,10)))
+            native_pos=hud.get_development_window_position()
+            check('WINDOW-DEV-NATIVE-DRAG-MOVES',native_pos.x>before_native.x+25 and native_pos.y>before_native.y+5)
+            before_native_size=hud.get_development_window_size()
+            check('WINDOW-DEV-NATIVE-RESIZE-DISPATCH',panel.debug_frame_gesture(True,unreal.Vector2D(-25,-20)))
+            after_native_size=hud.get_development_window_size()
+            check('WINDOW-DEV-NATIVE-RESIZE-CHANGES',after_native_size.x<before_native_size.x-20 and after_native_size.y<before_native_size.y-15,(before_native_size,after_native_size))
+            check('WINDOW-DEV-NATIVE-READONLY',snapshot(pc)==before_simulation)
             pc.action('Developer')
             check('WINDOW-DEV-OVERLAY-PREVIEW-RESTORED',hud.has_orbit_preview())
             # 정상 임무를 시작한 뒤 정지한다. 아래 검사는 출격·귀환 명령 없이

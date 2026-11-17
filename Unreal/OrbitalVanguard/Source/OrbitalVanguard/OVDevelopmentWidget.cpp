@@ -16,6 +16,7 @@
 #include "OVController.h"
 #include "OVShip.h"
 #include "Blueprint/WidgetTree.h"
+#include "Blueprint/WidgetLayoutLibrary.h"
 #include "Components/Border.h"
 #include "Components/Button.h"
 #include "Components/ComboBoxString.h"
@@ -51,6 +52,65 @@ FString Evidence(const TCHAR* Name,const FOVCatalogEvidence& E) { const TCHAR* S
 UEditableTextBox* AddInput(UWidgetTree* T,UVerticalBox* P,const TCHAR* Hint,const TCHAR* Default) { P->AddChildToVerticalBox(Label(T,Hint));auto* W=T->ConstructWidget<UEditableTextBox>();auto Style=W->GetWidgetStyle();Style.TextStyle.Font.Size=14;Style.TextStyle.ColorAndOpacity=FSlateColor(FLinearColor(.02f,.025f,.035f,1));Style.ForegroundColor=FSlateColor(FLinearColor(.02f,.025f,.035f,1));W->SetWidgetStyle(Style);W->SetForegroundColor(FLinearColor(.02f,.025f,.035f,1));W->SetHintText(FText::FromString(Hint));W->SetText(FText::FromString(Default));P->AddChildToVerticalBox(W);return W; }
 }
 void UOVDevelopmentItem::Pick() { if(Owner)Owner->SelectItem(Id); }
+FReply UOVDevelopmentWidget::NativeOnMouseButtonDown(const FGeometry& Geometry,const FPointerEvent& Event)
+{
+ const FVector2D Local=Geometry.AbsoluteToLocal(Event.GetScreenSpacePosition()),Size=Geometry.GetLocalSize();
+ if(Event.GetEffectingButton()==EKeys::LeftMouseButton&&(Local.Y<28||(Local.X>Size.X-20&&Local.Y>Size.Y-20)))
+  if(auto* PC=GetOwningPlayer())if(auto* HUD=Cast<AOVHUD>(PC->GetHUD())) {
+   bFrameDragging=Local.Y<28;bFrameResizing=!bFrameDragging;
+   FrameStartPointer=Event.GetScreenSpacePosition();FrameStartPosition=HUD->GetDevelopmentWindowPosition();FrameStartSize=HUD->GetDevelopmentWindowSize();
+   return FReply::Handled().CaptureMouse(TakeWidget());
+  }
+ return Super::NativeOnMouseButtonDown(Geometry,Event);
+}
+FReply UOVDevelopmentWidget::NativeOnMouseMove(const FGeometry& Geometry,const FPointerEvent& Event)
+{
+ if(bFrameDragging||bFrameResizing) {
+  if(auto* PC=GetOwningPlayer())if(auto* HUD=Cast<AOVHUD>(PC->GetHUD())) {
+   const FVector2D Delta=Event.GetScreenSpacePosition()-FrameStartPointer;
+   HUD->SetDevelopmentWindowGeometry(FrameStartPosition+(bFrameDragging?Delta:FVector2D::ZeroVector),FrameStartSize+(bFrameResizing?Delta:FVector2D::ZeroVector));
+  }
+  return FReply::Handled();
+ }
+ return Super::NativeOnMouseMove(Geometry,Event);
+}
+FReply UOVDevelopmentWidget::NativeOnMouseButtonUp(const FGeometry& Geometry,const FPointerEvent& Event)
+{
+ if(Event.GetEffectingButton()==EKeys::LeftMouseButton&&(bFrameDragging||bFrameResizing)) {
+  bFrameDragging=false;bFrameResizing=false;
+  if(auto* PC=GetOwningPlayer())if(auto* HUD=Cast<AOVHUD>(PC->GetHUD()))HUD->CancelPointerDrag();
+  return FReply::Handled().ReleaseMouseCapture();
+ }
+ return Super::NativeOnMouseButtonUp(Geometry,Event);
+}
+void UOVDevelopmentWidget::NativeOnMouseCaptureLost(const FCaptureLostEvent& Event)
+{
+ bFrameDragging=false;bFrameResizing=false;
+ if(auto* PC=GetOwningPlayer())if(auto* HUD=Cast<AOVHUD>(PC->GetHUD()))HUD->CancelPointerDrag();
+ Super::NativeOnMouseCaptureLost(Event);
+}
+bool UOVDevelopmentWidget::DebugFrameGesture(bool bResize,FVector2D Delta)
+{
+#if WITH_EDITOR
+ auto* PC=GetOwningPlayer();auto* HUD=PC?Cast<AOVHUD>(PC->GetHUD()):nullptr;
+ if(!HUD)return false;
+ const float Dpi=FMath::Max(.01f,UWidgetLayoutLibrary::GetViewportScale(this));
+ const FVector2D LocalSize=HUD->GetDevelopmentWindowSize()/Dpi;
+ const FGeometry Geometry=FGeometry::MakeRoot(LocalSize,FSlateLayoutTransform(Dpi,HUD->GetDevelopmentWindowPosition()));
+ const FVector2D LocalStart=bResize?LocalSize-FVector2D(5,5):FVector2D(30,12);
+ const FVector2D Start=Geometry.LocalToAbsolute(LocalStart),End=Start+Delta;
+ const TSet<FKey> Pressed{EKeys::LeftMouseButton};const FModifierKeysState Modifiers;
+ const FPointerEvent Down(0,Start,Start,Pressed,EKeys::LeftMouseButton,0,Modifiers);
+ const FPointerEvent Move(0,End,Start,Pressed,EKeys::Invalid,0,Modifiers);
+ const FPointerEvent Up(0,End,End,TSet<FKey>{},EKeys::LeftMouseButton,0,Modifiers);
+ const bool bStarted=NativeOnMouseButtonDown(Geometry,Down).IsEventHandled();
+ const bool bMoved=NativeOnMouseMove(Geometry,Move).IsEventHandled();
+ const bool bEnded=NativeOnMouseButtonUp(Geometry,Up).IsEventHandled();
+ return bStarted&&bMoved&&bEnded;
+#else
+ return false;
+#endif
+}
 void UOVDevelopmentWidget::NativeOnInitialized()
 {
  Super::NativeOnInitialized();
