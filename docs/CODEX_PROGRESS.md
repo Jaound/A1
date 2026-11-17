@@ -42,6 +42,8 @@
 
 **R2 추가 후 기존 API 회귀:** 코드 `37c6150` 기준 실행. [2A 57/57](validation/PlayUIR2/DE_2A.json), [명령·보호 60/60](validation/PlayUIR2/DE_명령보호.json), [D116 종합 79/79](validation/PlayUIR2/DE_D116종합.json), [2C 77/77](validation/PlayUIR2/DE_2C.json), [선내 36/36](validation/PlayUIR2/DE_선내.json), [통합 임무 29사례·316검사](validation/PlayUIR2/DE_통합임무.json) 통과. D116 79에는 명령·보호 60과 기존 2B 검사가 포함되므로 합산하지 않는다. `Saved/Logs/PlayUI_R2_Regression_*.log`, 이전/새 결과는 `Saved/Validation/Regression_20261118_013646`에 보존했다. 통합 검사 실행 관리 명령에서 결과 파일명을 잘못 기대해 `MISSING_OR_STALE`을 출력했으나 실제 `IntegratedMission.json`의 성공·완료와 29/316을 별도로 검증했다. 이는 API 시뮬레이션이며 직접 입력·실시간 10분 렌더 성능은 아니다.
 
+**MM24 UE 좌우 회전 화면:** 저장하지 않는 UE 시험 레벨에서 상부 시험 메시를 0·+45·-45도로 각각 회전했다. 회전 값·에셋·파일 생성 [15/15](validation/PlayUIR2/MM24_UE좌우회전_검사.json), [0도](validation/PlayUIR2/MM24_UE좌우회전_0.png) / [+45도](validation/PlayUIR2/MM24_UE좌우회전_45.png) / [-45도](validation/PlayUIR2/MM24_UE좌우회전_-45.png). 받침대는 고정됐으며 화면상 큰 이탈은 보이지 않지만 어두운 부분이 많아 관통·틈이 없다고 판정할 수 없다. 이는 직접 입력과 실제 전장 조준·피격 검사가 아니다. 상하 관절 분리·포구 정합·애니메이션·원본 품질 및 성능은 남았다.
+
 ## 이전 작업 기록
 
 **아군 영웅 실제 피격:** 선내 전투의 실제 HP 감소를 아군 영웅 피격 알림에 연결했다. 일반 병력과 숨은 적 피해는 영웅 알림으로 기록하지 않으며 치명타는 중복 피격 대신 전사 사건으로 기록한다. 같은 함선의 서로 다른 영웅은 실행 중 개인 ID로 구분하고 같은 영웅의 연속 피격만 2초 게임시간 안에 묶는다. `PlayUI_R2_BQ_Build.log` 빌드 성공, `PlayUI_R2_BQ_Automation.log` 자동90/90: 실제 적 공격에 따른 HP 감소·묶음·적 비공개 포함. 실제 표시 화면·장기 경보 부하·직접 입력은 미검증이다. 함재기 임계 경보는 아직 미구현이며 소유권 변경과 실제 손실을 구분하는 시험이 필요하다.

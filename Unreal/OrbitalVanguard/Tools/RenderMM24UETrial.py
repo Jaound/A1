@@ -35,6 +35,7 @@ def tick(_dt):
                 check('MESH-'+part,isinstance(mesh,unreal.StaticMesh))
                 obj=actors.spawn_actor_from_class(unreal.StaticMeshActor,unreal.Vector(0,0,0))
                 obj.static_mesh_component.set_static_mesh(mesh);obj.set_actor_enable_collision(False)
+                if part=='Yaw':state['yaw_actor']=obj
                 bounds=mesh.get_bounding_box()
                 report[part]={'min':[float(getattr(bounds.min,k)) for k in ('x','y','z')],
                               'max':[float(getattr(bounds.max,k)) for k in ('x','y','z')]}
@@ -47,18 +48,24 @@ def tick(_dt):
             camera.camera_component.set_editor_property('field_of_view',50.0)
             levels=unreal.get_editor_subsystem(unreal.LevelEditorSubsystem)
             levels.set_level_viewport_camera_info(pos,rotation,'')
-            state.update(stage='render',camera=camera,at=time.monotonic());return
+            state.update(stage='render',camera=camera,at=time.monotonic(),index=0,angles=(0,45,-45));return
         if state['stage']=='render' and time.monotonic()-state['at']>3:
-            path=str(out/'MM24.png')
-            check('NO-SCREENSHOT-OVERWRITE',not Path(path).exists())
+            angle=state['angles'][state['index']];state['yaw_actor'].set_actor_rotation(unreal.Rotator(0,0,angle),False)
+            check('YAW-ROTATION-'+str(angle),abs(state['yaw_actor'].get_actor_rotation().yaw-angle)<.1)
+            path=str(out/('MM24_%+03d.png'%angle))
+            check('NO-SCREENSHOT-OVERWRITE-'+str(angle),not Path(path).exists())
             state['stage']='requesting'
             task=unreal.AutomationLibrary.take_high_res_screenshot(1024,1024,path,camera=state['camera'],delay=1.0)
-            check('SCREENSHOT-TASK',task is not None)
-            state.update(stage='wait',task=task,at=time.monotonic());return
+            check('SCREENSHOT-TASK-'+str(angle),task is not None)
+            state.update(stage='wait',task=task,path=path,angle=angle,at=time.monotonic());return
         if state['stage']=='wait' and time.monotonic()-state['at']>3:
-            path=out/'MM24.png'
+            path=Path(state['path'])
             if path.exists() and path.stat().st_size>1000:
-                check('RENDER-FILE',True,path.stat().st_size);report['image']=str(path);finish()
+                check('RENDER-FILE-'+str(state['angle']),True,path.stat().st_size)
+                report.setdefault('images',[]).append({'angle':state['angle'],'path':str(path)})
+                state['index']+=1
+                if state['index']==len(state['angles']):finish()
+                else:state.update(stage='render',at=time.monotonic())
     except Exception:
         report['errors'].append(traceback.format_exc());unreal.log_error(report['errors'][-1]);finish()
 state['handle']=unreal.register_slate_post_tick_callback(tick)
