@@ -94,6 +94,8 @@ public:
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Layout") FName LayoutVersion = TEXT("PrototypeInterior_v1");
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Layout") int32 DeckCount = 1;
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Layout") bool bSmallHull = true;
+    // -1: no confirmed hull-specific limit; this is not an installed facility count.
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Layout") int32 MaxHangarInstallations = -1;
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Layout") FName CoreSlotId;
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Layout") TArray<FName> BridgeAllowedSlots;
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Layout") TArray<FOVSlotDefinition> Slots;

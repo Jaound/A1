@@ -57,6 +57,8 @@ bool UOVCarrierSubsystem::RegisterCarrier(AOVShip* Ship, int32 InitialPerHangar)
 {
     if (!LivingShip(Ship) || Ship->Systems->Layout->bSmallHull) return false;
     if (Carriers.ContainsByPredicate([Ship](const FOVCarrierState& S) { return S.Carrier == Ship; })) return false;
+    TArray<FString> LayoutErrors;
+    if (!Ship->Systems->Layout->ValidateLayout(LayoutErrors)) return false;
     bool bAny = false;
     for (const auto& Slot : Ship->Systems->Layout->Slots)
     {

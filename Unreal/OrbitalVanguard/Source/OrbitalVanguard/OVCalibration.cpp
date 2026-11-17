@@ -107,6 +107,8 @@ UShipLayoutDataAsset* MakeLayout(UObject* Outer, const FHull& Hull)
 {
     auto* Layout = UShipLayoutDataAsset::MakeTestLayout(Outer, Hull.Decks);
     Layout->bSmallHull = Hull.Size == 1;
+    if (FName(Hull.Key) == TEXT("carrier")) Layout->MaxHangarInstallations = 4;
+    else if (FName(Hull.Key) == TEXT("battlecarrier")) Layout->MaxHangarInstallations = 8;
     Layout->MaxHullHP = Hull.HP;
     Layout->WeaponMounts.Reset();
     Layout->CannonSlots = Layout->BeamSlots = Layout->MissileSlots = 0;
@@ -339,6 +341,39 @@ bool FOVD116CatalogTest::RunTest(const FString&)
         && Bastion->Decks == 2 && Bastion->MountCount == 5 && Bastion->PD == 4);
     TestEqual(TEXT("Extra-large hull HP remains absolute"), Dreadnought->HP, 825000.f);
     const FHull* Battlecarrier = FindHull(TEXT("battlecarrier"));
+    const FHull* Carrier = FindHull(TEXT("carrier"));
+    for (const FHull* Hull : {Carrier, Battlecarrier})
+    {
+        if (!Hull) { AddError(TEXT("Missing carrier hull")); continue; }
+        UShipLayoutDataAsset* Layout = MakeLayout(GetTransientPackage(), *Hull);
+        if (!TestNotNull(TEXT("Carrier layout exists"), Layout)) continue;
+        const int32 Limit = Hull == Carrier ? 4 : 8;
+        TestEqual(TEXT("D121 installation limit"), Layout->MaxHangarInstallations, Limit);
+        int32 Installed = Layout->Slots.FilterByPredicate([](const FOVSlotDefinition& Slot) {
+            return Slot.Facility == EOVFacilityType::Hangar;
+        }).Num();
+        for (auto& Slot : Layout->Slots)
+        {
+            if (Slot.Facility != EOVFacilityType::None || !Slot.AllowedFacilities.Contains(EOVFacilityType::Hangar)) continue;
+            Slot.Facility = EOVFacilityType::Hangar;
+            Slot.MaxFacilityHP = 100;
+            Slot.RequiredCrew = 10;
+            ++Installed;
+            TArray<FString> Errors;
+            if (Installed == Limit)
+            {
+                const bool bValid = Layout->ValidateLayout(Errors);
+                TestTrue(FString::Printf(TEXT("At hangar limit accepted: %s"), *FString::Join(Errors, TEXT("; "))), bValid);
+            }
+            if (Installed == Limit + 1)
+            {
+                TestFalse(TEXT("Above hangar limit rejected"), Layout->ValidateLayout(Errors));
+                TestTrue(TEXT("Limit failure identified"), Errors.Contains(TEXT("Hangar installation limit exceeded")));
+                break;
+            }
+        }
+        TestEqual(TEXT("Enough actual slots for boundary test"), Installed, Limit + 1);
+    }
     for (const FHull* Hull : {Dreadnought, Battlecarrier})
     {
         if (!Hull) { AddError(TEXT("Missing extra-large hull")); continue; }

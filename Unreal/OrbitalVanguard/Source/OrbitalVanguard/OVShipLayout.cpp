@@ -288,6 +288,9 @@ bool UShipLayoutDataAsset::ValidateLayout(TArray<FString>& Errors) const
             Require(BridgeAllowedSlots.Contains(Slot.SlotId) && (DeckCount != 3 || Slot.DeckId != 2), TEXT("Bridge must occupy an explicit outer-deck slot"));
     }
     Require(Counts.FindRef(EOVFacilityType::Core) == 1 && Counts.FindRef(EOVFacilityType::Bridge) == 1, TEXT("Exactly one core and bridge required"));
+    Require(MaxHangarInstallations >= -1, TEXT("Invalid hangar installation limit"));
+    Require(MaxHangarInstallations < 0 || Counts.FindRef(EOVFacilityType::Hangar) <= MaxHangarInstallations,
+        TEXT("Hangar installation limit exceeded"));
     Require(Counts.FindRef(EOVFacilityType::LifeSupport) > 0 && Counts.FindRef(EOVFacilityType::Engine) > 0, TEXT("Life support and engine required"));
     const int32 CoreIndex = GetSlotIndex(CoreSlotId);
     Require(Slots.IsValidIndex(CoreIndex), TEXT("Explicit CoreSlotId is missing"));

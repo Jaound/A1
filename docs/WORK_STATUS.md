@@ -1,5 +1,9 @@
 # 최신 작업 — 플레이 UI R2 진행 중
 
+**2026-11-17 후속 체크포인트:** 최신 work를 다시 fetch하여 기획 `b7becc4f7c785ad64657ef771ffff1c43546b540`가 그대로임을 확인했다. D121 설치 상한을 배치 데이터에 추가했다. 항모4·항공순양함8이며 다른 함종은 미정(`-1`), 기존 설치 수나 기체 지급량을 증가시키지 않는다. 실제 슬롯·시설 제약을 포함하는 `ValidateLayout`과 모함 등록 시 초과 배치를 거부한다. 기존 직렬화 에셋의 기본값은 미정으로 보존한다. 빌드 `PlayUI_R2_D_Build.log` 성공, 자동85/85(`PlayUI_R2_D_Automation.log`), 개발 PIE96/96, 함종 PIE270/270(`PlayUI_R2_D_ValidateDevelopment.log`, `PlayUI_R2_D_ValidateHullRoles.log`). 최초 B/C의 추가 경계 검사는 기본 배치의 기존 격납고를 누락해 실패했으며 D에서 실제 기존 수를 세어 수정했다. 관련 로그는 Saved에 보존한다. 실제 커스터마이징 UI·기존 저장 에셋의 함종별 마이그레이션은 구현하지 않았다.
+
+다음: 상한이 실제 편집/저장 경로 전반에서 유지되는지 확인하고, work 문서 충돌을 보존하며 통합한다. 이후 원본 9종 분리와 대표 원본 적용, R2의 좌측 명령·창 제어·카드·경보·종합 검증을 순서대로 진행한다. 상세 아래의 이전 ‘상한 미착수’는 이력이다. 임시 모델을 원본 완성으로 처리하지 않는다.
+
 시작 코드 `b7e5c1035f364ee2e5f81b90fdd9bc040dd9c60e`, 원격 work fetch 직후 고정 기획 `b7becc4f7c785ad64657ef771ffff1c43546b540`. `git fetch origin work`는 FETCH_HEAD를 갱신했으나 로컬 `origin/work` 추적 참조는 갱신하지 않았으므로 기획 조회에는 반드시 위 SHA를 사용한다. UI 명세는 양 브랜치가 모두 변경해 무조건 덮어쓰지 않는다.
 
 **진행 중 / 검증 대기:** D121 항공순양함 T3 함포 8·T4 전용 주포 2를 기존 D116 원본 데이터 위의 명시적 코드 오버라이드로 적용하고 유폭 검사 기대치를 갱신했다. 생성기 `--check` 통과, C++ 컴파일 성공. 열린 `OrbitalVanguard` 플레이 창 PID 26100이 DLL을 점유하여 링크 LNK1104로 빌드는 실패했다. 로그 `Unreal/OrbitalVanguard/Saved/Logs/PlayUI_R2_A_Build.log`. 새 바이너리·기능 성공은 확인되지 않았다. 플레이 창 종료 동의를 요청했으며, 종료 후 `Unreal/OrbitalVanguard/Tools/Build.ps1`을 재실행하고 자동검사 및 `ValidateDevelopment.py`로 무장 수·티어·유폭을 검증한다.
