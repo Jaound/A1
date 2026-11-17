@@ -50,7 +50,7 @@ bool AOVHUD::IsOverPanel(float X,float Y) const
  if(IsOverMissionPanel(X,Y)) return true;
  if(bDragging||bResizing) return true;
  if(!PC->bDeveloperMode&&!bSceneMenuOpen&&PC->Phase2CScenario>=0&&P.X>=212&&P.X<=484&&P.Y>=76&&P.Y<=224)return true;
- if(!PC->bDeveloperMode&&!bHeroPanelOpen&&!bDetailsOpen&&PinnedShips.Num()>0&&P.X>=ViewportPixels.X/UIScale-278&&P.Y>=76&&P.Y<=76+PinnedShips.Num()*170)return true;
+ if(!PC->bDeveloperMode&&!bHeroPanelOpen&&PinnedShips.Num()>0&&P.X>=PinnedPanelX()&&P.X<=PinnedPanelX()+266&&P.Y>=PinnedPanelY()&&P.Y<=PinnedPanelY()+(PinnedShips.Num()-1)*168+164)return true;
  const int32 Notices=VisibleBattleNoticeCount();const float NoticeX=ViewportPixels.X/UIScale*.5f-120;
  const auto* Feed=GetBattleNoticeFeed();const int32 Footer=bBattleFeedOpen&&Feed&&Feed->DroppedCount>0?20:0;
  if(Notices>0&&P.X>=NoticeX&&P.X<=NoticeX+240&&P.Y>=66&&P.Y<=66+Notices*32+Footer)return true;
@@ -150,6 +150,7 @@ void AOVHUD::NotifyHitBoxClick(FName N)
  }
  if(N==TEXT("MissionBackground")) return;
  if(N==TEXT("WindowBackground")) return;
+ if(N.ToString().StartsWith(TEXT("PinnedBackground_"))) return;
  if(N==TEXT("SceneMenu")) { bSceneMenuOpen=!bSceneMenuOpen;return; }
  if(N==TEXT("FleetPrevious")) { FleetPage=FMath::Max(0,FleetPage-1);return; }
  if(N==TEXT("FleetNext")) { ++FleetPage;return; }
@@ -181,8 +182,25 @@ void AOVHUD::NotifyHitBoxClick(FName N)
  if(N==TEXT("WindowPin")) {
   auto* PC=Cast<AOVController>(PlayerOwner);
   const int32 Index=PinnedShips.IndexOfByKey(PC->Selected);
-  if(Index!=INDEX_NONE){PinnedShips.RemoveAt(Index);PinnedPreviews[Index]->Release();PinnedPreviews.RemoveAt(Index);}
-  else if(PinnedShips.Num()<2){PinnedShips.Add(PC->Selected);PinnedPreviews.Add(NewObject<UOVShipPreview>(this));}
+  if(Index!=INDEX_NONE){PinnedShips.RemoveAt(Index);PinnedPreviews[Index]->Release();PinnedPreviews.RemoveAt(Index);PinnedDecks.RemoveAt(Index);PinnedSlots.RemoveAt(Index);}
+  else if(PinnedShips.Num()<2){PinnedShips.Add(PC->Selected);PinnedPreviews.Add(NewObject<UOVShipPreview>(this));PinnedDecks.Add(0);PinnedSlots.Add(INDEX_NONE);}
+  return;
+ }
+ if(N.ToString().StartsWith(TEXT("PinnedClose_"))) {
+  const int32 Index=FCString::Atoi(*N.ToString().Mid(12));
+  if(PinnedShips.IsValidIndex(Index)){PinnedShips.RemoveAt(Index);PinnedPreviews[Index]->Release();PinnedPreviews.RemoveAt(Index);PinnedDecks.RemoveAt(Index);PinnedSlots.RemoveAt(Index);}
+  return;
+ }
+ if(N.ToString().StartsWith(TEXT("PinnedDeck_"))||N.ToString().StartsWith(TEXT("PinnedSlot_"))) {
+  TArray<FString> Parts;N.ToString().ParseIntoArray(Parts,TEXT("_"),true);
+  if(Parts.Num()!=3)return;
+  const int32 Index=FCString::Atoi(*Parts[1]),Value=FCString::Atoi(*Parts[2]);
+  if(!PinnedShips.IsValidIndex(Index)||!PinnedShips[Index].IsValid())return;
+  const auto* Systems=PinnedShips[Index]->Systems.Get();
+  if(!Systems||!Systems->Layout)return;
+  if(Parts[0]==TEXT("PinnedDeck")&&Value>=0&&Value<=Systems->Layout->DeckCount&&(Value==0||Systems->FactionId==0)) {
+   PinnedDecks[Index]=Value;PinnedSlots[Index]=INDEX_NONE;
+  } else if(Parts[0]==TEXT("PinnedSlot")&&Systems->FactionId==0&&Systems->Layout->Slots.IsValidIndex(Value)&&Systems->Layout->Slots[Value].DeckId==PinnedDecks[Index])PinnedSlots[Index]=Value;
   return;
  }
  if(N.ToString().StartsWith(TEXT("Pinned_"))) {
@@ -519,21 +537,68 @@ float AOVHUD::GetSelectedWeaponHealthRatio() const
   }
  return MaxHP>0?FMath::Clamp(HP/MaxHP,0.f,1.f):-1.f;
 }
+float AOVHUD::PinnedPanelX() const
+{
+ const float Width=ViewportPixels.X/UIScale;
+ const auto* PC=Cast<AOVController>(PlayerOwner);
+ if(PC&&PC->Selected&&bDetailsOpen) {
+  const float Left=WindowPosition.X-278;
+  if(Left>=206)return Left;
+  const float Right=WindowPosition.X+WindowSize.X+6;
+  if(Right+266<=Width-12)return Right;
+ }
+ return FMath::Max(206.f,Width-278.f);
+}
+float AOVHUD::PinnedPanelY() const
+{
+ const int32 Count=VisibleBattleNoticeCount();
+ const float NoticeX=ViewportPixels.X/UIScale*.5f-120;
+ if(Count<=0||PinnedPanelX()+266<=NoticeX||PinnedPanelX()>=NoticeX+240)return 76;
+ const auto* Feed=GetBattleNoticeFeed();
+ const int32 Footer=bBattleFeedOpen&&Feed&&Feed->DroppedCount>0?20:0;
+ return FMath::Max(76.f,66.f+Count*32+Footer+4.f);
+}
 void AOVHUD::DrawPinned()
 {
  const auto* PC=Cast<AOVController>(PlayerOwner);
  for(int32 I=PinnedShips.Num()-1;I>=0;--I)if(!PinnedShips[I].IsValid()||PinnedShips[I]->IsHidden()||(PC&&PC->Combat&&PC->Combat->IsDeparted(PinnedShips[I].Get())))
- {PinnedPreviews[I]->Release();PinnedPreviews.RemoveAt(I);PinnedShips.RemoveAt(I);}
- if(!PC||PC->bDeveloperMode||bHeroPanelOpen||bDetailsOpen)return;
- const float X=ViewportPixels.X/UIScale-278;
+ {PinnedPreviews[I]->Release();PinnedPreviews.RemoveAt(I);PinnedShips.RemoveAt(I);PinnedDecks.RemoveAt(I);PinnedSlots.RemoveAt(I);}
+ if(!PC||PC->bDeveloperMode||bHeroPanelOpen)return;
+ const float X=PinnedPanelX();
  for(int32 I=0;I<PinnedShips.Num();++I)
  {
-  const float Y=76+I*170;auto* Ship=PinnedShips[I].Get();
+  const float Y=PinnedPanelY()+I*168;auto* Ship=PinnedShips[I].Get();
   DrawRect(Panel,X,Y,266,164);
-  Button(FName(*FString::Printf(TEXT("Pinned_%d"),I)),TEXT("핀 · ")+Ship->ShipName.Left(20),X+6,Y+4,254);
-  auto* Preview=PinnedPreviews[I].Get();Preview->Update(Ship,FRotator(-25,35,0),1,2.4f);
-  if(auto* Texture=Preview->GetTexture())DrawTexture(Texture,X+6,Y+35,254,106,0,0,1,1,FLinearColor::White,BLEND_Opaque);
-  DrawText(FString::Printf(TEXT("선체 %.0f%% · 쉴드 %.0f%%"),100*Ship->Systems->HullHP/FMath::Max(1.f,Ship->Systems->MaxHullHP),100*Ship->Systems->Shield/FMath::Max(1.f,Ship->Systems->MaxShield)),Ink,X+10,Y+144,GEngine->GetSmallFont());
+  AddHitBox(FVector2D(X,Y)*UIScale,FVector2D(266,164)*UIScale,FName(*FString::Printf(TEXT("PinnedBackground_%d"),I)),true,5);
+  Button(FName(*FString::Printf(TEXT("Pinned_%d"),I)),TEXT("핀 · ")+Ship->ShipName.Left(16),X+6,Y+4,218);
+  Button(FName(*FString::Printf(TEXT("PinnedClose_%d"),I)),TEXT("X"),X+228,Y+4,32);
+  const auto* Systems=Ship->Systems.Get();const auto* Layout=Systems?Systems->Layout.Get():nullptr;
+  if(!Layout)continue;
+  Button(FName(*FString::Printf(TEXT("PinnedDeck_%d_0"),I)),TEXT("외부"),X+6,Y+35,55,PinnedDecks[I]==0);
+  if(Systems->FactionId==0)for(int32 D=1;D<=Layout->DeckCount;++D)
+   Button(FName(*FString::Printf(TEXT("PinnedDeck_%d_%d"),I,D)),FString::Printf(TEXT("%dF"),D),X+64+(D-1)*45,Y+35,40,PinnedDecks[I]==D);
+  if(PinnedDecks[I]==0) {
+   auto* Preview=PinnedPreviews[I].Get();Preview->Update(Ship,FRotator(-25,35,0),1,3.4f);
+   if(auto* Texture=Preview->GetTexture())DrawTexture(Texture,X+6,Y+64,254,75,0,0,1,1,FLinearColor::White,BLEND_Opaque);
+   DrawText(FString::Printf(TEXT("선체 %.0f%% · 쉴드 %.0f%%"),100*Systems->HullHP/FMath::Max(1.f,Systems->MaxHullHP),100*Systems->Shield/FMath::Max(1.f,Systems->MaxShield)),Ink,X+10,Y+144,GEngine->GetSmallFont());
+  } else if(Systems->FactionId==0) {
+   if(PinnedPreviews[I])PinnedPreviews[I]->Release();
+   int32 DeckSlots=0;for(const auto& Def:Layout->Slots)if(Def.DeckId==PinnedDecks[I])++DeckSlots;
+   if(DeckSlots>15)DrawText(TEXT("일부"),Ink,X+225,Y+41,GEngine->GetSmallFont());
+   int32 Cell=0;
+   for(int32 S=0;S<Layout->Slots.Num()&&S<Systems->Slots.Num()&&Cell<15;++S)if(Layout->Slots[S].DeckId==PinnedDecks[I]) {
+    const auto& Def=Layout->Slots[S];const auto& Slot=Systems->Slots[S];
+    const float CX=X+7+(Cell%5)*50,CY=Y+65+(Cell/5)*24;++Cell;
+    const FName Action(*FString::Printf(TEXT("PinnedSlot_%d_%d"),I,S));
+    DrawRect(S==PinnedSlots[I]?Accent:FLinearColor(.04f,.08f,.13f),CX,CY,47,21);
+    DrawText(Def.Facility==EOVFacilityType::None?TEXT("-"):Facility(Def.Facility).Left(2),Ink,CX+3,CY+1,GEngine->GetSmallFont());
+    DrawRect(Health(Def.MaxFacilityHP>0?Slot.HP/Def.MaxFacilityHP:0),CX,CY+18,47,3);
+    AddHitBox(FVector2D(CX,CY)*UIScale,FVector2D(47,21)*UIScale,Action,true,10);ActionCenters.Add(Action,FVector2D(CX+23.5f,CY+10.5f));
+   }
+   const int32 S=PinnedSlots[I];
+   if(Layout->Slots.IsValidIndex(S)&&Systems->Slots.IsValidIndex(S))DrawText(FString::Printf(TEXT("%s · 내구 %.0f/%.0f"),*Facility(Layout->Slots[S].Facility),Systems->Slots[S].HP,Layout->Slots[S].MaxFacilityHP),Ink,X+10,Y+144,GEngine->GetSmallFont());
+   else DrawText(TEXT("시설을 선택하세요"),Ink,X+10,Y+144,GEngine->GetSmallFont());
+  }
  }
 }
 void AOVHUD::ToggleDevelopmentMinimized(){bDevelopmentMinimized=!bDevelopmentMinimized;CancelPointerDrag();SyncAddedUI();}

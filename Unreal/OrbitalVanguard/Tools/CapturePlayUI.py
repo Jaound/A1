@@ -13,7 +13,7 @@ width, height = map(int, size.split('x'))
 report = {'passed': None, 'kind': 'PIE 렌더와 UI API', 'physical_input': False, 'requested_size': [width, height], 'captures': [], 'checks': [], 'errors': []}
 state = {'stage': 'start', 'at': time.monotonic(), 'started': time.monotonic(), 'index': 0}
 editor = unreal.get_editor_subsystem(unreal.UnrealEditorSubsystem)
-views = ['전투_HUD', '영웅_카드', '외부_무장', '격납고', '선내_영웅', '개발_함선', '개발_영웅', '개발_무장', '개발_시험', '초계함_모델', '개발_접기', '개발_확대', '전투_알림', '쉴드_고갈_알림', '항공대_위기']
+views = ['전투_HUD', '영웅_카드', '외부_무장', '핀_비교', '핀_시설', '격납고', '선내_영웅', '개발_함선', '개발_영웅', '개발_무장', '개발_시험', '초계함_모델', '개발_접기', '개발_확대', '전투_알림', '쉴드_고갈_알림', '항공대_위기']
 
 def prop(obj, key):
     return obj.get_editor_property(key)
@@ -83,6 +83,15 @@ def tick(_dt):
             elif name == '외부_무장':
                 hud.execute_ui_action('External')
                 state['before_preview'] = snapshot(pc)
+            elif name == '핀_비교':
+                ships=prop(pc,'ships')
+                for ship in (ships[0],ships[2]):
+                    pc.select_ship(ship);hud.execute_ui_action('WindowPin')
+                pc.select_ship(ships[1]);hud.set_details_open(True)
+                check('PIN-COMPARE-THREE-SHIPS',hud.get_pinned_count()==2 and hud.get_pinned_ship(0)==ships[0] and hud.get_pinned_ship(1)==ships[2] and prop(pc,'selected')==ships[1])
+            elif name == '핀_시설':
+                hud.set_details_open(True);hud.execute_ui_action('PinnedDeck_0_1')
+                check('PIN-DECK-INDEPENDENT',hud.get_pinned_deck(0)==1 and hud.get_pinned_deck(1)==0)
             elif name == '초계함_모델':
                 # Explicit art inspection only: original surface anchors remain unfinished.
                 unreal.SystemLibrary.execute_console_command(world, 'ov.Presentation.ImportedHull 1', pc)
@@ -174,6 +183,16 @@ def tick(_dt):
                 hp=prop(prop(systems,'weapon_mount_states')[index],'hp');maximum=prop(prop(prop(systems,'layout'),'weapon_mounts')[index],'max_hp')
                 check('WEAPON-PREVIEW-ACTUAL-HEALTH', maximum > 0 and abs(hud.get_selected_weapon_health_ratio()-hp/maximum)<.001)
                 check('PREVIEW-NO-DAMAGE', state['before_preview'] == snapshot(pc))
+            if name == '핀_비교':
+                for i in range(2):
+                    action='Pinned_'+str(i);center=hud.get_action_center(action)
+                    check('PIN-COMPARE-HITBOX-'+str(i),center.x>=0 and str(hud.get_hit_action_at_canvas_point(center))==action)
+            if name == '핀_시설':
+                slots=prop(prop(prop(hud.get_pinned_ship(0),'systems'),'layout'),'slots')
+                index=next(i for i,s in enumerate(slots) if prop(s,'deck_id')==1)
+                action='PinnedSlot_0_'+str(index);center=hud.get_action_center(action)
+                check('PIN-FACILITY-HITBOX',center.x>=0 and str(hud.get_hit_action_at_canvas_point(center))==action)
+                hud.execute_ui_action(action);check('PIN-FACILITY-SELECTED',hud.get_pinned_slot(0)==index)
             if name in ('전투_알림','쉴드_고갈_알림','항공대_위기'):
                 index=state['notice_count']-1;action='BattleNotice_'+str(index)
                 center=hud.get_action_center(action)
@@ -191,6 +210,8 @@ def tick(_dt):
             item['exists'] = os.path.isfile(item['path']) and os.path.getsize(item['path']) > 0
             check('RENDER-' + name, item['exists'])
             report['captures'].append(item)
+            if name == '핀_시설':
+                hud.execute_ui_action('PinnedClose_1');hud.execute_ui_action('PinnedClose_0')
             if name == '외부_무장':
                 hud.execute_ui_action('Weapon_1')
                 state.update(stage='weapon_switched', at=time.monotonic())

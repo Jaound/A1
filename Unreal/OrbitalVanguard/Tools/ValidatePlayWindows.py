@@ -134,6 +134,35 @@ def tick(_dt):
             for ship in (attacker,target):
                 pc.select_ship(ship);hud.execute_ui_action('WindowPin')
             check('WINDOW-TWO-SIMULTANEOUS-PINS',hud.get_pinned_count()==2)
+            pc.select_ship(p(pc,'ships')[1]);hud.set_details_open(True)
+            state.update(phase=55,at=time.monotonic());return
+        if state['phase']==55:
+            attacker=state['attacker'];target=state['target'];combat=p(pc,'combat')
+            width,height=pc.get_viewport_size();scale=max(.25,min(1,width/1280,height/740))
+            check('WINDOW-PINS-KEEP-SHIPS-AFTER-SELECTION',hud.get_pinned_ship(0)==attacker and hud.get_pinned_ship(1)==target)
+            for i in range(2):
+                name='Pinned_'+str(i);center=hud.get_action_center(name)
+                check('WINDOW-PIN-VISIBLE-WITH-DETAIL-'+str(i),center.x>=0 and str(hud.get_hit_action_at_canvas_point(center))==name,center)
+                check('WINDOW-PIN-CONSUMES-INPUT-'+str(i),hud.is_over_panel(center.x*scale,center.y*scale))
+                background=unreal.Vector2D(center.x,center.y+60)
+                check('WINDOW-PIN-BACKGROUND-CONSUMES-'+str(i),str(hud.get_hit_action_at_canvas_point(background))=='PinnedBackground_'+str(i) and hud.is_over_panel(background.x*scale,background.y*scale))
+            selected_before=p(pc,'selected');hud.execute_ui_action('PinnedDeck_0_1')
+            check('WINDOW-PIN-INDEPENDENT-DECK',hud.get_pinned_deck(0)==1 and hud.get_pinned_deck(1)==0 and p(pc,'selected')==selected_before)
+            hud.execute_ui_action('PinnedDeck_1_1')
+            check('WINDOW-PIN-ENEMY-DECK-PRIVATE',hud.get_pinned_deck(1)==0)
+            state.update(phase=56,at=time.monotonic());return
+        if state['phase']==56:
+            attacker=state['attacker'];target=state['target'];combat=p(pc,'combat')
+            slots=p(p(p(attacker,'systems'),'layout'),'slots')
+            index=next(i for i,s in enumerate(slots) if p(s,'deck_id')==1)
+            action='PinnedSlot_0_'+str(index);center=hud.get_action_center(action)
+            check('WINDOW-PIN-SLOT-HITBOX',center.x>=0 and str(hud.get_hit_action_at_canvas_point(center))==action)
+            selected_before=p(pc,'selected');hud.execute_ui_action(action)
+            check('WINDOW-PIN-INDEPENDENT-SLOT',hud.get_pinned_slot(0)==index and p(pc,'selected')==selected_before)
+            hud.execute_ui_action('PinnedClose_1')
+            check('WINDOW-PIN-CLOSE-ONLY-ONE',hud.get_pinned_count()==1 and hud.get_pinned_ship(0)==attacker)
+            pc.select_ship(target);hud.execute_ui_action('WindowPin')
+            check('WINDOW-PIN-REOPEN',hud.get_pinned_count()==2 and hud.get_pinned_ship(1)==target)
             hud.set_details_open(False);combat.notify_ftl_departure(target)
             state.update(phase=6,at=time.monotonic());return
         if state['phase']==6:
