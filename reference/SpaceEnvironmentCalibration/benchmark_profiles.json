@@ -1,0 +1,43 @@
+{
+  "asteroid": {
+    "hp_50m": 1800.0,
+    "collision_hp_fraction": 0.006,
+    "collision_interval": 4.0,
+    "radii": [
+      45.0,
+      65.0,
+      85.0
+    ],
+    "avoid_margin": 18.0
+  },
+  "radiation": {
+    "radius": 850.0,
+    "peak_shield_fraction_per_second": 0.006,
+    "falloff_power": 1.5,
+    "resistance": 0.0
+  },
+  "flare": {
+    "warning": 45.0,
+    "period": 210.0,
+    "speed": 1200.0,
+    "thickness": 60.0,
+    "shield_fraction": 0.35,
+    "emp_seconds": 3.0,
+    "radar_seconds": 6.0,
+    "radar_scale": 0.5,
+    "cover_radius": 120.0
+  },
+  "blackhole": {
+    "radius": 1000.0,
+    "core_radius": 45.0,
+    "peak_acceleration": 0.8,
+    "falloff_power": 2.0,
+    "propulsion_acceleration": [
+      5.0,
+      3.0,
+      1.2,
+      0.6
+    ],
+    "surface_contact": true
+  }
+}

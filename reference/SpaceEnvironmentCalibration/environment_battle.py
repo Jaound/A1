@@ -337,7 +337,7 @@ class EnvironmentBattle(legacy.Battle):
                         ship.vel=mul(unit(sub(goal,old)),ship.d["speed"]*.7*ship.eff("engine"))
                         desired_velocity=list(ship.vel);proposed=add(old,mul(ship.vel,dt))
                         self.metric["env_los_reposition_steps"]+=1
-            if self.hazard == "flare" and self.avoidance and ship.eff("engine") and ship.ftl is None and self.t >= ship.order_until:
+            if self.hazard == "flare" and self.avoidance and ship.eff("engine") and ship.ftl is None and self.t >= ship.order_until and (self.params.get("cover_policy","always") != "risk_based" or not ship.active or ship.shield <= max(ship.maxshield,ship.maxhp*.2)*self.params["shield_fraction"]*1.2):
                 current_wave = max(0, math.floor((self.t-self.params["warning"])/self.params["period"]))
                 for wave in (current_wave, current_wave+1):
                     arrival = self.params["warning"]+wave*self.params["period"]+(1600+old[0]*self.wave_direction)/self.params["speed"]

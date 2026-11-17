@@ -1,0 +1,172 @@
+{
+  "version": "E1-v0.1",
+  "status": "design_calibrated_initial_values_not_UE_certified",
+  "units": {
+    "distance": "m",
+    "speed": "m/s",
+    "acceleration": "m/s^2",
+    "time": "game_seconds"
+  },
+  "simultaneous_space_hazards": 1,
+  "ue_applied": false,
+  "normalization": {
+    "formula": "B = max(reference_hull_shield, 0.2 * reference_hull_hp)",
+    "warning": "Do not substitute live shield gauge, crew efficiency or a temporary buff for reference hull data.",
+    "source_profile_sha256": "639f0a233a3c0ed6bf97edc407754c304c3a4ff8499f1b75ec383a78d5f60d4b",
+    "references": {
+      "corvette": {
+        "hp": 5400,
+        "shield": 1408
+      },
+      "frigate": {
+        "hp": 8400,
+        "shield": 2288
+      },
+      "vector": {
+        "hp": 21252,
+        "shield": 6600
+      },
+      "bastion": {
+        "hp": 34188,
+        "shield": 10560
+      },
+      "cruiser": {
+        "hp": 36960,
+        "shield": 12320
+      },
+      "air_defense": {
+        "hp": 25410,
+        "shield": 8360
+      },
+      "radar": {
+        "hp": 19404,
+        "shield": 7040
+      },
+      "battleship": {
+        "hp": 158400,
+        "shield": 61600
+      },
+      "carrier": {
+        "hp": 134640,
+        "shield": 52800
+      },
+      "missile_ship": {
+        "hp": 130680,
+        "shield": 48400
+      },
+      "dreadnought": {
+        "hp": 825000,
+        "shield": 374000
+      },
+      "battlecarrier": {
+        "hp": 693000,
+        "shield": 308000
+      },
+      "repair": {
+        "hp": 10164,
+        "shield": 1672
+      },
+      "mining": {
+        "hp": 6600,
+        "shield": 1584
+      },
+      "assault": {
+        "hp": 10560,
+        "shield": 6336
+      }
+    },
+    "excluded_hulls": {
+      "transport": "Medium hull redesign R37 pending; historical small stats not adopted."
+    }
+  },
+  "asteroid": {
+    "radii_m": [
+      45,
+      65,
+      85
+    ],
+    "hp_at_50m": 1800,
+    "hp_formula": "1800 * (radius_m / 50)^3",
+    "impact_fraction_of_reference_hp": 0.006,
+    "impact_speed_power": 2,
+    "same_contact_cooldown_seconds": 4,
+    "path_clearance_m": 25,
+    "model_collision_radius_fraction": 0.65,
+    "alternate_hp_at_50m_for_persistent_map": 6000,
+    "alternate_status": "terrain-removal probe only; not full-battle evaluated",
+    "impact_speed_ratio_cap": 2
+  },
+  "radiation": {
+    "radius_m": 850,
+    "peak_fraction_of_B_per_second": 0.006,
+    "falloff_power": 1.5,
+    "damage_formula": "Sum over exposed surface samples j: B * 0.006 * max(0,1-r_j/850)^1.5 / N * (1-resistance) * dt",
+    "counts_as_combat": true,
+    "tested_resistances": [
+      0,
+      0.25,
+      0.5
+    ],
+    "sample_definition": "r_j is sample distance to zone centre; N is all hull-surface samples, not only exposed samples"
+  },
+  "flare": {
+    "warning_seconds": 45,
+    "period_seconds": 210,
+    "wave_speed_m_per_second": 1200,
+    "wave_thickness_m": 60,
+    "pulse_fraction_of_B": 0.35,
+    "emp_seconds": 3,
+    "radar_disruption_seconds": 6,
+    "radar_range_multiplier": 0.5,
+    "cover_policy": "risk_based",
+    "cover_risk_margin": 1.2,
+    "shelter_fixture_radius_m": 60,
+    "shelter_fixture_centers_m": [
+      [
+        -800,
+        0,
+        0
+      ],
+      [
+        -180,
+        200,
+        0
+      ],
+      [
+        180,
+        200,
+        0
+      ],
+      [
+        800,
+        0,
+        0
+      ]
+    ],
+    "emp_eligibility_trial": "No active shield after pulse processing, including shield broken by pulse",
+    "aircraft_shield_trial": 75,
+    "life_support_and_indoor_emp_policy": "not included; requires explicit integration policy"
+  },
+  "blackhole": {
+    "influence_radius_m": 1000,
+    "core_radius_m": 45,
+    "peak_acceleration_m_per_second_squared": 0.8,
+    "gravity_formula": "0.8 * max(0, 1-max(0,r-45)/955)^2, r<1000; 0 outside",
+    "model_propulsion_acceleration_by_size": [
+      5,
+      3,
+      1.2,
+      0.6
+    ],
+    "core_contact_trial": "spherical hull surface",
+    "core_contact_result": "complete wreck",
+    "ftl_charge_conditions": "unchanged; external drift still applies",
+    "ftl_test_input_seconds": 20,
+    "tow_system_implemented": false
+  },
+  "limitations": [
+    "reference hull/room model is not final UE mesh/facility data",
+    "aircraft combat/PD remain partly aggregate despite per-ID environmental proxy flight",
+    "no combined hazards, base damage, mining reward or tow economy certification"
+  ]
+}

@@ -1,54 +1,77 @@
-# 플레어 일시 정지 시간 — 고립 민감도 모형 v1
+# 우주 환경 단독 전투 교정 — E1 v0.1
 
-2026-11-17 KST. D124의 이동·무장·요격 등 작동 기능 일시 중단에 대해 **정지 시간 후보의 위험 차이**를 비교했다. 전체 플레어·함대전·영웅전·UE 검증이 아니며 최종 밸런스 확정이 아니다.
+운석·방사능·플레어·블랙홀을 **한 전투에 하나씩만** 적용한 Python 설계 모형이다. 실제 UE 실행·최종 모델의 충돌/노출·완성 게임 밸런스를 인증하지 않는다.
 
-## 실행
+- [권장 수치와 단위](../../docs/02_balance/SPACE_ENVIRONMENT_BALANCE.md)
+- [비교 결과와 한계](../../docs/04_analysis/SPACE_ENVIRONMENT_RESULTS.md)
+- [UE 구현용 초기 프로필](implementation_profile.json)
+- [최종140개 고유 조건/시드](final_results.json)
+- [CSV 요약](final_summary.csv)
+- [파일 해시 목록](environment_manifest.json)
 
-저장소 루트에서 Python3 표준 라이브러리만 사용한다.
+## 표본을 구분해서 읽기
 
-    python -X utf8 reference/SpaceEnvironmentCalibration/flare_stop.py
+| 자료 | 범위 | 집계 방식 |
+| --- | --- | --- |
+| pilot_results.json | 약/기준/강 입력28회·600초 | 탐색, 최종 승률에 합산하지 않음 |
+| evaluation_results.json | 초기120회 비교, 플레어R120·상시엄폐 포함 | 이전 기준 비교. 최종140과 중복 합산 금지 |
+| final_flare_results.json | 새 시드의 플레어R60·위험도 대응20회 + 일반/엄폐 대조40회 | 최종 자료에60행 반영 |
+| final_results.json | 환경80 + 일반대조40 + 엄폐대조20 =140 | 최종 E1의 고유 표본 |
+| sensitivity_results.json | 준비/무방비·저항·시간간격30회 | 별도 민감도 |
+| boundary_results.json | 노출/엄폐/무동력/FTL49개 에피소드 | 승률 표본이 아님 |
+| asteroid_persistence_results.json | 운석HP별 제거 시간12회 | 지형 유지 시간 교정 |
+| flare_policy_results.json | 같은 조건 정책 재검사10 + 새 시드 쌍대8 | 추가 정책 비교18회 |
+| flare_cover_results.json | R60/80/100m 엄폐 교정12회 | 선택용 탐색 |
+| flare_stop_results.json | 정지 길이의 고립 요격 구간10,800회 | 초기 D124 시험, 함대전 표본과 별도 |
 
-[결과 JSON](flare_stop_results.json)은 입력/스크립트 SHA-256, 가정,108개 조건별100시드 요약과 전체 요약을 포함한다. 기존 IntegratedCombat 프로필은 읽기만 하고 변경하지 않는다.
+주 평가의 각 환경·편성은4시드다. 전체 승률이나 모든 메타의 균형을 확정하는 표본 수가 아니다. 본 전투는 자동 퇴각을 끄고 최대1800게임초까지 관측한다. 시간 제한·일시 마비·교착을 승리나 영웅 사망으로 바꾸지 않는다.
 
-## 조건
+## 선택한 최종 구성
 
-- 정지 시간:0(대조)/2/3/5/8/12게임초.
-- PD 수:1/2/3/5/8/11기.
-- 기발사 일반 미사일:3/6/12발, 각 시드에서1~12초에 표적 도달.
-- 조건108개 × 시드100개 =10,800개 조건/시드 조합. 기준0초의 동일 조합을 별도 반복 계산해도 표본을 추가 합산하지 않는다.
-- 게임시간12초, 간격0.05초. 기체/함선은 이미 쉴드가 없고 완전 노출된 상태다.
-- PD는2C의 시험 범위111/126m·명중72/62%, 기존 프로필의 주기0.5초·피해12, 미사일HP24·회피25%·속도120m/s 사용.
-- 해당 표적 자체 PD만 존재한다. 미사일은 PD를 통과하면 표적 도달로 기록한다. 후속 기동 회피·장갑·시설·선체 피해는 계산하지 않는다.
-- 쿨타임은 정지 중 진행하지만 정지 해제 전에는 발사 불가라는 **시험 가정**이다. 최종 재개 정책을 확정하지 않는다.
-- 보호된 적이 미리 발사한 공격에 일시적으로 노출되는 비대칭 위험을 보는 격리 조건이다. 양측 전투 전체를 표현하지 않는다.
+- 원형 입력은 IntegratedCombat v0.6이며 과거 파일을 수정하지 않았다.
+- 프로세스 내부에서 항공순양함T4전용주포2문, 격납고 상한 항모4/항공순양함8과 실제2/4를 구분한다.
+- 강습선의 무료 경비를 제거하고 강습조는 영웅4+병력6으로 맞춘다.
+- 중형 재산정 전 수송선은 이 편성에 포함하지 않는다.
+- 초기120회 플레어는R120 엄폐물·상시엄폐였다. 교착이 많아 다른 시드로R60/80/100과 위험도 대응을 탐색했다.
+- 최종 플레어는R60·위험도 대응, 새 시드178100~178103이다. 나머지 환경은173100~173103이며 각각 같은 시드의 자체 대조군과 비교한다.
+- 일반 엄폐 구조물은 플레어 시험의 지형이다. 동시 운석 환경의 충돌 피해·파괴를 켠 것이 아니다.
 
-## 결과
+## 재현
 
-18개 PD/탄수 조합을 동일 가중한다. 평균 기발사 탄수는7발이다. 실제 함대의 출현 확률이나 편성 가중치가 아니다.
+Python 표준 라이브러리만 필요하다. 저장소 루트에서 실행한다. 워커는 독립 모형을 계산하며 각 배틀의 환경 종류는 하나로 제한한다. 주요 스윕은 환경 종류별 배치를 순서대로 실행한다.
 
-| 정지 시간 | 대조군 대비 추가 표적 도달 탄수 |
-| --- | ---: |
-| 2초 | 0.60발 |
-| 3초 | 1.06발 |
-| 5초 | 2.01발 |
-| 8초 | 3.49발 |
-| 12초 | 5.34발 |
+    python -X utf8 -m unittest discover -s reference/SpaceEnvironmentCalibration -p 'test_environments.py' -v
+    python -X utf8 -m unittest discover -s reference/IntegratedCombat -p 'test_rules.py' -v
+    python -X utf8 reference/SpaceEnvironmentCalibration/run_environment_sweep.py --stage pilot --output /tmp/E1-pilot-replay.json
+    python -X utf8 reference/SpaceEnvironmentCalibration/run_environment_sweep.py --stage evaluation --profiles reference/SpaceEnvironmentCalibration/benchmark_profiles.json --output /tmp/E0-reference-replay.json
+    python -X utf8 reference/SpaceEnvironmentCalibration/run_final_flare.py
+    python -X utf8 reference/SpaceEnvironmentCalibration/report_environment_results.py
 
-무방비 시간이 늘수록 PD 공백의 위험이 커졌다. 통과 탄수를 선체 명중률·함선 파괴율·영웅 사망률로 바꾸지 않는다.
+Windows에서는 /tmp 대신 실제 임시 폴더 경로를 사용한다. 일부 명령은 지정된 결과 파일을 다시 쓴다. 검증 자료를 보존하려면 별도 체크아웃에서 재현하고 원본 증거와 비교한다.
 
-## 초기 권장값과 해석
+현재 selected_profiles.json은R60·위험도 대응의 E1이고 benchmark_profiles.json은 이전R120 기준 입력이다. 이전120회 재현에는 benchmark_profiles.json을 명시해야 한다.
 
-- **기본3게임초**를 초기 시험값으로 권한다. 주어진 불리한 조건에서 추가 도달이 평균1발 안팎이며 장시간 전면 기능 마비보다 위험을 제한하는 설계 선택이다.
-- **강한 환경5초**,8초 이상은 스트레스 비교 후보로 둔다.
-- 이 추천은 설계자의 위험 선호를 포함한다. 최적값이나 모든 체급/편성의 생존 보장을 수학적으로 증명한 것이 아니다.
-- 3초의 기동 기회 손실은 기존 속도 기준 초계함144m·강습선180m다. 실제 이동 궤적·충돌·엄폐를 계산한 거리가 아니라 속도×시간의 상한 비교다.
-- 결과의180초당 발사 중단 비율은 단순 참고값(3초1.67%,5초2.78%)이며 발생 주기180초를 채택한 것이 아니다.
-- 쉴드 회복 손실량은 정지 중 회복도 멈춘다고 가정한 조건부 산술값이다. 아직 정지 범위와 회복 상호작용을 최종 확정하지 않았다.
+기존 민감도30회는R120 입력으로 수행했다. 재현 시 같은 입력을 지정한다.
 
-## 이 실험에서 정하지 않은 것
+    python -X utf8 reference/SpaceEnvironmentCalibration/run_environment_sweep.py --stage sensitivity --profiles reference/SpaceEnvironmentCalibration/benchmark_profiles.json --output /tmp/E0-sensitivity-replay.json
+    python -X utf8 reference/SpaceEnvironmentCalibration/probe_environment_boundaries.py
+    python -X utf8 reference/SpaceEnvironmentCalibration/probe_asteroid_persistence.py
 
-플레어의 예고·주기·파동 속도/두께·피해, 실제 부분 엄폐, 쉴드 없음 판정, 무쉴드 기체별 정지 예외, 명령/살보/관제/생명유지/FTL 재개, 인양·블랙홀·방사능·운석은 미구현이다. 따라서 다른 수치까지 함께 확정했다고 주장하지 않는다.
+추가 정책/엄폐 교정은 실제 수행 당시 선택 프로필과 코드 해시를 결과 파일에서 확인한다. 최종 E1 파일로 실행하면 입력이 달라질 수 있으므로 과거 자료를 덮어쓰며 동일 실험이라고 부르지 않는다.
 
-다음은 실제 엄폐·쉴드 소모·함대 집중 사격·PD 호위·함재기/포드 운송·영웅 철수와3/5초를 결합하는 비교다. 환경 모델이 이를 지원한 뒤 같은 조건으로 비교하고 UE에 옮겨 검증한다. 고립 모형 결과를 기존 환경 없는 전투 승률과 합산하지 않는다.
+[초기 정지 시간 시험의 원래 안내](FLARE_STOP_SENSITIVITY.md)는 별도로 보존했다.
 
-[환경 기획](../../docs/01_design/strategy/SPACE_ENVIRONMENTS.md) · [R36](../../docs/00_overview/OPEN_QUESTIONS.md#r36)
+## 의존성·실패 이력
+
+- 초기 엄폐물과 항모가 겹치는 배치를 발견했다. evaluation_invalid_shelter_layout.json의 지형 관련 행은 최종 통계에서 제외했다.
+- 영향 없는 일반 대조·운석·방사능60행만 AST/입력 해시 증명을 거쳐 초기120회에 재사용했다. 잘못된 지형 행이나 미완료 결과를 성공 표본으로 채우지 않았다.
+- 당시 재사용 증명은 reuse_proof.json과 코드 스냅샷eac4063/1bd1691에서 확인한다. 현재 코드는 추가 선택적 AI 분기를 포함하므로 위 전체 재실행 명령을 권한다.
+- pilot_before_shelter_los_fix.json, pilot_before_braking_fix.json, pilot_invalid_shelter_layout.json은 수정 전 탐색 이력이며 최종 표본이 아니다.
+- 최종140행은 초기120 중 영향 없는80행 + 새 플레어/대조60행이다. 이전 연구와 합산해 표본 수를 늘리지 않는다.
+- 본평가 소스 스냅샷eac4063과 최종 코드의 선택적 cover_policy 분기는 구분한다. 실제 실행 파일 SHA-256은 각 결과와 environment_manifest.json에 기록한다.
+
+## 남은 모델 한계
+
+함체/장갑/시설은 임시 논리형상이며 함재기 공격·PD 일부는 집계 근사다. 개체별 환경 위치도 프록시 궤적을 사용한다. 함대 충돌·엄폐점 점유·최종 메시 광선·실제 추진 성능·생명유지/FTL의 EMP 상호작용·전용 인양·기지/채굴 보상은 추가 검증이 필요하다.
+
+초기 구현에는 implementation_profile.json을 참고하되 UE 데이터와 단위를 대조한다. selected_profiles.json의 옛 avoid_margin 후보키처럼 실제 계산에 사용하지 않는 값은 그대로 이식하지 않는다. 환경 없는 기존 D116 결과도 수정하지 않는다.

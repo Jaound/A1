@@ -6,6 +6,10 @@
 
 [폴더 안내](README.md)는 개요/분야 명세/수치/개발/분석/참조/과거 자료의 분류 기준을 정한다. 예전 경로는 [대응표](DOCUMENT_PATHS.json)로 찾는다. 이 문서는 계속 기획의 입구로 유지한다.
 
+## D125 단독 환경 초기 수치와 비교
+
+[환경E1](02_balance/SPACE_ENVIRONMENT_BALANCE.md)·[결과](04_analysis/SPACE_ENVIRONMENT_RESULTS.md)·[원시자료](../reference/SpaceEnvironmentCalibration/README.md)에네환경을한번에하나씩적용한최종140개고유표본과추가교정을정리했다. 실제UE환경완료나모든메타균형을뜻하지않는다.
+
 ## D123 우주 환경 행동 규칙
 
 [환경 명세](01_design/strategy/SPACE_ENVIRONMENTS.md)에 운석 충돌·파괴·지형 변화, 방사능 노출 피해·전투 판정, 플레어 부분 엄폐·정지, 블랙홀 실제 견인·중심부 완파·FTL 외력 예외를 채택했다. D124는 이동·무장·요격 등 작동 기능 일시 중단을 확정하고 [초기 정지시간 민감도](../reference/SpaceEnvironmentCalibration/README.md)에서3초/강한5초를 시험 후보로 제안했다. 수치·기능별 재개·인양은 R36에서 계속 설계한다. 현재UI/모델 작업에 환경 구현을 자동 추가하거나 기존 결과를 새 환경 검증으로 바꾸지 않는다.

@@ -10,6 +10,7 @@ test_flare_covered_partial_and_open (test_environments.Rules.test_flare_covered_
 test_flare_no_duplicate_or_skip_on_long_frame (test_environments.Rules.test_flare_no_duplicate_or_skip_on_long_frame) ... ok
 test_flare_stops_functions_without_erasing_gauge (test_environments.Rules.test_flare_stops_functions_without_erasing_gauge) ... ok
 test_ftl_unchanged_far_and_wrecked_near (test_environments.Rules.test_ftl_unchanged_far_and_wrecked_near) ... ok
+test_healthy_autopilot_avoids_core_without_enemy_damage (test_environments.Rules.test_healthy_autopilot_avoids_core_without_enemy_damage) ... ok
 test_hold_does_not_cancel_gravity (test_environments.Rules.test_hold_does_not_cancel_gravity) ... ok
 test_initial_geometry_has_clearance (test_environments.Rules.test_initial_geometry_has_clearance) ... ok
 test_no_environment_is_not_damage (test_environments.Rules.test_no_environment_is_not_damage) ... ok
@@ -18,12 +19,13 @@ test_radiation_only_exposed_cells (test_environments.Rules.test_radiation_only_e
 test_radiation_resistance_is_damage_reduction (test_environments.Rules.test_radiation_resistance_is_damage_reduction) ... ok
 test_radiation_time_integral (test_environments.Rules.test_radiation_time_integral) ... ok
 test_reject_combined_hazards (test_environments.Rules.test_reject_combined_hazards) ... ok
+test_risk_based_cover_uses_own_shield (test_environments.Rules.test_risk_based_cover_uses_own_shield) ... ok
 test_shutdown_is_not_early_stalemate (test_environments.Rules.test_shutdown_is_not_early_stalemate) ... ok
 test_stopped_pod_waits_and_resumes (test_environments.Rules.test_stopped_pod_waits_and_resumes) ... ok
 test_swept_contact (test_environments.Rules.test_swept_contact) ... ok
 test_unit_identity_short_linked (test_environments.Rules.test_unit_identity_short_linked) ... ok
 
 ----------------------------------------------------------------------
-Ran 24 tests in 0.330s
+Ran 26 tests in 2.228s
 
 OK

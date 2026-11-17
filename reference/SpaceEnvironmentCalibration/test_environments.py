@@ -209,6 +209,25 @@ class Rules(unittest.TestCase):
                         import math
                         self.assertGreater(math.dist(ship.pos,body["pos"]),body["radius"]+ship.d["radius"])
 
+    def test_risk_based_cover_uses_own_shield(self):
+        direction=[]
+        for policy,fraction in (("always",1.),("risk_based",1.),("risk_based",.1)):
+            b=self.battle("flare",parameters={"cover_policy":policy})
+            a,v=b.ships;a.pos=[-425,0,0];v.pos=[425,0,0];a.shield=a.maxshield*fraction
+            b.t=2;b.pre_environment(.5);b.observe();a.target=v;b.update_motion(a,.5)
+            direction.append(a.vel[0])
+        self.assertLess(direction[0],0)
+        self.assertGreater(direction[1],0)
+        self.assertLess(direction[2],0)
+
+    def test_healthy_autopilot_avoids_core_without_enemy_damage(self):
+        b=EnvironmentBattle(legacy.roster(100),legacy.roster(100),172100,hazard="blackhole",heroes=False,retreat=False)
+        for ship in b.ships:ship.guns=[];ship.fighters=0
+        for wing in b.aircraft.values():
+            for aircraft in wing:aircraft["hp"]=0
+        for _ in range(600):b.tick(.5)
+        self.assertFalse(any(ship.dead for ship in b.ships))
+
     def test_unit_identity_short_linked(self):
         b=EnvironmentBattle(legacy.roster(100),legacy.roster(100),171800,hazard="flare",
                             mode="assault",heroes=True,duration=10,retreat=False)

@@ -1,0 +1,33 @@
+{
+  "status": "completed",
+  "final_unique_trials": 140,
+  "one_hazard_assertion": true,
+  "other_studies": {
+    "pilot": 28,
+    "sensitivity": 30,
+    "boundary_episodes": 49,
+    "terrain_removal": 12,
+    "policy_trials": 18,
+    "cover_calibration": 12
+  },
+  "main_execution_snapshot": "eac4063",
+  "unaffected_reuse_snapshot": "1bd1691",
+  "files": {
+    "environment_battle.py": "1328ed0e938b9f2440929c5478675db527a93ef54e5daca5471926eb0bf7dcb0",
+    "run_environment_sweep.py": "34b9b2bdcfd5bdc6034f6105ee7a7824a459e8e900f1b7b29990cf206098a6ae",
+    "run_final_flare.py": "42fb26010a13d13bae108d40a0b71ec0fca9f1db832b10d35b80e80b71701b67",
+    "selected_profiles.json": "0562dc3ad13ae949b3f44f8b38a6d3a41494c331afd76386b3128ef4fde2e2d9",
+    "implementation_profile.json": "6a9380cc18725af7ade42f9f0d5637258f0010458086ecba47a648b3d9d6b7d3",
+    "benchmark_profiles.json": "786e397bc31e4dcb8465a5789ca31f2b06313a51e17f9e8b0623a47e0111d63d",
+    "evaluation_results.json": "47edf7f985c65156e1acc0d4d08fcc342cf8c451562c72cf8cbae5632250ed66",
+    "final_flare_results.json": "2adac3c8fc689f1b3838a27ae6d5fbe0de506272759e2e92ae9b0bd6431a2e23",
+    "final_results.json": "eac8ae476d15f6e91e933c8373f05816c9be28c59478c6510a7e6566776161ee",
+    "sensitivity_results.json": "458dfcd3936bb22fd3cda1bdbe873f7fac43e1e029b8b1c4ad756c007b55938c",
+    "boundary_results.json": "07534635fc383f524559805040f58fe2850c6d46ec0df4c3d97696d1808b3dad",
+    "asteroid_persistence_results.json": "d80311d3300f48390e7a09cbfa2303814d98fd6d00845da48da5098171ea444a",
+    "flare_policy_results.json": "f7657d443c79880beb50ae74b1e9dcd623e5e754a552930f679540f9969da836",
+    "flare_cover_results.json": "c933d9313de48af8dd3cb926e45d836123d2fc2fe9ceae55bfeaae27d6c38286",
+    "reuse_proof.json": "1cd1eba03dbff4692e7a9da9c80c7c5cee782ed48e6c86a9cc2ca7492cdea0e1",
+    "final_reuse_proof.json": "8932fa23a72513013ee037a56175b92cf241c39ac1225cd829888c020983fd48"
+  }
+}

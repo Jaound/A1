@@ -25,7 +25,8 @@
     "emp_seconds": 3.0,
     "radar_seconds": 6.0,
     "radar_scale": 0.5,
-    "cover_radius": 120.0
+    "cover_radius": 60.0,
+    "cover_policy": "risk_based"
   },
   "blackhole": {
     "radius": 1000.0,

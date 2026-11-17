@@ -1,0 +1,11 @@
+{
+  "status": "verified",
+  "old_snapshot": "eac4063",
+  "old_code_sha256": "5fcd6abd91680e2c5f2c6e75ec29acd5ac859e3e45d8596c575dba5cee1a456a",
+  "new_code_sha256": "1328ed0e938b9f2440929c5478675db527a93ef54e5daca5471926eb0bf7dcb0",
+  "only_new_optional_flare_guard_ast": true,
+  "retained_rows": 80,
+  "all_retained_hazards_skip_flare_guard": true,
+  "current_flare_60_rows_executed_new_code": true,
+  "note": "First-layer reuse60 from1bd1691 is separately verified in reuse_proof.json. Final140 contains each tuple once."
+}

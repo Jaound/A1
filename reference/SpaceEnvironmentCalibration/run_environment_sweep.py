@@ -95,6 +95,8 @@ def main():
     parser.add_argument("--stage",choices=["pilot","evaluation","sensitivity"],required=True)
     parser.add_argument("--workers",type=int,default=min(4,os.cpu_count() or 1))
     parser.add_argument("--reuse-unaffected",type=Path)
+    parser.add_argument("--profiles",type=Path,default=HERE/"selected_profiles.json")
+    parser.add_argument("--output",type=Path)
     args=parser.parse_args()
     all_rows=[];tasks=[]
     if args.stage=="pilot":
@@ -108,7 +110,7 @@ def main():
                     tasks.append(dict(stage="pilot",case="mixed_100",seed=seed,hazard=hazard,
                                       variant=variant,parameters=parameters,duration=600))
     else:
-        selection=json.loads((HERE/"selected_profiles.json").read_text())
+        selection=json.loads(args.profiles.read_text())
         cases=["mixed_100","mixed_200","mixed_300","boarding_100","battlecarrier_200"]
         seeds=range(173100,173104)
         if args.stage=="evaluation":
@@ -162,7 +164,8 @@ def main():
         reused=len(eligible)
         assert reused==60
     started=time.monotonic()
-    output=HERE/f"{args.stage}_results.json"
+    output=args.output or HERE/f"{args.stage}_results.json"
+    output.parent.mkdir(parents=True,exist_ok=True)
     metadata={"stage":args.stage,"status":"running","hashes":hashes(),"tasks":len(tasks),
               "parameters":FAMILIES if args.stage=="pilot" else selection,
               "one_environment_per_battle":True,"no_ue_execution":True,
