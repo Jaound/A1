@@ -193,6 +193,13 @@ class Rules(unittest.TestCase):
             doses.append(b.metric["env_damage_input_radiation"])
         self.assertAlmostEqual(*doses)
 
+    def test_shutdown_is_not_early_stalemate(self):
+        b=self.battle("flare");b.duration=100;b.t=95;b.bodies=[]
+        for s in b.ships:s.active=False;s.shield=0;s.emp_until=120
+        r=b.run(.5)
+        self.assertEqual(r["seconds"],100)
+        self.assertEqual(r["outcome"],"timeout")
+
     def test_unit_identity_short_linked(self):
         b=EnvironmentBattle(legacy.roster(100),legacy.roster(100),171800,hazard="flare",
                             mode="assault",heroes=True,duration=10,retreat=False)

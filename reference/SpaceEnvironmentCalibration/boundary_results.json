@@ -1,0 +1,428 @@
+{
+  "status": "completed",
+  "episodes": 49,
+  "rows": [
+    {
+      "kind": "radiation_probe",
+      "distance": 0,
+      "resistance": 0,
+      "one_environment": true,
+      "shield_damage": 142.86275192199537,
+      "damaged_cells": 52.0
+    },
+    {
+      "kind": "radiation_probe",
+      "distance": 0,
+      "resistance": 0.25,
+      "one_environment": true,
+      "shield_damage": 107.14706394147652,
+      "damaged_cells": 52.0
+    },
+    {
+      "kind": "radiation_probe",
+      "distance": 0,
+      "resistance": 0.5,
+      "one_environment": true,
+      "shield_damage": 71.43137596099405,
+      "damaged_cells": 52.0
+    },
+    {
+      "kind": "radiation_probe",
+      "distance": 200,
+      "resistance": 0,
+      "one_environment": true,
+      "shield_damage": 98.80442010924526,
+      "damaged_cells": 52.0
+    },
+    {
+      "kind": "radiation_probe",
+      "distance": 200,
+      "resistance": 0.25,
+      "one_environment": true,
+      "shield_damage": 74.10331508192758,
+      "damaged_cells": 52.0
+    },
+    {
+      "kind": "radiation_probe",
+      "distance": 200,
+      "resistance": 0.5,
+      "one_environment": true,
+      "shield_damage": 49.40221005461353,
+      "damaged_cells": 52.0
+    },
+    {
+      "kind": "radiation_probe",
+      "distance": 425,
+      "resistance": 0,
+      "one_environment": true,
+      "shield_damage": 52.266545321468584,
+      "damaged_cells": 52.0
+    },
+    {
+      "kind": "radiation_probe",
+      "distance": 425,
+      "resistance": 0.25,
+      "one_environment": true,
+      "shield_damage": 39.19990899109689,
+      "damaged_cells": 52.0
+    },
+    {
+      "kind": "radiation_probe",
+      "distance": 425,
+      "resistance": 0.5,
+      "one_environment": true,
+      "shield_damage": 26.133272660728835,
+      "damaged_cells": 52.0
+    },
+    {
+      "kind": "radiation_probe",
+      "distance": 650,
+      "resistance": 0,
+      "one_environment": true,
+      "shield_damage": 16.900668983958894,
+      "damaged_cells": 52.0
+    },
+    {
+      "kind": "radiation_probe",
+      "distance": 650,
+      "resistance": 0.25,
+      "one_environment": true,
+      "shield_damage": 12.675501737965533,
+      "damaged_cells": 52.0
+    },
+    {
+      "kind": "radiation_probe",
+      "distance": 650,
+      "resistance": 0.5,
+      "one_environment": true,
+      "shield_damage": 8.450334491979447,
+      "damaged_cells": 52.0
+    },
+    {
+      "kind": "radiation_probe",
+      "distance": 825,
+      "resistance": 0,
+      "one_environment": true,
+      "shield_damage": 0.8667928544527967,
+      "damaged_cells": 50.0
+    },
+    {
+      "kind": "radiation_probe",
+      "distance": 825,
+      "resistance": 0.25,
+      "one_environment": true,
+      "shield_damage": 0.6500946408450545,
+      "damaged_cells": 50.0
+    },
+    {
+      "kind": "radiation_probe",
+      "distance": 825,
+      "resistance": 0.5,
+      "one_environment": true,
+      "shield_damage": 0.4333964272373123,
+      "damaged_cells": 50.0
+    },
+    {
+      "kind": "radiation_probe",
+      "distance": 900,
+      "resistance": 0,
+      "one_environment": true,
+      "shield_damage": 0,
+      "damaged_cells": 0.0
+    },
+    {
+      "kind": "radiation_probe",
+      "distance": 900,
+      "resistance": 0.25,
+      "one_environment": true,
+      "shield_damage": 0,
+      "damaged_cells": 0.0
+    },
+    {
+      "kind": "radiation_probe",
+      "distance": 900,
+      "resistance": 0.5,
+      "one_environment": true,
+      "shield_damage": 0,
+      "damaged_cells": 0.0
+    },
+    {
+      "kind": "flare_cover_probe",
+      "cover_radius": 0,
+      "shielded": false,
+      "exposure": 1.0,
+      "shield_damage": 0,
+      "stop_seconds": 3.0,
+      "one_environment": true
+    },
+    {
+      "kind": "flare_cover_probe",
+      "cover_radius": 0,
+      "shielded": true,
+      "exposure": 1.0,
+      "shield_damage": 4312.000000000011,
+      "stop_seconds": 0,
+      "one_environment": true
+    },
+    {
+      "kind": "flare_cover_probe",
+      "cover_radius": 8,
+      "shielded": false,
+      "exposure": 0.9230769230769231,
+      "shield_damage": 0,
+      "stop_seconds": 3.0,
+      "one_environment": true
+    },
+    {
+      "kind": "flare_cover_probe",
+      "cover_radius": 8,
+      "shielded": true,
+      "exposure": 0.9230769230769231,
+      "shield_damage": 3980.3076923077024,
+      "stop_seconds": 0,
+      "one_environment": true
+    },
+    {
+      "kind": "flare_cover_probe",
+      "cover_radius": 120,
+      "shielded": false,
+      "exposure": 0.0,
+      "shield_damage": 0,
+      "stop_seconds": 0,
+      "one_environment": true
+    },
+    {
+      "kind": "flare_cover_probe",
+      "cover_radius": 120,
+      "shielded": true,
+      "exposure": 0.0,
+      "shield_damage": 0,
+      "stop_seconds": 0,
+      "one_environment": true
+    },
+    {
+      "kind": "blackhole_engine_dead",
+      "hull": "corvette",
+      "distance": 100,
+      "wrecked": true,
+      "contact_seconds": 11.25,
+      "initially_in_contact": false,
+      "one_environment": true
+    },
+    {
+      "kind": "blackhole_engine_dead",
+      "hull": "corvette",
+      "distance": 200,
+      "wrecked": true,
+      "contact_seconds": 22.25,
+      "initially_in_contact": false,
+      "one_environment": true
+    },
+    {
+      "kind": "blackhole_engine_dead",
+      "hull": "corvette",
+      "distance": 400,
+      "wrecked": true,
+      "contact_seconds": 43.0,
+      "initially_in_contact": false,
+      "one_environment": true
+    },
+    {
+      "kind": "blackhole_engine_dead",
+      "hull": "corvette",
+      "distance": 600,
+      "wrecked": true,
+      "contact_seconds": 73.5,
+      "initially_in_contact": false,
+      "one_environment": true
+    },
+    {
+      "kind": "blackhole_engine_dead",
+      "hull": "corvette",
+      "distance": 900,
+      "wrecked": true,
+      "contact_seconds": 232.75,
+      "initially_in_contact": false,
+      "one_environment": true
+    },
+    {
+      "kind": "blackhole_engine_dead",
+      "hull": "cruiser",
+      "distance": 100,
+      "wrecked": true,
+      "contact_seconds": 8.25,
+      "initially_in_contact": false,
+      "one_environment": true
+    },
+    {
+      "kind": "blackhole_engine_dead",
+      "hull": "cruiser",
+      "distance": 200,
+      "wrecked": true,
+      "contact_seconds": 20.75,
+      "initially_in_contact": false,
+      "one_environment": true
+    },
+    {
+      "kind": "blackhole_engine_dead",
+      "hull": "cruiser",
+      "distance": 400,
+      "wrecked": true,
+      "contact_seconds": 42.0,
+      "initially_in_contact": false,
+      "one_environment": true
+    },
+    {
+      "kind": "blackhole_engine_dead",
+      "hull": "cruiser",
+      "distance": 600,
+      "wrecked": true,
+      "contact_seconds": 72.5,
+      "initially_in_contact": false,
+      "one_environment": true
+    },
+    {
+      "kind": "blackhole_engine_dead",
+      "hull": "cruiser",
+      "distance": 900,
+      "wrecked": true,
+      "contact_seconds": 232.0,
+      "initially_in_contact": false,
+      "one_environment": true
+    },
+    {
+      "kind": "blackhole_engine_dead",
+      "hull": "battleship",
+      "distance": 100,
+      "wrecked": true,
+      "contact_seconds": 0.25,
+      "initially_in_contact": true,
+      "one_environment": true
+    },
+    {
+      "kind": "blackhole_engine_dead",
+      "hull": "battleship",
+      "distance": 200,
+      "wrecked": true,
+      "contact_seconds": 18.25,
+      "initially_in_contact": false,
+      "one_environment": true
+    },
+    {
+      "kind": "blackhole_engine_dead",
+      "hull": "battleship",
+      "distance": 400,
+      "wrecked": true,
+      "contact_seconds": 40.25,
+      "initially_in_contact": false,
+      "one_environment": true
+    },
+    {
+      "kind": "blackhole_engine_dead",
+      "hull": "battleship",
+      "distance": 600,
+      "wrecked": true,
+      "contact_seconds": 71.0,
+      "initially_in_contact": false,
+      "one_environment": true
+    },
+    {
+      "kind": "blackhole_engine_dead",
+      "hull": "battleship",
+      "distance": 900,
+      "wrecked": true,
+      "contact_seconds": 230.5,
+      "initially_in_contact": false,
+      "one_environment": true
+    },
+    {
+      "kind": "blackhole_engine_dead",
+      "hull": "dreadnought",
+      "distance": 100,
+      "wrecked": true,
+      "contact_seconds": 0.25,
+      "initially_in_contact": true,
+      "one_environment": true
+    },
+    {
+      "kind": "blackhole_engine_dead",
+      "hull": "dreadnought",
+      "distance": 200,
+      "wrecked": true,
+      "contact_seconds": 9.5,
+      "initially_in_contact": false,
+      "one_environment": true
+    },
+    {
+      "kind": "blackhole_engine_dead",
+      "hull": "dreadnought",
+      "distance": 400,
+      "wrecked": true,
+      "contact_seconds": 35.75,
+      "initially_in_contact": false,
+      "one_environment": true
+    },
+    {
+      "kind": "blackhole_engine_dead",
+      "hull": "dreadnought",
+      "distance": 600,
+      "wrecked": true,
+      "contact_seconds": 67.25,
+      "initially_in_contact": false,
+      "one_environment": true
+    },
+    {
+      "kind": "blackhole_engine_dead",
+      "hull": "dreadnought",
+      "distance": 900,
+      "wrecked": true,
+      "contact_seconds": 226.75,
+      "initially_in_contact": false,
+      "one_environment": true
+    },
+    {
+      "kind": "blackhole_ftl",
+      "distance": 100,
+      "charge_seconds": 20,
+      "wrecked": true,
+      "escaped": false,
+      "one_environment": true
+    },
+    {
+      "kind": "blackhole_ftl",
+      "distance": 200,
+      "charge_seconds": 20,
+      "wrecked": false,
+      "escaped": true,
+      "one_environment": true
+    },
+    {
+      "kind": "blackhole_ftl",
+      "distance": 400,
+      "charge_seconds": 20,
+      "wrecked": false,
+      "escaped": true,
+      "one_environment": true
+    },
+    {
+      "kind": "blackhole_ftl",
+      "distance": 600,
+      "charge_seconds": 20,
+      "wrecked": false,
+      "escaped": true,
+      "one_environment": true
+    },
+    {
+      "kind": "blackhole_ftl",
+      "distance": 900,
+      "charge_seconds": 20,
+      "wrecked": false,
+      "escaped": true,
+      "one_environment": true
+    }
+  ],
+  "scope": "Deterministic probes, not added to fleet win-rate samples",
+  "one_environment_per_episode": true,
+  "environment_code_sha256": "32a4e99b0194d70e3b1d9f11e30c34491b88e1965b11aaf3532902542df006e1",
+  "selected_profiles_sha256": "786e397bc31e4dcb8465a5789ca31f2b06313a51e17f9e8b0623a47e0111d63d"
+}

@@ -292,6 +292,10 @@ class EnvironmentBattle(legacy.Battle):
             thrust = self.params["propulsion_acceleration"][ship.size-1]*ORIGINAL_EFF(ship,"engine")
             safe_radius = max(self.params["core_radius"]+ship.d["radius"]+80.,
                 self.params["core_radius"]+(1-math.sqrt(min(1.,.7*thrust/max(.001,self.params["peak_acceleration"]))))*(radius-self.params["core_radius"]))
+            incoming_speed = max(0.,-sum(v*n for v,n in zip(old_velocity,unit(offset))))
+            local_gravity = self.params["peak_acceleration"]*max(0.,1-max(0.,distance-self.params["core_radius"])/(radius-self.params["core_radius"]))**self.params["falloff_power"] if distance < radius else 0.
+            braking = incoming_speed**2/(2*max(.05,thrust-local_gravity))
+            safe_radius += braking+incoming_speed*2.
             if self.avoidance and ship.eff("engine") and ship.ftl is None and distance < safe_radius:
                 outward = unit(offset)
                 desired_velocity = mul(outward, ship.d["speed"]*.9)
@@ -322,9 +326,9 @@ class EnvironmentBattle(legacy.Battle):
                     body = block[2]
                     margin = body["radius"]+ship.d["radius"]+35.
                     candidates = [add(body["pos"],off) for off in ([0,0,margin],[0,0,-margin],[0,margin,0],[0,-margin,0])]
-                    candidates = [point for point in candidates if self.blockers(old,point,ship.d["radius"]*.65) is None and self.blockers(point,ship.target.pos) is None]
+                    candidates = [point for point in candidates if self.blockers(old,point,ship.d["radius"]*.65) is None and math.dist(old,point)>5.]
                     if candidates:
-                        goal=min(candidates,key=lambda point:math.dist(old,point)+math.dist(point,ship.target.pos))
+                        goal=min(candidates,key=lambda point:math.dist(old,point)+math.dist(point,ship.target.pos)+500.*sum(segment_sphere(point,ship.target.pos,body2["pos"],body2["radius"]) is not None for body2 in self.bodies if not body2["destroyed"]))
                         ship.vel=mul(unit(sub(goal,old)),ship.d["speed"]*.7*ship.eff("engine"))
                         desired_velocity=list(ship.vel);proposed=add(old,mul(ship.vel,dt))
                         self.metric["env_los_reposition_steps"]+=1
@@ -537,8 +541,21 @@ class EnvironmentBattle(legacy.Battle):
         if int(self.t)%30 == 0 and (not self.env_trace or self.env_trace[-1]["t"] != round(self.t)):
             self.env_trace.append({"t":round(self.t),"remaining":[sum(s.d["fleet_cost"] for s in self.living(side)) for side in (0,1)]})
 
+    def run(self, dt=None):
+        if self.hazard == "none": return super().run(dt)
+        dt = dt or legacy.C["dt"]
+        while self.t < self.duration:
+            self.tick(min(dt,self.duration-self.t))
+            if not self.living(0) or not self.living(1): break
+            # Scheduled pulses, temporary shutdowns and gravity remain live even
+            # when both sides are briefly unable to fire. Never declare victory.
+        return self.result()
+
     def result(self):
         out = super().result()
+        if out["outcome"] == "stalemate" and any(s.alive() and self.t < s.emp_until for s in self.ships):
+            out["outcome"] = "timeout"
+            out["end_reason"] = "observation_limit_during_temporary_shutdown"
         current_ids = [u.uid for ship in self.ships for u in ship.units+ship.officers]
         current_ids += [u.uid for op in self.operations for u in op["units"]]
         out.update({
