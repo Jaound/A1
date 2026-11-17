@@ -41,6 +41,7 @@ public:
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly) TArray<FOVBattleNotice> Notices;
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly) int32 DroppedCount=0;
     double LastCriticalDisplayTime=-1000;
+    int32 GetToastIndex(double Now) const;
     void Reset();
     void RecordCombatHit(const FOVAttackState& Attack,AOVShip* Victim);
     void RecordShieldRestored(AOVShip* Ship,double GameTime);

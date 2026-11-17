@@ -10,6 +10,23 @@ void UOVBattleNotices::Reset()
     Notices.Reset();RecentAttackIds.Reset();DroppedCount=0;LastCriticalDisplayTime=-1000;
 }
 
+int32 UOVBattleNotices::GetToastIndex(double Now) const
+{
+    // Critical notices remain visible briefly even if routine hits arrive later.
+    // The complete chronological event feed is not reordered or modified.
+    for(int32 I=Notices.Num()-1;I>=0;--I)
+    {
+        const double Age=Now-Notices[I].DisplayTime;
+        if(Notices[I].bCritical&&Age>=0&&Age<3.0)return I;
+    }
+    if(!Notices.IsEmpty())
+    {
+        const double Age=Now-Notices.Last().DisplayTime;
+        if(Age>=0&&Age<5.0)return Notices.Num()-1;
+    }
+    return INDEX_NONE;
+}
+
 void UOVBattleNotices::RecordCombatHit(const FOVAttackState& Attack,AOVShip* Victim)
 {
     if(Attack.Result!=EOVAttackResult::Hit||Attack.AttackId<=0||RecentAttackIds.Contains(Attack.AttackId)

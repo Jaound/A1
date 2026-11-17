@@ -169,6 +169,11 @@ TArray<int32,TInlineAllocator<64>> AOVHUD::BattleNoticeIndices() const
 {
  TArray<int32,TInlineAllocator<64>> Result;const auto* Feed=GetWorld()?GetWorld()->GetSubsystem<UOVBattleNotices>():nullptr;
  const auto* PC=Cast<AOVController>(PlayerOwner);if(!Feed||!PC)return Result;
+ if(!bBattleFeedOpen) {
+  const int32 Toast=Feed->GetToastIndex(FPlatformTime::Seconds());
+  if(Toast!=INDEX_NONE)Result.Add(Toast);
+  return Result;
+ }
  for(int32 I=Feed->Notices.Num()-1;I>=0;--I) {
   const auto& N=Feed->Notices[I];const auto K=N.Kind;bool Match=true;
   if(bBattleFeedOpen)switch(BattleFeedFilter) {
@@ -188,7 +193,7 @@ int32 AOVHUD::VisibleBattleNoticeCount() const
  const auto* PC=Cast<AOVController>(PlayerOwner);const auto* Feed=GetWorld()?GetWorld()->GetSubsystem<UOVBattleNotices>():nullptr;
  if(!PC||PC->bDeveloperMode||bSceneMenuOpen||!Feed||Feed->Notices.IsEmpty())return 0;
  if(bBattleFeedOpen){const int32 Total=BattleNoticeIndices().Num();if(Total==0)return 0;const int32 Page=FMath::Clamp(BattleFeedPage,0,(Total-1)/3);return FMath::Min(3,Total-Page*3);}
- return FPlatformTime::Seconds()-Feed->Notices.Last().DisplayTime<5?1:0;
+ return Feed->GetToastIndex(FPlatformTime::Seconds())!=INDEX_NONE?1:0;
 }
 int32 AOVHUD::BattleNoticeRows() const
 {

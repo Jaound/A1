@@ -7,6 +7,7 @@
 #include "OVShip.h"
 #include "OVShipSystemsComponent.h"
 #include "Engine/World.h"
+#include "HAL/PlatformTime.h"
 #include "Misc/AutomationTest.h"
 
 #if WITH_DEV_AUTOMATION_TESTS
@@ -97,6 +98,9 @@ bool FOVPDAircraftWarning::RunTest(const FString&)
     TestEqual(TEXT("실제 기체 손실 횟수"),Carrier->LossCount,Total);
     auto* Feed=R.World->GetSubsystem<UOVBattleNotices>();
     TestTrue(TEXT("실제 PD 격추는 모함 및 함대 전멸 경보와 연결"),Feed->Notices.ContainsByPredicate([](const FOVBattleNotice& N){return N.Kind==EOVBattleNoticeKind::AircraftEliminated&&!N.bFleetScope;})&&Feed->Notices.ContainsByPredicate([](const FOVBattleNotice& N){return N.Kind==EOVBattleNoticeKind::AircraftEliminated&&N.bFleetScope;}));
+    Feed->RecordAircraftAdjustment(R.Source,0,0,2.0);
+    const int32 Toast=Feed->GetToastIndex(FPlatformTime::Seconds());
+    TestTrue(TEXT("실제 격추 직후 일반 편제 알림이 전멸 경보를 가리지 않음"),Feed->Notices.IsValidIndex(Toast)&&Feed->Notices[Toast].Kind==EOVBattleNoticeKind::AircraftEliminated);
     return true;
 }
 

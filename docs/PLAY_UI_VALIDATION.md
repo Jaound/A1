@@ -1,3 +1,9 @@
+# R2 위급 알림 검증
+
+**위급 알림 우선 표시:** 전투 기록을 닫았을 때 일반 피격이 이어져도 최근 위급 사건을 실시간 3초간 우선 표시한다. 그 후 최신 일반 사건으로 돌아가며, 전체 기록의 순서·사건·피해는 바꾸지 않는다. Win64 `PlayUI_R2_DH_Build.log` 성공, `PlayUI_R2_DH_Automation.log` 자동97/97. 신규 `CriticalToastPriority`는 순서·시간 만료·기록 보존을, 기존 `ActualAircraftKillsTriggerWarnings` 확장 검사는 실제 적 PD 격추 후 일반 편제 알림을 추가한 경계를 확인했다. [1280 렌더/API 74/74](validation/PlayUIR2/DG_알림_UI.json)은 실제 사건을 표시하나 직접 입력은 아니다. 초기 DF 빌드는 새 C++ 파일이 캐시된 파일 목록에 빠져 자동96개만 실행됐고 DG에서 빌드 목록 재생성 후 신규 검사가 실행됨을 확인했다. 다수 위급 사건을 각각 보장하는 대기열과 장기 알림 부하는 여전히 미완료다.
+
+---
+
 # R2 기존 API 회귀 재검증
 
 **R2 추가 후 기존 API 회귀:** 코드 `37c6150` 기준 실행. [2A 57/57](validation/PlayUIR2/DE_2A.json), [명령·보호 60/60](validation/PlayUIR2/DE_명령보호.json), [D116 종합 79/79](validation/PlayUIR2/DE_D116종합.json), [2C 77/77](validation/PlayUIR2/DE_2C.json), [선내 36/36](validation/PlayUIR2/DE_선내.json), [통합 임무 29사례·316검사](validation/PlayUIR2/DE_통합임무.json) 통과. D116 79에는 명령·보호 60과 기존 2B 검사가 포함되므로 합산하지 않는다. `Saved/Logs/PlayUI_R2_Regression_*.log`, 이전/새 결과는 `Saved/Validation/Regression_20261118_013646`에 보존했다. 통합 검사 실행 관리 명령에서 결과 파일명을 잘못 기대해 `MISSING_OR_STALE`을 출력했으나 실제 `IntegratedMission.json`의 성공·완료와 29/316을 별도로 검증했다. 이는 API 시뮬레이션이며 직접 입력·실시간 10분 렌더 성능은 아니다.
