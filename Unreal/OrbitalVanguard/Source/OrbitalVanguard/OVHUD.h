@@ -49,6 +49,7 @@ public:
  UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="UI") FString InteriorFeedback;
  UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="UI") bool bDetailsOpen=false;
  UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="UI") bool bMinimized=false;
+ UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="UI") int32 SelectedAircraftId=0;
  UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="UI") FVector2D WindowPosition=FVector2D(840,76);
  UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="UI") FVector2D WindowSize=FVector2D(424,550);
 private:
@@ -61,8 +62,11 @@ private:
  bool bHeroPanelOpen=false;
  bool bSceneMenuOpen=false;
  bool bHangarView=false;
+ bool bAircraftGrid=true;
  bool bDetailsPositioned=false;
  int32 FleetPage=0;
+ int32 AircraftPage=0;
+ TWeakObjectPtr<AOVShip> AircraftPageShip;
  FString LastNoticeSource;
  FString NoticeText;
  double NoticeExpires=0;

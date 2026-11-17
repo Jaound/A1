@@ -115,7 +115,18 @@ void AOVHUD::NotifyHitBoxClick(FName N)
  if(N==TEXT("SceneMenu")) { bSceneMenuOpen=!bSceneMenuOpen;return; }
  if(N==TEXT("FleetPrevious")) { FleetPage=FMath::Max(0,FleetPage-1);return; }
  if(N==TEXT("FleetNext")) { ++FleetPage;return; }
+ if(N==TEXT("AircraftPrevious")) { AircraftPage=FMath::Max(0,AircraftPage-1);return; }
+ if(N==TEXT("AircraftNext")) { ++AircraftPage;return; }
+ if(N.ToString().StartsWith(TEXT("AircraftCard_"))) {
+  const int32 Id=FCString::Atoi(*N.ToString().Mid(13));
+  auto* PC=Cast<AOVController>(PlayerOwner);
+  auto* Carrier=GetWorld()->GetSubsystem<UOVCarrierSubsystem>();
+  if(PC&&PC->Selected&&Carrier&&(PC->Selected->bFriendly||PC->bDeveloperMode))
+   if(Carrier->Aircraft.ContainsByPredicate([&](const FOVAircraftRecord& A){return A.AircraftId==Id&&A.Carrier==PC->Selected&&A.FactionId==PC->Selected->Systems->FactionId;})) SelectedAircraftId=Id;
+  return;
+ }
  if(N==TEXT("HangarView")) { bHangarView=true;return; }
+ if(N==TEXT("HangarDisplayMode")) { bAircraftGrid=!bAircraftGrid;return; }
  if(N==TEXT("External")||N.ToString().StartsWith(TEXT("Deck")))bHangarView=false;
  if(N==TEXT("WindowPin")) {
   auto* PC=Cast<AOVController>(PlayerOwner);
@@ -236,15 +247,50 @@ void AOVHUD::DrawDetails()
  if(bHangarView) {
   if(!Reveal) DrawText(TEXT("적 격납고 · 미확인"),Ink,X+16,Y+88,GEngine->GetSmallFont());
   else if(auto* Carrier=GetWorld()->GetSubsystem<UOVCarrierSubsystem>()) {
-   int32 Row=0;
-   for(const auto& Hangar:Carrier->Hangars)if(Hangar.Carrier==PC->Selected) {
-    const int32 Stored=Carrier->Aircraft.FilterByPredicate([&](const auto& A){return A.HangarId==Hangar.HangarId&&A.State==EOVAircraftState::Stored;}).Num();
-    DrawText(FString::Printf(TEXT("격납고 %d   %s   %d / %d"),++Row,Hangar.Mode==EOVHangarMode::Aircraft?TEXT("함재기"):TEXT("소형함"),Hangar.Mode==EOVHangarMode::Aircraft?Stored:(Hangar.StoredSmallShip.IsValid()?1:0),Hangar.Mode==EOVHangarMode::Aircraft?20+Hangar.ExtraAircraftCapacity:1),Ink,X+16,Y+82+(Row-1)*24,GEngine->GetSmallFont());
-   }
+   if(AircraftPageShip!=PC->Selected){AircraftPageShip=PC->Selected;AircraftPage=0;SelectedAircraftId=0;}
+   const int32 Row=Carrier->Hangars.FilterByPredicate([&](const FOVHangarState& H){return H.Carrier==PC->Selected;}).Num();
    if(Row==0)DrawText(TEXT("장착된 격납고 없음"),Ink,X+16,Y+88,GEngine->GetSmallFont());
-   else {
-    Button(TEXT("HangarLaunchAircraft"),TEXT("출격"),X+16,Y+220,92);
-    Button(TEXT("HangarRecallAircraft"),TEXT("귀환"),X+116,Y+220,92);
+   else if(!bAircraftGrid) {
+    Button(TEXT("HangarDisplayMode"),TEXT("기체 보기"),X+W-105,Y+72,90);
+    int32 I=0;
+    for(const auto& Hangar:Carrier->Hangars)if(Hangar.Carrier==PC->Selected) {
+     const int32 Stored=Carrier->Aircraft.FilterByPredicate([&](const auto& A){return A.HangarId==Hangar.HangarId&&A.State==EOVAircraftState::Stored;}).Num();
+     DrawText(FString::Printf(TEXT("격납고 %d · %s · %d / %d"),++I,Hangar.Mode==EOVHangarMode::Aircraft?TEXT("함재기"):TEXT("소형함"),Hangar.Mode==EOVHangarMode::Aircraft?Stored:(Hangar.StoredSmallShip.IsValid()?1:0),Hangar.Mode==EOVHangarMode::Aircraft?20+Hangar.ExtraAircraftCapacity:1),Ink,X+16,Y+105+(I-1)*19,GEngine->GetSmallFont());
+    }
+    Button(TEXT("HangarLaunchAircraft"),TEXT("출격"),X+W-180,Y+250,78);
+    Button(TEXT("HangarRecallAircraft"),TEXT("귀환"),X+W-96,Y+250,78);
+   } else {
+    const auto Overview=Carrier->GetAircraftOverview(PC->Selected);
+    DrawText(FString::Printf(TEXT("격납고 %d · 기체 생존 %d · 손실 %d"),Row,Overview.Surviving,Overview.Wrecked),Ink,X+16,Y+80,GEngine->GetSmallFont());
+    Button(TEXT("HangarDisplayMode"),TEXT("시설 보기"),X+W-105,Y+72,90);
+    TArray<const FOVAircraftRecord*> Records;
+    for(const auto& A:Carrier->Aircraft)if(A.Carrier==PC->Selected&&A.FactionId==S->FactionId)Records.Add(&A);
+    const int32 Pages=FMath::Max(1,FMath::DivideAndRoundUp(Records.Num(),15));
+    AircraftPage=FMath::Clamp(AircraftPage,0,Pages-1);
+    const float CW=(W-38)/5;
+    for(int32 I=0;I<15&&AircraftPage*15+I<Records.Num();++I) {
+     const auto& A=*Records[AircraftPage*15+I];const float CX=X+12+(I%5)*(CW+3),CY=Y+105+(I/5)*37;
+     const TCHAR* ShortStates[]={TEXT("보관"),TEXT("출격"),TEXT("귀환"),TEXT("대기"),TEXT("상실"),TEXT("완파")};
+     Button(FName(*FString::Printf(TEXT("AircraftCard_%d"),A.AircraftId)),FString::Printf(TEXT("%d %s"),AircraftPage*15+I+1,ShortStates[FMath::Clamp(int32(A.State),0,5)]),CX,CY,CW,A.AircraftId==SelectedAircraftId);
+     const float Ratio=FMath::Clamp(A.HP/FMath::Max(1.f,Carrier->Profile.Hull),0.f,1.f);
+     const FLinearColor Icon=A.State==EOVAircraftState::Wrecked?FLinearColor::Gray:
+      A.State==EOVAircraftState::ControlLost?FLinearColor(1,.55f,.2f):Accent;
+     // Small schematic fighter silhouette; it is not a final aircraft asset.
+     DrawLine(CX+CW-14,CY+6,CX+CW-14,CY+21,Icon,2);
+     DrawLine(CX+CW-14,CY+12,CX+CW-20,CY+18,Icon,2);
+     DrawLine(CX+CW-14,CY+12,CX+CW-8,CY+18,Icon,2);
+     DrawRect(FLinearColor(.12f,.14f,.17f),CX,CY+28,CW,3);
+     DrawRect(Health(A.State==EOVAircraftState::Wrecked?0:Ratio),CX,CY+28,CW*Ratio,3);
+    }
+    Button(TEXT("AircraftPrevious"),TEXT("이전"),X+12,Y+220,62);
+    DrawText(FString::Printf(TEXT("%d / %d"),AircraftPage+1,Pages),Ink,X+80,Y+226,GEngine->GetSmallFont());
+    Button(TEXT("AircraftNext"),TEXT("다음"),X+125,Y+220,62);
+    Button(TEXT("HangarLaunchAircraft"),TEXT("출격"),X+W-180,Y+220,78);
+    Button(TEXT("HangarRecallAircraft"),TEXT("귀환"),X+W-96,Y+220,78);
+    if(const auto* A=Carrier->Aircraft.FindByPredicate([&](const FOVAircraftRecord& Item){return Item.AircraftId==SelectedAircraftId&&Item.Carrier==PC->Selected&&Item.FactionId==S->FactionId;})) {
+     const TCHAR* Labels[]={TEXT("보관"),TEXT("출격"),TEXT("귀환"),TEXT("도킹 대기"),TEXT("관제 상실"),TEXT("완파")};
+     DrawText(FString::Printf(TEXT("선택 기체 · %s · 내구 %.0f"),Labels[FMath::Clamp(int32(A->State),0,5)],A->HP),Ink,X+16,Y+258,GEngine->GetSmallFont());
+    }
    }
   }
  }

@@ -204,7 +204,22 @@ def tick(_dt):
             check('WINDOW-UNIQUE-SCENE-MENU-CLOSED',hud.get_action_center('SceneMenuClose').x<0)
             for action in ('HangarLaunchAircraft','HangarRecallAircraft','LaunchAircraft','RecallAircraft'):
                 hit_button(hud,action)
+            records=[a for a in p(p(pc,'carrier'),'aircraft') if p(a,'carrier')==p(pc,'selected') and p(a,'faction_id')==0]
+            check('WINDOW-AIRCRAFT-CARD-FIXTURE',bool(records))
+            craft_id=p(records[0],'aircraft_id');card='AircraftCard_'+str(craft_id)
+            hit_button(hud,card);hud.execute_ui_action(card)
+            check('WINDOW-AIRCRAFT-CARD-SELECTS-ID',p(hud,'selected_aircraft_id')==craft_id)
+            check('WINDOW-AIRCRAFT-CARD-READONLY',observe_combat(pc)==state['mission_observation'])
             check('WINDOW-UNIQUE-HANGAR-OBSERVATION-NO-MUTATION',observe_combat(pc)==state['mission_observation'])
+            check('WINDOW-AIRCRAFT-PAGE-FIXTURE',len(records)>15)
+            state['next_aircraft_id']=p(records[15],'aircraft_id')
+            hud.execute_ui_action('AircraftNext')
+            state.update(phase=111,at=time.monotonic());return
+        if state['phase']==111:
+            card='AircraftCard_'+str(state['next_aircraft_id'])
+            hit_button(hud,card);hud.execute_ui_action(card)
+            check('WINDOW-AIRCRAFT-PAGE-SELECTS-STABLE-ID',p(hud,'selected_aircraft_id')==state['next_aircraft_id'])
+            check('WINDOW-AIRCRAFT-PAGE-READONLY',observe_combat(pc)==state['mission_observation'])
             hud.execute_ui_action('Deck1')
             state.update(phase=12,at=time.monotonic());return
         if state['phase']==12:
