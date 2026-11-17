@@ -146,6 +146,8 @@ AOVShip::AOVShip()
 
 void AOVShip::SetCalibrationHull(const FVector* LocalHalfExtent)
 {
+    for(const auto& Support:PresentationMountSupports)if(IsValid(Support.Get()))Support->DestroyComponent();
+    PresentationMountSupports.Reset();
     Hull->SetStaticMesh(LoadObject<UStaticMesh>(nullptr,TEXT("/Engine/BasicShapes/Cube.Cube")));
     // Readable temporary silhouette inside the existing coarse combat OBB.
     // Selection retains exactly that OBB; neither actor scale nor combat dimensions change.
@@ -178,6 +180,8 @@ void AOVShip::ApplyPresentationHull(FName DefinitionId)
     if(CVarOVImportedHull.GetValueOnGameThread()!=1 || DefinitionId!=TEXT("corvette") || !Systems || !Systems->Layout)return;
     auto* Mesh=LoadObject<UStaticMesh>(nullptr,TEXT("/Game/Presentation/Ships/SM_PC14.SM_PC14"),nullptr,LOAD_NoWarn);
     if(!Mesh)return;
+    for(const auto& Support:PresentationMountSupports)if(IsValid(Support.Get()))Support->DestroyComponent();
+    PresentationMountSupports.Reset();
     const FBoxSphereBounds Bounds=Mesh->GetBounds();
     const FVector Available=Systems->Layout->LocalHalfExtent;
     const FVector Ratio=Available/Bounds.BoxExtent.ComponentMax(FVector(1));
@@ -187,6 +191,33 @@ void AOVShip::ApplyPresentationHull(FName DefinitionId)
     Hull->SetRelativeLocation(-Bounds.Origin*Scale);
     Hull->SetCollisionEnabled(ECollisionEnabled::NoCollision);
     for(auto Part:AccentMeshes)Part->SetVisibility(false);
+    // Authored visual adapters for this exact simplified PC14 mesh and existing
+    // corvette hardpoints. Surface heights were measured from the imported UE
+    // triangles; these do not alter the physical mount, muzzle or collision OBB.
+    const FVector ExpectedExtent(175,75,30);
+    const auto& Mounts=Systems->Layout->WeaponMounts;
+    if(!Available.Equals(ExpectedExtent,.01)||Mounts.Num()<2)return;
+    const FVector ExpectedPositions[]={FVector(-46.6666667,0,42),FVector(46.6666667,0,-42)};
+    const double SurfaceAtUnitScale[]={-2.5506140066/.7732958684,-29.3900465727/.7732958684};
+    for(int32 I=0;I<2;++I)
+    {
+        const auto& Mount=Mounts[I];
+        if(!Mount.LocalPosition.Equals(ExpectedPositions[I],.1))continue;
+        const double Side=Mount.LocalPosition.Z>0?1:-1;
+        const double Length=OVWeaponGeometry::BarrelLength(Available,Mount.Tier,Mount.Type==EOVWeaponType::Interception);
+        const double BaseInner=Mount.LocalPosition.Z-Side*Length*(.23+.09);
+        const double Surface=SurfaceAtUnitScale[I]*Scale;
+        const double Height=Side*(BaseInner-Surface);
+        if(Height<=.01)continue;
+        const FName Name=MakeUniqueObjectName(this,UStaticMeshComponent::StaticClass(),TEXT("PC14MountSupport"));
+        auto* Support=NewObject<UStaticMeshComponent>(this,Name);
+        AddInstanceComponent(Support);Support->SetupAttachment(GetRootComponent());
+        Support->SetStaticMesh(LoadObject<UStaticMesh>(nullptr,TEXT("/Engine/BasicShapes/Cube.Cube")));
+        Support->SetCollisionEnabled(ECollisionEnabled::NoCollision);Support->SetGenerateOverlapEvents(false);
+        Support->SetRelativeLocation(FVector(Mount.LocalPosition.X,Mount.LocalPosition.Y,(BaseInner+Surface)*.5));
+        Support->SetRelativeScale3D(FVector(Length*.42/100,Length*.42/100,Height/100));
+        Support->SetMaterial(0,Hull->GetMaterial(0));Support->RegisterComponent();PresentationMountSupports.Add(Support);
+    }
 }
 
 void AOVShip::Configure(const FString& Name, bool Friendly, float Speed, float RotationRate,

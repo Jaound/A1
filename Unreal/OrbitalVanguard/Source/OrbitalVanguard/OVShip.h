@@ -89,4 +89,5 @@ private:
     TArray<TObjectPtr<UStaticMeshComponent>> AccentMeshes;
     UPROPERTY() TObjectPtr<UBoxComponent> CalibrationSelection;
     UPROPERTY() TArray<TObjectPtr<UOVWeaponVisualComponent>> WeaponVisuals;
+    UPROPERTY() TArray<TObjectPtr<UStaticMeshComponent>> PresentationMountSupports;
 };
