@@ -63,7 +63,8 @@ FString AOVHUD::GetFleetDisplayLabel(AOVShip* Ship) const
   if(!Other||Other->bFriendly!=Ship->bFriendly||Other->ShipName!=Ship->ShipName)continue;
   ++Same;if(Other==Ship)Ordinal=Same;
  }
- return Ship->ShipName.Left(10)+(Same>1?FString::Printf(TEXT(" %d"),Ordinal):FString());
+ const FString Name=Ship->ShipName.Len()>10?Ship->ShipName.Left(9)+TEXT("…"):Ship->ShipName;
+ return Name+(Same>1?FString::Printf(TEXT(" %d"),Ordinal):FString());
 }
 FString AOVHUD::GetFleetTitleTooltip(FVector2D CanvasPoint) const
 {

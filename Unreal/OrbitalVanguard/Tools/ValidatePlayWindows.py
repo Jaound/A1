@@ -61,6 +61,7 @@ def tick(_dt):
             long_name='아주 긴 이름을 가진 동일 함급의 함선'
             for ship in ships[:2]:ship.set_editor_property('ship_name',long_name)
             for i in range(2):
+                check('WINDOW-FLEET-LONG-NAME-ELLIPSIS-'+str(i),'…' in hud.get_fleet_display_label(ships[i]))
                 center=hud.get_action_center('Pick_'+str(i))
                 check('WINDOW-FLEET-LONG-NAME-TOOLTIP-'+str(i),hud.get_fleet_title_tooltip(center)==long_name+' '+str(i+1))
             ships[0].set_editor_property('ship_name','짧음')

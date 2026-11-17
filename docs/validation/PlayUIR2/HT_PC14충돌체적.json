@@ -1,0 +1,12 @@
+{
+  "scope": "PC14 시험 형상의 상자 체적 합 비교. 명중률이나 전체 원본 메시 체적은 아님.",
+  "candidate_sha256": "0965ee5f04e54f7f220efcb35654af6ec3e8f4bc77c8113d90c5046c2bf44907",
+  "candidate_boxes": 27,
+  "candidate_box_volume_sum_cm3": 541993.1536,
+  "previous_obb_volume_cm3": 3150000,
+  "candidate_to_obb": 0.17206131860317458,
+  "limitations": [
+    "상자 겹침을 제외한 기하학적 합 기준이며 공격 방향별 명중 확률은 별도 시험",
+    "후보는 기본 전투에 미적용"
+  ]
+}
