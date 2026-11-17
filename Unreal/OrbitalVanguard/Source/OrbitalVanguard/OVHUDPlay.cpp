@@ -184,8 +184,9 @@ void AOVHUD::DrawBattleNotices()
  }
  for(int32 I=0;I<Count;++I) {
   const int32 Index=Feed->Notices.Num()-1-I;const auto& N=Feed->Notices[Index];
-  const TCHAR* Names[]={TEXT("피격"),TEXT("완파"),TEXT("쉴드 고갈"),TEXT("장갑 파괴"),TEXT("시설 파괴"),TEXT("쉴드 재가동"),TEXT("영웅 전사"),TEXT("강습 진입"),TEXT("강습 귀환"),TEXT("시설 장악"),TEXT("적 침입"),TEXT("영웅 피격"),TEXT("구조 대기")};
-  const FString Label=FString::Printf(TEXT("%s · %s%s"),*N.ShipName.Left(8),Names[FMath::Clamp(int32(N.Kind),0,12)],N.Count>1?*FString::Printf(TEXT(" ×%d"),N.Count):TEXT(""));
+  const TCHAR* Names[]={TEXT("피격"),TEXT("완파"),TEXT("쉴드 고갈"),TEXT("장갑 파괴"),TEXT("시설 파괴"),TEXT("쉴드 재가동"),TEXT("영웅 전사"),TEXT("강습 진입"),TEXT("강습 귀환"),TEXT("시설 장악"),TEXT("적 침입"),TEXT("영웅 피격"),TEXT("구조 대기"),TEXT("함재기 절반 미만"),TEXT("함재기 10% 이하"),TEXT("함재기 전멸"),TEXT("항공대 편제 변경")};
+  const FString Suffix=N.Baseline>0?FString::Printf(TEXT(" %d/%d"),N.Remaining,N.Baseline):N.Count>1?FString::Printf(TEXT(" ×%d"),N.Count):FString();
+  const FString Label=FString::Printf(TEXT("%s · %s%s"),*N.ShipName.Left(8),Names[FMath::Clamp(int32(N.Kind),0,16)],*Suffix);
   Button(FName(*FString::Printf(TEXT("BattleNotice_%d"),Index)),Label,X,66+I*32,240,N.bCritical);
  }
  if(bBattleFeedOpen&&Feed->DroppedCount>0)DrawText(FString::Printf(TEXT("이전 알림 %d건 생략"),Feed->DroppedCount),PlayInk,X,68+Count*32,GEngine->GetSmallFont());

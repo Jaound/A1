@@ -54,6 +54,25 @@ void UOVBattleNotices::RecordHeroRescue(int32 Faction,int32 UnitId,FVector Posit
     Append(Event,nullptr,EOVBattleNoticeKind::HeroRescue,1,UnitId);
 }
 
+void UOVBattleNotices::RecordAircraftThreshold(AOVShip* Carrier,bool bFleet,int32 PreviousSeverity,int32 Severity,int32 Remaining,int32 Baseline,FVector Position,double GameTime)
+{
+    if((!bFleet&&!IsValid(Carrier))||Baseline<=0||Remaining<0||Remaining>Baseline||Position.ContainsNaN()||Severity<1||Severity>3)return;
+    const auto Kind=Severity==3?EOVBattleNoticeKind::AircraftEliminated:Severity==2?EOVBattleNoticeKind::AircraftCritical:EOVBattleNoticeKind::AircraftHalf;
+    FOVAttackState Event;Event.HitShipId=IsValid(Carrier)?Carrier->GetFName():NAME_None;Event.Position=Position;Event.ResolvedAt=GameTime;
+    Append(Event,Carrier,Kind,1);
+    auto& Notice=Notices.Last();Notice.bFleetScope=bFleet;Notice.Remaining=Remaining;Notice.Baseline=Baseline;
+    for(int32 I=PreviousSeverity+1;I<=Severity;++I)Notice.CrossedThresholdMask|=1<<(I-1);
+    if(bFleet)Notice.ShipName=TEXT("아군 함대");
+}
+
+void UOVBattleNotices::RecordAircraftAdjustment(AOVShip* Carrier,int32 Remaining,int32 Baseline,double GameTime)
+{
+    if(!IsValid(Carrier)||Baseline<0||Remaining<0||Remaining>Baseline)return;
+    FOVAttackState Event;Event.HitShipId=Carrier->GetFName();Event.Position=Carrier->GetActorLocation();Event.ResolvedAt=GameTime;
+    Append(Event,Carrier,EOVBattleNoticeKind::AircraftAdjusted,1);
+    Notices.Last().Remaining=Remaining;Notices.Last().Baseline=Baseline;
+}
+
 void UOVBattleNotices::Append(const FOVAttackState& Attack,AOVShip* Victim,EOVBattleNoticeKind Kind,int32 Count,int32 UnitId)
 {
     const bool bWrecked=Kind==EOVBattleNoticeKind::ShipWrecked;
@@ -65,7 +84,7 @@ void UOVBattleNotices::Append(const FOVAttackState& Attack,AOVShip* Victim,EOVBa
     FOVBattleNotice& Notice=Notices.AddDefaulted_GetRef();
     Notice.ShipName=Victim?Victim->ShipName:TEXT("아군 영웅");Notice.ShipId=Attack.HitShipId;Notice.LastPosition=Attack.Position;
     Notice.GameTime=Attack.ResolvedAt;Notice.DisplayTime=FPlatformTime::Seconds();Notice.Count=Count;Notice.UnitId=UnitId;Notice.bShipWrecked=bWrecked;Notice.Kind=Kind;
-    Notice.bCritical=bWrecked||Kind==EOVBattleNoticeKind::HeroDeath||Kind==EOVBattleNoticeKind::HeroRescue||Kind==EOVBattleNoticeKind::HostileBoarding||(Kind==EOVBattleNoticeKind::FacilityDestroyed&&Attack.CriticalFacilitiesDestroyed>0);
+    Notice.bCritical=bWrecked||Kind==EOVBattleNoticeKind::HeroDeath||Kind==EOVBattleNoticeKind::HeroRescue||Kind==EOVBattleNoticeKind::HostileBoarding||Kind==EOVBattleNoticeKind::AircraftCritical||Kind==EOVBattleNoticeKind::AircraftEliminated||(Kind==EOVBattleNoticeKind::FacilityDestroyed&&Attack.CriticalFacilitiesDestroyed>0);
     if(Notice.bCritical)LastCriticalDisplayTime=Notice.DisplayTime;
     if(Notices.Num()>64){Notices.RemoveAt(0);++DroppedCount;}
 }

@@ -1,4 +1,5 @@
 #include "OVCarrierSubsystem.h"
+#include "OVBattleNotices.h"
 #include "OVCombatSubsystem.h"
 #include "OVShip.h"
 #include "OVShipSystemsComponent.h"
@@ -44,6 +45,7 @@ void UOVCarrierSubsystem::Reset(int32 Seed)
 {
     Hangars.Reset(); Aircraft.Reset(); Bolts.Reset(); RecentEvents.Reset(); Carriers.Reset();
     StrikeCandidateCache.Reset();
+    FriendlyWarningGroups.Reset();FleetWarningGroup=FAirWarningGroup();
     Profile = FOVAircraftProfile();
     ManeuverProfile = FOVAircraftManeuverProfile();
     GameTime = Accumulator = 0;
@@ -100,8 +102,69 @@ bool UOVCarrierSubsystem::RegisterCarrier(AOVShip* Ship, int32 InitialPerHangar)
     {
         auto& State = Carriers.AddDefaulted_GetRef(); State.Carrier = Ship;
         State.LastFaction = Ship->Systems->FactionId;
+        UpdateWarningOwnership(Ship);
     }
     return bAny;
+}
+
+int32 UOVCarrierSubsystem::WarningSeverity(const FAirWarningGroup& Group)
+{
+    const int32 Total=Group.Members.Num();
+    if(Total<=0)return 0;
+    if(Group.Living<=0)return 3;
+    if(int64(Group.Living)*10<=Total)return 2;
+    if(int64(Group.Living)*2<Total)return 1;
+    return 0;
+}
+
+void UOVCarrierSubsystem::RebaseWarningGroup(FAirWarningGroup& Group)
+{
+    // Ownership/inventory adjustments are not losses; only a later crossing warns.
+    Group.Severity=WarningSeverity(Group);
+}
+
+void UOVCarrierSubsystem::UpdateWarningOwnership(AOVShip* Ship)
+{
+    if(!IsValid(Ship)||!Ship->Systems)return;
+    const bool bWasFriendly=FriendlyWarningGroups.Contains(Ship);
+    if(auto* Old=FriendlyWarningGroups.Find(Ship))
+    {
+        for(int32 Id:Old->Members)FleetWarningGroup.Members.Remove(Id);
+        FleetWarningGroup.Living=FMath::Max(0,FleetWarningGroup.Living-Old->Living);
+        FriendlyWarningGroups.Remove(Ship);
+    }
+    if(Ship->Systems->FactionId==0)
+    {
+        auto& Group=FriendlyWarningGroups.FindOrAdd(Ship);
+        for(const auto& Craft:Aircraft)if(Craft.Carrier==Ship&&Craft.FactionId==0&&Craft.State!=EOVAircraftState::Wrecked)
+        {
+            Group.Members.Add(Craft.AircraftId);++Group.Living;
+            FleetWarningGroup.Members.Add(Craft.AircraftId);++FleetWarningGroup.Living;
+        }
+        RebaseWarningGroup(Group);
+    }
+    RebaseWarningGroup(FleetWarningGroup);
+    if(GameTime>0&&(bWasFriendly||Ship->Systems->FactionId==0))
+        if(auto* Feed=GetWorld()->GetSubsystem<UOVBattleNotices>())
+            if(const auto* Group=FriendlyWarningGroups.Find(Ship))Feed->RecordAircraftAdjustment(Ship,Group->Living,Group->Members.Num(),GameTime);
+            else Feed->RecordAircraftAdjustment(Ship,0,0,GameTime);
+}
+
+void UOVCarrierSubsystem::NotifyAircraftLoss(const FOVAircraftRecord& Craft)
+{
+    if(Craft.FactionId!=0)return;
+    auto* Feed=GetWorld()->GetSubsystem<UOVBattleNotices>();
+    auto Update=[&](FAirWarningGroup& Group,bool bFleet)
+    {
+        if(!Group.Members.Contains(Craft.AircraftId))return;
+        Group.Living=FMath::Max(0,Group.Living-1);
+        const int32 NewSeverity=WarningSeverity(Group);
+        if(NewSeverity>Group.Severity&&Feed)
+            Feed->RecordAircraftThreshold(Craft.Carrier.Get(),bFleet,Group.Severity,NewSeverity,Group.Living,Group.Members.Num(),Craft.Position,GameTime);
+        Group.Severity=FMath::Max(Group.Severity,NewSeverity);
+    };
+    if(auto* Group=FriendlyWarningGroups.Find(Craft.Carrier))Update(*Group,false);
+    Update(FleetWarningGroup,true);
 }
 
 bool UOVCarrierSubsystem::IsAirborneState(EOVAircraftState State)
@@ -274,6 +337,7 @@ void UOVCarrierSubsystem::DestroyAircraft(FOVAircraftRecord& Craft)
 {
     if (Craft.State == EOVAircraftState::Wrecked) return;
     Craft.HP = Craft.Shield = 0; Craft.State = EOVAircraftState::Wrecked; ++LossCount;
+    NotifyAircraftLoss(Craft);
 }
 
 bool UOVCarrierSubsystem::ApplyAircraftDamage(int32 AircraftId, float Damage)
@@ -332,6 +396,7 @@ void UOVCarrierSubsystem::Step(float Delta)
                     Craft.Maneuver = EOVAircraftManeuver::Approach; Craft.Leg = EOVAircraftLeg::Ingress;
                     Craft.DefensiveRemaining = 0; Craft.RejoinRemaining = 0;
                 }
+            UpdateWarningOwnership(Ship);
             // Launched Bolts intentionally retain their immutable previous faction.
         }
         if (!LivingShip(Ship)) continue;

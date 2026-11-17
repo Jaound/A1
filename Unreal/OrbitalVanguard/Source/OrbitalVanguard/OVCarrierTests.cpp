@@ -1,4 +1,5 @@
 #include "OVCarrierSubsystem.h"
+#include "OVBattleNotices.h"
 #include "OVCombatSubsystem.h"
 #include "OVCalibration.h"
 #include "OVShip.h"
@@ -53,6 +54,58 @@ struct FRange
             }
     }
 };
+}
+
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(FOVAircraftLossWarning,"OrbitalVanguard.Carrier.AircraftLossThresholdsAndOwnership",EAutomationTestFlags::EditorContext|EAutomationTestFlags::EngineFilter)
+bool FOVAircraftLossWarning::RunTest(const FString&)
+{
+    OVCarrierTest::FRange R(20);auto* Feed=R.World->GetSubsystem<UOVBattleNotices>();
+    const int32 Total=R.Fleet->Aircraft.Num();
+    TestTrue(TEXT("기체 분모가 10의 배수"),Total>=20&&Total%10==0);
+    TestEqual(TEXT("출격은 재고만 이동"),R.Fleet->Launch(R.Carrier),Total);
+    for(int32 I=0;I<Total/2;++I)R.Fleet->ApplyAircraftDamage(R.Fleet->Aircraft[I].AircraftId,100000);
+    TestFalse(TEXT("생존 정확히 50%는 절반 미만 아님"),Feed->Notices.ContainsByPredicate([](const FOVBattleNotice& N){return N.Kind==EOVBattleNoticeKind::AircraftHalf;}));
+    R.Fleet->ApplyAircraftDamage(R.Fleet->Aircraft[Total/2].AircraftId,100000);
+    auto Count=[&](EOVBattleNoticeKind Kind){return Feed->Notices.FilterByPredicate([&](const FOVBattleNotice& N){return N.Kind==Kind;}).Num();};
+    TestEqual(TEXT("50% 미만의 모함·함대 경보"),Count(EOVBattleNoticeKind::AircraftHalf),2);
+    for(int32 I=Total/2+1;I<Total-Total/10;++I)R.Fleet->ApplyAircraftDamage(R.Fleet->Aircraft[I].AircraftId,100000);
+    TestEqual(TEXT("정확히 10%에서 모함·함대 경보"),Count(EOVBattleNoticeKind::AircraftCritical),2);
+    TestTrue(TEXT("경보는 실제 분모와 생존 수를 보존"),Feed->Notices.ContainsByPredicate([&](const FOVBattleNotice& N){return N.Kind==EOVBattleNoticeKind::AircraftCritical&&N.Baseline==Total&&N.Remaining==Total/10&&N.bFleetScope;}));
+    for(int32 I=Total-Total/10;I<Total;++I)R.Fleet->ApplyAircraftDamage(R.Fleet->Aircraft[I].AircraftId,100000);
+    TestEqual(TEXT("실제 모든 기체 완파 시 모함·함대 전멸"),Count(EOVBattleNoticeKind::AircraftEliminated),2);
+    const int32 Before=Feed->Notices.Num();
+    TestFalse(TEXT("완파 기체 반복 피해 거부"),R.Fleet->ApplyAircraftDamage(R.Fleet->Aircraft[0].AircraftId,100000));
+    R.Fleet->Recall(R.Carrier);R.Advance(.1f);
+    TestEqual(TEXT("반복 피해와 빈 귀환은 경보를 복제하지 않음"),Feed->Notices.Num(),Before);
+    OVCarrierTest::FRange Captured(2);auto* CapturedFeed=Captured.World->GetSubsystem<UOVBattleNotices>();
+    Captured.Fleet->Launch(Captured.Carrier);Captured.Carrier->Systems->FactionId=1;Captured.Advance(.02f);
+    auto LossWarning=[&](){return CapturedFeed->Notices.ContainsByPredicate([](const FOVBattleNotice& N){return N.Kind==EOVBattleNoticeKind::AircraftHalf||N.Kind==EOVBattleNoticeKind::AircraftCritical||N.Kind==EOVBattleNoticeKind::AircraftEliminated;});};
+    TestFalse(TEXT("나포에 따른 기체 소속 조정은 격추가 아님"),LossWarning());
+    Captured.Carrier->Systems->FactionId=0;Captured.Advance(.02f);
+    TestFalse(TEXT("탈환과 분모 조정만으로 손실 경보하지 않음"),LossWarning());
+    TestEqual(TEXT("나포와 탈환을 별도 편제 조정으로 기록"),CapturedFeed->Notices.FilterByPredicate([](const FOVBattleNotice& N){return N.Kind==EOVBattleNoticeKind::AircraftAdjusted;}).Num(),2);
+    Captured.Combat->NotifyFTLDeparture(Captured.Carrier);Captured.Advance(.02f);
+    TestFalse(TEXT("FTL 이탈만으로 전멸 경보하지 않음"),LossWarning());
+    OVCarrierTest::FRange Mixed(10);auto* Second=Mixed.Make(TEXT("SecondCarrier"),0,FVector(0,3000,0));
+    TestTrue(TEXT("두 번째 모함 실제 기체 등록"),Mixed.Fleet->RegisterCarrier(Second,10));
+    const int32 FirstCount=Mixed.Fleet->GetAircraftOverview(Mixed.Carrier).Surviving;
+    TestEqual(TEXT("두 모함은 같은 실제 기체 수"),FirstCount,Mixed.Fleet->GetAircraftOverview(Second).Surviving);
+    Mixed.Fleet->Launch(Mixed.Carrier);
+    TArray<int32> FirstIds;for(const auto& Craft:Mixed.Fleet->Aircraft)if(Craft.Carrier==Mixed.Carrier)FirstIds.Add(Craft.AircraftId);
+    for(int32 Id:FirstIds)Mixed.Fleet->ApplyAircraftDamage(Id,100000);
+    auto* MixedFeed=Mixed.World->GetSubsystem<UOVBattleNotices>();
+    TestTrue(TEXT("첫 모함 전멸은 해당 모함 범위만 전멸"),MixedFeed->Notices.ContainsByPredicate([](const FOVBattleNotice& N){return N.Kind==EOVBattleNoticeKind::AircraftEliminated&&!N.bFleetScope;}));
+    TestFalse(TEXT("다른 모함 생존으로 함대 50%는 손실 경보 아님"),MixedFeed->Notices.ContainsByPredicate([](const FOVBattleNotice& N){return N.bFleetScope&&(N.Kind==EOVBattleNoticeKind::AircraftHalf||N.Kind==EOVBattleNoticeKind::AircraftEliminated);}));
+    OVCarrierTest::FRange Empty(0);
+    TestFalse(TEXT("분모 0에서는 없는 기체에 피해를 줄 수 없음"),Empty.Fleet->ApplyAircraftDamage(1,100000));
+    TestTrue(TEXT("분모 0에서는 손실 경보가 없음"),Empty.World->GetSubsystem<UOVBattleNotices>()->Notices.IsEmpty());
+    OVCarrierTest::FRange Tiny(1);auto* TinyFeed=Tiny.World->GetSubsystem<UOVBattleNotices>();
+    const int32 TinyCount=Tiny.Fleet->Aircraft.Num();TestTrue(TEXT("작은 실제 기체 집단"),TinyCount>0&&TinyCount<10);
+    Tiny.Fleet->Launch(Tiny.Carrier);
+    for(const auto& Craft:Tiny.Fleet->Aircraft)Tiny.Fleet->ApplyAircraftDamage(Craft.AircraftId,100000);
+    const auto* Final=TinyFeed->Notices.FindByPredicate([](const FOVBattleNotice& N){return N.bFleetScope&&N.Kind==EOVBattleNoticeKind::AircraftEliminated;});
+    TestTrue(TEXT("마지막 격추의 10%·전멸 동시 통과 근거 보존"),Final&&(Final->CrossedThresholdMask&6)==6);
+    return true;
 }
 
 IMPLEMENT_SIMPLE_AUTOMATION_TEST(FOVCarrierInventoryTest, "OrbitalVanguard.Carrier.InventoryCapacityAndRecall", EAutomationTestFlags::EditorContext | EAutomationTestFlags::EngineFilter)

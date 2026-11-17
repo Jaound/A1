@@ -193,6 +193,18 @@ public:
     UFUNCTION(BlueprintPure) EOVHangarAvailability GetHangarAvailability(int32 HangarId) const;
     static bool IsAirborneState(EOVAircraftState State);
 private:
+    struct FAirWarningGroup
+    {
+        TSet<int32> Members;
+        int32 Living=0;
+        int32 Severity=0;
+    };
+    TMap<TWeakObjectPtr<AOVShip>, FAirWarningGroup> FriendlyWarningGroups;
+    FAirWarningGroup FleetWarningGroup;
+    static int32 WarningSeverity(const FAirWarningGroup& Group);
+    void RebaseWarningGroup(FAirWarningGroup& Group);
+    void UpdateWarningOwnership(AOVShip* Ship);
+    void NotifyAircraftLoss(const FOVAircraftRecord& Craft);
     double Accumulator = 0;
     int32 NextAircraftId = 1, NextHangarId = 1, NextBoltId = 1;
     FRandomStream Random;
