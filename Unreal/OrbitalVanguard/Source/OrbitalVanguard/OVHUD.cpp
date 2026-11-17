@@ -77,11 +77,21 @@ bool AOVHUD::HandlePointer(float X,float Y,bool Pressed,bool Down,float Wheel,bo
  UIScale=FMath::Max(.25f,FMath::Min(1.f,FMath::Min(ViewportPixels.X/1280.f,ViewportPixels.Y/740.f)));
  // AHUD::Canvas is cleared by the viewport after rendering. Input runs outside DrawHUD.
  const bool Over=IsOverPanel(X,Y);
- if(PC&&PC->bDeveloperMode){bDragging=false;bResizing=false;return Over;}
+ if(PC&&PC->bDeveloperMode){CancelPointerDrag();return Over;}
  // A drag begun in the existing window retains ownership; a new interior gesture consumes all buttons/wheel.
- if(!bDragging&&!bResizing&&IsOverInteriorPanel(X,Y)) return true;
- if(!PC||!PC->Selected||!bDetailsOpen) { bDragging=false;bResizing=false;return Over; }
  const FVector2D P(X/UIScale,Y/UIScale);
+ if(!bDragging&&!bResizing&&(bInteriorDragging||bInteriorResizing||IsOverInteriorPanel(X,Y))) {
+  const FBox2D Bounds=InteriorBounds();
+  if(Pressed) {
+   if(P.X>=Bounds.Min.X&&P.X<Bounds.Max.X-140&&P.Y>=Bounds.Min.Y&&P.Y<Bounds.Min.Y+30) {bInteriorDragging=true;InteriorDragOffset=P-Bounds.Min;}
+   else if(P.X>=Bounds.Max.X-18&&P.Y>=Bounds.Max.Y-18) bInteriorResizing=true;
+  }
+  if(!Down){bInteriorDragging=false;bInteriorResizing=false;}
+  if(bInteriorDragging)InteriorWindowPosition=P-InteriorDragOffset;
+  if(bInteriorResizing){InteriorWindowPosition=Bounds.Min;InteriorWindowSize=FVector2D(FMath::Max(620.,P.X-Bounds.Min.X),FMath::Max(500.,P.Y-Bounds.Min.Y));}
+  return true;
+ }
+ if(!PC||!PC->Selected||!bDetailsOpen) { bDragging=false;bResizing=false;return Over; }
  if(Pressed&&Over) {
   if(P.X>=WindowPosition.X&&P.X<WindowPosition.X+WindowSize.X-134&&P.Y>=WindowPosition.Y&&P.Y<WindowPosition.Y+30) { bDragging=true;DragOffset=P-WindowPosition; }
   if(!bMinimized&&P.X>WindowPosition.X+WindowSize.X-18&&P.X<=WindowPosition.X+WindowSize.X&&P.Y>WindowPosition.Y+WindowSize.Y-18&&P.Y<=WindowPosition.Y+WindowSize.Y) bResizing=true;

@@ -309,6 +309,32 @@ def tick(_dt):
             hud.execute_ui_action('InteriorHeroPanel')
             check('WINDOW-INTERIOR-HERO-CLOSES',not hud.is_hero_panel_open())
             check('WINDOW-INTERIOR-HERO-NO-SIMULATION',observe_combat(pc)==state['mission_observation'])
+            width,height=pc.get_viewport_size();scale=max(.25,min(1,width/1280,height/740))
+            pos=hud.get_interior_window_position();size=hud.get_interior_window_size()
+            x,y=(pos.x+30)*scale,(pos.y+12)*scale
+            hud.handle_pointer(x,y,True,True,0.,False,0.,0.)
+            hud.handle_pointer(x-50*scale,y+15*scale,False,True,0.,False,0.,0.)
+            hud.handle_pointer(x-50*scale,y+15*scale,False,False,0.,False,0.,0.)
+            moved=hud.get_interior_window_position()
+            check('WINDOW-INTERIOR-DRAG-MOVES',moved.x<pos.x-45 and moved.y>pos.y+10)
+            x,y=(moved.x+size.x-4)*scale,(moved.y+size.y-4)*scale
+            hud.handle_pointer(x,y,True,True,0.,False,0.,0.)
+            hud.handle_pointer(x-40*scale,y-30*scale,False,True,0.,False,0.,0.)
+            hud.handle_pointer(x-40*scale,y-30*scale,False,False,0.,False,0.,0.)
+            resized=hud.get_interior_window_size()
+            check('WINDOW-INTERIOR-RESIZE-CHANGES',resized.x<size.x-35 and resized.y<size.y-25)
+            state.update(phase=14,at=time.monotonic(),interior_unit_id=unit_id);return
+        if state['phase']==14:
+            action='InteriorMarker_'+str(state['interior_unit_id']);center=hud.get_action_center(action)
+            check('WINDOW-INTERIOR-MOVED-MARKER-HIT',str(hud.get_hit_action_at_canvas_point(center))==action)
+            hud.execute_ui_action(action)
+            check('WINDOW-INTERIOR-MOVED-MARKER-SELECTS',state['interior_unit_id'] in list(p(hud,'interior_selected_units')))
+            check('WINDOW-INTERIOR-MOVE-RESIZE-READONLY',observe_combat(pc)==state['mission_observation'])
+            width,height=pc.get_viewport_size();scale=max(.25,min(1,width/1280,height/740))
+            pos=hud.get_interior_window_position();x,y=(pos.x+30)*scale,(pos.y+12)*scale
+            hud.handle_pointer(x,y,True,True,0.,False,0.,0.);hud.execute_ui_action('InteriorClose')
+            hud.handle_pointer(x-30*scale,y,False,True,0.,False,0.,0.)
+            check('WINDOW-INTERIOR-CLOSE-CANCELS-DRAG',hud.get_interior_window_position()==pos)
             finish()
     except Exception:
         report['errors'].append(traceback.format_exc());unreal.log_error(report['errors'][-1]);finish()

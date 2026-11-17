@@ -30,8 +30,9 @@ bool Living(const FOVInteriorUnitRecord& U) { return U.HP>0 && U.State!=EOVInter
 FBox2D AOVHUD::InteriorBounds() const
 {
  const double Width=ViewportPixels.X/UIScale,Height=ViewportPixels.Y/UIScale;
- const FVector2D Size(FMath::Min(780.,Width-32),FMath::Min(550.,Height-180));
- const FVector2D Position(Width-Size.X-16,90);
+ const FVector2D Size(FMath::Clamp(InteriorWindowSize.X,620.,FMath::Max(620.,Width-32)),FMath::Clamp(InteriorWindowSize.Y,500.,FMath::Max(500.,Height-100)));
+ const FVector2D Desired=InteriorWindowPosition.X<0?FVector2D(Width-Size.X-16,90):InteriorWindowPosition;
+ const FVector2D Position(FMath::Clamp(Desired.X,0.,FMath::Max(0.,Width-Size.X)),FMath::Clamp(Desired.Y,62.,FMath::Max(62.,Height-Size.Y)));
  return FBox2D(Position,Position+Size);
 }
 
@@ -50,8 +51,8 @@ bool AOVHUD::HandleInteriorAction(FName Action)
  if(!PC||!PC->Interior||!PC->Interior->bEnabled) { bInteriorOpen=false;return true; }
  auto* Interior=PC->Interior.Get();
  auto ViewShip=[&](AOVShip* Ship) { InteriorShip=Ship;InteriorDeck=1;InteriorTargetSlot=NAME_None;InteriorUnitPage=0;InteriorSelectedUnits.Reset(); };
- if(Action==TEXT("InteriorToggle")||Action==TEXT("InteriorMissionToggle")) { bInteriorOpen=!bInteriorOpen;if(bInteriorOpen)ViewShip(PC->Selected);return true; }
- if(Action==TEXT("InteriorClose")) { bInteriorOpen=false;return true; }
+ if(Action==TEXT("InteriorToggle")||Action==TEXT("InteriorMissionToggle")) { bInteriorOpen=!bInteriorOpen;if(bInteriorOpen)ViewShip(PC->Selected);else CancelPointerDrag();return true; }
+ if(Action==TEXT("InteriorClose")) { bInteriorOpen=false;CancelPointerDrag();return true; }
  if(Action==TEXT("InteriorBackground"))return true;
  if(!bInteriorOpen)return true;
  if(Action==TEXT("InteriorSelectedShip")) { ViewShip(PC->Selected);return true; }
@@ -124,6 +125,7 @@ void AOVHUD::DrawInterior()
  TGuardValue<bool> Layer(bDrawingInterior,true);
  AddHitBox(Bounds.Min*UIScale,Bounds.GetSize()*UIScale,TEXT("InteriorBackground"),true,200);
  DrawRect(Panel,X,Y,W,H);
+ DrawLine(X+W-14,Y+H-2,X+W-2,Y+H-14,Accent,2);
  AOVShip* Ship=InteriorShip.Get();
  DrawText(TEXT("선내 작전 · ")+(Ship?Ship->ShipName:TEXT("함선 선택")),Accent,X+12,Y+10,GEngine->GetSmallFont());
  Button(TEXT("InteriorClose"),TEXT("닫기"),X+W-66,Y+5,56);

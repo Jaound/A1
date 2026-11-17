@@ -32,7 +32,7 @@ public:
  UFUNCTION(BlueprintPure, Category="UI") float GetPreviewZoom() const { return PreviewZoom; }
  bool IsOverOrbitPreview(FVector2D Cursor) const;
  void OrbitPreview(FVector2D Delta);
- void CancelPointerDrag() { bDragging=false; bResizing=false; }
+ void CancelPointerDrag() { bDragging=false; bResizing=false; bInteriorDragging=false; bInteriorResizing=false; }
  void OpenDetails() { bDetailsOpen=true; bMinimized=false; bHeroPanelOpen=false; SyncAddedUI(); }
  UFUNCTION(BlueprintCallable, Category="UI") bool HandlePointer(float X,float Y,bool Pressed,bool Down,float Wheel,bool Orbit,float DX,float DY);
  UFUNCTION(BlueprintCallable, Category="UI") void SetDetailsOpen(bool Open) { bDetailsOpen=Open; bMinimized=false; }
@@ -42,6 +42,8 @@ public:
  UFUNCTION(BlueprintPure, Category="UI") bool IsOverWorldMarker(FVector2D Pixel) const;
  UFUNCTION(BlueprintCallable, Category="UI") bool HandleInteriorAction(FName Action);
  UFUNCTION(BlueprintPure, Category="UI") bool IsOverInteriorPanel(float X,float Y) const;
+ UFUNCTION(BlueprintPure, Category="UI") FVector2D GetInteriorWindowPosition() const { return InteriorBounds().Min; }
+ UFUNCTION(BlueprintPure, Category="UI") FVector2D GetInteriorWindowSize() const { return InteriorBounds().GetSize(); }
  UFUNCTION(BlueprintPure, Category="UI") bool IsOverMissionPanel(float X,float Y) const;
  UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="UI") bool bInteriorOpen=false;
  UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="UI") int32 InteriorDeck=1;
@@ -80,6 +82,8 @@ private:
  float UIScale=1.f;
  FVector2D ViewportPixels=FVector2D(1280,740);
  bool bDragging=false,bResizing=false;
+ bool bInteriorDragging=false,bInteriorResizing=false;
+ FVector2D InteriorWindowPosition=FVector2D(-1,-1),InteriorWindowSize=FVector2D(780,550),InteriorDragOffset=FVector2D::ZeroVector;
  bool bDrawingDetails=false;
  bool bDrawingInterior=false;
  int32 InteriorUnitPage=0;
