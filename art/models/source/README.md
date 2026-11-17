@@ -12,13 +12,14 @@
       ships/               함선16종: corvette, frigate, vector, bastion, cruiser,
                            air_defense, radar, battleship, carrier, missile_ship,
                            dreadnought, battlecarrier, repair, mining, transport, assault
-      weapons/             무장9종
+      weapons/             기존 무장9종
+      weapons/anti_ship_missile_launcher/  대함 미사일 발사 모듈(추가 업로드 위치)
       aircraft/fighter/    함재기
       transport_devices/boarding_pod/  개인 강습포드
       projectiles/anti_ship_missile/   대함 미사일 탄체
       projectiles/standard_missile/    일반 미사일 탄체
 
-각 모델의 실제 원본 파일명과 경로는 [manifest.json](manifest.json)에 있다. Git은 빈 폴더를 보존하지 않으므로 각 폴더의 .gitkeep으로 경로를 만들었다. 원본 ZIP은 이름을 바꾸거나 풀지 않고 보관한다.
+기존 29종 모델의 실제 원본 파일명과 경로는 [manifest.json](manifest.json)에 있다. 대함 미사일 발사 모듈은 새 업로드 위치만 준비했으며 원본 파일명은 아직 manifest에 등록하지 않았다. 이 파일은 아래 도우미 스크립트 대신 해당 폴더에 직접 복사한다. Git은 빈 폴더를 보존하지 않으므로 각 폴더의 .gitkeep으로 경로를 만들었다. 원본 ZIP은 이름을 바꾸거나 풀지 않고 보관한다.
 
 ## 권장: Windows Git + Git LFS로 업로드
 
