@@ -1,5 +1,8 @@
 # 최근 검사: BF120 양포구와 상하 장착
 
+**BF120 개발 창 명령·기발사 탄 연결 (II):** 시험 버튼 이벤트로 적용→실제 포탄 발사→비행 중 해제/재적용→명중을 확인했다. 비행 중 공격의 ID·원점·소속은 보존됐고 [PIE API 32/32](validation/PlayUIR2/II_BF120비행탄_API.json), [개발 창 화면](validation/PlayUIR2/II_BF120비행탄_1280.png)이다. 재현성을 위해 시험 프로필의 명중 오차를 0으로 설정했고 발사체 속도 2,200cm/s는 유지했다. [IF](validation/PlayUIR2/IF_BF120비행탄_초기실패.json)·[IG](validation/PlayUIR2/IG_BF120비행탄_재시도실패.json)는 4,000cm 거리에서 0.5초만 진행해 명중을 잘못 기대한 실패였다. [IH 진단](validation/PlayUIR2/IH_BF120비행탄_진단.json)에서 아직 비행 중임을 확인하고 II에서 게임 시간 2.5초를 진행했다. 직접 마우스 입력·기본 원본 모델 적용은 미검증/미완료다.
+
+
 **BF120 개발 창 시험 적용 (ID/IE):** 아군 함포를 선택해 개발 도구 `무장` 탭의 `BF120 시험`/`시험 해제`로 원본 기반 포탑을 시험할 수 있다. 복사한 레이아웃의 해당 무장에만 적용하고 다른 함선·원본 레이아웃·HP·발사 횟수를 바꾸지 않는다. 포구 위치는 실제 발사에 반영되므로 시험 상태임을 화면에 표시한다. [1920 API 23/23](validation/PlayUIR2/ID_BF120개발_API.json)·[화면](validation/PlayUIR2/ID_BF120개발_1920.png), [1280 API 23/23](validation/PlayUIR2/IE_BF120개발_API.json)·[화면](validation/PlayUIR2/IE_BF120개발_1280.png), [개발 창 기존 API 36/36](validation/PlayUIR2/IC_개발창회귀_API.json), `PlayUI_R2_ID_Build.log` 빌드 성공·`PlayUI_R2_IE_Automation.log` 전체 자동 104/104. 버튼 이벤트는 테스트 API로 발생시켰고 직접 마우스 클릭은 미검증이다. 첫 HW 검사는 잘못된 Python 서브시스템 API, HY는 보호된 UI 속성 조회로 실패해 [증거](validation/PlayUIR2/HW_무장개발_초기실패.json)·[증거](validation/PlayUIR2/HY_BF120개발_렌더실패.json)를 남겼다. IB 화면은 버튼이 하단에 걸려 가려져 [기록](validation/PlayUIR2/IB_BF120개발_1920.png)했고, 끝까지 스크롤한 ID 화면에서 보이는 것을 확인했다. [사용법](PLAY_UI_GUIDE.md). 여전히 시험본이고 기본 원본 적용이나 대량 성능·패키지 검증은 아니다.
 
 

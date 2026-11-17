@@ -26,10 +26,19 @@ def tick(_):
   if not pc or len(p(pc,'ships'))<3:return
   if state['phase']=='wait':
    pc.start_combat_range();ships=list(p(pc,'ships'));source,target=ships[1],ships[2]
+   for ship in ships:ship.set_automation(False,False);ship.stop_movement()
+   source.set_actor_location(unreal.Vector(0,0,300),False,False)
+   target.set_actor_location(unreal.Vector(4000,0,300),False,False)
+   ships[0].set_actor_location(unreal.Vector(-15000,10000,300),False,False)
    pc.select_ship(source);combat=p(pc,'combat');check('TARGET',combat.set_target(source,target))
    dev=p(pc,'development');systems=p(source,'systems');layout=p(systems,'layout')
    defs=list(p(layout,'weapon_mounts'));gun=next(d for d in defs if p(d,'type')==unreal.OVWeaponType.CANNON)
    mid=p(gun,'weapon_id');beam=next(d for d in defs if p(d,'type')==unreal.OVWeaponType.BEAM)
+   mount=next(m for m in p(combat.get_ship_state(source),'mounts') if p(m,'mount_id')==mid)
+   profile=p(mount,'profile');profile.set_editor_property('profile_id','BF120DevTest')
+   for key,value in [('accuracy',1.0),('aim_spread_degrees',0.0),('fire_tolerance',180.0),('range',100000.0),('salvo',1)]:profile.set_editor_property(key,value)
+   settings=p(combat,'settings');profiles=list(p(settings,'weapons'));profiles.append(profile);settings.set_editor_property('weapons',profiles)
+   check('TEST_PROFILE',combat.set_weapon_profile(source,mid,'BF120DevTest'))
    snapshot=(p(systems,'hull_hp'),p(systems,'shield'),p(combat,'shot_count'),p(combat,'game_time'),[p(x,'hp') for x in p(systems,'weapon_mount_states')])
    check('DENY_OUTSIDE_DEV',not dev.set_bf120_trial(source,mid,True))
    pc.action('Developer');check('DEV_OPEN',p(pc,'developer_mode'))
@@ -54,6 +63,22 @@ def tick(_):
    d=next(v for v in p(p(systems,'layout'),'weapon_mounts') if p(v,'weapon_id')==mid)
    check('UI_DISABLE_ACTUAL',str(p(d,'presentation_profile'))=='None',p(dev,'last_message'))
    check('UI_ENABLE_AGAIN',panel.debug_activate_bf120_trial_control(True))
+   combat.simulate(2.0);before_shots=p(combat,'shot_count');before_hits=p(combat,'hit_count')
+   check('LIVE_REQUEST',combat.request_fire(source,mid))
+   combat.simulate(1/120)
+   check('LIVE_LAUNCH',p(combat,'shot_count')==before_shots+1)
+   attacks=list(p(combat,'attacks'));check('PROJECTILE_IN_FLIGHT',bool(attacks))
+   projectile=attacks[-1];projectile_id=p(projectile,'attack_id');origin=p(projectile,'origin');faction=p(projectile,'faction_id')
+   check('ACTUAL_MUZZLE',(source.get_weapon_muzzle_world(mid)-origin).length()<.1)
+   check('UI_DISABLE_IN_FLIGHT',panel.debug_activate_bf120_trial_control(False))
+   remaining=next((a for a in p(combat,'attacks') if p(a,'attack_id')==projectile_id),None)
+   check('LAUNCHED_PROJECTILE_UNCHANGED',bool(remaining) and (p(remaining,'origin')-origin).length()<.001 and p(remaining,'faction_id')==faction)
+   check('UI_REENABLE_IN_FLIGHT',panel.debug_activate_bf120_trial_control(True))
+   combat.simulate(2.5)
+   report['projectile_diagnostic']={'speed':p(p(projectile,'weapon'),'speed'),'hits':p(combat,'hit_count'),
+      'remaining':[(p(a,'attack_id'),str(p(a,'position')),p(a,'age'),str(p(a,'result'))) for a in p(combat,'attacks')],
+      'events':[(p(e,'attack_id'),str(p(e,'result'))) for e in p(combat,'recent_events')]}
+   check('LIVE_IMPACT',p(combat,'hit_count')==before_hits+1,report['projectile_diagnostic'])
    check('SCROLL_TO_CONTROLS',panel.debug_show_bf120_trial_controls())
    state.update(phase='capture',at=time.monotonic());return
   if state['phase']=='capture' and time.monotonic()-state['at']>1:

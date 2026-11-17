@@ -1,0 +1,162 @@
+{
+  "passed": false,
+  "physical_input": false,
+  "checks": [
+    {
+      "id": "PREVIEW",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "TARGET",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "TEST_PROFILE",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "DENY_OUTSIDE_DEV",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "DEV_OPEN",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "DENY_OTHER_WEAPON",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "DENY_ENEMY",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "ENABLE",
+      "passed": true,
+      "detail": "BF120 원본 기반 시험 · 포구 위치 변경 · 최종 모델 아님"
+    },
+    {
+      "id": "NEW_ISOLATED_LAYOUT",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "ORIGINAL_UNCHANGED",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "ENABLE_IDEMPOTENT",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "OTHER_SHIP_UNCHANGED",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "NO_GAMEPLAY_EVENT",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "DISABLE",
+      "passed": true,
+      "detail": "시험 해제 · 기존 포탑과 발사 위치로 복귀"
+    },
+    {
+      "id": "FALLBACK",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "DISABLE_AGAIN_REJECTED",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "WEAPON_PAGE",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "UI_ENABLE_EVENT",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "UI_ENABLE_ACTUAL",
+      "passed": true,
+      "detail": "BF120 원본 기반 시험 · 포구 위치 변경 · 최종 모델 아님"
+    },
+    {
+      "id": "UI_DISABLE_EVENT",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "UI_DISABLE_ACTUAL",
+      "passed": true,
+      "detail": "시험 해제 · 기존 포탑과 발사 위치로 복귀"
+    },
+    {
+      "id": "UI_ENABLE_AGAIN",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "LIVE_REQUEST",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "LIVE_LAUNCH",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "PROJECTILE_IN_FLIGHT",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "ACTUAL_MUZZLE",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "UI_DISABLE_IN_FLIGHT",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "LAUNCHED_PROJECTILE_UNCHANGED",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "UI_REENABLE_IN_FLIGHT",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "LIVE_IMPACT",
+      "passed": false,
+      "detail": ""
+    }
+  ],
+  "errors": [
+    "Traceback (most recent call last):\n  File \"ValidateBF120Developer.py\", line 78, in tick\n  File \"ValidateBF120Developer.py\", line 13, in check\nAssertionError: LIVE_IMPACT: \n"
+  ],
+  "image": "C:/Users/user/source/repos/A1/Unreal/OrbitalVanguard/Saved/Validation/BF120Developer.png",
+  "scope": "개발 도구 명령 API. 원본 적용 완료나 직접 클릭 검증이 아님",
+  "play_settings_restored": true
+}
