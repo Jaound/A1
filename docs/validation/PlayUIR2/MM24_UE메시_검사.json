@@ -1,0 +1,131 @@
+{
+  "passed": true,
+  "checks": [
+    {
+      "id": "SOURCE-INPUT-UNCHANGED",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "SOURCE-HASH-SM_MM24_BaseTrial",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "NO-OVERWRITE-SM_MM24_BaseTrial",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "SOURCE-HASH-SM_MM24_YawTrial",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "NO-OVERWRITE-SM_MM24_YawTrial",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "EDITOR",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "STATIC-MESH-SM_MM24_BaseTrial",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "TRIANGLES-SM_MM24_BaseTrial",
+      "passed": true,
+      "detail": "{'asset': '/Game/Presentation/MM24Trial/SM_MM24_BaseTrial', 'size_cm': [255.01715087890625, 246.95880889892578, 52.52214050292969], 'triangles': 151674, 'uv_channels': 1, 'simple_collisions': 0}"
+    },
+    {
+      "id": "UV-SM_MM24_BaseTrial",
+      "passed": true,
+      "detail": "{'asset': '/Game/Presentation/MM24Trial/SM_MM24_BaseTrial', 'size_cm': [255.01715087890625, 246.95880889892578, 52.52214050292969], 'triangles': 151674, 'uv_channels': 1, 'simple_collisions': 0}"
+    },
+    {
+      "id": "NO-COLLISION-SM_MM24_BaseTrial",
+      "passed": true,
+      "detail": "{'asset': '/Game/Presentation/MM24Trial/SM_MM24_BaseTrial', 'size_cm': [255.01715087890625, 246.95880889892578, 52.52214050292969], 'triangles': 151674, 'uv_channels': 1, 'simple_collisions': 0}"
+    },
+    {
+      "id": "SCALE-SM_MM24_BaseTrial",
+      "passed": true,
+      "detail": "{'asset': '/Game/Presentation/MM24Trial/SM_MM24_BaseTrial', 'size_cm': [255.01715087890625, 246.95880889892578, 52.52214050292969], 'triangles': 151674, 'uv_channels': 1, 'simple_collisions': 0}"
+    },
+    {
+      "id": "SAVE-SM_MM24_BaseTrial",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "SOURCE-STILL-SAME-SM_MM24_BaseTrial",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "STATIC-MESH-SM_MM24_YawTrial",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "TRIANGLES-SM_MM24_YawTrial",
+      "passed": true,
+      "detail": "{'asset': '/Game/Presentation/MM24Trial/SM_MM24_YawTrial', 'size_cm': [226.18809509277344, 251.35116577148438, 247.51812744140625], 'triangles': 601900, 'uv_channels': 1, 'simple_collisions': 0}"
+    },
+    {
+      "id": "UV-SM_MM24_YawTrial",
+      "passed": true,
+      "detail": "{'asset': '/Game/Presentation/MM24Trial/SM_MM24_YawTrial', 'size_cm': [226.18809509277344, 251.35116577148438, 247.51812744140625], 'triangles': 601900, 'uv_channels': 1, 'simple_collisions': 0}"
+    },
+    {
+      "id": "NO-COLLISION-SM_MM24_YawTrial",
+      "passed": true,
+      "detail": "{'asset': '/Game/Presentation/MM24Trial/SM_MM24_YawTrial', 'size_cm': [226.18809509277344, 251.35116577148438, 247.51812744140625], 'triangles': 601900, 'uv_channels': 1, 'simple_collisions': 0}"
+    },
+    {
+      "id": "SCALE-SM_MM24_YawTrial",
+      "passed": true,
+      "detail": "{'asset': '/Game/Presentation/MM24Trial/SM_MM24_YawTrial', 'size_cm': [226.18809509277344, 251.35116577148438, 247.51812744140625], 'triangles': 601900, 'uv_channels': 1, 'simple_collisions': 0}"
+    },
+    {
+      "id": "SAVE-SM_MM24_YawTrial",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "SOURCE-STILL-SAME-SM_MM24_YawTrial",
+      "passed": true,
+      "detail": ""
+    }
+  ],
+  "parts": [
+    {
+      "asset": "/Game/Presentation/MM24Trial/SM_MM24_BaseTrial",
+      "size_cm": [
+        255.01715087890625,
+        246.95880889892578,
+        52.52214050292969
+      ],
+      "triangles": 151674,
+      "uv_channels": 1,
+      "simple_collisions": 0
+    },
+    {
+      "asset": "/Game/Presentation/MM24Trial/SM_MM24_YawTrial",
+      "size_cm": [
+        226.18809509277344,
+        251.35116577148438,
+        247.51812744140625
+      ],
+      "triangles": 601900,
+      "uv_channels": 1,
+      "simple_collisions": 0
+    }
+  ],
+  "errors": [],
+  "scope": "isolated UE mesh inspection; not integrated into gameplay or final art"
+}

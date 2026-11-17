@@ -1,0 +1,284 @@
+{
+  "passed": true,
+  "checks": [
+    {
+      "id": "EXISTING-TRIAL-MESH-Base",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "NO-MATERIAL-OVERWRITE-Base",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "EXISTING-TRIAL-MESH-Yaw",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "NO-MATERIAL-OVERWRITE-Yaw",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "SOURCE-T_MM24_Base_BaseColor_Trial",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "NO-OVERWRITE-T_MM24_Base_BaseColor_Trial",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "SOURCE-T_MM24_Base_Normal_Trial",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "NO-OVERWRITE-T_MM24_Base_Normal_Trial",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "SOURCE-T_MM24_Base_Roughness_Trial",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "NO-OVERWRITE-T_MM24_Base_Roughness_Trial",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "SOURCE-T_MM24_Base_Metallic_Trial",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "NO-OVERWRITE-T_MM24_Base_Metallic_Trial",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "SOURCE-T_MM24_Yaw_BaseColor_Trial",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "NO-OVERWRITE-T_MM24_Yaw_BaseColor_Trial",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "SOURCE-T_MM24_Yaw_Normal_Trial",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "NO-OVERWRITE-T_MM24_Yaw_Normal_Trial",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "SOURCE-T_MM24_Yaw_Roughness_Trial",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "NO-OVERWRITE-T_MM24_Yaw_Roughness_Trial",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "SOURCE-T_MM24_Yaw_Metallic_Trial",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "NO-OVERWRITE-T_MM24_Yaw_Metallic_Trial",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "TEXTURE-T_MM24_Base_BaseColor_Trial",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "SAVE-T_MM24_Base_BaseColor_Trial",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "TEXTURE-T_MM24_Base_Normal_Trial",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "SAVE-T_MM24_Base_Normal_Trial",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "TEXTURE-T_MM24_Base_Roughness_Trial",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "SAVE-T_MM24_Base_Roughness_Trial",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "TEXTURE-T_MM24_Base_Metallic_Trial",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "SAVE-T_MM24_Base_Metallic_Trial",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "TEXTURE-T_MM24_Yaw_BaseColor_Trial",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "SAVE-T_MM24_Yaw_BaseColor_Trial",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "TEXTURE-T_MM24_Yaw_Normal_Trial",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "SAVE-T_MM24_Yaw_Normal_Trial",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "TEXTURE-T_MM24_Yaw_Roughness_Trial",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "SAVE-T_MM24_Yaw_Roughness_Trial",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "TEXTURE-T_MM24_Yaw_Metallic_Trial",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "SAVE-T_MM24_Yaw_Metallic_Trial",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "CREATE-M_MM24_Base_Trial",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "CONNECT-Base-BaseColor",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "CONNECT-Base-Normal",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "CONNECT-Base-Roughness",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "CONNECT-Base-Metallic",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "SAVE-M_MM24_Base_Trial",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "SAVE-TRIAL-MESH-Base",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "CREATE-M_MM24_Yaw_Trial",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "CONNECT-Yaw-BaseColor",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "CONNECT-Yaw-Normal",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "CONNECT-Yaw-Roughness",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "CONNECT-Yaw-Metallic",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "SAVE-M_MM24_Yaw_Trial",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "SAVE-TRIAL-MESH-Yaw",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "SOURCE-IMAGES-UNCHANGED",
+      "passed": true,
+      "detail": ""
+    }
+  ],
+  "assets": [
+    "/Game/Presentation/MM24Trial/T_MM24_Base_BaseColor_Trial",
+    "/Game/Presentation/MM24Trial/T_MM24_Base_Normal_Trial",
+    "/Game/Presentation/MM24Trial/T_MM24_Base_Roughness_Trial",
+    "/Game/Presentation/MM24Trial/T_MM24_Base_Metallic_Trial",
+    "/Game/Presentation/MM24Trial/T_MM24_Yaw_BaseColor_Trial",
+    "/Game/Presentation/MM24Trial/T_MM24_Yaw_Normal_Trial",
+    "/Game/Presentation/MM24Trial/T_MM24_Yaw_Roughness_Trial",
+    "/Game/Presentation/MM24Trial/T_MM24_Yaw_Metallic_Trial",
+    "/Game/Presentation/MM24Trial/M_MM24_Base_Trial",
+    "/Game/Presentation/MM24Trial/M_MM24_Yaw_Trial"
+  ],
+  "errors": [],
+  "scope": "isolated baked trial materials, not final art or gameplay",
+  "source_sha256": {
+    "C:\\Users\\user\\Documents\\OrbitalVanguardAssets\\Prepared\\PlayUI_R2_MM24_BakeTrial_v4\\MM24_BaseTrial_baked.png": "b2b0a4f4be52ff9ee4c0899e46909bba4617299c956e05a15443dbc1dced0a67",
+    "C:\\Users\\user\\Documents\\OrbitalVanguardAssets\\Prepared\\PlayUI_R2_MM24_MaterialTrial_v1\\MM24_BaseTrial_NORMAL.png": "4b4b5c876517beeb5c30797036836a1c41e8f6758441617ed227fe7fdf51fac5",
+    "C:\\Users\\user\\Documents\\OrbitalVanguardAssets\\Prepared\\PlayUI_R2_MM24_MaterialTrial_v1\\MM24_BaseTrial_Roughness.png": "e1b857e773f7b5a8db2bca9c6026597dcdfd02dc8fe8136787af158f4bd47d09",
+    "C:\\Users\\user\\Documents\\OrbitalVanguardAssets\\Prepared\\PlayUI_R2_MM24_MaterialTrial_v1\\MM24_BaseTrial_Metallic.png": "e748505a1bbb64d14cd1c013f0e170711efc786b7472f67753aed4507c80b312",
+    "C:\\Users\\user\\Documents\\OrbitalVanguardAssets\\Prepared\\PlayUI_R2_MM24_BakeTrial_v4\\MM24_YawTrial_baked.png": "b45a0f7530502b8d878d217cad6635de42312d4f17bde1c14e484b5e84240f2c",
+    "C:\\Users\\user\\Documents\\OrbitalVanguardAssets\\Prepared\\PlayUI_R2_MM24_MaterialTrial_v1\\MM24_YawTrial_NORMAL.png": "ee04946d7a4291eb6bde3684b5278cdca3581bee3afceaed1d968d82f846a6d5",
+    "C:\\Users\\user\\Documents\\OrbitalVanguardAssets\\Prepared\\PlayUI_R2_MM24_MaterialTrial_v1\\MM24_YawTrial_Roughness.png": "e4adfd30f35ebf6482a4360275b08b6ca5593f7e09011296df9ad40cf5ea9d50",
+    "C:\\Users\\user\\Documents\\OrbitalVanguardAssets\\Prepared\\PlayUI_R2_MM24_MaterialTrial_v1\\MM24_YawTrial_Metallic.png": "e6f6ce18f7e3280bd050ad236aa5b0069604d4c99e1bb9fab4abd1cf10e6e3c1"
+  }
+}
