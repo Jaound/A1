@@ -1,0 +1,69 @@
+{
+  "passed": true,
+  "kind": "PIE 렌더와 UI API",
+  "physical_input": false,
+  "requested_size": [
+    1280,
+    720
+  ],
+  "captures": [
+    {
+      "view": "미사일함_모델",
+      "path": "C:/Users/user/source/repos/A1/Unreal/OrbitalVanguard/Saved/Validation\\PlayUI\\20261118_080732\\01_미사일함_모델.png",
+      "viewport_size": [
+        1280,
+        722
+      ],
+      "exists": true
+    },
+    {
+      "view": "방공함_모델",
+      "path": "C:/Users/user/source/repos/A1/Unreal/OrbitalVanguard/Saved/Validation\\PlayUI\\20261118_080732\\02_방공함_모델.png",
+      "viewport_size": [
+        1280,
+        722
+      ],
+      "exists": true
+    }
+  ],
+  "checks": [
+    {
+      "id": "PLAY-WINDOW",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "SOURCE-HULL-PHASE2C-미사일함_모델",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "SOURCE-HULL-IN-SCENE-미사일함_모델",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "RENDER-미사일함_모델",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "SOURCE-HULL-PHASE2C-방공함_모델",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "SOURCE-HULL-IN-SCENE-방공함_모델",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "RENDER-방공함_모델",
+      "passed": true,
+      "detail": ""
+    }
+  ],
+  "errors": [],
+  "preview_settings_restored": true,
+  "elapsed_seconds": 14.343000000000757
+}

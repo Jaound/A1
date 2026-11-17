@@ -1,0 +1,102 @@
+[
+  {
+    "id": "missile_ship",
+    "source": "C:\\Users\\user\\Documents\\OrbitalVanguardAssets\\Source\\전략미사일함\\Meshy_AI_scifi_missile_cruiser_20261117_image-to-3d-texture_fbx\\Meshy_AI_scifi_missile_cruiser_20261117_image-to-3d-texture.fbx",
+    "source_sha256": "539a6704c932c7ddf3392ebdd037ed60845dcdd8e55f609ac6524c39ba187c82",
+    "source_unchanged": true,
+    "prepared_sha256": "542d8bf237824b0c06b37190f16bac441e1422bdd12d018ad3f850ae3df7163c",
+    "vertices": 420748,
+    "polygons": 841572,
+    "uv_layers": 1,
+    "source_extent": [
+      40.386741638183594,
+      14.670268058776855,
+      10.0
+    ],
+    "textures": [
+      {
+        "name": "Image_0.png",
+        "size": [
+          4096,
+          4096
+        ],
+        "sha256": "908bf331b228f67858a1c3b9d2a1c2c7dd7c85791aa8409431d0056abce1c0e2"
+      },
+      {
+        "name": "Image_2.png",
+        "size": [
+          4096,
+          4096
+        ],
+        "sha256": "94c3b2d16723955e5f5834e3a143270c636ae8fa9db72726f0789bb9301a1c19"
+      },
+      {
+        "name": "texture_0_metallic.png",
+        "size": [
+          2048,
+          2048
+        ],
+        "sha256": "c19fa913684680896229c2e416fe4bcfc2467612501ff5421359623a45d4043c"
+      },
+      {
+        "name": "texture_0_roughness.png",
+        "size": [
+          2048,
+          2048
+        ],
+        "sha256": "67d5dea30828de7a7eec8669d3c3ae98ac68207d632ddf6108532d6748d5a9e5"
+      }
+    ],
+    "forward_direction_validated": false
+  },
+  {
+    "id": "air_defense",
+    "source": "C:\\Users\\user\\Documents\\OrbitalVanguardAssets\\Source\\방공함\\Meshy_AI_model_20261112_texture_fbx\\Meshy_AI_model_20261112_texture.fbx",
+    "source_sha256": "389a9d3a7b18ef8aacd29350d8ff8f36b4807752256143f57098824a20356274",
+    "source_unchanged": true,
+    "prepared_sha256": "6ff8bac6a06419c9941300e0e5499cabba5dabb757a0337def3df7e419f0622c",
+    "vertices": 227966,
+    "polygons": 455991,
+    "uv_layers": 1,
+    "source_extent": [
+      58.3675537109375,
+      17.303403854370117,
+      12.0
+    ],
+    "textures": [
+      {
+        "name": "Image_0.png",
+        "size": [
+          8192,
+          8192
+        ],
+        "sha256": "ae4adb23a15370a944cdbd5ab5bb628979e5c96347c4be2a1a316da3591fe0e7"
+      },
+      {
+        "name": "Image_2.png",
+        "size": [
+          4096,
+          4096
+        ],
+        "sha256": "2e03c8cd976d9aeab619c3fe884bea052080b9a0e287f847b598b726e5a43b76"
+      },
+      {
+        "name": "texture_0_metallic.png",
+        "size": [
+          4096,
+          4096
+        ],
+        "sha256": "a8c0ba522fc03fce38a486675ccf6b1d80c90db3c211e6dcd8d23b6ace534ed6"
+      },
+      {
+        "name": "texture_0_roughness.png",
+        "size": [
+          4096,
+          4096
+        ],
+        "sha256": "758c9ed6eb6abe588ade4e76d559efa1e67004d0912b6d6178f49d86e770a50a"
+      }
+    ],
+    "forward_direction_validated": false
+  }
+]
