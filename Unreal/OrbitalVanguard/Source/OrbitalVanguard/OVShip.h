@@ -8,6 +8,7 @@
 class UStaticMeshComponent;
 class UBoxComponent;
 class UOVShipSystemsComponent;
+class UMaterialInterface;
 
 /** Placeholder vessel. The controller supplies the single simulation clock. */
 UCLASS()
@@ -90,4 +91,6 @@ private:
     UPROPERTY() TObjectPtr<UBoxComponent> CalibrationSelection;
     UPROPERTY() TArray<TObjectPtr<UOVWeaponVisualComponent>> WeaponVisuals;
     UPROPERTY() TArray<TObjectPtr<UStaticMeshComponent>> PresentationMountSupports;
+    UPROPERTY() TObjectPtr<UMaterialInterface> SavedHullMaterial;
+    bool bSavedHullMaterial=false;
 };

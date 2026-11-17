@@ -8,6 +8,7 @@
 #include "Components/StaticMeshComponent.h"
 #include "Engine/World.h"
 #include "HAL/IConsoleManager.h"
+#include "Materials/MaterialInterface.h"
 
 #if WITH_DEV_AUTOMATION_TESTS
 IMPLEMENT_SIMPLE_AUTOMATION_TEST(FOVPC14ImportedMountSurface,
@@ -60,6 +61,9 @@ bool FOVPC14MountAdapter::RunTest(const FString&)
 {
     auto* CVar=IConsoleManager::Get().FindConsoleVariable(TEXT("ov.Presentation.ImportedHull"));
     if(!TestNotNull(TEXT("Source inspection flag exists"),CVar))return false;
+    auto* MaterialCVar=IConsoleManager::Get().FindConsoleVariable(TEXT("ov.Presentation.PC14SourceMaterial"));
+    if(!TestNotNull(TEXT("Source material inspection flag exists"),MaterialCVar))return false;
+    const int32 PreviousMaterial=MaterialCVar->GetInt();MaterialCVar->Set(1,ECVF_SetByConsole);
     const int32 Previous=CVar->GetInt();CVar->Set(0,ECVF_SetByConsole);
     UWorld* World=UWorld::CreateWorld(EWorldType::Game,false);
     TArray<AOVShip*> Ships={World->SpawnActor<AOVShip>(),World->SpawnActor<AOVShip>(),World->SpawnActor<AOVShip>()};
@@ -72,7 +76,10 @@ bool FOVPC14MountAdapter::RunTest(const FString&)
         const FName Gun=Ship->Systems->Layout->WeaponMounts[0].WeaponId;
         const FVector MuzzleBefore=Ship->GetWeaponMuzzleWorld(Gun);
         const float HPBefore=Ship->Systems->HullHP;
+        auto* OriginalMaterial=Ship->Hull->GetMaterial(0);
         CVar->Set(1,ECVF_SetByConsole);Ship->ApplyPresentationHull(TEXT("corvette"));
+        auto* TrialMaterial=LoadObject<UMaterialInterface>(nullptr,TEXT("/Game/Presentation/PC14Trial/M_PC14_TrialReadable.M_PC14_TrialReadable"));
+        TestTrue(TEXT("Source-derived trial material applied"),TrialMaterial&&Ship->Hull->GetMaterial(0)&&Ship->Hull->GetMaterial(0)->GetMaterial()==TrialMaterial->GetMaterial());
         TArray<UStaticMeshComponent*> Components;Ship->GetComponents<UStaticMeshComponent>(Components);
         int32 Supports=0;
         for(const auto* Component:Components)if(Component->GetName().StartsWith(TEXT("PC14MountSupport_")))
@@ -91,10 +98,13 @@ bool FOVPC14MountAdapter::RunTest(const FString&)
         int32 Rebuilt=0;for(const auto* Component:Components)if(Component->GetName().StartsWith(TEXT("PC14MountSupport_")))++Rebuilt;
         TestEqual(TEXT("Repeated application does not duplicate adapters"),Rebuilt,2);
         Ship->SetCalibrationHull(&Ship->Systems->Layout->LocalHalfExtent);
+        TestTrue(TEXT("Leaving trial hull restores previous material"),Ship->Hull->GetMaterial(0)==OriginalMaterial);
         Components.Reset();Ship->GetComponents<UStaticMeshComponent>(Components);
         TestFalse(TEXT("Changing hull removes old adapters"),Components.ContainsByPredicate([](const UStaticMeshComponent* C){return C->GetName().StartsWith(TEXT("PC14MountSupport_"));}));
+        MaterialCVar->Set(0,ECVF_SetByConsole);Ship->ApplyPresentationHull(TEXT("corvette"));
+        TestTrue(TEXT("Source material switch off retains original faction material"),Ship->Hull->GetMaterial(0)==OriginalMaterial);
     }
-    CVar->Set(Previous,ECVF_SetByConsole);World->DestroyWorld(false);
+    CVar->Set(Previous,ECVF_SetByConsole);MaterialCVar->Set(PreviousMaterial,ECVF_SetByConsole);World->DestroyWorld(false);
     return true;
 }
 #endif

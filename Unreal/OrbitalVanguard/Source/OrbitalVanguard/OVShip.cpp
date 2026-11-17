@@ -16,6 +16,8 @@
 // Opt-in keeps the tested articulated placeholder in normal scenarios.
 static TAutoConsoleVariable<int32> CVarOVImportedHull(TEXT("ov.Presentation.ImportedHull"),0,
     TEXT("DEV source-hull inspection. 1 enables PC14 on the next scenario creation; no combat geometry changes."));
+static TAutoConsoleVariable<int32> CVarOVPC14SourceMaterial(TEXT("ov.Presentation.PC14SourceMaterial"),1,
+    TEXT("DEV PC14 trial material from reduced source maps; 0 uses faction placeholder material."));
 
 #if WITH_DEV_AUTOMATION_TESTS
 #include "Misc/AutomationTest.h"
@@ -148,6 +150,7 @@ void AOVShip::SetCalibrationHull(const FVector* LocalHalfExtent)
 {
     for(const auto& Support:PresentationMountSupports)if(IsValid(Support.Get()))Support->DestroyComponent();
     PresentationMountSupports.Reset();
+    if(bSavedHullMaterial){Hull->SetMaterial(0,SavedHullMaterial);SavedHullMaterial=nullptr;bSavedHullMaterial=false;}
     Hull->SetStaticMesh(LoadObject<UStaticMesh>(nullptr,TEXT("/Engine/BasicShapes/Cube.Cube")));
     // Readable temporary silhouette inside the existing coarse combat OBB.
     // Selection retains exactly that OBB; neither actor scale nor combat dimensions change.
@@ -182,6 +185,14 @@ void AOVShip::ApplyPresentationHull(FName DefinitionId)
     if(!Mesh)return;
     for(const auto& Support:PresentationMountSupports)if(IsValid(Support.Get()))Support->DestroyComponent();
     PresentationMountSupports.Reset();
+    if(bSavedHullMaterial){Hull->SetMaterial(0,SavedHullMaterial);SavedHullMaterial=nullptr;bSavedHullMaterial=false;}
+    if(CVarOVPC14SourceMaterial.GetValueOnGameThread()==1)
+        if(auto* Material=LoadObject<UMaterialInterface>(nullptr,TEXT("/Game/Presentation/PC14Trial/M_PC14_TrialReadable.M_PC14_TrialReadable"),nullptr,LOAD_NoWarn))
+            if(auto* Instance=UMaterialInstanceDynamic::Create(Material,this)) {
+                SavedHullMaterial=Hull->GetMaterial(0);bSavedHullMaterial=true;
+                Instance->SetVectorParameterValue(TEXT("FactionTint"),bFriendly?FLinearColor(.8f,.9f,1.f):FLinearColor(1.f,.72f,.7f));
+                Hull->SetMaterial(0,Instance);
+            }
     const FBoxSphereBounds Bounds=Mesh->GetBounds();
     const FVector Available=Systems->Layout->LocalHalfExtent;
     const FVector Ratio=Available/Bounds.BoxExtent.ComponentMax(FVector(1));
@@ -223,6 +234,7 @@ void AOVShip::ApplyPresentationHull(FName DefinitionId)
 void AOVShip::Configure(const FString& Name, bool Friendly, float Speed, float RotationRate,
     const FVector& Scale, const FLinearColor& Color)
 {
+    if(bSavedHullMaterial){Hull->SetMaterial(0,SavedHullMaterial);SavedHullMaterial=nullptr;bSavedHullMaterial=false;}
     ShipName = Name;
     bFriendly = Friendly;
     MoveSpeed = FMath::Max(0.0f, Speed);

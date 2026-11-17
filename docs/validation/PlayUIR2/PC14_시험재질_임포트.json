@@ -1,0 +1,147 @@
+{
+  "passed": true,
+  "scope": "1024px source-derived trial material; no final model approval",
+  "source_modified": false,
+  "destination": "/Game/Presentation/PC14Trial",
+  "checks": [
+    {
+      "id": "SOURCE-T_PC14_Base_Trial",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "NO-OVERWRITE-T_PC14_Base_Trial",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "SOURCE-T_PC14_Normal_Trial",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "NO-OVERWRITE-T_PC14_Normal_Trial",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "SOURCE-T_PC14_Roughness_Trial",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "NO-OVERWRITE-T_PC14_Roughness_Trial",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "SOURCE-T_PC14_Metallic_Trial",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "NO-OVERWRITE-T_PC14_Metallic_Trial",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "NO-OVERWRITE-MATERIAL",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "IMPORTED-T_PC14_Base_Trial",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "SAVE-T_PC14_Base_Trial",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "IMPORTED-T_PC14_Normal_Trial",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "SAVE-T_PC14_Normal_Trial",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "IMPORTED-T_PC14_Roughness_Trial",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "SAVE-T_PC14_Roughness_Trial",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "IMPORTED-T_PC14_Metallic_Trial",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "SAVE-T_PC14_Metallic_Trial",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "MATERIAL-CREATED",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "CONNECT-BASE-TINT",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "CONNECT-BASE",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "CONNECT-normal",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "CONNECT-roughness",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "CONNECT-metallic",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "SAVE-MATERIAL",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "SOURCE-UNCHANGED",
+      "passed": true,
+      "detail": ""
+    }
+  ],
+  "errors": [],
+  "source_sha256": {
+    "Image_0.png": "cf242fbbd82149b0c7a782f5495b104a27eec71c9f6a7e457f344a36b7905763",
+    "Image_2.png": "14fa4e9f5cdc6bab58cb0154eccfda6d5eb7e8ce31e9be454b2223518ecb0047",
+    "texture_0_roughness.png": "68bd7534a3143690789a1eb07905aab88178c287a1a601bf0fe9d0461c309f7c",
+    "texture_0_metallic.png": "18d7f6f186021985c862fe81f3a3801e9529d93038c328b93e92da2efee25d02"
+  },
+  "assets": [
+    "/Game/Presentation/PC14Trial/T_PC14_Base_Trial",
+    "/Game/Presentation/PC14Trial/T_PC14_Normal_Trial",
+    "/Game/Presentation/PC14Trial/T_PC14_Roughness_Trial",
+    "/Game/Presentation/PC14Trial/T_PC14_Metallic_Trial",
+    "/Game/Presentation/PC14Trial/M_PC14_Trial"
+  ]
+}

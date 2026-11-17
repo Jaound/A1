@@ -178,6 +178,8 @@ def tick(_dt):
             state.update(stage='capture', at=time.monotonic())
             return
         if state['stage'] == 'capture':
+            if name == '초계함_모델' and time.monotonic()-state['at'] < 5:
+                return  # First-time source texture/shader preparation can outlast a normal frame.
             if name == '외부_무장':
                 check('PREVIEW-MESH-MIRROR', hud.get_preview_mesh_count() > 0, hud.get_preview_mesh_count())
                 check('WEAPON-PREVIEW-SELECTED-MOUNT', hud.get_weapon_preview_focus() == prop(pc, 'selected_weapon'))
@@ -213,6 +215,8 @@ def tick(_dt):
         if state['stage'] == 'verify':
             item = state['pending']
             item['exists'] = os.path.isfile(item['path']) and os.path.getsize(item['path']) > 0
+            if not item['exists'] and time.monotonic()-state['at'] < 15:
+                return
             check('RENDER-' + name, item['exists'])
             report['captures'].append(item)
             if name == '핀_시설':

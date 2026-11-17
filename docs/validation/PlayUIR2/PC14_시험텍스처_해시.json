@@ -1,0 +1,58 @@
+{
+  "scope": "1024px preview copies; not final source resolution",
+  "files": [
+    {
+      "name": "Image_0.png",
+      "trial_sha256": "CF242FBBD82149B0C7A782F5495B104A27EEC71C9F6A7E457F344A36B7905763",
+      "source_size": [
+        4096,
+        4096
+      ],
+      "trial_size": [
+        1024,
+        1024
+      ],
+      "source_sha256": "0ECD473D80F089C221443831543D2ECE5C931D001B50C0BED7AF593683DB609D"
+    },
+    {
+      "name": "Image_2.png",
+      "trial_sha256": "14FA4E9F5CDC6BAB58CB0154ECCFDA6D5EB7E8CE31E9BE454B2223518ECB0047",
+      "source_size": [
+        4096,
+        4096
+      ],
+      "trial_size": [
+        1024,
+        1024
+      ],
+      "source_sha256": "CA00D605BC41C19513F074113EB861B915D0C3758A9E0E17F0F34172F7A407AA"
+    },
+    {
+      "name": "texture_0_roughness.png",
+      "trial_sha256": "68BD7534A3143690789A1EB07905AAB88178C287A1A601BF0FE9D0461C309F7C",
+      "source_size": [
+        2048,
+        2048
+      ],
+      "trial_size": [
+        1024,
+        1024
+      ],
+      "source_sha256": "F5D3073133B5DEF0CB8C81A1D3EB6ACE0EA08154D45282C5F2E26883E9A9AF67"
+    },
+    {
+      "name": "texture_0_metallic.png",
+      "trial_sha256": "18D7F6F186021985C862FE81F3A3801E9529D93038C328B93E92DA2EFEE25D02",
+      "source_size": [
+        2048,
+        2048
+      ],
+      "trial_size": [
+        1024,
+        1024
+      ],
+      "source_sha256": "F50F27A1DCA4F2778FE827DDED80A68FFE67DA02DE66BDB3E8BD2180DA8C7F16"
+    }
+  ],
+  "source_modified": false
+}
