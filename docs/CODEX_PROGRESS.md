@@ -1,3 +1,7 @@
+# 최근 진행: BF120 쌍포 상하 시험
+
+**BF120 쌍포 상하 분리 시험 — 채택 보류:** [X축 단면](validation/PlayUIR2/BF120_포신_X단면.json)에서 x=-0.136 부근까지 포신의 좁은 범위가 이어지고 이후 몸체 범위가 커지는 점을 확인해 시험 복사본을 분리했다. 첫 [v1 화면](validation/PlayUIR2/BF120_상하v1_실패.png)은 Blender 부모 변환 갱신 전 좌표를 읽어 포신이 이탈해 실패했다. 갱신 순서를 고친 v2와 축을 절단면으로 옮긴 v3은 각각 메시 폐합·부모 축·좌우 회전의 상하축 추종 등 구조 검사 12/12이나, 캡을 제외한 몸체-포신 표면 교차가 -30/-15/0/+15/+30도에서 [v2](validation/PlayUIR2/BF120_상하v2_검사.json) 0/1/140/6/16쌍, [v3](validation/PlayUIR2/BF120_상하v3_검사.json) 513/469/6/469/583쌍이다. 0도 수치는 접촉/관통 구별이 안 되며 회전 시 교차는 해결되지 않았다. [v2 화면](validation/PlayUIR2/BF120_상하v2_15.png) / [v3 화면](validation/PlayUIR2/BF120_상하v3_15.png), [v2 제작](validation/PlayUIR2/BF120_상하v2_제작.json) / [v3 제작](validation/PlayUIR2/BF120_상하v3_제작.json). 시험 피벗·캡·접합부 수작업, 양 포신 포구, 재질·경량화·실제 발사 연결은 남았다. 원본과 입력 시험본은 변경하지 않았다.
+
 # 최근 진행: 상세창 긴 이름 확인
 
 **상세창의 긴 이름:** 함선명이 창 제어 버튼을 가리지 않도록 제목을 줄이고, 제목에 마우스를 올리면 전체 이름을 표시한다. 제목 클릭은 선택을 바꾸지 않고 창 드래그 동작을 유지한다. 처음 렌더는 한 글자가 다음 줄로 떨어져 [기록](validation/PlayUIR2/EN_상세제목_1280.png)했으며, 글자 수 대신 실제 폭으로 줄을 나누도록 수정했다. `PlayUI_R2_EO_Build.log` 성공, EO 자동 98/98, [창 API 191/191](validation/PlayUIR2/EO_상세제목_API.json), 렌더/API [1280 10/10](validation/PlayUIR2/EO_상세제목_렌더.json) / [1920 10/10](validation/PlayUIR2/EP_상세제목_렌더.json), [1280 화면](validation/PlayUIR2/EO_상세제목_1280.png) / [1920 화면](validation/PlayUIR2/EP_상세제목_1920.png). 포인터는 API로 이동했으며 직접 마우스 입력은 미검증이다.

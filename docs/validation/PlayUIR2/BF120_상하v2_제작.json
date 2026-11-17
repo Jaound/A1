@@ -1,0 +1,35 @@
+{
+  "source": "C:\\Users\\user\\Documents\\OrbitalVanguardAssets\\Prepared\\PlayUI_R2_BF120_YawTrial_v1\\BF120_YawTrial.blend",
+  "source_before": "c09993f68eec6cd1746930b22df48b7f817921610fe3113c9afb4fb9838438a6",
+  "source_after": "c09993f68eec6cd1746930b22df48b7f817921610fe3113c9afb4fb9838438a6",
+  "evidence": "C:\\Users\\user\\Documents\\OrbitalVanguardAssets\\Reports\\PlayUI_R2_BF120_PitchXSlices.json",
+  "evidence_sha256": "8471dc4437b8da0a6cda1a03a477a84069663c91e93e6402550f690e7ef12c2d",
+  "cut_x": -0.136,
+  "trial_pitch_pivot": [
+    0.0,
+    0.0,
+    0.49000000953674316
+  ],
+  "trial_yaw_pivot": [
+    0.9950000047683716,
+    -0.02500000037252903,
+    -0.41999998688697815
+  ],
+  "parts": {
+    "YawBody": {
+      "faces": 594639,
+      "cut_edges": 504,
+      "cap_faces": 2,
+      "boundary_edges": 0,
+      "nonmanifold_edges": 0
+    },
+    "PitchTrial": {
+      "faces": 138445,
+      "cut_edges": 504,
+      "cap_faces": 2,
+      "boundary_edges": 0,
+      "nonmanifold_edges": 0
+    }
+  },
+  "status": "experimental pitch split only; joint, cap, intersections, source material and gameplay unapproved"
+}
