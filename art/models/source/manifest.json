@@ -3,7 +3,7 @@
   "recorded_date_kst": "2026-11-17",
   "base_code_commit": "f8f4d7a3106805d77040ce9091913cebf0d2f374",
   "status": "source_files_not_imported",
-  "blocked_reason": "All 19 download_file requests were rejected because each uploaded archive exceeds the tool's 32 MiB transfer limit. No archive bytes or contents have been inspected.",
+  "blocked_reason": "All 22 download_file requests were rejected because each uploaded archive exceeds the tool's 32 MiB transfer limit. No archive bytes or contents have been inspected.",
   "assets": [
     {
       "id": "heavy_cannon_shc400",
@@ -232,7 +232,42 @@
       "sha256": null,
       "inspection_status": "not_inspected",
       "ue_import_status": "not_imported"
+    },
+    {
+      "id": "fighter",
+      "category": "aircraft",
+      "display_name": "함재기",
+      "original_filename": "함재기.zip",
+      "destination": "art/models/source/aircraft/fighter/함재기.zip",
+      "source_status": "not_imported",
+      "size_bytes": null,
+      "sha256": null,
+      "inspection_status": "not_inspected",
+      "ue_import_status": "not_imported"
+    },
+    {
+      "id": "boarding_pod",
+      "category": "transport_device",
+      "display_name": "강습 포드",
+      "original_filename": "강습 포드.zip",
+      "destination": "art/models/source/transport_devices/boarding_pod/강습 포드.zip",
+      "source_status": "not_imported",
+      "size_bytes": null,
+      "sha256": null,
+      "inspection_status": "not_inspected",
+      "ue_import_status": "not_imported"
+    },
+    {
+      "id": "assault",
+      "category": "ship",
+      "display_name": "강습선",
+      "original_filename": "강습선.zip",
+      "destination": "art/models/source/ships/assault/강습선.zip",
+      "source_status": "not_imported",
+      "size_bytes": null,
+      "sha256": null,
+      "inspection_status": "not_inspected",
+      "ue_import_status": "not_imported"
     }
   ]
 }
-
