@@ -1,6 +1,6 @@
 # 최근 검사: 핀 항공대 명령
 
-**핀에서 항공대 명령:** 아군 모함 핀의 `항공대`에서 출격·귀환을 누르면 다른 선택 함선은 유지하면서 해당 모함의 실제 기체를 제어한다. 통합 임무와 2C의 기존 버튼도 같은 컨트롤러 명령 경계를 사용한다. 적 핀의 명령은 차단되며 기체 ID·HP·재고는 재생성하지 않는다. `PlayUI_R2_EL_Build.log` 성공, EL 자동 98/98, [명령 PIE API 15/15](validation/PlayUIR2/EL_핀항공명령_API.json), [창 API 188/188](validation/PlayUIR2/EL_핀명령_창API.json), [2C API 77/77](validation/PlayUIR2/EL_핀명령_2C.json), 렌더/API [1280 4/4](validation/PlayUIR2/EL_핀명령_렌더.json) / [1920 4/4](validation/PlayUIR2/EM_핀명령_렌더.json), [1280 화면](validation/PlayUIR2/EL_핀명령_1280.png) / [1920 화면](validation/PlayUIR2/EM_핀명령_1920.png). 도킹은 항공대 시간만 API로 진행한 시험이며 실제 마우스·장기 성능은 미검증이다. 통합 임무 29사례 회귀 재실행 중이다.
+**핀에서 항공대 명령:** 아군 모함 핀의 `항공대`에서 출격·귀환을 누르면 다른 선택 함선은 유지하면서 해당 모함의 실제 기체를 제어한다. 통합 임무와 2C의 기존 버튼도 같은 컨트롤러 명령 경계를 사용한다. 적 핀의 명령은 차단되며 기체 ID·HP·재고는 재생성하지 않는다. `PlayUI_R2_EL_Build.log` 성공, EL 자동 98/98, [명령 PIE API 15/15](validation/PlayUIR2/EL_핀항공명령_API.json), [창 API 188/188](validation/PlayUIR2/EL_핀명령_창API.json), [2C API 77/77](validation/PlayUIR2/EL_핀명령_2C.json), 렌더/API [1280 4/4](validation/PlayUIR2/EL_핀명령_렌더.json) / [1920 4/4](validation/PlayUIR2/EM_핀명령_렌더.json), [1280 화면](validation/PlayUIR2/EL_핀명령_1280.png) / [1920 화면](validation/PlayUIR2/EM_핀명령_1920.png). 도킹은 항공대 시간만 API로 진행한 시험이며 실제 마우스·장기 성능은 미검증이다. [통합 임무 29사례·316검사](validation/PlayUIR2/EL_통합임무_요약.json) 통과, 기존 검사 ID 순서 일치.
 
 # 최근 검사: 통합 임무 항공대 버튼
 

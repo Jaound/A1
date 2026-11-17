@@ -1,0 +1,28 @@
+{
+  "source": "C:\\Users\\user\\Documents\\OrbitalVanguardAssets\\Prepared\\PlayUI_R2_BF120_YawTrial_v1\\BF120_YawTrial.blend",
+  "source_before": "c09993f68eec6cd1746930b22df48b7f817921610fe3113c9afb4fb9838438a6",
+  "source_after": "c09993f68eec6cd1746930b22df48b7f817921610fe3113c9afb4fb9838438a6",
+  "angles": [
+    {
+      "degrees": -90,
+      "surface_intersections": 0
+    },
+    {
+      "degrees": -45,
+      "surface_intersections": 0
+    },
+    {
+      "degrees": 0,
+      "surface_intersections": 158
+    },
+    {
+      "degrees": 45,
+      "surface_intersections": 0
+    },
+    {
+      "degrees": 90,
+      "surface_intersections": 0
+    }
+  ],
+  "scope": "surface intersections with caps omitted; no clearance, pitch, material or gameplay approval"
+}

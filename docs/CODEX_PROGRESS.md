@@ -1,6 +1,10 @@
+# 최근 진행: BF120 좌우 분리 시험
+
+**BF120 좌우 분리 시험:** [원본 측면](validation/PlayUIR2/BF120_원본측면.png)·[60개 높이 구간](validation/PlayUIR2/BF120_원본단면.json)의 받침대 경계를 근거로 z=-0.42, 피벗 (0.995,-0.025)에 복사본을 분리했다. [구조 13/13](validation/PlayUIR2/BF120_좌우분리_구조.json), [교차 검사](validation/PlayUIR2/BF120_좌우분리_교차.json)는 캡 제외 -90/-45/+45/+90도 각 0쌍, 0도 158쌍이다. 0도 접합의 접촉/관통과 모든 각도는 미확정이다. [-45도 시험 화면](validation/PlayUIR2/BF120_좌우분리_-45.png). [연결성 검사](validation/PlayUIR2/BF120_포신_연결성.json)에서 좌우부 367,209개 정점이 단일 표면이므로 두 포신의 상하 분리·동기화, 포구·재질·게임 적용은 미완료다. 원본은 변경하지 않았다.
+
 # 최근 진행: 핀 항공대 명령
 
-**핀에서 항공대 명령:** 아군 모함 핀의 `항공대`에서 출격·귀환을 누르면 다른 선택 함선은 유지하면서 해당 모함의 실제 기체를 제어한다. 통합 임무와 2C의 기존 버튼도 같은 컨트롤러 명령 경계를 사용한다. 적 핀의 명령은 차단되며 기체 ID·HP·재고는 재생성하지 않는다. `PlayUI_R2_EL_Build.log` 성공, EL 자동 98/98, [명령 PIE API 15/15](validation/PlayUIR2/EL_핀항공명령_API.json), [창 API 188/188](validation/PlayUIR2/EL_핀명령_창API.json), [2C API 77/77](validation/PlayUIR2/EL_핀명령_2C.json), 렌더/API [1280 4/4](validation/PlayUIR2/EL_핀명령_렌더.json) / [1920 4/4](validation/PlayUIR2/EM_핀명령_렌더.json), [1280 화면](validation/PlayUIR2/EL_핀명령_1280.png) / [1920 화면](validation/PlayUIR2/EM_핀명령_1920.png). 도킹은 항공대 시간만 API로 진행한 시험이며 실제 마우스·장기 성능은 미검증이다. 통합 임무 29사례 회귀 재실행 중이다.
+**핀에서 항공대 명령:** 아군 모함 핀의 `항공대`에서 출격·귀환을 누르면 다른 선택 함선은 유지하면서 해당 모함의 실제 기체를 제어한다. 통합 임무와 2C의 기존 버튼도 같은 컨트롤러 명령 경계를 사용한다. 적 핀의 명령은 차단되며 기체 ID·HP·재고는 재생성하지 않는다. `PlayUI_R2_EL_Build.log` 성공, EL 자동 98/98, [명령 PIE API 15/15](validation/PlayUIR2/EL_핀항공명령_API.json), [창 API 188/188](validation/PlayUIR2/EL_핀명령_창API.json), [2C API 77/77](validation/PlayUIR2/EL_핀명령_2C.json), 렌더/API [1280 4/4](validation/PlayUIR2/EL_핀명령_렌더.json) / [1920 4/4](validation/PlayUIR2/EM_핀명령_렌더.json), [1280 화면](validation/PlayUIR2/EL_핀명령_1280.png) / [1920 화면](validation/PlayUIR2/EM_핀명령_1920.png). 도킹은 항공대 시간만 API로 진행한 시험이며 실제 마우스·장기 성능은 미검증이다. [통합 임무 29사례·316검사](validation/PlayUIR2/EL_통합임무_요약.json) 통과, 기존 검사 ID 순서 일치.
 
 # 최근 진행: MM48 원본 좌우 분리 시험
 

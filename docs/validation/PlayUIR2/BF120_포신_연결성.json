@@ -1,0 +1,25 @@
+{
+  "source": "C:\\Users\\user\\Documents\\OrbitalVanguardAssets\\Prepared\\PlayUI_R2_BF120_YawTrial_v1\\BF120_YawTrial.blend",
+  "source_before": "c09993f68eec6cd1746930b22df48b7f817921610fe3113c9afb4fb9838438a6",
+  "source_after": "c09993f68eec6cd1746930b22df48b7f817921610fe3113c9afb4fb9838438a6",
+  "mesh": "BF120_YawTrial",
+  "vertices": 367209,
+  "edges": 1099829,
+  "components": 1,
+  "largest": [
+    {
+      "vertices": 367209,
+      "min": [
+        -2.4215550422668457,
+        -1.156287670135498,
+        -0.42000871896743774
+      ],
+      "max": [
+        2.2900683879852295,
+        1.1593186855316162,
+        1.0
+      ]
+    }
+  ],
+  "scope": "connected topology evidence, not an approved articulation split"
+}
