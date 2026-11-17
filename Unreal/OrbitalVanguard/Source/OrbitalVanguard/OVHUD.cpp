@@ -226,6 +226,11 @@ void AOVHUD::DrawExternal(float X,float Y,float W)
   DrawRect(FLinearColor(.009f,.02f,.035f),PX,PY,PW,PH);
   if(auto* Texture=WeaponPreview->GetTexture())DrawTexture(Texture,PX,PY,PW,PH,0,0,1,1,FLinearColor::White,BLEND_Opaque);
   DrawText(TEXT("선택 무장 · 실시간"),Ink,PX+4,PY+4,GEngine->GetSmallFont());
+  const float Ratio=GetSelectedWeaponHealthRatio();
+  if(Ratio>=0) {
+   DrawRect(FLinearColor(.08f,.1f,.12f),PX+5,PY+PH-8,PW-10,4);
+   DrawRect(Health(Ratio),PX+5,PY+PH-8,(PW-10)*Ratio,4);
+  }
   AddHitBox(FVector2D(PX,PY)*UIScale,FVector2D(PW,PH)*UIScale,TEXT("WeaponPreviewBackground"),true,140);
  }
  DrawText(TEXT("중클릭 회전 · 휠 확대 · 무장 선택"),Ink,X+8,Y+174,GEngine->GetSmallFont());
@@ -498,6 +503,22 @@ int32 AOVHUD::GetPreviewMeshCount() const
 }
 int32 AOVHUD::GetWeaponPreviewVisibleMeshCount() const { return WeaponPreview?WeaponPreview->GetVisibleMeshCount():0; }
 int32 AOVHUD::GetWeaponPreviewFocus() const { return WeaponPreview?WeaponPreview->GetFocusMount():INDEX_NONE; }
+float AOVHUD::GetSelectedWeaponHealthRatio() const
+{
+ const auto* PC=Cast<AOVController>(PlayerOwner);
+ if(!PC||!PC->Selected||!PC->Selected->Systems||!PC->Selected->Systems->Layout)return -1;
+ const auto* S=PC->Selected->Systems.Get();const auto* L=S->Layout.Get();const int32 I=PC->SelectedWeapon;
+ if(!S->WeaponMountStates.IsValidIndex(I)||!L->WeaponMounts.IsValidIndex(I)||L->WeaponMounts[I].MaxHP<=0)return -1;
+ float HP=S->WeaponMountStates[I].HP,MaxHP=L->WeaponMounts[I].MaxHP;
+ if(L->WeaponMounts[I].Type==EOVWeaponType::Interception&&(S->FactionId==0||PC->bDeveloperMode))
+  if(const auto* PD=GetWorld()->GetSubsystem<UOVPointDefenseSubsystem>()) {
+   const auto State=PD->GetShipState(PC->Selected);
+   if(const auto* M=State.Mounts.FindByPredicate([&](const FOVPDMountState& P){return P.MountId==S->WeaponMountStates[I].WeaponMountId;})) {
+    HP=M->bLayoutMount?FMath::Min(HP,M->HP):M->HP;MaxHP=M->bLayoutMount?MaxHP:M->Profile.MountHP;
+   }
+  }
+ return MaxHP>0?FMath::Clamp(HP/MaxHP,0.f,1.f):-1.f;
+}
 void AOVHUD::DrawPinned()
 {
  const auto* PC=Cast<AOVController>(PlayerOwner);

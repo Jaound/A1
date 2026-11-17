@@ -1,4 +1,5 @@
 #include "OVInteriorSubsystem.h"
+#include "OVBattleNotices.h"
 #include "OVTransportSubsystem.h"
 #include "OVShip.h"
 #include "OVShipSystemsComponent.h"
@@ -400,6 +401,7 @@ void UOVInteriorSubsystem::Emit(FName Kind,const FOVInteriorUnitRecord& U,const 
 {
     FOVInteriorEvent E;E.Serial=NextEventSerial++;E.Time=GameTime;E.UnitId=U.UnitId;E.FactionId=U.FactionId;E.Kind=Kind;E.Ship=U.Ship;E.SlotId=U.NodeId;E.Message=Message;
     Events.Add(E);if(Events.Num()>256)Events.RemoveAt(0,Events.Num()-256,EAllowShrinking::No);LastMessage=Message;
+    if(auto* Feed=GetWorld()->GetSubsystem<UOVBattleNotices>())Feed->RecordInteriorEvent(Kind,U,GameTime);
 }
 
 void UOVInteriorSubsystem::Kill(FOVInteriorUnitRecord& U,const FString& Reason)

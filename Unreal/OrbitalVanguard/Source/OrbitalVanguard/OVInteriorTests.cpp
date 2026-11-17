@@ -1,4 +1,5 @@
 #include "OVInteriorSubsystem.h"
+#include "OVBattleNotices.h"
 #include "OVTransportSubsystem.h"
 #include "OVCombatSubsystem.h"
 #include "OVLogisticsSubsystem.h"
@@ -47,6 +48,24 @@ struct FRange
     TArray<int32> Enter(int32 Heroes=1,int32 Troops=0)
     {auto Ids=Interior->RegisterBoardingTeam(Origin,0,Heroes,Troops);Transport->LaunchPods(Origin,Target);Advance(3);return Ids;}
 };
+}
+
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(FOVInteriorHostileBoardingNotice,"OrbitalVanguard.Interior.HostileBoardingNotice",EAutomationTestFlags::EditorContext|EAutomationTestFlags::EngineFilter)
+bool FOVInteriorHostileBoardingNotice::RunTest(const FString&)
+{
+    OVInteriorTest::FRange R;
+    R.Origin->Systems->Shield=0;R.Origin->Systems->bShieldActive=false;
+    const auto Enemy=R.Interior->RegisterBoardingTeam(R.Target,1,1,0);
+    auto* Feed=R.World->GetSubsystem<UOVBattleNotices>();
+    TestFalse(TEXT("출발 전 침입 경보 없음"),Feed->Notices.ContainsByPredicate([](const FOVBattleNotice& N){return N.Kind==EOVBattleNoticeKind::HostileBoarding;}));
+    TestTrue(TEXT("실제 적 운송 인원 등록"),Enemy.Num()>0);
+    TestTrue(TEXT("실제 적 포드 발사"),R.Transport->LaunchPods(R.Target,R.Origin)>0);
+    R.Advance(3);
+    const auto* Notice=Feed->Notices.FindByPredicate([](const FOVBattleNotice& N){return N.Kind==EOVBattleNoticeKind::HostileBoarding;});
+    TestTrue(TEXT("실제 아군 함선 진입에만 위급 경보"),Notice&&Notice->bCritical&&Notice->ShipId==R.Origin->GetFName());
+    const int32 Count=Feed->Notices.Num();R.Advance(1);
+    TestEqual(TEXT("머무르는 동안 침입 경보 반복 없음"),Feed->Notices.Num(),Count);
+    return true;
 }
 
 IMPLEMENT_SIMPLE_AUTOMATION_TEST(FOVInteriorOperationContributors,"OrbitalVanguard.Interior.ActualOperationContributors",EAutomationTestFlags::EditorContext|EAutomationTestFlags::EngineFilter)
@@ -236,7 +255,11 @@ bool FOVInteriorGraphAndRoster::RunTest(const FString&)
     TestEqual(TEXT("배치 버전 교체시 임의 슬롯 이동 금지"),R.Interior->GetUnit(Id).State,EOVInteriorState::Blocked);
     R.Origin->Systems->HullHP=0;R.Origin->Systems->RefreshDerivedState();R.Advance(.1f);
     TestEqual(TEXT("내부 완파는 전원 영구 사망"),R.Interior->TotalDeaths,16);
+    auto* Feed=R.World->GetSubsystem<UOVBattleNotices>();
+    const int32 HeroDeaths=Feed->Notices.FilterByPredicate([](const FOVBattleNotice& N){return N.Kind==EOVBattleNoticeKind::HeroDeath;}).Num();
+    TestEqual(TEXT("영웅 전사 알림만 기록하고 일반병은 영웅으로 표시하지 않음"),HeroDeaths,15);
     R.Advance(1);TestEqual(TEXT("사망 사건은 중복되지 않음"),R.Interior->TotalDeaths,16);
+    TestEqual(TEXT("반복 처리시 영웅 전사 알림 중복 없음"),Feed->Notices.FilterByPredicate([](const FOVBattleNotice& N){return N.Kind==EOVBattleNoticeKind::HeroDeath;}).Num(),HeroDeaths);
     return true;
 }
 
@@ -266,6 +289,11 @@ IMPLEMENT_SIMPLE_AUTOMATION_TEST(FOVInteriorEntryOperationReturn,"OrbitalVanguar
 bool FOVInteriorEntryOperationReturn::RunTest(const FString&)
 {
     OVInteriorTest::FRange R;const auto Ids=R.Enter();const auto Before=R.Interior->GetUnit(Ids[0]);const auto Person=R.Transport->GetPerson(Before.PersonId);
+    auto* Feed=R.World->GetSubsystem<UOVBattleNotices>();
+    TestTrue(TEXT("실제 강습 진입 알림"),Feed->Notices.ContainsByPredicate([](const FOVBattleNotice& N){return N.Kind==EOVBattleNoticeKind::BoardingEntry;}));
+    const int32 BeforeEnemy=Feed->Notices.Num();auto EnemyEvent=Before;EnemyEvent.FactionId=1;
+    Feed->RecordInteriorEvent(TEXT("Entry"),EnemyEvent,R.Interior->GameTime);
+    TestEqual(TEXT("비공개 적 선내 사건을 알림으로 누설하지 않음"),Feed->Notices.Num(),BeforeEnemy);
     TestTrue(TEXT("실제 유닛 진입이 세력 보호 활성"),R.Target->Systems->HasInteriorPresence(0));
     TestFalse(TEXT("실제 유닛 보호를 DEV로 표시하지 않음"),R.Target->Systems->IsInteriorDeveloperInput(0));
     TestFalse(TEXT("DEV 복귀 버튼으로 실내 이동 우회 금지"),R.Transport->DevReturnPersonToEntry(Person.PersonId));
@@ -275,6 +303,7 @@ bool FOVInteriorEntryOperationReturn::RunTest(const FString&)
     TestTrue(TEXT("목표 지시만으로 즉시 점령하지 않음"),R.Target->Systems->GetSlotState(Shield).OccupyingFaction!=0);
     R.Advance(25);
     TestEqual(TEXT("실제 이동·작업 후 시설 점령"),R.Target->Systems->GetSlotState(Shield).OccupyingFaction,0);
+    TestTrue(TEXT("실제 시설 장악 알림"),Feed->Notices.ContainsByPredicate([](const FOVBattleNotice& N){return N.Kind==EOVBattleNoticeKind::FacilityCaptured;}));
     TestEqual(TEXT("점령은 물리 HP를 복원하거나 파괴하지 않음"),R.Target->Systems->GetSlotState(Shield).HP,Facility.HP);
     TestEqual(TEXT("운영 승무원과 강습 병력 분리"),R.Target->Systems->GetSlotState(Shield).Crew,Facility.Crew);
     TestTrue(TEXT("통로를 실제 이동함"),R.Interior->GetUnit(Ids[0]).DistanceTravelled>0);
@@ -290,6 +319,7 @@ bool FOVInteriorEntryOperationReturn::RunTest(const FString&)
     TestEqual(TEXT("같은 인물이 원 포드로 귀환"),After.State,EOVPassengerState::Aboard);
     TestEqual(TEXT("귀환에 포드를 새로 만들지 않음"),After.PodId,Person.PodId);
     TestFalse(TEXT("마지막 인원 이탈시 보호 해제"),R.Target->Systems->HasInteriorPresence(0));
+    TestTrue(TEXT("실제 원 운송수단 귀환 알림"),Feed->Notices.ContainsByPredicate([](const FOVBattleNotice& N){return N.Kind==EOVBattleNoticeKind::BoardingReturn;}));
     return true;
 }
 

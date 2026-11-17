@@ -2,6 +2,7 @@
 #include "OVCombatSubsystem.h"
 #include "OVShip.h"
 #include "OVShipSystemsComponent.h"
+#include "OVInteriorSubsystem.h"
 #include "HAL/PlatformTime.h"
 
 void UOVBattleNotices::Reset()
@@ -29,6 +30,22 @@ void UOVBattleNotices::RecordShieldRestored(AOVShip* Ship,double GameTime)
     Append(Event,Ship,EOVBattleNoticeKind::ShieldRestored,1);
 }
 
+void UOVBattleNotices::RecordInteriorEvent(FName EventKind,const FOVInteriorUnitRecord& Unit,double GameTime)
+{
+    AOVShip* Ship=Unit.Ship.Get();
+    if(!IsValid(Ship)||!Ship->Systems)return;
+    EOVBattleNoticeKind Kind;
+    if(EventKind==TEXT("Entry")&&Unit.FactionId!=0&&Ship->Systems->FactionId==0)Kind=EOVBattleNoticeKind::HostileBoarding;
+    else if(Unit.FactionId!=0)return;
+    else if(EventKind==TEXT("Death")&&Unit.Role!=EOVInteriorRole::Trooper)Kind=EOVBattleNoticeKind::HeroDeath;
+    else if(EventKind==TEXT("Entry"))Kind=EOVBattleNoticeKind::BoardingEntry;
+    else if(EventKind==TEXT("Return"))Kind=EOVBattleNoticeKind::BoardingReturn;
+    else if(EventKind==TEXT("Capture"))Kind=EOVBattleNoticeKind::FacilityCaptured;
+    else return;
+    FOVAttackState Event;Event.HitShipId=Ship->GetFName();Event.Position=Ship->GetActorTransform().TransformPosition(Unit.LocalPosition);Event.ResolvedAt=GameTime;
+    Append(Event,Ship,Kind,1);
+}
+
 void UOVBattleNotices::Append(const FOVAttackState& Attack,AOVShip* Victim,EOVBattleNoticeKind Kind,int32 Count)
 {
     const bool bWrecked=Kind==EOVBattleNoticeKind::ShipWrecked;
@@ -40,7 +57,7 @@ void UOVBattleNotices::Append(const FOVAttackState& Attack,AOVShip* Victim,EOVBa
     FOVBattleNotice& Notice=Notices.AddDefaulted_GetRef();
     Notice.ShipName=Victim->ShipName;Notice.ShipId=Attack.HitShipId;Notice.LastPosition=Attack.Position;
     Notice.GameTime=Attack.ResolvedAt;Notice.DisplayTime=FPlatformTime::Seconds();Notice.Count=Count;Notice.bShipWrecked=bWrecked;Notice.Kind=Kind;
-    Notice.bCritical=bWrecked||(Kind==EOVBattleNoticeKind::FacilityDestroyed&&Attack.CriticalFacilitiesDestroyed>0);
+    Notice.bCritical=bWrecked||Kind==EOVBattleNoticeKind::HeroDeath||Kind==EOVBattleNoticeKind::HostileBoarding||(Kind==EOVBattleNoticeKind::FacilityDestroyed&&Attack.CriticalFacilitiesDestroyed>0);
     if(Notice.bCritical)LastCriticalDisplayTime=Notice.DisplayTime;
     if(Notices.Num()>64){Notices.RemoveAt(0);++DroppedCount;}
 }

@@ -154,6 +154,9 @@ def tick(_dt):
                 check('PREVIEW-MESH-MIRROR', hud.get_preview_mesh_count() > 0, hud.get_preview_mesh_count())
                 check('WEAPON-PREVIEW-SELECTED-MOUNT', hud.get_weapon_preview_focus() == prop(pc, 'selected_weapon'))
                 check('WEAPON-PREVIEW-ONLY-MOUNT-MESHES', 0 < hud.get_weapon_preview_visible_mesh_count() < hud.get_preview_mesh_count(), hud.get_weapon_preview_visible_mesh_count())
+                systems=prop(prop(pc,'selected'),'systems');index=prop(pc,'selected_weapon')
+                hp=prop(prop(systems,'weapon_mount_states')[index],'hp');maximum=prop(prop(prop(systems,'layout'),'weapon_mounts')[index],'max_hp')
+                check('WEAPON-PREVIEW-ACTUAL-HEALTH', maximum > 0 and abs(hud.get_selected_weapon_health_ratio()-hp/maximum)<.001)
                 check('PREVIEW-NO-DAMAGE', state['before_preview'] == snapshot(pc))
             if name in ('전투_알림','쉴드_고갈_알림'):
                 index=state['notice_count']-1;action='BattleNotice_'+str(index)

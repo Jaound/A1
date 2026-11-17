@@ -22,6 +22,7 @@ public:
  UFUNCTION(BlueprintPure, Category="UI") int32 GetPreviewMeshCount() const;
  UFUNCTION(BlueprintPure, Category="UI") int32 GetWeaponPreviewVisibleMeshCount() const;
  UFUNCTION(BlueprintPure, Category="UI") int32 GetWeaponPreviewFocus() const;
+ UFUNCTION(BlueprintPure, Category="UI") float GetSelectedWeaponHealthRatio() const;
  UFUNCTION(BlueprintPure, Category="UI") FString GetSelectedWeaponSummary() const;
  UFUNCTION(BlueprintPure, Category="UI") int32 GetPinnedCount() const { return PinnedShips.Num(); }
  UFUNCTION(BlueprintCallable, Category="UI") void SetHeroPanelOpen(bool bOpen) { bHeroPanelOpen=bOpen; if(bOpen)bDetailsOpen=false; SyncAddedUI(); }
