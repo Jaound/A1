@@ -1,4 +1,7 @@
 #include "OVPointDefenseSubsystem.h"
+#include "OVCarrierSubsystem.h"
+#include "OVBattleNotices.h"
+#include "OVInteriorSubsystem.h"
 #include "OVCombatSubsystem.h"
 #include "OVTransportSubsystem.h"
 #include "OVShip.h"
@@ -75,6 +78,51 @@ struct FRange
         for (int32 I = 0; I < Count; ++I) PD->Step(1.f / 120.f);
     }
 };
+}
+
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(FOVPDAircraftWarning,"OrbitalVanguard.PointDefense.ActualAircraftKillsTriggerWarnings",EAutomationTestFlags::EditorContext|EAutomationTestFlags::EngineFilter)
+bool FOVPDAircraftWarning::RunTest(const FString&)
+{
+    OVPDTest::FRange R;
+    auto* Carrier=R.World->GetSubsystem<UOVCarrierSubsystem>();Carrier->Reset(3104);
+    TestTrue(TEXT("실제 아군 모함과 재고 등록"),Carrier->RegisterCarrier(R.Source,1));
+    const int32 Total=Carrier->Aircraft.Num();TestTrue(TEXT("실제 기체 집단 존재"),Total>0);
+    TestEqual(TEXT("실제 기체 출격"),Carrier->Launch(R.Source),Total);
+    for(auto& Craft:Carrier->Aircraft){Craft.Position=R.Escort->GetActorLocation()+FVector(1000,0,0);Craft.Shield=0;Craft.HP=1;Craft.Evasion=0;}
+    R.Register();auto& Mount=R.PD->Ships[0].Mounts[0];
+    Mount.Profile.Accuracy=1;Mount.Profile.Damage=10000;Mount.Profile.Interval=.01f;Mount.Profile.Range=50000;
+    R.PD->SetPriority(R.Escort,{EOVPDTargetKind::Aircraft,EOVPDTargetKind::Missile,EOVPDTargetKind::Pod});
+    R.Step(2);
+    TestEqual(TEXT("실제 적 PD 발사로 모든 기체 격추"),R.PD->KillCount,Total);
+    TestEqual(TEXT("실제 기체 손실 횟수"),Carrier->LossCount,Total);
+    auto* Feed=R.World->GetSubsystem<UOVBattleNotices>();
+    TestTrue(TEXT("실제 PD 격추는 모함 및 함대 전멸 경보와 연결"),Feed->Notices.ContainsByPredicate([](const FOVBattleNotice& N){return N.Kind==EOVBattleNoticeKind::AircraftEliminated&&!N.bFleetScope;})&&Feed->Notices.ContainsByPredicate([](const FOVBattleNotice& N){return N.Kind==EOVBattleNoticeKind::AircraftEliminated&&N.bFleetScope;}));
+    return true;
+}
+
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(FOVPDHeroRescueNotice,"OrbitalVanguard.PointDefense.ActualHeroPodRescueWarning",EAutomationTestFlags::EditorContext|EAutomationTestFlags::EngineFilter)
+bool FOVPDHeroRescueNotice::RunTest(const FString&)
+{
+    OVPDTest::FRange R;
+    auto* Transport=R.World->GetSubsystem<UOVTransportSubsystem>();Transport->ResetScenario({R.Source,R.Target,R.Escort});
+    auto* Interior=R.World->GetSubsystem<UOVInteriorSubsystem>();Interior->ResetScenario({R.Source,R.Target,R.Escort},3104);
+    const auto Units=Interior->RegisterBoardingTeam(R.Source,0,1,0);
+    TestEqual(TEXT("실제 강습 영웅 등록"),Units.Num(),1);
+    if(Units.Num()!=1)return false;
+    TestEqual(TEXT("영웅 원 포드 발사"),Transport->LaunchPods(R.Source,R.Target),1);
+    Transport->Simulate(1.f/120.f);
+    if(!TestTrue(TEXT("실제 포드가 비행 중"),!Transport->Pods.IsEmpty()&&Transport->Pods[0].State==EOVPodFlightState::Outbound))return false;
+    Transport->Pods[0].Evasion=0;Transport->Pods[0].HP=1;
+    const FVector LastPosition=Transport->Pods[0].Position;
+    R.Register();auto& Mount=R.PD->Ships[0].Mounts[0];
+    Mount.Profile.Accuracy=1;Mount.Profile.Damage=10000;Mount.Profile.Range=50000;
+    R.PD->SetPriority(R.Escort,{EOVPDTargetKind::Pod,EOVPDTargetKind::Aircraft,EOVPDTargetKind::Missile});
+    R.PD->Step(1.f/120.f);Interior->Simulate(1.f/60.f);
+    TestEqual(TEXT("실제 적 PD가 포드를 격추"),R.PD->KillCount,1);
+    TestEqual(TEXT("실제 영웅은 구조 대기"),Interior->GetUnit(Units[0]).State,EOVInteriorState::RescueWaiting);
+    auto* Feed=R.World->GetSubsystem<UOVBattleNotices>();
+    TestTrue(TEXT("실제 PD 격추 위치를 구조 경보에 보존"),Feed->Notices.ContainsByPredicate([&](const FOVBattleNotice& N){return N.Kind==EOVBattleNoticeKind::HeroRescue&&N.UnitId==Units[0]&&N.LastPosition.Equals(LastPosition,.01);}));
+    return true;
 }
 
 IMPLEMENT_SIMPLE_AUTOMATION_TEST(FOVPDProbabilityTest, "OrbitalVanguard.PointDefense.ProbabilityAndTargetBoundary", EAutomationTestFlags::EditorContext | EAutomationTestFlags::EngineFilter)
