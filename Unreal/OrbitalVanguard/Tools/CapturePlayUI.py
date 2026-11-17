@@ -16,6 +16,7 @@ editor = unreal.get_editor_subsystem(unreal.UnrealEditorSubsystem)
 views = ['전투_HUD', '영웅_카드', '외부_무장', '핀_비교', '핀_무장', '핀_시설', '격납고', '선내_영웅', '개발_함선', '개발_영웅', '개발_무장', '개발_시험', '초계함_모델', '개발_접기', '개발_확대', '전투_알림', '쉴드_고갈_알림', '적_쉴드_알림', '항공대_위기', '항공대_필터']
 if os.environ.get('OV_UI_ONLY_PIN') == '1': views = ['핀_비교']
 if os.environ.get('OV_UI_TOOLTIP_TEST') == 'fleet': views = ['함대_긴이름']
+if os.environ.get('OV_UI_ONLY_PIN_HANGAR') == '1': views = ['항공대_핀']
 
 def prop(obj, key):
     return obj.get_editor_property(key)
@@ -85,6 +86,13 @@ def tick(_dt):
             elif name == '함대_긴이름':
                 for ship in prop(pc,'ships')[:2]:
                     ship.set_editor_property('ship_name','아주 긴 이름을 가진 동일 함급의 함선')
+            elif name == '항공대_핀':
+                carriers=[prop(c,'carrier') for c in prop(prop(pc,'carrier'),'carriers') if prop(c,'carrier') and prop(prop(prop(c,'carrier'),'systems'),'faction_id')==0]
+                check('PIN-AIR-CARRIER-FIXTURE',bool(carriers))
+                pc.select_ship(carriers[0]);hud.execute_ui_action('WindowPin');hud.execute_ui_action('PinnedHangar_0')
+                check('PIN-AIR-LIVE-SUMMARY',hud.get_pinned_deck(0)==-1 and '생존' in hud.get_pinned_carrier_summary(0))
+                other=next(s for s in prop(pc,'ships') if s!=carriers[0] and prop(s,'friendly'))
+                pc.select_ship(other);hud.set_details_open(True)
             elif name == '외부_무장':
                 hud.execute_ui_action('External')
                 state['before_preview'] = snapshot(pc)

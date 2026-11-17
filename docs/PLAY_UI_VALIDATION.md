@@ -1,3 +1,7 @@
+# 최근 검사: 핀의 항공대 현황
+
+**핀의 항공대 현황:** 아군 모함 핀의 `항공대`에서 실제 격납고 가동 수와 생존·손실·보관·출격·귀환·관제 상실 수를 조회한다. 다른 함선 선택은 바꾸지 않으며 적 모함과 세력 변경 시 내부 재고 조회를 차단한다. 표시 갱신은 재고·HP·시간을 변경하지 않는다. 이는 조회 요약이며 개별 기체 카드나 출격·귀환 명령을 핀에 구현한 것은 아니다. `PlayUI_R2_EE_Build.log` 성공, EE 자동 98/98, [창 API 186/186](validation/PlayUIR2/EF_핀항공대_API.json), 렌더/API [1280 4/4](validation/PlayUIR2/EE_핀항공대_렌더.json) / [1920 4/4](validation/PlayUIR2/EF_핀항공대_렌더.json), [1280 화면](validation/PlayUIR2/EE_핀항공대_1280.png) / [1920 화면](validation/PlayUIR2/EF_핀항공대_1920.png). 세력 변경 검사는 API 시험이며 실제 마우스 입력·대량 항공대에서 이 화면의 성능은 미검증이다.
+
 # 최근 검사: 함대 제목
 
 **함대 목록의 긴 이름:** 이름이 생략된 함대 카드를 가리키면 전체 이름을 표시하며 같은 이름의 함선은 기존 번호도 함께 보여준다. `PlayUI_R2_ED_Build.log` 성공, [창 API 178/178](validation/PlayUIR2/ED_함대제목_API.json). [1280 렌더/API 3/3](validation/PlayUIR2/EC_함대제목_렌더.json)과 [화면](validation/PlayUIR2/EC_함대제목_1280.png)은 마지막 조회 최적화 전 결과이며 실제 마우스 입력이 아닌 API 포인터 이동이다. `PlayUI_R2_EC_Automation.log` 자동 98/98 역시 마지막 조회 최적화 전이다.

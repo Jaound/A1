@@ -376,6 +376,27 @@ def tick(_dt):
                       p(p(p(c,'carrier'),'systems'),'faction_id')==0]
             check('WINDOW-UNIQUE-REGISTERED-CARRIER-FIXTURE',bool(carriers))
             pc.select_ship(carriers[0]);hud.execute_ui_action('External');hud.execute_ui_action('HangarView')
+            hud.execute_ui_action('WindowPin')
+            enemy=next(s for s in p(pc,'ships') if p(p(s,'systems'),'faction_id')!=0)
+            pc.select_ship(enemy);hud.execute_ui_action('WindowPin');pc.select_ship(carriers[0])
+            state.update(phase=101,at=time.monotonic());return
+        if state['phase']==101:
+            check('WINDOW-PIN-CARRIER-AND-ENEMY',hud.get_pinned_count()==2)
+            hit_button(hud,'PinnedHangar_0')
+            check('WINDOW-PIN-ENEMY-HANGAR-HIDDEN',hud.get_pinned_carrier_summary(1)=='' and hud.get_action_center('PinnedHangar_1').x<0)
+            hud.execute_ui_action('PinnedHangar_1')
+            check('WINDOW-PIN-ENEMY-HANGAR-ACTION-BLOCKED',hud.get_pinned_deck(1)==0)
+            hud.execute_ui_action('PinnedHangar_0')
+            state.update(phase=102,at=time.monotonic());return
+        if state['phase']==102:
+            overview=p(pc,'carrier').get_aircraft_overview(hud.get_pinned_ship(0));summary=hud.get_pinned_carrier_summary(0)
+            check('WINDOW-PIN-CARRIER-ACTUAL-COUNTS',hud.get_pinned_deck(0)==-1 and ('생존 '+str(p(overview,'surviving'))) in summary and ('손실 '+str(p(overview,'wrecked'))) in summary)
+            systems=p(hud.get_pinned_ship(0),'systems');systems.set_editor_property('faction_id',1)
+            check('WINDOW-PIN-CARRIER-OWNERSHIP-PRIVACY',hud.get_pinned_carrier_summary(0)=='')
+            systems.set_editor_property('faction_id',0)
+            check('WINDOW-PIN-CARRIER-OWNERSHIP-RESTORED',hud.get_pinned_carrier_summary(0)==summary)
+            check('WINDOW-PIN-CARRIER-READONLY',observe_combat(pc)==state['mission_observation'])
+            hud.execute_ui_action('PinnedClose_1');hud.execute_ui_action('PinnedClose_0')
             state.update(phase=11,at=time.monotonic());return
         if state['phase']==11:
             check('WINDOW-UNIQUE-SCENE-MENU-CLOSED',hud.get_action_center('SceneMenuClose').x<0)

@@ -244,6 +244,13 @@ void AOVHUD::NotifyHitBoxClick(FName N)
   }
   return;
  }
+ if(N.ToString().StartsWith(TEXT("PinnedHangar_"))) {
+  const int32 Index=FCString::Atoi(*N.ToString().Mid(13));
+  if(PinnedShips.IsValidIndex(Index)&&!GetPinnedCarrierSummary(Index).IsEmpty()) {
+   PinnedDecks[Index]=-1;PinnedSlots[Index]=INDEX_NONE;PinnedSlotPages[Index]=0;
+  }
+  return;
+ }
  if(N.ToString().StartsWith(TEXT("PinnedGrip_"))||N.ToString().StartsWith(TEXT("PinnedResize_")))return;
  if(N.ToString().StartsWith(TEXT("PinnedPage_"))) {
   TArray<FString> Parts;N.ToString().ParseIntoArray(Parts,TEXT("_"),true);
@@ -613,6 +620,21 @@ FString AOVHUD::GetPinnedWeaponSummary(int32 Index) const
 {
  return PinnedShips.IsValidIndex(Index)&&PinnedWeapons.IsValidIndex(Index)?GetWeaponSummary(PinnedShips[Index].Get(),PinnedWeapons[Index]):TEXT("무장을 선택하세요");
 }
+FString AOVHUD::GetPinnedCarrierSummary(int32 Index) const
+{
+ if(!PinnedShips.IsValidIndex(Index)||!PinnedShips[Index].IsValid())return FString();
+ auto* Ship=PinnedShips[Index].Get();
+ if(!Ship->Systems||Ship->Systems->FactionId!=0||!GetWorld())return FString();
+ const auto* Carrier=GetWorld()->GetSubsystem<UOVCarrierSubsystem>();if(!Carrier)return FString();
+ int32 Total=0,Ready=0;
+ for(const auto& Hangar:Carrier->Hangars)if(Hangar.Carrier==Ship) {
+  ++Total;if(Carrier->GetHangarAvailability(Hangar.HangarId)==EOVHangarAvailability::Ready)++Ready;
+ }
+ if(Total==0)return FString();
+ const auto Air=Carrier->GetAircraftOverview(Ship);
+ return FString::Printf(TEXT("격납고 %d · 가동 %d\n생존 %d · 손실 %d\n보관 %d · 출격 %d\n귀환 %d · 관제 상실 %d"),
+  Total,Ready,Air.Surviving,Air.Wrecked,Air.Stored,Air.Sortie,Air.Returning,Air.ControlLost);
+}
 int32 AOVHUD::GetPinnedPreviewFocus(int32 Index) const
 {
  return PinnedPreviews.IsValidIndex(Index)&&PinnedPreviews[Index]?PinnedPreviews[Index]->GetFocusMount():INDEX_NONE;
@@ -700,21 +722,28 @@ void AOVHUD::DrawPinned()
   const auto* Systems=Ship->Systems.Get();const auto* Layout=Systems?Systems->Layout.Get():nullptr;
   if(!Layout)continue;
   if(!Layout->WeaponMounts.IsValidIndex(PinnedWeapons[I])||!Systems->WeaponMountStates.IsValidIndex(PinnedWeapons[I]))PinnedWeapons[I]=INDEX_NONE;
+  const auto* Carrier=GetWorld()->GetSubsystem<UOVCarrierSubsystem>();
+  const bool HasHangar=Systems->FactionId==0&&Carrier&&Carrier->Hangars.ContainsByPredicate([&](const FOVHangarState& Hangar){return Hangar.Carrier==Ship;});
   Button(FName(*FString::Printf(TEXT("PinnedDeck_%d_0"),I)),TEXT("외부"),X+6,Y+35,55,PinnedDecks[I]==0);
   if(Systems->FactionId==0)for(int32 D=1;D<=Layout->DeckCount;++D)
    Button(FName(*FString::Printf(TEXT("PinnedDeck_%d_%d"),I,D)),FString::Printf(TEXT("%dF"),D),X+64+(D-1)*45,Y+35,40,PinnedDecks[I]==D);
+  if(HasHangar)Button(FName(*FString::Printf(TEXT("PinnedHangar_%d"),I)),TEXT("항공대"),X+W-62,Y+35,56,PinnedDecks[I]==-1);
   if(PinnedDecks[I]==0) {
-   if(Layout->WeaponMounts.Num()>0)Button(FName(*FString::Printf(TEXT("PinnedWeaponNext_%d"),I)),TEXT("무장 +"),X+W-62,Y+35,56,PinnedWeapons[I]>=0);
    auto* Preview=PinnedPreviews[I].Get();
    if(Systems->bWrecked)Preview->Release();
    else Preview->Update(Ship,FRotator(-25,35,0),1,(W-12)/FMath::Max(1.f,H-83),PinnedWeapons[I]);
    if(auto* Texture=Preview->GetTexture())DrawTexture(Texture,X+6,Y+64,W-12,H-83,0,0,1,1,FLinearColor::White,BLEND_Opaque);
    else if(Systems->bWrecked)DrawText(TEXT("함선 완파"),Ink,X+12,Y+72,GEngine->GetSmallFont());
+   if(Layout->WeaponMounts.Num()>0)Button(FName(*FString::Printf(TEXT("PinnedWeaponNext_%d"),I)),TEXT("무장 +"),X+W-62,Y+(HasHangar?65:35),56,PinnedWeapons[I]>=0);
    if(PinnedWeapons[I]>=0) {
     TArray<FString> Lines;GetWeaponSummary(Ship,PinnedWeapons[I]).ParseIntoArrayLines(Lines);
     if(Lines.Num()>0)DrawText(Lines[0],Ink,X+10,Y+65,GEngine->GetSmallFont(),.9f);
     if(Lines.Num()>1)DrawText(Lines[1],Ink,X+10,Y+H-14,GEngine->GetSmallFont(),.9f);
    } else DrawText(FString::Printf(TEXT("선체 %.0f%% · 쉴드 %.0f%%"),100*Systems->HullHP/FMath::Max(1.f,Systems->MaxHullHP),100*Systems->Shield/FMath::Max(1.f,Systems->MaxShield)),Ink,X+10,Y+H-14,GEngine->GetSmallFont());
+  } else if(PinnedDecks[I]==-1&&Systems->FactionId==0) {
+   if(PinnedPreviews[I])PinnedPreviews[I]->Release();
+   TArray<FString> Lines;GetPinnedCarrierSummary(I).ParseIntoArrayLines(Lines);
+   for(int32 Line=0;Line<Lines.Num();++Line)DrawText(Lines[Line],Ink,X+10,Y+65+Line*19,GEngine->GetSmallFont());
   } else if(Systems->FactionId==0) {
    if(PinnedPreviews[I])PinnedPreviews[I]->Release();
    int32 DeckSlots=0;for(int32 S=0;S<Layout->Slots.Num()&&S<Systems->Slots.Num();++S)if(Layout->Slots[S].DeckId==PinnedDecks[I])++DeckSlots;
