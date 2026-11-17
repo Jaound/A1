@@ -1,0 +1,183 @@
+{
+  "source": "C:\\Users\\user\\Documents\\OrbitalVanguardAssets\\Prepared\\PlayUI_R2_BF120_YawClearance_v1\\BF120_ClearanceTrial.blend",
+  "source_before": "06c8fc61fd9fa678c5ade11c87094f97b0f46da6a03acad373fdaffbb9cefd54",
+  "source_after": "06c8fc61fd9fa678c5ade11c87094f97b0f46da6a03acad373fdaffbb9cefd54",
+  "angles": [
+    {
+      "yaw": -180,
+      "pitch": -15,
+      "body_base": 0,
+      "pitch_body": 0,
+      "pitch_base": 0
+    },
+    {
+      "yaw": -180,
+      "pitch": 0,
+      "body_base": 0,
+      "pitch_body": 0,
+      "pitch_base": 0
+    },
+    {
+      "yaw": -180,
+      "pitch": 30,
+      "body_base": 0,
+      "pitch_body": 0,
+      "pitch_base": 0
+    },
+    {
+      "yaw": -180,
+      "pitch": 60,
+      "body_base": 0,
+      "pitch_body": 0,
+      "pitch_base": 0
+    },
+    {
+      "yaw": -180,
+      "pitch": 90,
+      "body_base": 0,
+      "pitch_body": 0,
+      "pitch_base": 0
+    },
+    {
+      "yaw": -90,
+      "pitch": -15,
+      "body_base": 0,
+      "pitch_body": 0,
+      "pitch_base": 0
+    },
+    {
+      "yaw": -90,
+      "pitch": 0,
+      "body_base": 0,
+      "pitch_body": 0,
+      "pitch_base": 0
+    },
+    {
+      "yaw": -90,
+      "pitch": 30,
+      "body_base": 0,
+      "pitch_body": 0,
+      "pitch_base": 0
+    },
+    {
+      "yaw": -90,
+      "pitch": 60,
+      "body_base": 0,
+      "pitch_body": 0,
+      "pitch_base": 0
+    },
+    {
+      "yaw": -90,
+      "pitch": 90,
+      "body_base": 0,
+      "pitch_body": 0,
+      "pitch_base": 0
+    },
+    {
+      "yaw": 0,
+      "pitch": -15,
+      "body_base": 0,
+      "pitch_body": 0,
+      "pitch_base": 0
+    },
+    {
+      "yaw": 0,
+      "pitch": 0,
+      "body_base": 0,
+      "pitch_body": 0,
+      "pitch_base": 0
+    },
+    {
+      "yaw": 0,
+      "pitch": 30,
+      "body_base": 0,
+      "pitch_body": 0,
+      "pitch_base": 0
+    },
+    {
+      "yaw": 0,
+      "pitch": 60,
+      "body_base": 0,
+      "pitch_body": 0,
+      "pitch_base": 0
+    },
+    {
+      "yaw": 0,
+      "pitch": 90,
+      "body_base": 0,
+      "pitch_body": 0,
+      "pitch_base": 0
+    },
+    {
+      "yaw": 90,
+      "pitch": -15,
+      "body_base": 0,
+      "pitch_body": 0,
+      "pitch_base": 0
+    },
+    {
+      "yaw": 90,
+      "pitch": 0,
+      "body_base": 0,
+      "pitch_body": 0,
+      "pitch_base": 0
+    },
+    {
+      "yaw": 90,
+      "pitch": 30,
+      "body_base": 0,
+      "pitch_body": 0,
+      "pitch_base": 0
+    },
+    {
+      "yaw": 90,
+      "pitch": 60,
+      "body_base": 0,
+      "pitch_body": 0,
+      "pitch_base": 0
+    },
+    {
+      "yaw": 90,
+      "pitch": 90,
+      "body_base": 0,
+      "pitch_body": 0,
+      "pitch_base": 0
+    },
+    {
+      "yaw": 180,
+      "pitch": -15,
+      "body_base": 0,
+      "pitch_body": 0,
+      "pitch_base": 0
+    },
+    {
+      "yaw": 180,
+      "pitch": 0,
+      "body_base": 0,
+      "pitch_body": 0,
+      "pitch_base": 0
+    },
+    {
+      "yaw": 180,
+      "pitch": 30,
+      "body_base": 0,
+      "pitch_body": 0,
+      "pitch_base": 0
+    },
+    {
+      "yaw": 180,
+      "pitch": 60,
+      "body_base": 0,
+      "pitch_body": 0,
+      "pitch_base": 0
+    },
+    {
+      "yaw": 180,
+      "pitch": 90,
+      "body_base": 0,
+      "pitch_body": 0,
+      "pitch_base": 0
+    }
+  ],
+  "scope": "25 cap-free top-orientation samples only; not proof of continuous clearance, UE mounting, or gameplay"
+}

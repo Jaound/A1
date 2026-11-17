@@ -1,0 +1,452 @@
+{
+  "passed": true,
+  "checks": [
+    {
+      "id": "NEW-UNSAVED-WORLD",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "CLEARANCE-BOUNDED",
+      "passed": true,
+      "detail": "1.0"
+    },
+    {
+      "id": "PITCH-PARENT",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "INITIAL-PITCH-PIVOT",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "MESH-BaseTrial",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "MESH-YawBody",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "ATTACH-YawBody",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "INITIAL-MESH-ORIGIN-YawBody",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "MESH-PitchTrial",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "ATTACH-PitchTrial",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "INITIAL-MESH-ORIGIN-PitchTrial",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "YAW-ROTATION-0",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "YAW-BODY-ROTATION-0",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "PITCH-RELATIVE-0",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "BORE-DIRECTION-0",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "PITCH-PIVOT-FOLLOWS-YAW-0",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "NO-OVERWRITE-0",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "YAW-ROTATION-0",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "YAW-BODY-ROTATION-0",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "PITCH-RELATIVE-0",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "BORE-DIRECTION-0",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "PITCH-PIVOT-FOLLOWS-YAW-0",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "NO-OVERWRITE-0",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "YAW-ROTATION-0",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "YAW-BODY-ROTATION-0",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "PITCH-RELATIVE-0",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "BORE-DIRECTION-0",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "PITCH-PIVOT-FOLLOWS-YAW-0",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "NO-OVERWRITE-0",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "YAW-ROTATION-0",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "YAW-BODY-ROTATION-0",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "PITCH-RELATIVE-0",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "BORE-DIRECTION-0",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "PITCH-PIVOT-FOLLOWS-YAW-0",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "NO-OVERWRITE-0",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "YAW-ROTATION-0",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "YAW-BODY-ROTATION-0",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "PITCH-RELATIVE-0",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "BORE-DIRECTION-0",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "PITCH-PIVOT-FOLLOWS-YAW-0",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "NO-OVERWRITE-0",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "SCREENSHOT-TASK-0",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "SCREENSHOT-TASK-0",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "SCREENSHOT-TASK-0",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "SCREENSHOT-TASK-0",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "SCREENSHOT-TASK-0",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "RENDER-FILE-0",
+      "passed": true,
+      "detail": "189041"
+    },
+    {
+      "id": "YAW-ROTATION-1",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "YAW-BODY-ROTATION-1",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "PITCH-RELATIVE-1",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "BORE-DIRECTION-1",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "PITCH-PIVOT-FOLLOWS-YAW-1",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "NO-OVERWRITE-1",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "SCREENSHOT-TASK-1",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "RENDER-FILE-1",
+      "passed": true,
+      "detail": "198180"
+    },
+    {
+      "id": "YAW-ROTATION-2",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "YAW-BODY-ROTATION-2",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "PITCH-RELATIVE-2",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "BORE-DIRECTION-2",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "PITCH-PIVOT-FOLLOWS-YAW-2",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "NO-OVERWRITE-2",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "SCREENSHOT-TASK-2",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "RENDER-FILE-2",
+      "passed": true,
+      "detail": "205144"
+    },
+    {
+      "id": "YAW-ROTATION-3",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "YAW-BODY-ROTATION-3",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "PITCH-RELATIVE-3",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "BORE-DIRECTION-3",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "PITCH-PIVOT-FOLLOWS-YAW-3",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "NO-OVERWRITE-3",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "SCREENSHOT-TASK-3",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "RENDER-FILE-3",
+      "passed": true,
+      "detail": "156818"
+    },
+    {
+      "id": "YAW-ROTATION-4",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "YAW-BODY-ROTATION-4",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "PITCH-RELATIVE-4",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "BORE-DIRECTION-4",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "PITCH-PIVOT-FOLLOWS-YAW-4",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "NO-OVERWRITE-4",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "SCREENSHOT-TASK-4",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "RENDER-FILE-4",
+      "passed": true,
+      "detail": "194576"
+    },
+    {
+      "id": "YAW-ROTATION-5",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "YAW-BODY-ROTATION-5",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "PITCH-RELATIVE-5",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "BORE-DIRECTION-5",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "PITCH-PIVOT-FOLLOWS-YAW-5",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "NO-OVERWRITE-5",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "SCREENSHOT-TASK-5",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "RENDER-FILE-5",
+      "passed": true,
+      "detail": "180395"
+    }
+  ],
+  "errors": [],
+  "physical_input": false,
+  "gameplay": false,
+  "scope": "unsaved isolated UE three-part pivot and render; no art/gameplay approval",
+  "images": [
+    "C:\\Users\\user\\source\\repos\\A1\\Unreal\\OrbitalVanguard\\Saved\\Validation\\BF120UERender\\tri_pivot_v8_top_extremes\\BF120_yaw+00_pitch+00.png",
+    "C:\\Users\\user\\source\\repos\\A1\\Unreal\\OrbitalVanguard\\Saved\\Validation\\BF120UERender\\tri_pivot_v8_top_extremes\\BF120_yaw+00_pitch+15.png",
+    "C:\\Users\\user\\source\\repos\\A1\\Unreal\\OrbitalVanguard\\Saved\\Validation\\BF120UERender\\tri_pivot_v8_top_extremes\\BF120_yaw+45_pitch+15.png",
+    "C:\\Users\\user\\source\\repos\\A1\\Unreal\\OrbitalVanguard\\Saved\\Validation\\BF120UERender\\tri_pivot_v8_top_extremes\\BF120_yaw-45_pitch-15.png",
+    "C:\\Users\\user\\source\\repos\\A1\\Unreal\\OrbitalVanguard\\Saved\\Validation\\BF120UERender\\tri_pivot_v8_top_extremes\\BF120_yaw+00_pitch+90.png",
+    "C:\\Users\\user\\source\\repos\\A1\\Unreal\\OrbitalVanguard\\Saved\\Validation\\BF120UERender\\tri_pivot_v8_top_extremes\\BF120_yaw+00_pitch-15.png"
+  ]
+}

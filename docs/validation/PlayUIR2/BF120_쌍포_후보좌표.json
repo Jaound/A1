@@ -1,0 +1,48 @@
+{
+  "source": "C:\\Users\\user\\Documents\\OrbitalVanguardAssets\\Prepared\\PlayUI_R2_BF120_YawClearance_v1\\BF120_ClearanceTrial.blend",
+  "source_before": "06c8fc61fd9fa678c5ade11c87094f97b0f46da6a03acad373fdaffbb9cefd54",
+  "source_after": "06c8fc61fd9fa678c5ade11c87094f97b0f46da6a03acad373fdaffbb9cefd54",
+  "front_x": -2.4215025901794434,
+  "band": 0.02,
+  "groups": [
+    {
+      "name": "negative_y",
+      "vertices": 513,
+      "min": [
+        -2.42122745513916,
+        -0.5676198601722717,
+        0.34643930196762085
+      ],
+      "max": [
+        -2.401622772216797,
+        -0.26583588123321533,
+        0.6477475762367249
+      ],
+      "center": [
+        -2.4114251136779785,
+        -0.41672787070274353,
+        0.49709343910217285
+      ]
+    },
+    {
+      "name": "positive_y",
+      "vertices": 498,
+      "min": [
+        -2.4215025901794434,
+        0.2714231014251709,
+        0.34423673152923584
+      ],
+      "max": [
+        -2.4018287658691406,
+        0.5757279396057129,
+        0.6453008651733398
+      ],
+      "center": [
+        -2.411665678024292,
+        0.4235755205154419,
+        0.49476879835128784
+      ]
+    }
+  ],
+  "scope": "bounds-derived candidate centers only; not muzzle socket or game firing approval"
+}
