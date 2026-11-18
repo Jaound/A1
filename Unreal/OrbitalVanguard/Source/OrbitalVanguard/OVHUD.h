@@ -37,6 +37,9 @@ public:
  UFUNCTION(BlueprintPure, Category="UI") FString GetCommandTitleTooltip(FVector2D CanvasPoint) const;
  UFUNCTION(BlueprintPure, Category="UI") FString GetDetailsTitleTooltip(FVector2D CanvasPoint) const;
  UFUNCTION(BlueprintPure, Category="UI") FString GetPinnedCarrierSummary(int32 Index) const;
+ UFUNCTION(BlueprintPure, Category="UI") int32 GetPinnedAircraftId(int32 Index) const { return PinnedAircraftIds.IsValidIndex(Index)?PinnedAircraftIds[Index]:0; }
+ UFUNCTION(BlueprintPure, Category="UI") int32 GetPinnedAircraftPage(int32 Index) const { return PinnedAircraftPages.IsValidIndex(Index)?PinnedAircraftPages[Index]:0; }
+ UFUNCTION(BlueprintPure, Category="UI") FString GetPinnedAircraftSummary(int32 Index) const;
  UFUNCTION(BlueprintPure, Category="UI") int32 GetDetailsSlotPage() const { return DetailsSlotPage; }
  UFUNCTION(BlueprintPure, Category="UI") int32 GetWarningLevel() const { return WarningLevel; }
  UFUNCTION(BlueprintPure, Category="UI") FString GetPinnedWeaponSummary(int32 Index) const;
@@ -85,9 +88,12 @@ public:
  UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="UI") FString InteriorFeedback;
  UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="UI") bool bDetailsOpen=false;
  UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="UI") bool bMinimized=false;
+ UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="UI") bool bStarMapOpen=false;
+ UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="UI") FName SelectedStarSystemId=TEXT("home_vanguard");
  UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="UI") int32 SelectedAircraftId=0;
  UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="UI") FVector2D WindowPosition=FVector2D(840,76);
  UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="UI") FVector2D WindowSize=FVector2D(424,550);
+ bool IsOverStarMapPanel(float X,float Y) const;
 private:
  UPROPERTY() TObjectPtr<UOVDevelopmentWidget> DevelopmentWidget;
  UPROPERTY() TObjectPtr<UOVHeroWidget> HeroWidget;
@@ -95,7 +101,7 @@ private:
  UPROPERTY() TObjectPtr<UOVShipPreview> WeaponPreview;
  UPROPERTY() TArray<TObjectPtr<UOVShipPreview>> PinnedPreviews;
  UPROPERTY() TArray<TWeakObjectPtr<AOVShip>> PinnedShips;
- TArray<int32> PinnedDecks, PinnedSlots, PinnedWeapons, PinnedSlotPages;
+ TArray<int32> PinnedDecks, PinnedSlots, PinnedWeapons, PinnedSlotPages, PinnedAircraftIds, PinnedAircraftPages;
  TArray<FVector2D> PinnedPositions;
  TArray<FVector2D> PinnedSizes;
  int32 DraggedPin=INDEX_NONE;
@@ -144,6 +150,7 @@ private:
  FBox2D InteriorBounds() const;
  void DrawInterior();
  void DrawMission();
+ void DrawStarMap();
  FVector2D DragOffset=FVector2D::ZeroVector;
  FRotator PreviewRotation=FRotator(-25,35,0);
  float PreviewZoom=1;

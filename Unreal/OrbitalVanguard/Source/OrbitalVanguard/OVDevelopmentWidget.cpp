@@ -133,6 +133,7 @@ void UOVDevelopmentWidget::NativeOnInitialized()
  AddButton(WidgetTree,Tabs,TEXT("영웅"))->OnClicked.AddDynamic(this,&UOVDevelopmentWidget::Heroes);
  AddButton(WidgetTree,Tabs,TEXT("무장"))->OnClicked.AddDynamic(this,&UOVDevelopmentWidget::Weapons);
  AddButton(WidgetTree,Tabs,TEXT("시험"))->OnClicked.AddDynamic(this,&UOVDevelopmentWidget::Overview);
+ AddButton(WidgetTree,Tabs,TEXT("윤곽선 온오프"))->OnClicked.AddDynamic(this,&UOVDevelopmentWidget::ToggleDebugOutlines);
  AddButton(WidgetTree,Tabs,TEXT("닫기 ×"))->OnClicked.AddDynamic(this,&UOVDevelopmentWidget::Close);
  Feedback=Label(WidgetTree,TEXT("시험용 생성 · 실제 전투 규칙 적용"));
  Feedback->SetColorAndOpacity(FLinearColor(.45f,.85f,.95f));FrameContents->AddChildToVerticalBox(Feedback)->SetPadding(FMargin(3,4));
@@ -183,6 +184,7 @@ void UOVDevelopmentWidget::Reply(const FString& Message)
 FString UOVDevelopmentWidget::GetCompactSelectionText()const{return Detail?Detail->GetText().ToString():FString();}
 void UOVDevelopmentWidget::ExecuteSelectedCreation(){if(Page==1&&HullCategory==0)Spawn();else if(Page==2)CreateHero();}
 void UOVDevelopmentWidget::ToggleAdvanced(){SetAdvancedDiagnostics(!bAdvanced);}
+void UOVDevelopmentWidget::ToggleDebugOutlines(){if(auto* PC=Cast<AOVController>(GetOwningPlayer())){PC->Action(TEXT("ToggleDebugOutlines"));Reply(PC->LastAction);}}
 void UOVDevelopmentWidget::SetAdvancedDiagnostics(bool bEnabled)
 {
  bAdvanced=bEnabled;

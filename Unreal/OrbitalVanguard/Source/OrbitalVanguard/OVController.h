@@ -15,8 +15,46 @@ class UOVMissionSubsystem;
 class UOVDevelopmentSubsystem;
 class UOVHeroSubsystem;
 class UInstancedStaticMeshComponent;
+class UStaticMeshComponent;
 UENUM(BlueprintType)
 enum class EOVInputMode : uint8 { None, Move, Target, Heading, Repair };
+UENUM(BlueprintType)
+enum class EOVSpaceEnvironmentType : uint8 { None, AsteroidField, RadiationZone, SolarFlare, BlackHole };
+UENUM(BlueprintType)
+enum class EOVOutpostKind : uint8 { None, Basic, MiningHub, CombatBase };
+USTRUCT(BlueprintType)
+struct FOVStarSystemNode
+{
+ GENERATED_BODY()
+ UPROPERTY(VisibleAnywhere, BlueprintReadOnly) FName SystemId;
+ UPROPERTY(VisibleAnywhere, BlueprintReadOnly) FString DisplayName;
+ UPROPERTY(VisibleAnywhere, BlueprintReadOnly) FString OwnerFaction=TEXT("neutral");
+ UPROPERTY(VisibleAnywhere, BlueprintReadOnly) FString EnemyFactionName;
+ UPROPERTY(VisibleAnywhere, BlueprintReadOnly) FVector2D MapNormalizedPos=FVector2D(0.5f,0.5f);
+ UPROPERTY(VisibleAnywhere, BlueprintReadOnly) EOVSpaceEnvironmentType Environment=EOVSpaceEnvironmentType::None;
+ UPROPERTY(VisibleAnywhere, BlueprintReadOnly) EOVOutpostKind Outpost=EOVOutpostKind::None;
+ UPROPERTY(VisibleAnywhere, BlueprintReadOnly) int32 OutpostHP=0;
+ UPROPERTY(VisibleAnywhere, BlueprintReadOnly) int32 OutpostMaxHP=0;
+ UPROPERTY(VisibleAnywhere, BlueprintReadOnly) int32 CommonYield=10;
+ UPROPERTY(VisibleAnywhere, BlueprintReadOnly) int32 AdvancedYield=4;
+ UPROPERTY(VisibleAnywhere, BlueprintReadOnly) int32 SupremeYield=0;
+ UPROPERTY(VisibleAnywhere, BlueprintReadOnly) int32 DangerLevel=1;
+ UPROPERTY(VisibleAnywhere, BlueprintReadOnly) FLinearColor NebulaTint=FLinearColor::White;
+ UPROPERTY(VisibleAnywhere, BlueprintReadOnly) TArray<FName> Links;
+};
+struct FOVDeathThroeState
+{
+ bool bActive=false;
+ bool bVanished=false;
+ bool bHasBaseTransform=false;
+ float TotalDuration=3.1f;
+ float Remaining=0.f;
+ float BurstAccum=0.f;
+ float RollDirection=1.f;
+ FVector BaseRelLocation=FVector::ZeroVector;
+ FRotator BaseRelRotation=FRotator::ZeroRotator;
+ TArray<TPair<FVector,double>> ExtraBursts;
+};
 UCLASS()
 class ORBITALVANGUARD_API AOVController : public APlayerController
 {
@@ -34,8 +72,52 @@ public:
  virtual void FlushPressedKeys() override;
  /** Render-only copies of live aircraft; gameplay remains in the carrier subsystem. */
  UFUNCTION(BlueprintCallable, Category="Presentation") void UpdateAircraftPresentation();
+ UFUNCTION(BlueprintCallable, Category="Presentation") void UpdateCombatPresentation();
  UPROPERTY(Transient, VisibleAnywhere, BlueprintReadOnly, Category="Presentation") TObjectPtr<UInstancedStaticMeshComponent> FriendlyAircraftMeshes;
  UPROPERTY(Transient, VisibleAnywhere, BlueprintReadOnly, Category="Presentation") TObjectPtr<UInstancedStaticMeshComponent> EnemyAircraftMeshes;
+ UPROPERTY(Transient, VisibleAnywhere, BlueprintReadOnly, Category="Presentation") TObjectPtr<UInstancedStaticMeshComponent> StandardMissileMeshes;
+ UPROPERTY(Transient, VisibleAnywhere, BlueprintReadOnly, Category="Presentation") TObjectPtr<UInstancedStaticMeshComponent> AntiShipMissileMeshes;
+ UPROPERTY(Transient, VisibleAnywhere, BlueprintReadOnly, Category="Presentation") TObjectPtr<UInstancedStaticMeshComponent> CannonProjectileMeshes;
+ UPROPERTY(Transient, VisibleAnywhere, BlueprintReadOnly, Category="Presentation") TObjectPtr<UInstancedStaticMeshComponent> FriendlyBeamMeshes;
+ UPROPERTY(Transient, VisibleAnywhere, BlueprintReadOnly, Category="Presentation") TObjectPtr<UInstancedStaticMeshComponent> EnemyBeamMeshes;
+ UPROPERTY(Transient, VisibleAnywhere, BlueprintReadOnly, Category="Presentation") TObjectPtr<UInstancedStaticMeshComponent> MissilePlumeMeshes;
+ UPROPERTY(Transient, VisibleAnywhere, BlueprintReadOnly, Category="Presentation") TObjectPtr<UInstancedStaticMeshComponent> ShieldImpactMeshes;
+ UPROPERTY(Transient, VisibleAnywhere, BlueprintReadOnly, Category="Presentation") TObjectPtr<UInstancedStaticMeshComponent> HullImpactMeshes;
+ UPROPERTY(Transient, VisibleAnywhere, BlueprintReadOnly, Category="Presentation") TObjectPtr<UStaticMeshComponent> SpaceSkyboxMesh;
+ UPROPERTY(Transient, VisibleAnywhere, BlueprintReadOnly, Category="Presentation") TObjectPtr<UStaticMeshComponent> DistantPlanetMesh;
+ UPROPERTY(Transient, VisibleAnywhere, BlueprintReadOnly, Category="Presentation") TObjectPtr<UInstancedStaticMeshComponent> StarfieldMeshes;
+ UPROPERTY(Transient, VisibleAnywhere, BlueprintReadOnly, Category="Presentation") TObjectPtr<UInstancedStaticMeshComponent> AsteroidMeshes;
+ UPROPERTY(Transient, VisibleAnywhere, BlueprintReadOnly, Category="Presentation") TObjectPtr<UInstancedStaticMeshComponent> BlackHoleMeshes;
+ UPROPERTY(Transient, VisibleAnywhere, BlueprintReadOnly, Category="Presentation") TObjectPtr<UInstancedStaticMeshComponent> RadiationZoneMeshes;
+ UPROPERTY(Transient, VisibleAnywhere, BlueprintReadOnly, Category="Presentation") TObjectPtr<UInstancedStaticMeshComponent> SolarFlareMeshes;
+ UPROPERTY(Transient) TMap<TWeakObjectPtr<AOVShip>, TObjectPtr<UStaticMeshComponent>> ShieldBubbleMeshes;
+ TMap<TWeakObjectPtr<AOVShip>, FOVDeathThroeState> DeathThroes;
+ TArray<FTransform> CachedStarTransforms;
+ UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Campaign") TArray<FOVStarSystemNode> StarSystems;
+ UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Campaign") FName CurrentStarSystemId=TEXT("home_vanguard");
+ UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Campaign") int32 ResourceCommon=320;
+ UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Campaign") int32 ResourceAdvanced=140;
+ UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Campaign") int32 ResourceSupreme=35;
+ UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Environment") EOVSpaceEnvironmentType ActiveEnvironment=EOVSpaceEnvironmentType::None;
+ TArray<FVector4> ActiveAsteroids;
+ TArray<FVector4> ActiveRadiationZones;
+ FVector ActiveBlackHoleCenter=FVector(0,0,250);
+ float ActiveBlackHoleRadius=2600.f;
+ float EnvironmentTickAccum=0.f;
+ float SolarFlareCycleTime=0.f;
+ bool bSolarFlareWaveApplied=false;
+ float CampaignMiningAccum=0.f;
+ void InitializeCampaignSystems();
+ UFUNCTION(BlueprintCallable, Category="Environment") void SetSpaceEnvironment(EOVSpaceEnvironmentType NewEnvironment);
+ UFUNCTION(BlueprintCallable, Category="Campaign") bool SwitchStarSystem(FName SystemId);
+ UFUNCTION(BlueprintCallable, Category="Campaign") bool DispatchFleetFTL(FName TargetSystemId);
+ UFUNCTION(BlueprintCallable, Category="Campaign") bool BuildOutpost(FName SystemId, EOVOutpostKind Kind);
+ bool IsShipInDeathThroe(const AOVShip* Ship, float& OutRemaining) const;
+ bool IsShipVanished(const AOVShip* Ship) const;
+ bool IsShipShelteredFromSolarFlare(const AOVShip* Ship) const;
+ void ResetDeathThroes();
+ static FString GetEnvironmentDisplayName(EOVSpaceEnvironmentType Env);
+ static FString GetOutpostDisplayName(EOVOutpostKind Kind);
  UPROPERTY(Transient) TObjectPtr<AActor> AircraftPresentationActor;
  UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Camera") bool bPlayGame3=true;
  UFUNCTION(BlueprintCallable, Category="Camera") void ApplyCameraInput(FVector2D OrbitDelta, FVector LocalPan, float YawAxis, int32 Wheel, float RealSeconds);
@@ -52,6 +134,7 @@ public:
  UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Control Range") TArray<TObjectPtr<AOVShip>> Selection;
  UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Control Range") bool bFollow=false;
  UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Debug") bool bDeveloperMode=false;
+ UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Debug") bool bShowDebugOutlines=false;
  UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Debug") int32 ViewedDeck=0;
  UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Debug") int32 SelectedSlot=0;
  UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Debug") int32 SelectedArmor=0;

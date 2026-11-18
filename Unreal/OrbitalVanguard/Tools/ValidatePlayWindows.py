@@ -435,6 +435,34 @@ def tick(_dt):
             systems.set_editor_property('faction_id',0)
             check('WINDOW-PIN-CARRIER-OWNERSHIP-RESTORED',hud.get_pinned_carrier_summary(0)==summary)
             check('WINDOW-PIN-CARRIER-READONLY',observe_combat(pc)==state['mission_observation'])
+            hit_button(hud,'PinnedAirGrid_0');state['pin_selected_before']=p(pc,'selected')
+            hud.execute_ui_action('PinnedAirGrid_0');check('WINDOW-PIN-AIR-GRID-OPEN',hud.get_pinned_deck(0)==-2)
+            state.update(phase=103,at=time.monotonic());return
+        if state['phase']==103:
+            ship=hud.get_pinned_ship(0);wing=p(pc,'carrier')
+            records=[a for a in p(wing,'aircraft') if p(a,'carrier')==ship and p(a,'faction_id')==0]
+            check('WINDOW-PIN-AIR-GRID-FIXTURE',len(records)>5)
+            first=p(records[0],'aircraft_id');action='PinnedAirCard_0_'+str(first)
+            hit_button(hud,action);hud.execute_ui_action(action)
+            check('WINDOW-PIN-AIR-CARD-ID',hud.get_pinned_aircraft_id(0)==first and '내구' in hud.get_pinned_aircraft_summary(0))
+            check('WINDOW-PIN-AIR-SELECTION-INDEPENDENT',p(pc,'selected')==state['pin_selected_before'])
+            systems=p(ship,'systems');systems.set_editor_property('faction_id',1)
+            check('WINDOW-PIN-AIR-CAPTURE-PRIVACY',hud.get_pinned_aircraft_summary(0)=='')
+            hud.execute_ui_action('PinnedAirCard_0_'+str(p(records[1],'aircraft_id')))
+            check('WINDOW-PIN-AIR-CAPTURE-ACTION-BLOCKED',hud.get_pinned_aircraft_id(0)==first)
+            systems.set_editor_property('faction_id',0)
+            hit_button(hud,'PinnedAirPage_0_1');hud.execute_ui_action('PinnedAirPage_0_1')
+            check('WINDOW-PIN-AIR-PAGE-NEXT',hud.get_pinned_aircraft_page(0)==1)
+            state.update(phase=104,at=time.monotonic(),pin_records=records);return
+        if state['phase']==104:
+            second=p(state['pin_records'][5],'aircraft_id');action='PinnedAirCard_0_'+str(second)
+            hit_button(hud,action);hud.execute_ui_action(action)
+            check('WINDOW-PIN-AIR-SECOND-PAGE-ID',hud.get_pinned_aircraft_id(0)==second)
+            hit_button(hud,'PinnedAirPage_0_-1');hud.execute_ui_action('PinnedAirPage_0_-1')
+            check('WINDOW-PIN-AIR-PAGE-PREVIOUS',hud.get_pinned_aircraft_page(0)==0)
+            check('WINDOW-PIN-AIR-NO-STATE-CHANGE',observe_combat(pc)==state['mission_observation'])
+            hit_button(hud,'PinnedAirBack_0');hud.execute_ui_action('PinnedAirBack_0')
+            check('WINDOW-PIN-AIR-BACK',hud.get_pinned_deck(0)==-1)
             hud.execute_ui_action('PinnedClose_1');hud.execute_ui_action('PinnedClose_0')
             state.update(phase=11,at=time.monotonic());return
         if state['phase']==11:

@@ -576,4 +576,23 @@ bool FOVSideMountGeometry::RunTest(const FString&)
     }
     return true;
 }
+
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(FOVPrototypeWeaponScaleTest,
+    "OrbitalVanguard.Presentation.PrototypeWeaponScaleBuffering",
+    EAutomationTestFlags::EditorContext | EAutomationTestFlags::EngineFilter)
+bool FOVPrototypeWeaponScaleTest::RunTest(const FString&)
+{
+    const float UnitLength = OVWeaponGeometry::BarrelLength(FVector(175, 75, 30), 1, false);
+    TestEqual(TEXT("Unit baseline barrel length"), UnitLength, 26.f);
+
+    const float UnitPD = OVWeaponGeometry::BarrelLength(FVector(175, 75, 30), 1, true);
+    TestEqual(TEXT("Point defense is 50 percent of cannon scale"), UnitPD, UnitLength * 0.5f);
+
+    const float CarrierLength = OVWeaponGeometry::BarrelLength(FVector(700, 300, 120), 1, false);
+    TestTrue(TEXT("Carrier scale is dampened by 0.16 coefficient"), CarrierLength < 50.f && CarrierLength > 35.f);
+
+    const float HugeLength = OVWeaponGeometry::BarrelLength(FVector(10000, 5000, 3000), 1, false);
+    TestEqual(TEXT("Scale is capped at 3.85 upper bound"), HugeLength, 26.f * 3.85f);
+    return true;
+}
 #endif

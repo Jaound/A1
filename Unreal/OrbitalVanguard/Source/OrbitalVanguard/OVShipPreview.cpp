@@ -78,7 +78,7 @@ void UOVShipPreview::Update(AOVShip* Ship, FRotator Rotation, float Zoom, float 
     if(Ship->Systems->Layout->WeaponMounts.IsValidIndex(FocusMount)) {
         const auto& Mount=Ship->Systems->Layout->WeaponMounts[FocusMount];
         Focus=Rotation.RotateVector(Mount.LocalPosition);
-        OrthoWidth=FMath::Max(100.f,OVWeaponGeometry::BarrelLength(Extent,Mount.Tier,Mount.Type==EOVWeaponType::Interception)*4.f);
+        OrthoWidth=FMath::Max(16.f,OVWeaponGeometry::BarrelLength(Extent,Mount.Tier,Mount.Type==EOVWeaponType::Interception)*4.f);
     }
     if (Texture->SizeY!=FMath::RoundToInt(800/ViewAspect)) Texture->ResizeTarget(800,FMath::RoundToInt(800/ViewAspect));
     Capture->OrthoWidth=OrthoWidth;

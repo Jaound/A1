@@ -5,18 +5,19 @@
 #include "Engine/StaticMesh.h"
 #include "HAL/IConsoleManager.h"
 
-static TAutoConsoleVariable<int32> CVarCIWSBTrial(TEXT("ov.Presentation.CIWSBTrial"), 0,
+static TAutoConsoleVariable<int32> CVarCIWSBTrial(TEXT("ov.Presentation.CIWSBTrial"), 1,
     TEXT("Opt-in isolated source point-defense articulation trials; not final artwork."));
-static TAutoConsoleVariable<int32> CVarLB30Trial(TEXT("ov.Presentation.LB30Trial"), 0,
+static TAutoConsoleVariable<int32> CVarLB30Trial(TEXT("ov.Presentation.LB30Trial"), 1,
     TEXT("Opt-in isolated source beam turret trial; not final artwork."));
-static TAutoConsoleVariable<int32> CVarBF120SourceTrial(TEXT("ov.Presentation.BF120SourceTrial"), 0,
+static TAutoConsoleVariable<int32> CVarBF120SourceTrial(TEXT("ov.Presentation.BF120SourceTrial"), 1,
     TEXT("Opt-in isolated source twin cannon trial; not final artwork."));
-static TAutoConsoleVariable<int32> CVarSHC400Trial(TEXT("ov.Presentation.SHC400Trial"), 0,
+static TAutoConsoleVariable<int32> CVarSHC400Trial(TEXT("ov.Presentation.SHC400Trial"), 1,
     TEXT("Opt-in isolated source heavy cannon trial; not final artwork."));
-static TAutoConsoleVariable<int32> CVarRG200Trial(TEXT("ov.Presentation.RG200Trial"), 0,
+static TAutoConsoleVariable<int32> CVarRG200Trial(TEXT("ov.Presentation.RG200Trial"), 1,
     TEXT("Opt-in isolated source railgun trial; not final artwork."));
-static TAutoConsoleVariable<int32> CVarPlasmaTrial(TEXT("ov.Presentation.PlasmaTrial"), 0,
+static TAutoConsoleVariable<int32> CVarPlasmaTrial(TEXT("ov.Presentation.PlasmaTrial"), 1,
     TEXT("Opt-in isolated source plasma visual trial; no special combat rules."));
+
 
 namespace OVWeaponGeometry
 {
@@ -29,9 +30,14 @@ FVector SurfaceNormal(const FOVWeaponMountDefinition& Definition)
 float BarrelLength(const FVector& HullHalfExtent, float Tier, bool bPointDefense)
 {
     // Display geometry only; no range/damage/speed or hit-volume multiplier.
-    const float Scale = FMath::Clamp(float(HullHalfExtent.GetMin()) / 30.f, 1.f, 12.f);
-    return (bPointDefense ? 16.f : 26.f + FMath::Max(0.f, Tier - 1.f) * 3.f) * Scale;
+    // D110 prototype record: scale buffering coefficient 0.16, max scale clamp 3.85
+    // Interception (PD) is 50% of cannon size.
+    const float BaseRatio = FMath::Max(0.f, float(HullHalfExtent.GetMin()) / 30.f - 1.f);
+    const float Scale = FMath::Clamp(1.f + BaseRatio * 0.16f, 1.f, 3.85f);
+    const float CannonLength = 26.f + FMath::Max(0.f, Tier - 1.f) * 3.f;
+    return (bPointDefense ? CannonLength * 0.5f : CannonLength) * Scale;
 }
+
 
 FVector MuzzleLocal(FVector MountPosition, FRotator Aim, float Length, bool bFixedVLS)
 {
@@ -241,7 +247,7 @@ FVector MuzzleLocal(const FOVWeaponMountDefinition& Definition, FRotator Aim,
         const FQuat Flip=FRotator(0,0,bBottom?180.f:0.f).Quaternion();
         const FQuat Yaw=FRotator(0,bBottom?180.f-LocalAim.Yaw:180.f+LocalAim.Yaw,0).Quaternion();
         const FQuat Pitch=FRotator(bBottom?LocalAim.Pitch:-LocalAim.Pitch,0,0).Quaternion();
-        const double Scale=Length/Art.Span;
+        const double Scale=(Length*0.80)/Art.Span;
         const FVector Lift(0,0,(bBottom?-1.f:1.f)*Art.BaseDepth*Scale);
         const FVector Tip=Art.Tip[Art.bTwin?(BarrelIndex&1):0];
         return Definition.LocalPosition+Surface.RotateVector(Lift+Flip.RotateVector(FVector(0,0,.1*Scale)+Yaw.RotateVector((Art.Pivot+Pitch.RotateVector(Tip))*Scale)));
@@ -254,7 +260,7 @@ FVector MuzzleLocal(const FOVWeaponMountDefinition& Definition, FRotator Aim,
     const FQuat Flip=FRotator(0,0,bBottom?180.f:0.f).Quaternion();
     const FQuat Yaw=FRotator(0,bBottom?180.f-Aim.Yaw:180.f+Aim.Yaw,0).Quaternion();
     const FQuat Pitch=FRotator(bBottom?Aim.Pitch:-Aim.Pitch,0,0).Quaternion();
-    const double Scale=Length/249.143;
+    const double Scale=(Length*0.80)/249.143;
     const FVector InYaw=(PitchOrigin-YawOrigin)+Pitch.RotateVector(Tips[BarrelIndex&1]-PitchOrigin);
     return Definition.LocalPosition+Flip.RotateVector(Yaw.RotateVector(InYaw))*Scale;
 }
@@ -285,6 +291,7 @@ UStaticMeshComponent* UOVWeaponVisualComponent::MakeMesh(USceneComponent* Parent
     Part->SetMobility(EComponentMobility::Movable);
     Part->SetupAttachment(Parent);
     Part->SetStaticMesh(LoadObject<UStaticMesh>(nullptr, Asset));
+    Part->SetForcedLodModel(1);
     Part->SetCollisionEnabled(ECollisionEnabled::NoCollision);
     Part->SetCollisionResponseToAllChannels(ECR_Ignore);
     Part->SetGenerateOverlapEvents(false);
@@ -319,20 +326,23 @@ void UOVWeaponVisualComponent::Initialize(const FOVWeaponMountDefinition& InDefi
     if (OVWeaponGeometry::SourceTrialArt(Definition,Art))
     {
         // Trial only: source base, body and barrel plus a clearly separate generated neck.
-        const double Scale=Length/Art.Span;
+        const double Scale=(Length*0.80)/Art.Span;
         auto* Flip=MakePivot(this);
         Flip->SetRelativeLocation(FVector(0,0,Side*Art.BaseDepth*Scale));
         Flip->SetRelativeRotation(FRotator(0,0,State.bBottom?180.f:0.f));
-        MakeMesh(Flip,Art.Base,FVector::ZeroVector,FVector(Scale),FRotator::ZeroRotator,false);
+        auto* BasePart=MakeMesh(Flip,Art.Base,FVector::ZeroVector,FVector(Scale),FRotator::ZeroRotator,false);
         YawPivot=MakePivot(Flip);
         YawPivot->SetRelativeLocation(FVector(0,0,.1*Scale)); // 0.001 Blender-unit trial bearing clearance.
-        MakeMesh(YawPivot,Art.Body,FVector::ZeroVector,FVector(Scale),FRotator::ZeroRotator,false);
+        auto* BodyPart=MakeMesh(YawPivot,Art.Body,FVector::ZeroVector,FVector(Scale),FRotator::ZeroRotator,false);
         PitchPivot=MakePivot(YawPivot);PitchPivot->SetRelativeLocation(Art.Pivot*Scale);
         Barrel=MakeMesh(PitchPivot,Art.Barrel,FVector::ZeroVector,FVector(Scale),FRotator::ZeroRotator,false);
+        for (auto* MeshPart : {BasePart, BodyPart, Barrel.Get()})
+            if (MeshPart && MeshPart->GetMaterial(0))
+                MeshPart->SetMaterial(0, UMaterialInstanceDynamic::Create(MeshPart->GetMaterial(0), MeshPart));
         auto* Neck=MakeMesh(PitchPivot,Art.Neck,Art.NeckOffset*Scale,FVector(Scale),FRotator::ZeroRotator,false);
-        if (Base && Neck) { auto* M=UMaterialInstanceDynamic::Create(Base,Neck); M->SetVectorParameterValue(TEXT("Color"),FLinearColor(.19f,.2f,.21f)); Neck->SetMaterial(0,M); }
-        Flash=MakeMesh(PitchPivot,TEXT("/Engine/BasicShapes/Sphere.Sphere"),Art.Tip[0]*Scale,FVector(Length*.15/100.f));
-        if (Art.bTwin) SecondFlash=MakeMesh(PitchPivot,TEXT("/Engine/BasicShapes/Sphere.Sphere"),Art.Tip[1]*Scale,FVector(Length*.15/100.f));
+        if (Base && Neck) { auto* M=UMaterialInstanceDynamic::Create(Base,Neck); M->SetVectorParameterValue(TEXT("Color"),FLinearColor(.56f,.60f,.66f)); Neck->SetMaterial(0,M); }
+        Flash=MakeMesh(PitchPivot,TEXT("/Engine/BasicShapes/Sphere.Sphere"),Art.Tip[0]*Scale,FVector(Length*0.80*.15/100.f));
+        if (Art.bTwin) SecondFlash=MakeMesh(PitchPivot,TEXT("/Engine/BasicShapes/Sphere.Sphere"),Art.Tip[1]*Scale,FVector(Length*0.80*.15/100.f));
         UStaticMeshComponent* Flashes[]={Flash.Get(),SecondFlash.Get()};
         for (auto* Part:Flashes) if (Part) {
             if (Base) { auto* M=UMaterialInstanceDynamic::Create(Base,Part);M->SetVectorParameterValue(TEXT("Color"),Definition.Type==EOVWeaponType::Cannon?FLinearColor(1.f,.66f,.08f):FLinearColor(.12f,.85f,1.f));Part->SetMaterial(0,M); }
@@ -345,15 +355,18 @@ void UOVWeaponVisualComponent::Initialize(const FOVWeaponMountDefinition& InDefi
         // Isolated trial measurements; source meshes bake their original world offsets.
         const FVector YawOrigin(99.5,2.5,-41),PitchOrigin(8,0,50),Clearance(0,0,1);
         const FVector Tips[]={FVector(-241.143,41.673,49.709),FVector(-241.167,-42.358,49.477)};
-        const double Scale=Length/249.143;
+        const double Scale=(Length*0.80)/249.143;
         auto* Flip=MakePivot(this);Flip->SetRelativeRotation(FRotator(0,0,State.bBottom?180.f:0.f));
-        MakeMesh(Flip,TEXT("/Game/Presentation/BF120Trial/SM_BF120_BaseTrial.SM_BF120_BaseTrial"),-YawOrigin*Scale,FVector(Scale),FRotator::ZeroRotator,false);
+        auto* BasePart=MakeMesh(Flip,TEXT("/Game/Presentation/BF120Trial/SM_BF120_BaseTrial.SM_BF120_BaseTrial"),-YawOrigin*Scale,FVector(Scale),FRotator::ZeroRotator,false);
         YawPivot=MakePivot(Flip);
-        MakeMesh(YawPivot,TEXT("/Game/Presentation/BF120Trial/SM_BF120_YawBody.SM_BF120_YawBody"),(-YawOrigin+Clearance)*Scale,FVector(Scale),FRotator::ZeroRotator,false);
+        auto* BodyPart=MakeMesh(YawPivot,TEXT("/Game/Presentation/BF120Trial/SM_BF120_YawBody.SM_BF120_YawBody"),(-YawOrigin+Clearance)*Scale,FVector(Scale),FRotator::ZeroRotator,false);
         PitchPivot=MakePivot(YawPivot);PitchPivot->SetRelativeLocation((PitchOrigin-YawOrigin)*Scale);
         Barrel=MakeMesh(PitchPivot,TEXT("/Game/Presentation/BF120Trial/SM_BF120_PitchTrial.SM_BF120_PitchTrial"),(-PitchOrigin+Clearance)*Scale,FVector(Scale),FRotator::ZeroRotator,false);
-        Flash=MakeMesh(PitchPivot,TEXT("/Engine/BasicShapes/Sphere.Sphere"),(Tips[0]-PitchOrigin)*Scale,FVector(Length*.15/100.f));
-        SecondFlash=MakeMesh(PitchPivot,TEXT("/Engine/BasicShapes/Sphere.Sphere"),(Tips[1]-PitchOrigin)*Scale,FVector(Length*.15/100.f));
+        for (auto* MeshPart : {BasePart, BodyPart, Barrel.Get()})
+            if (MeshPart && MeshPart->GetMaterial(0))
+                MeshPart->SetMaterial(0, UMaterialInstanceDynamic::Create(MeshPart->GetMaterial(0), MeshPart));
+        Flash=MakeMesh(PitchPivot,TEXT("/Engine/BasicShapes/Sphere.Sphere"),(Tips[0]-PitchOrigin)*Scale,FVector(Length*0.80*.15/100.f));
+        SecondFlash=MakeMesh(PitchPivot,TEXT("/Engine/BasicShapes/Sphere.Sphere"),(Tips[1]-PitchOrigin)*Scale,FVector(Length*0.80*.15/100.f));
         UStaticMeshComponent* FlashParts[]={Flash.Get(),SecondFlash.Get()};
         for (auto* Part : FlashParts) if (Part) {
             if (Base) {auto* Material=UMaterialInstanceDynamic::Create(Base,Part);Material->SetVectorParameterValue(TEXT("Color"),FLinearColor(1.f,.66f,.08f));Part->SetMaterial(0,Material);}
@@ -361,19 +374,52 @@ void UOVWeaponVisualComponent::Initialize(const FOVWeaponMountDefinition& InDefi
         }
         return;
     }
-    // Fixed plinth remains level with the hull. Only the trunnion and barrel elevate.
-    MakeMesh(this, TEXT("/Engine/BasicShapes/Cylinder.Cylinder"), FVector(0, 0, -Side * Length * .23),
-        FVector(Length * .8, Length * .8, Length * .18) / 100.f);
+    if (Definition.Type == EOVWeaponType::Missile)
+    {
+        const TCHAR* LauncherAsset = Definition.PresentationProfile == TEXT("AntiShipMissileModule")
+            ? TEXT("/Game/Presentation/Missiles/AntiShipModule/SM_Source.SM_Source")
+            : (Definition.Tier >= 3
+                ? TEXT("/Game/Presentation/WeaponsFull/missile_pod_mm48/SM_Source.SM_Source")
+                : TEXT("/Game/Presentation/WeaponsFull/missile_pod_mm24/SM_Source.SM_Source"));
+        if (UStaticMesh* LauncherMesh = LoadObject<UStaticMesh>(nullptr, LauncherAsset, nullptr, LOAD_NoWarn))
+        {
+            const FBoxSphereBounds MeshBounds = LauncherMesh->GetBounds();
+            const double Span = FMath::Max(1.0, 2.0 * MeshBounds.BoxExtent.GetMax());
+            const double Scale = (Length * 0.80) / Span;
+            auto* Flip = MakePivot(this);
+            Flip->SetRelativeLocation(FVector(0, 0, Side * MeshBounds.BoxExtent.Z * Scale));
+            Flip->SetRelativeRotation(FRotator(0, 180.f, State.bBottom ? 180.f : 0.f));
+            YawPivot = MakePivot(this);
+            PitchPivot = MakePivot(YawPivot);
+            Barrel = MakeMesh(Flip, LauncherAsset, -MeshBounds.Origin * Scale, FVector(Scale), FRotator::ZeroRotator, false);
+            if (Barrel && Barrel->GetMaterial(0))
+                Barrel->SetMaterial(0, UMaterialInstanceDynamic::Create(Barrel->GetMaterial(0), Barrel));
+            Flash = MakeMesh(PitchPivot, TEXT("/Engine/BasicShapes/Sphere.Sphere"), FVector(Length, 0, 0), FVector(Length * 0.80 * .20 / 100.f));
+            if (Base && Flash)
+            {
+                auto* FlashMaterial = UMaterialInstanceDynamic::Create(Base, Flash);
+                FlashMaterial->SetVectorParameterValue(TEXT("Color"), FLinearColor(1.f, .66f, .08f));
+                Flash->SetMaterial(0, FlashMaterial);
+            }
+            if (Flash) Flash->SetVisibility(false);
+            return;
+        }
+    }
+    // Fixed plinth remains level with the hull surface. Only the trunnion and barrel elevate.
+    const float VisLen = Length * 0.80f;
+    MakeMesh(this, TEXT("/Engine/BasicShapes/Cylinder.Cylinder"), FVector(0, 0, -Side * VisLen * .03f),
+        FVector(VisLen * .40, VisLen * .40, VisLen * .06) / 100.f);
     YawPivot = MakePivot(this);
-    MakeMesh(YawPivot, TEXT("/Engine/BasicShapes/Cube.Cube"), FVector(-Length * .1, 0, -Side * Length * .08),
-        FVector(Length * .5, Length * .52, Length * .28) / 100.f);
+    MakeMesh(YawPivot, TEXT("/Engine/BasicShapes/Cube.Cube"), FVector(-VisLen * .05, 0, 0),
+        FVector(VisLen * .35, VisLen * .32, VisLen * .16) / 100.f);
     PitchPivot = MakePivot(YawPivot);
-    Barrel = MakeMesh(PitchPivot, TEXT("/Engine/BasicShapes/Cube.Cube"), FVector(Length * .5, 0, 0),
-        FVector(Length, Length * (Definition.Type == EOVWeaponType::Beam ? .24 : .13), Length * .13) / 100.f);
+    Barrel = MakeMesh(PitchPivot, TEXT("/Engine/BasicShapes/Cube.Cube"), FVector(VisLen * .5, 0, 0),
+        FVector(VisLen, VisLen * (Definition.Type == EOVWeaponType::Beam ? .18 : .10), VisLen * .10) / 100.f);
     // The visible outlet coincides exactly with the shared gameplay muzzle.
-    MakeMesh(PitchPivot, TEXT("/Engine/BasicShapes/Cylinder.Cylinder"), FVector(Length, 0, 0),
-        FVector(Length * .22, Length * .22, Length * .07) / 100.f, FRotator(90, 0, 0));
-    Flash = MakeMesh(PitchPivot, TEXT("/Engine/BasicShapes/Sphere.Sphere"), FVector(Length, 0, 0), FVector(Length * .30 / 100.f));
+    MakeMesh(PitchPivot, TEXT("/Engine/BasicShapes/Cylinder.Cylinder"), FVector(VisLen, 0, 0),
+        FVector(VisLen * .16, VisLen * .16, VisLen * .05) / 100.f, FRotator(90, 0, 0));
+    Flash = MakeMesh(PitchPivot, TEXT("/Engine/BasicShapes/Sphere.Sphere"), FVector(Length, 0, 0), FVector(VisLen * .20 / 100.f));
+
     if (Base)
     {
         UMaterialInstanceDynamic* FlashMaterial = UMaterialInstanceDynamic::Create(Base, Flash);
@@ -420,10 +466,19 @@ void UOVWeaponVisualComponent::Synchronize(FRotator LogicalAim, bool bFixedVLS, 
     if (Flash) Flash->SetVisibility(State.bFlashVisible&&(!bTwin||BarrelIndex==0));
     if (SecondFlash) SecondFlash->SetVisibility(State.bFlashVisible&&bTwin&&BarrelIndex==1);
     if (Barrel) Barrel->SetVisibility(!bDestroyed);
-    if (BodyMaterial && (!bColorInitialized || bLastDestroyed != bDestroyed || bLastFriendly != bFriendly))
+    if (!bColorInitialized || bLastDestroyed != bDestroyed || bLastFriendly != bFriendly)
     {
-        BodyMaterial->SetVectorParameterValue(TEXT("Color"), bDestroyed ? FLinearColor(.15f, .12f, .12f)
-            : bFriendly ? FLinearColor(.42f, .74f, .91f) : FLinearColor(.92f, .43f, .28f));
+        if (BodyMaterial)
+        {
+            BodyMaterial->SetVectorParameterValue(TEXT("Color"), bDestroyed ? FLinearColor(.15f, .12f, .12f)
+                : bFriendly ? FLinearColor(.62f, .74f, .86f) : FLinearColor(.86f, .58f, .52f));
+        }
+        const FLinearColor FactionTint = bDestroyed ? FLinearColor(.25f, .22f, .22f)
+            : bFriendly ? FLinearColor(.86f, .92f, 1.f) : FLinearColor(1.f, .78f, .74f);
+        for (USceneComponent* Comp : Parts)
+            if (auto* MeshComp = Cast<UStaticMeshComponent>(Comp); MeshComp && MeshComp != Flash && MeshComp != SecondFlash)
+                if (auto* DynMat = Cast<UMaterialInstanceDynamic>(MeshComp->GetMaterial(0)))
+                    DynMat->SetVectorParameterValue(TEXT("FactionTint"), FactionTint);
         bColorInitialized = true; bLastDestroyed = bDestroyed; bLastFriendly = bFriendly;
     }
 }

@@ -104,6 +104,7 @@ void AOVHUD::DrawPlayHUD()
  Button(TEXT("Speed2"),TEXT("2배"),468,18,52,PC->SimulationSpeed==2);
  Button(TEXT("Speed3"),TEXT("3배"),526,18,52,PC->SimulationSpeed==3);
  Button(TEXT("Overview"),TEXT("전체 보기"),596,18,100);
+ Button(TEXT("StarMapToggle"),TEXT("은하 지도"),W-396,18,88,bStarMapOpen);
  Button(TEXT("BattleFeedToggle"),TEXT("전투 알림"),W-300,18,90,bBattleFeedOpen);
  Button(TEXT("HeroPanel"),TEXT("영웅"),W-202,18,82,bHeroPanelOpen);
  Button(TEXT("Developer"),TEXT("개발 도구"),W-112,18,96,PC->bDeveloperMode);
@@ -117,7 +118,7 @@ void AOVHUD::DrawPlayHUD()
  }
  if(FPlatformTime::Seconds()<NoticeExpires)DrawText(NoticeText,PlayInk,716,26,GEngine->GetSmallFont());
  if(bSceneMenuOpen) {
-  DrawRect(PlayPanel,216,63,426,139);
+  DrawRect(PlayPanel,216,63,426,188);
   Button(TEXT("CombatRange"),TEXT("기본 전투"),226,72,126);
   Button(TEXT("CalibrationRange"),TEXT("함대 교전"),362,72,126);
   Button(TEXT("Phase2C"),TEXT("모함 · 운송"),498,72,132);
@@ -126,6 +127,37 @@ void AOVHUD::DrawPlayHUD()
   Button(TEXT("MissionFleetOnly"),TEXT("함대만 비교"),498,108,132);
   Button(TEXT("RestartScene"),TEXT("현재 장면 재시작"),226,148,190);
   Button(TEXT("SceneMenuClose"),TEXT("닫기"),498,148,132,true);
+  Button(TEXT("Env_None"),TEXT("환경: 없음"),226,184,76,PC->ActiveEnvironment==EOVSpaceEnvironmentType::None);
+  Button(TEXT("Env_AsteroidField"),TEXT("운석지대"),306,184,78,PC->ActiveEnvironment==EOVSpaceEnvironmentType::AsteroidField);
+  Button(TEXT("Env_RadiationZone"),TEXT("방사능"),388,184,74,PC->ActiveEnvironment==EOVSpaceEnvironmentType::RadiationZone);
+  Button(TEXT("Env_SolarFlare"),TEXT("태양플레어"),466,184,84,PC->ActiveEnvironment==EOVSpaceEnvironmentType::SolarFlare);
+  Button(TEXT("Env_BlackHole"),TEXT("블랙홀"),554,184,76,PC->ActiveEnvironment==EOVSpaceEnvironmentType::BlackHole);
+  Button(TEXT("StarMapToggle"),TEXT("은하 지도 캠페인 열기 (M)"),226,216,404,bStarMapOpen);
+ } else if(!bStarMapOpen && PC->ActiveEnvironment!=EOVSpaceEnvironmentType::None) {
+  const float BX=W*0.5f-220.f,BY=60.f;
+  DrawRect(FLinearColor(0.02f,0.05f,0.09f,0.92f),BX,BY,440,24);
+  FString EnvStatus=FString::Printf(TEXT("우주 환경: %s"),*AOVController::GetEnvironmentDisplayName(PC->ActiveEnvironment));
+  FLinearColor EnvColor=PlayAccent;
+  if(PC->ActiveEnvironment==EOVSpaceEnvironmentType::SolarFlare) {
+   if(PC->SolarFlareCycleTime>=9.f && PC->SolarFlareCycleTime<13.f) {
+    EnvStatus=FString::Printf(TEXT("⚠ 태양 플레어 예고 (%.1fs) · 방향 +X→-X · 대형 운석 후방 엄폐 권고"),13.f-PC->SolarFlareCycleTime);
+    EnvColor=FLinearColor(1.f,0.75f,0.2f);
+   } else if(PC->SolarFlareCycleTime>=13.f && PC->SolarFlareCycleTime<16.f) {
+    EnvStatus=TEXT("⚡ 태양 플레어 파동 통과 중 · 비엄폐 쉴드 부하 및 레이더 교란");
+    EnvColor=FLinearColor(1.f,0.38f,0.2f);
+   } else {
+    EnvStatus=FString::Printf(TEXT("태양 플레어 주기 감시 중 (다음 경보까지 %.1fs)"),FMath::Max(0.f,9.f-PC->SolarFlareCycleTime));
+   }
+  } else if(PC->ActiveEnvironment==EOVSpaceEnvironmentType::AsteroidField) {
+   EnvStatus=TEXT("운석지대 · 직사/투사체 물리 차폐 및 항로 우회 활성");
+  } else if(PC->ActiveEnvironment==EOVSpaceEnvironmentType::RadiationZone) {
+   EnvStatus=TEXT("우주 방사능 지대 · 구역 내 지속 방사능 하중 (활성 쉴드 우선 흡수)");
+   EnvColor=FLinearColor(0.4f,1.f,0.75f);
+  } else if(PC->ActiveEnvironment==EOVSpaceEnvironmentType::BlackHole) {
+   EnvStatus=TEXT("소규모 블랙홀 · 중력권 내 추진·선회·이탈 속도 부담 활성");
+   EnvColor=FLinearColor(0.95f,0.72f,1.f);
+  }
+  DrawText(EnvStatus,EnvColor,BX+10,BY+4,GEngine->GetSmallFont());
  }
  const int32 PageSize=FMath::Max(2,FMath::FloorToInt((H-360)/58));
  const int32 PageCount=FMath::Max(1,FMath::DivideAndRoundUp(PC->Ships.Num(),PageSize));
@@ -288,19 +320,28 @@ void AOVHUD::DrawWorldIndicators()
  auto Project=[&](FVector V,FVector2D& P) { if(!PC->ProjectWorldLocationToScreen(V,P)||IsOverPanel(P.X,P.Y))return false; P/=UIScale; return true; };
  for(int32 I=0;I<PC->Ships.Num();++I) {
   AOVShip* Ship=PC->Ships[I]; if(PC->Combat&&PC->Combat->bEnabled&&PC->Combat->IsDeparted(Ship))continue;
+  if(PC->IsShipVanished(Ship))continue;
   FVector2D P; if(!Project(Ship->GetActorLocation(),P))continue;
   const bool Selected=PC->Selection.Contains(Ship),Target=PC->Selected&&PC->Selected->AttackTarget==Ship;
   FLinearColor Color=Ship->bFriendly?PlayAccent:FLinearColor(1,.3f,.16f);
-  if(Ship->Systems->bWrecked)Color=FLinearColor::Gray;
+  float ThroeRemaining=0.f;
+  const bool bInThroe=PC->IsShipInDeathThroe(Ship,ThroeRemaining);
+  if(Ship->Systems->bWrecked)Color=bInThroe?FLinearColor(1.f,0.45f,0.2f):FLinearColor::Gray;
   FVector2D Edge;
   const float Extent=Ship->Systems->Layout?(Ship->Systems->Layout->LocalHalfExtent*Ship->GetActorScale3D()).Size():200;
   float Radius=Selected?22:16;
   if(PC->ProjectWorldLocationToScreen(Ship->GetActorLocation()+PC->PlayerCameraManager->GetCameraRotation().RotateVector(FVector::RightVector)*Extent,Edge)) Radius=FMath::Clamp(float((Edge/UIScale-P).Size()),Radius,110.f);
   const FVector2D Label(FMath::Clamp(P.X+Radius+7,208.,Canvas->SizeX/UIScale-200.),FMath::Clamp(P.Y-Radius-20,100.,Canvas->SizeY/UIScale-155.));
-  DrawLine(P.X-Radius,P.Y-Radius,P.X-Radius,P.Y+Radius,Color,Selected?3:1);
-  DrawLine(P.X+Radius,P.Y-Radius,P.X+Radius,P.Y+Radius,Color,Selected?3:1);
-  DrawLine(P.X-Radius,P.Y-Radius,P.X+Radius,P.Y-Radius,Color,Selected?3:1);
-  if(Selected||Target||PC->CameraDistance<45000) {
+  if(bInThroe) {
+   DrawLine(P.X-10,P.Y-10,P.X+10,P.Y+10,FLinearColor(1.f,0.45f,0.2f),2.2f);
+   DrawLine(P.X+10,P.Y-10,P.X-10,P.Y+10,FLinearColor(1.f,0.45f,0.2f),2.2f);
+  }
+  if(PC->bShowDebugOutlines) {
+   DrawLine(P.X-Radius,P.Y-Radius,P.X-Radius,P.Y+Radius,Color,Selected?3:1);
+   DrawLine(P.X+Radius,P.Y-Radius,P.X+Radius,P.Y+Radius,Color,Selected?3:1);
+   DrawLine(P.X-Radius,P.Y-Radius,P.X+Radius,P.Y-Radius,Color,Selected?3:1);
+  }
+  if(Selected||Target||bInThroe||PC->CameraDistance<45000) {
    const FString Name=(Target?TEXT("공격 ▶ "):Selected?TEXT("선택 ▶ "):TEXT(""))+Ship->ShipName;
    DrawText(FitCommandLabel(this,GEngine->GetSmallFont(),Name,180),Color,Label.X,Label.Y,GEngine->GetSmallFont());
   }
@@ -308,7 +349,8 @@ void AOVHUD::DrawWorldIndicators()
   DrawRect(FLinearColor(.06f,.08f,.12f),Label.X,Label.Y+17,86,8);
   DrawRect(Color,Label.X,Label.Y+17,86*Hull,3);
   DrawRect(FLinearColor(.25f,.4f,1),Label.X,Label.Y+22,86*Ship->Systems->Shield/FMath::Max(1.f,Ship->Systems->MaxShield),3);
-  if(Selected||Target)DrawText(FString::Printf(TEXT("고도 %.0fm"),Ship->GetActorLocation().Z/100),PlayInk,Label.X,Label.Y+29,GEngine->GetSmallFont());
+  if(bInThroe)DrawText(FString::Printf(TEXT("★ 침몰 붕괴 (%.1fs)"),ThroeRemaining),FLinearColor(1.f,0.45f,0.2f),Label.X,Label.Y+29,GEngine->GetSmallFont());
+  else if(Selected||Target)DrawText(FString::Printf(TEXT("고도 %.0fm"),Ship->GetActorLocation().Z/100),PlayInk,Label.X,Label.Y+29,GEngine->GetSmallFont());
   const FName Marker(*FString::Printf(TEXT("WorldPick_%d"),I));
   AddHitBox((P-FVector2D(Radius+6,Radius+6))*UIScale,FVector2D(2*Radius+12,2*Radius+12)*UIScale,Marker,true,5);
   ActionCenters.Add(Marker,P);
@@ -323,4 +365,98 @@ void AOVHUD::DrawWorldIndicators()
   ShownImpacts.Add(E.HitShipId);
   FVector2D P;if(Project(E.Position,P))DrawText(E.HullDamage>0?TEXT("선체 명중"):TEXT("쉴드 / 장갑 명중"),FLinearColor(1,.8f,.2f),P.X,P.Y-45,GEngine->GetSmallFont());
  }
+}
+
+bool AOVHUD::IsOverStarMapPanel(float X,float Y) const
+{
+ const auto* PC=Cast<AOVController>(PlayerOwner);
+ if(!PC||PC->bDeveloperMode||!bStarMapOpen) return false;
+ const FVector2D P(X/UIScale,Y/UIScale);
+ const float W=ViewportPixels.X/UIScale,H=ViewportPixels.Y/UIScale;
+ const float MX=216.f,MY=68.f,MW=FMath::Max(680.f,W-432.f),MH=FMath::Max(410.f,H-296.f);
+ return P.X>=MX&&P.X<=MX+MW&&P.Y>=MY&&P.Y<=MY+MH;
+}
+
+void AOVHUD::DrawStarMap()
+{
+ auto* PC=Cast<AOVController>(PlayerOwner);
+ if(!PC||PC->bDeveloperMode||!bStarMapOpen||PC->StarSystems.IsEmpty()) return;
+ const float W=Canvas->SizeX/UIScale,H=Canvas->SizeY/UIScale;
+ const float MX=216.f,MY=68.f,MW=FMath::Max(680.f,W-432.f),MH=FMath::Max(410.f,H-296.f);
+ DrawRect(FLinearColor(0.006f,0.016f,0.032f,0.97f),MX,MY,MW,MH);
+ AddHitBox(FVector2D(MX,MY)*UIScale,FVector2D(MW,MH)*UIScale,TEXT("StarMapBackground"),true,150);
+ DrawText(TEXT("은하 지도 · 성계 캠페인 및 우주 환경"),PlayAccent,MX+14,MY+10,GEngine->GetMediumFont());
+ DrawText(FString::Printf(TEXT("보유 자원 · 일반 %d  |  고급 %d  |  최고급 %d"),PC->ResourceCommon,PC->ResourceAdvanced,PC->ResourceSupreme),
+  FLinearColor(0.65f,0.95f,0.85f),MX+280,MY+12,GEngine->GetSmallFont());
+ Button(TEXT("StarMapClose"),TEXT("닫기 X"),MX+MW-78,MY+6,68,true);
+ const float MapX=MX+12.f,MapY=MY+40.f,MapW=MW*0.56f,MapH=MH-52.f;
+ DrawRect(FLinearColor(0.01f,0.025f,0.05f,0.96f),MapX,MapY,MapW,MapH);
+ auto SysScreenPos=[&](const FOVStarSystemNode& Node) -> FVector2D {
+  return FVector2D(MapX+28.f+Node.MapNormalizedPos.X*(MapW-96.f),MapY+24.f+Node.MapNormalizedPos.Y*(MapH-56.f));
+ };
+ // Draw hyperlanes
+ for(const FOVStarSystemNode& Node:PC->StarSystems) {
+  const FVector2D P1=SysScreenPos(Node);
+  for(const FName& LinkId:Node.Links) {
+   const FOVStarSystemNode* Target=PC->StarSystems.FindByPredicate([LinkId](const FOVStarSystemNode& N){return N.SystemId==LinkId;});
+   if(!Target || Node.SystemId.LexicalLess(Target->SystemId)) continue;
+   const FVector2D P2=SysScreenPos(*Target);
+   const bool bConnectedToCurrent=(Node.SystemId==PC->CurrentStarSystemId || Target->SystemId==PC->CurrentStarSystemId);
+   DrawLine(P1.X,P1.Y,P2.X,P2.Y,bConnectedToCurrent?FLinearColor(0.25f,0.78f,1.f,0.85f):FLinearColor(0.18f,0.32f,0.48f,0.6f),bConnectedToCurrent?2.2f:1.2f);
+  }
+ }
+ if(SelectedStarSystemId.IsNone()) SelectedStarSystemId=PC->CurrentStarSystemId;
+ // Draw star system nodes
+ for(const FOVStarSystemNode& Node:PC->StarSystems) {
+  const FVector2D P=SysScreenPos(Node);
+  const bool bIsSelected=(Node.SystemId==SelectedStarSystemId);
+  const bool bIsCurrent=(Node.SystemId==PC->CurrentStarSystemId);
+  const FLinearColor FactionCol=Node.OwnerFaction==TEXT("player")?FLinearColor(0.2f,0.88f,1.f):
+   (Node.OwnerFaction==TEXT("enemy")?FLinearColor(1.f,0.35f,0.28f):FLinearColor(0.95f,0.82f,0.35f));
+  if(bIsCurrent) DrawRect(FLinearColor(0.2f,0.9f,1.f,0.25f),P.X-44,P.Y-18,88,36);
+  Button(FName(*FString::Printf(TEXT("StarSystem_Select_%s"),*Node.SystemId.ToString())),
+   Node.DisplayName.Left(7),P.X-40,P.Y-14,80,bIsSelected);
+  DrawRect(FactionCol,P.X-40,P.Y-14,4,27);
+  const TCHAR* EnvTag=Node.Environment==EOVSpaceEnvironmentType::AsteroidField?TEXT("[운석]"):
+   Node.Environment==EOVSpaceEnvironmentType::RadiationZone?TEXT("[방사능]"):
+   Node.Environment==EOVSpaceEnvironmentType::SolarFlare?TEXT("[플레어]"):
+   Node.Environment==EOVSpaceEnvironmentType::BlackHole?TEXT("[블랙홀]"):TEXT("[안정]");
+  DrawText(FString::Printf(TEXT("%s%s"),bIsCurrent?TEXT("★현재 "):TEXT(""),EnvTag),FactionCol,P.X-36,P.Y+14,GEngine->GetSmallFont());
+ }
+ // Right Inspector Panel
+ const float IX=MapX+MapW+12.f,IY=MapY,IW=MW-MapW-36.f,IH=MapH;
+ DrawRect(FLinearColor(0.012f,0.028f,0.052f,0.96f),IX,IY,IW,IH);
+ const FOVStarSystemNode* Sel=PC->StarSystems.FindByPredicate([this](const FOVStarSystemNode& N){return N.SystemId==SelectedStarSystemId;});
+ if(!Sel) Sel=&PC->StarSystems[0];
+ const FLinearColor OwnerColor=Sel->OwnerFaction==TEXT("player")?PlayAccent:(Sel->OwnerFaction==TEXT("enemy")?FLinearColor(1.f,0.4f,0.3f):FLinearColor(1.f,0.85f,0.35f));
+ const FString OwnerLabel=Sel->OwnerFaction==TEXT("player")?TEXT("선봉 함대 (아군 통제)"):
+  (Sel->OwnerFaction==TEXT("enemy")?FString::Printf(TEXT("적 통제 (%s)"),*Sel->EnemyFactionName):TEXT("중립 성계 (개척 가능)"));
+ DrawText(Sel->DisplayName,PlayAccent,IX+12,IY+10,GEngine->GetMediumFont());
+ DrawText(FString::Printf(TEXT("통제 세력: %s  ·  위험도 %d단계"),*OwnerLabel,Sel->DangerLevel),OwnerColor,IX+12,IY+36,GEngine->GetSmallFont());
+ DrawText(FString::Printf(TEXT("우주 환경: %s"),*AOVController::GetEnvironmentDisplayName(Sel->Environment)),FLinearColor(0.5f,0.95f,1.f),IX+12,IY+58,GEngine->GetSmallFont());
+ const TCHAR* EnvDesc=Sel->Environment==EOVSpaceEnvironmentType::AsteroidField?TEXT("• 3D 운석이 직사/투사체를 물리 차폐하고 항로 폭을 제한"):
+  Sel->Environment==EOVSpaceEnvironmentType::RadiationZone?TEXT("• 경계 구역 내 지속 방사능 하중 (활성 쉴드가 우선 흡수)"):
+  Sel->Environment==EOVSpaceEnvironmentType::SolarFlare?TEXT("• 예고→파동 통과 주기 사건 · 비엄폐 시 쉴드 부하 및 레이더 교란"):
+  Sel->Environment==EOVSpaceEnvironmentType::BlackHole?TEXT("• 중력권 내부 추진·선회·이탈 속도 부담 (위치 유지/FTL 보존)"):
+  TEXT("• 환경 제약 없는 표준 우주 전장");
+ DrawText(EnvDesc,PlayInk,IX+12,IY+78,GEngine->GetSmallFont());
+ DrawText(FString::Printf(TEXT("자원 산출 (주기당): 일반 +%d  ·  고급 +%d  ·  최고급 +%d"),Sel->CommonYield,Sel->AdvancedYield,Sel->SupremeYield),
+  FLinearColor(0.7f,0.95f,0.8f),IX+12,IY+102,GEngine->GetSmallFont());
+ DrawText(FString::Printf(TEXT("설치 기지: %s %s"),*AOVController::GetOutpostDisplayName(Sel->Outpost),
+  Sel->OutpostMaxHP>0?*FString::Printf(TEXT("(내구 %d/%d)"),Sel->OutpostHP,Sel->OutpostMaxHP):TEXT("")),PlayInk,IX+12,IY+124,GEngine->GetSmallFont());
+ const FString IdStr=Sel->SystemId.ToString();
+ const float BtnW=(IW-30.f)*0.5f;
+ Button(FName(*FString::Printf(TEXT("StarSystem_Enter_%s"),*IdStr)),TEXT("전장 전환 (성계 진입)"),IX+12,IY+154,BtnW,Sel->SystemId==PC->CurrentStarSystemId);
+ Button(FName(*FString::Printf(TEXT("StarSystem_FTL_%s"),*IdStr)),TEXT("함대 FTL 도약 파견"),IX+18+BtnW,IY+154,BtnW);
+ DrawText(TEXT("전초기지 건설 / 업그레이드 (중립·아군 성계)"),PlayAccent,IX+12,IY+192,GEngine->GetSmallFont());
+ Button(FName(*FString::Printf(TEXT("StarSystem_BuildBasic_%s"),*IdStr)),TEXT("기본 기지 (80/20/0)"),IX+12,IY+214,IW-24,Sel->Outpost==EOVOutpostKind::Basic);
+ Button(FName(*FString::Printf(TEXT("StarSystem_BuildMine_%s"),*IdStr)),TEXT("자원 채굴 기지 (110/45/5 · 산출+45%)"),IX+12,IY+246,IW-24,Sel->Outpost==EOVOutpostKind::MiningHub);
+ Button(FName(*FString::Printf(TEXT("StarSystem_BuildCombat_%s"),*IdStr)),TEXT("전투 요새 기지 (140/65/12)"),IX+12,IY+278,IW-24,Sel->Outpost==EOVOutpostKind::CombatBase);
+ DrawText(TEXT("현재 전장 우주 환경 즉시 전환"),PlayAccent,IX+12,IY+316,GEngine->GetSmallFont());
+ const float EW=(IW-36.f)/5.f;
+ Button(TEXT("Env_None"),TEXT("안정"),IX+12,IY+336,EW,PC->ActiveEnvironment==EOVSpaceEnvironmentType::None);
+ Button(TEXT("Env_AsteroidField"),TEXT("운석"),IX+15+EW,IY+336,EW,PC->ActiveEnvironment==EOVSpaceEnvironmentType::AsteroidField);
+ Button(TEXT("Env_RadiationZone"),TEXT("방사능"),IX+18+EW*2,IY+336,EW,PC->ActiveEnvironment==EOVSpaceEnvironmentType::RadiationZone);
+ Button(TEXT("Env_SolarFlare"),TEXT("플레어"),IX+21+EW*3,IY+336,EW,PC->ActiveEnvironment==EOVSpaceEnvironmentType::SolarFlare);
+ Button(TEXT("Env_BlackHole"),TEXT("블랙홀"),IX+24+EW*4,IY+336,EW,PC->ActiveEnvironment==EOVSpaceEnvironmentType::BlackHole);
 }

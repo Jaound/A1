@@ -67,6 +67,16 @@ const FHull* FindHull(FName Key)
                 static const FHull Revised = [&Hull]() { FHull Result = Hull; Result.MountCount = 1; return Result; }();
                 return &Revised;
             }
+            if (Key == TEXT("missile_ship"))
+            {
+                static const FHull Revised = [&Hull]() {
+                    FHull Result = Hull;
+                    Result.Mounts[0].Weapon = 5;
+                    Result.Mounts[1].Weapon = 5;
+                    return Result;
+                }();
+                return &Revised;
+            }
             return &Hull;
         }
     return nullptr;
@@ -222,6 +232,8 @@ UShipLayoutDataAsset* MakeLayout(UObject* Outer, const FHull& Hull)
         Def.Tier = Mount.Tier;
         Def.ExplosionTierCoefficient = TierDamage[Mount.Tier - 1];
         Def.MaxHP = Weapon.HP * TierDamage[Mount.Tier - 1];
+        if (FName(Hull.Key) == TEXT("missile_ship"))
+            Def.PresentationProfile = TEXT("AntiShipMissileModule");
         const double X = FMath::Lerp(-.8, .8, (I + 1.0) / (Hull.MountCount + 1.0));
         Def.LocalPosition = FVector(X * Layout->LocalHalfExtent.X, 0,
             (Mount.bTop ? 1 : -1) * (Layout->HalfHeight + 12));

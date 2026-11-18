@@ -90,6 +90,29 @@ bool SegmentMount(FVector Start, FVector End, const FTransform& Transform, FVect
     Normal = Transform.TransformVectorNoScale(LocalNormal / Transform.GetScale3D()).GetSafeNormal();
     return true;
 }
+
+bool SegmentEllipsoid(FVector Start, FVector End, const FTransform& Transform,
+    FVector Radii, float& HitFraction, FVector& HitNormal)
+{
+    if (Radii.GetMin() <= 0) return false;
+    const FVector InvRadii(1.0 / Radii.X, 1.0 / Radii.Y, 1.0 / Radii.Z);
+    const FVector S = Transform.InverseTransformPosition(Start) * InvRadii;
+    const FVector E = Transform.InverseTransformPosition(End) * InvRadii;
+    const FVector D = E - S;
+    const double A = D.SizeSquared();
+    if (A < 1.e-9) return false;
+    const double B = FVector::DotProduct(S, D);
+    const double C = S.SizeSquared() - 1.0;
+    const double Discriminant = B * B - A * C;
+    if (Discriminant < 0) return false;
+    const double Entry = C <= 0 ? 0.0 : (-B - FMath::Sqrt(Discriminant)) / A;
+    if (Entry < 0.0 || Entry > 1.0) return false;
+    HitFraction = float(Entry);
+    FVector LocalNormal = (S + D * Entry).GetSafeNormal();
+    if (LocalNormal.IsNearlyZero()) LocalNormal = -D.GetSafeNormal();
+    HitNormal = Transform.TransformVectorNoScale(LocalNormal / Transform.GetScale3D()).GetSafeNormal();
+    return true;
+}
 }
 
 UOVCombatSettings::UOVCombatSettings()
@@ -155,7 +178,7 @@ void UOVCombatSubsystem::DisableCombat()
     for (const auto& State : Ships) if (IsValid(State.Ship)) State.Ship->ClearWeaponVisuals();
     bEnabled = false; GameTime = 0; Accumulator = 0;
     ShotCount = 0; HitCount = 0; Ships.Reset(); Attacks.Reset(); RecentEvents.Reset();
-    ResolvedAttackIds.Reset();
+    ResolvedAttackIds.Reset(); EnvironmentAsteroids.Reset(); EnvironmentRadarDisruptRemaining = 0.f;
 }
 
 int32 UOVCombatSubsystem::FindShip(AOVShip* Ship) const
@@ -316,6 +339,7 @@ FOVDetectionInfo UOVCombatSubsystem::GetDetection(AOVShip* Ship, AOVShip* Target
     { Best.bDetected = true; Best.Source = TEXT("DEV OMNISCIENT"); return Best; }
     if (FVector::Dist(Ship->GetActorLocation(), Target->GetActorLocation()) <= Settings->GuaranteedRange)
     { Best.bDetected = true; Best.Source = TEXT("GUARANTEED NEAR"); Best.SourceId = Ship->GetFName(); }
+    if (EnvironmentRadarDisruptRemaining > 0.f) return Best;
     for (const FOVCombatShipState& Observer : Ships)
     {
         AOVShip* Sensor = Observer.Ship;
@@ -446,6 +470,7 @@ void UOVCombatSubsystem::Simulate(float GameDelta)
 void UOVCombatSubsystem::Step(float Delta)
 {
     GameTime += Delta;
+    EnvironmentRadarDisruptRemaining = FMath::Max(0.f, EnvironmentRadarDisruptRemaining - Delta);
     for (FOVCombatShipState& State : Ships)
     {
         AOVShip* Ship = State.Ship;
@@ -581,7 +606,10 @@ void UOVCombatSubsystem::UpdateAim(FOVCombatShipState& State, FOVCombatMountStat
     Mount.bHadDetection = bDetected;
     // No hidden current position is read after loss. Return to authored standby through the same inertial turn.
     const FVector Local = Ship->GetActorQuat().UnrotateVector(Mount.LastTrackedWorldPoint - MountOrigin(State, *Def));
-    const FRotator Desired = bDetected || Mount.TrackingRemaining > 0 ? Local.Rotation() : Mount.Profile.StandbyAim;
+    const FVector LocalDir = Local.GetSafeNormal();
+    const double FaceDot = FVector::DotProduct(OVWeaponGeometry::SurfaceNormal(*Def), LocalDir);
+    const bool bInArc = FaceDot >= -FMath::Sin(FMath::DegreesToRadians(double(NeutralElevation)));
+    const FRotator Desired = (bDetected || Mount.TrackingRemaining > 0) && bInArc ? Local.Rotation() : Mount.Profile.StandbyAim;
     TurnAxis(Mount.LocalAim.Yaw, Mount.AngularVelocity.X, Desired.Yaw, Mount.Profile.TraverseSpeed, Mount.Profile.TraverseAcceleration, Delta);
     TurnAxis(Mount.LocalAim.Pitch, Mount.AngularVelocity.Y, Desired.Pitch, Mount.Profile.TraverseSpeed, Mount.Profile.TraverseAcceleration, Delta);
     Mount.LocalAim.Roll = 0;
@@ -598,6 +626,8 @@ void UOVCombatSubsystem::Launch(FOVCombatShipState& State, FOVCombatMountState& 
     Attack.FactionId = State.Ship->Systems->FactionId;
     Attack.LaunchTime = GameTime; Attack.TrackingLifetime = Settings->GuidedTrackingSeconds;
     Attack.WeaponId = Mount.MountId; Attack.Weapon = Mount.Profile;
+    Attack.bAntiShipMissile = (Def->PresentationProfile == TEXT("AntiShipMissileModule")
+        || (Def->Type == EOVWeaponType::Missile && Def->AuthoredSlotPurpose == TEXT("Dedicated")));
     Attack.InterceptHP = (Attack.Weapon.Kind == EOVAttackKind::Missile || Attack.Weapon.Kind == EOVAttackKind::GuidedMissile)
         ? FMath::Max(0.f, Attack.Weapon.ProjectileHP) : 0;
     Attack.Target = State.Ship->AttackTarget;
@@ -699,6 +729,29 @@ bool UOVCombatSubsystem::SweepAttack(FOVAttackState& Attack, FVector End)
             || Ship->Systems->bWrecked || State.bDeparted) continue;
         float Fraction; FVector Normal;
         const auto& Boxes=Ship->Systems->Layout->CombatHullBoxes;
+        if (Ship->Systems->bShieldActive && Ship->Systems->Shield > 0 && !Boxes.IsEmpty())
+        {
+            const FVector ShieldRadii = Ship->Systems->Layout->LocalHalfExtent * FVector(1.22f, 1.32f, 1.42f);
+            if (SegmentEllipsoid(Attack.Position, End, Ship->GetActorTransform(), ShieldRadii, Fraction, Normal)
+                && Fraction <= BestFraction)
+            {
+                Closest = Ship; BestFraction = Fraction; BestNormal = Normal; HitWeaponId = NAME_None;
+                const FVector RayDir = (End - Attack.Position).GetSafeNormal();
+                const FVector LookAheadEnd = Attack.Position + RayDir * FMath::Max(FVector::Dist(Attack.Position, End), TargetRadius(Ship) * 2.5f);
+                float BestMountFrac = 1.f;
+                for (const FOVWeaponMountDefinition& Mount : Ship->Systems->Layout->WeaponMounts)
+                {
+                    const FOVWeaponMountState* Health = Ship->Systems->WeaponMountStates.FindByPredicate(
+                        [&](const FOVWeaponMountState& H) { return H.WeaponMountId == Mount.WeaponId; });
+                    if (!Health || Health->HP <= 0) continue;
+                    float MountFrac; FVector MountNorm;
+                    if (SegmentMount(Attack.Position, LookAheadEnd, Ship->GetActorTransform(), Mount.LocalPosition,
+                        Settings->MountCollisionRadius, MountFrac, MountNorm) && MountFrac <= BestMountFrac)
+                    { BestMountFrac = MountFrac; HitWeaponId = Mount.WeaponId; }
+                }
+            }
+            continue;
+        }
         if (Boxes.IsEmpty())
         {
             if (SegmentBox(Attack.Position, End, Ship->GetActorTransform(), Ship->Systems->Layout->LocalHalfExtent, Fraction, Normal)
@@ -722,6 +775,25 @@ bool UOVCombatSubsystem::SweepAttack(FOVAttackState& Attack, FVector End)
                 Settings->MountCollisionRadius, Fraction, Normal) && Fraction <= BestFraction)
             { Closest = Ship; BestFraction = Fraction; BestNormal = Normal; HitWeaponId = Mount.WeaponId; }
         }
+    }
+    float BestAsteroidFraction = BestFraction;
+    bool bHitAsteroid = false;
+    for (const FVector4& Ast : EnvironmentAsteroids)
+    {
+        float AstFrac = 1.f; FVector AstNorm;
+        if (SegmentMount(Attack.Position, End, FTransform::Identity, FVector(Ast.X, Ast.Y, Ast.Z), float(Ast.W), AstFrac, AstNorm)
+            && AstFrac < BestAsteroidFraction)
+        {
+            BestAsteroidFraction = AstFrac;
+            bHitAsteroid = true;
+        }
+    }
+    if (bHitAsteroid)
+    {
+        Attack.Position = FMath::Lerp(Attack.Position, End, BestAsteroidFraction);
+        Attack.Result = EOVAttackResult::Miss;
+        Attack.ResolvedAt = GameTime;
+        return false;
     }
     if (!Closest) { Attack.Position = End; return false; }
     const FVector Point = FMath::Lerp(Attack.Position, End, BestFraction);

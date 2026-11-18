@@ -169,7 +169,7 @@ void UOVPointDefenseSubsystem::Step(float GameDelta)
         {
             if (Mount.HP <= 0 || (Mount.bLayoutMount && !Ship->Systems->IsWeaponAvailable(Mount.MountId))) continue;
             Mount.Cooldown = FMath::Max(0.f, Mount.Cooldown - GameDelta * Efficiency);
-            if (Mount.Cooldown > 1.e-5f || !FMath::IsFinite(Mount.Profile.Damage) || Mount.Profile.Damage <= 0
+            if (!FMath::IsFinite(Mount.Profile.Damage) || Mount.Profile.Damage <= 0
                 || !FMath::IsFinite(Mount.Profile.Interval) || Mount.Profile.Interval <= 0
                 || !FMath::IsFinite(Mount.Profile.Range) || Mount.Profile.Range <= 0) continue;
             const FVector Origin = Ship->GetActorTransform().TransformPosition(Mount.LocalPosition);
@@ -208,7 +208,19 @@ void UOVPointDefenseSubsystem::Step(float GameDelta)
                     || (Distance == BestDistance && Target.Id < Best->Id))))
                 { Best = &Target; BestRank = Rank; BestDistance = Distance; }
             }
-            if (!Best) continue;
+            if (!Best)
+            {
+                Mount.LocalAim = FMath::RInterpConstantTo(Mount.LocalAim, FRotator::ZeroRotator, GameDelta, 120.f);
+                Mount.LocalAim.Roll = 0;
+                continue;
+            }
+            if (Mount.Cooldown > 1.e-5f)
+            {
+                const FRotator DesiredAim = Ship->GetActorQuat().UnrotateVector(Best->Position - Origin).Rotation();
+                Mount.LocalAim = FMath::RInterpConstantTo(Mount.LocalAim, DesiredAim, GameDelta, 240.f);
+                Mount.LocalAim.Roll = 0;
+                continue;
+            }
             const FTarget Chosen = *Best;
             Mount.LocalAim = Ship->GetActorQuat().UnrotateVector(Chosen.Position - Origin).Rotation();
             FOVPDEvent Event;

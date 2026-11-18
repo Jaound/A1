@@ -1090,4 +1090,15 @@ bool FOVProtectionLifetimeTest::RunTest(const FString&)
  R.B->Systems->SetInteriorPresence(1,false,false,false);TestTrue(TEXT("No owner survivors restores neutral rule"),R.B->Systems->bNeutral);
  return true;
 }
+
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(FOVCombatBlindArcStandbyTest,"OrbitalVanguard.Combat.BlindArcPreventsHullPenetration",EAutomationTestFlags::EditorContext|EAutomationTestFlags::EngineFilter)
+bool FOVCombatBlindArcStandbyTest::RunTest(const FString&)
+{
+    OVCombatTest::FRange R;
+    R.B->SetActorLocation(FVector(1000, 0, -2000));
+    R.Combat->Simulate(1.f);
+    TestTrue(TEXT("Turret holds standby rather than depressing into hull"),
+        R.Gun().LocalAim.Pitch >= -0.1f);
+    return true;
+}
 #endif

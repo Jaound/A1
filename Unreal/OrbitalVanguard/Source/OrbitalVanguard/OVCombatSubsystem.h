@@ -182,6 +182,7 @@ struct ORBITALVANGUARD_API FOVAttackState
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly) float HullDamage = 0;
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly) int32 Explosions = 0;
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly) bool bShieldDepleted = false;
+    UPROPERTY(VisibleAnywhere, BlueprintReadOnly) bool bAntiShipMissile = false;
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly) int32 ArmorSectionsDestroyed = 0;
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly) int32 FacilitiesDestroyed = 0;
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly) int32 CriticalFacilitiesDestroyed = 0;
@@ -203,6 +204,8 @@ public:
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly) TArray<FOVCombatShipState> Ships;
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly) TArray<FOVAttackState> Attacks;
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly) TArray<FOVAttackState> RecentEvents;
+    UPROPERTY(VisibleAnywhere, BlueprintReadOnly) TArray<FVector4> EnvironmentAsteroids;
+    UPROPERTY(VisibleAnywhere, BlueprintReadOnly) float EnvironmentRadarDisruptRemaining = 0.f;
     UFUNCTION(BlueprintCallable) void EnableCombat(const TArray<AOVShip*>& InShips, int32 Seed = 260112);
     UFUNCTION(BlueprintCallable) void DisableCombat();
     UFUNCTION(BlueprintCallable) void RegisterShip(AOVShip* Ship, int32 RadarTier = 1, bool bRadarSupport = false, int32 WeaponTierCap = 0);

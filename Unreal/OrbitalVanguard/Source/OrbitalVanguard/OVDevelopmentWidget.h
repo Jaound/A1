@@ -129,6 +129,7 @@ private:
  void Reply(const FString& Message);
  void UpdateCardSelection();
  UFUNCTION() void ToggleAdvanced();
+ UFUNCTION() void ToggleDebugOutlines();
  UFUNCTION() void SideChanged(FString Item, ESelectInfo::Type Type);
  UFUNCTION() void PresetChanged(FString Item, ESelectInfo::Type Type);
  UFUNCTION() void LocateHero();

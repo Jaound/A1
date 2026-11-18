@@ -254,7 +254,7 @@ void AOVShip::ApplyPresentationHull(FName DefinitionId)
         const auto& Mount=Mounts[I];
         if(!Mount.LocalPosition.Equals(ExpectedPositions[I],.1))continue;
         const double Side=Mount.LocalPosition.Z>0?1:-1;
-        const double Length=OVWeaponGeometry::BarrelLength(Available,Mount.Tier,Mount.Type==EOVWeaponType::Interception);
+        const double Length=26.0;
         const double BaseInner=Mount.LocalPosition.Z-Side*Length*(.23+.09);
         const double Surface=SurfaceAtUnitScale[I]*Scale;
         const double Height=Side*(BaseInner-Surface);
@@ -315,7 +315,7 @@ void AOVShip::RefreshWeaponVisuals()
         bool bDestroyed, int32 ShotId, double ShotTime, double Clock, int32 ShotsFired, bool bCannon, bool bKineticPD, bool bBeamAttack)
     {
         FOVWeaponMountDefinition VisualDef = Def;
-        if (!bCannon && !bBeamAttack) VisualDef.PresentationProfile = NAME_None;
+        if (!bCannon && !bBeamAttack && Def.PresentationProfile != TEXT("AntiShipMissileModule")) VisualDef.PresentationProfile = NAME_None;
         if (bCannon) VisualDef.PresentationProfile=OVWeaponGeometry::CannonSourceTrialProfile(VisualDef);
         if (Def.Type==EOVWeaponType::Interception && OVWeaponGeometry::CIWSBTrialEnabled()) VisualDef.PresentationProfile=bKineticPD?TEXT("CIWS6Trial"):TEXT("CIWSBTrial");
         if (Def.Type==EOVWeaponType::Beam && bBeamAttack) VisualDef.PresentationProfile=OVWeaponGeometry::BeamSourceTrialProfile(VisualDef);
