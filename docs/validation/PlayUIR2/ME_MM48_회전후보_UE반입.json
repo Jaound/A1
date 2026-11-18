@@ -1,0 +1,38 @@
+{
+  "id": "missile_pod_mm48",
+  "passed": true,
+  "scope": "원본 재질을 참조하는 회전 후보 격리 반입 및 시험 LOD. 전장 미적용.",
+  "parts": [
+    {
+      "asset": "/Game/Presentation/WeaponsYawTrial/missile_pod_mm48/SM_Base",
+      "fbx_sha256": "5aadb698b74660eced166b4c98155790450e0735b6bd2bbca288ced0378bfd74",
+      "source_origin": [
+        -0.00042489171028137207,
+        -0.17936056852340698,
+        -0.5125000476837158
+      ],
+      "triangles": [
+        726962,
+        36348,
+        7270
+      ],
+      "source_material": "/Game/Presentation/WeaponsFull/missile_pod_mm48/M_Source.M_Source"
+    },
+    {
+      "asset": "/Game/Presentation/WeaponsYawTrial/missile_pod_mm48/SM_Yaw",
+      "fbx_sha256": "797b48a694e7a211f06ce76b52a88a68c6f9b8ff670bcb357b0248c5de48026b",
+      "source_origin": [
+        -0.00042489171028137207,
+        -0.17936056852340698,
+        -0.5125000476837158
+      ],
+      "triangles": [
+        2568132,
+        128406,
+        25682
+      ],
+      "source_material": "/Game/Presentation/WeaponsFull/missile_pod_mm48/M_Source.M_Source"
+    }
+  ],
+  "errors": []
+}

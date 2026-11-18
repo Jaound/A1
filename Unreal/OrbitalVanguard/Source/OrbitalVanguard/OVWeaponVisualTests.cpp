@@ -306,11 +306,12 @@ bool FOVCIWSBSourceTrialTest::RunTest(const FString&)
 {
     OVWeaponVisualTest::FRange R;
     R.A->SetActorRotation(FRotator(7,31,13));
+    for (const FName Profile : {FName(TEXT("CIWSBTrial")),FName(TEXT("CIWS6Trial"))})
     for (const FVector Normal : {FVector::UpVector,FVector::DownVector,FVector::RightVector,FVector::LeftVector})
     {
         FOVWeaponMountDefinition Def;Def.WeaponId=TEXT("CIWSBTrialTest");Def.Type=EOVWeaponType::Interception;
-        Def.LocalPosition=FVector(5,7,11);Def.LocalSurfaceNormal=Normal;Def.PresentationProfile=TEXT("CIWSBTrial");
-        if(!TestTrue(TEXT("All isolated trial assets exist"),OVWeaponGeometry::HasCIWSBTrial(Def)))return false;
+        Def.LocalPosition=FVector(5,7,11);Def.LocalSurfaceNormal=Normal;Def.PresentationProfile=Profile;
+        if(!TestTrue(TEXT("All isolated trial assets exist"),OVWeaponGeometry::HasSourcePDTrial(Def)))return false;
         auto* Visual=NewObject<UOVWeaponVisualComponent>(R.A);R.A->AddInstanceComponent(Visual);
         Visual->SetupAttachment(R.A->GetRootComponent());Visual->RegisterComponent();
         const FVector Extent(80,60,40);Visual->Initialize(Def,Extent);

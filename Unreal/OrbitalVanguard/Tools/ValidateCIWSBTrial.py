@@ -35,13 +35,17 @@ def finish_trial(dt):
             if not pc.start_calibration_range(1):
                 raise RuntimeError('시각 확인용 F6 장면 생성 실패')
             candidates = []
+            kinetic = []
             for ship in p(pc, 'ships'):
                 ship.refresh_weapon_visuals()
                 for component in ship.get_components_by_class(unreal.StaticMeshComponent):
                     mesh = component.get_editor_property('static_mesh')
                     if mesh and '/WeaponsPitchTrial/ciws_beam_b/SM_Barrel' in mesh.get_path_name():
                         candidates.append((ship, component))
+                    if mesh and '/WeaponsPitchTrial/ciws_gatling_6/SM_Barrel' in mesh.get_path_name():
+                        kinetic.append((ship, component))
             check('CIWSB-SOURCE-BARREL-LIVE', bool(candidates), len(candidates))
+            check('CIWS6-SOURCE-BARREL-LIVE', bool(kinetic), len(kinetic))
             ship, barrel = candidates[0]
             pc.select_ship(ship)
             pc.set_editor_property('camera_focus', ship.get_actor_location())
@@ -60,7 +64,7 @@ def finish_trial(dt):
             return
         if trial['phase'] == 'capture' and time.monotonic() - trial['at'] > 2:
             check('CIWSB-RENDER-CAPTURED', os.path.isfile(trial['png']), trial['png'])
-            report['scope'] += '; CIWS-B 원본 기반 포신 및 시험 연결부 표시, 물리 입력 아님'
+            report['scope'] += '; 빔/실탄 원본 기반 포신 및 시험 연결부 표시, 물리 입력 아님'
             report['capture'] = trial['png']
             save()
             unreal.unregister_slate_post_tick_callback(trial['handle'])

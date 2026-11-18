@@ -6,7 +6,7 @@
 #include "HAL/IConsoleManager.h"
 
 static TAutoConsoleVariable<int32> CVarCIWSBTrial(TEXT("ov.Presentation.CIWSBTrial"), 0,
-    TEXT("Opt-in isolated CIWS-B articulation trial; not final artwork."));
+    TEXT("Opt-in isolated source point-defense articulation trials; not final artwork."));
 
 namespace OVWeaponGeometry
 {
@@ -50,13 +50,27 @@ bool HasCIWSBTrial(const FOVWeaponMountDefinition& Definition)
     if (!Neck.IsValid()) Neck=LoadObject<UStaticMesh>(nullptr,TEXT("/Game/Presentation/WeaponsPitchTrial/ciws_beam_b/SM_TrialNeck.SM_TrialNeck"),nullptr,LOAD_NoWarn);
     return Base.IsValid() && Body.IsValid() && Barrel.IsValid() && Neck.IsValid();
 }
+bool HasCIWS6Trial(const FOVWeaponMountDefinition& Definition)
+{
+    if (Definition.Type != EOVWeaponType::Interception || Definition.PresentationProfile != TEXT("CIWS6Trial")) return false;
+    static TWeakObjectPtr<UStaticMesh> Base, Body, Barrel, Neck;
+    if (!Base.IsValid()) Base=LoadObject<UStaticMesh>(nullptr,TEXT("/Game/Presentation/WeaponsYawTrial/ciws_gatling_6/SM_Base.SM_Base"),nullptr,LOAD_NoWarn);
+    if (!Body.IsValid()) Body=LoadObject<UStaticMesh>(nullptr,TEXT("/Game/Presentation/WeaponsPitchTrial/ciws_gatling_6/SM_Body.SM_Body"),nullptr,LOAD_NoWarn);
+    if (!Barrel.IsValid()) Barrel=LoadObject<UStaticMesh>(nullptr,TEXT("/Game/Presentation/WeaponsPitchTrial/ciws_gatling_6/SM_Barrel.SM_Barrel"),nullptr,LOAD_NoWarn);
+    if (!Neck.IsValid()) Neck=LoadObject<UStaticMesh>(nullptr,TEXT("/Game/Presentation/WeaponsPitchTrial/ciws_gatling_6/SM_TrialNeck.SM_TrialNeck"),nullptr,LOAD_NoWarn);
+    return Base.IsValid() && Body.IsValid() && Barrel.IsValid() && Neck.IsValid();
+}
+bool HasSourcePDTrial(const FOVWeaponMountDefinition& Definition)
+{
+    return HasCIWSBTrial(Definition)||HasCIWS6Trial(Definition);
+}
 
 FVector MuzzleLocal(const FOVWeaponMountDefinition& Definition, FRotator Aim,
     FVector HullHalfExtent, bool bFixedVLS, int32 BarrelIndex)
 {
     const float Length=BarrelLength(HullHalfExtent,Definition.Tier,Definition.Type==EOVWeaponType::Interception);
     if (bFixedVLS) return Definition.LocalPosition + SurfaceNormal(Definition)*Length;
-    if (HasCIWSBTrial(Definition))
+    if (HasSourcePDTrial(Definition))
     {
         // Isolated source-derived centimetres. The outlet is a candidate, not approved final art.
         const FVector Normal=SurfaceNormal(Definition);
@@ -66,9 +80,11 @@ FVector MuzzleLocal(const FOVWeaponMountDefinition& Definition, FRotator Aim,
         const FQuat Flip=FRotator(0,0,bBottom?180.f:0.f).Quaternion();
         const FQuat Yaw=FRotator(0,bBottom?180.f-LocalAim.Yaw:180.f+LocalAim.Yaw,0).Quaternion();
         const FQuat Pitch=FRotator(bBottom?LocalAim.Pitch:-LocalAim.Pitch,0,0).Quaternion();
-        const double Scale=Length/164.4709;
-        const FVector Lift(0,0,(bBottom?-1.f:1.f)*56.99999*Scale);
-        const FVector Pivot(-70.92006,-.03419,53.0000), Tip(-93.55087,0,.96070);
+        const bool bKinetic=HasCIWS6Trial(Definition);
+        const double Scale=Length/(bKinetic?161.01693:164.4709);
+        const FVector Lift(0,0,(bBottom?-1.f:1.f)*(bKinetic?62.999996:56.99999)*Scale);
+        const FVector Pivot=bKinetic?FVector(-66.83440,-.07568,47.0):FVector(-70.92006,-.03419,53.0);
+        const FVector Tip=bKinetic?FVector(-94.18253,.04104,.67683):FVector(-93.55087,0,.96070);
         return Definition.LocalPosition+Surface.RotateVector(Lift+Flip.RotateVector(FVector(0,0,.1*Scale)+Yaw.RotateVector((Pivot+Pitch.RotateVector(Tip))*Scale)));
     }
     if (!HasBF120Trial(Definition)) return MuzzleLocal(Definition.LocalPosition,Aim,Length,false);
@@ -140,21 +156,23 @@ void UOVWeaponVisualComponent::Initialize(const FOVWeaponMountDefinition& InDefi
     UMaterialInterface* Base = LoadObject<UMaterialInterface>(nullptr, TEXT("/Engine/BasicShapes/BasicShapeMaterial.BasicShapeMaterial"));
     if (Base) BodyMaterial = UMaterialInstanceDynamic::Create(Base, this);
 
-    if (OVWeaponGeometry::HasCIWSBTrial(Definition))
+    if (OVWeaponGeometry::HasSourcePDTrial(Definition))
     {
         // Trial only: source base, body and barrel plus a clearly separate generated neck.
-        const double Scale=Length/164.4709;
-        const FVector Pivot(-70.92006,-.03419,53.0000), Tip(-93.55087,0,.96070);
+        const bool bKinetic=OVWeaponGeometry::HasCIWS6Trial(Definition);
+        const double Scale=Length/(bKinetic?161.01693:164.4709);
+        const FVector Pivot=bKinetic?FVector(-66.83440,-.07568,47.0):FVector(-70.92006,-.03419,53.0);
+        const FVector Tip=bKinetic?FVector(-94.18253,.04104,.67683):FVector(-93.55087,0,.96070);
         auto* Flip=MakePivot(this);
-        Flip->SetRelativeLocation(FVector(0,0,Side*56.99999*Scale));
+        Flip->SetRelativeLocation(FVector(0,0,Side*(bKinetic?62.999996:56.99999)*Scale));
         Flip->SetRelativeRotation(FRotator(0,0,State.bBottom?180.f:0.f));
-        MakeMesh(Flip,TEXT("/Game/Presentation/WeaponsYawTrial/ciws_beam_b/SM_Base.SM_Base"),FVector::ZeroVector,FVector(Scale),FRotator::ZeroRotator,false);
+        MakeMesh(Flip,bKinetic?TEXT("/Game/Presentation/WeaponsYawTrial/ciws_gatling_6/SM_Base.SM_Base"):TEXT("/Game/Presentation/WeaponsYawTrial/ciws_beam_b/SM_Base.SM_Base"),FVector::ZeroVector,FVector(Scale),FRotator::ZeroRotator,false);
         YawPivot=MakePivot(Flip);
         YawPivot->SetRelativeLocation(FVector(0,0,.1*Scale)); // 0.001 Blender-unit trial bearing clearance.
-        MakeMesh(YawPivot,TEXT("/Game/Presentation/WeaponsPitchTrial/ciws_beam_b/SM_Body.SM_Body"),FVector::ZeroVector,FVector(Scale),FRotator::ZeroRotator,false);
+        MakeMesh(YawPivot,bKinetic?TEXT("/Game/Presentation/WeaponsPitchTrial/ciws_gatling_6/SM_Body.SM_Body"):TEXT("/Game/Presentation/WeaponsPitchTrial/ciws_beam_b/SM_Body.SM_Body"),FVector::ZeroVector,FVector(Scale),FRotator::ZeroRotator,false);
         PitchPivot=MakePivot(YawPivot);PitchPivot->SetRelativeLocation(Pivot*Scale);
-        Barrel=MakeMesh(PitchPivot,TEXT("/Game/Presentation/WeaponsPitchTrial/ciws_beam_b/SM_Barrel.SM_Barrel"),FVector::ZeroVector,FVector(Scale),FRotator::ZeroRotator,false);
-        auto* Neck=MakeMesh(PitchPivot,TEXT("/Game/Presentation/WeaponsPitchTrial/ciws_beam_b/SM_TrialNeck.SM_TrialNeck"),FVector(7,0,0)*Scale,FVector(Scale),FRotator::ZeroRotator,false);
+        Barrel=MakeMesh(PitchPivot,bKinetic?TEXT("/Game/Presentation/WeaponsPitchTrial/ciws_gatling_6/SM_Barrel.SM_Barrel"):TEXT("/Game/Presentation/WeaponsPitchTrial/ciws_beam_b/SM_Barrel.SM_Barrel"),FVector::ZeroVector,FVector(Scale),FRotator::ZeroRotator,false);
+        auto* Neck=MakeMesh(PitchPivot,bKinetic?TEXT("/Game/Presentation/WeaponsPitchTrial/ciws_gatling_6/SM_TrialNeck.SM_TrialNeck"):TEXT("/Game/Presentation/WeaponsPitchTrial/ciws_beam_b/SM_TrialNeck.SM_TrialNeck"),FVector(7,0,0)*Scale,FVector(Scale),FRotator::ZeroRotator,false);
         if (Base && Neck) { auto* M=UMaterialInstanceDynamic::Create(Base,Neck); M->SetVectorParameterValue(TEXT("Color"),FLinearColor(.19f,.2f,.21f)); Neck->SetMaterial(0,M); }
         Flash=MakeMesh(PitchPivot,TEXT("/Engine/BasicShapes/Sphere.Sphere"),Tip*Scale,FVector(Length*.15/100.f));
         if (Base && Flash) { auto* M=UMaterialInstanceDynamic::Create(Base,Flash); M->SetVectorParameterValue(TEXT("Color"),FLinearColor(.12f,.85f,1.f)); Flash->SetMaterial(0,M); }
@@ -224,12 +242,12 @@ void UOVWeaponVisualComponent::Synchronize(FRotator LogicalAim, bool bFixedVLS, 
     State.VisualAim = bSide ? (bFixedVLS ? FRotator(90,0,0) : GetRelativeRotation().UnrotateVector(LogicalAim.Vector()).Rotation())
         : (bFixedVLS ? FRotator(State.bBottom ? -90 : 90, 0, 0) : LogicalAim);
     const bool bBF120=OVWeaponGeometry::HasBF120Trial(Definition)&&!bFixedVLS;
-    const bool bCIWSB=OVWeaponGeometry::HasCIWSBTrial(Definition)&&!bFixedVLS;
-    const bool bSource=bBF120||bCIWSB;
+    const bool bSourcePD=OVWeaponGeometry::HasSourcePDTrial(Definition)&&!bFixedVLS;
+    const bool bSource=bBF120||bSourcePD;
     if (YawPivot) YawPivot->SetRelativeRotation(FRotator(0,bSource?(State.bBottom?180.f-State.VisualAim.Yaw:180.f+State.VisualAim.Yaw):State.VisualAim.Yaw,0));
     if (PitchPivot) PitchPivot->SetRelativeRotation(FRotator(bSource?(State.bBottom?State.VisualAim.Pitch:-State.VisualAim.Pitch):State.VisualAim.Pitch,0,0));
     const int32 BarrelIndex=ShotsFired>0?(ShotsFired-1)%2:0;
-    State.LocalMuzzle = bCIWSB ? OVWeaponGeometry::MuzzleLocal(Definition,LogicalAim,Extent,false,0) : State.bPointDefense
+    State.LocalMuzzle = bSourcePD ? OVWeaponGeometry::MuzzleLocal(Definition,LogicalAim,Extent,false,0) : State.bPointDefense
         ? Definition.LocalPosition+(bFixedVLS?Normal:LogicalAim.Vector())*Length
         : OVWeaponGeometry::MuzzleLocal(Definition,LogicalAim,Extent,bFixedVLS,BarrelIndex);
     State.LastShotId = ShotId;

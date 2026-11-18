@@ -9,6 +9,8 @@
 #include "Engine/World.h"
 #include "HAL/PlatformTime.h"
 #include "HAL/IConsoleManager.h"
+#include "Components/StaticMeshComponent.h"
+#include "Engine/StaticMesh.h"
 #include "Misc/AutomationTest.h"
 
 #if WITH_DEV_AUTOMATION_TESTS
@@ -123,6 +125,30 @@ bool FOVPDCIWSBTrialShot::RunTest(const FString&)
     const auto* State=Visuals.FindByPredicate([&Event](const FOVWeaponVisualState& V){return V.MountId==Event.MountId;});
     if(!TestNotNull(TEXT("Actual interception has a trial visual"),State))return false;
     TestTrue(TEXT("Actual shot origin agrees with displayed trial muzzle"),Event.Origin.Equals(State->WorldMuzzle,.1));
+    return true;
+}
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(FOVPDCIWS6TrialShot,"OrbitalVanguard.PointDefense.CIWS6TrialRealShotMuzzle",EAutomationTestFlags::EditorContext|EAutomationTestFlags::EngineFilter)
+bool FOVPDCIWS6TrialShot::RunTest(const FString&)
+{
+    auto* Switch=IConsoleManager::Get().FindConsoleVariable(TEXT("ov.Presentation.CIWSBTrial"));
+    if(!TestNotNull(TEXT("Trial switch exists"),Switch))return false;
+    const int32 Previous=Switch->GetInt();
+    struct FRestore { IConsoleVariable* Var; int32 Value; ~FRestore(){Var->Set(Value,ECVF_SetByCode);} } Restore{Switch,Previous};
+    Switch->Set(1,ECVF_SetByCode);
+    OVPDTest::FRange R;
+    R.Launch();R.Register();R.PD->Ships[0].Mounts[0].Profile.Kind=EOVPDWeaponKind::Kinetic;
+    R.PD->Step(1.f/120.f);
+    if(!TestTrue(TEXT("Actual kinetic interception exists"),R.PD->RecentEvents.Num()>0))return false;
+    const auto& Event=R.PD->RecentEvents.Last();
+    TestEqual(TEXT("Shot retains its kinetic kind"),Event.WeaponKind,EOVPDWeaponKind::Kinetic);
+    R.Escort->RefreshWeaponVisuals();
+    const auto Visuals=R.Escort->GetWeaponVisualStates();
+    const auto* State=Visuals.FindByPredicate([&Event](const FOVWeaponVisualState& V){return V.MountId==Event.MountId;});
+    if(!TestNotNull(TEXT("Kinetic trial visual exists"),State))return false;
+    TestTrue(TEXT("Kinetic shot origin agrees with trial muzzle"),Event.Origin.Equals(State->WorldMuzzle,.1));
+    TArray<UStaticMeshComponent*> Meshes;R.Escort->GetComponents(Meshes);
+    TestTrue(TEXT("Kinetic mount uses the gatling source model"),Meshes.ContainsByPredicate([](const UStaticMeshComponent* M)
+        {return M&&M->GetStaticMesh()&&M->GetStaticMesh()->GetPathName().Contains(TEXT("/WeaponsPitchTrial/ciws_gatling_6/SM_Barrel"));}));
     return true;
 }
 

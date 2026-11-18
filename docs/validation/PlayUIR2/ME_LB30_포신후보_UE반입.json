@@ -1,0 +1,51 @@
+{
+  "id": "laser_turret_lb30",
+  "passed": true,
+  "scope": "포신 후보 격리 반입. 전장 미적용; 연결부는 시험용 추가 형상.",
+  "parts": [
+    {
+      "asset": "/Game/Presentation/WeaponsPitchTrial/laser_turret_lb30/SM_Body",
+      "triangles": [
+        886302,
+        44316,
+        8864
+      ],
+      "source_origin": [
+        0.9830499887466431,
+        -0.04373061656951904,
+        -0.3700000047683716
+      ],
+      "fbx_sha256": "7aa35f88735eb840071871cd96c503b235b9f8d7d3938adfefbf4672b342f9f5",
+      "generated_connector": false
+    },
+    {
+      "asset": "/Game/Presentation/WeaponsPitchTrial/laser_turret_lb30/SM_Barrel",
+      "triangles": [
+        148418,
+        7420,
+        1484
+      ],
+      "source_origin": [
+        -0.5,
+        0.0,
+        0.44999998807907104
+      ],
+      "fbx_sha256": "b19acf26a6c120cb196aac8f94b83f17265a5ec3f92f601ae852e3d6ccf14d94",
+      "generated_connector": false
+    },
+    {
+      "asset": "/Game/Presentation/WeaponsPitchTrial/laser_turret_lb30/SM_TrialNeck",
+      "triangles": [
+        188
+      ],
+      "source_origin": [
+        -0.3499999940395355,
+        0.0,
+        0.44999998807907104
+      ],
+      "fbx_sha256": "eb1cd4b6d762c349ee15f92cd0cb198c1803c1a3b5f1a5722bf905b2de6a044c",
+      "generated_connector": true
+    }
+  ],
+  "errors": []
+}

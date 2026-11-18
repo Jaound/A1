@@ -196,8 +196,8 @@ void UOVPointDefenseSubsystem::Step(float GameDelta)
                     FOVWeaponMountDefinition Def;
                     if (MountDef) Def=*MountDef;
                     else { Def.WeaponId=Mount.MountId;Def.Type=EOVWeaponType::Interception;Def.LocalPosition=Mount.LocalPosition;Def.Tier=Ship->Systems->Layout->WeaponTier; }
-                    Def.PresentationProfile=TEXT("CIWSBTrial");
-                    if (OVWeaponGeometry::HasCIWSBTrial(Def)) LocalMuzzle=OVWeaponGeometry::MuzzleLocal(Def,CandidateAim,Ship->Systems->Layout->LocalHalfExtent,false,0);
+                    Def.PresentationProfile=Mount.Profile.Kind==EOVPDWeaponKind::Kinetic?TEXT("CIWS6Trial"):TEXT("CIWSBTrial");
+                    if (OVWeaponGeometry::HasSourcePDTrial(Def)) LocalMuzzle=OVWeaponGeometry::MuzzleLocal(Def,CandidateAim,Ship->Systems->Layout->LocalHalfExtent,false,0);
                 }
                 const FVector CandidateMuzzle = Ship->GetActorTransform().TransformPosition(LocalMuzzle);
                 const double Distance = FVector::DistSquared(CandidateMuzzle, Target.Position);

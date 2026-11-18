@@ -1,0 +1,63 @@
+{
+  "passed": true,
+  "scope": "격리된 UE 메시 로컬 경계만 측정; 실제 포구·가동·장착 확정 아님.",
+  "parts": [
+    {
+      "asset": "/Game/Presentation/WeaponsYawTrial/ciws_gatling_6/SM_Base",
+      "min_cm": [
+        -77.12254333496094,
+        -77.20663452148438,
+        -62.999996185302734
+      ],
+      "max_cm": [
+        77.18904876708984,
+        77.22908020019531,
+        0.0006101438775658607
+      ],
+      "triangles": 479552
+    },
+    {
+      "asset": "/Game/Presentation/WeaponsPitchTrial/ciws_gatling_6/SM_Body",
+      "min_cm": [
+        -67.20046997070312,
+        -60.69767379760742,
+        -6.323833986243699e-06
+      ],
+      "max_cm": [
+        87.12467193603516,
+        60.72111892700195,
+        137.0
+      ],
+      "triangles": 537142
+    },
+    {
+      "asset": "/Game/Presentation/WeaponsPitchTrial/ciws_gatling_6/SM_Barrel",
+      "min_cm": [
+        -94.18253326416016,
+        -24.90694236755371,
+        -23.824819564819336
+      ],
+      "max_cm": [
+        0.0,
+        24.9890193939209,
+        25.178470611572266
+      ],
+      "triangles": 167082
+    },
+    {
+      "asset": "/Game/Presentation/WeaponsPitchTrial/ciws_gatling_6/SM_TrialNeck",
+      "min_cm": [
+        -17.500001907348633,
+        -10.0,
+        -10.000001907348633
+      ],
+      "max_cm": [
+        17.500001907348633,
+        10.0,
+        10.000001907348633
+      ],
+      "triangles": 188
+    }
+  ],
+  "errors": []
+}
