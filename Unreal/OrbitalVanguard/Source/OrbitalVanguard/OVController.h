@@ -12,6 +12,7 @@ class UOVPointDefenseSubsystem;
 class UOVTransportSubsystem;
 class UOVInteriorSubsystem;
 class UOVMissionSubsystem;
+class UOVPlayScenarioSubsystem;
 class UOVDevelopmentSubsystem;
 class UOVHeroSubsystem;
 class UInstancedStaticMeshComponent;
@@ -180,6 +181,9 @@ public:
  UFUNCTION(BlueprintCallable, Category="Camera") void FrameEngagement();
  UFUNCTION(BlueprintPure, Category="Combat") FString GetScenarioLabel() const;
  UFUNCTION(BlueprintCallable, Category="Combat") void ResetPhase2C();
+ UFUNCTION(BlueprintCallable, Category="Mission") bool StartPlayScenario(FName ScenarioId);
+ UFUNCTION(BlueprintCallable, Category="Mission") void LeavePlayScenario();
+ UFUNCTION(BlueprintPure, Category="Mission") UOVPlayScenarioSubsystem* GetPlayScenario() const;
  UFUNCTION(BlueprintCallable) void AdvancePhase2C(float GameDelta);
  bool CommandCarrier(AOVShip* Ship, bool bLaunch);
  UPROPERTY(VisibleAnywhere, BlueprintReadOnly) TMap<AOVShip*,float> TrialFTLRemaining;
@@ -187,6 +191,10 @@ public:
  void ResolveContacts(float SimDelta);
  FOVOrderInput OrderInput;
 private:
+ friend class UOVPlayScenarioSubsystem;
+ UPROPERTY() TArray<TObjectPtr<AOVShip>> ParkedRangeShips;
+ bool bPlayScenarioSession=false;
+ void ResetPlayScenarioSession(bool bRestoreLegacy);
  float LegacyTraceDistance=0;
  double CommandXY() const;
  double CommandMinZ() const;

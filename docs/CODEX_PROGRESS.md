@@ -1,5 +1,14 @@
 # 최신 진행: 원본 함재기 표시와 포탑 접합 작업
 
+## 2026-11-19 · 플레이 임무 6종 개편 — 함대전 및 공통 세션
+
+- 브랜치 `codex/phase1-playground`, 시작 코드 `37c181f`, 읽기 전용으로 확인한 `work` 기획 `f0ac7fbd51f1888e1d74552e6ff302e8a464acfa`. 시작 로컬/원격 코드가 일치했고 미추적 `Unreal/OrbitalVanguard/launch.log`만 있었으며 그대로 보존했다.
+- `OVPlayScenarioSubsystem`의 데이터 목록과 공통 초기화 경로를 추가했다. 100·200·300코스트 대칭 편성과 빈 자유 시험장이 실행된다. 실제 D116 무장, 쉴드, 함체, PD, 항공대, 선내 그래프를 재사용한다. 기존 시험과 강습 API는 회귀 경로로 유지하며 F5/F6/F7은 정상 플레이에서 새 함대전을 연다. 새 임무는 자원 생산 시간을 진행하지 않고, 기본 편성에 영구 영웅을 배치하지 않는다.
+- Win64 Development Editor 빌드 성공 (`PlayScenarios_Fleet_Build.log`), 기존 자동 134/134 (`PlayScenarios_Fleet_Automation.log`), 새 [PIE API 51/51](validation/PlayScenarios/Fleets_PIE.json) (`PlayScenarios_Fleet_PIE2.log`), 기존 [2C API 83/83](validation/PlayScenarios/Legacy2C_PIE.json) (`PlayScenarios_Fleet_2C.log`). 세 함대전의 기본 편성, 양측 이동·발사·명중·첫 출격, 이탈 이벤트에 따른 승리/패배, 120게임초 교착, 1·2·3배속 같은 게임 시간, 재시작·목록 복귀·기존 F6 API 복구를 확인했다. 이탈 시나리오는 판정 경계용 이벤트 직접 호출이다. 실제 플레이어 입력·전투 자연 종결·공습 FTL·최대 부하 성능은 미검증이다.
+- 미완료: 채굴·수송과 공습·퇴각은 목록의 준비 중 항목이며 런타임은 미작성. 자유 시험장은 빈 상태, 일시정지·배속 및 기존 개발 도구 진입까지만 지원한다. 이미지 카드, 편성 상세, 중립·위치 미리보기·교전 제어, 실제 영웅 편성과 별도 세션 명단은 후속이다. 임무 전환 시 일반 명단 UI와 캠페인 명령의 경계도 추가 확인한다.
+- **다음 작업:** `OVPlayScenarioSubsystem.cpp`의 `Scenes`에서 Logistics에 별도 프로필을 추가한다. `OVCalibration.cpp`의 `transport`는 길이만 중형 보정돼 있고 `OVCalibrationData.inl` 및 `GetHullMetadata`/`ConfigureHull`은 과거 소형이다. 역사 교정값을 덮지 않고 이번 임무의 중형 후보를 명시적으로 생성·검증한다. `OVLogisticsSubsystem`의 `AddDevNode`, `DevMine`, `DevTransfer`를 재사용해 채굴 지점, 집하점, 납품을 실제 위치·화물 차감으로 연결한다. 두 척 이상의 손실 사례에서 목표 달성 가능 자원·운송 용량을 검사한다. 그 뒤 공습/FTL, 자유 시험장, 카드·결과 UI, 실전·부하 검증 순서로 진행한다.
+- 재실행: `E:\UE_5.8\Engine\Build\BatchFiles\Build.bat OrbitalVanguardEditor Win64 Development -Project=<절대 경로의 uproject> -WaitMutex -NoHotReload`. 자동 검사는 `UnrealEditor-Cmd.exe <uproject> -unattended -nullrhi -ExecCmds="Automation RunTests OrbitalVanguard" -TestExit="Automation Test Queue Empty"`. PIE는 `OV_FLEET_RUN`에 고유 ID를 설정하고 `UnrealEditor.exe <uproject> /Game/Maps/ControlRange -unattended -ExecCmds="py <프로젝트>/Tools/ValidatePlayScenarioFleets.py"`를 실행한다. 보고서는 `Saved/Validation/PlayScenarioFleets_<ID>.json`에 저장된다. 수동 조작, 편성 및 판정 설명은 [실행 안내](PLAY_SCENARIOS_GUIDE.md) 참조.
+
 **ML 미사일 지지대 재구성 시험 — 미채택:** MM24 원본 발사 상자·받침은 유지하고 지지대·축·절단면 덮개를 새로 만든 후보를 별도 복사본에서 시험했다. [중립](validation/PlayUIR2/ML_MM24_새지지대_중립.png)과 [90도](validation/PlayUIR2/ML_MM24_새지지대_90도.png)에서 대체 지지대와 큰 덮개가 원본 형상을 가려 채택하지 않았다([입력 해시·시험 기록](validation/PlayUIR2/ML_MM24_새지지대_시험.json)). 원본 FBX와 본 프로젝트 자산은 수정하지 않았다. 단일 메시 자동 절단, 접합부 축소, 전체 회전, 가중 변형, 대체 지지대는 모두 실제 가동 기본 모델로 승인할 수 없었다. 화면 캡처가 계속 시간 초과여서 Blender에서 지지대 경계를 직접 편집하는 방법도 이 세션에서는 검증하지 못했다. 다음 재개는 분리된 발사 상자·회전 지지대·받침이 있는 원본이 있는지 확인하거나, 원본 FBX를 직접 리깅·접합 수정할 수 있는 화면 제어 환경에서 두 모델을 작업하는 것이다. 이후 포구·상하좌우 접합·VLS와 유도탄 발사·간섭·회귀를 검증해야 한다. 현 단계는 요청 전체 완료가 아니다. 최신 검증은 바로 아래 MK 기록을 따른다.
 
 

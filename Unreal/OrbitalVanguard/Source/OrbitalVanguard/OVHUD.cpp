@@ -60,7 +60,7 @@ bool AOVHUD::IsOverPanel(float X,float Y) const
  const auto* Feed=GetBattleNoticeFeed();const int32 Footer=bBattleFeedOpen?66+(Feed&&Feed->DroppedCount>0?20:0):0;
  if(Notices>0&&P.X>=NoticeX&&P.X<=NoticeX+240&&P.Y>=66&&P.Y<=66+Notices*32+Footer)return true;
  // The basic HUD remains visible under the separate developer window.
- if(P.Y<62 || (P.X<620 && P.Y>ViewportPixels.Y/UIScale-220) || (P.X<204 && P.Y<ViewportPixels.Y/UIScale-230) || (bSceneMenuOpen && P.X>=210 && P.X<=650 && P.Y<=255)) return true;
+ if(P.Y<62 || (P.X<620 && P.Y>ViewportPixels.Y/UIScale-220) || (P.X<204 && P.Y<ViewportPixels.Y/UIScale-230) || (bSceneMenuOpen && P.X>=210 && P.X<=650 && P.Y<=380)) return true;
  return !PC->bDeveloperMode&&PC->Selected&&bDetailsOpen&&P.X>=WindowPosition.X&&P.X<=WindowPosition.X+WindowSize.X&&P.Y>=WindowPosition.Y&&P.Y<=WindowPosition.Y+(bMinimized?32:WindowSize.Y);
 }
 bool AOVHUD::HasOrbitPreview() const
@@ -213,6 +213,12 @@ void AOVHUD::NotifyHitBoxClick(FName N)
  if(N==TEXT("DetailsTitle"))return;
  if(N==TEXT("CommandShipLabel")||N==TEXT("CommandTargetLabel"))return;
  if(N==TEXT("SceneMenu")) { bSceneMenuOpen=!bSceneMenuOpen; if(bSceneMenuOpen) bStarMapOpen=false; return; }
+ if(N==TEXT("PlaySceneExit")) { if(auto* PC=Cast<AOVController>(PlayerOwner)) PC->LeavePlayScenario(); bSceneMenuOpen=true; return; }
+ if(N==TEXT("Fleet100")||N==TEXT("Fleet200")||N==TEXT("Fleet300")||N==TEXT("Sandbox"))
+ {
+  if(auto* PC=Cast<AOVController>(PlayerOwner);PC&&PC->StartPlayScenario(N)) bSceneMenuOpen=false;
+  return;
+ }
  if(N==TEXT("FleetPrevious")) { FleetPage=FMath::Max(0,FleetPage-1);return; }
  if(N==TEXT("FleetNext")) { ++FleetPage;return; }
  if(N==TEXT("AircraftPrevious")) { AircraftPage=FMath::Max(0,AircraftPage-1);return; }
@@ -920,6 +926,34 @@ void AOVHUD::ToggleDevelopmentMaximized()
  bDevelopmentMinimized=false;CancelPointerDrag();SyncAddedUI();
 }
 void AOVHUD::ResetDevelopmentWindow(){DevelopmentPosition=FVector2D(-1,-1);DevelopmentSize=FVector2D(-1,-1);bDevelopmentMinimized=false;bDevelopmentMaximized=false;CancelPointerDrag();SyncAddedUI();}
+
+void AOVHUD::ResetPlaySessionUI()
+{
+ CancelPointerDrag();
+ SetDetailsOpen(false);
+ SetHeroPanelOpen(false);
+ bInteriorOpen=false;
+ bStarMapOpen=false;
+ bBattleFeedOpen=false;
+ bHangarView=false;
+ FleetPage=AircraftPage=BattleFeedPage=0;
+ DetailsPageShip.Reset();
+ AircraftPageShip.Reset();
+ SelectedAircraftId=0;
+ if(ShipPreview) ShipPreview->Release();
+ if(WeaponPreview) WeaponPreview->Release();
+ for(auto& Preview:PinnedPreviews) if(Preview) Preview->Release();
+ PinnedPreviews.Reset();
+ PinnedShips.Reset();
+ PinnedDecks.Reset();
+ PinnedSlots.Reset();
+ PinnedWeapons.Reset();
+ PinnedSlotPages.Reset();
+ PinnedAircraftIds.Reset();
+ PinnedAircraftPages.Reset();
+ PinnedPositions.Reset();
+ PinnedSizes.Reset();
+}
 void AOVHUD::SyncAddedUI()
 {
  auto* PC=Cast<AOVController>(PlayerOwner);if(!PC)return;int32 W=0,H=0;PC->GetViewportSize(W,H);if(W<=0||H<=0)return;

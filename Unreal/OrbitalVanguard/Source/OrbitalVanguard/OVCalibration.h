@@ -33,6 +33,7 @@ double GetHullGeometryScale(FName HullId);
 TArray<FName> GetWeaponProfileIds();
 FString GetWeaponProfileDescription(FName ProfileId);
 FString GetSourceHash();
+void BeginSession(UOVCombatSubsystem& Combat, int32 Seed);
 // Returns false before initializing any runtime profile if the requested roster is invalid.
 bool Start(UOVCombatSubsystem& Combat, const TArray<AOVShip*>& Ships, int32 Scenario);
 // Candidate data reuse for 2C. Does not alter stored inventory or reload profiles.

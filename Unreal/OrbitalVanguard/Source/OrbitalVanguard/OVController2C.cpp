@@ -9,6 +9,7 @@
 #include "OVTransportSubsystem.h"
 #include "OVInteriorSubsystem.h"
 #include "OVMissionSubsystem.h"
+#include "OVPlayScenarioSubsystem.h"
 #include "OVDevelopmentSubsystem.h"
 #include "OVLogisticsSubsystem.h"
 #include "Engine/World.h"
@@ -28,13 +29,68 @@ void AOVController::ResetPhase2C()
  auto* Logistics=GetWorld()->GetSubsystem<UOVLogisticsSubsystem>();
  Logistics->Cargo.Reset(); Logistics->Nodes.Reset(); Logistics->RepairLinks.Reset();
  // Only explicitly created transient benchmark actors are removed; original three survive.
- while(Ships.Num()>3) { AOVShip* Extra=Ships.Last(); Ships.Pop(); if(IsValid(Extra))Extra->Destroy(); }
+ const int32 RetainedShips=bPlayScenarioSession?0:3;
+ while(Ships.Num()>RetainedShips) { AOVShip* Extra=Ships.Last(); Ships.Pop(); if(IsValid(Extra))Extra->Destroy(); }
  TrialFTLRemaining.Reset();
  Phase2CScenario=-1;
 }
 
+bool AOVController::StartPlayScenario(FName ScenarioId)
+{
+ return GetPlayScenario()->Start(*this,ScenarioId);
+}
+
+UOVPlayScenarioSubsystem* AOVController::GetPlayScenario() const
+{
+ return GetWorld()->GetSubsystem<UOVPlayScenarioSubsystem>();
+}
+
+void AOVController::LeavePlayScenario()
+{
+ if(bPlayScenarioSession) ResetPlayScenarioSession(false);
+}
+
+void AOVController::ResetPlayScenarioSession(bool bRestoreLegacy)
+{
+ ClearSelection();
+ Action(TEXT("Cancel"));
+ OrbitGesture={};
+ Groups.Reset();
+ if(auto* HUD=Cast<AOVHUD>(GetHUD())) HUD->ResetPlaySessionUI();
+ Combat->DisableCombat();
+ ResetPhase2C();
+ ResetDeathThroes();
+ SetSpaceEnvironment(EOVSpaceEnvironmentType::None);
+ GetWorld()->GetSubsystem<UOVPlayScenarioSubsystem>()->Clear();
+ if(!bPlayScenarioSession && !bRestoreLegacy)
+ {
+  ParkedRangeShips=MoveTemp(Ships);
+  for(AOVShip* Ship:ParkedRangeShips) if(IsValid(Ship))
+  {
+   Ship->AttackTarget=nullptr;
+   Ship->StopMovement();
+   Ship->SetActorHiddenInGame(true);
+   Ship->SetActorEnableCollision(false);
+  }
+ }
+ if(bRestoreLegacy) Ships=MoveTemp(ParkedRangeShips);
+ bPlayScenarioSession=!bRestoreLegacy;
+ CalibrationScenario=1;
+ HitResultTraceDistance=OVCalibration::RayLength;
+ bSimulationPaused=true;
+ SimulationSpeed=1;
+ SimulationSeconds=0;
+ CameraFocus=FVector(0,0,2000);
+ CameraDistance=OVCalibration::StartZoom;
+ CameraYaw=-65;
+ CameraPitch=-55;
+ UpdateCamera();
+}
+
 FString AOVController::GetScenarioLabel() const
 {
+ if(const auto* Play=GetWorld()->GetSubsystem<UOVPlayScenarioSubsystem>())
+  if(const auto* Definition=Play->GetActiveDefinition()) return Definition->Title;
  if(Mission && Mission->bEnabled) return Mission->Mode==EOVMissionMode::Defense?TEXT("강습 방어 임무"):Mission->Mode==EOVMissionMode::FleetOnly?TEXT("함대전 비교 임무"):TEXT("강습 통합 임무");
  static const TCHAR* Names[]={TEXT("일반 호위"),TEXT("방공함 호위"),TEXT("항공모함 교전"),TEXT("개인 포드 운송"),TEXT("강습선 운송"),TEXT("혼성 교전")};
  if(Phase2CScenario>=0&&Phase2CScenario<6) return Names[Phase2CScenario];
@@ -57,6 +113,7 @@ void AOVController::FrameEngagement()
 
 bool AOVController::StartPhase2CRange(int32 Scenario)
 {
+ if(Scenario>=0&&Scenario<=5&&bPlayScenarioSession) ResetPlayScenarioSession(true);
  if(Scenario<0||Scenario>5||Ships.Num()<3||!Combat) return false;
  // Uses the established candidate settings; only an explicit scene reset creates a new fixture.
  if(!StartCalibrationRange(1)) return false;

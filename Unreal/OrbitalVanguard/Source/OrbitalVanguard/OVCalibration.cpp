@@ -355,6 +355,12 @@ FString OVCalibration::GetWeaponProfileDescription(FName RequestedId)
 
 FString OVCalibration::GetSourceHash() { return SourceHash; }
 
+void OVCalibration::BeginSession(UOVCombatSubsystem& Combat, int32 Seed)
+{
+    Combat.EnableCombat({}, Seed);
+    ApplyProfiles(*Combat.Settings);
+}
+
 bool OVCalibration::Start(UOVCombatSubsystem& Combat, const TArray<AOVShip*>& Ships, int32 Scenario)
 {
     if (Ships.Num() != 3 || Scenario < 0 || Scenario > 2) return false;
@@ -379,8 +385,7 @@ bool OVCalibration::Start(UOVCombatSubsystem& Combat, const TArray<AOVShip*>& Sh
         }
     }
 
-    Combat.EnableCombat({}, 260112);
-    ApplyProfiles(*Combat.Settings);
+    BeginSession(Combat, 260112);
     auto* Defense=Combat.GetWorld()->GetSubsystem<UOVPointDefenseSubsystem>();
     if(Defense&&CVarOVMarkedMounts.GetValueOnGameThread()==1)Defense->Reset(260112);
     const FVector Positions[] = {FVector(-33000,-6200,2000), FVector(-37000,10500,2000), FVector(33000,0,2000)};

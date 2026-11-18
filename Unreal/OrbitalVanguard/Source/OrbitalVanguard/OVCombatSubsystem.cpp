@@ -5,6 +5,7 @@
 #include "OVInteriorSubsystem.h"
 #include "OVLogisticsSubsystem.h"
 #include "OVMissionSubsystem.h"
+#include "OVPlayScenarioSubsystem.h"
 #include "OVPointDefenseSubsystem.h"
 #include "ProfilingDebugging/CsvProfiler.h"
 #include "ProfilingDebugging/CpuProfilerTrace.h"
@@ -579,6 +580,7 @@ void UOVCombatSubsystem::Step(float Delta)
             Mount.RequestedTarget.Reset();
         }
     }
+    GetWorld()->GetSubsystem<UOVPlayScenarioSubsystem>()->Step(Delta);
 }
 
 void UOVCombatSubsystem::UpdateAim(FOVCombatShipState& State, FOVCombatMountState& Mount, float Delta)

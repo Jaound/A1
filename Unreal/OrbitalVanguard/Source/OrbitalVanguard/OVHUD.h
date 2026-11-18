@@ -76,6 +76,7 @@ public:
  UFUNCTION(BlueprintCallable, Category="UI") void ToggleDevelopmentMinimized();
  UFUNCTION(BlueprintCallable, Category="UI") void ToggleDevelopmentMaximized();
  UFUNCTION(BlueprintCallable, Category="UI") void ResetDevelopmentWindow();
+ void ResetPlaySessionUI();
  UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="UI") bool bDevelopmentMinimized=false;
  void SetDevelopmentWindowGeometry(FVector2D Position,FVector2D Size) { bDevelopmentMaximized=false;DevelopmentPosition=Position;if(!bDevelopmentMinimized)DevelopmentSize=Size;SyncAddedUI(); }
  UFUNCTION(BlueprintPure, Category="UI") bool IsOverMissionPanel(float X,float Y) const;

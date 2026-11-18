@@ -9,6 +9,7 @@
 #include "OVTransportSubsystem.h"
 #include "OVInteriorSubsystem.h"
 #include "OVMissionSubsystem.h"
+#include "OVPlayScenarioSubsystem.h"
 #include "OVDevelopmentSubsystem.h"
 #include "OVHeroSubsystem.h"
 #include "Engine/GameInstance.h"
@@ -201,6 +202,9 @@ void AOVController::BeginPlay()
  int32 RequestedMission=-1;
  if(FParse::Value(FCommandLine::Get(),TEXT("OVMission="),RequestedMission) && RequestedMission>=0 && RequestedMission<=2)
   Mission->StartMission(this,static_cast<EOVMissionMode>(RequestedMission));
+ FString RequestedPlayScene;
+ if (FParse::Value(FCommandLine::Get(),TEXT("OVPlayScene="),RequestedPlayScene))
+  StartPlayScenario(FName(*RequestedPlayScene));
 }
 void AOVController::EndPlay(const EEndPlayReason::Type EndPlayReason)
 {
@@ -706,6 +710,7 @@ void AOVController::UpdateCombatPresentation()
 }
 void AOVController::StartCombatRange()
 {
+ if(bPlayScenarioSession) ResetPlayScenarioSession(true);
  if(!Combat || Ships.Num()<3) return;
  ResetDeathThroes();
  SetSpaceEnvironment(EOVSpaceEnvironmentType::None);
@@ -760,6 +765,7 @@ void AOVController::StartCombatRange()
 bool AOVController::StartCalibrationRange(int32 Scenario)
 {
  if (!Combat || Scenario<0 || Scenario>2) return false;
+ if(bPlayScenarioSession) ResetPlayScenarioSession(true);
  ResetDeathThroes();
  SetSpaceEnvironment(EOVSpaceEnvironmentType::None);
  ResetPhase2C();
@@ -845,6 +851,7 @@ bool AOVController::ActionPressed(FName Name) const
 }
 void AOVController::Action(FName Name)
 {
+ if(auto* Play=GetWorld()->GetSubsystem<UOVPlayScenarioSubsystem>();Play&&Play->HandleAction(*this,Name)) return;
  if(Name==TEXT("Env_None")) { SetSpaceEnvironment(EOVSpaceEnvironmentType::None); return; }
  if(Name==TEXT("Env_AsteroidField")) { SetSpaceEnvironment(EOVSpaceEnvironmentType::AsteroidField); return; }
  if(Name==TEXT("Env_RadiationZone")) { SetSpaceEnvironment(EOVSpaceEnvironmentType::RadiationZone); return; }
@@ -1238,7 +1245,7 @@ void AOVController::StepSimulation(float DeltaTime)
 {
  if(bSimulationPaused || DeltaTime<=0 || !FMath::IsFinite(DeltaTime)) return;
  float Remaining=DeltaTime*SimulationSpeed; SimulationSeconds+=Remaining;
- CampaignMiningAccum+=Remaining;
+ if(!bPlayScenarioSession) CampaignMiningAccum+=Remaining;
  while(CampaignMiningAccum>=4.0f) {
   CampaignMiningAccum-=4.0f;
   for(const FOVStarSystemNode& Node:StarSystems) {
@@ -1431,10 +1438,10 @@ void AOVController::PlayerTick(float DeltaTime)
  }
  ApplyCameraInput(FVector2D::ZeroVector,Pan,YawAxis,CameraWheel,FApp::GetDeltaTime());
  if(ActionPressed(TEXT("OVCameraProfile"))) Action(TEXT("CameraProfile"));
- if(Focused && ActionPressed(TEXT("OVPhase2C"))) Action(TEXT("Phase2C"));
+ if(Focused && ActionPressed(TEXT("OVPhase2C"))) Action(bDeveloperMode?TEXT("Phase2C"):TEXT("Fleet300"));
  if(Focused && ActionPressed(TEXT("OVDeveloper"))) Action(TEXT("Developer"));
- if(Focused && ActionPressed(TEXT("OVCalibrationRange"))) Action(TEXT("CalibrationRange"));
- if(Focused && ActionPressed(TEXT("OVCombatRange"))) Action(TEXT("CombatRange"));
+ if(Focused && ActionPressed(TEXT("OVCalibrationRange"))) Action(bDeveloperMode?TEXT("CalibrationRange"):TEXT("Fleet200"));
+ if(Focused && ActionPressed(TEXT("OVCombatRange"))) Action(bDeveloperMode?TEXT("CombatRange"):TEXT("Fleet100"));
  if(WasInputKeyJustPressed(EKeys::F9)) UE_LOG(LogTemp,Display,TEXT("OV VERIFY: camera=%s yaw=%.1f pitch=%.1f distance=%.1f ship=%s pos=%s manual=%d moving=%d paused=%d speed=%.0f sim=%.3f"),*CameraFocus.ToString(),CameraYaw,CameraPitch,CameraDistance,Selected?*Selected->ShipName:TEXT("none"),Selected?*Selected->GetActorLocation().ToString():TEXT("none"),Selected?Selected->bManual:0,Selected?Selected->bHasDestination:0,bSimulationPaused,SimulationSpeed,SimulationSeconds);
  if(ActionPressed(TEXT("OVPause"))) Action(TEXT("Pause"));
  if(ActionPressed(TEXT("OVSpeed1"))) Action(TEXT("Speed1"));

@@ -1,5 +1,6 @@
 #include "OVHUD.h"
 #include "OVController.h"
+#include "OVPlayScenarioSubsystem.h"
 #include "OVShip.h"
 #include "OVShipSystemsComponent.h"
 #include "OVCombatSubsystem.h"
@@ -117,22 +118,26 @@ void AOVHUD::DrawPlayHUD()
   NoticeText=NoticeText.Left(24);
  }
  if(FPlatformTime::Seconds()<NoticeExpires)DrawText(NoticeText,PlayInk,716,26,GEngine->GetSmallFont());
+ const auto* Play=GetWorld()->GetSubsystem<UOVPlayScenarioSubsystem>();
+ if(!bSceneMenuOpen && Play && Play->GetActiveDefinition()) {
+  DrawRect(PlayPanel,216,63,426,82);
+  DrawText(Play->GetActiveDefinition()->Title,PlayAccent,226,69,GEngine->GetSmallFont());
+  DrawText(Play->GetStatus(),PlayInk,226,92,GEngine->GetSmallFont());
+  Button(TEXT("RestartScene"),TEXT("재시작"),479,69,72);
+  Button(TEXT("PlaySceneExit"),TEXT("목록 복귀"),557,69,75);
+ }
  if(bSceneMenuOpen) {
-  DrawRect(PlayPanel,216,63,426,188);
-  Button(TEXT("CombatRange"),TEXT("기본 전투"),226,72,126);
-  Button(TEXT("CalibrationRange"),TEXT("함대 교전"),362,72,126);
-  Button(TEXT("Phase2C"),TEXT("모함 · 운송"),498,72,132);
-  Button(TEXT("MissionAttack"),TEXT("강습 임무"),226,108,126);
-  Button(TEXT("MissionDefense"),TEXT("방어 임무"),362,108,126);
-  Button(TEXT("MissionFleetOnly"),TEXT("함대만 비교"),498,108,132);
-  Button(TEXT("RestartScene"),TEXT("현재 장면 재시작"),226,148,190);
-  Button(TEXT("SceneMenuClose"),TEXT("닫기"),498,148,132,true);
-  Button(TEXT("Env_None"),TEXT("환경: 없음"),226,184,76,PC->ActiveEnvironment==EOVSpaceEnvironmentType::None);
-  Button(TEXT("Env_AsteroidField"),TEXT("운석지대"),306,184,78,PC->ActiveEnvironment==EOVSpaceEnvironmentType::AsteroidField);
-  Button(TEXT("Env_RadiationZone"),TEXT("방사능"),388,184,74,PC->ActiveEnvironment==EOVSpaceEnvironmentType::RadiationZone);
-  Button(TEXT("Env_SolarFlare"),TEXT("태양플레어"),466,184,84,PC->ActiveEnvironment==EOVSpaceEnvironmentType::SolarFlare);
-  Button(TEXT("Env_BlackHole"),TEXT("블랙홀"),554,184,76,PC->ActiveEnvironment==EOVSpaceEnvironmentType::BlackHole);
-  Button(TEXT("StarMapToggle"),TEXT("은하 지도 캠페인 열기 (M)"),226,216,404,bStarMapOpen);
+  DrawRect(PlayPanel,216,63,426,316);
+  DrawText(TEXT("임무 선택"),PlayAccent,226,71,GEngine->GetSmallFont());
+  Button(TEXT("SceneMenuClose"),TEXT("닫기"),558,70,72,true);
+  float Y=106;
+  for(const auto& Definition:UOVPlayScenarioSubsystem::Definitions()) {
+   if(Definition.bAvailable) Button(Definition.Id,Definition.Title,226,Y,157,Play&&Play->ActiveId==Definition.Id);
+   else DrawText(Definition.Title,PlayInk,226,Y+6,GEngine->GetSmallFont());
+   const FString Description=Definition.bAvailable?FString(Definition.Objective):TEXT("준비 중");
+   DrawText(Description,PlayInk,393,Y+6,GEngine->GetSmallFont());
+   Y+=43;
+  }
  } else if(!bStarMapOpen && PC->ActiveEnvironment!=EOVSpaceEnvironmentType::None) {
   const float BX=W*0.5f-220.f,BY=60.f;
   DrawRect(FLinearColor(0.02f,0.05f,0.09f,0.92f),BX,BY,440,24);
