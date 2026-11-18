@@ -1,0 +1,15 @@
+{
+  "scope": "Windows 실제 입력을 위한 화면 캡처 시도. 키보드·마우스 입력 없음.",
+  "tool": "@oai/sky",
+  "target": "OrbitalVanguard (64 비트, Development PCD3D_SM5)",
+  "attempts": [
+    {
+      "result": "window capture timed out: timed out waiting on channel"
+    },
+    {
+      "result": "window capture timed out: timed out waiting on channel"
+    }
+  ],
+  "physical_input_performed": false,
+  "interpretation": "선택·무장 조작 직접 검증 불가. API 통과와 별도."
+}

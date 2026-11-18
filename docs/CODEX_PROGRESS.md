@@ -1,5 +1,12 @@
 # 최신 진행: 원본 함재기 표시와 포탑 접합 작업
 
+**MK 최신 상태 — 통합 임무·기존 회귀 통과, 원본 무장 전체 적용 미완료:** 코드 체크포인트 `1f1b18a`에서 Win64 Development Editor `MarkedModule_Main_Build3.log` 성공, 시험 무장 7종 활성 자동 `MarkedModule_All_Automation3.log` 132/132, [일반 슬롯 교체 포함 2C API 83/83](validation/PlayUIR2/MJ_일반슬롯교체_시설검사_API.json), [2A API 57/57](validation/PlayUIR2/MK_모듈코드_2A_API.json), [D116 API 79/79](validation/PlayUIR2/MK_모듈코드_D116_API.json), [통합 임무 29사례·268검사](validation/PlayUIR2/MK_모듈코드_통합임무_API.json) 통과. 임무 결과는 1승·8패·20사례 진행 중이며 승패를 검사 통과와 혼동하지 않는다. 한국어 엔진 자체 검사 오류는 기존과 별개다.
+
+별도 게임 창을 실행했지만 Windows 캡처가 두 번 모두 `window capture timed out: timed out waiting on channel`로 실패했다([기록](validation/PlayUIR2/MK_직접화면_검증.json)). 실제 키보드·마우스 입력은 수행하지 않았다. 창은 열어두었다. 사용자 기존 UI 변경 `OVHUD.cpp`, `OVHUD.h`, `ValidatePlayWindows.py`는 보존했고 검증 빌드에는 포함되지만 커밋에는 넣지 않았다.
+
+**미완료와 재개:** 도면 슬롯·근사 충돌은 기본 활성화됐지만 MM24·MM48 원본 발사기는 실제 게임에 연결되지 않았다. 나머지 7종도 원본 기반 분리와 별도 시험 연결부를 사용하는 기본 0의 실험이다. 단일 메시를 절단하면 큰 캡과 간섭이 생기고, 분리하지 않는 가중 관절 시도도 [90도에서 심각하게 변형](validation/PlayUIR2/MK_MM24_가중변형_90도.png)돼 폐기했다. 다음은 원본 발사구와 받침·지지대의 실제 경계에 맞는 새 가동부를 수작업으로 재구성하고 MM24/48의 축·포구·발사·상하좌우 접합 및 90도 간섭을 각각 검증하는 것이다. 이후 프로필별 명시 선택·전체 모델 기본 적용, 통합 임무 재검사·실제 입력·화면 및 성능 검증이 필요하다. 미사일 경로와 기존 VLS/유도 규칙을 억지로 바꾸지 않는다. 기본 충돌은 실제 선체에 대한 근사 박스이며 최종 충돌 메시가 아니다.
+
+
 **MJ 도면 일반 슬롯 모듈 교체 — 검증 진행 중:** 파란 일반 슬롯에서 기존 슬롯 티어와 함체 제한을 유지하며 보정 데이터의 무장 HP가 있는 함포·빔·미사일로 계열을 교체할 수 있다. 전용 빨간 슬롯과 요격 슬롯은 이 경로로 변경하지 않는다. 새 무장에 필요한 시설이 없는 함선은 교체를 거부하며, 시설이 파괴·무인 상태면 장착 후에도 기존 발사 차단을 따른다. 함선별 레이아웃을 복제하고 시설별 무장 수·개별 무장 최대 HP를 갱신하며 현재 HP는 이전 값과 새 최대치 중 작은 값으로 유지한다. 명령·살보는 취소하고 이미 발사된 공격 정보는 보존한다. 이는 DEV 무장 창의 기존 시험 장착 경로이며 일반 플레이의 전체 장비·경제 시스템이나 티어 간 교체 구현은 아니다.
 
 Win64 Development Editor `MarkedModule_Main_Build3.log` 성공, 시험 무장 7종 활성 전체 자동 `MarkedModule_All_Automation3.log` 132/132(새 검사는 무장 계열·HP·필수 시설·전용 슬롯·기발사 탄 확인), 2C PIE API [83/83](validation/PlayUIR2/MJ_일반슬롯교체_시설검사_API.json)(함포→빔 및 시설별 개수·HP 포함). 이전 코드 `1dbaed1`의 7종 시험 활성 통합 임무는 [29사례·268검사 성공](validation/PlayUIR2/MJ_무장7종_통합임무_API.json), 1승·8패·20사례 시간제한까지 진행 중이다. 최신 모듈 코드의 같은 임무는 `MarkedModule_FullMission.log`와 `IntegratedMission_Source7_modules1.json`으로 실행 중이므로 결과를 확인하기 전 성공으로 기록하지 않는다. 직접 마우스·키보드 입력은 수행하지 않았다.
