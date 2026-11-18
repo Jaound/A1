@@ -300,4 +300,28 @@ bool FOVBF120LiveTrialTest::RunTest(const FString&)
     TestTrue(TEXT("Missile keeps its usual gameplay muzzle"),R.A->GetWeaponMuzzleWorld(Def.WeaponId).Equals(R.A->GetActorTransform().TransformPosition(Fallback),.01));
     return true;
 }
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(FOVSideMountGeometry,
+    "OrbitalVanguard.Presentation.SideMountGeometry",
+    EAutomationTestFlags::EditorContext | EAutomationTestFlags::EngineFilter)
+bool FOVSideMountGeometry::RunTest(const FString&)
+{
+    FOVWeaponMountDefinition Def;Def.LocalPosition=FVector(10,20,30);Def.Tier=1;
+    const FVector Extent(175,75,30);const float Length=OVWeaponGeometry::BarrelLength(Extent,1,false);
+    TestTrue(TEXT("Legacy upper face remains up"),OVWeaponGeometry::SurfaceNormal(Def).Equals(FVector::UpVector));
+    Def.LocalPosition.Z=-30;
+    TestTrue(TEXT("Legacy lower face remains down"),OVWeaponGeometry::SurfaceNormal(Def).Equals(FVector::DownVector));
+    Def.LocalSurfaceNormal=FVector(0,-2,0);
+    TestTrue(TEXT("Side face normal is normalized"),OVWeaponGeometry::SurfaceNormal(Def).Equals(FVector(0,-1,0)));
+    TestTrue(TEXT("Side missile muzzle follows the face"),OVWeaponGeometry::MuzzleLocal(Def,FRotator::ZeroRotator,Extent,true,0).Equals(Def.LocalPosition+FVector(0,-Length,0),.01));
+    TestTrue(TEXT("Side gun muzzle retains actual aim"),OVWeaponGeometry::MuzzleLocal(Def,FRotator(0,45,0),Extent,false,0).Equals(Def.LocalPosition+FRotator(0,45,0).Vector()*Length,.01));
+    OVWeaponVisualTest::FRange R;
+    auto& LiveDef=R.A->Systems->Layout->WeaponMounts[1];
+    LiveDef.LocalSurfaceNormal=FVector(0,-1,0);
+    R.Gun().LocalAim=FRotator(0,-90,0);
+    R.A->RefreshWeaponVisuals();
+    const FOVWeaponVisualState Visual=R.Visual();
+    TestTrue(TEXT("Side visual uses the actual gameplay muzzle"),Visual.WorldMuzzle.Equals(R.A->GetWeaponMuzzleWorld(Visual.MountId),.01));
+    TestTrue(TEXT("Side visual keeps the actual logical aim"),Visual.LogicalAim.Equals(R.Gun().LocalAim,.01));
+    return true;
+}
 #endif

@@ -62,6 +62,8 @@ struct ORBITALVANGUARD_API FOVWeaponMountDefinition
     // Optional presentation/geometry profile. NAME_None preserves the existing muzzle path.
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Weapon") FName PresentationProfile = NAME_None;
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Weapon") FVector LocalPosition = FVector::ZeroVector;
+    // Zero retains the legacy top/bottom rule; a nonzero normal specifies the mounting face.
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Weapon") FVector LocalSurfaceNormal = FVector::ZeroVector;
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Weapon") float MaxHP = 200;
 };
 

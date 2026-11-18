@@ -12,6 +12,7 @@ class UMaterialInstanceDynamic;
 namespace OVWeaponGeometry
 {
     ORBITALVANGUARD_API float BarrelLength(const FVector& HullHalfExtent, float Tier, bool bPointDefense);
+    ORBITALVANGUARD_API FVector SurfaceNormal(const FOVWeaponMountDefinition& Definition);
     ORBITALVANGUARD_API FVector MuzzleLocal(FVector MountPosition, FRotator Aim,
         float BarrelLength, bool bFixedVLS);
     ORBITALVANGUARD_API bool HasBF120Trial(const FOVWeaponMountDefinition& Definition);

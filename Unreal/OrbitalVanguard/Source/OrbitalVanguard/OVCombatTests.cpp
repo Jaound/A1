@@ -326,6 +326,11 @@ bool FOVCombatTurretTest::RunTest(const FString&)
     TestFalse(TEXT("Lower mount cannot shoot above local neutral band"), R.Combat->GetReadiness(R.A, Id).bReady);
     R.B->SetActorLocation(FVector(1000, 0, 0)); R.Align();
     TestTrue(TEXT("Equator permits lower mount too"), R.Combat->GetReadiness(R.A, Id).bReady);
+    R.A->Systems->Layout->WeaponMounts[1].LocalSurfaceNormal=FVector(0,-1,0);
+    R.B->SetActorLocation(FVector(1000,-1000,0)); R.Align();
+    TestTrue(TEXT("Left-facing mount can fire toward the left"),R.Combat->GetReadiness(R.A,Id).bReady);
+    R.B->SetActorLocation(FVector(1000,1000,0)); R.Align();
+    TestFalse(TEXT("Left-facing mount cannot fire through the opposite side"),R.Combat->GetReadiness(R.A,Id).bReady);
     float T; FVector Normal;
     TestTrue(TEXT("Swept segment intersects a rotated scaled hull"), UOVCombatSubsystem::SegmentBox(FVector(-1000, 0, 0), FVector(1000, 0, 0), FTransform(FRotator(10, 37, 25), FVector::ZeroVector, FVector(1.4, 1.2, 1.8)), FVector(175, 75, 30), T, Normal));
     TestTrue(TEXT("Continuous impact has bounded fraction and finite normal"), T >= 0 && T <= 1 && !Normal.ContainsNaN());

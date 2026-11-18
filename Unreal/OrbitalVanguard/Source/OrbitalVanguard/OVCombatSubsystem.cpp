@@ -357,9 +357,8 @@ FOVFireReadiness UOVCombatSubsystem::Evaluate(const FOVCombatShipState& State, c
         R.AimSpreadDegrees=FMath::Clamp(Mount.Profile.AimSpreadDegrees /
             (1.f+4.f*FMath::Max(0.f,R.Detection.AccuracyBonus+Duty.AccuracyBonus)),0.f,45.f);
     const FVector LocalDirection = Ship->GetActorQuat().UnrotateVector(Offset).GetSafeNormal();
-    const float Elevation = LocalDirection.Rotation().Pitch;
-    if ((Def->LocalPosition.Z >= 0 && Elevation < -NeutralElevation)
-        || (Def->LocalPosition.Z < 0 && Elevation > NeutralElevation)) return Block(TEXT("MOUNT BLIND ARC"));
+    const double FaceDot=FVector::DotProduct(OVWeaponGeometry::SurfaceNormal(*Def),LocalDirection);
+    if (FaceDot < -FMath::Sin(FMath::DegreesToRadians(double(NeutralElevation)))) return Block(TEXT("MOUNT BLIND ARC"));
     R.AimError = FMath::RadiansToDegrees(FMath::Acos(FMath::Clamp(
         FVector::DotProduct(Mount.LocalAim.Vector(), LocalDirection), -1.0, 1.0)));
     if (R.AimError > Mount.Profile.FireTolerance) return Block(TEXT("TURRET ALIGNING"));
@@ -585,7 +584,7 @@ void UOVCombatSubsystem::Launch(FOVCombatShipState& State, FOVCombatMountState& 
     Attack.Direction = (AimPoint - Attack.Position).GetSafeNormal();
     if (Attack.Weapon.Kind == EOVAttackKind::Missile)
     {
-        const FVector LaunchUp = State.Ship->GetActorQuat().GetUpVector() * (Def->LocalPosition.Z < 0 ? -1.f : 1.f);
+        const FVector LaunchUp = State.Ship->GetActorQuat().RotateVector(OVWeaponGeometry::SurfaceNormal(*Def));
         Attack.VLSControlPoint = Attack.Origin + LaunchUp * FMath::Max(1.f, Attack.Weapon.VLSHeight);
         FVector Previous = Attack.Origin; double Length = 0;
         for (int32 Sample = 1; Sample <= 16; ++Sample)

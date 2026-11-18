@@ -6,6 +6,12 @@
 
 namespace OVWeaponGeometry
 {
+FVector SurfaceNormal(const FOVWeaponMountDefinition& Definition)
+{
+    if (!Definition.LocalSurfaceNormal.ContainsNaN() && !Definition.LocalSurfaceNormal.IsNearlyZero())
+        return Definition.LocalSurfaceNormal.GetSafeNormal();
+    return Definition.LocalPosition.Z < 0 ? FVector::DownVector : FVector::UpVector;
+}
 float BarrelLength(const FVector& HullHalfExtent, float Tier, bool bPointDefense)
 {
     // Display geometry only; no range/damage/speed or hit-volume multiplier.
@@ -21,6 +27,7 @@ FVector MuzzleLocal(FVector MountPosition, FRotator Aim, float Length, bool bFix
 bool HasBF120Trial(const FOVWeaponMountDefinition& Definition)
 {
     if (Definition.Type != EOVWeaponType::Cannon || Definition.PresentationProfile != TEXT("BF120Trial")) return false;
+    if (FMath::Abs(SurfaceNormal(Definition).Z)<.999) return false;
     static TWeakObjectPtr<UStaticMesh> Base, Body, Pitch;
     if (!Base.IsValid()) Base = LoadObject<UStaticMesh>(nullptr,TEXT("/Game/Presentation/BF120Trial/SM_BF120_BaseTrial.SM_BF120_BaseTrial"),nullptr,LOAD_NoWarn);
     if (!Body.IsValid()) Body = LoadObject<UStaticMesh>(nullptr,TEXT("/Game/Presentation/BF120Trial/SM_BF120_YawBody.SM_BF120_YawBody"),nullptr,LOAD_NoWarn);
@@ -32,11 +39,12 @@ FVector MuzzleLocal(const FOVWeaponMountDefinition& Definition, FRotator Aim,
     FVector HullHalfExtent, bool bFixedVLS, int32 BarrelIndex)
 {
     const float Length=BarrelLength(HullHalfExtent,Definition.Tier,false);
-    if (!HasBF120Trial(Definition) || bFixedVLS) return MuzzleLocal(Definition.LocalPosition,Aim,Length,bFixedVLS);
+    if (bFixedVLS) return Definition.LocalPosition + SurfaceNormal(Definition)*Length;
+    if (!HasBF120Trial(Definition)) return MuzzleLocal(Definition.LocalPosition,Aim,Length,false);
     // Measured isolated UE trial, cm. One projectile uses one barrel; shots alternate without changing cadence or damage.
     const FVector YawOrigin(99.5,2.5,-41),PitchOrigin(8,0,50);
     const FVector Tips[]={FVector(-241.143,41.673,49.709),FVector(-241.167,-42.358,49.477)};
-    const bool bBottom=Definition.LocalPosition.Z<0;
+    const bool bBottom=SurfaceNormal(Definition).Z<0;
     const FQuat Flip=FRotator(0,0,bBottom?180.f:0.f).Quaternion();
     const FQuat Yaw=FRotator(0,bBottom?180.f-Aim.Yaw:180.f+Aim.Yaw,0).Quaternion();
     const FQuat Pitch=FRotator(bBottom?Aim.Pitch:-Aim.Pitch,0,0).Quaternion();
@@ -91,9 +99,12 @@ void UOVWeaponVisualComponent::Initialize(const FOVWeaponMountDefinition& InDefi
     Extent = HullHalfExtent;
     State.MountId = Definition.WeaponId;
     State.bPointDefense = Definition.Type == EOVWeaponType::Interception;
-    State.bBottom = Definition.LocalPosition.Z < 0;
+    const FVector Normal=OVWeaponGeometry::SurfaceNormal(Definition);
+    const bool bSide=FMath::Abs(Normal.Z)<.999;
+    State.bBottom = !bSide && Normal.Z < 0;
     Length = OVWeaponGeometry::BarrelLength(Extent, Definition.Tier, State.bPointDefense);
     SetRelativeLocation(Definition.LocalPosition);
+    if(bSide) SetRelativeRotation(FRotationMatrix::MakeFromZ(Normal).Rotator());
     const float Side = State.bBottom ? -1.f : 1.f;
     UMaterialInterface* Base = LoadObject<UMaterialInterface>(nullptr, TEXT("/Engine/BasicShapes/BasicShapeMaterial.BasicShapeMaterial"));
     if (Base) BodyMaterial = UMaterialInstanceDynamic::Create(Base, this);
@@ -146,6 +157,7 @@ bool UOVWeaponVisualComponent::Matches(const FOVWeaponMountDefinition& Other, FV
 {
     return Definition.WeaponId == Other.WeaponId && Definition.Type == Other.Type
         && Definition.Tier == Other.Tier && Definition.PresentationProfile==Other.PresentationProfile && Definition.LocalPosition.Equals(Other.LocalPosition)
+        && Definition.LocalSurfaceNormal.Equals(Other.LocalSurfaceNormal)
         && Extent.Equals(HullHalfExtent);
 }
 
@@ -155,13 +167,17 @@ void UOVWeaponVisualComponent::Synchronize(FRotator LogicalAim, bool bFixedVLS, 
     State.LogicalAim = LogicalAim;
     State.bFixedVLS = bFixedVLS;
     State.bDestroyed = bDestroyed;
-    State.VisualAim = bFixedVLS ? FRotator(State.bBottom ? -90 : 90, 0, 0) : LogicalAim;
+    const FVector Normal=OVWeaponGeometry::SurfaceNormal(Definition);
+    const bool bSide=FMath::Abs(Normal.Z)<.999;
+    State.VisualAim = bSide ? (bFixedVLS ? FRotator(90,0,0) : GetRelativeRotation().UnrotateVector(LogicalAim.Vector()).Rotation())
+        : (bFixedVLS ? FRotator(State.bBottom ? -90 : 90, 0, 0) : LogicalAim);
     const bool bSource=OVWeaponGeometry::HasBF120Trial(Definition)&&!bFixedVLS;
     if (YawPivot) YawPivot->SetRelativeRotation(FRotator(0,bSource?(State.bBottom?180.f-State.VisualAim.Yaw:180.f+State.VisualAim.Yaw):State.VisualAim.Yaw,0));
     if (PitchPivot) PitchPivot->SetRelativeRotation(FRotator(bSource?(State.bBottom?State.VisualAim.Pitch:-State.VisualAim.Pitch):State.VisualAim.Pitch,0,0));
     const int32 BarrelIndex=ShotsFired>0?(ShotsFired-1)%2:0;
-    State.LocalMuzzle = bSource?OVWeaponGeometry::MuzzleLocal(Definition,LogicalAim,Extent,false,BarrelIndex)
-        :OVWeaponGeometry::MuzzleLocal(Definition.LocalPosition,LogicalAim,Length,bFixedVLS);
+    State.LocalMuzzle = State.bPointDefense
+        ? Definition.LocalPosition+(bFixedVLS?Normal:LogicalAim.Vector())*Length
+        : OVWeaponGeometry::MuzzleLocal(Definition,LogicalAim,Extent,bFixedVLS,BarrelIndex);
     State.LastShotId = ShotId;
     State.LastShotTime = ShotTime;
     // Game time keeps a paused muzzle flash frozen. Opening a viewer cannot fire or re-trigger it.
