@@ -1,0 +1,9 @@
+{
+  "id": "ciws_beam_b",
+  "passed": false,
+  "scope": "원본 재질을 참조하는 회전 후보 격리 반입 및 시험 LOD. 전장 미적용.",
+  "parts": [],
+  "errors": [
+    "Traceback (most recent call last):\n  File \"C:/Users/user/source/repos/A1/Unreal/OrbitalVanguard/Tools/ImportWeaponYawCandidate.py\", line 67, in <module>\n    require(original == part['triangles'] and uv_count > 0,\n  File \"C:/Users/user/source/repos/A1/Unreal/OrbitalVanguard/Tools/ImportWeaponYawCandidate.py\", line 33, in require\n    raise RuntimeError(message)\nRuntimeError: 삼각형 또는 UV 불일치: SM_Base UE=464733 source=464924 UV=1\n"
+  ]
+}

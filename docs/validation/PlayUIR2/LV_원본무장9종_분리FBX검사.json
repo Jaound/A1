@@ -1,0 +1,563 @@
+{
+  "scope": "분리 후보 FBX의 해시·삼각형·UV 확인; 전장 적용 검증 아님.",
+  "models": [
+    {
+      "id": "ciws_beam_b",
+      "source_sha256": "8394e887f12f91221a0903cf76aaad28b34def07ec8ee0d2e50da592aa37a552",
+      "parts": [
+        {
+          "name": "ciws_beam_b_BaseTrial",
+          "fbx": "C:\\Users\\user\\Documents\\OrbitalVanguardAssets\\Prepared\\PlayUI_R2_WeaponYawExports_v1\\ciws_beam_b\\ciws_beam_b_BaseTrial.fbx",
+          "sha256": "e55dc66aaee1fb666d678d14a81813eae32d73a1286b27dd50b14033bc5f8aa1",
+          "source_origin": [
+            0.40920060873031616,
+            -0.0003419220447540283,
+            -0.4300000071525574
+          ],
+          "triangles": 464924,
+          "uv_layers": [
+            "UVMap"
+          ],
+          "materials": [
+            "Material.001",
+            "TrialCutCap"
+          ]
+        },
+        {
+          "name": "ciws_beam_b_YawTrial",
+          "fbx": "C:\\Users\\user\\Documents\\OrbitalVanguardAssets\\Prepared\\PlayUI_R2_WeaponYawExports_v1\\ciws_beam_b\\ciws_beam_b_YawTrial.fbx",
+          "sha256": "80fdd8d8833c61947637dff40769f6fc9265a3fd2c3908e51dd587ecf50f7687",
+          "source_origin": [
+            0.40920060873031616,
+            -0.0003419220447540283,
+            -0.4300000071525574
+          ],
+          "triangles": 754930,
+          "uv_layers": [
+            "UVMap"
+          ],
+          "materials": [
+            "Material.001",
+            "TrialCutCap"
+          ]
+        }
+      ],
+      "reimport": [
+        {
+          "name": "ciws_beam_b_BaseTrial",
+          "source_sha256": "e55dc66aaee1fb666d678d14a81813eae32d73a1286b27dd50b14033bc5f8aa1",
+          "triangles": 464924,
+          "uv_layers": [
+            "UVMap"
+          ],
+          "material_slots": 2
+        },
+        {
+          "name": "ciws_beam_b_YawTrial",
+          "source_sha256": "80fdd8d8833c61947637dff40769f6fc9265a3fd2c3908e51dd587ecf50f7687",
+          "triangles": 754930,
+          "uv_layers": [
+            "UVMap"
+          ],
+          "material_slots": 2
+        }
+      ]
+    },
+    {
+      "id": "ciws_gatling_6",
+      "source_sha256": "36e3bcc2f74356bcc76213c02edc6fdf16a0e55e23ceb20bdbfdaa6a204f41f3",
+      "parts": [
+        {
+          "name": "ciws_gatling_6_BaseTrial",
+          "fbx": "C:\\Users\\user\\Documents\\OrbitalVanguardAssets\\Prepared\\PlayUI_R2_WeaponYawExports_v1\\ciws_gatling_6\\ciws_gatling_6_BaseTrial.fbx",
+          "sha256": "ddcab5ac7af1692241673d1a3f09b1a066f9cbbb58a9f7646ddb7bdf079193a3",
+          "source_origin": [
+            0.3683440089225769,
+            0.0007568150758743286,
+            -0.3700000047683716
+          ],
+          "triangles": 479552,
+          "uv_layers": [
+            "UVMap"
+          ],
+          "materials": [
+            "Material.001",
+            "TrialCutCap"
+          ]
+        },
+        {
+          "name": "ciws_gatling_6_YawTrial",
+          "fbx": "C:\\Users\\user\\Documents\\OrbitalVanguardAssets\\Prepared\\PlayUI_R2_WeaponYawExports_v1\\ciws_gatling_6\\ciws_gatling_6_YawTrial.fbx",
+          "sha256": "bbc5e937dc8909606dc6da88840976b60fa8942990e33b656a478e9fad5fff6d",
+          "source_origin": [
+            0.3683440089225769,
+            0.0007568150758743286,
+            -0.3700000047683716
+          ],
+          "triangles": 816190,
+          "uv_layers": [
+            "UVMap"
+          ],
+          "materials": [
+            "Material.001",
+            "TrialCutCap"
+          ]
+        }
+      ],
+      "reimport": [
+        {
+          "name": "ciws_gatling_6_BaseTrial",
+          "source_sha256": "ddcab5ac7af1692241673d1a3f09b1a066f9cbbb58a9f7646ddb7bdf079193a3",
+          "triangles": 479552,
+          "uv_layers": [
+            "UVMap"
+          ],
+          "material_slots": 2
+        },
+        {
+          "name": "ciws_gatling_6_YawTrial",
+          "source_sha256": "bbc5e937dc8909606dc6da88840976b60fa8942990e33b656a478e9fad5fff6d",
+          "triangles": 816190,
+          "uv_layers": [
+            "UVMap"
+          ],
+          "material_slots": 2
+        }
+      ]
+    },
+    {
+      "id": "heavy_cannon_shc400",
+      "source_sha256": "f310a6a19d3d1e516ca49fc3576246ada47e4eafee0a8a417a2fc570fc5566c3",
+      "parts": [
+        {
+          "name": "heavy_cannon_shc400_BaseTrial",
+          "fbx": "C:\\Users\\user\\Documents\\OrbitalVanguardAssets\\Prepared\\PlayUI_R2_WeaponYawExports_v1\\heavy_cannon_shc400\\heavy_cannon_shc400_BaseTrial.fbx",
+          "sha256": "f66fed259900dab85aba9d162e5ff66064c2f711c8a0991b0291ec3b654764de",
+          "source_origin": [
+            0.46212488412857056,
+            0.000729680061340332,
+            -0.5125001072883606
+          ],
+          "triangles": 354026,
+          "uv_layers": [
+            "UVMap"
+          ],
+          "materials": [
+            "Material.001",
+            "TrialCutCap"
+          ]
+        },
+        {
+          "name": "heavy_cannon_shc400_YawTrial",
+          "fbx": "C:\\Users\\user\\Documents\\OrbitalVanguardAssets\\Prepared\\PlayUI_R2_WeaponYawExports_v1\\heavy_cannon_shc400\\heavy_cannon_shc400_YawTrial.fbx",
+          "sha256": "1e39602ded5e61f437cb734fab1a45d05948c98c8f1c8754e9137ae5d800ada6",
+          "source_origin": [
+            0.46212488412857056,
+            0.000729680061340332,
+            -0.5125001072883606
+          ],
+          "triangles": 754502,
+          "uv_layers": [
+            "UVMap"
+          ],
+          "materials": [
+            "Material.001",
+            "TrialCutCap"
+          ]
+        }
+      ],
+      "reimport": [
+        {
+          "name": "heavy_cannon_shc400_BaseTrial",
+          "source_sha256": "f66fed259900dab85aba9d162e5ff66064c2f711c8a0991b0291ec3b654764de",
+          "triangles": 354026,
+          "uv_layers": [
+            "UVMap"
+          ],
+          "material_slots": 2
+        },
+        {
+          "name": "heavy_cannon_shc400_YawTrial",
+          "source_sha256": "1e39602ded5e61f437cb734fab1a45d05948c98c8f1c8754e9137ae5d800ada6",
+          "triangles": 754502,
+          "uv_layers": [
+            "UVMap"
+          ],
+          "material_slots": 2
+        }
+      ]
+    },
+    {
+      "id": "laser_turret_lb30",
+      "source_sha256": "68087a92c69af3849895a72fe98ee52781aca134c385803c79409f556e257dee",
+      "parts": [
+        {
+          "name": "laser_turret_lb30_BaseTrial",
+          "fbx": "C:\\Users\\user\\Documents\\OrbitalVanguardAssets\\Prepared\\PlayUI_R2_WeaponYawExports_v1\\laser_turret_lb30\\laser_turret_lb30_BaseTrial.fbx",
+          "sha256": "a58d7f5760cff32447b8fe0b5a9384d8b3f22c51ee21525f151575986be24410",
+          "source_origin": [
+            0.9830499887466431,
+            -0.04373061656951904,
+            -0.3700000047683716
+          ],
+          "triangles": 277630,
+          "uv_layers": [
+            "UVMap"
+          ],
+          "materials": [
+            "Material.001",
+            "TrialCutCap"
+          ]
+        },
+        {
+          "name": "laser_turret_lb30_YawTrial",
+          "fbx": "C:\\Users\\user\\Documents\\OrbitalVanguardAssets\\Prepared\\PlayUI_R2_WeaponYawExports_v1\\laser_turret_lb30\\laser_turret_lb30_YawTrial.fbx",
+          "sha256": "fd8103439e1790c5d1ba9e9497d1096e09f0ba875bae689b7195eac364befc23",
+          "source_origin": [
+            0.9830499887466431,
+            -0.04373061656951904,
+            -0.3700000047683716
+          ],
+          "triangles": 1109302,
+          "uv_layers": [
+            "UVMap"
+          ],
+          "materials": [
+            "Material.001",
+            "TrialCutCap"
+          ]
+        }
+      ],
+      "reimport": [
+        {
+          "name": "laser_turret_lb30_BaseTrial",
+          "source_sha256": "a58d7f5760cff32447b8fe0b5a9384d8b3f22c51ee21525f151575986be24410",
+          "triangles": 277630,
+          "uv_layers": [
+            "UVMap"
+          ],
+          "material_slots": 2
+        },
+        {
+          "name": "laser_turret_lb30_YawTrial",
+          "source_sha256": "fd8103439e1790c5d1ba9e9497d1096e09f0ba875bae689b7195eac364befc23",
+          "triangles": 1109302,
+          "uv_layers": [
+            "UVMap"
+          ],
+          "material_slots": 2
+        }
+      ]
+    },
+    {
+      "id": "missile_pod_mm24",
+      "source_sha256": "0f175755c6c55434ec21a03c2aa15f9015bf1f828461c6518d865a2e81197f2f",
+      "parts": [
+        {
+          "name": "missile_pod_mm24_BaseTrial",
+          "fbx": "C:\\Users\\user\\Documents\\OrbitalVanguardAssets\\Prepared\\PlayUI_R2_WeaponYawExports_v1\\missile_pod_mm24\\missile_pod_mm24_BaseTrial.fbx",
+          "sha256": "721f59d0c1166f545631340131811c9418f64a152d0982d7961023ab6101cad9",
+          "source_origin": [
+            -0.00018212199211120605,
+            0.0815979540348053,
+            -0.4050000011920929
+          ],
+          "triangles": 935218,
+          "uv_layers": [
+            "UVMap"
+          ],
+          "materials": [
+            "Material.001",
+            "TrialCutCap"
+          ]
+        },
+        {
+          "name": "missile_pod_mm24_YawTrial",
+          "fbx": "C:\\Users\\user\\Documents\\OrbitalVanguardAssets\\Prepared\\PlayUI_R2_WeaponYawExports_v1\\missile_pod_mm24\\missile_pod_mm24_YawTrial.fbx",
+          "sha256": "ac8c087682f518719593fb1c663bff1f205b72c75494496621be6985fb89fa9b",
+          "source_origin": [
+            -0.00018212199211120605,
+            0.0815979540348053,
+            -0.4050000011920929
+          ],
+          "triangles": 1327222,
+          "uv_layers": [
+            "UVMap"
+          ],
+          "materials": [
+            "Material.001",
+            "TrialCutCap"
+          ]
+        }
+      ],
+      "reimport": [
+        {
+          "name": "missile_pod_mm24_BaseTrial",
+          "source_sha256": "721f59d0c1166f545631340131811c9418f64a152d0982d7961023ab6101cad9",
+          "triangles": 935218,
+          "uv_layers": [
+            "UVMap"
+          ],
+          "material_slots": 2
+        },
+        {
+          "name": "missile_pod_mm24_YawTrial",
+          "source_sha256": "ac8c087682f518719593fb1c663bff1f205b72c75494496621be6985fb89fa9b",
+          "triangles": 1327222,
+          "uv_layers": [
+            "UVMap"
+          ],
+          "material_slots": 2
+        }
+      ]
+    },
+    {
+      "id": "missile_pod_mm48",
+      "source_sha256": "9f7c153e24d94a443c6fd8531d3b1fb7c23347f14dc19afece5b0921e50410de",
+      "parts": [
+        {
+          "name": "missile_pod_mm48_BaseTrial",
+          "fbx": "C:\\Users\\user\\Documents\\OrbitalVanguardAssets\\Prepared\\PlayUI_R2_WeaponYawExports_v1\\missile_pod_mm48\\missile_pod_mm48_BaseTrial.fbx",
+          "sha256": "5aadb698b74660eced166b4c98155790450e0735b6bd2bbca288ced0378bfd74",
+          "source_origin": [
+            -0.00042489171028137207,
+            -0.17936056852340698,
+            -0.5125000476837158
+          ],
+          "triangles": 726962,
+          "uv_layers": [
+            "UVMap"
+          ],
+          "materials": [
+            "Material.001",
+            "TrialCutCap"
+          ]
+        },
+        {
+          "name": "missile_pod_mm48_YawTrial",
+          "fbx": "C:\\Users\\user\\Documents\\OrbitalVanguardAssets\\Prepared\\PlayUI_R2_WeaponYawExports_v1\\missile_pod_mm48\\missile_pod_mm48_YawTrial.fbx",
+          "sha256": "797b48a694e7a211f06ce76b52a88a68c6f9b8ff670bcb357b0248c5de48026b",
+          "source_origin": [
+            -0.00042489171028137207,
+            -0.17936056852340698,
+            -0.5125000476837158
+          ],
+          "triangles": 2568132,
+          "uv_layers": [
+            "UVMap"
+          ],
+          "materials": [
+            "Material.001",
+            "TrialCutCap"
+          ]
+        }
+      ],
+      "reimport": [
+        {
+          "name": "missile_pod_mm48_BaseTrial",
+          "source_sha256": "5aadb698b74660eced166b4c98155790450e0735b6bd2bbca288ced0378bfd74",
+          "triangles": 726962,
+          "uv_layers": [
+            "UVMap"
+          ],
+          "material_slots": 2
+        },
+        {
+          "name": "missile_pod_mm48_YawTrial",
+          "source_sha256": "797b48a694e7a211f06ce76b52a88a68c6f9b8ff670bcb357b0248c5de48026b",
+          "triangles": 2568132,
+          "uv_layers": [
+            "UVMap"
+          ],
+          "material_slots": 2
+        }
+      ]
+    },
+    {
+      "id": "naval_gun_bf120",
+      "source_sha256": "8772ae1dbdf460c0b2e57654dfbfe1b40447b3ad5c2c9623a744f78a31a756a1",
+      "parts": [
+        {
+          "name": "naval_gun_bf120_BaseTrial",
+          "fbx": "C:\\Users\\user\\Documents\\OrbitalVanguardAssets\\Prepared\\PlayUI_R2_WeaponYawExports_v1\\naval_gun_bf120\\naval_gun_bf120_BaseTrial.fbx",
+          "sha256": "2f9d43c991dbf0168bfa9fb29a13db8c7920f27512091e597dd0bcc9f4b627fb",
+          "source_origin": [
+            1.0015538930892944,
+            -0.00039190053939819336,
+            -0.23000003397464752
+          ],
+          "triangles": 393922,
+          "uv_layers": [
+            "UVMap"
+          ],
+          "materials": [
+            "Material.001",
+            "TrialCutCap"
+          ]
+        },
+        {
+          "name": "naval_gun_bf120_YawTrial",
+          "fbx": "C:\\Users\\user\\Documents\\OrbitalVanguardAssets\\Prepared\\PlayUI_R2_WeaponYawExports_v1\\naval_gun_bf120\\naval_gun_bf120_YawTrial.fbx",
+          "sha256": "d7e98c4abeb86a049d8f060b2fd40d08664f189c5e53e322ffae6ed6f32d107c",
+          "source_origin": [
+            1.0015538930892944,
+            -0.00039190053939819336,
+            -0.23000003397464752
+          ],
+          "triangles": 616788,
+          "uv_layers": [
+            "UVMap"
+          ],
+          "materials": [
+            "Material.001",
+            "TrialCutCap"
+          ]
+        }
+      ],
+      "reimport": [
+        {
+          "name": "naval_gun_bf120_BaseTrial",
+          "source_sha256": "2f9d43c991dbf0168bfa9fb29a13db8c7920f27512091e597dd0bcc9f4b627fb",
+          "triangles": 393922,
+          "uv_layers": [
+            "UVMap"
+          ],
+          "material_slots": 2
+        },
+        {
+          "name": "naval_gun_bf120_YawTrial",
+          "source_sha256": "d7e98c4abeb86a049d8f060b2fd40d08664f189c5e53e322ffae6ed6f32d107c",
+          "triangles": 616788,
+          "uv_layers": [
+            "UVMap"
+          ],
+          "material_slots": 2
+        }
+      ]
+    },
+    {
+      "id": "plasma_heavy_cannon",
+      "source_sha256": "0d21ebdff1cef6505c8bbd62e224de6849f209f7ced9b165cae38da9cbd5cf6c",
+      "parts": [
+        {
+          "name": "plasma_heavy_cannon_BaseTrial",
+          "fbx": "C:\\Users\\user\\Documents\\OrbitalVanguardAssets\\Prepared\\PlayUI_R2_WeaponYawExports_v1\\plasma_heavy_cannon\\plasma_heavy_cannon_BaseTrial.fbx",
+          "sha256": "08d755634569fa55d5294c97244c754a514110053c72fcce08dc6c0ee5b84d67",
+          "source_origin": [
+            1.2523497343063354,
+            -2.345442771911621e-05,
+            -0.5375000238418579
+          ],
+          "triangles": 625140,
+          "uv_layers": [
+            "UVMap"
+          ],
+          "materials": [
+            "Material.001",
+            "TrialCutCap"
+          ]
+        },
+        {
+          "name": "plasma_heavy_cannon_YawTrial",
+          "fbx": "C:\\Users\\user\\Documents\\OrbitalVanguardAssets\\Prepared\\PlayUI_R2_WeaponYawExports_v1\\plasma_heavy_cannon\\plasma_heavy_cannon_YawTrial.fbx",
+          "sha256": "af2cda448d2b815a21c7371b87fe713eb1dfbf380208b6ef3081a867cdfe2ac7",
+          "source_origin": [
+            1.2523497343063354,
+            -2.345442771911621e-05,
+            -0.5375000238418579
+          ],
+          "triangles": 1901260,
+          "uv_layers": [
+            "UVMap"
+          ],
+          "materials": [
+            "Material.001",
+            "TrialCutCap"
+          ]
+        }
+      ],
+      "reimport": [
+        {
+          "name": "plasma_heavy_cannon_BaseTrial",
+          "source_sha256": "08d755634569fa55d5294c97244c754a514110053c72fcce08dc6c0ee5b84d67",
+          "triangles": 625140,
+          "uv_layers": [
+            "UVMap"
+          ],
+          "material_slots": 2
+        },
+        {
+          "name": "plasma_heavy_cannon_YawTrial",
+          "source_sha256": "af2cda448d2b815a21c7371b87fe713eb1dfbf380208b6ef3081a867cdfe2ac7",
+          "triangles": 1901260,
+          "uv_layers": [
+            "UVMap"
+          ],
+          "material_slots": 2
+        }
+      ]
+    },
+    {
+      "id": "railgun_rg200",
+      "source_sha256": "9cb80666e27ef33658228092f30ffe60a55d0b3f31072d3c80b19735890a5068",
+      "parts": [
+        {
+          "name": "railgun_rg200_BaseTrial",
+          "fbx": "C:\\Users\\user\\Documents\\OrbitalVanguardAssets\\Prepared\\PlayUI_R2_WeaponYawExports_v1\\railgun_rg200\\railgun_rg200_BaseTrial.fbx",
+          "sha256": "2e78c4cb45caddbf2bfc638cc75b9b9815bb974c2e710b9489d8b42c1c38c6e7",
+          "source_origin": [
+            1.7215403318405151,
+            0.0007683038711547852,
+            -0.4050000011920929
+          ],
+          "triangles": 562798,
+          "uv_layers": [
+            "UVMap"
+          ],
+          "materials": [
+            "Material.001",
+            "TrialCutCap"
+          ]
+        },
+        {
+          "name": "railgun_rg200_YawTrial",
+          "fbx": "C:\\Users\\user\\Documents\\OrbitalVanguardAssets\\Prepared\\PlayUI_R2_WeaponYawExports_v1\\railgun_rg200\\railgun_rg200_YawTrial.fbx",
+          "sha256": "5841f56792529dbb1588cfc94067efebd5e01704cdd46ea2db1c4a907af73c49",
+          "source_origin": [
+            1.7215403318405151,
+            0.0007683038711547852,
+            -0.4050000011920929
+          ],
+          "triangles": 1513234,
+          "uv_layers": [
+            "UVMap"
+          ],
+          "materials": [
+            "Material.001",
+            "TrialCutCap"
+          ]
+        }
+      ],
+      "reimport": [
+        {
+          "name": "railgun_rg200_BaseTrial",
+          "source_sha256": "2e78c4cb45caddbf2bfc638cc75b9b9815bb974c2e710b9489d8b42c1c38c6e7",
+          "triangles": 562798,
+          "uv_layers": [
+            "UVMap"
+          ],
+          "material_slots": 2
+        },
+        {
+          "name": "railgun_rg200_YawTrial",
+          "source_sha256": "5841f56792529dbb1588cfc94067efebd5e01704cdd46ea2db1c4a907af73c49",
+          "triangles": 1513234,
+          "uv_layers": [
+            "UVMap"
+          ],
+          "material_slots": 2
+        }
+      ]
+    }
+  ]
+}

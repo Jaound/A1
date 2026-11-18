@@ -1,5 +1,8 @@
 # 최신 진행: 원본 함재기 표시와 포탑 접합 작업
 
+**LV 원본 분리 FBX·첫 UE 시험 자산 (전장 적용 미완료):** 9종을 받침과 회전부 FBX로 내보내 각각 Blender 재반입한 결과 18/18에서 삼각형 수·UV·입력 SHA가 보존됐다([결과](validation/PlayUIR2/LV_원본무장9종_분리FBX검사.json)). `ExportWeaponYawCandidate.py`와 `ValidateWeaponYawExport.py`는 원본 .blend를 저장하지 않는다. CIWS-B의 두 부분을 `/Game/Presentation/WeaponsYawTrial/ciws_beam_b/`에 격리 반입하고 기존 원본 재질 및 시험 LOD 100%/5%/1%를 연결했다([결과](validation/PlayUIR2/LV_CIWSB_회전후보_UE반입.json)). 첫 UE 반입은 기본 퇴화 삼각형 제거로 원본 삼각형 수가 191개 차이나 실패했고([기록](validation/PlayUIR2/LV_CIWSB_UE반입_초기실패.json)), 제거를 끄고 다시 실행했다. 스무딩 그룹 경고가 있어 화면 노멀·재질은 별도 확인해야 한다. CIWS-B 상하 회전 후보는 계층 구조 검사는 통과했지만 절단면 제외 표면 교차가 30도 458개, -30도 654개 등으로 나타나([검사](validation/PlayUIR2/LV_CIWSB_피치후보_간섭.json)) 미승인이다. 9종의 UE 회전 후보 격리 반입은 순차 진행 중이며 회전 후보도 실제 전장의 무장이 아니다. 다음: 완료 보고서·재로드 검증을 수집하고 포신 축/접합부·포구를 개별 수정한다. 실제 교전 장착, 시각/직접 입력, 전투 성능 및 패키징은 미검증이다. 사용자 UI 3파일은 커밋에서 제외한다.
+
+
 **LU 회귀·후보 간격 검증 (원본 전장 적용 미완료):** 최신 기본 코드의 기존 D116 전투 PIE API는 렌더러를 켠 에디터에서 [79/79 통과](validation/PlayUIR2/LU_D116_API.json)했다(`AssaultDisarm_LU_D116_Rendered.log`). 선행 `-nullrhi` 실행은 상세창 뒤 클릭 영역 1건에서 실패하여 [실패 결과](validation/PlayUIR2/LT_D116_API.json)를 보존했다. 렌더 없는 실행과 렌더 실행 결과를 구분하며 물리 입력 검증은 아니다. 9종 분리 후보에서 상부를 원본 정규화 좌표로 0.001만큼 높이는 읽기 전용 시험을 추가했을 때 -90/-45/0/45/90도 45개 모두 절단 덮개를 제외한 표면 교차가 0이었다([측정](validation/PlayUIR2/LU_원본무장9종_분리간격검사.json)). 다섯 각도 표면 교차만의 결과이며 모든 각도에서의 거리, 균열·떠 보임, 적절한 회전축, 피치·포구·재질·선체 장착, 실제 게임 화면/성능 확인이 아니다. `InspectTurretIntersections.py`의 선택 인자는 후보 파일을 저장하거나 변경하지 않는다. 다음은 모델별 회전축과 피치·포구를 확정하고 원본 재질·LOD·측면 슬롯을 검증할 수 있는 시험 자산을 생성하여 실제 게임 발사점과 연결하는 것이다. 이전 [LN 2C 실패](validation/PlayUIR2/LN_2C_API.json)는 F6에 신규 PD가 생긴 것을 과거 장면의 잔여물로 본 기대값 불일치이며 LQ에서 실제 등록 여부를 검사하도록 수정해 78/78로 재검증했다. 사용자 미커밋 UI 3파일은 유지한다.
 
 

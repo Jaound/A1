@@ -17,3 +17,4 @@
 /Unreal/OrbitalVanguard/Content/Presentation/Ships/BattlecarrierFull/*.uasset filter=lfs diff=lfs merge=lfs -text
 /Unreal/OrbitalVanguard/Content/Presentation/Ships/FighterFull/*.uasset filter=lfs diff=lfs merge=lfs -text
 /Unreal/OrbitalVanguard/Content/Presentation/WeaponsFull/**/*.uasset filter=lfs diff=lfs merge=lfs -text
+/Unreal/OrbitalVanguard/Content/Presentation/WeaponsYawTrial/**/*.uasset filter=lfs diff=lfs merge=lfs -text

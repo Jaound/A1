@@ -1,0 +1,38 @@
+{
+  "id": "ciws_beam_b",
+  "passed": true,
+  "scope": "원본 재질을 참조하는 회전 후보 격리 반입 및 시험 LOD. 전장 미적용.",
+  "parts": [
+    {
+      "asset": "/Game/Presentation/WeaponsYawTrial/ciws_beam_b/SM_Base",
+      "fbx_sha256": "e55dc66aaee1fb666d678d14a81813eae32d73a1286b27dd50b14033bc5f8aa1",
+      "source_origin": [
+        0.40920060873031616,
+        -0.0003419220447540283,
+        -0.4300000071525574
+      ],
+      "triangles": [
+        464924,
+        23246,
+        4650
+      ],
+      "source_material": "/Game/Presentation/WeaponsFull/ciws_beam_b/M_Source.M_Source"
+    },
+    {
+      "asset": "/Game/Presentation/WeaponsYawTrial/ciws_beam_b/SM_Yaw",
+      "fbx_sha256": "80fdd8d8833c61947637dff40769f6fc9265a3fd2c3908e51dd587ecf50f7687",
+      "source_origin": [
+        0.40920060873031616,
+        -0.0003419220447540283,
+        -0.4300000071525574
+      ],
+      "triangles": [
+        754930,
+        37746,
+        7550
+      ],
+      "source_material": "/Game/Presentation/WeaponsFull/ciws_beam_b/M_Source.M_Source"
+    }
+  ],
+  "errors": []
+}
