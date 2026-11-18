@@ -1,0 +1,63 @@
+{
+  "passed": true,
+  "scope": "격리된 UE 메시 로컬 경계만 측정; 실제 포구·가동·장착 확정 아님.",
+  "parts": [
+    {
+      "asset": "/Game/Presentation/WeaponsYawTrial/ciws_beam_b/SM_Base",
+      "min_cm": [
+        -80.5047607421875,
+        -79.12870788574219,
+        -56.9999885559082
+      ],
+      "max_cm": [
+        75.78533172607422,
+        78.98973846435547,
+        0.0007907931576482952
+      ],
+      "triangles": 464924
+    },
+    {
+      "asset": "/Game/Presentation/WeaponsPitchTrial/ciws_beam_b/SM_Body",
+      "min_cm": [
+        -63.4756965637207,
+        -55.00912857055664,
+        -0.0006363156135194004
+      ],
+      "max_cm": [
+        82.51375579833984,
+        54.76201629638672,
+        143.00001525878906
+      ],
+      "triangles": 576680
+    },
+    {
+      "asset": "/Game/Presentation/WeaponsPitchTrial/ciws_beam_b/SM_Barrel",
+      "min_cm": [
+        -93.55086517333984,
+        -17.66423225402832,
+        -21.471935272216797
+      ],
+      "max_cm": [
+        0.0,
+        17.566280364990234,
+        23.393329620361328
+      ],
+      "triangles": 90510
+    },
+    {
+      "asset": "/Game/Presentation/WeaponsPitchTrial/ciws_beam_b/SM_TrialNeck",
+      "min_cm": [
+        -17.500001907348633,
+        -10.0,
+        -10.000001907348633
+      ],
+      "max_cm": [
+        17.500001907348633,
+        10.0,
+        10.000001907348633
+      ],
+      "triangles": 188
+    }
+  ],
+  "errors": []
+}

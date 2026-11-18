@@ -16,6 +16,8 @@ namespace OVWeaponGeometry
     ORBITALVANGUARD_API FVector MuzzleLocal(FVector MountPosition, FRotator Aim,
         float BarrelLength, bool bFixedVLS);
     ORBITALVANGUARD_API bool HasBF120Trial(const FOVWeaponMountDefinition& Definition);
+    ORBITALVANGUARD_API bool CIWSBTrialEnabled();
+    ORBITALVANGUARD_API bool HasCIWSBTrial(const FOVWeaponMountDefinition& Definition);
     ORBITALVANGUARD_API FVector MuzzleLocal(const FOVWeaponMountDefinition& Definition, FRotator Aim,
         FVector HullHalfExtent, bool bFixedVLS, int32 BarrelIndex);
 }

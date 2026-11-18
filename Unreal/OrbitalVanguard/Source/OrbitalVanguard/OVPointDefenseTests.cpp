@@ -8,6 +8,7 @@
 #include "OVShipSystemsComponent.h"
 #include "Engine/World.h"
 #include "HAL/PlatformTime.h"
+#include "HAL/IConsoleManager.h"
 #include "Misc/AutomationTest.h"
 
 #if WITH_DEV_AUTOMATION_TESTS
@@ -100,6 +101,28 @@ bool FOVPDSideMountArc::RunTest(const FString&)
     for(auto& Craft:Carrier->Aircraft) Craft.Position=R.Escort->GetActorLocation()+FVector(0,3000,0);
     R.Step(.1f);
     TestTrue(TEXT("The same mount fires at a target on its outward side"),R.PD->ShotCount>0);
+    return true;
+}
+
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(FOVPDCIWSBTrialShot,"OrbitalVanguard.PointDefense.CIWSBTrialRealShotMuzzle",EAutomationTestFlags::EditorContext|EAutomationTestFlags::EngineFilter)
+bool FOVPDCIWSBTrialShot::RunTest(const FString&)
+{
+    auto* Switch=IConsoleManager::Get().FindConsoleVariable(TEXT("ov.Presentation.CIWSBTrial"));
+    if(!TestNotNull(TEXT("Trial switch exists"),Switch))return false;
+    const int32 Previous=Switch->GetInt();
+    struct FRestore { IConsoleVariable* Var; int32 Value; ~FRestore(){Var->Set(Value,ECVF_SetByCode);} } Restore{Switch,Previous};
+    Switch->Set(1,ECVF_SetByCode);
+    OVPDTest::FRange R;
+    R.Launch();R.Register();
+    R.PD->Step(1.f/120.f);
+    if(!TestTrue(TEXT("Actual interception event exists"),R.PD->RecentEvents.Num()>0))return false;
+    const auto& Event=R.PD->RecentEvents.Last();
+    TestTrue(TEXT("Actual interception event uses live trial muzzle"),Event.Origin.Equals(R.Escort->GetWeaponMuzzleWorld(Event.MountId),.01));
+    R.Escort->RefreshWeaponVisuals();
+    const auto Visuals=R.Escort->GetWeaponVisualStates();
+    const auto* State=Visuals.FindByPredicate([&Event](const FOVWeaponVisualState& V){return V.MountId==Event.MountId;});
+    if(!TestNotNull(TEXT("Actual interception has a trial visual"),State))return false;
+    TestTrue(TEXT("Actual shot origin agrees with displayed trial muzzle"),Event.Origin.Equals(State->WorldMuzzle,.1));
     return true;
 }
 

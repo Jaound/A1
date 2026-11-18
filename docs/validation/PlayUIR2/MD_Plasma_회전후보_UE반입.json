@@ -1,0 +1,38 @@
+{
+  "id": "plasma_heavy_cannon",
+  "passed": true,
+  "scope": "원본 재질을 참조하는 회전 후보 격리 반입 및 시험 LOD. 전장 미적용.",
+  "parts": [
+    {
+      "asset": "/Game/Presentation/WeaponsYawTrial/plasma_heavy_cannon/SM_Base",
+      "fbx_sha256": "08d755634569fa55d5294c97244c754a514110053c72fcce08dc6c0ee5b84d67",
+      "source_origin": [
+        1.2523497343063354,
+        -2.345442771911621e-05,
+        -0.5375000238418579
+      ],
+      "triangles": [
+        625140,
+        31256,
+        6252
+      ],
+      "source_material": "/Game/Presentation/WeaponsFull/plasma_heavy_cannon/M_Source.M_Source"
+    },
+    {
+      "asset": "/Game/Presentation/WeaponsYawTrial/plasma_heavy_cannon/SM_Yaw",
+      "fbx_sha256": "af2cda448d2b815a21c7371b87fe713eb1dfbf380208b6ef3081a867cdfe2ac7",
+      "source_origin": [
+        1.2523497343063354,
+        -2.345442771911621e-05,
+        -0.5375000238418579
+      ],
+      "triangles": [
+        1901260,
+        95062,
+        19012
+      ],
+      "source_material": "/Game/Presentation/WeaponsFull/plasma_heavy_cannon/M_Source.M_Source"
+    }
+  ],
+  "errors": []
+}

@@ -1,0 +1,51 @@
+{
+  "id": "ciws_beam_b",
+  "passed": true,
+  "scope": "포신 후보 격리 반입. 전장 미적용; 연결부는 시험용 추가 형상.",
+  "parts": [
+    {
+      "asset": "/Game/Presentation/WeaponsPitchTrial/ciws_beam_b/SM_Body",
+      "triangles": [
+        576680,
+        28834,
+        5766
+      ],
+      "source_origin": [
+        0.40920060873031616,
+        -0.0003419220447540283,
+        -0.4300000071525574
+      ],
+      "fbx_sha256": "618f783ffb6634b5ba68ef6e2c8825720e0177d5294c8ce8acd34377ffb8b618",
+      "generated_connector": false
+    },
+    {
+      "asset": "/Game/Presentation/WeaponsPitchTrial/ciws_beam_b/SM_Barrel",
+      "triangles": [
+        90510,
+        4526,
+        906
+      ],
+      "source_origin": [
+        -0.30000001192092896,
+        0.0,
+        0.10000002384185791
+      ],
+      "fbx_sha256": "6cbfe43e32904d197d9cf061d126fa19dcbe16690e8999c5b6190e521ba53fe5",
+      "generated_connector": false
+    },
+    {
+      "asset": "/Game/Presentation/WeaponsPitchTrial/ciws_beam_b/SM_TrialNeck",
+      "triangles": [
+        188
+      ],
+      "source_origin": [
+        -0.23000001907348633,
+        0.0,
+        0.10000002384185791
+      ],
+      "fbx_sha256": "a1746187961736e477cff2aabf503dbfa988a72a908a56fb67426034175e71ba",
+      "generated_connector": true
+    }
+  ],
+  "errors": []
+}

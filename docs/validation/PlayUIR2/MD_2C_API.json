@@ -1,0 +1,818 @@
+{
+  "kind": "Editor PIE API and rendered frames; not physical mouse/keyboard input",
+  "planning": "035a4fba81d26f1d67daa1f44bded0f7e8d3a434",
+  "seed": 260112,
+  "scope": "Play quality and 2C, independent of existing regression totals",
+  "physical_input": "not performed by this script",
+  "checks": [
+    {
+      "id": "2C-EDITOR-MAP",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "2C-REAL-PIE",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "2C-SCENE-REJECT",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "2C-SCENE-0",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "2C-PD-MOUNTS-0",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "2C-SCENE-1",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "2C-PD-MOUNTS-1",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "2C-SCENE-2",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "2C-PD-MOUNTS-2",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "2C-SCENE-3",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "2C-PD-MOUNTS-3",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "2C-SCENE-4",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "2C-PD-MOUNTS-4",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "2C-SCENE-5",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "2C-PD-MOUNTS-5",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "2C-SHUTTLE-CLASS",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "2C-PD-CLOCK-123",
+      "passed": true,
+      "detail": "[{'time': 18.0, 'shots': 170, 'hits': 130, 'flying': 25, 'pd': [29, 14, 3], 'aircraft_fire': [0, 0, 0], 'aircraft': {}, 'bolts': 0, 'pods': {}, 'people': {}, 'entries': 0, 'ship_hp': [20681.867, 21252.0, 130680.0], 'shields': [0.0, 3402.0, 45265.0]}, {'time': 18.0, 'shots': 170, 'hits': 130, 'flying': 25, 'pd': [29, 14, 3], 'aircraft_fire': [0, 0, 0], 'aircraft': {}, 'bolts': 0, 'pods': {}, 'people': {}, 'entries': 0, 'ship_hp': [20681.867, 21252.0, 130680.0], 'shields': [0.0, 3402.0, 45265.0]}, {'time': 18.0, 'shots': 170, 'hits': 130, 'flying': 25, 'pd': [29, 14, 3], 'aircraft_fire': [0, 0, 0], 'aircraft': {}, 'bolts': 0, 'pods': {}, 'people': {}, 'entries': 0, 'ship_hp': [20681.867, 21252.0, 130680.0], 'shields': [0.0, 3402.0, 45265.0]}]"
+    },
+    {
+      "id": "2C-PD-ACTUAL-MISSILES",
+      "passed": true,
+      "detail": "{'time': 18.0, 'shots': 170, 'hits': 130, 'flying': 25, 'pd': [29, 14, 3], 'aircraft_fire': [0, 0, 0], 'aircraft': {}, 'bolts': 0, 'pods': {}, 'people': {}, 'entries': 0, 'ship_hp': [20681.867, 21252.0, 130680.0], 'shields': [0.0, 3402.0, 45265.0]}"
+    },
+    {
+      "id": "2C-AIRDEFENSE-LIVE",
+      "passed": true,
+      "detail": "{'time': 18.0, 'shots': 169, 'hits': 116, 'flying': 5, 'pd': [150, 80, 36], 'aircraft_fire': [0, 0, 0], 'aircraft': {}, 'bolts': 0, 'pods': {}, 'people': {}, 'entries': 0, 'ship_hp': [20765.861, 25410.0, 130680.0], 'shields': [0.0, 8360.0, 45925.0]}"
+    },
+    {
+      "id": "2C-MIXED-CLOCK-123",
+      "passed": true,
+      "detail": "[{'time': 18.0, 'shots': 38, 'hits': 38, 'flying': 0, 'pd': [55, 9, 0], 'aircraft_fire': [478, 392, 12], 'aircraft': {'<OVAircraftState.SORTIE: 1>': 68, '<OVAircraftState.WRECKED: 5>': 12}, 'bolts': 7, 'pods': {'<OVPodFlightState.CANCELLED: 7>': 5}, 'people': {'<OVPassengerState.ABOARD: 0>': 5, '<OVPassengerState.INSIDE_TARGET: 2>': 5}, 'entries': 5, 'ship_hp': [134640.0, 10560.0, 134261.828], 'shields': [48900.0, 6336.0, 0.0]}, {'time': 18.0, 'shots': 38, 'hits': 38, 'flying': 0, 'pd': [55, 9, 0], 'aircraft_fire': [478, 392, 12], 'aircraft': {'<OVAircraftState.SORTIE: 1>': 68, '<OVAircraftState.WRECKED: 5>': 12}, 'bolts': 7, 'pods': {'<OVPodFlightState.CANCELLED: 7>': 5}, 'people': {'<OVPassengerState.ABOARD: 0>': 5, '<OVPassengerState.INSIDE_TARGET: 2>': 5}, 'entries': 5, 'ship_hp': [134640.0, 10560.0, 134261.828], 'shields': [48900.0, 6336.0, 0.0]}, {'time': 18.0, 'shots': 38, 'hits': 38, 'flying': 0, 'pd': [55, 9, 0], 'aircraft_fire': [478, 392, 12], 'aircraft': {'<OVAircraftState.SORTIE: 1>': 68, '<OVAircraftState.WRECKED: 5>': 12}, 'bolts': 7, 'pods': {'<OVPodFlightState.CANCELLED: 7>': 5}, 'people': {'<OVPassengerState.ABOARD: 0>': 5, '<OVPassengerState.INSIDE_TARGET: 2>': 5}, 'entries': 5, 'ship_hp': [134640.0, 10560.0, 134261.828], 'shields': [48900.0, 6336.0, 0.0]}]"
+    },
+    {
+      "id": "2C-MIXED-LIVE",
+      "passed": true,
+      "detail": "{'time': 18.0, 'shots': 38, 'hits': 38, 'flying': 0, 'pd': [55, 9, 0], 'aircraft_fire': [478, 392, 12], 'aircraft': {'<OVAircraftState.SORTIE: 1>': 68, '<OVAircraftState.WRECKED: 5>': 12}, 'bolts': 7, 'pods': {'<OVPodFlightState.CANCELLED: 7>': 5}, 'people': {'<OVPassengerState.ABOARD: 0>': 5, '<OVPassengerState.INSIDE_TARGET: 2>': 5}, 'entries': 5, 'ship_hp': [134640.0, 10560.0, 134261.828], 'shields': [48900.0, 6336.0, 0.0]}"
+    },
+    {
+      "id": "2C-LOWFPS-SWEPT",
+      "passed": true,
+      "detail": "{'60Hz': {'time': 18.0, 'shots': 38, 'hits': 38, 'flying': 0, 'pd': [55, 9, 0], 'aircraft_fire': [478, 392, 12], 'aircraft': {'<OVAircraftState.SORTIE: 1>': 68, '<OVAircraftState.WRECKED: 5>': 12}, 'bolts': 7, 'pods': {'<OVPodFlightState.CANCELLED: 7>': 5}, 'people': {'<OVPassengerState.ABOARD: 0>': 5, '<OVPassengerState.INSIDE_TARGET: 2>': 5}, 'entries': 5, 'ship_hp': [134640.0, 10560.0, 134261.828], 'shields': [48900.0, 6336.0, 0.0]}, '250ms_game_batches': {'time': 18.0, 'shots': 38, 'hits': 38, 'flying': 0, 'pd': [55, 9, 0], 'aircraft_fire': [478, 392, 12], 'aircraft': {'<OVAircraftState.SORTIE: 1>': 68, '<OVAircraftState.WRECKED: 5>': 12}, 'bolts': 7, 'pods': {'<OVPodFlightState.CANCELLED: 7>': 5}, 'people': {'<OVPassengerState.ABOARD: 0>': 5, '<OVPassengerState.INSIDE_TARGET: 2>': 5}, 'entries': 5, 'ship_hp': [134640.0, 10560.0, 134261.828], 'shields': [48900.0, 6336.0, 0.0]}}"
+    },
+    {
+      "id": "2C-F5-RESTORE",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "2C-F6-RESTORE",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "2C-F6-PD-REGISTRATION",
+      "passed": true,
+      "detail": "[2, 2, 4]"
+    },
+    {
+      "id": "2C-HANGAR-CAPACITY",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "2C-CAPACITY-NO-CREATION",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "2C-REGISTER-IDEMPOTENT",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "2C-HANGAR-EXCLUSIVE",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "2C-LAUNCH-INVENTORY",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "2C-RECALL-SAME-IDS-NO-HEAL",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "2C-CONTROL-LOSS",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "2C-CONTROL-STATIONARY",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "2C-CONTROL-RECOVERY",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "2C-AIRCRAFT-LOSS-ONCE",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "2C-REDEPLOY-NO-RESURRECTION",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "2C-CARRIER-CAPTURE-AFFILIATION",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "2C-HANGAR-STORED-LOSS",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "2C-FTL-WAIT-RECOVERY",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "2C-FTL-EXPLICIT-ABANDON",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "2C-POD-LIVE-PARTIAL-PD",
+      "passed": true,
+      "detail": "{'casualties': 6, 'inside': 4, 'PD_kills': 6}"
+    },
+    {
+      "id": "2C-PERSON-IDENTITIES",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "2C-ONE-PERSON-ONE-POD",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "2C-POD-ACTUAL-ARRIVAL",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "2C-ENTRY-LOCAL-DATA",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "2C-RESIDENT-PROTECTION-NO-OBJECTIVE",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "2C-RETURN-ORIGINAL-PODS",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "2C-EXIT-PROTECTION-CLEARED",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "2C-ACTIVE-SHIELD-BARRIER",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "2C-RESIDENT-WRECK-DEATH",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "2C-POD-ALTERNATE-RETURN",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "2C-SHUTTLE-DELIVERY",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "2C-SHUTTLE-ENTRY-BOUNDARY",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "2C-SHUTTLE-SAME-RECOVERY",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "2C-SHUTTLE-LOSS-BEFORE-ENTRY",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "2C-SHUTTLE-LOSS-AFTER-ENTRY",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "2C-NO-FREE-ESCAPE-PODS",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "2C-N-CYCLE-OFFENSIVE-ONLY",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "2C-STRESS-ROSTER",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "2C-STRESS-F5-CLEANUP",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "2C-STRESS-F6-CLEANUP",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "2C-STRESS-F7-CLEANUP",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "2C-SHUTTLE-MANUAL-XYZ-PRIORITY",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "2C-SHUTTLE-STOP-PRIORITY",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "2C-SHUTTLE-EXPLICIT-RESUME",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "2C-FTL-TRIAL-CHARGING",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "2C-FTL-CAPTURE-CLEARS-OLD-ORDER",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "2C-REPEATED-SCENE-RESET",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "2C-HUD-ID-Pause",
+      "passed": true,
+      "detail": "<Struct 'Vector2D' (0x000001D92EF03720) {x: 360.000000, y: 31.500000}>"
+    },
+    {
+      "id": "2C-HUD-ID-LaunchAircraft",
+      "passed": true,
+      "detail": "<Struct 'Vector2D' (0x000001D92EF03EA0) {x: 434.000000, y: 978.940430}>"
+    },
+    {
+      "id": "2C-HUD-ID-RecallAircraft",
+      "passed": true,
+      "detail": "<Struct 'Vector2D' (0x000001D92EF87E20) {x: 549.000000, y: 978.940430}>"
+    },
+    {
+      "id": "2C-HUD-ID-PDPriority",
+      "passed": true,
+      "detail": "<Struct 'Vector2D' (0x000001D92EF87E60) {x: 348.000000, y: 119.500000}>"
+    },
+    {
+      "id": "2C-WORLD-ROSTER-DISTINCT-IDS",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "2C-WORLD-MARKER-CAMERA-OWNERSHIP",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "2C-HUD-DETAIL-CONSUMES",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "2C-HUD-REFRESH-NO-MUTATION",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "2C-RENDERED-FRAMES-ADVANCE",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "2C-READY-FOR-USER",
+      "passed": true,
+      "detail": ""
+    }
+  ],
+  "errors": [],
+  "performance": {
+    "gpu_utilization": "not measured",
+    "cpu_utilization": "not measured",
+    "interpretation": "API batch wall time is not rendered frame time or whole-machine CPU load",
+    "api_batches": [
+      {
+        "scenario": 0,
+        "ships": 3,
+        "aircraft_records": 0,
+        "game_seconds": 18,
+        "speed": 1,
+        "batch_game_seconds": 0.25,
+        "wall_seconds": 0.3391,
+        "simulation_wall_ms_per_game_second": 18.839
+      },
+      {
+        "scenario": 0,
+        "ships": 3,
+        "aircraft_records": 0,
+        "game_seconds": 18,
+        "speed": 2,
+        "batch_game_seconds": 0.25,
+        "wall_seconds": 0.2946,
+        "simulation_wall_ms_per_game_second": 16.367
+      },
+      {
+        "scenario": 0,
+        "ships": 3,
+        "aircraft_records": 0,
+        "game_seconds": 18,
+        "speed": 3,
+        "batch_game_seconds": 0.25,
+        "wall_seconds": 0.3066,
+        "simulation_wall_ms_per_game_second": 17.031
+      },
+      {
+        "scenario": 1,
+        "ships": 3,
+        "aircraft_records": 0,
+        "game_seconds": 18,
+        "speed": 1,
+        "batch_game_seconds": 0.25,
+        "wall_seconds": 0.362,
+        "simulation_wall_ms_per_game_second": 20.111
+      },
+      {
+        "scenario": 5,
+        "ships": 3,
+        "aircraft_records": 80,
+        "game_seconds": 18,
+        "speed": 1,
+        "batch_game_seconds": 0.25,
+        "wall_seconds": 0.5161,
+        "simulation_wall_ms_per_game_second": 28.674
+      },
+      {
+        "scenario": 5,
+        "ships": 3,
+        "aircraft_records": 80,
+        "game_seconds": 18,
+        "speed": 2,
+        "batch_game_seconds": 0.25,
+        "wall_seconds": 0.5199,
+        "simulation_wall_ms_per_game_second": 28.882
+      },
+      {
+        "scenario": 5,
+        "ships": 3,
+        "aircraft_records": 80,
+        "game_seconds": 18,
+        "speed": 3,
+        "batch_game_seconds": 0.25,
+        "wall_seconds": 0.4841,
+        "simulation_wall_ms_per_game_second": 26.894
+      },
+      {
+        "scenario": 5,
+        "ships": 3,
+        "aircraft_records": 80,
+        "game_seconds": 18,
+        "speed": 1,
+        "batch_game_seconds": 0.016666666666666666,
+        "wall_seconds": 0.5173,
+        "simulation_wall_ms_per_game_second": 28.738
+      }
+    ],
+    "rendered_mixed_scene": {
+      "ships": 3,
+      "aircraft_records": 80,
+      "duration_wall_s": 5.0,
+      "frames": 545,
+      "mean_slate_callback_dt_ms": 9.166,
+      "p95_slate_callback_dt_ms": 10.694,
+      "max_slate_callback_dt_ms": 29.881,
+      "note": "Editor/Slate frame intervals; not isolated GPU time or packaged-game benchmark"
+    }
+  },
+  "escort_comparison": {
+    "ordinary": {
+      "time": 18.0,
+      "shots": 170,
+      "hits": 130,
+      "flying": 25,
+      "pd": [
+        29,
+        14,
+        3
+      ],
+      "aircraft_fire": [
+        0,
+        0,
+        0
+      ],
+      "aircraft": {},
+      "bolts": 0,
+      "pods": {},
+      "people": {},
+      "entries": 0,
+      "ship_hp": [
+        20681.867,
+        21252.0,
+        130680.0
+      ],
+      "shields": [
+        0.0,
+        3402.0,
+        45265.0
+      ]
+    },
+    "air_defense": {
+      "time": 18.0,
+      "shots": 169,
+      "hits": 116,
+      "flying": 5,
+      "pd": [
+        150,
+        80,
+        36
+      ],
+      "aircraft_fire": [
+        0,
+        0,
+        0
+      ],
+      "aircraft": {},
+      "bolts": 0,
+      "pods": {},
+      "people": {},
+      "entries": 0,
+      "ship_hp": [
+        20765.861,
+        25410.0,
+        130680.0
+      ],
+      "shields": [
+        0.0,
+        8360.0,
+        45925.0
+      ]
+    },
+    "conditions": "Same seed/missile attacker; different escort hull, mount count and explicit range role. Not equal-fleet balance proof."
+  },
+  "same_game_time": {
+    "ordinary_123": [
+      {
+        "time": 18.0,
+        "shots": 170,
+        "hits": 130,
+        "flying": 25,
+        "pd": [
+          29,
+          14,
+          3
+        ],
+        "aircraft_fire": [
+          0,
+          0,
+          0
+        ],
+        "aircraft": {},
+        "bolts": 0,
+        "pods": {},
+        "people": {},
+        "entries": 0,
+        "ship_hp": [
+          20681.867,
+          21252.0,
+          130680.0
+        ],
+        "shields": [
+          0.0,
+          3402.0,
+          45265.0
+        ]
+      },
+      {
+        "time": 18.0,
+        "shots": 170,
+        "hits": 130,
+        "flying": 25,
+        "pd": [
+          29,
+          14,
+          3
+        ],
+        "aircraft_fire": [
+          0,
+          0,
+          0
+        ],
+        "aircraft": {},
+        "bolts": 0,
+        "pods": {},
+        "people": {},
+        "entries": 0,
+        "ship_hp": [
+          20681.867,
+          21252.0,
+          130680.0
+        ],
+        "shields": [
+          0.0,
+          3402.0,
+          45265.0
+        ]
+      },
+      {
+        "time": 18.0,
+        "shots": 170,
+        "hits": 130,
+        "flying": 25,
+        "pd": [
+          29,
+          14,
+          3
+        ],
+        "aircraft_fire": [
+          0,
+          0,
+          0
+        ],
+        "aircraft": {},
+        "bolts": 0,
+        "pods": {},
+        "people": {},
+        "entries": 0,
+        "ship_hp": [
+          20681.867,
+          21252.0,
+          130680.0
+        ],
+        "shields": [
+          0.0,
+          3402.0,
+          45265.0
+        ]
+      }
+    ],
+    "mixed_123": [
+      {
+        "time": 18.0,
+        "shots": 38,
+        "hits": 38,
+        "flying": 0,
+        "pd": [
+          55,
+          9,
+          0
+        ],
+        "aircraft_fire": [
+          478,
+          392,
+          12
+        ],
+        "aircraft": {
+          "<OVAircraftState.SORTIE: 1>": 68,
+          "<OVAircraftState.WRECKED: 5>": 12
+        },
+        "bolts": 7,
+        "pods": {
+          "<OVPodFlightState.CANCELLED: 7>": 5
+        },
+        "people": {
+          "<OVPassengerState.ABOARD: 0>": 5,
+          "<OVPassengerState.INSIDE_TARGET: 2>": 5
+        },
+        "entries": 5,
+        "ship_hp": [
+          134640.0,
+          10560.0,
+          134261.828
+        ],
+        "shields": [
+          48900.0,
+          6336.0,
+          0.0
+        ]
+      },
+      {
+        "time": 18.0,
+        "shots": 38,
+        "hits": 38,
+        "flying": 0,
+        "pd": [
+          55,
+          9,
+          0
+        ],
+        "aircraft_fire": [
+          478,
+          392,
+          12
+        ],
+        "aircraft": {
+          "<OVAircraftState.SORTIE: 1>": 68,
+          "<OVAircraftState.WRECKED: 5>": 12
+        },
+        "bolts": 7,
+        "pods": {
+          "<OVPodFlightState.CANCELLED: 7>": 5
+        },
+        "people": {
+          "<OVPassengerState.ABOARD: 0>": 5,
+          "<OVPassengerState.INSIDE_TARGET: 2>": 5
+        },
+        "entries": 5,
+        "ship_hp": [
+          134640.0,
+          10560.0,
+          134261.828
+        ],
+        "shields": [
+          48900.0,
+          6336.0,
+          0.0
+        ]
+      },
+      {
+        "time": 18.0,
+        "shots": 38,
+        "hits": 38,
+        "flying": 0,
+        "pd": [
+          55,
+          9,
+          0
+        ],
+        "aircraft_fire": [
+          478,
+          392,
+          12
+        ],
+        "aircraft": {
+          "<OVAircraftState.SORTIE: 1>": 68,
+          "<OVAircraftState.WRECKED: 5>": 12
+        },
+        "bolts": 7,
+        "pods": {
+          "<OVPodFlightState.CANCELLED: 7>": 5
+        },
+        "people": {
+          "<OVPassengerState.ABOARD: 0>": 5,
+          "<OVPassengerState.INSIDE_TARGET: 2>": 5
+        },
+        "entries": 5,
+        "ship_hp": [
+          134640.0,
+          10560.0,
+          134261.828
+        ],
+        "shields": [
+          48900.0,
+          6336.0,
+          0.0
+        ]
+      }
+    ],
+    "mixed_60Hz": {
+      "time": 18.0,
+      "shots": 38,
+      "hits": 38,
+      "flying": 0,
+      "pd": [
+        55,
+        9,
+        0
+      ],
+      "aircraft_fire": [
+        478,
+        392,
+        12
+      ],
+      "aircraft": {
+        "<OVAircraftState.SORTIE: 1>": 68,
+        "<OVAircraftState.WRECKED: 5>": 12
+      },
+      "bolts": 7,
+      "pods": {
+        "<OVPodFlightState.CANCELLED: 7>": 5
+      },
+      "people": {
+        "<OVPassengerState.ABOARD: 0>": 5,
+        "<OVPassengerState.INSIDE_TARGET: 2>": 5
+      },
+      "entries": 5,
+      "ship_hp": [
+        134640.0,
+        10560.0,
+        134261.828
+      ],
+      "shields": [
+        48900.0,
+        6336.0,
+        0.0
+      ]
+    }
+  },
+  "passed": true
+}

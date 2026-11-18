@@ -300,6 +300,41 @@ bool FOVBF120LiveTrialTest::RunTest(const FString&)
     TestTrue(TEXT("Missile keeps its usual gameplay muzzle"),R.A->GetWeaponMuzzleWorld(Def.WeaponId).Equals(R.A->GetActorTransform().TransformPosition(Fallback),.01));
     return true;
 }
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(FOVCIWSBSourceTrialTest, "OrbitalVanguard.Presentation.CIWSBTrialSurfaceMuzzle",
+    EAutomationTestFlags::EditorContext | EAutomationTestFlags::EngineFilter)
+bool FOVCIWSBSourceTrialTest::RunTest(const FString&)
+{
+    OVWeaponVisualTest::FRange R;
+    R.A->SetActorRotation(FRotator(7,31,13));
+    for (const FVector Normal : {FVector::UpVector,FVector::DownVector,FVector::RightVector,FVector::LeftVector})
+    {
+        FOVWeaponMountDefinition Def;Def.WeaponId=TEXT("CIWSBTrialTest");Def.Type=EOVWeaponType::Interception;
+        Def.LocalPosition=FVector(5,7,11);Def.LocalSurfaceNormal=Normal;Def.PresentationProfile=TEXT("CIWSBTrial");
+        if(!TestTrue(TEXT("All isolated trial assets exist"),OVWeaponGeometry::HasCIWSBTrial(Def)))return false;
+        auto* Visual=NewObject<UOVWeaponVisualComponent>(R.A);R.A->AddInstanceComponent(Visual);
+        Visual->SetupAttachment(R.A->GetRootComponent());Visual->RegisterComponent();
+        const FVector Extent(80,60,40);Visual->Initialize(Def,Extent);
+        TArray<USceneComponent*> Children;Visual->GetChildrenComponents(true,Children);
+        UStaticMeshComponent* Flash=nullptr;int32 SourceParts=0;
+        for(auto* Child:Children)if(auto* Mesh=Cast<UStaticMeshComponent>(Child);Mesh&&Mesh->GetStaticMesh())
+        {
+            const FString Path=Mesh->GetStaticMesh()->GetPathName();
+            if(Path.Contains(TEXT("/WeaponsPitchTrial/"))||Path.Contains(TEXT("/WeaponsYawTrial/")))++SourceParts;
+            if(Path==TEXT("/Engine/BasicShapes/Sphere.Sphere"))Flash=Mesh;
+        }
+        TestEqual(TEXT("Source base/body/barrel and trial neck are present"),SourceParts,4);
+        if(!TestNotNull(TEXT("Trial muzzle flash exists"),Flash)){Visual->DestroyComponent();return false;}
+        for(const FRotator Aim : {FRotator(0,0,0),FRotator(20,75,0),FRotator(-10,-120,0),FRotator(85,25,0)})
+        {
+            Visual->Synchronize(Aim,false,false,true,1,0,0,1);
+            const FVector Expected=R.A->GetActorTransform().TransformPosition(OVWeaponGeometry::MuzzleLocal(Def,Aim,Extent,false,0));
+            TestTrue(TEXT("Source muzzle and visible flash agree"),Flash->GetComponentLocation().Equals(Expected,.1));
+            TestTrue(TEXT("Source visual state reports same muzzle"),Visual->ReadState().WorldMuzzle.Equals(Expected,.1));
+        }
+        Visual->DestroyComponent();
+    }
+    return true;
+}
 IMPLEMENT_SIMPLE_AUTOMATION_TEST(FOVSideMountGeometry,
     "OrbitalVanguard.Presentation.SideMountGeometry",
     EAutomationTestFlags::EditorContext | EAutomationTestFlags::EngineFilter)

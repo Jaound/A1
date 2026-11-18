@@ -1,0 +1,37 @@
+{
+  "passed": true,
+  "scope": "격리 자산 재로드·LOD·재질 참조 검사; 전장 적용 및 렌더 검증 아님.",
+  "models": [
+    {
+      "id": "ciws_beam_b",
+      "parts": [
+        {
+          "asset": "/Game/Presentation/WeaponsPitchTrial/ciws_beam_b/SM_Body",
+          "triangles": [
+            576680,
+            28834,
+            5766
+          ],
+          "material": "/Game/Presentation/WeaponsFull/ciws_beam_b/M_Source.M_Source"
+        },
+        {
+          "asset": "/Game/Presentation/WeaponsPitchTrial/ciws_beam_b/SM_Barrel",
+          "triangles": [
+            90510,
+            4526,
+            906
+          ],
+          "material": "/Game/Presentation/WeaponsFull/ciws_beam_b/M_Source.M_Source"
+        },
+        {
+          "asset": "/Game/Presentation/WeaponsPitchTrial/ciws_beam_b/SM_TrialNeck",
+          "triangles": [
+            188
+          ],
+          "material": "/Engine/BasicShapes/BasicShapeMaterial.BasicShapeMaterial"
+        }
+      ]
+    }
+  ],
+  "errors": []
+}

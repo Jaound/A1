@@ -316,6 +316,7 @@ void AOVShip::RefreshWeaponVisuals()
     {
         FOVWeaponMountDefinition VisualDef = Def;
         if (!bCannon) VisualDef.PresentationProfile = NAME_None;
+        if (Def.Type==EOVWeaponType::Interception && OVWeaponGeometry::CIWSBTrialEnabled()) VisualDef.PresentationProfile=TEXT("CIWSBTrial");
         Active.Add(Def.WeaponId);
         UOVWeaponVisualComponent* Visual = nullptr;
         for (auto& Existing : WeaponVisuals)
@@ -395,8 +396,19 @@ FVector AOVShip::GetWeaponMuzzleWorld(FName MountId) const
     if (PD)
         if (const auto* State = PD->Ships.FindByPredicate([this](const FOVPDShipState& S) { return S.Ship == this; }))
             if (const auto* Mount = State->Mounts.FindByPredicate([MountId](const FOVPDMountState& M) { return M.MountId == MountId; }))
+            {
+                if (OVWeaponGeometry::CIWSBTrialEnabled())
+                {
+                    FOVWeaponMountDefinition Def;
+                    const auto* Authored=Mount->bLayoutMount?Systems->Layout->WeaponMounts.FindByPredicate([MountId](const FOVWeaponMountDefinition& D){return D.WeaponId==MountId;}):nullptr;
+                    if (Authored) Def=*Authored;
+                    else { Def.WeaponId=MountId;Def.Type=EOVWeaponType::Interception;Def.LocalPosition=Mount->LocalPosition;Def.Tier=Systems->Layout->WeaponTier; }
+                    Def.PresentationProfile=TEXT("CIWSBTrial");
+                    if (OVWeaponGeometry::HasCIWSBTrial(Def)) return GetActorTransform().TransformPosition(OVWeaponGeometry::MuzzleLocal(Def,Mount->LocalAim,Systems->Layout->LocalHalfExtent,false,0));
+                }
                 return GetActorTransform().TransformPosition(OVWeaponGeometry::MuzzleLocal(Mount->LocalPosition, Mount->LocalAim,
                     OVWeaponGeometry::BarrelLength(Systems->Layout->LocalHalfExtent, Systems->Layout->WeaponTier, true), false));
+            }
     return GetActorLocation();
 }
 

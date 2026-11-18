@@ -189,9 +189,17 @@ void UOVPointDefenseSubsystem::Step(float GameDelta)
                 if (MountDef && !MountDef->LocalSurfaceNormal.IsNearlyZero() &&
                     FVector::DotProduct(MountDef->LocalSurfaceNormal.GetSafeNormal(), LocalDirection) < -FMath::Sin(FMath::DegreesToRadians(15.0))) continue;
                 const FRotator CandidateAim = LocalDirection.Rotation();
-                const FVector CandidateMuzzle = Ship->GetActorTransform().TransformPosition(OVWeaponGeometry::MuzzleLocal(
-                    Mount.LocalPosition, CandidateAim, OVWeaponGeometry::BarrelLength(Ship->Systems->Layout->LocalHalfExtent,
-                        Ship->Systems->Layout->WeaponTier, true), false));
+                FVector LocalMuzzle=OVWeaponGeometry::MuzzleLocal(Mount.LocalPosition, CandidateAim,
+                    OVWeaponGeometry::BarrelLength(Ship->Systems->Layout->LocalHalfExtent,Ship->Systems->Layout->WeaponTier,true),false);
+                if (OVWeaponGeometry::CIWSBTrialEnabled())
+                {
+                    FOVWeaponMountDefinition Def;
+                    if (MountDef) Def=*MountDef;
+                    else { Def.WeaponId=Mount.MountId;Def.Type=EOVWeaponType::Interception;Def.LocalPosition=Mount.LocalPosition;Def.Tier=Ship->Systems->Layout->WeaponTier; }
+                    Def.PresentationProfile=TEXT("CIWSBTrial");
+                    if (OVWeaponGeometry::HasCIWSBTrial(Def)) LocalMuzzle=OVWeaponGeometry::MuzzleLocal(Def,CandidateAim,Ship->Systems->Layout->LocalHalfExtent,false,0);
+                }
+                const FVector CandidateMuzzle = Ship->GetActorTransform().TransformPosition(LocalMuzzle);
                 const double Distance = FVector::DistSquared(CandidateMuzzle, Target.Position);
                 if (Distance > FMath::Square(Range)) continue;
                 const int32 Rank = State.Priority.IndexOfByKey(Target.Kind);
