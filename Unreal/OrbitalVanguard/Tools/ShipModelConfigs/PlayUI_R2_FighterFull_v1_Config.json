@@ -1,0 +1,10 @@
+{
+  "tag": "PlayUI_R2_FighterFull_v1",
+  "ships": [
+    {
+      "id": "fighter",
+      "folder": "함재기",
+      "pattern": "*image-to-3d-texture.fbx"
+    }
+  ]
+}

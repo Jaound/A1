@@ -28,6 +28,8 @@
 #include "Engine/World.h"
 #include "InputCoreTypes.h"
 #include "Kismet/GameplayStatics.h"
+#include "Components/InstancedStaticMeshComponent.h"
+#include "Materials/MaterialInstanceDynamic.h"
 
 AOVController::AOVController() { bShowMouseCursor=true; bEnableClickEvents=true; bEnableMouseOverEvents=true; }
 void AOVController::BeginPlay()
@@ -36,6 +38,24 @@ void AOVController::BeginPlay()
  LegacyTraceDistance=HitResultTraceDistance;
  Combat=GetWorld()->GetSubsystem<UOVCombatSubsystem>();
  Carrier=GetWorld()->GetSubsystem<UOVCarrierSubsystem>();
+ auto* AircraftMesh=LoadObject<UStaticMesh>(nullptr,TEXT("/Game/Presentation/Ships/FighterFull/SM_Hull.SM_Hull"),nullptr,LOAD_NoWarn);
+ auto* AircraftMaterial=LoadObject<UMaterialInterface>(nullptr,TEXT("/Game/Presentation/Ships/FighterFull/M_Readable.M_Readable"),nullptr,LOAD_NoWarn);
+ if(AircraftMesh&&AircraftMaterial) {
+  AircraftPresentationActor=GetWorld()->SpawnActor<AActor>();
+  if(AircraftPresentationActor) {AircraftPresentationActor->SetActorHiddenInGame(false);AircraftPresentationActor->SetActorEnableCollision(false);}
+  auto CreateAircraftInstances=[&](const TCHAR* Name,FLinearColor Tint) {
+   auto* Mesh=NewObject<UInstancedStaticMeshComponent>(AircraftPresentationActor,Name);AircraftPresentationActor->AddInstanceComponent(Mesh);
+   Mesh->SetMobility(EComponentMobility::Movable);Mesh->SetStaticMesh(AircraftMesh);
+   Mesh->SetCollisionEnabled(ECollisionEnabled::NoCollision);Mesh->SetGenerateOverlapEvents(false);
+   Mesh->SetCanEverAffectNavigation(false);Mesh->SetCastShadow(false);
+   if(auto* Material=UMaterialInstanceDynamic::Create(AircraftMaterial,Mesh)) {Material->SetVectorParameterValue(TEXT("FactionTint"),Tint);Mesh->SetMaterial(0,Material);}
+   Mesh->RegisterComponent();return Mesh;
+  };
+  if(AircraftPresentationActor) {
+   FriendlyAircraftMeshes=CreateAircraftInstances(TEXT("FriendlyAircraftPresentation"),FLinearColor(.8f,.9f,1));
+   EnemyAircraftMeshes=CreateAircraftInstances(TEXT("EnemyAircraftPresentation"),FLinearColor(1,.72f,.7f));
+  }
+ }
  PointDefense=GetWorld()->GetSubsystem<UOVPointDefenseSubsystem>();
  Transport=GetWorld()->GetSubsystem<UOVTransportSubsystem>();
  Interior=GetWorld()->GetSubsystem<UOVInteriorSubsystem>();
@@ -76,6 +96,29 @@ void AOVController::BeginPlay()
  int32 RequestedMission=-1;
  if(FParse::Value(FCommandLine::Get(),TEXT("OVMission="),RequestedMission) && RequestedMission>=0 && RequestedMission<=2)
   Mission->StartMission(this,static_cast<EOVMissionMode>(RequestedMission));
+}
+void AOVController::EndPlay(const EEndPlayReason::Type EndPlayReason)
+{
+ if(IsValid(AircraftPresentationActor))AircraftPresentationActor->Destroy();
+ Super::EndPlay(EndPlayReason);
+}
+void AOVController::UpdateAircraftPresentation()
+{
+ if(!FriendlyAircraftMeshes||!EnemyAircraftMeshes||!Carrier)return;
+ TArray<FTransform> Friendly,Enemy;
+ for(const auto& Aircraft:Carrier->Aircraft) {
+  if(!UOVCarrierSubsystem::IsAirborneState(Aircraft.State)||Aircraft.Position.ContainsNaN()||Aircraft.Direction.ContainsNaN())continue;
+  const FVector Direction=Aircraft.Direction.GetSafeNormal(UE_SMALL_NUMBER,FVector::ForwardVector);
+  const FQuat Rotation=Direction.Rotation().Quaternion()*FRotator(0,180,0).Quaternion();
+  const float Scale=FMath::Max(1.f,Carrier->Profile.CollisionRadius)*2.f/350.f;
+  (Aircraft.FactionId==0?Friendly:Enemy).Emplace(Rotation,Aircraft.Position,FVector(Scale));
+ }
+ auto Sync=[](UInstancedStaticMeshComponent* Mesh,const TArray<FTransform>& Transforms) {
+  while(Mesh->GetInstanceCount()>Transforms.Num())Mesh->RemoveInstance(Mesh->GetInstanceCount()-1);
+  for(int32 I=Mesh->GetInstanceCount();I<Transforms.Num();++I)Mesh->AddInstance(Transforms[I],true);
+  if(!Transforms.IsEmpty())Mesh->BatchUpdateInstancesTransforms(0,Transforms,true,true,true);
+ };
+ Sync(FriendlyAircraftMeshes,Friendly);Sync(EnemyAircraftMeshes,Enemy);
 }
 void AOVController::StartCombatRange()
 {

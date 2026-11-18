@@ -1,0 +1,52 @@
+[
+  {
+    "id": "fighter",
+    "source": "C:\\Users\\user\\Documents\\OrbitalVanguardAssets\\Source\\함재기\\Meshy_AI_scifi_fighter_interceptor_20261117_image-to-3d-texture_fbx\\Meshy_AI_scifi_fighter_interceptor_20261117_image-to-3d-texture.fbx",
+    "source_sha256": "bde7b8fedd08796f510c28b6b3f9c89a4307e792be651c5a8f845123bf08fd3f",
+    "source_unchanged": true,
+    "prepared_sha256": "66e43d06e8f105921216f0908d5cef368d85e98b1c537cc7a5317981dd25c5be",
+    "vertices": 377848,
+    "polygons": 755812,
+    "uv_layers": 1,
+    "source_extent": [
+      13.790246963500977,
+      7.924794673919678,
+      3.0
+    ],
+    "textures": [
+      {
+        "name": "Image_0.png",
+        "size": [
+          4096,
+          4096
+        ],
+        "sha256": "cabb43aebe502e8cc0c782f492cd30991612fb0a8245ed13084f2292d9479a49"
+      },
+      {
+        "name": "Image_2.png",
+        "size": [
+          4096,
+          4096
+        ],
+        "sha256": "7f68ee9ec413e53422fed1023c7b141518db5faececdd5c4f0b1c9f2e44510ad"
+      },
+      {
+        "name": "texture_0_metallic.png",
+        "size": [
+          2048,
+          2048
+        ],
+        "sha256": "24c60cddea15b847fa8b3c14e6d388446dc62d6309c0f0bc97e16384bf1fa1ef"
+      },
+      {
+        "name": "texture_0_roughness.png",
+        "size": [
+          2048,
+          2048
+        ],
+        "sha256": "18839d17ad6313346a28d51474a3bddfd81797201d3b7757b2df0cd9a0d40d89"
+      }
+    ],
+    "forward_direction_validated": false
+  }
+]

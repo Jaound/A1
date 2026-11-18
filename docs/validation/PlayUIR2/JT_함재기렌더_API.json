@@ -1,0 +1,50 @@
+{
+  "passed": true,
+  "kind": "PIE 렌더와 UI API",
+  "physical_input": false,
+  "requested_size": [
+    1280,
+    720
+  ],
+  "captures": [
+    {
+      "view": "함재기_원본모델",
+      "path": "C:/Users/user/source/repos/A1/Unreal/OrbitalVanguard/Saved/Validation\\PlayUI\\20261118_085617\\01_함재기_원본모델.png",
+      "viewport_size": [
+        1280,
+        722
+      ],
+      "exists": true
+    }
+  ],
+  "checks": [
+    {
+      "id": "PLAY-WINDOW",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "FIGHTER-RENDER-SCENE",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "FIGHTER-RENDER-LAUNCH",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "FIGHTER-RENDER-INSTANCE",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "RENDER-함재기_원본모델",
+      "passed": true,
+      "detail": ""
+    }
+  ],
+  "errors": [],
+  "preview_settings_restored": true,
+  "elapsed_seconds": 7.718000000000757
+}

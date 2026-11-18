@@ -17,7 +17,9 @@ void AOVHUD::DrawPhase2C()
 {
     CSV_SCOPED_TIMING_STAT_EXCLUSIVE(OV_Effects);
     TRACE_CPUPROFILER_EVENT_SCOPE(OV_Effects);
- auto* PC=Cast<AOVController>(PlayerOwner);if(PC->Phase2CScenario<0&&!(PC->Interior&&PC->Interior->bEnabled))return;
+ auto* PC=Cast<AOVController>(PlayerOwner);if(!PC)return;
+ PC->UpdateAircraftPresentation();
+ if(PC->Phase2CScenario<0&&!(PC->Interior&&PC->Interior->bEnabled))return;
  auto* Carrier=GetWorld()->GetSubsystem<UOVCarrierSubsystem>();
  auto* PD=GetWorld()->GetSubsystem<UOVPointDefenseSubsystem>();
  auto* Transport=GetWorld()->GetSubsystem<UOVTransportSubsystem>();

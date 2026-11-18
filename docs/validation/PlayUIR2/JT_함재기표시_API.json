@@ -1,0 +1,51 @@
+{
+  "passed": true,
+  "kind": "PIE API, 직접 입력 아님",
+  "checks": [
+    {
+      "id": "FIGHTER-SCENE",
+      "passed": true
+    },
+    {
+      "id": "FIGHTER-HAS-RECORDS",
+      "passed": true
+    },
+    {
+      "id": "FIGHTER-LAUNCH",
+      "passed": true
+    },
+    {
+      "id": "FIGHTER-INSTANCE-COMPONENTS",
+      "passed": true
+    },
+    {
+      "id": "FIGHTER-REAL-SOURCE-MESH",
+      "passed": true
+    },
+    {
+      "id": "FIGHTER-INSTANCE-COUNTS",
+      "passed": true
+    },
+    {
+      "id": "FIGHTER-WORLD-POSITION",
+      "passed": true
+    },
+    {
+      "id": "FIGHTER-RENDER-DOES-NOT-CHANGE-RECORDS",
+      "passed": true
+    },
+    {
+      "id": "FIGHTER-RENDER-DOES-NOT-DUPLICATE",
+      "passed": true
+    },
+    {
+      "id": "FIGHTER-IDS-RETAINED",
+      "passed": true
+    },
+    {
+      "id": "FIGHTER-SCENE-RESET-CLEARS",
+      "passed": true
+    }
+  ],
+  "errors": []
+}

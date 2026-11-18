@@ -14,6 +14,7 @@ class UOVInteriorSubsystem;
 class UOVMissionSubsystem;
 class UOVDevelopmentSubsystem;
 class UOVHeroSubsystem;
+class UInstancedStaticMeshComponent;
 UENUM(BlueprintType)
 enum class EOVInputMode : uint8 { None, Move, Target, Heading, Repair };
 UCLASS()
@@ -27,9 +28,15 @@ public:
  UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Interior") TObjectPtr<UOVInteriorSubsystem> Interior;
  UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Mission") TObjectPtr<UOVMissionSubsystem> Mission;
  virtual void BeginPlay() override;
+ virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
  virtual void PlayerTick(float DeltaTime) override;
  virtual bool InputKey(const FInputKeyEventArgs& Params) override;
  virtual void FlushPressedKeys() override;
+ /** Render-only copies of live aircraft; gameplay remains in the carrier subsystem. */
+ UFUNCTION(BlueprintCallable, Category="Presentation") void UpdateAircraftPresentation();
+ UPROPERTY(Transient, VisibleAnywhere, BlueprintReadOnly, Category="Presentation") TObjectPtr<UInstancedStaticMeshComponent> FriendlyAircraftMeshes;
+ UPROPERTY(Transient, VisibleAnywhere, BlueprintReadOnly, Category="Presentation") TObjectPtr<UInstancedStaticMeshComponent> EnemyAircraftMeshes;
+ UPROPERTY(Transient) TObjectPtr<AActor> AircraftPresentationActor;
  UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Camera") bool bPlayGame3=true;
  UFUNCTION(BlueprintCallable, Category="Camera") void ApplyCameraInput(FVector2D OrbitDelta, FVector LocalPan, float YawAxis, int32 Wheel, float RealSeconds);
  UFUNCTION(BlueprintCallable, Category="Control Range")
