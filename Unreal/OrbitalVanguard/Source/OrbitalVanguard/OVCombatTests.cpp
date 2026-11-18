@@ -684,6 +684,59 @@ bool FOVCombatOrdersTest::RunTest(const FString&)
     return true;
 }
 
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(FOVMarkedGeneralModuleSwap, "OrbitalVanguard.Combat.MarkedGeneralModuleSwap", EAutomationTestFlags::EditorContext | EAutomationTestFlags::EngineFilter)
+bool FOVMarkedGeneralModuleSwap::RunTest(const FString&)
+{
+    OVCombatTest::FRange R; auto& Gun=R.Gun(0);
+    const FName Id=Gun.MountId;
+    auto* Beam=R.Combat->Settings->Weapons.FindByPredicate([](const FOVWeaponProfile& P){return P.ProfileId==TEXT("BeamRapid_T1");});
+    if(!TestNotNull(TEXT("Beam profile exists"),Beam))return false;
+    Beam->MountMaxHP=75;
+    auto& OriginalDef=R.A->Systems->Layout->WeaponMounts[0];
+    OriginalDef.AuthoredSlotPurpose=TEXT("General");
+    const int32 OldCannon=R.A->Systems->Layout->CannonSlots, OldBeam=R.A->Systems->Layout->BeamSlots, OldMissile=R.A->Systems->Layout->MissileSlots;
+    const auto OtherFamily=R.B->Systems->Layout->WeaponMounts[0].Type;
+    auto* Health=R.A->Systems->WeaponMountStates.FindByPredicate([Id](const FOVWeaponMountState& S){return S.WeaponMountId==Id;});
+    if(!TestNotNull(TEXT("Mount health exists"),Health))return false;
+    Health->HP=60;
+    R.Exact(0); R.Fire(0,1.f/120.f);
+    if(!TestTrue(TEXT("Existing projectile was fired"),R.Combat->Attacks.Num()>0))return false;
+    const int32 AttackId=R.Combat->Attacks.Last().AttackId;
+    const auto OldKind=R.Combat->Attacks.Last().Weapon.Kind;
+    TestTrue(TEXT("General slot accepts same-tier beam module"),R.Combat->SetWeaponProfile(R.A,Id,TEXT("BeamRapid_T1")));
+    const auto& Updated=R.A->Systems->Layout->WeaponMounts[0];
+    TestEqual(TEXT("Layout uses installed family"),Updated.Type,EOVWeaponType::Beam);
+    TestEqual(TEXT("Calibrated module max HP is used"),Updated.MaxHP,75.f);
+    TestEqual(TEXT("Re-equipping does not restore HP"),Health->HP,60.f);
+    TestEqual(TEXT("Supply explosion cannon count decreases"),R.A->Systems->Layout->CannonSlots,OldCannon-1);
+    TestEqual(TEXT("Supply explosion beam count increases"),R.A->Systems->Layout->BeamSlots,OldBeam+1);
+    TestEqual(TEXT("Another ship's layout is untouched"),R.B->Systems->Layout->WeaponMounts[0].Type,OtherFamily);
+    TestEqual(TEXT("Runtime module changes family"),Gun.Profile.Family,EOVWeaponType::Beam);
+    const auto* Existing=R.Combat->Attacks.FindByPredicate([AttackId](const FOVAttackState& A){return A.AttackId==AttackId;});
+    TestTrue(TEXT("Already-fired projectile retains its original kind"),Existing && Existing->Weapon.Kind==OldKind);
+    R.DisableFacility(R.A,EOVFacilityType::Capacitor);
+    TestEqual(TEXT("New beam reads capacitor availability"),R.Combat->GetReadiness(R.A,Id).Reason,FString(TEXT("SUPPLY OFF")));
+    auto* Missile=R.Combat->Settings->Weapons.FindByPredicate([](const FOVWeaponProfile& P){return P.ProfileId==TEXT("Missile_T1");});
+    if(!TestNotNull(TEXT("Missile profile exists"),Missile))return false;
+    Missile->MountMaxHP=0;
+    TestFalse(TEXT("Missing calibrated mount HP rejects a cross-family change"),R.Combat->SetWeaponProfile(R.A,Id,TEXT("Missile_T1")));
+    Missile->MountMaxHP=40;
+    TestTrue(TEXT("General slot accepts calibrated missile module"),R.Combat->SetWeaponProfile(R.A,Id,TEXT("Missile_T1")));
+    TestEqual(TEXT("HP is clamped to the new module maximum"),Health->HP,40.f);
+    TestEqual(TEXT("Missile count follows the new module"),R.A->Systems->Layout->MissileSlots,OldMissile+1);
+    auto& Dedicated=R.A->Systems->Layout->WeaponMounts[0];Dedicated.AuthoredSlotPurpose=TEXT("Dedicated");Dedicated.RequiredProfileId=TEXT("Missile_T1");
+    TestFalse(TEXT("Dedicated slot rejects another family"),R.Combat->SetWeaponProfile(R.A,Id,TEXT("BeamRapid_T1")));
+    TestEqual(TEXT("Rejected change does not heal"),Health->HP,40.f);
+    OVCombatTest::FRange Missing;
+    auto* MissingBeam=Missing.Combat->Settings->Weapons.FindByPredicate([](const FOVWeaponProfile& P){return P.ProfileId==TEXT("BeamRapid_T1");});
+    if(!TestNotNull(TEXT("Beam candidate exists for facility check"),MissingBeam))return false;
+    MissingBeam->MountMaxHP=75;
+    Missing.A->Systems->Layout->WeaponMounts[0].AuthoredSlotPurpose=TEXT("General");
+    for(auto& Slot:Missing.A->Systems->Layout->Slots)if(Slot.Facility==EOVFacilityType::Capacitor)Slot.Facility=EOVFacilityType::None;
+    TestFalse(TEXT("A module cannot be installed without its required facility"),Missing.Combat->SetWeaponProfile(Missing.A,Missing.Gun(0).MountId,TEXT("BeamRapid_T1")));
+    return true;
+}
+
 IMPLEMENT_SIMPLE_AUTOMATION_TEST(FOVCombatProfilesTest, "OrbitalVanguard.Combat.DataProfilesAndTierLimits", EAutomationTestFlags::EditorContext | EAutomationTestFlags::EngineFilter)
 bool FOVCombatProfilesTest::RunTest(const FString&)
 {

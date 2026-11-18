@@ -1,0 +1,81 @@
+{
+  "source": "C:\\Users\\user\\Documents\\OrbitalVanguardAssets\\Prepared\\PlayUI_R2_MissileTrim_v1\\missile_pod_mm24\\missile_pod_mm24_TrimTrial.blend",
+  "source_before": "2fb7f10f6e6596bb67c5681da49864b20d97270970a9aa78bfb45d5af4c2ef7c",
+  "source_after": "2fb7f10f6e6596bb67c5681da49864b20d97270970a9aa78bfb45d5af4c2ef7c",
+  "trial_clearance": 0.001,
+  "samples": [
+    {
+      "pitch": -90,
+      "body_base": 0,
+      "launcher_body": 917,
+      "launcher_base": 4896,
+      "axle_body": 190,
+      "axle_base": 1158
+    },
+    {
+      "pitch": -60,
+      "body_base": 0,
+      "launcher_body": 708,
+      "launcher_base": 1267,
+      "axle_body": 190,
+      "axle_base": 1158
+    },
+    {
+      "pitch": -30,
+      "body_base": 0,
+      "launcher_body": 2030,
+      "launcher_base": 75,
+      "axle_body": 190,
+      "axle_base": 1158
+    },
+    {
+      "pitch": -15,
+      "body_base": 0,
+      "launcher_body": 2071,
+      "launcher_base": 0,
+      "axle_body": 190,
+      "axle_base": 1158
+    },
+    {
+      "pitch": 0,
+      "body_base": 0,
+      "launcher_body": 73,
+      "launcher_base": 0,
+      "axle_body": 190,
+      "axle_base": 1158
+    },
+    {
+      "pitch": 15,
+      "body_base": 0,
+      "launcher_body": 3211,
+      "launcher_base": 0,
+      "axle_body": 190,
+      "axle_base": 1158
+    },
+    {
+      "pitch": 30,
+      "body_base": 0,
+      "launcher_body": 5626,
+      "launcher_base": 667,
+      "axle_body": 190,
+      "axle_base": 1158
+    },
+    {
+      "pitch": 60,
+      "body_base": 0,
+      "launcher_body": 920,
+      "launcher_base": 7639,
+      "axle_body": 190,
+      "axle_base": 1158
+    },
+    {
+      "pitch": 90,
+      "body_base": 0,
+      "launcher_body": 620,
+      "launcher_base": 8040,
+      "axle_body": 190,
+      "axle_base": 1158
+    }
+  ],
+  "scope": "이산 각도 표면 교차. 캡 및 의도된 축-발사 상자 연결 제외. 게임 미승인"
+}

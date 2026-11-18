@@ -169,6 +169,7 @@ void ApplyProfiles(UOVCombatSettings& Settings)
             Profile.Family = Family(W.Kind);
             Profile.Kind = W.Kind;
             Profile.Tier = Tier;
+            Profile.MountMaxHP = W.HP * TierDamage[Tier - 1];
             Profile.Range = W.Range;
             Profile.Interval = W.Period;
             Profile.Damage = W.Damage * TierDamage[Tier - 1];

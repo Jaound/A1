@@ -255,13 +255,45 @@ bool UOVCombatSubsystem::SetWeaponProfile(AOVShip* Ship, FName MountId, FName Pr
     const FOVWeaponMountDefinition* Def = MountDefinition(Ships[Index], MountId);
     const FOVWeaponProfile* Profile = Settings->Weapons.FindByPredicate(
         [ProfileId](const FOVWeaponProfile& P) { return P.ProfileId == ProfileId; });
-    if (!Def || !Profile || MountIndex == INDEX_NONE || Profile->Family != Def->Type) return false;
+    if (!Def || !Profile || MountIndex == INDEX_NONE) return false;
     if (!Def->RequiredProfileId.IsNone() && Def->RequiredProfileId != ProfileId) return false;
     // Changing kind is supported. Re-equipping a different tier requires a new authored
     // loadout, keeping the existing storage-explosion tier data authoritative.
     if (Profile->Tier > Ships[Index].WeaponTierCap || Profile->Tier != FMath::RoundToInt(Def->Tier)) return false;
+    const bool bGeneral = Def->AuthoredSlotPurpose == TEXT("General") && Def->RequiredProfileId.IsNone();
+    const bool bFamilyChange = Profile->Family != Def->Type;
+    if (bFamilyChange && (!bGeneral || Profile->MountMaxHP <= 0 || Profile->Family == EOVWeaponType::Interception)) return false;
+    if (bFamilyChange && !Ship->Systems->Layout->Slots.ContainsByPredicate(
+        [Profile](const FOVSlotDefinition& Slot) { return Slot.Facility == SupplyFor(Profile->Family); })) return false;
+    // The layout may be shared by many ships: re-equipment must change only this ship.
+    // A calibrated module supplies its own max HP; current HP is never restored for free.
+    if (bGeneral && Profile->MountMaxHP > 0 && (bFamilyChange || !FMath::IsNearlyEqual(Def->MaxHP, Profile->MountMaxHP)))
+    {
+        UOVShipSystemsComponent* Systems = Ship->Systems;
+        FOVWeaponMountState* Health = Systems ? Systems->WeaponMountStates.FindByPredicate(
+            [MountId](const FOVWeaponMountState& S) { return S.WeaponMountId == MountId; }) : nullptr;
+        if (!Systems || !Systems->Layout || !Health) return false;
+        UShipLayoutDataAsset* Copy = DuplicateObject<UShipLayoutDataAsset>(Systems->Layout, Ship);
+        if (!Copy) return false;
+        FOVWeaponMountDefinition* Updated = Copy->WeaponMounts.FindByPredicate(
+            [MountId](const FOVWeaponMountDefinition& M) { return M.WeaponId == MountId; });
+        if (!Updated) return false;
+        Updated->Type = Profile->Family;
+        Updated->MaxHP = Profile->MountMaxHP;
+        if (bFamilyChange) Updated->PresentationProfile = NAME_None;
+        Copy->BeamSlots = Copy->CannonSlots = Copy->MissileSlots = 0;
+        for (const FOVWeaponMountDefinition& M : Copy->WeaponMounts)
+        {
+            if (M.Type == EOVWeaponType::Beam) ++Copy->BeamSlots;
+            else if (M.Type == EOVWeaponType::Cannon) ++Copy->CannonSlots;
+            else if (M.Type == EOVWeaponType::Missile) ++Copy->MissileSlots;
+        }
+        Health->HP = FMath::Min(Health->HP, Updated->MaxHP);
+        Systems->Layout = Copy;
+    }
     FOVCombatMountState& Mount = Ships[Index].Mounts[MountIndex];
     Mount.Profile = *Profile; Mount.SalvoRemaining = 0; Mount.bFireRequested = false;
+    if (bGeneral) Ship->RefreshWeaponVisuals();
     return true;
 }
 

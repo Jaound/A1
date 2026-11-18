@@ -1,0 +1,45 @@
+{
+  "source": "C:\\Users\\user\\Documents\\OrbitalVanguardAssets\\Prepared\\PlayUI_R2_WeaponYawCandidates_v1\\missile_pod_mm48\\missile_pod_mm48_YawTrial.blend",
+  "source_before": "9f7c153e24d94a443c6fd8531d3b1fb7c23347f14dc19afece5b0921e50410de",
+  "source_after": "9f7c153e24d94a443c6fd8531d3b1fb7c23347f14dc19afece5b0921e50410de",
+  "trial_clearance": 0.001,
+  "samples": [
+    {
+      "pitch": -90,
+      "surface_overlap_pairs": 7807
+    },
+    {
+      "pitch": -60,
+      "surface_overlap_pairs": 7520
+    },
+    {
+      "pitch": -30,
+      "surface_overlap_pairs": 10053
+    },
+    {
+      "pitch": -15,
+      "surface_overlap_pairs": 2289
+    },
+    {
+      "pitch": 0,
+      "surface_overlap_pairs": 0
+    },
+    {
+      "pitch": 15,
+      "surface_overlap_pairs": 541
+    },
+    {
+      "pitch": 30,
+      "surface_overlap_pairs": 2610
+    },
+    {
+      "pitch": 60,
+      "surface_overlap_pairs": 23437
+    },
+    {
+      "pitch": 90,
+      "surface_overlap_pairs": 6262
+    }
+  ],
+  "scope": "받침/상부 이산 각도 표면 교차. 발사구·연속 각도·게임 미검증"
+}

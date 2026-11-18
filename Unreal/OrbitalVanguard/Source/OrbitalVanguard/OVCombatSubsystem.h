@@ -22,6 +22,8 @@ struct ORBITALVANGUARD_API FOVWeaponProfile
     UPROPERTY(EditAnywhere, BlueprintReadWrite) EOVWeaponType Family = EOVWeaponType::Beam;
     UPROPERTY(EditAnywhere, BlueprintReadWrite) EOVAttackKind Kind = EOVAttackKind::Beam;
     UPROPERTY(EditAnywhere, BlueprintReadWrite) int32 Tier = 1;
+    // Zero means no calibrated mount HP is available for cross-family re-equipment.
+    UPROPERTY(EditAnywhere, BlueprintReadWrite) float MountMaxHP = 0;
     UPROPERTY(EditAnywhere, BlueprintReadWrite) float Range = 6000;
     UPROPERTY(EditAnywhere, BlueprintReadWrite) float Interval = 0.9f;
     UPROPERTY(EditAnywhere, BlueprintReadWrite) float Damage = 45;

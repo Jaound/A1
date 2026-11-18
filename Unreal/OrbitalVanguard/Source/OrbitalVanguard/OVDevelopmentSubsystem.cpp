@@ -124,8 +124,8 @@ bool UOVDevelopmentSubsystem::EquipWeapon(AOVShip* Ship,FName MountId,FName Prof
     if(!PC||!PC->bDeveloperMode){LastMessage=TEXT("개발 모드에서만 시험 장착할 수 있습니다.");return false;}
     auto* Combat=GetWorld()->GetSubsystem<UOVCombatSubsystem>();
     const bool Result=IsValid(Ship)&&Combat->SetWeaponProfile(Ship,MountId,ProfileId);
-    LastMessage=Result?TEXT("무장 교체 · 기존 장착 계열/티어/상하부 제약 유지 · HP 회복 없음"):
-        TEXT("교체 불가: 장착점·계열·티어·함체 제한 또는 프로필을 확인하세요.");return Result;
+    LastMessage=Result?TEXT("무장 교체 · 슬롯과 티어 제약 유지 · HP 회복 없음"):
+        TEXT("교체 불가: 슬롯·티어·함체 제한 또는 무장 정보를 확인하세요.");return Result;
 }
 bool UOVDevelopmentSubsystem::SetBF120Trial(AOVShip* Ship,FName MountId,bool bEnable)
 {
