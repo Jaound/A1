@@ -372,6 +372,60 @@ bool FOVLB30SourceTrialTest::RunTest(const FString&)
     TestTrue(TEXT("Beam uses source flash position"),Event.Origin.Equals(Flash->GetComponentLocation(),.1));
     return true;
 }
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(FOVBF120NewSourceTrialTest, "OrbitalVanguard.Presentation.BF120SourceTrialActualTwinShots",
+    EAutomationTestFlags::EditorContext | EAutomationTestFlags::EngineFilter)
+bool FOVBF120NewSourceTrialTest::RunTest(const FString&)
+{
+    auto* Switch=IConsoleManager::Get().FindConsoleVariable(TEXT("ov.Presentation.BF120SourceTrial"));
+    if(!TestNotNull(TEXT("BF120 source trial switch exists"),Switch))return false;
+    const int32 Previous=Switch->GetInt();
+    struct FRestore { IConsoleVariable* Var; int32 Value; ~FRestore(){Var->Set(Value,ECVF_SetByCode);} } Restore{Switch,Previous};
+    Switch->Set(1,ECVF_SetByCode);
+    OVWeaponVisualTest::FRange R;R.Accurate(0);R.A->RefreshWeaponVisuals();
+    auto& Gun=R.Gun(0);
+    if(!TestEqual(TEXT("Fixture is a cannon"),Gun.Profile.Kind,EOVAttackKind::Cannon))return false;
+    FOVWeaponMountDefinition Def=R.A->Systems->Layout->WeaponMounts[0];Def.PresentationProfile=TEXT("BF120SourceTrial");
+    if(!TestTrue(TEXT("BF120 source trial assets exist"),OVWeaponGeometry::HasBF120SourceTrial(Def)))return false;
+    FVector Origins[2];
+    for(int32 Shot=0;Shot<2;++Shot)
+    {
+        Gun.Cooldown=0;R.Combat->RequestFire(R.A,Gun.MountId);R.Combat->Simulate(1.f/120.f);
+        if(!TestTrue(TEXT("Actual cannon projectile exists"),R.Combat->Attacks.Num()>0))return false;
+        Origins[Shot]=R.Combat->Attacks.Last().Origin;
+        TestTrue(TEXT("Actual shot uses displayed source muzzle"),Origins[Shot].Equals(R.Visual(0).WorldMuzzle,.1));
+        TArray<UOVWeaponVisualComponent*> Visuals;R.A->GetComponents(Visuals);
+        auto** Found=Visuals.FindByPredicate([&](const UOVWeaponVisualComponent* V){return V&&V->GetMountId()==Def.WeaponId;});
+        if(!TestNotNull(TEXT("BF120 source visual exists"),Found?*Found:nullptr))return false;
+        TArray<USceneComponent*> Children;(*Found)->GetChildrenComponents(true,Children);int32 Visible=0;
+        for(auto* Child:Children)if(auto* Mesh=Cast<UStaticMeshComponent>(Child);Mesh&&Mesh->GetStaticMesh()&&
+            Mesh->GetStaticMesh()->GetPathName()==TEXT("/Engine/BasicShapes/Sphere.Sphere")&&Mesh->IsVisible())
+        {++Visible;TestTrue(TEXT("Visible flash matches actual projectile"),Mesh->GetComponentLocation().Equals(Origins[Shot],.1));}
+        TestEqual(TEXT("One source barrel flashes"),Visible,1);
+    }
+    TestEqual(TEXT("Two requests produce two shots"),R.Combat->ShotCount,2);
+    TestFalse(TEXT("Twin barrels alternate"),Origins[0].Equals(Origins[1],.1));
+    R.A->SetActorRotation(FRotator(7,31,13));
+    for(const FVector Normal:{FVector::UpVector,FVector::DownVector,FVector::RightVector,FVector::LeftVector})
+    {
+        Def.LocalSurfaceNormal=Normal;
+        auto* Visual=NewObject<UOVWeaponVisualComponent>(R.A);R.A->AddInstanceComponent(Visual);
+        Visual->SetupAttachment(R.A->GetRootComponent());Visual->RegisterComponent();
+        const FVector Extent(80,60,40);Visual->Initialize(Def,Extent);
+        for(const FRotator Aim:{FRotator(0,0,0),FRotator(20,75,0),FRotator(-10,-120,0)})
+        {
+            Visual->Synchronize(Aim,false,false,true,1,0,0,1);
+            TArray<USceneComponent*> Children;Visual->GetChildrenComponents(true,Children);int32 Index=0;
+            for(auto* Child:Children)if(auto* Mesh=Cast<UStaticMeshComponent>(Child);Mesh&&Mesh->GetStaticMesh()&&Mesh->GetStaticMesh()->GetPathName()==TEXT("/Engine/BasicShapes/Sphere.Sphere"))
+            {
+                const FVector Expected=R.A->GetActorTransform().TransformPosition(OVWeaponGeometry::MuzzleLocal(Def,Aim,Extent,false,Index));
+                TestTrue(TEXT("Both source muzzle positions follow each surface"),Mesh->GetComponentLocation().Equals(Expected,.1));++Index;
+            }
+            TestEqual(TEXT("Both source muzzles exist"),Index,2);
+        }
+        Visual->DestroyComponent();
+    }
+    return true;
+}
 IMPLEMENT_SIMPLE_AUTOMATION_TEST(FOVSideMountGeometry,
     "OrbitalVanguard.Presentation.SideMountGeometry",
     EAutomationTestFlags::EditorContext | EAutomationTestFlags::EngineFilter)

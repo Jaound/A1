@@ -9,6 +9,8 @@ static TAutoConsoleVariable<int32> CVarCIWSBTrial(TEXT("ov.Presentation.CIWSBTri
     TEXT("Opt-in isolated source point-defense articulation trials; not final artwork."));
 static TAutoConsoleVariable<int32> CVarLB30Trial(TEXT("ov.Presentation.LB30Trial"), 0,
     TEXT("Opt-in isolated source beam turret trial; not final artwork."));
+static TAutoConsoleVariable<int32> CVarBF120SourceTrial(TEXT("ov.Presentation.BF120SourceTrial"), 0,
+    TEXT("Opt-in isolated source twin cannon trial; not final artwork."));
 
 namespace OVWeaponGeometry
 {
@@ -77,13 +79,78 @@ bool HasLB30Trial(const FOVWeaponMountDefinition& Definition)
     if (!Neck.IsValid()) Neck=LoadObject<UStaticMesh>(nullptr,TEXT("/Game/Presentation/WeaponsPitchTrial/laser_turret_lb30/SM_TrialNeck.SM_TrialNeck"),nullptr,LOAD_NoWarn);
     return Base.IsValid()&&Body.IsValid()&&Barrel.IsValid()&&Neck.IsValid();
 }
+bool BF120SourceTrialEnabled() { return CVarBF120SourceTrial.GetValueOnGameThread()!=0; }
+bool HasBF120SourceTrial(const FOVWeaponMountDefinition& Definition)
+{
+    if (Definition.Type!=EOVWeaponType::Cannon || Definition.PresentationProfile!=TEXT("BF120SourceTrial")) return false;
+    static TWeakObjectPtr<UStaticMesh> Base, Body, Barrel, Neck;
+    if (!Base.IsValid()) Base=LoadObject<UStaticMesh>(nullptr,TEXT("/Game/Presentation/WeaponsYawTrial/naval_gun_bf120/SM_Base.SM_Base"),nullptr,LOAD_NoWarn);
+    if (!Body.IsValid()) Body=LoadObject<UStaticMesh>(nullptr,TEXT("/Game/Presentation/WeaponsPitchTrial/naval_gun_bf120/SM_Body.SM_Body"),nullptr,LOAD_NoWarn);
+    if (!Barrel.IsValid()) Barrel=LoadObject<UStaticMesh>(nullptr,TEXT("/Game/Presentation/WeaponsPitchTrial/naval_gun_bf120/SM_Barrel.SM_Barrel"),nullptr,LOAD_NoWarn);
+    if (!Neck.IsValid()) Neck=LoadObject<UStaticMesh>(nullptr,TEXT("/Game/Presentation/WeaponsPitchTrial/naval_gun_bf120/SM_TrialNeck.SM_TrialNeck"),nullptr,LOAD_NoWarn);
+    return Base.IsValid()&&Body.IsValid()&&Barrel.IsValid()&&Neck.IsValid();
+}
+
+struct FSourceTrialArt
+{
+    double Span, BaseDepth;
+    FVector Pivot, Tip[2], NeckOffset;
+    const TCHAR* Base; const TCHAR* Body; const TCHAR* Barrel; const TCHAR* Neck;
+    bool bTwin;
+};
+
+static bool SourceTrialArt(const FOVWeaponMountDefinition& Definition,FSourceTrialArt& Out)
+{
+    if (HasBF120SourceTrial(Definition))
+    {
+        Out={342.3109,77.00002,FVector(-110.15539,-.03919,71.5),
+             {FVector(-232.13071,41.70198,.21027),FVector(-232.15546,-42.35428,-.02401)},FVector(7,42,0),
+             TEXT("/Game/Presentation/WeaponsYawTrial/naval_gun_bf120/SM_Base.SM_Base"),
+             TEXT("/Game/Presentation/WeaponsPitchTrial/naval_gun_bf120/SM_Body.SM_Body"),
+             TEXT("/Game/Presentation/WeaponsPitchTrial/naval_gun_bf120/SM_Barrel.SM_Barrel"),
+             TEXT("/Game/Presentation/WeaponsPitchTrial/naval_gun_bf120/SM_TrialNeck.SM_TrialNeck"),true};
+        return true;
+    }
+    if (HasLB30Trial(Definition))
+    {
+        Out={324.63175,62.999996,FVector(-148.305,4.37306,82.0),
+             {FVector(-176.32675,-.21687,-3.48731),FVector::ZeroVector},FVector(15,0,0),
+             TEXT("/Game/Presentation/WeaponsYawTrial/laser_turret_lb30/SM_Base.SM_Base"),
+             TEXT("/Game/Presentation/WeaponsPitchTrial/laser_turret_lb30/SM_Body.SM_Body"),
+             TEXT("/Game/Presentation/WeaponsPitchTrial/laser_turret_lb30/SM_Barrel.SM_Barrel"),
+             TEXT("/Game/Presentation/WeaponsPitchTrial/laser_turret_lb30/SM_TrialNeck.SM_TrialNeck"),false};
+        return true;
+    }
+    if (HasCIWS6Trial(Definition))
+    {
+        Out={161.01693,62.999996,FVector(-66.83440,-.07568,47.0),
+             {FVector(-94.18253,.04104,.67683),FVector::ZeroVector},FVector(7,0,0),
+             TEXT("/Game/Presentation/WeaponsYawTrial/ciws_gatling_6/SM_Base.SM_Base"),
+             TEXT("/Game/Presentation/WeaponsPitchTrial/ciws_gatling_6/SM_Body.SM_Body"),
+             TEXT("/Game/Presentation/WeaponsPitchTrial/ciws_gatling_6/SM_Barrel.SM_Barrel"),
+             TEXT("/Game/Presentation/WeaponsPitchTrial/ciws_gatling_6/SM_TrialNeck.SM_TrialNeck"),false};
+        return true;
+    }
+    if (HasCIWSBTrial(Definition))
+    {
+        Out={164.4709,56.99999,FVector(-70.92006,-.03419,53.0),
+             {FVector(-93.55087,0,.96070),FVector::ZeroVector},FVector(7,0,0),
+             TEXT("/Game/Presentation/WeaponsYawTrial/ciws_beam_b/SM_Base.SM_Base"),
+             TEXT("/Game/Presentation/WeaponsPitchTrial/ciws_beam_b/SM_Body.SM_Body"),
+             TEXT("/Game/Presentation/WeaponsPitchTrial/ciws_beam_b/SM_Barrel.SM_Barrel"),
+             TEXT("/Game/Presentation/WeaponsPitchTrial/ciws_beam_b/SM_TrialNeck.SM_TrialNeck"),false};
+        return true;
+    }
+    return false;
+}
 
 FVector MuzzleLocal(const FOVWeaponMountDefinition& Definition, FRotator Aim,
     FVector HullHalfExtent, bool bFixedVLS, int32 BarrelIndex)
 {
     const float Length=BarrelLength(HullHalfExtent,Definition.Tier,Definition.Type==EOVWeaponType::Interception);
     if (bFixedVLS) return Definition.LocalPosition + SurfaceNormal(Definition)*Length;
-    if (HasSourcePDTrial(Definition)||HasLB30Trial(Definition))
+    FSourceTrialArt Art{};
+    if (SourceTrialArt(Definition,Art))
     {
         // Isolated source-derived centimetres. The outlet is a candidate, not approved final art.
         const FVector Normal=SurfaceNormal(Definition);
@@ -93,13 +160,10 @@ FVector MuzzleLocal(const FOVWeaponMountDefinition& Definition, FRotator Aim,
         const FQuat Flip=FRotator(0,0,bBottom?180.f:0.f).Quaternion();
         const FQuat Yaw=FRotator(0,bBottom?180.f-LocalAim.Yaw:180.f+LocalAim.Yaw,0).Quaternion();
         const FQuat Pitch=FRotator(bBottom?LocalAim.Pitch:-LocalAim.Pitch,0,0).Quaternion();
-        const bool bKinetic=HasCIWS6Trial(Definition);
-        const bool bBeam=HasLB30Trial(Definition);
-        const double Scale=Length/(bBeam?324.63175:(bKinetic?161.01693:164.4709));
-        const FVector Lift(0,0,(bBottom?-1.f:1.f)*((bBeam||bKinetic)?62.999996:56.99999)*Scale);
-        const FVector Pivot=bBeam?FVector(-148.305,4.37306,82.0):(bKinetic?FVector(-66.83440,-.07568,47.0):FVector(-70.92006,-.03419,53.0));
-        const FVector Tip=bBeam?FVector(-176.32675,-.21687,-3.48731):(bKinetic?FVector(-94.18253,.04104,.67683):FVector(-93.55087,0,.96070));
-        return Definition.LocalPosition+Surface.RotateVector(Lift+Flip.RotateVector(FVector(0,0,.1*Scale)+Yaw.RotateVector((Pivot+Pitch.RotateVector(Tip))*Scale)));
+        const double Scale=Length/Art.Span;
+        const FVector Lift(0,0,(bBottom?-1.f:1.f)*Art.BaseDepth*Scale);
+        const FVector Tip=Art.Tip[Art.bTwin?(BarrelIndex&1):0];
+        return Definition.LocalPosition+Surface.RotateVector(Lift+Flip.RotateVector(FVector(0,0,.1*Scale)+Yaw.RotateVector((Art.Pivot+Pitch.RotateVector(Tip))*Scale)));
     }
     if (!HasBF120Trial(Definition)) return MuzzleLocal(Definition.LocalPosition,Aim,Length,false);
     // Measured isolated UE trial, cm. One projectile uses one barrel; shots alternate without changing cadence or damage.
@@ -170,28 +234,29 @@ void UOVWeaponVisualComponent::Initialize(const FOVWeaponMountDefinition& InDefi
     UMaterialInterface* Base = LoadObject<UMaterialInterface>(nullptr, TEXT("/Engine/BasicShapes/BasicShapeMaterial.BasicShapeMaterial"));
     if (Base) BodyMaterial = UMaterialInstanceDynamic::Create(Base, this);
 
-    if (OVWeaponGeometry::HasSourcePDTrial(Definition)||OVWeaponGeometry::HasLB30Trial(Definition))
+    OVWeaponGeometry::FSourceTrialArt Art{};
+    if (OVWeaponGeometry::SourceTrialArt(Definition,Art))
     {
         // Trial only: source base, body and barrel plus a clearly separate generated neck.
-        const bool bKinetic=OVWeaponGeometry::HasCIWS6Trial(Definition);
-        const bool bBeam=OVWeaponGeometry::HasLB30Trial(Definition);
-        const double Scale=Length/(bBeam?324.63175:(bKinetic?161.01693:164.4709));
-        const FVector Pivot=bBeam?FVector(-148.305,4.37306,82.0):(bKinetic?FVector(-66.83440,-.07568,47.0):FVector(-70.92006,-.03419,53.0));
-        const FVector Tip=bBeam?FVector(-176.32675,-.21687,-3.48731):(bKinetic?FVector(-94.18253,.04104,.67683):FVector(-93.55087,0,.96070));
+        const double Scale=Length/Art.Span;
         auto* Flip=MakePivot(this);
-        Flip->SetRelativeLocation(FVector(0,0,Side*((bBeam||bKinetic)?62.999996:56.99999)*Scale));
+        Flip->SetRelativeLocation(FVector(0,0,Side*Art.BaseDepth*Scale));
         Flip->SetRelativeRotation(FRotator(0,0,State.bBottom?180.f:0.f));
-        MakeMesh(Flip,bBeam?TEXT("/Game/Presentation/WeaponsYawTrial/laser_turret_lb30/SM_Base.SM_Base"):(bKinetic?TEXT("/Game/Presentation/WeaponsYawTrial/ciws_gatling_6/SM_Base.SM_Base"):TEXT("/Game/Presentation/WeaponsYawTrial/ciws_beam_b/SM_Base.SM_Base")),FVector::ZeroVector,FVector(Scale),FRotator::ZeroRotator,false);
+        MakeMesh(Flip,Art.Base,FVector::ZeroVector,FVector(Scale),FRotator::ZeroRotator,false);
         YawPivot=MakePivot(Flip);
         YawPivot->SetRelativeLocation(FVector(0,0,.1*Scale)); // 0.001 Blender-unit trial bearing clearance.
-        MakeMesh(YawPivot,bBeam?TEXT("/Game/Presentation/WeaponsPitchTrial/laser_turret_lb30/SM_Body.SM_Body"):(bKinetic?TEXT("/Game/Presentation/WeaponsPitchTrial/ciws_gatling_6/SM_Body.SM_Body"):TEXT("/Game/Presentation/WeaponsPitchTrial/ciws_beam_b/SM_Body.SM_Body")),FVector::ZeroVector,FVector(Scale),FRotator::ZeroRotator,false);
-        PitchPivot=MakePivot(YawPivot);PitchPivot->SetRelativeLocation(Pivot*Scale);
-        Barrel=MakeMesh(PitchPivot,bBeam?TEXT("/Game/Presentation/WeaponsPitchTrial/laser_turret_lb30/SM_Barrel.SM_Barrel"):(bKinetic?TEXT("/Game/Presentation/WeaponsPitchTrial/ciws_gatling_6/SM_Barrel.SM_Barrel"):TEXT("/Game/Presentation/WeaponsPitchTrial/ciws_beam_b/SM_Barrel.SM_Barrel")),FVector::ZeroVector,FVector(Scale),FRotator::ZeroRotator,false);
-        auto* Neck=MakeMesh(PitchPivot,bBeam?TEXT("/Game/Presentation/WeaponsPitchTrial/laser_turret_lb30/SM_TrialNeck.SM_TrialNeck"):(bKinetic?TEXT("/Game/Presentation/WeaponsPitchTrial/ciws_gatling_6/SM_TrialNeck.SM_TrialNeck"):TEXT("/Game/Presentation/WeaponsPitchTrial/ciws_beam_b/SM_TrialNeck.SM_TrialNeck")),FVector(bBeam?15:7,0,0)*Scale,FVector(Scale),FRotator::ZeroRotator,false);
+        MakeMesh(YawPivot,Art.Body,FVector::ZeroVector,FVector(Scale),FRotator::ZeroRotator,false);
+        PitchPivot=MakePivot(YawPivot);PitchPivot->SetRelativeLocation(Art.Pivot*Scale);
+        Barrel=MakeMesh(PitchPivot,Art.Barrel,FVector::ZeroVector,FVector(Scale),FRotator::ZeroRotator,false);
+        auto* Neck=MakeMesh(PitchPivot,Art.Neck,Art.NeckOffset*Scale,FVector(Scale),FRotator::ZeroRotator,false);
         if (Base && Neck) { auto* M=UMaterialInstanceDynamic::Create(Base,Neck); M->SetVectorParameterValue(TEXT("Color"),FLinearColor(.19f,.2f,.21f)); Neck->SetMaterial(0,M); }
-        Flash=MakeMesh(PitchPivot,TEXT("/Engine/BasicShapes/Sphere.Sphere"),Tip*Scale,FVector(Length*.15/100.f));
-        if (Base && Flash) { auto* M=UMaterialInstanceDynamic::Create(Base,Flash); M->SetVectorParameterValue(TEXT("Color"),FLinearColor(.12f,.85f,1.f)); Flash->SetMaterial(0,M); }
-        if (Flash) Flash->SetVisibility(false);
+        Flash=MakeMesh(PitchPivot,TEXT("/Engine/BasicShapes/Sphere.Sphere"),Art.Tip[0]*Scale,FVector(Length*.15/100.f));
+        if (Art.bTwin) SecondFlash=MakeMesh(PitchPivot,TEXT("/Engine/BasicShapes/Sphere.Sphere"),Art.Tip[1]*Scale,FVector(Length*.15/100.f));
+        UStaticMeshComponent* Flashes[]={Flash.Get(),SecondFlash.Get()};
+        for (auto* Part:Flashes) if (Part) {
+            if (Base) { auto* M=UMaterialInstanceDynamic::Create(Base,Part);M->SetVectorParameterValue(TEXT("Color"),Art.bTwin?FLinearColor(1.f,.66f,.08f):FLinearColor(.12f,.85f,1.f));Part->SetMaterial(0,M); }
+            Part->SetVisibility(false);
+        }
         return;
     }
     if (OVWeaponGeometry::HasBF120Trial(Definition))
@@ -257,20 +322,22 @@ void UOVWeaponVisualComponent::Synchronize(FRotator LogicalAim, bool bFixedVLS, 
     State.VisualAim = bSide ? (bFixedVLS ? FRotator(90,0,0) : GetRelativeRotation().UnrotateVector(LogicalAim.Vector()).Rotation())
         : (bFixedVLS ? FRotator(State.bBottom ? -90 : 90, 0, 0) : LogicalAim);
     const bool bBF120=OVWeaponGeometry::HasBF120Trial(Definition)&&!bFixedVLS;
-    const bool bSourceArt=(OVWeaponGeometry::HasSourcePDTrial(Definition)||OVWeaponGeometry::HasLB30Trial(Definition))&&!bFixedVLS;
+    OVWeaponGeometry::FSourceTrialArt Art{};
+    const bool bSourceArt=!bFixedVLS&&OVWeaponGeometry::SourceTrialArt(Definition,Art);
     const bool bSource=bBF120||bSourceArt;
     if (YawPivot) YawPivot->SetRelativeRotation(FRotator(0,bSource?(State.bBottom?180.f-State.VisualAim.Yaw:180.f+State.VisualAim.Yaw):State.VisualAim.Yaw,0));
     if (PitchPivot) PitchPivot->SetRelativeRotation(FRotator(bSource?(State.bBottom?State.VisualAim.Pitch:-State.VisualAim.Pitch):State.VisualAim.Pitch,0,0));
     const int32 BarrelIndex=ShotsFired>0?(ShotsFired-1)%2:0;
-    State.LocalMuzzle = bSourceArt ? OVWeaponGeometry::MuzzleLocal(Definition,LogicalAim,Extent,false,0) : State.bPointDefense
+    State.LocalMuzzle = bSourceArt ? OVWeaponGeometry::MuzzleLocal(Definition,LogicalAim,Extent,false,BarrelIndex) : State.bPointDefense
         ? Definition.LocalPosition+(bFixedVLS?Normal:LogicalAim.Vector())*Length
         : OVWeaponGeometry::MuzzleLocal(Definition,LogicalAim,Extent,bFixedVLS,BarrelIndex);
     State.LastShotId = ShotId;
     State.LastShotTime = ShotTime;
     // Game time keeps a paused muzzle flash frozen. Opening a viewer cannot fire or re-trigger it.
     State.bFlashVisible = !bDestroyed && ShotId > 0 && ShotTime >= 0 && GameTime >= ShotTime && GameTime - ShotTime < .12;
-    if (Flash) Flash->SetVisibility(State.bFlashVisible&&(!bBF120||BarrelIndex==0));
-    if (SecondFlash) SecondFlash->SetVisibility(State.bFlashVisible&&bBF120&&BarrelIndex==1);
+    const bool bTwin=bBF120||(bSourceArt&&Art.bTwin);
+    if (Flash) Flash->SetVisibility(State.bFlashVisible&&(!bTwin||BarrelIndex==0));
+    if (SecondFlash) SecondFlash->SetVisibility(State.bFlashVisible&&bTwin&&BarrelIndex==1);
     if (Barrel) Barrel->SetVisibility(!bDestroyed);
     if (BodyMaterial && (!bColorInitialized || bLastDestroyed != bDestroyed || bLastFriendly != bFriendly))
     {

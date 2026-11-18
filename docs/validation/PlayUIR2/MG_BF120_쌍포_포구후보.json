@@ -1,0 +1,48 @@
+{
+  "source": "C:\\Users\\user\\Documents\\OrbitalVanguardAssets\\Prepared\\PlayUI_R2_WeaponPitchReliefCandidates_v1\\naval_gun_bf120\\naval_gun_bf120_PitchTrial.blend",
+  "source_before": "1bdb815e1ea43ca1673abfb79ab5c68ffef87f0bc2f2d851e71c75bcbbe75ff2",
+  "source_after": "1bdb815e1ea43ca1673abfb79ab5c68ffef87f0bc2f2d851e71c75bcbbe75ff2",
+  "front_x": -2.4215545654296875,
+  "band": 0.03,
+  "groups": [
+    {
+      "name": "negative_y",
+      "vertices": 1251,
+      "min": [
+        -2.42130708694458,
+        -0.5683701634407043,
+        0.3362656235694885
+      ],
+      "max": [
+        -2.3915891647338867,
+        -0.26566943526268005,
+        0.6379398107528687
+      ],
+      "center": [
+        -2.4064481258392334,
+        -0.4170197993516922,
+        0.4871027171611786
+      ]
+    },
+    {
+      "name": "positive_y",
+      "vertices": 1238,
+      "min": [
+        -2.4215545654296875,
+        0.27121061086654663,
+        0.3339802622795105
+      ],
+      "max": [
+        -2.3915791511535645,
+        0.5758749842643738,
+        0.6355395317077637
+      ],
+      "center": [
+        -2.406566858291626,
+        0.4235427975654602,
+        0.4847598969936371
+      ]
+    }
+  ],
+  "scope": "bounds-derived candidate centers only; not muzzle socket or game firing approval"
+}

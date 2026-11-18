@@ -38,6 +38,7 @@ FVector MountOrigin(const FOVCombatShipState& State, const FOVWeaponMountDefinit
         [&Def](const FOVCombatMountState& M) { return M.MountId == Def.WeaponId; });
     FOVWeaponMountDefinition EffectiveDef = Def;
     if (!Mount || Mount->Profile.Kind != EOVAttackKind::Cannon) EffectiveDef.PresentationProfile = NAME_None;
+    if (Mount && Mount->Profile.Kind==EOVAttackKind::Cannon && EffectiveDef.PresentationProfile.IsNone() && OVWeaponGeometry::BF120SourceTrialEnabled()) EffectiveDef.PresentationProfile=TEXT("BF120SourceTrial");
     if (Mount && Mount->Profile.Kind==EOVAttackKind::Beam && OVWeaponGeometry::LB30TrialEnabled()) EffectiveDef.PresentationProfile=TEXT("LB30Trial");
     const FVector Local = OVWeaponGeometry::MuzzleLocal(EffectiveDef,Mount ? Mount->LocalAim : FRotator::ZeroRotator,
         State.Ship->Systems->Layout->LocalHalfExtent,Mount && Mount->Profile.Kind == EOVAttackKind::Missile,

@@ -1,0 +1,63 @@
+{
+  "passed": true,
+  "scope": "격리된 UE 메시 로컬 경계만 측정; 실제 포구·가동·장착 확정 아님.",
+  "parts": [
+    {
+      "asset": "/Game/Presentation/WeaponsYawTrial/heavy_cannon_shc400/SM_Base",
+      "min_cm": [
+        -87.43424224853516,
+        -86.28897094726562,
+        -73.74998474121094
+      ],
+      "max_cm": [
+        75.87834930419922,
+        86.32199096679688,
+        0.0009830743074417114
+      ],
+      "triangles": 354026
+    },
+    {
+      "asset": "/Game/Presentation/WeaponsPitchTrial/heavy_cannon_shc400/SM_Body",
+      "min_cm": [
+        -73.3642349243164,
+        -62.531612396240234,
+        -0.00024043234589044005
+      ],
+      "max_cm": [
+        148.69741821289062,
+        62.50210189819336,
+        176.25
+      ],
+      "triangles": 506760
+    },
+    {
+      "asset": "/Game/Presentation/WeaponsPitchTrial/heavy_cannon_shc400/SM_Barrel",
+      "min_cm": [
+        -165.13311767578125,
+        -38.84339141845703,
+        -35.4106330871582
+      ],
+      "max_cm": [
+        0.000476837158203125,
+        38.49616241455078,
+        33.63735580444336
+      ],
+      "triangles": 109204
+    },
+    {
+      "asset": "/Game/Presentation/WeaponsPitchTrial/heavy_cannon_shc400/SM_TrialNeck",
+      "min_cm": [
+        -37.5,
+        -15.000000953674316,
+        -15.000003814697266
+      ],
+      "max_cm": [
+        37.5,
+        15.000000953674316,
+        15.000003814697266
+      ],
+      "triangles": 188
+    }
+  ],
+  "errors": []
+}

@@ -1,0 +1,37 @@
+{
+  "passed": true,
+  "scope": "격리 자산 재로드·LOD·재질 참조 검사; 전장 적용 및 렌더 검증 아님.",
+  "models": [
+    {
+      "id": "naval_gun_bf120",
+      "parts": [
+        {
+          "asset": "/Game/Presentation/WeaponsPitchTrial/naval_gun_bf120/SM_Body",
+          "triangles": [
+            454272,
+            22714,
+            4542
+          ],
+          "material": "/Game/Presentation/WeaponsFull/naval_gun_bf120/M_Source.M_Source"
+        },
+        {
+          "asset": "/Game/Presentation/WeaponsPitchTrial/naval_gun_bf120/SM_Barrel",
+          "triangles": [
+            139614,
+            6980,
+            1396
+          ],
+          "material": "/Game/Presentation/WeaponsFull/naval_gun_bf120/M_Source.M_Source"
+        },
+        {
+          "asset": "/Game/Presentation/WeaponsPitchTrial/naval_gun_bf120/SM_TrialNeck",
+          "triangles": [
+            376
+          ],
+          "material": "/Engine/BasicShapes/BasicShapeMaterial.BasicShapeMaterial"
+        }
+      ]
+    }
+  ],
+  "errors": []
+}

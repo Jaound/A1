@@ -1,0 +1,51 @@
+{
+  "id": "heavy_cannon_shc400",
+  "passed": true,
+  "scope": "포신 후보 격리 반입. 전장 미적용; 연결부는 시험용 추가 형상.",
+  "parts": [
+    {
+      "asset": "/Game/Presentation/WeaponsPitchTrial/heavy_cannon_shc400/SM_Body",
+      "triangles": [
+        506760,
+        25338,
+        5068
+      ],
+      "source_origin": [
+        0.46212488412857056,
+        0.000729680061340332,
+        -0.5125001072883606
+      ],
+      "fbx_sha256": "6bb1ebe3aea2da53bdbb73ce9245360e746edf3a6993f13f81bebd2406763bee",
+      "generated_connector": false
+    },
+    {
+      "asset": "/Game/Presentation/WeaponsPitchTrial/heavy_cannon_shc400/SM_Barrel",
+      "triangles": [
+        109204,
+        5460,
+        1092
+      ],
+      "source_origin": [
+        -0.30000001192092896,
+        0.0,
+        0.1899999976158142
+      ],
+      "fbx_sha256": "c7e560d70222c8460e85c055aadde996bf1c9ce360f270955cb66c2eeb4fe5a7",
+      "generated_connector": false
+    },
+    {
+      "asset": "/Game/Presentation/WeaponsPitchTrial/heavy_cannon_shc400/SM_TrialNeck",
+      "triangles": [
+        188
+      ],
+      "source_origin": [
+        -0.15000000596046448,
+        0.0,
+        0.1899999976158142
+      ],
+      "fbx_sha256": "6eb05eea8a91a75aba149fe4adbff692318eed7f30771249bef99a5e29e08afd",
+      "generated_connector": true
+    }
+  ],
+  "errors": []
+}

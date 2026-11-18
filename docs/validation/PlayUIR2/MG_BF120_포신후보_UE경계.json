@@ -1,0 +1,63 @@
+{
+  "passed": true,
+  "scope": "격리된 UE 메시 로컬 경계만 측정; 실제 포구·가동·장착 확정 아님.",
+  "parts": [
+    {
+      "asset": "/Game/Presentation/WeaponsYawTrial/naval_gun_bf120/SM_Base",
+      "min_cm": [
+        -144.0723114013672,
+        -141.48159790039062,
+        -77.00001525878906
+      ],
+      "max_cm": [
+        142.44874572753906,
+        141.09681701660156,
+        0.0007204528665170074
+      ],
+      "triangles": 393922
+    },
+    {
+      "asset": "/Game/Presentation/WeaponsPitchTrial/naval_gun_bf120/SM_Body",
+      "min_cm": [
+        -109.55672454833984,
+        -115.9710693359375,
+        -0.0005574569804593921
+      ],
+      "max_cm": [
+        128.85145568847656,
+        115.58956909179688,
+        123.00001525878906
+      ],
+      "triangles": 454272
+    },
+    {
+      "asset": "/Game/Presentation/WeaponsPitchTrial/naval_gun_bf120/SM_Barrel",
+      "min_cm": [
+        -232.1554718017578,
+        -59.40689468383789,
+        -16.070283889770508
+      ],
+      "max_cm": [
+        7.450580596923828e-07,
+        59.258277893066406,
+        17.592937469482422
+      ],
+      "triangles": 139614
+    },
+    {
+      "asset": "/Game/Presentation/WeaponsPitchTrial/naval_gun_bf120/SM_TrialNeck",
+      "min_cm": [
+        -17.500001907348633,
+        -94.0,
+        -10.000015258789062
+      ],
+      "max_cm": [
+        17.500001907348633,
+        10.0,
+        10.000001907348633
+      ],
+      "triangles": 376
+    }
+  ],
+  "errors": []
+}
