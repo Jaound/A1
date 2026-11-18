@@ -1,0 +1,114 @@
+{
+  "scope": "원본 해시와 별도 FBX 재반입 구조. UE 적용·가동·재질 품질 검증 아님.",
+  "passed": true,
+  "models": [
+    {
+      "id": "ciws_beam_b",
+      "source_unchanged": true,
+      "prepared_hash_ok": true,
+      "textures_hash_ok": true,
+      "source_vertices": 605518,
+      "prepared_vertices": 605518,
+      "source_polygons": 1211660,
+      "prepared_polygons": 1211660,
+      "uv_channels": 1,
+      "passed": true
+    },
+    {
+      "id": "ciws_gatling_6",
+      "source_unchanged": true,
+      "prepared_hash_ok": true,
+      "textures_hash_ok": true,
+      "source_vertices": 646802,
+      "prepared_vertices": 646802,
+      "source_polygons": 1293768,
+      "prepared_polygons": 1293768,
+      "uv_channels": 1,
+      "passed": true
+    },
+    {
+      "id": "heavy_cannon_shc400",
+      "source_unchanged": true,
+      "prepared_hash_ok": true,
+      "textures_hash_ok": true,
+      "source_vertices": 551210,
+      "prepared_vertices": 551210,
+      "source_polygons": 1102716,
+      "prepared_polygons": 1102716,
+      "uv_channels": 1,
+      "passed": true
+    },
+    {
+      "id": "laser_turret_lb30",
+      "source_unchanged": true,
+      "prepared_hash_ok": true,
+      "textures_hash_ok": true,
+      "source_vertices": 688799,
+      "prepared_vertices": 688799,
+      "source_polygons": 1378046,
+      "prepared_polygons": 1378046,
+      "uv_channels": 1,
+      "passed": true
+    },
+    {
+      "id": "missile_pod_mm24",
+      "source_unchanged": true,
+      "prepared_hash_ok": true,
+      "textures_hash_ok": true,
+      "source_vertices": 1124319,
+      "prepared_vertices": 1124319,
+      "source_polygons": 2250958,
+      "prepared_polygons": 2250958,
+      "uv_channels": 1,
+      "passed": true
+    },
+    {
+      "id": "missile_pod_mm48",
+      "source_unchanged": true,
+      "prepared_hash_ok": true,
+      "textures_hash_ok": true,
+      "source_vertices": 1642892,
+      "prepared_vertices": 1642892,
+      "source_polygons": 3286864,
+      "prepared_polygons": 3286864,
+      "uv_channels": 1,
+      "passed": true
+    },
+    {
+      "id": "naval_gun_bf120",
+      "source_unchanged": true,
+      "prepared_hash_ok": true,
+      "textures_hash_ok": true,
+      "source_vertices": 501883,
+      "prepared_vertices": 501883,
+      "source_polygons": 1003858,
+      "prepared_polygons": 1003858,
+      "uv_channels": 1,
+      "passed": true
+    },
+    {
+      "id": "plasma_heavy_cannon",
+      "source_unchanged": true,
+      "prepared_hash_ok": true,
+      "textures_hash_ok": true,
+      "source_vertices": 1258411,
+      "prepared_vertices": 1258411,
+      "source_polygons": 2517506,
+      "prepared_polygons": 2517506,
+      "uv_channels": 1,
+      "passed": true
+    },
+    {
+      "id": "railgun_rg200",
+      "source_unchanged": true,
+      "prepared_hash_ok": true,
+      "textures_hash_ok": true,
+      "source_vertices": 1032143,
+      "prepared_vertices": 1032143,
+      "source_polygons": 2064814,
+      "prepared_polygons": 2064814,
+      "uv_channels": 1,
+      "passed": true
+    }
+  ]
+}

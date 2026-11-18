@@ -190,6 +190,29 @@ bool FOVMarkedCandidateHullDamage::RunTest(const FString&)
     return true;
 }
 
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(FOVDisarmVisibleMount, "OrbitalVanguard.Combat.DisarmSelectsUnoccludedMount",
+    EAutomationTestFlags::EditorContext | EAutomationTestFlags::EngineFilter)
+bool FOVDisarmVisibleMount::RunTest(const FString&)
+{
+    OVCombatTest::FRange R;auto* Layout=DuplicateObject<UShipLayoutDataAsset>(R.B->Systems->Layout,R.B);
+    FOVCombatHullBox Box;Box.HalfExtent=FVector(175,75,30);Layout->CombatHullBoxes.Add(Box);
+    Layout->WeaponMounts[0].LocalPosition=FVector(100,0,0);
+    Layout->WeaponMounts[1].LocalPosition=FVector(-170,0,0);
+    R.B->Systems->Initialize(Layout);R.B->Systems->Shield=0;R.B->Systems->bShieldActive=false;
+    R.B->Systems->WeaponMountStates[2].HP=0;
+    R.Combat->Settings->GuaranteedRange=100000;R.Combat->SetTarget(R.A,R.B);
+    R.Combat->SetAttackIntent(R.A,EOVAttackIntent::DisableWeapons);
+    auto& Gun=R.Gun();Gun.Profile.Kind=EOVAttackKind::Beam;Gun.Profile.Accuracy=1;Gun.Profile.AimSpreadDegrees=0;
+    Gun.Profile.Range=100000;Gun.Profile.FireTolerance=180;Gun.Profile.TraverseSpeed=10000;Gun.Profile.TraverseAcceleration=100000;Gun.Profile.Damage=50;
+    R.Combat->Simulate(.2f);
+    TestTrue(TEXT("Disarm fire request accepted"),R.Combat->RequestFire(R.A,Gun.MountId));
+    R.Combat->Simulate(.1f);
+    TestTrue(TEXT("Actual attack selects visible second mount instead of occluded first"),R.Combat->HitCount==1&&
+        !R.Combat->RecentEvents.IsEmpty()&&R.Combat->RecentEvents.Last().ImpactWeaponId==Layout->WeaponMounts[1].WeaponId);
+    TestEqual(TEXT("Occluded first weapon remains intact"),R.B->Systems->WeaponMountStates[0].HP,Layout->WeaponMounts[0].MaxHP);
+    return true;
+}
+
 IMPLEMENT_SIMPLE_AUTOMATION_TEST(FOVBattleNoticeTest, "OrbitalVanguard.Combat.ConfirmedFriendlyNotices", EAutomationTestFlags::EditorContext | EAutomationTestFlags::EngineFilter)
 bool FOVBattleNoticeTest::RunTest(const FString&)
 {
@@ -831,6 +854,9 @@ bool FOVCombatPC14MountOcclusionTest::RunTest(const FString&)
             }
             R.B->Systems->Initialize(Layout);
             R.B->Systems->Shield=0;R.B->Systems->bShieldActive=false;
+            // Isolate the intended test mount; otherwise the new visibility
+            // selection can correctly choose a different, exposed mount.
+            for(int32 Other=1;Other<R.B->Systems->WeaponMountStates.Num();++Other)R.B->Systems->WeaponMountStates[Other].HP=0;
             const FVector Positions[]={FVector(953.3333333,0,1300),FVector(-346.6666667,0,0),FVector(953.3333333,-1300,0),FVector(153.3333333,0,1000)};
             const FRotator Rotations[]={FRotator(-90,0,0),FRotator(0,0,0),FRotator(0,90,0),FVector(800,0,-1000).Rotation()};
             R.A->SetActorLocation(Positions[Direction]);R.A->SetActorRotation(Rotations[Direction]);
@@ -843,6 +869,13 @@ bool FOVCombatPC14MountOcclusionTest::RunTest(const FString&)
             R.Combat->Simulate(.2f);
             TestTrue(TEXT("Actual targeted attack is requested"),R.Combat->RequestFire(R.A,Gun.MountId));
             R.Combat->Simulate(.1f);
+            if(Variant==2&&Direction!=0)
+            {
+                TestEqual(TEXT("Only observed weapon is occluded, so disarm does not hit hull"),R.Combat->HitCount,0);
+                TestEqual(TEXT("Occluded disarm produces no projectile"),R.Combat->ShotCount,0);
+                TestEqual(TEXT("Blocked status identifies hull occlusion"),R.Combat->GetReadiness(R.A,Gun.MountId).Reason,FString(TEXT("NO ACCESSIBLE WEAPONS - WAIT")));
+                continue;
+            }
             if(!TestTrue(TEXT("One real attack resolves"),R.Combat->HitCount==1&&!R.Combat->RecentEvents.IsEmpty()))continue;
             const FOVAttackState& Event=R.Combat->RecentEvents.Last();
             // The early five-box notch is only open from above; preserve its observed side occlusion.

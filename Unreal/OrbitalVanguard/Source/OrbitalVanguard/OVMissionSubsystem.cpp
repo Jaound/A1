@@ -15,8 +15,8 @@
 
 namespace
 {
-TAutoConsoleVariable<int32> CVarOVAssaultHold(TEXT("ov.Mission.ExperimentalAssaultHold"),0,
-    TEXT("Trial automatic assault objective hold; disabled pending integrated validation."), ECVF_Default);
+TAutoConsoleVariable<int32> CVarOVAssaultHold(TEXT("ov.Mission.ExperimentalAssaultHold"),1,
+    TEXT("Automatic mission assault disarm/hold; zero restores the legacy trial behavior."), ECVF_Default);
 FName Facility(AOVShip* Ship,EOVFacilityType Type)
 {
     if(Ship&&Ship->Systems&&Ship->Systems->Layout)
@@ -33,7 +33,7 @@ void UOVMissionSubsystem::Disable()
     bEnabled=false; bAutoPlayer=false; Owner.Reset(); Roster.Reset();
     Origin=Objective=Shuttle=nullptr; AttackUnitIds.Reset();DefenderUnitIds.Reset();
     LaunchedIds.Reset();EnteredIds.Reset();ReturnedIds.Reset();AutoOrderedIds.Reset();
-    bDispatched=bRetreatOrdered=bAutoBridgeOrdered=bDefenderRetakeOrdered=false;
+    bDispatched=bRetreatOrdered=bAutoBridgeOrdered=bDefenderRetakeOrdered=bAutoDisarmIssued=false;
     DecisionRemaining=0;Score={};GameTime=0;Result=EOVMissionResult::Ongoing;Phase=EOVMissionPhase::Battle;
 }
 
@@ -246,6 +246,18 @@ void UOVMissionSubsystem::SetAutoPlayer(bool bAuto)
 
 bool UOVMissionSubsystem::ShouldHoldAutoAssaultFire(const AOVShip* Source,const AOVShip* Target) const
 {
+    if(!ShouldHoldAutoAssaultStrike(Source,Target) || !Target->Systems->Layout)return false;
+    for(const FOVWeaponMountDefinition& Def:Target->Systems->Layout->WeaponMounts)
+    {
+        if(Def.Type==EOVWeaponType::Interception)continue;
+        const auto* State=Target->Systems->WeaponMountStates.FindByPredicate([&Def](const FOVWeaponMountState& M){return M.WeaponMountId==Def.WeaponId;});
+        if(State&&State->HP>0)return false;
+    }
+    return true;
+}
+
+bool UOVMissionSubsystem::ShouldHoldAutoAssaultStrike(const AOVShip* Source,const AOVShip* Target) const
+{
     return CVarOVAssaultHold.GetValueOnGameThread()==1 && bEnabled && (bAutoPlayer || Mode==EOVMissionMode::Defense) && bDispatched && !bRetreatOrdered
         && IsValid(Source) && Source->Systems && Source->Systems->FactionId==AttackerFaction
         && IsValid(Target) && Target==Objective && Target->Systems && !Target->Systems->bWrecked;
@@ -288,6 +300,18 @@ void UOVMissionSubsystem::AdvanceOrders()
     if(Mode!=EOVMissionMode::FleetOnly&&AutoAttacker)
     {
         if(!bDispatched)Dispatch(bUseShuttle);
+        if(CVarOVAssaultHold.GetValueOnGameThread()==1 && bDispatched && !bRetreatOrdered && !bAutoDisarmIssued)
+        {
+            auto* Combat=GetWorld()->GetSubsystem<UOVCombatSubsystem>();
+            for(AOVShip* Ship:Roster)if(Living(Ship)&&Ship->Systems->FactionId==AttackerFaction&&Ship->IsAttackAutomatic()&&Ship->AttackTarget==Objective)
+            {
+                auto* State=Combat->Ships.FindByPredicate([Ship](const FOVCombatShipState& S){return S.Ship==Ship;});
+                if(State&&State->Intent!=EOVAttackIntent::DisableWeapons&&State->ForcedMount.IsNone()
+                    &&!State->Mounts.ContainsByPredicate([](const FOVCombatMountState& M){return M.bFireRequested;}))
+                    Combat->SetAttackIntent(Ship,EOVAttackIntent::DisableWeapons);
+            }
+            bAutoDisarmIssued=true;
+        }
         if(bDispatched&&!bRetreatOrdered&&Interior->IsStructureKnown(AttackerFaction,Objective))
         {
             const bool ShieldDestroyed=Objective->Systems->GetSlotState(ShieldSlot).HP<=0;
@@ -514,9 +538,12 @@ bool FOVMissionAutoAssaultHold::RunTest(const FString&)
     TestFalse(TEXT("Automatic fire is not held before dispatch"),R.Mission->ShouldHoldAutoAssaultFire(Source,Target));
     Target->Systems->ApplyWorldHit(Target->GetActorLocation(),FVector::ForwardVector,Target->Systems->Shield,EOVDamageCause::External,true);
     if(!TestTrue(TEXT("Shuttle dispatch accepted"),R.Mission->Dispatch(true)))return false;
-    TestTrue(TEXT("Automatic objective fire is held during assault"),R.Mission->ShouldHoldAutoAssaultFire(Source,Target));
+    TestTrue(TEXT("Automatic hull strikes are held during assault"),R.Mission->ShouldHoldAutoAssaultStrike(Source,Target));
+    TestFalse(TEXT("Armed objective may be disarmed"),R.Mission->ShouldHoldAutoAssaultFire(Source,Target));
     TestFalse(TEXT("Other targets do not receive this hold"),R.Mission->ShouldHoldAutoAssaultFire(Source,R.PC->Ships[4]));
     TestFalse(TEXT("Opposing faction is unaffected"),R.Mission->ShouldHoldAutoAssaultFire(Target,Source));
+    for(auto& Weapon:Target->Systems->WeaponMountStates)Weapon.HP=0;
+    TestTrue(TEXT("Automatic fire is held after offensive weapons disabled"),R.Mission->ShouldHoldAutoAssaultFire(Source,Target));
     for(AOVShip* Ship:R.PC->Ships)if(IsValid(Ship)&&Ship!=Source)Ship->SetAutomation(false,false);
     R.PC->Combat->NotifyFTLDeparture(R.PC->Ships[4]);R.PC->Combat->NotifyFTLDeparture(R.PC->Ships[5]);
     R.PC->Combat->Settings->bDevelopmentOmniscient=true;
@@ -530,9 +557,11 @@ bool FOVMissionAutoAssaultHold::RunTest(const FString&)
         R.PC->Combat->Simulate(.25f);
         TestEqual(TEXT("Automatic assault hold creates no new shots"),R.PC->Combat->ShotCount,Before);
         R.PC->Combat->SetTarget(Source,Target);
+        TestTrue(TEXT("Player may explicitly select hull attack intent"),R.PC->Combat->SetAttackIntent(Source,EOVAttackIntent::DestroyHull));
         TestTrue(TEXT("Explicit manual fire request remains accepted"),R.PC->Combat->RequestFire(Source,WeaponId));
         R.PC->Combat->Simulate(.5f);
         TestTrue(TEXT("Explicit manual fire launches despite auto hold"),R.PC->Combat->ShotCount>Before);
+        TestTrue(TEXT("Player's later hull intent is not repeatedly overwritten"),State->Intent==EOVAttackIntent::DestroyHull);
     }
     const bool WasAutomatic=Source->IsAttackAutomatic();
     R.Mission->SetAutoPlayer(false);

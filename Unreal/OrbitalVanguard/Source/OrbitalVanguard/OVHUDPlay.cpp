@@ -37,6 +37,7 @@ FString AOVHUD::ReadinessKorean(const FString& Key)
   {TEXT("MOUNT DESTROYED"),TEXT("무장 파괴")},{TEXT("FTL CHARGING"),TEXT("FTL 충전으로 빔 사용 불가")},
   {TEXT("INTERIOR ALLY HOLD"),TEXT("내부 아군 보호 · 사격 보류")},
   {TEXT("NO OBSERVED WEAPONS - WAIT"),TEXT("관측된 적 무장 없음 · 대기")},
+  {TEXT("NO ACCESSIBLE WEAPONS - WAIT"),TEXT("적 무장이 선체에 가려짐 · 대기")},
   {TEXT("WRECKED"),TEXT("완파")},{TEXT("NEUTRAL"),TEXT("중립 함선")},{TEXT("DEPARTED"),TEXT("이탈")}};
  if(const FString* Value=Labels.Find(Key)) return *Value;
  return TEXT("사용 불가 · DEV에서 상세 원인 확인");

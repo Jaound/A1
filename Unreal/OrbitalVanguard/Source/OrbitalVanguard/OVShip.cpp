@@ -351,8 +351,11 @@ void AOVShip::RefreshWeaponVisuals()
         for (const FOVPDMountState& Mount : PDState->Mounts)
         {
             FOVWeaponMountDefinition Def;
-            Def.WeaponId = Mount.MountId; Def.Type = EOVWeaponType::Interception;
-            Def.LocalPosition = Mount.LocalPosition; Def.Tier = Systems->Layout->WeaponTier;
+            const auto* Authored=Mount.bLayoutMount?Systems->Layout->WeaponMounts.FindByPredicate(
+                [&Mount](const FOVWeaponMountDefinition& D){return D.WeaponId==Mount.MountId;}):nullptr;
+            if(Authored)Def=*Authored;
+            else { Def.WeaponId=Mount.MountId;Def.Type=EOVWeaponType::Interception;
+                Def.LocalPosition=Mount.LocalPosition;Def.Tier=Systems->Layout->WeaponTier; }
             const auto* Health = Systems->WeaponMountStates.FindByPredicate(
                 [&Mount](const FOVWeaponMountState& H) { return H.WeaponMountId == Mount.MountId; });
             Sync(Def, Mount.LocalAim, false, Systems->bWrecked || Mount.HP <= 0

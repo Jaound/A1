@@ -342,7 +342,12 @@ FOVFireReadiness UOVCombatSubsystem::Evaluate(const FOVCombatShipState& State, c
     const FVector Origin = MountOrigin(State, *Def);
     if (IsTargetProtected(Ship, Target) && !(State.Intent==EOVAttackIntent::DisableWeapons && State.ForcedMount==Mount.MountId)) return Block(TEXT("INTERIOR ALLY HOLD"));
     FVector AimPoint;
-    if (!ResolveAimPoint(State,Target,AimPoint)) return Block(GetDetection(Ship,Target).bDetected?TEXT("NO OBSERVED WEAPONS - WAIT"):TEXT("NO DETECTION"));
+    if (!ResolveAimPoint(State,Target,AimPoint))
+    {
+        if(!GetDetection(Ship,Target).bDetected)return Block(TEXT("NO DETECTION"));
+        const bool bAlive=Target->Systems->WeaponMountStates.ContainsByPredicate([](const FOVWeaponMountState& M){return M.HP>0;});
+        return Block(bAlive?TEXT("NO ACCESSIBLE WEAPONS - WAIT"):TEXT("NO OBSERVED WEAPONS - WAIT"));
+    }
     const FVector Offset = AimPoint - Origin;
     R.Distance = Offset.Size();
     if (R.Distance > Mount.Profile.Range) return Block(TEXT("OUT OF RANGE"));
@@ -850,9 +855,25 @@ bool UOVCombatSubsystem::ResolveAimPoint(const FOVCombatShipState& State,AOVShip
  if(!IsValidTarget(State.Ship,Target)||!GetDetection(State.Ship,Target).bDetected)return false;
  if(State.Intent==EOVAttackIntent::DestroyHull) {Point=Target->GetActorLocation();return true;}
  // Prototype observation: detection exposes exterior mounting points only, never interior roster/state.
+ // For authored hull shapes, do not choose a mount behind the target hull: such
+ // a shot hits the hull first and defeats the requested disarm intent.
  for(const auto& Def:Target->Systems->Layout->WeaponMounts) {
   const auto* HP=Target->Systems->WeaponMountStates.FindByPredicate([&](const auto& H){return H.WeaponMountId==Def.WeaponId;});
-  if(HP&&HP->HP>0) {Point=Target->GetActorTransform().TransformPosition(Def.LocalPosition);return true;}
+  if(!HP||HP->HP<=0)continue;
+  const FVector Candidate=Target->GetActorTransform().TransformPosition(Def.LocalPosition);
+  const auto& Boxes=Target->Systems->Layout->CombatHullBoxes;
+  if(!Boxes.IsEmpty()) {
+   const FVector Origin=State.Ship->GetActorLocation();float MountFraction=1.f;FVector Normal;
+   if(!SegmentMount(Origin,Candidate,Target->GetActorTransform(),Def.LocalPosition,Settings->MountCollisionRadius,MountFraction,Normal))continue;
+   bool bOccluded=false;
+   for(const FOVCombatHullBox& Box:Boxes) {
+    FTransform Transform=Target->GetActorTransform();Transform.SetLocation(Transform.TransformPosition(Box.LocalCenter));
+    float HullFraction=1.f;FVector HullNormal;
+    if(SegmentBox(Origin,Candidate,Transform,Box.HalfExtent,HullFraction,HullNormal)&&HullFraction+1.e-5f<MountFraction) {bOccluded=true;break;}
+   }
+   if(bOccluded)continue;
+  }
+  Point=Candidate;return true;
  }
  return false;
 }
@@ -862,6 +883,10 @@ FString UOVCombatSubsystem::GetOrderStatus(AOVShip* Ship) const
  const auto& S=Ships[I];
  if(!IsValidTarget(Ship,Ship->AttackTarget))return TEXT("WAIT TARGET");
  if(IsTargetProtected(Ship,Ship->AttackTarget))return S.ForcedMount.IsNone()?TEXT("HOLD: INTERIOR ALLY"):TEXT("FORCE GUN: HULL HIT RISK");
- FVector P;if(!ResolveAimPoint(S,Ship->AttackTarget,P))return GetDetection(Ship,Ship->AttackTarget).bDetected?TEXT("WAIT: NO OBSERVED GUNS"):TEXT("WAIT: DETECTION");
+ FVector P;if(!ResolveAimPoint(S,Ship->AttackTarget,P)) {
+  if(!GetDetection(Ship,Ship->AttackTarget).bDetected)return TEXT("WAIT: DETECTION");
+  const bool bAlive=Ship->AttackTarget->Systems->WeaponMountStates.ContainsByPredicate([](const FOVWeaponMountState& M){return M.HP>0;});
+  return bAlive?TEXT("WAIT: NO ACCESSIBLE GUNS"):TEXT("WAIT: NO OBSERVED GUNS");
+ }
  return S.Intent==EOVAttackIntent::DisableWeapons?TEXT("DISABLE OBSERVED GUNS"):TEXT("DESTROY HULL");
 }

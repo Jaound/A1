@@ -16,9 +16,9 @@
 
 namespace
 {
-// Provisional source-surface boxes remain opt-in while mission regression persists.
-TAutoConsoleVariable<int32> CVarOVMarkedMounts(TEXT("ov.Calibration.MarkedMounts"),0,
-    TEXT("Experimental drawing-based mounts and provisional source-surface collision boxes."), ECVF_Default);
+// Source-surface boxes are provisional; zero restores the legacy test layout.
+TAutoConsoleVariable<int32> CVarOVMarkedMounts(TEXT("ov.Calibration.MarkedMounts"),1,
+    TEXT("Drawing-based mounts and provisional source-surface collision boxes."), ECVF_Default);
 struct FWeapon
 {
     const TCHAR* Key;

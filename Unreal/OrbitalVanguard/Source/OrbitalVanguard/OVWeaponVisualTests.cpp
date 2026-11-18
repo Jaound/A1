@@ -322,6 +322,21 @@ bool FOVSideMountGeometry::RunTest(const FString&)
     const FOVWeaponVisualState Visual=R.Visual();
     TestTrue(TEXT("Side visual uses the actual gameplay muzzle"),Visual.WorldMuzzle.Equals(R.A->GetWeaponMuzzleWorld(Visual.MountId),.01));
     TestTrue(TEXT("Side visual keeps the actual logical aim"),Visual.LogicalAim.Equals(R.Gun().LocalAim,.01));
+    auto* Layout=R.B->Systems->Layout.Get();
+    auto& SidePD=Layout->WeaponMounts.AddDefaulted_GetRef();
+    SidePD.WeaponId=TEXT("SidePDVisual");SidePD.Type=EOVWeaponType::Interception;SidePD.MaxHP=100;
+    SidePD.LocalPosition=FVector(0,-50,0);SidePD.LocalSurfaceNormal=FVector(0,-1,0);
+    R.B->Systems->Initialize(Layout);
+    auto* PD=R.World->GetSubsystem<UOVPointDefenseSubsystem>();PD->Reset();
+    TestTrue(TEXT("Authored side PD registers"),PD->RegisterShip(R.B,1));
+    PD->Ships[0].Mounts[0].LocalAim=FRotator(0,-90,0);R.B->RefreshWeaponVisuals();
+    const auto Visuals=R.B->GetWeaponVisualStates();
+    const auto* PDVisual=Visuals.FindByPredicate([](const FOVWeaponVisualState& S){return S.MountId==TEXT("SidePDVisual");});
+    if(TestNotNull(TEXT("Authored side PD has a visual"),PDVisual))
+    {
+        const FRotator Expected=FRotationMatrix::MakeFromZ(FVector(0,-1,0)).Rotator().UnrotateVector(FVector(0,-1,0)).Rotation();
+        TestTrue(TEXT("Actual PD visual follows authored side surface frame"),PDVisual->VisualAim.Equals(Expected,.01));
+    }
     return true;
 }
 #endif

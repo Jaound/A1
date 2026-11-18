@@ -188,8 +188,13 @@ def run_scenes(pc, world, carrier, pd, transport):
           and not p(transport, "enabled") and not p(carrier, "aircraft")
           and p(p(combat, "settings"), "guaranteed_range") == 1600)
     pc.start_calibration_range(1)
-    check("2C-F6-RESTORE", p(pc, "phase2_c_scenario") == -1 and not p(pd, "enabled")
+    f6_ships = p(pc, "ships")
+    f6_pd_counts = [sum(p(m, "type") == unreal.OVWeaponType.INTERCEPTION for m in p(p(p(s, "systems"), "layout"), "weapon_mounts")) for s in f6_ships]
+    f6_pd_ok = (not any(f6_pd_counts) and not p(pd, "enabled")) or (p(pd, "enabled") and
+        all(len(p(pd.get_ship_state(s), "mounts")) == count for s, count in zip(f6_ships, f6_pd_counts)))
+    check("2C-F6-RESTORE", p(pc, "phase2_c_scenario") == -1 and f6_pd_ok
           and not p(transport, "enabled") and p(p(combat, "settings"), "guaranteed_range") == 25000)
+    check("2C-F6-PD-REGISTRATION", f6_pd_ok, f6_pd_counts)
 
 
 def run_carrier(pc, carrier, pd, transport):

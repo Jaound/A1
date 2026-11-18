@@ -502,7 +502,7 @@ void UOVCarrierSubsystem::RebuildStrikeCandidates()
             AOVShip* Candidate = State.Ship.Get();
             const auto* Mission=GetWorld()->GetSubsystem<UOVMissionSubsystem>();
             if (!LivingShip(Candidate) || State.bDeparted || Candidate->Systems->FactionId == Source->Systems->FactionId
-                || (Mission && Mission->ShouldHoldAutoAssaultFire(Source,Candidate))
+                || (Mission && Mission->ShouldHoldAutoAssaultStrike(Source,Candidate))
                 || Combat->IsTargetProtected(Source, Candidate) || !Combat->GetDetection(Source, Candidate).bDetected) continue;
             Entry.Candidates.Add(Candidate);
         }
