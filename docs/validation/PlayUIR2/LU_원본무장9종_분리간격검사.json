@@ -1,0 +1,707 @@
+{
+  "scope": "비파괴 시험 후보. 간격 0과 0.001 단위에서 덮개 제외 수평 회전 5개 각도의 표면 교차만 측정; 피치·포구·재질·선체 장착·성능·전장 적용 미승인.",
+  "models": [
+    {
+      "id": "ciws_beam_b",
+      "source_sha256": "ee55657f22fb9c857da6cb8ae4b155a29c5cb6b97d39b3c83506f08b3ce134e0",
+      "candidate_sha256": "8394e887f12f91221a0903cf76aaad28b34def07ec8ee0d2e50da592aa37a552",
+      "cut_z": -0.43,
+      "trial_pivot": [
+        0.40920060873031616,
+        -0.0003419220447540283,
+        -0.4300000071525574
+      ],
+      "parts": {
+        "ciws_beam_b_BaseTrial": {
+          "faces": 461990,
+          "cut_edges": 2055,
+          "cap_faces": 3,
+          "boundary_edges": 0,
+          "nonmanifold_edges": 0,
+          "uv_layers": [
+            "UVMap"
+          ]
+        },
+        "ciws_beam_b_YawTrial": {
+          "faces": 751731,
+          "cut_edges": 2055,
+          "cap_faces": 3,
+          "boundary_edges": 0,
+          "nonmanifold_edges": 0,
+          "uv_layers": [
+            "UVMap"
+          ]
+        }
+      },
+      "angles": [
+        {
+          "degrees": -90,
+          "surface_intersections": 1
+        },
+        {
+          "degrees": -45,
+          "surface_intersections": 2
+        },
+        {
+          "degrees": 0,
+          "surface_intersections": 130
+        },
+        {
+          "degrees": 45,
+          "surface_intersections": 0
+        },
+        {
+          "degrees": 90,
+          "surface_intersections": 0
+        }
+      ],
+      "trial_clearance": 0.001,
+      "clearance_angles": [
+        {
+          "degrees": -90,
+          "surface_intersections": 0
+        },
+        {
+          "degrees": -45,
+          "surface_intersections": 0
+        },
+        {
+          "degrees": 0,
+          "surface_intersections": 0
+        },
+        {
+          "degrees": 45,
+          "surface_intersections": 0
+        },
+        {
+          "degrees": 90,
+          "surface_intersections": 0
+        }
+      ]
+    },
+    {
+      "id": "ciws_gatling_6",
+      "source_sha256": "6fab0cd8210d21414b45933ddac7f7cdeea643000050ed6c1491c4e9e1250ac6",
+      "candidate_sha256": "36e3bcc2f74356bcc76213c02edc6fdf16a0e55e23ceb20bdbfdaa6a204f41f3",
+      "cut_z": -0.37,
+      "trial_pivot": [
+        0.3683440089225769,
+        0.0007568150758743286,
+        -0.3700000047683716
+      ],
+      "parts": {
+        "ciws_gatling_6_BaseTrial": {
+          "faces": 478829,
+          "cut_edges": 495,
+          "cap_faces": 1,
+          "boundary_edges": 0,
+          "nonmanifold_edges": 0,
+          "uv_layers": [
+            "UVMap"
+          ]
+        },
+        "ciws_gatling_6_YawTrial": {
+          "faces": 815436,
+          "cut_edges": 495,
+          "cap_faces": 1,
+          "boundary_edges": 0,
+          "nonmanifold_edges": 0,
+          "uv_layers": [
+            "UVMap"
+          ]
+        }
+      },
+      "angles": [
+        {
+          "degrees": -90,
+          "surface_intersections": 0
+        },
+        {
+          "degrees": -45,
+          "surface_intersections": 0
+        },
+        {
+          "degrees": 0,
+          "surface_intersections": 59
+        },
+        {
+          "degrees": 45,
+          "surface_intersections": 0
+        },
+        {
+          "degrees": 90,
+          "surface_intersections": 0
+        }
+      ],
+      "trial_clearance": 0.001,
+      "clearance_angles": [
+        {
+          "degrees": -90,
+          "surface_intersections": 0
+        },
+        {
+          "degrees": -45,
+          "surface_intersections": 0
+        },
+        {
+          "degrees": 0,
+          "surface_intersections": 0
+        },
+        {
+          "degrees": 45,
+          "surface_intersections": 0
+        },
+        {
+          "degrees": 90,
+          "surface_intersections": 0
+        }
+      ]
+    },
+    {
+      "id": "heavy_cannon_shc400",
+      "source_sha256": "9488e4cdcad3aa7fe2c51861567b0358bec23b583094ffc9803911e10423bb1f",
+      "candidate_sha256": "f310a6a19d3d1e516ca49fc3576246ada47e4eafee0a8a417a2fc570fc5566c3",
+      "cut_z": -0.5125000840425491,
+      "trial_pivot": [
+        0.46212488412857056,
+        0.000729680061340332,
+        -0.5125001072883606
+      ],
+      "parts": {
+        "heavy_cannon_shc400_BaseTrial": {
+          "faces": 351831,
+          "cut_edges": 1458,
+          "cap_faces": 4,
+          "boundary_edges": 0,
+          "nonmanifold_edges": 0,
+          "uv_layers": [
+            "UVMap"
+          ]
+        },
+        "heavy_cannon_shc400_YawTrial": {
+          "faces": 752351,
+          "cut_edges": 1458,
+          "cap_faces": 4,
+          "boundary_edges": 0,
+          "nonmanifold_edges": 0,
+          "uv_layers": [
+            "UVMap"
+          ]
+        }
+      },
+      "angles": [
+        {
+          "degrees": -90,
+          "surface_intersections": 1
+        },
+        {
+          "degrees": -45,
+          "surface_intersections": 0
+        },
+        {
+          "degrees": 0,
+          "surface_intersections": 136
+        },
+        {
+          "degrees": 45,
+          "surface_intersections": 0
+        },
+        {
+          "degrees": 90,
+          "surface_intersections": 1
+        }
+      ],
+      "trial_clearance": 0.001,
+      "clearance_angles": [
+        {
+          "degrees": -90,
+          "surface_intersections": 0
+        },
+        {
+          "degrees": -45,
+          "surface_intersections": 0
+        },
+        {
+          "degrees": 0,
+          "surface_intersections": 0
+        },
+        {
+          "degrees": 45,
+          "surface_intersections": 0
+        },
+        {
+          "degrees": 90,
+          "surface_intersections": 0
+        }
+      ]
+    },
+    {
+      "id": "laser_turret_lb30",
+      "source_sha256": "8427b8f70c849ec8bf3feb425bd494a26d4bf129fb6402538d9b8fbe4e6246e2",
+      "candidate_sha256": "68087a92c69af3849895a72fe98ee52781aca134c385803c79409f556e257dee",
+      "cut_z": -0.37,
+      "trial_pivot": [
+        0.9830499887466431,
+        -0.04373061656951904,
+        -0.3700000047683716
+      ],
+      "parts": {
+        "laser_turret_lb30_BaseTrial": {
+          "faces": 274360,
+          "cut_edges": 2235,
+          "cap_faces": 6,
+          "boundary_edges": 0,
+          "nonmanifold_edges": 0,
+          "uv_layers": [
+            "UVMap"
+          ]
+        },
+        "laser_turret_lb30_YawTrial": {
+          "faces": 1105933,
+          "cut_edges": 2235,
+          "cap_faces": 6,
+          "boundary_edges": 0,
+          "nonmanifold_edges": 0,
+          "uv_layers": [
+            "UVMap"
+          ]
+        }
+      },
+      "angles": [
+        {
+          "degrees": -90,
+          "surface_intersections": 0
+        },
+        {
+          "degrees": -45,
+          "surface_intersections": 0
+        },
+        {
+          "degrees": 0,
+          "surface_intersections": 116
+        },
+        {
+          "degrees": 45,
+          "surface_intersections": 0
+        },
+        {
+          "degrees": 90,
+          "surface_intersections": 0
+        }
+      ],
+      "trial_clearance": 0.001,
+      "clearance_angles": [
+        {
+          "degrees": -90,
+          "surface_intersections": 0
+        },
+        {
+          "degrees": -45,
+          "surface_intersections": 0
+        },
+        {
+          "degrees": 0,
+          "surface_intersections": 0
+        },
+        {
+          "degrees": 45,
+          "surface_intersections": 0
+        },
+        {
+          "degrees": 90,
+          "surface_intersections": 0
+        }
+      ]
+    },
+    {
+      "id": "missile_pod_mm24",
+      "source_sha256": "8a33f669332921d2f9e02bc10a5bd78da4341e47507d1e7d202eb08040bf6727",
+      "candidate_sha256": "0f175755c6c55434ec21a03c2aa15f9015bf1f828461c6518d865a2e81197f2f",
+      "cut_z": -0.4049999999999999,
+      "trial_pivot": [
+        -0.00018212199211120605,
+        0.0815979540348053,
+        -0.4050000011920929
+      ],
+      "parts": {
+        "missile_pod_mm24_BaseTrial": {
+          "faces": 930965,
+          "cut_edges": 2881,
+          "cap_faces": 8,
+          "boundary_edges": 0,
+          "nonmanifold_edges": 0,
+          "uv_layers": [
+            "UVMap"
+          ]
+        },
+        "missile_pod_mm24_YawTrial": {
+          "faces": 1322890,
+          "cut_edges": 2881,
+          "cap_faces": 8,
+          "boundary_edges": 0,
+          "nonmanifold_edges": 0,
+          "uv_layers": [
+            "UVMap"
+          ]
+        }
+      },
+      "angles": [
+        {
+          "degrees": -90,
+          "surface_intersections": 0
+        },
+        {
+          "degrees": -45,
+          "surface_intersections": 1
+        },
+        {
+          "degrees": 0,
+          "surface_intersections": 184
+        },
+        {
+          "degrees": 45,
+          "surface_intersections": 1
+        },
+        {
+          "degrees": 90,
+          "surface_intersections": 0
+        }
+      ],
+      "trial_clearance": 0.001,
+      "clearance_angles": [
+        {
+          "degrees": -90,
+          "surface_intersections": 0
+        },
+        {
+          "degrees": -45,
+          "surface_intersections": 0
+        },
+        {
+          "degrees": 0,
+          "surface_intersections": 0
+        },
+        {
+          "degrees": 45,
+          "surface_intersections": 0
+        },
+        {
+          "degrees": 90,
+          "surface_intersections": 0
+        }
+      ]
+    },
+    {
+      "id": "missile_pod_mm48",
+      "source_sha256": "5d5382e13eab7d5685d15d3a75ace58dff1f44828013135da773f1aa6d8481be",
+      "candidate_sha256": "9f7c153e24d94a443c6fd8531d3b1fb7c23347f14dc19afece5b0921e50410de",
+      "cut_z": -0.5125000488758087,
+      "trial_pivot": [
+        -0.00042489171028137207,
+        -0.17936056852340698,
+        -0.5125000476837158
+      ],
+      "parts": {
+        "missile_pod_mm48_BaseTrial": {
+          "faces": 723869,
+          "cut_edges": 2065,
+          "cap_faces": 5,
+          "boundary_edges": 0,
+          "nonmanifold_edges": 0,
+          "uv_layers": [
+            "UVMap"
+          ]
+        },
+        "missile_pod_mm48_YawTrial": {
+          "faces": 2565070,
+          "cut_edges": 2065,
+          "cap_faces": 5,
+          "boundary_edges": 0,
+          "nonmanifold_edges": 0,
+          "uv_layers": [
+            "UVMap"
+          ]
+        }
+      },
+      "angles": [
+        {
+          "degrees": -90,
+          "surface_intersections": 0
+        },
+        {
+          "degrees": -45,
+          "surface_intersections": 0
+        },
+        {
+          "degrees": 0,
+          "surface_intersections": 141
+        },
+        {
+          "degrees": 45,
+          "surface_intersections": 0
+        },
+        {
+          "degrees": 90,
+          "surface_intersections": 0
+        }
+      ],
+      "trial_clearance": 0.001,
+      "clearance_angles": [
+        {
+          "degrees": -90,
+          "surface_intersections": 0
+        },
+        {
+          "degrees": -45,
+          "surface_intersections": 0
+        },
+        {
+          "degrees": 0,
+          "surface_intersections": 0
+        },
+        {
+          "degrees": 45,
+          "surface_intersections": 0
+        },
+        {
+          "degrees": 90,
+          "surface_intersections": 0
+        }
+      ]
+    },
+    {
+      "id": "naval_gun_bf120",
+      "source_sha256": "0b16f7059c0d2ef4b90a971b1ef9fe217289530de65c54efadcccab345ddc5ac",
+      "candidate_sha256": "8772ae1dbdf460c0b2e57654dfbfe1b40447b3ad5c2c9623a744f78a31a756a1",
+      "cut_z": -0.23000002741813663,
+      "trial_pivot": [
+        1.0015538930892944,
+        -0.00039190053939819336,
+        -0.23000003397464752
+      ],
+      "parts": {
+        "naval_gun_bf120_BaseTrial": {
+          "faces": 391401,
+          "cut_edges": 1716,
+          "cap_faces": 1,
+          "boundary_edges": 0,
+          "nonmanifold_edges": 0,
+          "uv_layers": [
+            "UVMap"
+          ]
+        },
+        "naval_gun_bf120_YawTrial": {
+          "faces": 614175,
+          "cut_edges": 1716,
+          "cap_faces": 1,
+          "boundary_edges": 0,
+          "nonmanifold_edges": 0,
+          "uv_layers": [
+            "UVMap"
+          ]
+        }
+      },
+      "angles": [
+        {
+          "degrees": -90,
+          "surface_intersections": 0
+        },
+        {
+          "degrees": -45,
+          "surface_intersections": 0
+        },
+        {
+          "degrees": 0,
+          "surface_intersections": 127
+        },
+        {
+          "degrees": 45,
+          "surface_intersections": 1
+        },
+        {
+          "degrees": 90,
+          "surface_intersections": 0
+        }
+      ],
+      "trial_clearance": 0.001,
+      "clearance_angles": [
+        {
+          "degrees": -90,
+          "surface_intersections": 0
+        },
+        {
+          "degrees": -45,
+          "surface_intersections": 0
+        },
+        {
+          "degrees": 0,
+          "surface_intersections": 0
+        },
+        {
+          "degrees": 45,
+          "surface_intersections": 0
+        },
+        {
+          "degrees": 90,
+          "surface_intersections": 0
+        }
+      ]
+    },
+    {
+      "id": "plasma_heavy_cannon",
+      "source_sha256": "206e2962971d6e7d379a52a2637906b5c9439606c4aea525a8ccd33e586af6e0",
+      "candidate_sha256": "0d21ebdff1cef6505c8bbd62e224de6849f209f7ced9b165cae38da9cbd5cf6c",
+      "cut_z": -0.537500017285347,
+      "trial_pivot": [
+        1.2523497343063354,
+        -2.345442771911621e-05,
+        -0.5375000238418579
+      ],
+      "parts": {
+        "plasma_heavy_cannon_BaseTrial": {
+          "faces": 621854,
+          "cut_edges": 2237,
+          "cap_faces": 11,
+          "boundary_edges": 0,
+          "nonmanifold_edges": 0,
+          "uv_layers": [
+            "UVMap"
+          ]
+        },
+        "plasma_heavy_cannon_YawTrial": {
+          "faces": 1897911,
+          "cut_edges": 2237,
+          "cap_faces": 11,
+          "boundary_edges": 0,
+          "nonmanifold_edges": 0,
+          "uv_layers": [
+            "UVMap"
+          ]
+        }
+      },
+      "angles": [
+        {
+          "degrees": -90,
+          "surface_intersections": 0
+        },
+        {
+          "degrees": -45,
+          "surface_intersections": 0
+        },
+        {
+          "degrees": 0,
+          "surface_intersections": 176
+        },
+        {
+          "degrees": 45,
+          "surface_intersections": 0
+        },
+        {
+          "degrees": 90,
+          "surface_intersections": 0
+        }
+      ],
+      "trial_clearance": 0.001,
+      "clearance_angles": [
+        {
+          "degrees": -90,
+          "surface_intersections": 0
+        },
+        {
+          "degrees": -45,
+          "surface_intersections": 0
+        },
+        {
+          "degrees": 0,
+          "surface_intersections": 0
+        },
+        {
+          "degrees": 45,
+          "surface_intersections": 0
+        },
+        {
+          "degrees": 90,
+          "surface_intersections": 0
+        }
+      ]
+    },
+    {
+      "id": "railgun_rg200",
+      "source_sha256": "6ea041d93ea779ae2818adcd66eeafea90f1749416034617213f9abc5f8d4666",
+      "candidate_sha256": "9cb80666e27ef33658228092f30ffe60a55d0b3f31072d3c80b19735890a5068",
+      "cut_z": -0.40499998867511744,
+      "trial_pivot": [
+        1.7215403318405151,
+        0.0007683038711547852,
+        -0.4050000011920929
+      ],
+      "parts": {
+        "railgun_rg200_BaseTrial": {
+          "faces": 558602,
+          "cut_edges": 2815,
+          "cap_faces": 9,
+          "boundary_edges": 0,
+          "nonmanifold_edges": 0,
+          "uv_layers": [
+            "UVMap"
+          ]
+        },
+        "railgun_rg200_YawTrial": {
+          "faces": 1509045,
+          "cut_edges": 2815,
+          "cap_faces": 9,
+          "boundary_edges": 0,
+          "nonmanifold_edges": 0,
+          "uv_layers": [
+            "UVMap"
+          ]
+        }
+      },
+      "angles": [
+        {
+          "degrees": -90,
+          "surface_intersections": 0
+        },
+        {
+          "degrees": -45,
+          "surface_intersections": 0
+        },
+        {
+          "degrees": 0,
+          "surface_intersections": 234
+        },
+        {
+          "degrees": 45,
+          "surface_intersections": 3
+        },
+        {
+          "degrees": 90,
+          "surface_intersections": 1
+        }
+      ],
+      "trial_clearance": 0.001,
+      "clearance_angles": [
+        {
+          "degrees": -90,
+          "surface_intersections": 0
+        },
+        {
+          "degrees": -45,
+          "surface_intersections": 0
+        },
+        {
+          "degrees": 0,
+          "surface_intersections": 0
+        },
+        {
+          "degrees": 45,
+          "surface_intersections": 0
+        },
+        {
+          "degrees": 90,
+          "surface_intersections": 0
+        }
+      ]
+    }
+  ]
+}
