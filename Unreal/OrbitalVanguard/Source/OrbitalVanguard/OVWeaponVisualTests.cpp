@@ -6,6 +6,7 @@
 #include "Components/StaticMeshComponent.h"
 #include "Engine/World.h"
 #include "Misc/AutomationTest.h"
+#include "HAL/IConsoleManager.h"
 
 #if WITH_DEV_AUTOMATION_TESTS
 namespace OVWeaponVisualTest
@@ -306,12 +307,12 @@ bool FOVCIWSBSourceTrialTest::RunTest(const FString&)
 {
     OVWeaponVisualTest::FRange R;
     R.A->SetActorRotation(FRotator(7,31,13));
-    for (const FName Profile : {FName(TEXT("CIWSBTrial")),FName(TEXT("CIWS6Trial"))})
+    for (const FName Profile : {FName(TEXT("CIWSBTrial")),FName(TEXT("CIWS6Trial")),FName(TEXT("LB30Trial"))})
     for (const FVector Normal : {FVector::UpVector,FVector::DownVector,FVector::RightVector,FVector::LeftVector})
     {
-        FOVWeaponMountDefinition Def;Def.WeaponId=TEXT("CIWSBTrialTest");Def.Type=EOVWeaponType::Interception;
+        FOVWeaponMountDefinition Def;Def.WeaponId=TEXT("CIWSBTrialTest");Def.Type=Profile==TEXT("LB30Trial")?EOVWeaponType::Beam:EOVWeaponType::Interception;
         Def.LocalPosition=FVector(5,7,11);Def.LocalSurfaceNormal=Normal;Def.PresentationProfile=Profile;
-        if(!TestTrue(TEXT("All isolated trial assets exist"),OVWeaponGeometry::HasSourcePDTrial(Def)))return false;
+        if(!TestTrue(TEXT("All isolated trial assets exist"),OVWeaponGeometry::HasSourcePDTrial(Def)||OVWeaponGeometry::HasLB30Trial(Def)))return false;
         auto* Visual=NewObject<UOVWeaponVisualComponent>(R.A);R.A->AddInstanceComponent(Visual);
         Visual->SetupAttachment(R.A->GetRootComponent());Visual->RegisterComponent();
         const FVector Extent(80,60,40);Visual->Initialize(Def,Extent);
@@ -334,6 +335,41 @@ bool FOVCIWSBSourceTrialTest::RunTest(const FString&)
         }
         Visual->DestroyComponent();
     }
+    return true;
+}
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(FOVLB30SourceTrialTest, "OrbitalVanguard.Presentation.LB30TrialActualBeam",
+    EAutomationTestFlags::EditorContext | EAutomationTestFlags::EngineFilter)
+bool FOVLB30SourceTrialTest::RunTest(const FString&)
+{
+    auto* Switch=IConsoleManager::Get().FindConsoleVariable(TEXT("ov.Presentation.LB30Trial"));
+    if(!TestNotNull(TEXT("LB30 trial switch exists"),Switch))return false;
+    const int32 Previous=Switch->GetInt();
+    struct FRestore { IConsoleVariable* Var; int32 Value; ~FRestore(){Var->Set(Value,ECVF_SetByCode);} } Restore{Switch,Previous};
+    Switch->Set(1,ECVF_SetByCode);
+    OVWeaponVisualTest::FRange R;R.Accurate(1);R.A->RefreshWeaponVisuals();
+    auto& Gun=R.Gun(1);
+    if(!TestEqual(TEXT("Fixture is a beam"),Gun.Profile.Kind,EOVAttackKind::Beam))return false;
+    FOVWeaponMountDefinition Def=R.A->Systems->Layout->WeaponMounts[1];Def.PresentationProfile=TEXT("LB30Trial");
+    if(!TestTrue(TEXT("LB30 source trial assets exist"),OVWeaponGeometry::HasLB30Trial(Def)))return false;
+    TArray<UOVWeaponVisualComponent*> Visuals;R.A->GetComponents(Visuals);
+    auto** Found=Visuals.FindByPredicate([&](const UOVWeaponVisualComponent* V){return V&&V->GetMountId()==Def.WeaponId;});
+    if(!TestNotNull(TEXT("LB30 live visual exists"),Found?*Found:nullptr))return false;
+    TArray<USceneComponent*> Children;(*Found)->GetChildrenComponents(true,Children);
+    UStaticMeshComponent* Flash=nullptr;int32 SourceParts=0;
+    for(auto* Child:Children)if(auto* Mesh=Cast<UStaticMeshComponent>(Child);Mesh&&Mesh->GetStaticMesh())
+    {
+        const FString Path=Mesh->GetStaticMesh()->GetPathName();
+        if(Path.Contains(TEXT("/laser_turret_lb30/")))++SourceParts;
+        if(Path==TEXT("/Engine/BasicShapes/Sphere.Sphere"))Flash=Mesh;
+    }
+    TestEqual(TEXT("LB30 source parts and trial neck exist"),SourceParts,4);
+    if(!TestNotNull(TEXT("LB30 flash exists"),Flash))return false;
+    R.Combat->RequestFire(R.A,Gun.MountId);R.Combat->Simulate(1.f/120.f);
+    if(!TestTrue(TEXT("Actual beam event exists"),R.Combat->RecentEvents.Num()>0))return false;
+    const auto& Event=R.Combat->RecentEvents.Last();
+    TestEqual(TEXT("Actual beam fired once"),R.Combat->ShotCount,1);
+    TestTrue(TEXT("Beam uses displayed muzzle"),Event.Origin.Equals(R.Visual(1).WorldMuzzle,.1));
+    TestTrue(TEXT("Beam uses source flash position"),Event.Origin.Equals(Flash->GetComponentLocation(),.1));
     return true;
 }
 IMPLEMENT_SIMPLE_AUTOMATION_TEST(FOVSideMountGeometry,

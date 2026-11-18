@@ -312,11 +312,12 @@ void AOVShip::RefreshWeaponVisuals()
         [this](const FOVPDShipState& S) { return S.Ship == this; }) : nullptr;
     TArray<FName, TInlineAllocator<32>> Active;
     auto Sync = [&](const FOVWeaponMountDefinition& Def, FRotator Aim, bool bFixedVLS,
-        bool bDestroyed, int32 ShotId, double ShotTime, double Clock, int32 ShotsFired, bool bCannon, bool bKineticPD)
+        bool bDestroyed, int32 ShotId, double ShotTime, double Clock, int32 ShotsFired, bool bCannon, bool bKineticPD, bool bBeamAttack)
     {
         FOVWeaponMountDefinition VisualDef = Def;
         if (!bCannon) VisualDef.PresentationProfile = NAME_None;
         if (Def.Type==EOVWeaponType::Interception && OVWeaponGeometry::CIWSBTrialEnabled()) VisualDef.PresentationProfile=bKineticPD?TEXT("CIWS6Trial"):TEXT("CIWSBTrial");
+        if (Def.Type==EOVWeaponType::Beam && bBeamAttack && OVWeaponGeometry::LB30TrialEnabled()) VisualDef.PresentationProfile=TEXT("LB30Trial");
         Active.Add(Def.WeaponId);
         UOVWeaponVisualComponent* Visual = nullptr;
         for (auto& Existing : WeaponVisuals)
@@ -346,7 +347,7 @@ void AOVShip::RefreshWeaponVisuals()
             const auto* Health = Systems->WeaponMountStates.FindByPredicate(
                 [&Mount](const FOVWeaponMountState& H) { return H.WeaponMountId == Mount.MountId; });
             Sync(*Def, Mount.LocalAim, Mount.Profile.Kind == EOVAttackKind::Missile,
-                Systems->bWrecked || !Health || Health->HP <= 0, Mount.LastShotId, Mount.LastShotTime, Combat->GameTime, Mount.ShotsFired, Mount.Profile.Kind == EOVAttackKind::Cannon,false);
+                Systems->bWrecked || !Health || Health->HP <= 0, Mount.LastShotId, Mount.LastShotTime, Combat->GameTime, Mount.ShotsFired, Mount.Profile.Kind == EOVAttackKind::Cannon,false,Mount.Profile.Kind==EOVAttackKind::Beam);
         }
     if (PDState)
         for (const FOVPDMountState& Mount : PDState->Mounts)
@@ -360,7 +361,7 @@ void AOVShip::RefreshWeaponVisuals()
             const auto* Health = Systems->WeaponMountStates.FindByPredicate(
                 [&Mount](const FOVWeaponMountState& H) { return H.WeaponMountId == Mount.MountId; });
             Sync(Def, Mount.LocalAim, false, Systems->bWrecked || Mount.HP <= 0
-                || (Mount.bLayoutMount && (!Health || Health->HP <= 0)), Mount.LastShotId, Mount.LastShotTime, PD->GameTime, 0, false,Mount.Profile.Kind==EOVPDWeaponKind::Kinetic);
+                || (Mount.bLayoutMount && (!Health || Health->HP <= 0)), Mount.LastShotId, Mount.LastShotTime, PD->GameTime, 0, false,Mount.Profile.Kind==EOVPDWeaponKind::Kinetic,false);
         }
     for (int32 I = WeaponVisuals.Num() - 1; I >= 0; --I)
         if (!WeaponVisuals[I] || !Active.Contains(WeaponVisuals[I]->GetMountId()))
@@ -389,6 +390,7 @@ FVector AOVShip::GetWeaponMuzzleWorld(FName MountId) const
                 {
                     FOVWeaponMountDefinition EffectiveDef = *Def;
                     if (Mount->Profile.Kind != EOVAttackKind::Cannon) EffectiveDef.PresentationProfile = NAME_None;
+                    if (Mount->Profile.Kind == EOVAttackKind::Beam && OVWeaponGeometry::LB30TrialEnabled()) EffectiveDef.PresentationProfile=TEXT("LB30Trial");
                     return GetActorTransform().TransformPosition(OVWeaponGeometry::MuzzleLocal(EffectiveDef,Mount->LocalAim,
                         Systems->Layout->LocalHalfExtent,Mount->Profile.Kind == EOVAttackKind::Missile,Mount->ShotsFired>0?(Mount->ShotsFired-1)%2:0));
                 }

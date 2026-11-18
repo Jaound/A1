@@ -1,0 +1,63 @@
+{
+  "passed": true,
+  "scope": "격리된 UE 메시 로컬 경계만 측정; 실제 포구·가동·장착 확정 아님.",
+  "parts": [
+    {
+      "asset": "/Game/Presentation/WeaponsYawTrial/laser_turret_lb30/SM_Base",
+      "min_cm": [
+        -126.34459686279297,
+        -112.896240234375,
+        -62.99998092651367
+      ],
+      "max_cm": [
+        104.11988830566406,
+        103.77448272705078,
+        0.0008440950768999755
+      ],
+      "triangles": 277630
+    },
+    {
+      "asset": "/Game/Presentation/WeaponsPitchTrial/laser_turret_lb30/SM_Body",
+      "min_cm": [
+        -119.84990692138672,
+        -103.46687316894531,
+        -0.0008359815110452473
+      ],
+      "max_cm": [
+        127.5141830444336,
+        94.4395980834961,
+        136.99998474121094
+      ],
+      "triangles": 886302
+    },
+    {
+      "asset": "/Game/Presentation/WeaponsPitchTrial/laser_turret_lb30/SM_Barrel",
+      "min_cm": [
+        -176.32675170898438,
+        -25.276893615722656,
+        -28.566497802734375
+      ],
+      "max_cm": [
+        0.0,
+        24.84314727783203,
+        21.59187126159668
+      ],
+      "triangles": 148418
+    },
+    {
+      "asset": "/Game/Presentation/WeaponsPitchTrial/laser_turret_lb30/SM_TrialNeck",
+      "min_cm": [
+        -37.5,
+        -15.000000953674316,
+        -15.000003814697266
+      ],
+      "max_cm": [
+        37.5,
+        15.000000953674316,
+        15.000003814697266
+      ],
+      "triangles": 188
+    }
+  ],
+  "errors": []
+}

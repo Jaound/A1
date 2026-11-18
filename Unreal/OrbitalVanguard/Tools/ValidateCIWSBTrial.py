@@ -9,6 +9,9 @@ import unreal
 
 editor = unreal.get_editor_subsystem(unreal.UnrealEditorSubsystem)
 unreal.SystemLibrary.execute_console_command(editor.get_editor_world(), 'ov.Presentation.CIWSBTrial 1')
+lb30 = os.environ.get('OV_LB30_TRIAL', '0') == '1'
+if lb30:
+    unreal.SystemLibrary.execute_console_command(editor.get_editor_world(), 'ov.Presentation.LB30Trial 1')
 tool = os.path.join(unreal.Paths.project_dir(), 'Tools', 'ValidatePhase2C.py')
 with open(tool, encoding='utf8') as file:
     source = file.read()
@@ -36,6 +39,7 @@ def finish_trial(dt):
                 raise RuntimeError('시각 확인용 F6 장면 생성 실패')
             candidates = []
             kinetic = []
+            beams = []
             for ship in p(pc, 'ships'):
                 ship.refresh_weapon_visuals()
                 for component in ship.get_components_by_class(unreal.StaticMeshComponent):
@@ -44,8 +48,12 @@ def finish_trial(dt):
                         candidates.append((ship, component))
                     if mesh and '/WeaponsPitchTrial/ciws_gatling_6/SM_Barrel' in mesh.get_path_name():
                         kinetic.append((ship, component))
+                    if mesh and '/WeaponsPitchTrial/laser_turret_lb30/SM_Barrel' in mesh.get_path_name():
+                        beams.append((ship, component))
             check('CIWSB-SOURCE-BARREL-LIVE', bool(candidates), len(candidates))
             check('CIWS6-SOURCE-BARREL-LIVE', bool(kinetic), len(kinetic))
+            if lb30:
+                check('LB30-SOURCE-BARREL-LIVE', bool(beams), len(beams))
             ship, barrel = candidates[0]
             pc.select_ship(ship)
             pc.set_editor_property('camera_focus', ship.get_actor_location())

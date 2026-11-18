@@ -1,0 +1,214 @@
+{
+  "passed": true,
+  "scope": "격리 자산 재로드·LOD·재질 참조 검사; 전장 적용 및 렌더 검증 아님.",
+  "models": [
+    {
+      "id": "naval_gun_bf120",
+      "parts": [
+        {
+          "asset": "/Game/Presentation/WeaponsYawTrial/naval_gun_bf120/SM_Base",
+          "triangles": [
+            393922,
+            19696,
+            3940
+          ],
+          "material": "/Game/Presentation/WeaponsFull/naval_gun_bf120/M_Source.M_Source"
+        },
+        {
+          "asset": "/Game/Presentation/WeaponsYawTrial/naval_gun_bf120/SM_Yaw",
+          "triangles": [
+            616788,
+            30840,
+            6168
+          ],
+          "material": "/Game/Presentation/WeaponsFull/naval_gun_bf120/M_Source.M_Source"
+        }
+      ]
+    },
+    {
+      "id": "laser_turret_lb30",
+      "parts": [
+        {
+          "asset": "/Game/Presentation/WeaponsYawTrial/laser_turret_lb30/SM_Base",
+          "triangles": [
+            277630,
+            13882,
+            2776
+          ],
+          "material": "/Game/Presentation/WeaponsFull/laser_turret_lb30/M_Source.M_Source"
+        },
+        {
+          "asset": "/Game/Presentation/WeaponsYawTrial/laser_turret_lb30/SM_Yaw",
+          "triangles": [
+            1109302,
+            55466,
+            11094
+          ],
+          "material": "/Game/Presentation/WeaponsFull/laser_turret_lb30/M_Source.M_Source"
+        }
+      ]
+    },
+    {
+      "id": "ciws_gatling_6",
+      "parts": [
+        {
+          "asset": "/Game/Presentation/WeaponsYawTrial/ciws_gatling_6/SM_Base",
+          "triangles": [
+            479552,
+            23978,
+            4796
+          ],
+          "material": "/Game/Presentation/WeaponsFull/ciws_gatling_6/M_Source.M_Source"
+        },
+        {
+          "asset": "/Game/Presentation/WeaponsYawTrial/ciws_gatling_6/SM_Yaw",
+          "triangles": [
+            816190,
+            40810,
+            8162
+          ],
+          "material": "/Game/Presentation/WeaponsFull/ciws_gatling_6/M_Source.M_Source"
+        }
+      ]
+    },
+    {
+      "id": "heavy_cannon_shc400",
+      "parts": [
+        {
+          "asset": "/Game/Presentation/WeaponsYawTrial/heavy_cannon_shc400/SM_Base",
+          "triangles": [
+            354026,
+            17702,
+            3540
+          ],
+          "material": "/Game/Presentation/WeaponsFull/heavy_cannon_shc400/M_Source.M_Source"
+        },
+        {
+          "asset": "/Game/Presentation/WeaponsYawTrial/heavy_cannon_shc400/SM_Yaw",
+          "triangles": [
+            754502,
+            37726,
+            7546
+          ],
+          "material": "/Game/Presentation/WeaponsFull/heavy_cannon_shc400/M_Source.M_Source"
+        }
+      ]
+    },
+    {
+      "id": "railgun_rg200",
+      "parts": [
+        {
+          "asset": "/Game/Presentation/WeaponsYawTrial/railgun_rg200/SM_Base",
+          "triangles": [
+            562798,
+            28140,
+            5628
+          ],
+          "material": "/Game/Presentation/WeaponsFull/railgun_rg200/M_Source.M_Source"
+        },
+        {
+          "asset": "/Game/Presentation/WeaponsYawTrial/railgun_rg200/SM_Yaw",
+          "triangles": [
+            1513234,
+            75662,
+            15132
+          ],
+          "material": "/Game/Presentation/WeaponsFull/railgun_rg200/M_Source.M_Source"
+        }
+      ]
+    },
+    {
+      "id": "plasma_heavy_cannon",
+      "parts": [
+        {
+          "asset": "/Game/Presentation/WeaponsYawTrial/plasma_heavy_cannon/SM_Base",
+          "triangles": [
+            625140,
+            31256,
+            6252
+          ],
+          "material": "/Game/Presentation/WeaponsFull/plasma_heavy_cannon/M_Source.M_Source"
+        },
+        {
+          "asset": "/Game/Presentation/WeaponsYawTrial/plasma_heavy_cannon/SM_Yaw",
+          "triangles": [
+            1901260,
+            95062,
+            19012
+          ],
+          "material": "/Game/Presentation/WeaponsFull/plasma_heavy_cannon/M_Source.M_Source"
+        }
+      ]
+    },
+    {
+      "id": "missile_pod_mm24",
+      "parts": [
+        {
+          "asset": "/Game/Presentation/WeaponsYawTrial/missile_pod_mm24/SM_Base",
+          "triangles": [
+            935218,
+            46760,
+            9352
+          ],
+          "material": "/Game/Presentation/WeaponsFull/missile_pod_mm24/M_Source.M_Source"
+        },
+        {
+          "asset": "/Game/Presentation/WeaponsYawTrial/missile_pod_mm24/SM_Yaw",
+          "triangles": [
+            1327222,
+            66362,
+            13272
+          ],
+          "material": "/Game/Presentation/WeaponsFull/missile_pod_mm24/M_Source.M_Source"
+        }
+      ]
+    },
+    {
+      "id": "missile_pod_mm48",
+      "parts": [
+        {
+          "asset": "/Game/Presentation/WeaponsYawTrial/missile_pod_mm48/SM_Base",
+          "triangles": [
+            726962,
+            36348,
+            7270
+          ],
+          "material": "/Game/Presentation/WeaponsFull/missile_pod_mm48/M_Source.M_Source"
+        },
+        {
+          "asset": "/Game/Presentation/WeaponsYawTrial/missile_pod_mm48/SM_Yaw",
+          "triangles": [
+            2568132,
+            128406,
+            25682
+          ],
+          "material": "/Game/Presentation/WeaponsFull/missile_pod_mm48/M_Source.M_Source"
+        }
+      ]
+    },
+    {
+      "id": "ciws_beam_b",
+      "parts": [
+        {
+          "asset": "/Game/Presentation/WeaponsYawTrial/ciws_beam_b/SM_Base",
+          "triangles": [
+            464924,
+            23246,
+            4650
+          ],
+          "material": "/Game/Presentation/WeaponsFull/ciws_beam_b/M_Source.M_Source"
+        },
+        {
+          "asset": "/Game/Presentation/WeaponsYawTrial/ciws_beam_b/SM_Yaw",
+          "triangles": [
+            754930,
+            37746,
+            7550
+          ],
+          "material": "/Game/Presentation/WeaponsFull/ciws_beam_b/M_Source.M_Source"
+        }
+      ]
+    }
+  ],
+  "errors": []
+}

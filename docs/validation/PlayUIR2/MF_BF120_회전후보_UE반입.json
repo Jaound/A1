@@ -1,0 +1,38 @@
+{
+  "id": "naval_gun_bf120",
+  "passed": true,
+  "scope": "원본 재질을 참조하는 회전 후보 격리 반입 및 시험 LOD. 전장 미적용.",
+  "parts": [
+    {
+      "asset": "/Game/Presentation/WeaponsYawTrial/naval_gun_bf120/SM_Base",
+      "fbx_sha256": "2f9d43c991dbf0168bfa9fb29a13db8c7920f27512091e597dd0bcc9f4b627fb",
+      "source_origin": [
+        1.0015538930892944,
+        -0.00039190053939819336,
+        -0.23000003397464752
+      ],
+      "triangles": [
+        393922,
+        19696,
+        3940
+      ],
+      "source_material": "/Game/Presentation/WeaponsFull/naval_gun_bf120/M_Source.M_Source"
+    },
+    {
+      "asset": "/Game/Presentation/WeaponsYawTrial/naval_gun_bf120/SM_Yaw",
+      "fbx_sha256": "d7e98c4abeb86a049d8f060b2fd40d08664f189c5e53e322ffae6ed6f32d107c",
+      "source_origin": [
+        1.0015538930892944,
+        -0.00039190053939819336,
+        -0.23000003397464752
+      ],
+      "triangles": [
+        616788,
+        30840,
+        6168
+      ],
+      "source_material": "/Game/Presentation/WeaponsFull/naval_gun_bf120/M_Source.M_Source"
+    }
+  ],
+  "errors": []
+}
