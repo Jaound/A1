@@ -315,10 +315,10 @@ void AOVShip::RefreshWeaponVisuals()
         bool bDestroyed, int32 ShotId, double ShotTime, double Clock, int32 ShotsFired, bool bCannon, bool bKineticPD, bool bBeamAttack)
     {
         FOVWeaponMountDefinition VisualDef = Def;
-        if (!bCannon) VisualDef.PresentationProfile = NAME_None;
+        if (!bCannon && !bBeamAttack) VisualDef.PresentationProfile = NAME_None;
         if (bCannon) VisualDef.PresentationProfile=OVWeaponGeometry::CannonSourceTrialProfile(VisualDef);
         if (Def.Type==EOVWeaponType::Interception && OVWeaponGeometry::CIWSBTrialEnabled()) VisualDef.PresentationProfile=bKineticPD?TEXT("CIWS6Trial"):TEXT("CIWSBTrial");
-        if (Def.Type==EOVWeaponType::Beam && bBeamAttack && OVWeaponGeometry::LB30TrialEnabled()) VisualDef.PresentationProfile=TEXT("LB30Trial");
+        if (Def.Type==EOVWeaponType::Beam && bBeamAttack) VisualDef.PresentationProfile=OVWeaponGeometry::BeamSourceTrialProfile(VisualDef);
         Active.Add(Def.WeaponId);
         UOVWeaponVisualComponent* Visual = nullptr;
         for (auto& Existing : WeaponVisuals)
@@ -390,9 +390,9 @@ FVector AOVShip::GetWeaponMuzzleWorld(FName MountId) const
                 if (const auto* Def = Systems->Layout->WeaponMounts.FindByPredicate([MountId](const FOVWeaponMountDefinition& D) { return D.WeaponId == MountId; }))
                 {
                     FOVWeaponMountDefinition EffectiveDef = *Def;
-                    if (Mount->Profile.Kind != EOVAttackKind::Cannon) EffectiveDef.PresentationProfile = NAME_None;
+                    if (Mount->Profile.Kind != EOVAttackKind::Cannon && Mount->Profile.Kind != EOVAttackKind::Beam) EffectiveDef.PresentationProfile = NAME_None;
                     if (Mount->Profile.Kind == EOVAttackKind::Cannon) EffectiveDef.PresentationProfile=OVWeaponGeometry::CannonSourceTrialProfile(EffectiveDef);
-                    if (Mount->Profile.Kind == EOVAttackKind::Beam && OVWeaponGeometry::LB30TrialEnabled()) EffectiveDef.PresentationProfile=TEXT("LB30Trial");
+                    if (Mount->Profile.Kind == EOVAttackKind::Beam) EffectiveDef.PresentationProfile=OVWeaponGeometry::BeamSourceTrialProfile(EffectiveDef);
                     return GetActorTransform().TransformPosition(OVWeaponGeometry::MuzzleLocal(EffectiveDef,Mount->LocalAim,
                         Systems->Layout->LocalHalfExtent,Mount->Profile.Kind == EOVAttackKind::Missile,Mount->ShotsFired>0?(Mount->ShotsFired-1)%2:0));
                 }

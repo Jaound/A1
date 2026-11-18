@@ -18,6 +18,8 @@ if bf120:
 shc = os.environ.get('OV_SHC400_TRIAL', '0') == '1'
 if shc:
     unreal.SystemLibrary.execute_console_command(editor.get_editor_world(), 'ov.Presentation.SHC400Trial 1')
+rg200 = os.environ.get('OV_RG200_TRIAL', '0') == '1'
+plasma = os.environ.get('OV_PLASMA_TRIAL', '0') == '1'
 tool = os.path.join(unreal.Paths.project_dir(), 'Tools', 'ValidatePhase2C.py')
 with open(tool, encoding='utf8') as file:
     source = file.read()
@@ -70,6 +72,30 @@ def finish_trial(dt):
                 check('BF120-SOURCE-BARREL-LIVE', bool(cannons), len(cannons))
             if shc:
                 check('SHC400-SOURCE-BARREL-LIVE', bool(heavy), len(heavy))
+            # A second pass allows both models of one family to be observed on the
+            # same finite F6 layout without changing its equipment or test scene.
+            if rg200:
+                unreal.SystemLibrary.execute_console_command(state['world'], 'ov.Presentation.RG200Trial 1')
+                unreal.SystemLibrary.execute_console_command(state['world'], 'ov.Presentation.BF120SourceTrial 0')
+                unreal.SystemLibrary.execute_console_command(state['world'], 'ov.Presentation.SHC400Trial 0')
+            if plasma:
+                unreal.SystemLibrary.execute_console_command(state['world'], 'ov.Presentation.PlasmaTrial 1')
+                unreal.SystemLibrary.execute_console_command(state['world'], 'ov.Presentation.LB30Trial 0')
+            if rg200 or plasma:
+                railguns, plasmas = [], []
+                for active_ship in p(pc, 'ships'):
+                    active_ship.refresh_weapon_visuals()
+                    for component in active_ship.get_components_by_class(unreal.StaticMeshComponent):
+                        mesh = component.get_editor_property('static_mesh')
+                        path = mesh.get_path_name() if mesh else ''
+                        if '/WeaponsPitchTrial/railgun_rg200/SM_Barrel' in path:
+                            railguns.append(component)
+                        if '/WeaponsPitchTrial/plasma_heavy_cannon/SM_Barrel' in path:
+                            plasmas.append(component)
+                if rg200:
+                    check('RG200-SOURCE-BARREL-LIVE', bool(railguns), len(railguns))
+                if plasma:
+                    check('PLASMA-SOURCE-BARREL-LIVE', bool(plasmas), len(plasmas))
             ship, barrel = candidates[0]
             pc.select_ship(ship)
             pc.set_editor_property('camera_focus', ship.get_actor_location())

@@ -1,0 +1,37 @@
+{
+  "passed": true,
+  "scope": "격리 자산 재로드·LOD·재질 참조 검사; 전장 적용 및 렌더 검증 아님.",
+  "models": [
+    {
+      "id": "plasma_heavy_cannon",
+      "parts": [
+        {
+          "asset": "/Game/Presentation/WeaponsPitchTrial/plasma_heavy_cannon/SM_Body",
+          "triangles": [
+            995534,
+            49776,
+            9956
+          ],
+          "material": "/Game/Presentation/WeaponsFull/plasma_heavy_cannon/M_Source.M_Source"
+        },
+        {
+          "asset": "/Game/Presentation/WeaponsPitchTrial/plasma_heavy_cannon/SM_Barrel",
+          "triangles": [
+            731026,
+            36552,
+            7310
+          ],
+          "material": "/Game/Presentation/WeaponsFull/plasma_heavy_cannon/M_Source.M_Source"
+        },
+        {
+          "asset": "/Game/Presentation/WeaponsPitchTrial/plasma_heavy_cannon/SM_TrialNeck",
+          "triangles": [
+            188
+          ],
+          "material": "/Engine/BasicShapes/BasicShapeMaterial.BasicShapeMaterial"
+        }
+      ]
+    }
+  ],
+  "errors": []
+}

@@ -1,0 +1,368 @@
+{
+  "source_before": "870dae4ed255b04b007cf8235e4d87c98c5646b6f193f82ac4acb60abb7704b0",
+  "source_after": "870dae4ed255b04b007cf8235e4d87c98c5646b6f193f82ac4acb60abb7704b0",
+  "trial_clearance": 0.001,
+  "samples": [
+    {
+      "yaw": -180,
+      "pitch": -15,
+      "body_base": 0,
+      "barrel_body": 0,
+      "barrel_base": 0,
+      "neck_body": 0,
+      "neck_base": 0
+    },
+    {
+      "yaw": -180,
+      "pitch": 0,
+      "body_base": 0,
+      "barrel_body": 0,
+      "barrel_base": 0,
+      "neck_body": 0,
+      "neck_base": 0
+    },
+    {
+      "yaw": -180,
+      "pitch": 15,
+      "body_base": 0,
+      "barrel_body": 0,
+      "barrel_base": 0,
+      "neck_body": 0,
+      "neck_base": 0
+    },
+    {
+      "yaw": -180,
+      "pitch": 30,
+      "body_base": 0,
+      "barrel_body": 0,
+      "barrel_base": 0,
+      "neck_body": 0,
+      "neck_base": 0
+    },
+    {
+      "yaw": -180,
+      "pitch": 45,
+      "body_base": 0,
+      "barrel_body": 0,
+      "barrel_base": 0,
+      "neck_body": 0,
+      "neck_base": 0
+    },
+    {
+      "yaw": -180,
+      "pitch": 60,
+      "body_base": 0,
+      "barrel_body": 0,
+      "barrel_base": 0,
+      "neck_body": 0,
+      "neck_base": 0
+    },
+    {
+      "yaw": -180,
+      "pitch": 75,
+      "body_base": 0,
+      "barrel_body": 0,
+      "barrel_base": 0,
+      "neck_body": 0,
+      "neck_base": 0
+    },
+    {
+      "yaw": -180,
+      "pitch": 90,
+      "body_base": 0,
+      "barrel_body": 0,
+      "barrel_base": 0,
+      "neck_body": 0,
+      "neck_base": 0
+    },
+    {
+      "yaw": -90,
+      "pitch": -15,
+      "body_base": 0,
+      "barrel_body": 0,
+      "barrel_base": 0,
+      "neck_body": 0,
+      "neck_base": 0
+    },
+    {
+      "yaw": -90,
+      "pitch": 0,
+      "body_base": 0,
+      "barrel_body": 0,
+      "barrel_base": 0,
+      "neck_body": 0,
+      "neck_base": 0
+    },
+    {
+      "yaw": -90,
+      "pitch": 15,
+      "body_base": 0,
+      "barrel_body": 0,
+      "barrel_base": 0,
+      "neck_body": 0,
+      "neck_base": 0
+    },
+    {
+      "yaw": -90,
+      "pitch": 30,
+      "body_base": 0,
+      "barrel_body": 0,
+      "barrel_base": 0,
+      "neck_body": 0,
+      "neck_base": 0
+    },
+    {
+      "yaw": -90,
+      "pitch": 45,
+      "body_base": 0,
+      "barrel_body": 0,
+      "barrel_base": 0,
+      "neck_body": 0,
+      "neck_base": 0
+    },
+    {
+      "yaw": -90,
+      "pitch": 60,
+      "body_base": 0,
+      "barrel_body": 0,
+      "barrel_base": 0,
+      "neck_body": 0,
+      "neck_base": 0
+    },
+    {
+      "yaw": -90,
+      "pitch": 75,
+      "body_base": 0,
+      "barrel_body": 0,
+      "barrel_base": 0,
+      "neck_body": 0,
+      "neck_base": 0
+    },
+    {
+      "yaw": -90,
+      "pitch": 90,
+      "body_base": 0,
+      "barrel_body": 0,
+      "barrel_base": 0,
+      "neck_body": 0,
+      "neck_base": 0
+    },
+    {
+      "yaw": 0,
+      "pitch": -15,
+      "body_base": 0,
+      "barrel_body": 0,
+      "barrel_base": 0,
+      "neck_body": 0,
+      "neck_base": 0
+    },
+    {
+      "yaw": 0,
+      "pitch": 0,
+      "body_base": 0,
+      "barrel_body": 0,
+      "barrel_base": 0,
+      "neck_body": 0,
+      "neck_base": 0
+    },
+    {
+      "yaw": 0,
+      "pitch": 15,
+      "body_base": 0,
+      "barrel_body": 0,
+      "barrel_base": 0,
+      "neck_body": 0,
+      "neck_base": 0
+    },
+    {
+      "yaw": 0,
+      "pitch": 30,
+      "body_base": 0,
+      "barrel_body": 0,
+      "barrel_base": 0,
+      "neck_body": 0,
+      "neck_base": 0
+    },
+    {
+      "yaw": 0,
+      "pitch": 45,
+      "body_base": 0,
+      "barrel_body": 0,
+      "barrel_base": 0,
+      "neck_body": 0,
+      "neck_base": 0
+    },
+    {
+      "yaw": 0,
+      "pitch": 60,
+      "body_base": 0,
+      "barrel_body": 0,
+      "barrel_base": 0,
+      "neck_body": 0,
+      "neck_base": 0
+    },
+    {
+      "yaw": 0,
+      "pitch": 75,
+      "body_base": 0,
+      "barrel_body": 0,
+      "barrel_base": 0,
+      "neck_body": 0,
+      "neck_base": 0
+    },
+    {
+      "yaw": 0,
+      "pitch": 90,
+      "body_base": 0,
+      "barrel_body": 0,
+      "barrel_base": 0,
+      "neck_body": 0,
+      "neck_base": 0
+    },
+    {
+      "yaw": 90,
+      "pitch": -15,
+      "body_base": 0,
+      "barrel_body": 0,
+      "barrel_base": 0,
+      "neck_body": 0,
+      "neck_base": 0
+    },
+    {
+      "yaw": 90,
+      "pitch": 0,
+      "body_base": 0,
+      "barrel_body": 0,
+      "barrel_base": 0,
+      "neck_body": 0,
+      "neck_base": 0
+    },
+    {
+      "yaw": 90,
+      "pitch": 15,
+      "body_base": 0,
+      "barrel_body": 0,
+      "barrel_base": 0,
+      "neck_body": 0,
+      "neck_base": 0
+    },
+    {
+      "yaw": 90,
+      "pitch": 30,
+      "body_base": 0,
+      "barrel_body": 0,
+      "barrel_base": 0,
+      "neck_body": 0,
+      "neck_base": 0
+    },
+    {
+      "yaw": 90,
+      "pitch": 45,
+      "body_base": 0,
+      "barrel_body": 0,
+      "barrel_base": 0,
+      "neck_body": 0,
+      "neck_base": 0
+    },
+    {
+      "yaw": 90,
+      "pitch": 60,
+      "body_base": 0,
+      "barrel_body": 0,
+      "barrel_base": 0,
+      "neck_body": 0,
+      "neck_base": 0
+    },
+    {
+      "yaw": 90,
+      "pitch": 75,
+      "body_base": 0,
+      "barrel_body": 0,
+      "barrel_base": 0,
+      "neck_body": 0,
+      "neck_base": 0
+    },
+    {
+      "yaw": 90,
+      "pitch": 90,
+      "body_base": 0,
+      "barrel_body": 0,
+      "barrel_base": 0,
+      "neck_body": 0,
+      "neck_base": 0
+    },
+    {
+      "yaw": 180,
+      "pitch": -15,
+      "body_base": 0,
+      "barrel_body": 0,
+      "barrel_base": 0,
+      "neck_body": 0,
+      "neck_base": 0
+    },
+    {
+      "yaw": 180,
+      "pitch": 0,
+      "body_base": 0,
+      "barrel_body": 0,
+      "barrel_base": 0,
+      "neck_body": 0,
+      "neck_base": 0
+    },
+    {
+      "yaw": 180,
+      "pitch": 15,
+      "body_base": 0,
+      "barrel_body": 0,
+      "barrel_base": 0,
+      "neck_body": 0,
+      "neck_base": 0
+    },
+    {
+      "yaw": 180,
+      "pitch": 30,
+      "body_base": 0,
+      "barrel_body": 0,
+      "barrel_base": 0,
+      "neck_body": 0,
+      "neck_base": 0
+    },
+    {
+      "yaw": 180,
+      "pitch": 45,
+      "body_base": 0,
+      "barrel_body": 0,
+      "barrel_base": 0,
+      "neck_body": 0,
+      "neck_base": 0
+    },
+    {
+      "yaw": 180,
+      "pitch": 60,
+      "body_base": 0,
+      "barrel_body": 0,
+      "barrel_base": 0,
+      "neck_body": 0,
+      "neck_base": 0
+    },
+    {
+      "yaw": 180,
+      "pitch": 75,
+      "body_base": 0,
+      "barrel_body": 0,
+      "barrel_base": 0,
+      "neck_body": 0,
+      "neck_base": 0
+    },
+    {
+      "yaw": 180,
+      "pitch": 90,
+      "body_base": 0,
+      "barrel_body": 0,
+      "barrel_base": 0,
+      "neck_body": 0,
+      "neck_base": 0
+    }
+  ],
+  "scope": "상부 장착의 이산 각도 표면 교차만 측정. 모든 각도·원본 UV·게임 미검증."
+}

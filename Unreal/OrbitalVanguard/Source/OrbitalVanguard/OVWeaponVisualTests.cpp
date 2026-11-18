@@ -307,12 +307,12 @@ bool FOVCIWSBSourceTrialTest::RunTest(const FString&)
 {
     OVWeaponVisualTest::FRange R;
     R.A->SetActorRotation(FRotator(7,31,13));
-    for (const FName Profile : {FName(TEXT("CIWSBTrial")),FName(TEXT("CIWS6Trial")),FName(TEXT("LB30Trial")),FName(TEXT("SHC400Trial"))})
+    for (const FName Profile : {FName(TEXT("CIWSBTrial")),FName(TEXT("CIWS6Trial")),FName(TEXT("LB30Trial")),FName(TEXT("SHC400Trial")),FName(TEXT("PlasmaTrial"))})
     for (const FVector Normal : {FVector::UpVector,FVector::DownVector,FVector::RightVector,FVector::LeftVector})
     {
-        FOVWeaponMountDefinition Def;Def.WeaponId=TEXT("CIWSBTrialTest");Def.Type=Profile==TEXT("LB30Trial")?EOVWeaponType::Beam:(Profile==TEXT("SHC400Trial")?EOVWeaponType::Cannon:EOVWeaponType::Interception);
+        FOVWeaponMountDefinition Def;Def.WeaponId=TEXT("CIWSBTrialTest");Def.Type=(Profile==TEXT("LB30Trial")||Profile==TEXT("PlasmaTrial"))?EOVWeaponType::Beam:((Profile==TEXT("SHC400Trial")||Profile==TEXT("RG200Trial"))?EOVWeaponType::Cannon:EOVWeaponType::Interception);
         Def.LocalPosition=FVector(5,7,11);Def.LocalSurfaceNormal=Normal;Def.PresentationProfile=Profile;
-        if(!TestTrue(TEXT("All isolated trial assets exist"),OVWeaponGeometry::HasSourcePDTrial(Def)||OVWeaponGeometry::HasLB30Trial(Def)||OVWeaponGeometry::HasSHC400Trial(Def)))return false;
+        if(!TestTrue(TEXT("All isolated trial assets exist"),OVWeaponGeometry::HasSourcePDTrial(Def)||OVWeaponGeometry::HasLB30Trial(Def)||OVWeaponGeometry::HasSHC400Trial(Def)||OVWeaponGeometry::HasRG200Trial(Def)||OVWeaponGeometry::HasPlasmaTrial(Def)))return false;
         auto* Visual=NewObject<UOVWeaponVisualComponent>(R.A);R.A->AddInstanceComponent(Visual);
         Visual->SetupAttachment(R.A->GetRootComponent());Visual->RegisterComponent();
         const FVector Extent(80,60,40);Visual->Initialize(Def,Extent);
@@ -454,15 +454,87 @@ bool FOVSHC400SourceTrialTest::RunTest(const FString&)
     TestEqual(TEXT("One heavy cannon flash is shown"),Visible,1);
     auto* BF=IConsoleManager::Get().FindConsoleVariable(TEXT("ov.Presentation.BF120SourceTrial"));
     auto* SHC=IConsoleManager::Get().FindConsoleVariable(TEXT("ov.Presentation.SHC400Trial"));
-    if(!TestNotNull(TEXT("BF switch exists"),BF)||!TestNotNull(TEXT("SHC switch exists"),SHC))return false;
-    const int32 OldBF=BF->GetInt(),OldSHC=SHC->GetInt();BF->Set(1,ECVF_SetByCode);SHC->Set(1,ECVF_SetByCode);
+    auto* RG=IConsoleManager::Get().FindConsoleVariable(TEXT("ov.Presentation.RG200Trial"));
+    if(!TestNotNull(TEXT("BF switch exists"),BF)||!TestNotNull(TEXT("SHC switch exists"),SHC)||!TestNotNull(TEXT("RG switch exists"),RG))return false;
+    const int32 OldBF=BF->GetInt(),OldSHC=SHC->GetInt(),OldRG=RG->GetInt();BF->Set(1,ECVF_SetByConsole);SHC->Set(1,ECVF_SetByConsole);RG->Set(0,ECVF_SetByConsole);
     FOVWeaponMountDefinition Choice=Def;Choice.PresentationProfile=NAME_None;Choice.Tier=1;
     TestEqual(TEXT("Both trial switches use BF for tier one"),OVWeaponGeometry::CannonSourceTrialProfile(Choice),FName(TEXT("BF120SourceTrial")));
     Choice.Tier=2;
     TestEqual(TEXT("Both trial switches use SHC for higher tiers"),OVWeaponGeometry::CannonSourceTrialProfile(Choice),FName(TEXT("SHC400Trial")));
     Choice.PresentationProfile=TEXT("BF120Trial");
     TestEqual(TEXT("Explicit prior trial remains authoritative"),OVWeaponGeometry::CannonSourceTrialProfile(Choice),FName(TEXT("BF120Trial")));
-    BF->Set(OldBF,ECVF_SetByCode);SHC->Set(OldSHC,ECVF_SetByCode);
+    BF->Set(OldBF,ECVF_SetByConsole);SHC->Set(OldSHC,ECVF_SetByConsole);RG->Set(OldRG,ECVF_SetByConsole);
+    return true;
+}
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(FOVRG200SourceTrialTest, "OrbitalVanguard.Presentation.RG200TrialActualTwinShots",
+    EAutomationTestFlags::EditorContext | EAutomationTestFlags::EngineFilter)
+bool FOVRG200SourceTrialTest::RunTest(const FString&)
+{
+    OVWeaponVisualTest::FRange R; R.Accurate(0);
+    auto& Def=R.A->Systems->Layout->WeaponMounts[0]; Def.PresentationProfile=TEXT("RG200Trial");
+    if(!TestTrue(TEXT("RG200 source trial assets exist"),OVWeaponGeometry::HasRG200Trial(Def)))return false;
+    R.A->RefreshWeaponVisuals(); auto& Gun=R.Gun(0); FVector Origins[2];
+    for(int32 Shot=0;Shot<2;++Shot)
+    {
+        Gun.Cooldown=0; R.Combat->RequestFire(R.A,Gun.MountId); R.Combat->Simulate(1.f/120.f);
+        if(!TestTrue(TEXT("Actual railgun projectile exists"),R.Combat->Attacks.Num()>0))return false;
+        Origins[Shot]=R.Combat->Attacks.Last().Origin;
+        TestTrue(TEXT("Projectile uses displayed muzzle"),Origins[Shot].Equals(R.Visual(0).WorldMuzzle,.1));
+        TArray<UOVWeaponVisualComponent*> Visuals; R.A->GetComponents(Visuals);
+        auto** Found=Visuals.FindByPredicate([&](const UOVWeaponVisualComponent* V){return V&&V->GetMountId()==Def.WeaponId;});
+        if(!TestNotNull(TEXT("Railgun visual exists"),Found?*Found:nullptr))return false;
+        TArray<USceneComponent*> Children; (*Found)->GetChildrenComponents(true,Children); int32 Visible=0;
+        for(auto* Child:Children)if(auto* Mesh=Cast<UStaticMeshComponent>(Child);Mesh&&Mesh->GetStaticMesh()&&
+            Mesh->GetStaticMesh()->GetPathName()==TEXT("/Engine/BasicShapes/Sphere.Sphere")&&Mesh->IsVisible())
+        { ++Visible; TestTrue(TEXT("Visible flash matches projectile"),Mesh->GetComponentLocation().Equals(Origins[Shot],.1)); }
+        TestEqual(TEXT("One railgun barrel flashes"),Visible,1);
+    }
+    TestEqual(TEXT("Two shots were fired"),R.Combat->ShotCount,2);
+    TestFalse(TEXT("Railgun barrels alternate"),Origins[0].Equals(Origins[1],.1));
+    R.A->SetActorRotation(FRotator(7,31,13));
+    for(const FVector Normal:{FVector::UpVector,FVector::DownVector,FVector::RightVector,FVector::LeftVector})
+    {
+        Def.LocalSurfaceNormal=Normal;
+        auto* Visual=NewObject<UOVWeaponVisualComponent>(R.A); R.A->AddInstanceComponent(Visual);
+        Visual->SetupAttachment(R.A->GetRootComponent()); Visual->RegisterComponent();
+        const FVector Extent(80,60,40); Visual->Initialize(Def,Extent);
+        for(const FRotator Aim:{FRotator(0,0,0),FRotator(20,75,0),FRotator(-10,-120,0)})
+        {
+            Visual->Synchronize(Aim,false,false,true,1,0,0,1);
+            TArray<USceneComponent*> Children; Visual->GetChildrenComponents(true,Children); int32 Index=0;
+            for(auto* Child:Children)if(auto* Mesh=Cast<UStaticMeshComponent>(Child);Mesh&&Mesh->GetStaticMesh()&&
+                Mesh->GetStaticMesh()->GetPathName()==TEXT("/Engine/BasicShapes/Sphere.Sphere"))
+            {
+                const FVector Expected=R.A->GetActorTransform().TransformPosition(OVWeaponGeometry::MuzzleLocal(Def,Aim,Extent,false,Index));
+                TestTrue(TEXT("Railgun muzzle follows surface"),Mesh->GetComponentLocation().Equals(Expected,.1)); ++Index;
+            }
+            TestEqual(TEXT("Both railgun muzzles exist"),Index,2);
+        }
+        Visual->DestroyComponent();
+    }
+    return true;
+}
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(FOVPlasmaSourceTrialTest, "OrbitalVanguard.Presentation.PlasmaTrialActualBeam",
+    EAutomationTestFlags::EditorContext | EAutomationTestFlags::EngineFilter)
+bool FOVPlasmaSourceTrialTest::RunTest(const FString&)
+{
+    OVWeaponVisualTest::FRange R; R.Accurate(1);
+    auto& Def=R.A->Systems->Layout->WeaponMounts[1]; Def.PresentationProfile=TEXT("PlasmaTrial");
+    if(!TestTrue(TEXT("Plasma source trial assets exist"),OVWeaponGeometry::HasPlasmaTrial(Def)))return false;
+    R.A->RefreshWeaponVisuals(); auto& Gun=R.Gun(1);
+    R.Combat->RequestFire(R.A,Gun.MountId); R.Combat->Simulate(1.f/120.f);
+    if(!TestTrue(TEXT("Actual beam event exists"),R.Combat->RecentEvents.Num()>0))return false;
+    const auto& Event=R.Combat->RecentEvents.Last();
+    TestEqual(TEXT("Beam fired once"),R.Combat->ShotCount,1);
+    TestTrue(TEXT("Beam uses displayed muzzle"),Event.Origin.Equals(R.Visual(1).WorldMuzzle,.1));
+    TArray<UOVWeaponVisualComponent*> Visuals; R.A->GetComponents(Visuals);
+    auto** Found=Visuals.FindByPredicate([&](const UOVWeaponVisualComponent* V){return V&&V->GetMountId()==Def.WeaponId;});
+    if(!TestNotNull(TEXT("Plasma visual exists"),Found?*Found:nullptr))return false;
+    TArray<USceneComponent*> Children; (*Found)->GetChildrenComponents(true,Children); int32 Count=0;
+    for(auto* Child:Children)if(auto* Mesh=Cast<UStaticMeshComponent>(Child);Mesh&&Mesh->GetStaticMesh()&&
+        Mesh->GetStaticMesh()->GetPathName()==TEXT("/Engine/BasicShapes/Sphere.Sphere")&&Mesh->IsVisible())
+    { ++Count; TestTrue(TEXT("Visible flash matches beam"),Mesh->GetComponentLocation().Equals(Event.Origin,.1)); }
+    TestEqual(TEXT("One plasma flash shown"),Count,1);
     return true;
 }
 IMPLEMENT_SIMPLE_AUTOMATION_TEST(FOVSideMountGeometry,

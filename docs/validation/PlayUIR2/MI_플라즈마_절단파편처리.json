@@ -1,0 +1,59 @@
+{
+  "source": "C:\\Users\\user\\Documents\\OrbitalVanguardAssets\\Prepared\\PlayUI_R2_WeaponPitchReliefCandidates_v2\\plasma_heavy_cannon\\plasma_heavy_cannon_PitchTrial.blend",
+  "source_before": "fe88296a30238883dcc366597f1fb0893281990f653a352a3fb27a3842672756",
+  "source_after": "fe88296a30238883dcc366597f1fb0893281990f653a352a3fb27a3842672756",
+  "evidence": "C:\\Users\\user\\Documents\\OrbitalVanguardAssets\\Prepared\\PlayUI_R2_WeaponYawCandidates_v1\\plasma_heavy_cannon_pitch_axis_x.json",
+  "evidence_sha256": "edccabed38f69e5fc38856fb525d918feaa9147818fb8cc1a8a5bf848363cd54",
+  "cut_x": -0.5,
+  "trial_pitch_pivot": [
+    -0.5,
+    0.0,
+    0.25
+  ],
+  "trial_yaw_pivot": [
+    1.2523497343063354,
+    -2.345442771911621e-05,
+    -0.5375000238418579
+  ],
+  "parts": {
+    "YawBody": {
+      "faces": 1170570,
+      "cut_edges": 1478,
+      "cap_faces": 5,
+      "boundary_edges": 0,
+      "nonmanifold_edges": 0
+    },
+    "PitchTrial": {
+      "faces": 728829,
+      "cut_edges": 1478,
+      "cap_faces": 5,
+      "boundary_edges": 0,
+      "nonmanifold_edges": 0
+    }
+  },
+  "status": "experimental seam-artifact cleanup on copy; visual and gameplay unapproved",
+  "trial_relief_shape": "sphere",
+  "trial_relief_depth": 0.5,
+  "trial_centers_y": [
+    0.0
+  ],
+  "trial_relief_radius": 0.73,
+  "trial_bearing_radius": 0.0,
+  "trial_relief_pivot": [
+    -0.5,
+    0.0,
+    0.25
+  ],
+  "trial_connector_radius": 0.17,
+  "trial_connector_length": 0.75,
+  "relief_topology": {
+    "faces": 989180,
+    "boundary_edges": 0,
+    "nonmanifold_edges": 0
+  },
+  "removed_seam_artifact_vertices": [
+    81,
+    67,
+    11
+  ]
+}

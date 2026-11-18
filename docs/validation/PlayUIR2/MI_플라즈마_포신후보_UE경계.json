@@ -1,0 +1,63 @@
+{
+  "passed": true,
+  "scope": "격리된 UE 메시 로컬 경계만 측정; 실제 포구·가동·장착 확정 아님.",
+  "parts": [
+    {
+      "asset": "/Game/Presentation/WeaponsYawTrial/plasma_heavy_cannon/SM_Base",
+      "min_cm": [
+        -188.90142822265625,
+        -166.489501953125,
+        -71.25
+      ],
+      "max_cm": [
+        155.43112182617188,
+        167.58572387695312,
+        0.0004911872674711049
+      ],
+      "triangles": 625140
+    },
+    {
+      "asset": "/Game/Presentation/WeaponsPitchTrial/plasma_heavy_cannon/SM_Body",
+      "min_cm": [
+        -156.70484924316406,
+        -118.5560302734375,
+        -0.00014587678015232086
+      ],
+      "max_cm": [
+        169.30441284179688,
+        118.28311920166016,
+        178.75001525878906
+      ],
+      "triangles": 995534
+    },
+    {
+      "asset": "/Game/Presentation/WeaponsPitchTrial/plasma_heavy_cannon/SM_Barrel",
+      "min_cm": [
+        -248.44068908691406,
+        -72.43032836914062,
+        -74.82623291015625
+      ],
+      "max_cm": [
+        0.0,
+        71.04874420166016,
+        74.59432220458984
+      ],
+      "triangles": 731026
+    },
+    {
+      "asset": "/Game/Presentation/WeaponsPitchTrial/plasma_heavy_cannon/SM_TrialNeck",
+      "min_cm": [
+        -37.5,
+        -17.0,
+        -17.000003814697266
+      ],
+      "max_cm": [
+        37.5,
+        17.0,
+        17.000003814697266
+      ],
+      "triangles": 188
+    }
+  ],
+  "errors": []
+}

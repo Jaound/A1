@@ -1,0 +1,63 @@
+{
+  "passed": true,
+  "scope": "격리된 UE 메시 로컬 경계만 측정; 실제 포구·가동·장착 확정 아님.",
+  "parts": [
+    {
+      "asset": "/Game/Presentation/WeaponsYawTrial/railgun_rg200/SM_Base",
+      "min_cm": [
+        -191.2168426513672,
+        -176.20960998535156,
+        -109.50003051757812
+      ],
+      "max_cm": [
+        195.96511840820312,
+        176.3495330810547,
+        0.0006820185226388276
+      ],
+      "triangles": 562798
+    },
+    {
+      "asset": "/Game/Presentation/WeaponsPitchTrial/railgun_rg200/SM_Body",
+      "min_cm": [
+        -128.953369140625,
+        -156.70947265625,
+        -0.00020286691142246127
+      ],
+      "max_cm": [
+        250.5320587158203,
+        156.86578369140625,
+        190.5
+      ],
+      "triangles": 969786
+    },
+    {
+      "asset": "/Game/Presentation/WeaponsPitchTrial/railgun_rg200/SM_Barrel",
+      "min_cm": [
+        -422.9329528808594,
+        -90.49205780029297,
+        -37.94747543334961
+      ],
+      "max_cm": [
+        3.725290298461914e-07,
+        90.13507843017578,
+        32.38020324707031
+      ],
+      "triangles": 520152
+    },
+    {
+      "asset": "/Game/Presentation/WeaponsPitchTrial/railgun_rg200/SM_TrialNeck",
+      "min_cm": [
+        -25.0,
+        -123.0,
+        -13.000019073486328
+      ],
+      "max_cm": [
+        25.0,
+        13.0,
+        13.000000953674316
+      ],
+      "triangles": 376
+    }
+  ],
+  "errors": []
+}

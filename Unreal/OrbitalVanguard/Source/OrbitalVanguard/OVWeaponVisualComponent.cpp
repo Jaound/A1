@@ -13,6 +13,10 @@ static TAutoConsoleVariable<int32> CVarBF120SourceTrial(TEXT("ov.Presentation.BF
     TEXT("Opt-in isolated source twin cannon trial; not final artwork."));
 static TAutoConsoleVariable<int32> CVarSHC400Trial(TEXT("ov.Presentation.SHC400Trial"), 0,
     TEXT("Opt-in isolated source heavy cannon trial; not final artwork."));
+static TAutoConsoleVariable<int32> CVarRG200Trial(TEXT("ov.Presentation.RG200Trial"), 0,
+    TEXT("Opt-in isolated source railgun trial; not final artwork."));
+static TAutoConsoleVariable<int32> CVarPlasmaTrial(TEXT("ov.Presentation.PlasmaTrial"), 0,
+    TEXT("Opt-in isolated source plasma visual trial; no special combat rules."));
 
 namespace OVWeaponGeometry
 {
@@ -102,12 +106,40 @@ bool HasSHC400Trial(const FOVWeaponMountDefinition& Definition)
     if (!Neck.IsValid()) Neck=LoadObject<UStaticMesh>(nullptr,TEXT("/Game/Presentation/WeaponsPitchTrial/heavy_cannon_shc400/SM_TrialNeck.SM_TrialNeck"),nullptr,LOAD_NoWarn);
     return Base.IsValid()&&Body.IsValid()&&Barrel.IsValid()&&Neck.IsValid();
 }
+bool HasRG200Trial(const FOVWeaponMountDefinition& Definition)
+{
+    if (Definition.Type!=EOVWeaponType::Cannon || Definition.PresentationProfile!=TEXT("RG200Trial")) return false;
+    static TWeakObjectPtr<UStaticMesh> Base, Body, Barrel, Neck;
+    if (!Base.IsValid()) Base=LoadObject<UStaticMesh>(nullptr,TEXT("/Game/Presentation/WeaponsYawTrial/railgun_rg200/SM_Base.SM_Base"),nullptr,LOAD_NoWarn);
+    if (!Body.IsValid()) Body=LoadObject<UStaticMesh>(nullptr,TEXT("/Game/Presentation/WeaponsPitchTrial/railgun_rg200/SM_Body.SM_Body"),nullptr,LOAD_NoWarn);
+    if (!Barrel.IsValid()) Barrel=LoadObject<UStaticMesh>(nullptr,TEXT("/Game/Presentation/WeaponsPitchTrial/railgun_rg200/SM_Barrel.SM_Barrel"),nullptr,LOAD_NoWarn);
+    if (!Neck.IsValid()) Neck=LoadObject<UStaticMesh>(nullptr,TEXT("/Game/Presentation/WeaponsPitchTrial/railgun_rg200/SM_TrialNeck.SM_TrialNeck"),nullptr,LOAD_NoWarn);
+    return Base.IsValid()&&Body.IsValid()&&Barrel.IsValid()&&Neck.IsValid();
+}
+bool HasPlasmaTrial(const FOVWeaponMountDefinition& Definition)
+{
+    if (Definition.Type!=EOVWeaponType::Beam || Definition.PresentationProfile!=TEXT("PlasmaTrial")) return false;
+    static TWeakObjectPtr<UStaticMesh> Base, Body, Barrel, Neck;
+    if (!Base.IsValid()) Base=LoadObject<UStaticMesh>(nullptr,TEXT("/Game/Presentation/WeaponsYawTrial/plasma_heavy_cannon/SM_Base.SM_Base"),nullptr,LOAD_NoWarn);
+    if (!Body.IsValid()) Body=LoadObject<UStaticMesh>(nullptr,TEXT("/Game/Presentation/WeaponsPitchTrial/plasma_heavy_cannon/SM_Body.SM_Body"),nullptr,LOAD_NoWarn);
+    if (!Barrel.IsValid()) Barrel=LoadObject<UStaticMesh>(nullptr,TEXT("/Game/Presentation/WeaponsPitchTrial/plasma_heavy_cannon/SM_Barrel.SM_Barrel"),nullptr,LOAD_NoWarn);
+    if (!Neck.IsValid()) Neck=LoadObject<UStaticMesh>(nullptr,TEXT("/Game/Presentation/WeaponsPitchTrial/plasma_heavy_cannon/SM_TrialNeck.SM_TrialNeck"),nullptr,LOAD_NoWarn);
+    return Base.IsValid()&&Body.IsValid()&&Barrel.IsValid()&&Neck.IsValid();
+}
 FName CannonSourceTrialProfile(const FOVWeaponMountDefinition& Definition)
 {
     if (Definition.Type!=EOVWeaponType::Cannon || !Definition.PresentationProfile.IsNone()) return Definition.PresentationProfile;
-    const bool bBF=BF120SourceTrialEnabled(), bSHC=CVarSHC400Trial.GetValueOnGameThread()!=0;
+    const bool bBF=BF120SourceTrialEnabled(), bSHC=CVarSHC400Trial.GetValueOnGameThread()!=0, bRG=CVarRG200Trial.GetValueOnGameThread()!=0;
+    if (bRG && (!bBF || Definition.Tier>=2) && (!bSHC || Definition.Tier==2)) return TEXT("RG200Trial");
     if (bSHC&&(!bBF||Definition.Tier>=2)) return TEXT("SHC400Trial");
     return bBF?FName(TEXT("BF120SourceTrial")):NAME_None;
+}
+FName BeamSourceTrialProfile(const FOVWeaponMountDefinition& Definition)
+{
+    if (Definition.Type!=EOVWeaponType::Beam || !Definition.PresentationProfile.IsNone()) return Definition.PresentationProfile;
+    const bool bLB=LB30TrialEnabled(), bPlasma=CVarPlasmaTrial.GetValueOnGameThread()!=0;
+    if (bPlasma && (!bLB || Definition.Tier>=2)) return TEXT("PlasmaTrial");
+    return bLB ? FName(TEXT("LB30Trial")) : NAME_None;
 }
 
 struct FSourceTrialArt
@@ -120,6 +152,26 @@ struct FSourceTrialArt
 
 static bool SourceTrialArt(const FOVWeaponMountDefinition& Definition,FSourceTrialArt& Out)
 {
+    if (HasRG200Trial(Definition))
+    {
+        Out={593.592,109.5,FVector(-172.154,.07683,87.5),
+             {FVector(-421.438,62.560,-5.849),FVector(-421.439,-63.009,-5.877)},FVector(10,55,0),
+             TEXT("/Game/Presentation/WeaponsYawTrial/railgun_rg200/SM_Base.SM_Base"),
+             TEXT("/Game/Presentation/WeaponsPitchTrial/railgun_rg200/SM_Body.SM_Body"),
+             TEXT("/Game/Presentation/WeaponsPitchTrial/railgun_rg200/SM_Barrel.SM_Barrel"),
+             TEXT("/Game/Presentation/WeaponsPitchTrial/railgun_rg200/SM_TrialNeck.SM_TrialNeck"),true};
+        return true;
+    }
+    if (HasPlasmaTrial(Definition))
+    {
+        Out={422.18,71.25,FVector(-175.235,-.00235,78.75),
+             {FVector(-246.94,4.956,-2.45),FVector::ZeroVector},FVector(15,0,0),
+             TEXT("/Game/Presentation/WeaponsYawTrial/plasma_heavy_cannon/SM_Base.SM_Base"),
+             TEXT("/Game/Presentation/WeaponsPitchTrial/plasma_heavy_cannon/SM_Body.SM_Body"),
+             TEXT("/Game/Presentation/WeaponsPitchTrial/plasma_heavy_cannon/SM_Barrel.SM_Barrel"),
+             TEXT("/Game/Presentation/WeaponsPitchTrial/plasma_heavy_cannon/SM_TrialNeck.SM_TrialNeck"),false};
+        return true;
+    }
     if (HasSHC400Trial(Definition))
     {
         Out={241.34561,73.749985,FVector(-76.21249,.072968,70.25),
@@ -283,7 +335,7 @@ void UOVWeaponVisualComponent::Initialize(const FOVWeaponMountDefinition& InDefi
         if (Art.bTwin) SecondFlash=MakeMesh(PitchPivot,TEXT("/Engine/BasicShapes/Sphere.Sphere"),Art.Tip[1]*Scale,FVector(Length*.15/100.f));
         UStaticMeshComponent* Flashes[]={Flash.Get(),SecondFlash.Get()};
         for (auto* Part:Flashes) if (Part) {
-            if (Base) { auto* M=UMaterialInstanceDynamic::Create(Base,Part);M->SetVectorParameterValue(TEXT("Color"),Art.bTwin?FLinearColor(1.f,.66f,.08f):FLinearColor(.12f,.85f,1.f));Part->SetMaterial(0,M); }
+            if (Base) { auto* M=UMaterialInstanceDynamic::Create(Base,Part);M->SetVectorParameterValue(TEXT("Color"),Definition.Type==EOVWeaponType::Cannon?FLinearColor(1.f,.66f,.08f):FLinearColor(.12f,.85f,1.f));Part->SetMaterial(0,M); }
             Part->SetVisibility(false);
         }
         return;

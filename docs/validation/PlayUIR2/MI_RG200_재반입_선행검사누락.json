@@ -1,0 +1,9 @@
+{
+  "id": "railgun_rg200",
+  "passed": false,
+  "scope": "포신 후보 격리 반입. 전장 미적용; 연결부는 시험용 추가 형상.",
+  "parts": [],
+  "errors": [
+    "Traceback (most recent call last):\n  File \"C:/Users/user/source/repos/A1/Unreal/OrbitalVanguard/Tools/ImportWeaponPitchCandidate.py\", line 35, in <module>\n    verification = json.loads((root / 'reimport.json').read_text(encoding='utf8'))\n                              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"E:\\UE_5.8\\Engine\\Binaries\\ThirdParty\\Python3\\Win64\\Lib\\pathlib.py\", line 1058, in read_text\n    with self.open(mode='r', encoding=encoding, errors=errors) as f:\n         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"E:\\UE_5.8\\Engine\\Binaries\\ThirdParty\\Python3\\Win64\\Lib\\pathlib.py\", line 1044, in open\n    return io.open(self, mode, buffering, encoding, errors, newline)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nFileNotFoundError: [Errno 2] No such file or directory: 'C:\\\\Users\\\\user\\\\Documents\\\\OrbitalVanguardAssets\\\\Prepared\\\\PlayUI_R2_WeaponPitchExports_v2\\\\railgun_rg200\\\\reimport.json'\n"
+  ]
+}

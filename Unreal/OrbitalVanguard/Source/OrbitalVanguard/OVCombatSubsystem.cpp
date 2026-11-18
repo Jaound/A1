@@ -37,9 +37,9 @@ FVector MountOrigin(const FOVCombatShipState& State, const FOVWeaponMountDefinit
     const FOVCombatMountState* Mount = State.Mounts.FindByPredicate(
         [&Def](const FOVCombatMountState& M) { return M.MountId == Def.WeaponId; });
     FOVWeaponMountDefinition EffectiveDef = Def;
-    if (!Mount || Mount->Profile.Kind != EOVAttackKind::Cannon) EffectiveDef.PresentationProfile = NAME_None;
+    if (!Mount || (Mount->Profile.Kind != EOVAttackKind::Cannon && Mount->Profile.Kind != EOVAttackKind::Beam)) EffectiveDef.PresentationProfile = NAME_None;
     if (Mount && Mount->Profile.Kind==EOVAttackKind::Cannon) EffectiveDef.PresentationProfile=OVWeaponGeometry::CannonSourceTrialProfile(EffectiveDef);
-    if (Mount && Mount->Profile.Kind==EOVAttackKind::Beam && OVWeaponGeometry::LB30TrialEnabled()) EffectiveDef.PresentationProfile=TEXT("LB30Trial");
+    if (Mount && Mount->Profile.Kind==EOVAttackKind::Beam) EffectiveDef.PresentationProfile=OVWeaponGeometry::BeamSourceTrialProfile(EffectiveDef);
     const FVector Local = OVWeaponGeometry::MuzzleLocal(EffectiveDef,Mount ? Mount->LocalAim : FRotator::ZeroRotator,
         State.Ship->Systems->Layout->LocalHalfExtent,Mount && Mount->Profile.Kind == EOVAttackKind::Missile,
         Mount ? Mount->ShotsFired%2 : 0);

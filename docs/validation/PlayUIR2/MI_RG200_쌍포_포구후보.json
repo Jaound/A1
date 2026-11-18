@@ -1,0 +1,48 @@
+{
+  "source": "C:\\Users\\user\\Documents\\OrbitalVanguardAssets\\Prepared\\PlayUI_R2_WeaponPitchReliefCandidates_v2\\railgun_rg200\\railgun_rg200_PitchTrial.blend",
+  "source_before": "cbbd9e68edeef24fb28c54d923ccc437cb74d7edd8fba31af5cd659697905db0",
+  "source_after": "cbbd9e68edeef24fb28c54d923ccc437cb74d7edd8fba31af5cd659697905db0",
+  "front_x": -4.229329586029053,
+  "band": 0.03,
+  "groups": [
+    {
+      "name": "negative_y",
+      "vertices": 1505,
+      "min": [
+        -4.229329586029053,
+        -0.8741194009780884,
+        0.1238085925579071
+      ],
+      "max": [
+        -4.199429988861084,
+        -0.3770824372768402,
+        0.6992138624191284
+      ],
+      "center": [
+        -4.214379787445068,
+        -0.6256009191274643,
+        0.41151122748851776
+      ]
+    },
+    {
+      "name": "positive_y",
+      "vertices": 1428,
+      "min": [
+        -4.228193283081055,
+        0.38066115975379944,
+        0.12322691082954407
+      ],
+      "max": [
+        -4.200588703155518,
+        0.8795140981674194,
+        0.6992316246032715
+      ],
+      "center": [
+        -4.214390993118286,
+        0.6300876289606094,
+        0.4112292677164078
+      ]
+    }
+  ],
+  "scope": "bounds-derived candidate centers only; not muzzle socket or game firing approval"
+}

@@ -1,5 +1,12 @@
 # 최신 작업 — 플레이 UI R2 진행 중
 
+**MI 원본 무장 7종 시험 — 기본 적용 미완료:** 기존 5종에 RG200 쌍포·플라즈마 외형을 실제 함포·빔 공격에 선택적으로 연결했다. `ov.Presentation.RG200Trial 1`, `ov.Presentation.PlasmaTrial 1`의 기본값은 0이며 공격 수치나 특수 무장 규칙을 추가하지 않는다. 원본을 보존하고 별도 복사본에서 포신을 분리했으며 시험 연결부를 별도 형상으로 추가했다. 플라즈마 절단에서 생성된 81·67·11개 정점 조각만 복사본에서 제거했고 [처리 내역](validation/PlayUIR2/MI_플라즈마_절단파편처리.json)에 전후 해시를 남겼다. 두 후보의 각각 40개 각도 표본 간섭 0과 UE 재반입·재로드는 `MI_*` 증거를 참조한다. 포구는 경계 기반 후보이며 연속 각도·텍스처·측면 접합의 실제 화면 판정은 미완료다.
+
+검증: Win64 Development Editor `Source7_Main_Build2.log` 성공, 6개 시험 스위치 활성 전체 자동 `Source7_Enabled_Automation2.log` 131/131, 2C PIE API [86/86](validation/PlayUIR2/MI_무장7종_2C_API.json). 첫 자동 실행은 시험 CVar 우선순위 충돌로 130/131 실패해 검사에서 값을 복원하도록 수정했다. 첫 격리 반입도 FBX 선행 재검증 파일 누락으로 차단됐고 재검증 후 성공했다. [API F6 캡처](validation/PlayUIR2/MI_무장7종_F6.png)는 정지 화면이며 실제 입력 검증이 아니다. 한국어 엔진 시작 자체 검사 오류는 별개로 남는다. 사용자 기존 UI 미커밋 3파일은 유지했다.
+
+**다음 작업:** MM24/MM48을 피치 축에 맞게 분리하고 실제 미사일의 VLS·유도 방향과 포구를 연결한다. 현 수평 절단 시도는 [MM24](validation/PlayUIR2/MI_MM24_절단실패.png)·[MM48](validation/PlayUIR2/MI_MM48_절단실패.png)처럼 고각에서 큰 절단면이 노출되어 폐기 후보이며 기본 적용하지 않는다. 전 9종의 모듈 선택, 모든 면의 선체 접합, 기본 활성화, 통합 임무 전체 재실행·직접 입력·대규모 성능·패키징은 미완료다. 기본 도면/충돌 및 통합 임무 29사례·268검사의 마지막 성공은 `cc75c24` 기록이다. 재실행: `E:\UE_5.8\Engine\Build\BatchFiles\Build.bat OrbitalVanguardEditor Win64 Development -Project=<프로젝트 uproject> -WaitMutex -NoHotReload`; `Source7_Enabled_Automation2.log` 명령과 `Tools/ValidateCIWSBTrial.py` 환경 변수는 각 로그·스크립트에 있다.
+
+
 **MH SHC400 대구경 함포 시험 (기본 적용 아님):** `ov.Presentation.SHC400Trial 1`에서 원본 기반 대구경 몸체·포신·받침과 시험 연결부를 기존 함포에 연결한다. BF120 시험도 함께 켜면 임시로 1티어는 BF120, 2티어 이상은 SHC400 외형을 고르며 공격 수치는 바꾸지 않는다. 이는 시험 배치일 뿐 사용자가 원하는 모듈 선택 기능이나 최종 기획이 아니다. 기존 명시적 `BF120Trial`은 항상 우선한다. 원본 후보의 40개 회전 표본 교차 0과 원본 재질/LOD의 새 에디터 재로드는 MG 기록 참조. 본 프로젝트 `SHC400_Main_Build.log` 성공, 실제 포탄·발사점 `SHC400_Main_Targeted.log` 성공, 네 시험 스위치를 켠 `Source5_Enabled_Automation.log` 자동 129/129, 다섯 모델을 켠 2C PIE [84/84](validation/PlayUIR2/MH_무장5종_2C_API.json), [F6 API 캡처](validation/PlayUIR2/MH_무장5종_F6.png). 포구는 경계 상자의 중심 후보이며 원본 개구부, 모든 각도·면의 선체 접합·Boolean 면 재질, 실제 마우스 입력·대규모 성능·패키징 미검증이다. 현재 원본 기반 실제 공격 연결은 5종이지만 모두 시험 스위치 기본 0이다. RG200·플라즈마·MM24·MM48의 정확한 동작과 선택, 9종 기본 적용은 미완료다. 기존 사용자 UI 3파일은 보존했다.
 
 

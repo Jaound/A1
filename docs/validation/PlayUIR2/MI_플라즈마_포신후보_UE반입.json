@@ -1,0 +1,51 @@
+{
+  "id": "plasma_heavy_cannon",
+  "passed": true,
+  "scope": "포신 후보 격리 반입. 전장 미적용; 연결부는 시험용 추가 형상.",
+  "parts": [
+    {
+      "asset": "/Game/Presentation/WeaponsPitchTrial/plasma_heavy_cannon/SM_Body",
+      "triangles": [
+        995534,
+        49776,
+        9956
+      ],
+      "source_origin": [
+        1.2523497343063354,
+        -2.345442771911621e-05,
+        -0.5375000238418579
+      ],
+      "fbx_sha256": "5e967d6b2153c0bb3674e9ab6c7ac9b5a6c8029e0f80eeb8b17af0082476afd6",
+      "generated_connector": false
+    },
+    {
+      "asset": "/Game/Presentation/WeaponsPitchTrial/plasma_heavy_cannon/SM_Barrel",
+      "triangles": [
+        731026,
+        36552,
+        7310
+      ],
+      "source_origin": [
+        -0.5,
+        0.0,
+        0.25
+      ],
+      "fbx_sha256": "66da869827753a751eed123eb9c51abb0315632764f95766bb3f49a7fac1552e",
+      "generated_connector": false
+    },
+    {
+      "asset": "/Game/Presentation/WeaponsPitchTrial/plasma_heavy_cannon/SM_TrialNeck",
+      "triangles": [
+        188
+      ],
+      "source_origin": [
+        -0.3499999940395355,
+        0.0,
+        0.25
+      ],
+      "fbx_sha256": "1217905c4029f7ca26acad80239cd13a001321152b3542467e45846267e752a6",
+      "generated_connector": true
+    }
+  ],
+  "errors": []
+}

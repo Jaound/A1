@@ -1,0 +1,51 @@
+{
+  "id": "railgun_rg200",
+  "passed": true,
+  "scope": "포신 후보 격리 반입. 전장 미적용; 연결부는 시험용 추가 형상.",
+  "parts": [
+    {
+      "asset": "/Game/Presentation/WeaponsPitchTrial/railgun_rg200/SM_Body",
+      "triangles": [
+        969786,
+        48490,
+        9698
+      ],
+      "source_origin": [
+        1.7215403318405151,
+        0.0007683038711547852,
+        -0.4050000011920929
+      ],
+      "fbx_sha256": "cbd86e3022974659dc8d8450e1d5909fcd2f3463f36bae285607763bfa7927f1",
+      "generated_connector": false
+    },
+    {
+      "asset": "/Game/Presentation/WeaponsPitchTrial/railgun_rg200/SM_Barrel",
+      "triangles": [
+        520152,
+        26008,
+        5202
+      ],
+      "source_origin": [
+        0.0,
+        0.0,
+        0.4699999988079071
+      ],
+      "fbx_sha256": "ea8cea96b6d54b5ce97ff0dfdf9b0466e6bbc366653aede48a1a002e1540f7ef",
+      "generated_connector": false
+    },
+    {
+      "asset": "/Game/Presentation/WeaponsPitchTrial/railgun_rg200/SM_TrialNeck",
+      "triangles": [
+        376
+      ],
+      "source_origin": [
+        0.10000000149011612,
+        -0.550000011920929,
+        0.4699999988079071
+      ],
+      "fbx_sha256": "c43cc46f6fad98e86d1fdf657f4b807b059ff5c08a709a85021b4b54485f753d",
+      "generated_connector": true
+    }
+  ],
+  "errors": []
+}

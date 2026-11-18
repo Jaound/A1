@@ -1,0 +1,48 @@
+{
+  "source": "C:\\Users\\user\\Documents\\OrbitalVanguardAssets\\Prepared\\PlayUI_R2_WeaponPitchReliefCandidates_v4\\plasma_heavy_cannon\\plasma_heavy_cannon_PitchTrial.blend",
+  "source_before": "870dae4ed255b04b007cf8235e4d87c98c5646b6f193f82ac4acb60abb7704b0",
+  "source_after": "870dae4ed255b04b007cf8235e4d87c98c5646b6f193f82ac4acb60abb7704b0",
+  "front_x": -2.9844069480895996,
+  "band": 0.03,
+  "groups": [
+    {
+      "name": "negative_y",
+      "vertices": 263,
+      "min": [
+        -2.9844069480895996,
+        -0.3780212104320526,
+        -0.3935179114341736
+      ],
+      "max": [
+        -2.95442533493042,
+        -0.00226193037815392,
+        0.8425236940383911
+      ],
+      "center": [
+        -2.9694161415100098,
+        -0.19014157040510327,
+        0.22450289130210876
+      ]
+    },
+    {
+      "name": "positive_y",
+      "vertices": 135,
+      "min": [
+        -2.980243682861328,
+        0.009984449483454227,
+        -0.37858980894088745
+      ],
+      "max": [
+        -2.9544410705566406,
+        0.2789035439491272,
+        0.8318907022476196
+      ],
+      "center": [
+        -2.9673423767089844,
+        0.1444439967162907,
+        0.2266504466533661
+      ]
+    }
+  ],
+  "scope": "bounds-derived candidate centers only; not muzzle socket or game firing approval"
+}

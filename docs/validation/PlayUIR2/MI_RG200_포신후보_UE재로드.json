@@ -1,0 +1,37 @@
+{
+  "passed": true,
+  "scope": "격리 자산 재로드·LOD·재질 참조 검사; 전장 적용 및 렌더 검증 아님.",
+  "models": [
+    {
+      "id": "railgun_rg200",
+      "parts": [
+        {
+          "asset": "/Game/Presentation/WeaponsPitchTrial/railgun_rg200/SM_Body",
+          "triangles": [
+            969786,
+            48490,
+            9698
+          ],
+          "material": "/Game/Presentation/WeaponsFull/railgun_rg200/M_Source.M_Source"
+        },
+        {
+          "asset": "/Game/Presentation/WeaponsPitchTrial/railgun_rg200/SM_Barrel",
+          "triangles": [
+            520152,
+            26008,
+            5202
+          ],
+          "material": "/Game/Presentation/WeaponsFull/railgun_rg200/M_Source.M_Source"
+        },
+        {
+          "asset": "/Game/Presentation/WeaponsPitchTrial/railgun_rg200/SM_TrialNeck",
+          "triangles": [
+            376
+          ],
+          "material": "/Engine/BasicShapes/BasicShapeMaterial.BasicShapeMaterial"
+        }
+      ]
+    }
+  ],
+  "errors": []
+}

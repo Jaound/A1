@@ -14,7 +14,7 @@ F7의 방공 호위 시험에는 원본 방공함과 미사일함이 등장한�
 
 # 원본 요격·빔포 시험
 
-에디터 플레이 중 개발 콘솔에서 `ov.Presentation.CIWSBTrial 1`을 입력하면 빔 요격과 실탄 요격이 각각 원본 기반 포탑 시험 형상으로 바뀐다. `ov.Presentation.LB30Trial 1`은 LB30 원본 기반 빔포를 시험한다. `ov.Presentation.BF120SourceTrial 1`은 쌍포 원본 기반 함포를 시험한다. `ov.Presentation.SHC400Trial 1`은 대구경 원본 기반 함포를 시험한다. 두 함포 시험을 함께 켜면 임시로 1티어에 쌍포, 2티어 이상에 대구경을 표시한다. F6 장면을 다시 열어 확인하고, 각각 `0`을 입력하면 기존 표시로 돌아간다. 이 명령은 시험 외형과 발사 원점을 함께 바꾼다. 포구 중심, 측면 접합, 모든 각도의 외형과 성능은 아직 검증 중이며 원본 무장 9종의 기본 적용이 아니다.
+에디터 플레이 중 개발 콘솔에서 `ov.Presentation.CIWSBTrial 1`은 빔·실탄 요격, `ov.Presentation.LB30Trial 1`은 LB30 빔포, `ov.Presentation.BF120SourceTrial 1`은 BF120 쌍포, `ov.Presentation.SHC400Trial 1`은 SHC400 대구경, `ov.Presentation.RG200Trial 1`은 RG200 쌍포, `ov.Presentation.PlasmaTrial 1`은 플라즈마 형상을 시험한다. 세 함포 시험을 함께 켜면 임시로 1티어 BF120, 2티어 RG200, 3티어 이상 SHC400을 표시하고, 두 빔 시험을 함께 켜면 1티어 LB30·2티어 이상 플라즈마를 표시한다. 이는 형상 시험 선택일 뿐 무장 모듈 선택이나 새 전투 규칙이 아니다. F6 장면을 다시 열어 확인하고 각각 `0`을 입력하면 해당 시험을 끈다. 포구 중심·측면 접합·모든 각도·성능은 검증 중이며 9종 기본 적용은 미완료다.
 
 # BF120 원본 기반 시험 포탑
 
