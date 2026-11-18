@@ -1,9 +1,13 @@
 #include "OVCalibration.h"
 
 #include "OVCombatSubsystem.h"
+#include "OVMarkedSlots.h"
 #include "OVShip.h"
 #include "OVShipSystemsComponent.h"
 #include "Engine/World.h"
+#include "Engine/StaticMesh.h"
+#include "Components/StaticMeshComponent.h"
+#include "HAL/IConsoleManager.h"
 
 #if WITH_DEV_AUTOMATION_TESTS
 #include "Misc/AutomationTest.h"
@@ -11,6 +15,10 @@
 
 namespace
 {
+// The legacy box still encloses many authored turret proxies. Keep the
+// placement opt-in until a collision representation is validated.
+TAutoConsoleVariable<int32> CVarOVMarkedMounts(TEXT("ov.Calibration.MarkedMounts"),0,
+    TEXT("Experimental drawing-based mounts; disabled until turret collision is validated."), ECVF_Default);
 struct FWeapon
 {
     const TCHAR* Key;
@@ -47,6 +55,14 @@ const FHull* FindHull(FName Key)
                 }();
                 return &Revised;
             }
+            if (Key == TEXT("air_defense") && CVarOVMarkedMounts.GetValueOnGameThread() == 1)
+            {
+                // The user-authored drawing has one general slot. Keep the
+                // first existing profile equipped; the second source candidate
+                // remains in D116 data rather than firing from an unmarked slot.
+                static const FHull Revised = [&Hull]() { FHull Result = Hull; Result.MountCount = 1; return Result; }();
+                return &Revised;
+            }
             return &Hull;
         }
     return nullptr;
@@ -62,6 +78,48 @@ EOVWeaponType Family(EOVAttackKind Kind)
 FName ProfileId(const FWeapon& Weapon, int32 Tier)
 {
     return FName(*FString::Printf(TEXT("D116_%s_T%d"), Weapon.Key, Tier));
+}
+
+// Keep the equipped weapon IDs/profiles and map them onto the user's slots.
+// A count mismatch must not silently create, delete, or overlap equipment.
+bool ApplyMarkedAttackMounts(const FHull& Hull, UShipLayoutDataAsset& Layout)
+{
+    const FName HullId(Hull.Key);
+    const auto Candidates = OVMarkedSlots::GetCandidates(HullId);
+    if (Candidates.IsEmpty()) return false;
+    TArray<const FOVMarkedSlotCandidate*> General, Dedicated;
+    for (const auto& Slot : Candidates)
+    {
+        if (Slot.Kind == EOVMarkedSlotKind::General) General.Add(&Slot);
+        else if (Slot.Kind == EOVMarkedSlotKind::Dedicated) Dedicated.Add(&Slot);
+    }
+    if (General.Num() + Dedicated.Num() != Hull.MountCount) return false;
+    TArray<int32> SpecialWeapons, RegularWeapons;
+    for (int32 I = 0; I < Hull.MountCount; ++I)
+    {
+        const bool bSpecial = Hull.Mounts[I].Weapon == 6 ||
+            (HullId == TEXT("missile_ship") && Hull.Mounts[I].Weapon >= 4 && SpecialWeapons.Num() < Dedicated.Num());
+        (bSpecial ? SpecialWeapons : RegularWeapons).Add(I);
+    }
+    if (SpecialWeapons.Num() != Dedicated.Num() || RegularWeapons.Num() != General.Num()) return false;
+    const auto Place = [&Layout,&Hull](const TArray<int32>& WeaponsToPlace, const TArray<const FOVMarkedSlotCandidate*>& Slots)
+    {
+        for (int32 I = 0; I < WeaponsToPlace.Num(); ++I)
+        {
+            auto& Mount = Layout.WeaponMounts[WeaponsToPlace[I]];
+            Mount.AuthoredSlotId = Slots[I]->SlotId;
+            Mount.AuthoredSlotPurpose = Slots[I]->Kind == EOVMarkedSlotKind::Dedicated ? FName(TEXT("Dedicated")) : FName(TEXT("General"));
+            if (Slots[I]->Kind == EOVMarkedSlotKind::Dedicated) {
+                const FMount& Source = Hull.Mounts[WeaponsToPlace[I]];
+                Mount.RequiredProfileId = ProfileId(Weapons[Source.Weapon],Source.Tier);
+            }
+            Mount.LocalPosition = Slots[I]->LocalPosition;
+            Mount.LocalSurfaceNormal = Slots[I]->LocalNormal;
+        }
+    };
+    Place(RegularWeapons, General);
+    Place(SpecialWeapons, Dedicated);
+    return true;
 }
 
 void ApplyProfiles(UOVCombatSettings& Settings)
@@ -147,6 +205,7 @@ UShipLayoutDataAsset* MakeLayout(UObject* Outer, const FHull& Hull)
         else ++Layout->MissileSlots;
     }
 
+    if (CVarOVMarkedMounts.GetValueOnGameThread() == 1) ApplyMarkedAttackMounts(Hull, *Layout);
     TArray<FString> Errors;
     if (Layout->ValidateLayout(Errors)) return Layout;
     UE_LOG(LogTemp, Error, TEXT("D116 invalid %s layout: %s"), Hull.Key, *FString::Join(Errors, TEXT("; ")));
@@ -196,14 +255,31 @@ double OVCalibration::GetHullGeometryScale(FName HullId)
 {
     const FHull* Hull = FindHull(HullId);
     if (!Hull) return 0;
-    // JU trial: shared layout boxes have equal local extents. Uniform root scale
-    // gives their enclosing volumes the requested 1:4:16:32 relationship.
-    // This is not the exact enclosed volume of the individual imported meshes.
-    // D119 makes transport medium; its older D116 combat metadata is retained
-    // pending the separate medium transport data revision.
+    // Assault ship was explicitly excluded from the current model revision.
+    if (HullId == TEXT("assault")) return 6.0;
+    // Imported hulls are uniformly fitted into the common local selection box.
+    // Correct for each mesh's fitted X length before applying the requested
+    // class ratio, without touching the combat speed or weapon profiles.
+    const auto FittedLength = [](FName MeshId) {
+        static TMap<FName, double> Lengths;
+        if (const double* Cached = Lengths.Find(MeshId)) return *Cached;
+        FString Name = MeshId.ToString();
+        Name[0] = FChar::ToUpper(Name[0]);
+        for (int32 I = 1; I < Name.Len(); ++I) if (Name[I-1] == TEXT('_')) Name[I] = FChar::ToUpper(Name[I]);
+        const FString Path = MeshId == TEXT("corvette") ? TEXT("/Game/Presentation/Ships/SM_PC14_FullMesh.SM_PC14_FullMesh") :
+            FString::Printf(TEXT("/Game/Presentation/Ships/%sFull/SM_Hull.SM_Hull"), *Name);
+        const UStaticMesh* Mesh = LoadObject<UStaticMesh>(nullptr, *Path, nullptr, LOAD_NoWarn);
+        if (!Mesh) return 0.0;
+        const FVector E = Mesh->GetBounds().BoxExtent;
+        const double Length = 2 * E.X * (FVector(175,75,30) / E.ComponentMax(FVector(1))).GetMin();
+        Lengths.Add(MeshId, Length);
+        return Length;
+    };
     const int32 Size=HullId==TEXT("transport")?2:Hull->Size;
-    constexpr double TrialVolumeRatios[]={1.,4.,16.,32.};
-    return Size>=1&&Size<=4 ? 6.0*FMath::Pow(TrialVolumeRatios[Size-1],1.0/3.0) : 0.0;
+    constexpr double LengthRatios[]={1.,4.,16.,32.};
+    const double Base = FittedLength(TEXT("corvette"));
+    const double Length = FittedLength(HullId);
+    return Size>=1&&Size<=4&&Base>0&&Length>0 ? 6.0*Base*LengthRatios[Size-1]/Length : 0.0;
 }
 
 TArray<FName> OVCalibration::GetHullIds()
@@ -317,6 +393,17 @@ bool OVCalibration::ConfigureHull(UOVCombatSubsystem& Combat, AOVShip& Ship, FNa
         M.LocalPosition=FVector(FMath::Lerp(-.7,.7,(I+.5)/Hull->PD)*Layout->LocalHalfExtent.X,
             (I%2?1:-1)*Layout->LocalHalfExtent.Y*.8,Layout->LocalHalfExtent.Z+8);
     }
+    const auto Marked = OVMarkedSlots::GetCandidates(HullId);
+    TArray<const FOVMarkedSlotCandidate*> PDSlots;
+    for (const auto& Slot : Marked) if (Slot.Kind == EOVMarkedSlotKind::Interception) PDSlots.Add(&Slot);
+    if (CVarOVMarkedMounts.GetValueOnGameThread() == 1 && PDSlots.Num() == Hull->PD)
+        for (int32 I = 0; I < Hull->PD; ++I) {
+            auto& Mount = Layout->WeaponMounts[Hull->MountCount + I];
+            Mount.AuthoredSlotId = PDSlots[I]->SlotId;
+            Mount.AuthoredSlotPurpose = TEXT("Interception");
+            Mount.LocalPosition = PDSlots[I]->LocalPosition;
+            Mount.LocalSurfaceNormal = PDSlots[I]->LocalNormal;
+        }
     Ship.Configure(HullId.ToString().ToUpper(),Friendly,Hull->Speed,Hull->Turn,FVector(Scale),Friendly?FLinearColor(.12f,.65f,1):FLinearColor(1,.15f,.08f));
     Ship.SetCalibrationHull(&Layout->LocalHalfExtent);
     auto& S=*Ship.Systems;
@@ -333,6 +420,74 @@ bool OVCalibration::ConfigureHull(UOVCombatSubsystem& Combat, AOVShip& Ship, FNa
 }
 
 #if WITH_DEV_AUTOMATION_TESTS
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(FOVMarkedEquippedMountsTest,
+    "OrbitalVanguard.Revision.MarkedEquippedMounts",
+    EAutomationTestFlags::EditorContext | EAutomationTestFlags::EngineFilter)
+bool FOVMarkedEquippedMountsTest::RunTest(const FString&)
+{
+    const int32 Previous=CVarOVMarkedMounts.GetValueOnGameThread();
+    CVarOVMarkedMounts->Set(1,ECVF_SetByConsole);
+    UWorld* World=UWorld::CreateWorld(EWorldType::Game,false);
+    TArray<AOVShip*> Ships={World->SpawnActor<AOVShip>(),World->SpawnActor<AOVShip>(),World->SpawnActor<AOVShip>()};
+    UOVCombatSubsystem* Combat=World->GetSubsystem<UOVCombatSubsystem>();
+    const bool Started=OVCalibration::Start(*Combat,Ships,1);
+    TestTrue(TEXT("Calibration combat starts"),Started);
+    for (const FHull& RawHull : Hulls)
+    {
+        const FHull& Hull = *FindHull(FName(RawHull.Key));
+        const auto Candidates = OVMarkedSlots::GetCandidates(FName(Hull.Key));
+        if (Candidates.IsEmpty()) continue;
+        auto* Layout = MakeLayout(GetTransientPackage(), Hull);
+        if (!TestNotNull(TEXT("Marked layout validates"), Layout)) continue;
+        TSet<FName> Used;
+        for (int32 I = 0; I < Hull.MountCount; ++I)
+        {
+            const auto& Mount = Layout->WeaponMounts[I];
+            const auto* Found = Candidates.FindByPredicate([&](const FOVMarkedSlotCandidate& C) {
+                return C.Kind != EOVMarkedSlotKind::Interception && C.LocalPosition.Equals(Mount.LocalPosition, .001);
+            });
+            if (!TestNotNull(TEXT("Equipped weapon uses a marked attack slot"), Found)) continue;
+            TestFalse(TEXT("Two equipped weapons cannot share a marked slot"), Used.Contains(Found->SlotId));
+            TestEqual(TEXT("Authored slot ID stays separate from weapon ID"),Mount.AuthoredSlotId,Found->SlotId);
+            Used.Add(Found->SlotId);
+            TestTrue(TEXT("Mount orientation follows source surface"), Mount.LocalSurfaceNormal.Equals(Found->LocalNormal, .001));
+            if (Hull.Mounts[I].Weapon == 6) TestTrue(TEXT("Spinal weapon occupies dedicated slot"), Found->Kind == EOVMarkedSlotKind::Dedicated);
+            if (Found->Kind == EOVMarkedSlotKind::Dedicated)
+                TestEqual(TEXT("Dedicated slot has an explicit profile constraint"),Mount.RequiredProfileId,ProfileId(Weapons[Hull.Mounts[I].Weapon],Hull.Mounts[I].Tier));
+        }
+        // Each hull gets a fresh combat registration; RegisterShip intentionally
+        // does not replace an existing ship's equipped runtime state.
+        Combat->Ships.RemoveAll([&Ships](const FOVCombatShipState& S){return S.Ship==Ships[0];});
+        if (Started && TestTrue(TEXT("Marked ship configures"), OVCalibration::ConfigureHull(*Combat,*Ships[0],FName(Hull.Key),true,FVector::ZeroVector,OVCalibration::GetHullGeometryScale(FName(Hull.Key)))))
+        {
+            TSet<FName> UsedPD;
+            for (const auto& Mount : Ships[0]->Systems->Layout->WeaponMounts)
+            {
+                if (!Mount.RequiredProfileId.IsNone())
+                {
+                    TestTrue(TEXT("Dedicated slot retains its designated weapon"),Combat->SetWeaponProfile(Ships[0],Mount.WeaponId,Mount.RequiredProfileId));
+                    const auto* Other=Combat->Settings->Weapons.FindByPredicate([&](const FOVWeaponProfile& P){
+                        return P.Family==Mount.Type && P.Tier==FMath::RoundToInt(Mount.Tier) && P.ProfileId!=Mount.RequiredProfileId;
+                    });
+                    if (Other) TestFalse(TEXT("Dedicated slot rejects another same-tier family profile"),Combat->SetWeaponProfile(Ships[0],Mount.WeaponId,Other->ProfileId));
+                }
+                if (Mount.Type != EOVWeaponType::Interception) continue;
+                const auto* Found=Candidates.FindByPredicate([&](const FOVMarkedSlotCandidate& C) {
+                    return C.Kind == EOVMarkedSlotKind::Interception && C.LocalPosition.Equals(Mount.LocalPosition,.001);
+                });
+                if (!TestNotNull(TEXT("PD uses a marked interception slot"),Found)) continue;
+                TestEqual(TEXT("PD records marked slot identity"),Mount.AuthoredSlotId,Found->SlotId);
+                TestFalse(TEXT("PD slots are independently equipped"),UsedPD.Contains(Found->SlotId));
+                UsedPD.Add(Found->SlotId);
+            }
+            TestEqual(TEXT("All marked PD slots have one actual mount"),UsedPD.Num(),Hull.PD);
+        }
+    }
+    World->DestroyWorld(false);
+    CVarOVMarkedMounts->Set(Previous,ECVF_SetByConsole);
+    return true;
+}
+
 IMPLEMENT_SIMPLE_AUTOMATION_TEST(FOVVolumeRatioTrial,
     "OrbitalVanguard.Revision.VolumeRatioTrial",
     EAutomationTestFlags::EditorContext | EAutomationTestFlags::EngineFilter)
@@ -343,19 +498,29 @@ bool FOVVolumeRatioTrial::RunTest(const FString&)
     auto* Combat=World->GetSubsystem<UOVCombatSubsystem>();
     if(TestTrue(TEXT("F6 scene starts"),OVCalibration::Start(*Combat,Ships,1)))
     {
-        auto BoxVolume=[](const AOVShip* Ship) {
-            const FVector E=Ship->Systems->Layout->LocalHalfExtent*Ship->GetActorScale3D();
-            return E.X*E.Y*E.Z*8.;
+        auto Length=[](const AOVShip* Ship) {
+            const UStaticMesh* Mesh=Ship->Hull->GetStaticMesh();
+            return Mesh ? 2.*Mesh->GetBounds().BoxExtent.X*Ship->Hull->GetRelativeScale3D().X*Ship->GetActorScale3D().X : 0.;
         };
-        const double Base=BoxVolume(Ships[1]);
-        TestTrue(TEXT("Small reference volume is positive"),Base>0);
-        TestTrue(TEXT("F6 vector and bastion are four times reference box volume"),
-            FMath::IsNearlyEqual(BoxVolume(Ships[0])/Base,4.,.001)&&FMath::IsNearlyEqual(BoxVolume(Ships[2])/Base,4.,.001));
-        const FName Ids[]={TEXT("carrier"),TEXT("dreadnought"),TEXT("transport")};
-        const double Ratios[]={16.,32.,4.};
-        for(int32 I=0;I<3;++I)
+        const double Base=Length(Ships[1]);
+        TestTrue(TEXT("Small reference mesh length is positive"),Base>0);
+        TestTrue(TEXT("F6 medium hulls are four times reference mesh length"),
+            FMath::IsNearlyEqual(Length(Ships[0])/Base,4.,.001)&&FMath::IsNearlyEqual(Length(Ships[2])/Base,4.,.001));
+        const FName Ids[]={TEXT("frigate"),TEXT("carrier"),TEXT("dreadnought"),TEXT("battlecarrier"),TEXT("transport")};
+        const double Ratios[]={1.,16.,32.,32.,4.};
+        for(int32 I=0;I<UE_ARRAY_COUNT(Ids);++I)
             if(TestTrue(TEXT("Hull config succeeds"),OVCalibration::ConfigureHull(*Combat,*Ships[0],Ids[I],true,FVector::ZeroVector,OVCalibration::GetHullGeometryScale(Ids[I]))))
-                TestTrue(FString::Printf(TEXT("%s requested collision box ratio"),*Ids[I].ToString()),FMath::IsNearlyEqual(BoxVolume(Ships[0])/Base,Ratios[I],.001));
+                TestTrue(FString::Printf(TEXT("%s requested source mesh length ratio"),*Ids[I].ToString()),FMath::IsNearlyEqual(Length(Ships[0])/Base,Ratios[I],.001));
+        constexpr double ClassRatios[]={1.,4.,16.,32.};
+        for (FName HullId : OVCalibration::GetHullIds())
+        {
+            if (HullId == TEXT("assault")) continue;
+            FOVHullMetadata Meta;
+            if (!TestTrue(TEXT("Hull metadata exists"),OVCalibration::GetHullMetadata(HullId,Meta))) continue;
+            const int32 Class=HullId == TEXT("transport") ? 2 : Meta.SizeClass;
+            if (TestTrue(TEXT("Actual source hull configures"),OVCalibration::ConfigureHull(*Combat,*Ships[0],HullId,true,FVector::ZeroVector,OVCalibration::GetHullGeometryScale(HullId))))
+                TestTrue(FString::Printf(TEXT("%s actual length ratio"),*HullId.ToString()),Class>=1&&Class<=4&&FMath::IsNearlyEqual(Length(Ships[0])/Base,ClassRatios[Class-1],.001));
+        }
     }
     World->DestroyWorld(false);return true;
 }

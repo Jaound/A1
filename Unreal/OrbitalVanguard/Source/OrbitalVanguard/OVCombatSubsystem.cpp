@@ -254,6 +254,7 @@ bool UOVCombatSubsystem::SetWeaponProfile(AOVShip* Ship, FName MountId, FName Pr
     const FOVWeaponProfile* Profile = Settings->Weapons.FindByPredicate(
         [ProfileId](const FOVWeaponProfile& P) { return P.ProfileId == ProfileId; });
     if (!Def || !Profile || MountIndex == INDEX_NONE || Profile->Family != Def->Type) return false;
+    if (!Def->RequiredProfileId.IsNone() && Def->RequiredProfileId != ProfileId) return false;
     // Changing kind is supported. Re-equipping a different tier requires a new authored
     // loadout, keeping the existing storage-explosion tier data authoritative.
     if (Profile->Tier > Ships[Index].WeaponTierCap || Profile->Tier != FMath::RoundToInt(Def->Tier)) return false;

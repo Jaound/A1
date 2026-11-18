@@ -55,6 +55,11 @@ struct ORBITALVANGUARD_API FOVWeaponMountDefinition
 {
     GENERATED_BODY()
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Weapon") FName WeaponId;
+    // The slot is distinct from the equipped weapon. Empty for legacy layouts.
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Weapon") FName AuthoredSlotId;
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Weapon") FName AuthoredSlotPurpose;
+    // Optional exact profile constraint for a dedicated slot; None is unrestricted.
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Weapon") FName RequiredProfileId;
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Weapon") EOVWeaponType Type = EOVWeaponType::Cannon;
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Weapon") float Tier = 1;
     // Optional profile-specific explosion coefficient. Zero preserves legacy tier behavior.

@@ -174,6 +174,8 @@ void UOVPointDefenseSubsystem::Step(float GameDelta)
                 || !FMath::IsFinite(Mount.Profile.Range) || Mount.Profile.Range <= 0) continue;
             const FVector Origin = Ship->GetActorTransform().TransformPosition(Mount.LocalPosition);
             const float Range = Mount.Profile.Range * State.RangeScale;
+            const FOVWeaponMountDefinition* MountDef = Mount.bLayoutMount ?
+                Ship->Systems->Layout->WeaponMounts.FindByPredicate([&Mount](const FOVWeaponMountDefinition& Def) { return Def.WeaponId == Mount.MountId; }) : nullptr;
             GatherTargets(GetWorld(), Targets); // Re-read survivors for each independent mount opportunity.
             const FTarget* Best = nullptr;
             int32 BestRank = MAX_int32;
@@ -181,7 +183,12 @@ void UOVPointDefenseSubsystem::Step(float GameDelta)
             for (const FTarget& Target : Targets)
             {
                 if (Target.Faction < 0 || Target.Faction == Ship->Systems->FactionId) continue;
-                const FRotator CandidateAim = Ship->GetActorQuat().UnrotateVector(Target.Position - Origin).Rotation();
+                const FVector LocalDirection = Ship->GetActorQuat().UnrotateVector(Target.Position - Origin).GetSafeNormal();
+                // Explicitly marked mounts cannot shoot through their own hull.
+                // Unmarked legacy PD retains its former unrestricted behavior.
+                if (MountDef && !MountDef->LocalSurfaceNormal.IsNearlyZero() &&
+                    FVector::DotProduct(MountDef->LocalSurfaceNormal.GetSafeNormal(), LocalDirection) < -FMath::Sin(FMath::DegreesToRadians(15.0))) continue;
+                const FRotator CandidateAim = LocalDirection.Rotation();
                 const FVector CandidateMuzzle = Ship->GetActorTransform().TransformPosition(OVWeaponGeometry::MuzzleLocal(
                     Mount.LocalPosition, CandidateAim, OVWeaponGeometry::BarrelLength(Ship->Systems->Layout->LocalHalfExtent,
                         Ship->Systems->Layout->WeaponTier, true), false));

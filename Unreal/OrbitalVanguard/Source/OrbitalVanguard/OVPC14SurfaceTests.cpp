@@ -339,7 +339,14 @@ bool FOVPC14MountAdapter::RunTest(const FString&)
     TestTrue(TEXT("Actual calibration range starts"),Started);
     if(Started)
     {
-        AOVShip* Ship=Ships[1];Ship->RefreshWeaponVisuals();
+        AOVShip* Ship=Ships[1];
+        // Exercise compatibility with the historical unmarked layout: marked
+        // mounts now sit directly on the hull and do not need these adapters.
+        Ship->Systems->Layout->WeaponMounts[0].LocalPosition=FVector(-46.6666667,0,42);
+        Ship->Systems->Layout->WeaponMounts[1].LocalPosition=FVector(46.6666667,0,-42);
+        Ship->Systems->Layout->WeaponMounts[0].LocalSurfaceNormal=FVector::ZeroVector;
+        Ship->Systems->Layout->WeaponMounts[1].LocalSurfaceNormal=FVector::ZeroVector;
+        Ship->RefreshWeaponVisuals();
         const FName Gun=Ship->Systems->Layout->WeaponMounts[0].WeaponId;
         const FVector MuzzleBefore=Ship->GetWeaponMuzzleWorld(Gun);
         const float HPBefore=Ship->Systems->HullHP;

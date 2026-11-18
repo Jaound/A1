@@ -51,12 +51,16 @@ bool UOVMissionSubsystem::StartMission(AOVController* Controller,EOVMissionMode 
     while(Controller->Ships.Num()<6)Controller->Ships.Add(GetWorld()->SpawnActor<AOVShip>());
     const FName Hulls[]={TEXT("carrier"),TEXT("bastion"),TEXT("assault")};
     const TCHAR* Names[]={TEXT("항공모함"),TEXT("바스티온 호위"),TEXT("강습선")};
+    // Keep the boarding fixture inside its original launch range while
+    // vertically separating the newly larger carriers' collision boxes.
     const double Half=FMath::Clamp(double(Settings.CarrierSeparation)*.5,10000.,12000.);
+    const double CarrierOffsetZ=30.0*OVCalibration::GetHullGeometryScale(TEXT("carrier"))+200.;
     for(int32 Faction=0;Faction<2;++Faction)for(int32 Index=0;Index<3;++Index)
     {
         AOVShip* Ship=Controller->Ships[Faction*3+Index];
         const double Side=Faction==0?-1.:1.;
-        const FVector Position(Side*(Half+(Index==0?0:Index==1?7000:12000)),Index==1?14000:Index==2?-12000:0,2000);
+        const FVector Position(Side*(Half+(Index==0?0:Index==1?7000:12000)),Index==1?14000:Index==2?-12000:0,
+            2000+(Index==0?Side*CarrierOffsetZ:0));
         if(!OVCalibration::ConfigureHull(*Combat,*Ship,Hulls[Index],Faction==0,Position,OVCalibration::GetHullGeometryScale(Hulls[Index])))
         { bStarting=false;Disable();Status=TEXT("통합 임무 생성 실패: 후보 함체/배치 확인");return false; }
         Ship->Systems->Layout->LayoutVersion=FName(*FString::Printf(TEXT("Interior_%s_D116_v1"),*Hulls[Index].ToString()));
@@ -469,6 +473,23 @@ struct FRange
     }
     ~FRange(){World->DestroyWorld(false);}
 };
+}
+
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(FOVMissionResizedCarrierClearance,"OrbitalVanguard.Mission.ResizedCarrierClearance",EAutomationTestFlags::EditorContext|EAutomationTestFlags::EngineFilter)
+bool FOVMissionResizedCarrierClearance::RunTest(const FString&)
+{
+    OVMissionTest::FRange R;
+    auto Check=[this,&R](AOVShip* A,AOVShip* B) {
+        const FVector EA=A->Systems->Layout->LocalHalfExtent*A->GetActorScale3D();
+        const FVector EB=B->Systems->Layout->LocalHalfExtent*B->GetActorScale3D();
+        const FBox BoxA(A->GetActorLocation()-EA,A->GetActorLocation()+EA);
+        const FBox BoxB(B->GetActorLocation()-EB,B->GetActorLocation()+EB);
+        TestFalse(TEXT("Opposing carrier boxes do not overlap"),BoxA.Intersect(BoxB));
+        TestTrue(TEXT("Carrier centers are within existing pod range"),FVector::Distance(A->GetActorLocation(),B->GetActorLocation())<=R.PC->Transport->Settings.PodLaunchRange);
+    };
+    if(TestTrue(TEXT("Integrated mission starts"),R.Mission->StartMission(R.PC,EOVMissionMode::Attack))) Check(R.Mission->Origin,R.Mission->Objective);
+    if(TestTrue(TEXT("Mixed 2C scene starts"),R.PC->StartPhase2CRange(5))) Check(R.PC->Ships[0],R.PC->Ships[2]);
+    return true;
 }
 
 IMPLEMENT_SIMPLE_AUTOMATION_TEST(FOVMissionSetup,"OrbitalVanguard.Mission.RealRosterShieldAndTransportGate",EAutomationTestFlags::EditorContext|EAutomationTestFlags::EngineFilter)

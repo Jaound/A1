@@ -1,0 +1,495 @@
+{
+  "scope": "기본 선체 OBB(반경 175/75/30) 안에 반지름 18인 무장 피격 구가 완전히 포함되는 확정 사례. 실제 탄도/차폐 검사는 아님.",
+  "count": 95,
+  "by_hull": {
+    "dreadnought": 19,
+    "bastion": 7,
+    "air_defense": 11,
+    "vector": 2,
+    "cruiser": 7,
+    "missile_ship": 11,
+    "battleship": 11,
+    "mining": 2,
+    "corvette": 2,
+    "carrier": 6,
+    "battlecarrier": 13,
+    "frigate": 4
+  },
+  "cases": [
+    {
+      "hull": "dreadnought",
+      "slot": "top_yellow_0",
+      "minimum_box_clearance_cm": 25.8458
+    },
+    {
+      "hull": "dreadnought",
+      "slot": "top_yellow_1",
+      "minimum_box_clearance_cm": 26.0391
+    },
+    {
+      "hull": "dreadnought",
+      "slot": "top_yellow_2",
+      "minimum_box_clearance_cm": 26.0616
+    },
+    {
+      "hull": "dreadnought",
+      "slot": "top_yellow_3",
+      "minimum_box_clearance_cm": 25.8359
+    },
+    {
+      "hull": "dreadnought",
+      "slot": "top_blue_0",
+      "minimum_box_clearance_cm": 25.8515
+    },
+    {
+      "hull": "dreadnought",
+      "slot": "top_blue_1",
+      "minimum_box_clearance_cm": 25.9192
+    },
+    {
+      "hull": "dreadnought",
+      "slot": "top_blue_2",
+      "minimum_box_clearance_cm": 25.919
+    },
+    {
+      "hull": "dreadnought",
+      "slot": "top_blue_3",
+      "minimum_box_clearance_cm": 25.8562
+    },
+    {
+      "hull": "dreadnought",
+      "slot": "top_red_0",
+      "minimum_box_clearance_cm": 27.1232
+    },
+    {
+      "hull": "dreadnought",
+      "slot": "top_red_1",
+      "minimum_box_clearance_cm": 27.1586
+    },
+    {
+      "hull": "dreadnought",
+      "slot": "top_red_2",
+      "minimum_box_clearance_cm": 23.6716
+    },
+    {
+      "hull": "dreadnought",
+      "slot": "left_yellow_0",
+      "minimum_box_clearance_cm": 24.7733
+    },
+    {
+      "hull": "dreadnought",
+      "slot": "left_blue_0",
+      "minimum_box_clearance_cm": 25.6693
+    },
+    {
+      "hull": "dreadnought",
+      "slot": "left_blue_1",
+      "minimum_box_clearance_cm": 25.7191
+    },
+    {
+      "hull": "dreadnought",
+      "slot": "left_blue_2",
+      "minimum_box_clearance_cm": 25.3707
+    },
+    {
+      "hull": "dreadnought",
+      "slot": "right_yellow_0",
+      "minimum_box_clearance_cm": 26.1671
+    },
+    {
+      "hull": "dreadnought",
+      "slot": "right_blue_0",
+      "minimum_box_clearance_cm": 26.1671
+    },
+    {
+      "hull": "dreadnought",
+      "slot": "right_blue_1",
+      "minimum_box_clearance_cm": 24.8729
+    },
+    {
+      "hull": "dreadnought",
+      "slot": "right_blue_2",
+      "minimum_box_clearance_cm": 23.2302
+    },
+    {
+      "hull": "bastion",
+      "slot": "top_yellow_0",
+      "minimum_box_clearance_cm": 24.2836
+    },
+    {
+      "hull": "bastion",
+      "slot": "top_yellow_1",
+      "minimum_box_clearance_cm": 24.2714
+    },
+    {
+      "hull": "bastion",
+      "slot": "top_blue_0",
+      "minimum_box_clearance_cm": 23.4234
+    },
+    {
+      "hull": "bastion",
+      "slot": "top_blue_1",
+      "minimum_box_clearance_cm": 19.357
+    },
+    {
+      "hull": "bastion",
+      "slot": "top_blue_2",
+      "minimum_box_clearance_cm": 21.5167
+    },
+    {
+      "hull": "bastion",
+      "slot": "left_blue_0",
+      "minimum_box_clearance_cm": 21.1893
+    },
+    {
+      "hull": "bastion",
+      "slot": "right_blue_0",
+      "minimum_box_clearance_cm": 21.936
+    },
+    {
+      "hull": "air_defense",
+      "slot": "top_yellow_0",
+      "minimum_box_clearance_cm": 29.5049
+    },
+    {
+      "hull": "air_defense",
+      "slot": "top_yellow_1",
+      "minimum_box_clearance_cm": 29.5721
+    },
+    {
+      "hull": "air_defense",
+      "slot": "top_yellow_2",
+      "minimum_box_clearance_cm": 29.4081
+    },
+    {
+      "hull": "air_defense",
+      "slot": "top_yellow_3",
+      "minimum_box_clearance_cm": 29.2298
+    },
+    {
+      "hull": "air_defense",
+      "slot": "top_yellow_4",
+      "minimum_box_clearance_cm": 29.3796
+    },
+    {
+      "hull": "air_defense",
+      "slot": "top_yellow_5",
+      "minimum_box_clearance_cm": 29.4493
+    },
+    {
+      "hull": "air_defense",
+      "slot": "top_yellow_6",
+      "minimum_box_clearance_cm": 29.5431
+    },
+    {
+      "hull": "air_defense",
+      "slot": "top_yellow_7",
+      "minimum_box_clearance_cm": 29.5067
+    },
+    {
+      "hull": "air_defense",
+      "slot": "top_blue_0",
+      "minimum_box_clearance_cm": 22.177
+    },
+    {
+      "hull": "air_defense",
+      "slot": "left_yellow_0",
+      "minimum_box_clearance_cm": 20.4952
+    },
+    {
+      "hull": "air_defense",
+      "slot": "right_yellow_0",
+      "minimum_box_clearance_cm": 20.5367
+    },
+    {
+      "hull": "vector",
+      "slot": "top_yellow_0",
+      "minimum_box_clearance_cm": 28.352
+    },
+    {
+      "hull": "vector",
+      "slot": "top_blue_0",
+      "minimum_box_clearance_cm": 28.0718
+    },
+    {
+      "hull": "cruiser",
+      "slot": "top_yellow_0",
+      "minimum_box_clearance_cm": 25.0211
+    },
+    {
+      "hull": "cruiser",
+      "slot": "top_yellow_1",
+      "minimum_box_clearance_cm": 24.8458
+    },
+    {
+      "hull": "cruiser",
+      "slot": "top_blue_0",
+      "minimum_box_clearance_cm": 29.2818
+    },
+    {
+      "hull": "cruiser",
+      "slot": "top_blue_1",
+      "minimum_box_clearance_cm": 25.8049
+    },
+    {
+      "hull": "cruiser",
+      "slot": "top_blue_2",
+      "minimum_box_clearance_cm": 24.2002
+    },
+    {
+      "hull": "cruiser",
+      "slot": "left_blue_0",
+      "minimum_box_clearance_cm": 20.8333
+    },
+    {
+      "hull": "cruiser",
+      "slot": "right_blue_0",
+      "minimum_box_clearance_cm": 22.2925
+    },
+    {
+      "hull": "missile_ship",
+      "slot": "top_yellow_0",
+      "minimum_box_clearance_cm": 28.4443
+    },
+    {
+      "hull": "missile_ship",
+      "slot": "top_yellow_1",
+      "minimum_box_clearance_cm": 23.6414
+    },
+    {
+      "hull": "missile_ship",
+      "slot": "top_yellow_2",
+      "minimum_box_clearance_cm": 28.399
+    },
+    {
+      "hull": "missile_ship",
+      "slot": "top_blue_0",
+      "minimum_box_clearance_cm": 23.4217
+    },
+    {
+      "hull": "missile_ship",
+      "slot": "top_blue_1",
+      "minimum_box_clearance_cm": 23.4062
+    },
+    {
+      "hull": "missile_ship",
+      "slot": "top_red_0",
+      "minimum_box_clearance_cm": 29.2161
+    },
+    {
+      "hull": "missile_ship",
+      "slot": "top_red_1",
+      "minimum_box_clearance_cm": 29.3894
+    },
+    {
+      "hull": "missile_ship",
+      "slot": "top_red_2",
+      "minimum_box_clearance_cm": 28.9187
+    },
+    {
+      "hull": "missile_ship",
+      "slot": "top_red_3",
+      "minimum_box_clearance_cm": 29.1881
+    },
+    {
+      "hull": "missile_ship",
+      "slot": "top_red_4",
+      "minimum_box_clearance_cm": 29.0323
+    },
+    {
+      "hull": "missile_ship",
+      "slot": "top_red_5",
+      "minimum_box_clearance_cm": 29.1166
+    },
+    {
+      "hull": "battleship",
+      "slot": "top_yellow_0",
+      "minimum_box_clearance_cm": 25.7133
+    },
+    {
+      "hull": "battleship",
+      "slot": "top_blue_0",
+      "minimum_box_clearance_cm": 29.2231
+    },
+    {
+      "hull": "battleship",
+      "slot": "top_blue_1",
+      "minimum_box_clearance_cm": 27.6973
+    },
+    {
+      "hull": "battleship",
+      "slot": "top_blue_2",
+      "minimum_box_clearance_cm": 24.2626
+    },
+    {
+      "hull": "battleship",
+      "slot": "top_blue_3",
+      "minimum_box_clearance_cm": 24.6889
+    },
+    {
+      "hull": "battleship",
+      "slot": "left_yellow_0",
+      "minimum_box_clearance_cm": 24.2258
+    },
+    {
+      "hull": "battleship",
+      "slot": "left_blue_0",
+      "minimum_box_clearance_cm": 24.8729
+    },
+    {
+      "hull": "battleship",
+      "slot": "left_blue_1",
+      "minimum_box_clearance_cm": 23.2302
+    },
+    {
+      "hull": "battleship",
+      "slot": "right_yellow_0",
+      "minimum_box_clearance_cm": 24.9724
+    },
+    {
+      "hull": "battleship",
+      "slot": "right_blue_0",
+      "minimum_box_clearance_cm": 25.2213
+    },
+    {
+      "hull": "battleship",
+      "slot": "right_blue_1",
+      "minimum_box_clearance_cm": 24.2756
+    },
+    {
+      "hull": "mining",
+      "slot": "left_yellow_0",
+      "minimum_box_clearance_cm": 27.9085
+    },
+    {
+      "hull": "mining",
+      "slot": "right_yellow_0",
+      "minimum_box_clearance_cm": 28.0601
+    },
+    {
+      "hull": "corvette",
+      "slot": "top_blue_0",
+      "minimum_box_clearance_cm": 24.8269
+    },
+    {
+      "hull": "corvette",
+      "slot": "top_blue_1",
+      "minimum_box_clearance_cm": 29.6924
+    },
+    {
+      "hull": "carrier",
+      "slot": "top_yellow_0",
+      "minimum_box_clearance_cm": 22.6266
+    },
+    {
+      "hull": "carrier",
+      "slot": "top_yellow_1",
+      "minimum_box_clearance_cm": 22.9486
+    },
+    {
+      "hull": "carrier",
+      "slot": "top_yellow_2",
+      "minimum_box_clearance_cm": 22.534
+    },
+    {
+      "hull": "carrier",
+      "slot": "top_yellow_3",
+      "minimum_box_clearance_cm": 22.9212
+    },
+    {
+      "hull": "carrier",
+      "slot": "top_blue_0",
+      "minimum_box_clearance_cm": 21.9989
+    },
+    {
+      "hull": "carrier",
+      "slot": "top_blue_1",
+      "minimum_box_clearance_cm": 22.3447
+    },
+    {
+      "hull": "battlecarrier",
+      "slot": "top_yellow_0",
+      "minimum_box_clearance_cm": 28.1206
+    },
+    {
+      "hull": "battlecarrier",
+      "slot": "top_yellow_1",
+      "minimum_box_clearance_cm": 25.4072
+    },
+    {
+      "hull": "battlecarrier",
+      "slot": "top_yellow_2",
+      "minimum_box_clearance_cm": 25.4164
+    },
+    {
+      "hull": "battlecarrier",
+      "slot": "top_yellow_3",
+      "minimum_box_clearance_cm": 28.5446
+    },
+    {
+      "hull": "battlecarrier",
+      "slot": "top_blue_0",
+      "minimum_box_clearance_cm": 27.3241
+    },
+    {
+      "hull": "battlecarrier",
+      "slot": "top_blue_1",
+      "minimum_box_clearance_cm": 25.0723
+    },
+    {
+      "hull": "battlecarrier",
+      "slot": "top_blue_2",
+      "minimum_box_clearance_cm": 27.5144
+    },
+    {
+      "hull": "battlecarrier",
+      "slot": "top_red_0",
+      "minimum_box_clearance_cm": 24.1812
+    },
+    {
+      "hull": "battlecarrier",
+      "slot": "top_red_1",
+      "minimum_box_clearance_cm": 26.9388
+    },
+    {
+      "hull": "battlecarrier",
+      "slot": "left_yellow_0",
+      "minimum_box_clearance_cm": 20.4637
+    },
+    {
+      "hull": "battlecarrier",
+      "slot": "left_blue_0",
+      "minimum_box_clearance_cm": 20.9896
+    },
+    {
+      "hull": "battlecarrier",
+      "slot": "right_yellow_0",
+      "minimum_box_clearance_cm": 19.8326
+    },
+    {
+      "hull": "battlecarrier",
+      "slot": "right_blue_0",
+      "minimum_box_clearance_cm": 21.4454
+    },
+    {
+      "hull": "frigate",
+      "slot": "top_yellow_0",
+      "minimum_box_clearance_cm": 23.0339
+    },
+    {
+      "hull": "frigate",
+      "slot": "top_yellow_1",
+      "minimum_box_clearance_cm": 23.0322
+    },
+    {
+      "hull": "frigate",
+      "slot": "left_blue_0",
+      "minimum_box_clearance_cm": 23.3731
+    },
+    {
+      "hull": "frigate",
+      "slot": "right_blue_0",
+      "minimum_box_clearance_cm": 22.2765
+    }
+  ]
+}

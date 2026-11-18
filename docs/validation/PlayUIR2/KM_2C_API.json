@@ -1,0 +1,260 @@
+{
+  "kind": "Editor PIE API and rendered frames; not physical mouse/keyboard input",
+  "planning": "035a4fba81d26f1d67daa1f44bded0f7e8d3a434",
+  "seed": 260112,
+  "scope": "Play quality and 2C, independent of existing regression totals",
+  "physical_input": "not performed by this script",
+  "checks": [
+    {
+      "id": "2C-EDITOR-MAP",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "2C-REAL-PIE",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "2C-SCENE-REJECT",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "2C-SCENE-0",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "2C-PD-MOUNTS-0",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "2C-SCENE-1",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "2C-PD-MOUNTS-1",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "2C-SCENE-2",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "2C-PD-MOUNTS-2",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "2C-SCENE-3",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "2C-PD-MOUNTS-3",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "2C-SCENE-4",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "2C-PD-MOUNTS-4",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "2C-SCENE-5",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "2C-PD-MOUNTS-5",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "2C-SHUTTLE-CLASS",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "2C-PD-CLOCK-123",
+      "passed": true,
+      "detail": "[{'time': 18.0, 'shots': 192, 'hits': 175, 'flying': 12, 'pd': [42, 22, 5], 'aircraft_fire': [0, 0, 0], 'aircraft': {}, 'bolts': 0, 'pods': {}, 'people': {}, 'entries': 0, 'ship_hp': [13818.168, 21252.0, 130680.0], 'shields': [527.992, 6600.0, 44200.0]}, {'time': 18.0, 'shots': 192, 'hits': 175, 'flying': 12, 'pd': [42, 22, 5], 'aircraft_fire': [0, 0, 0], 'aircraft': {}, 'bolts': 0, 'pods': {}, 'people': {}, 'entries': 0, 'ship_hp': [13818.168, 21252.0, 130680.0], 'shields': [527.992, 6600.0, 44200.0]}, {'time': 18.0, 'shots': 192, 'hits': 175, 'flying': 12, 'pd': [42, 22, 5], 'aircraft_fire': [0, 0, 0], 'aircraft': {}, 'bolts': 0, 'pods': {}, 'people': {}, 'entries': 0, 'ship_hp': [13818.168, 21252.0, 130680.0], 'shields': [527.992, 6600.0, 44200.0]}]"
+    },
+    {
+      "id": "2C-PD-ACTUAL-MISSILES",
+      "passed": true,
+      "detail": "{'time': 18.0, 'shots': 192, 'hits': 175, 'flying': 12, 'pd': [42, 22, 5], 'aircraft_fire': [0, 0, 0], 'aircraft': {}, 'bolts': 0, 'pods': {}, 'people': {}, 'entries': 0, 'ship_hp': [13818.168, 21252.0, 130680.0], 'shields': [527.992, 6600.0, 44200.0]}"
+    },
+    {
+      "id": "2C-AIRDEFENSE-LIVE",
+      "passed": true,
+      "detail": "{'time': 18.0, 'shots': 172, 'hits': 126, 'flying': 12, 'pd': [153, 80, 34], 'aircraft_fire': [0, 0, 0], 'aircraft': {}, 'bolts': 0, 'pods': {}, 'people': {}, 'entries': 0, 'ship_hp': [19196.949, 25410.0, 130680.0], 'shields': [353.427, 8360.0, 45700.0]}"
+    },
+    {
+      "id": "2C-MIXED-CLOCK-123",
+      "passed": true,
+      "detail": "[{'time': 18.0, 'shots': 97, 'hits': 97, 'flying': 0, 'pd': [59, 11, 0], 'aircraft_fire': [390, 311, 7], 'aircraft': {'<OVAircraftState.SORTIE: 1>': 73, '<OVAircraftState.WRECKED: 5>': 7}, 'bolts': 24, 'pods': {}, 'people': {'<OVPassengerState.ABOARD: 0>': 5, '<OVPassengerState.INSIDE_TARGET: 2>': 5}, 'entries': 5, 'ship_hp': [134640.0, 10560.0, 133869.109], 'shields': [45720.0, 6336.0, 0.0]}, {'time': 18.0, 'shots': 97, 'hits': 97, 'flying': 0, 'pd': [59, 11, 0], 'aircraft_fire': [390, 311, 7], 'aircraft': {'<OVAircraftState.SORTIE: 1>': 73, '<OVAircraftState.WRECKED: 5>': 7}, 'bolts': 24, 'pods': {}, 'people': {'<OVPassengerState.ABOARD: 0>': 5, '<OVPassengerState.INSIDE_TARGET: 2>': 5}, 'entries': 5, 'ship_hp': [134640.0, 10560.0, 133869.109], 'shields': [45720.0, 6336.0, 0.0]}, {'time': 18.0, 'shots': 97, 'hits': 97, 'flying': 0, 'pd': [59, 11, 0], 'aircraft_fire': [390, 311, 7], 'aircraft': {'<OVAircraftState.SORTIE: 1>': 73, '<OVAircraftState.WRECKED: 5>': 7}, 'bolts': 24, 'pods': {}, 'people': {'<OVPassengerState.ABOARD: 0>': 5, '<OVPassengerState.INSIDE_TARGET: 2>': 5}, 'entries': 5, 'ship_hp': [134640.0, 10560.0, 133869.109], 'shields': [45720.0, 6336.0, 0.0]}]"
+    },
+    {
+      "id": "2C-MIXED-LIVE",
+      "passed": false,
+      "detail": "{'time': 18.0, 'shots': 97, 'hits': 97, 'flying': 0, 'pd': [59, 11, 0], 'aircraft_fire': [390, 311, 7], 'aircraft': {'<OVAircraftState.SORTIE: 1>': 73, '<OVAircraftState.WRECKED: 5>': 7}, 'bolts': 24, 'pods': {}, 'people': {'<OVPassengerState.ABOARD: 0>': 5, '<OVPassengerState.INSIDE_TARGET: 2>': 5}, 'entries': 5, 'ship_hp': [134640.0, 10560.0, 133869.109], 'shields': [45720.0, 6336.0, 0.0]}"
+    }
+  ],
+  "errors": [
+    "Traceback (most recent call last):\n  File \"ValidatePhase2C.py\", line 407, in tick\n  File \"ValidatePhase2C.py\", line 181, in run_scenes\n  File \"ValidatePhase2C.py\", line 46, in check\nAssertionError: 2C-MIXED-LIVE: {'time': 18.0, 'shots': 97, 'hits': 97, 'flying': 0, 'pd': [59, 11, 0], 'aircraft_fire': [390, 311, 7], 'aircraft': {'<OVAircraftState.SORTIE: 1>': 73, '<OVAircraftState.WRECKED: 5>': 7}, 'bolts': 24, 'pods': {}, 'people': {'<OVPassengerState.ABOARD: 0>': 5, '<OVPassengerState.INSIDE_TARGET: 2>': 5}, 'entries': 5, 'ship_hp': [134640.0, 10560.0, 133869.109], 'shields': [45720.0, 6336.0, 0.0]}\n"
+  ],
+  "performance": {
+    "gpu_utilization": "not measured",
+    "cpu_utilization": "not measured",
+    "interpretation": "API batch wall time is not rendered frame time or whole-machine CPU load",
+    "api_batches": [
+      {
+        "scenario": 0,
+        "ships": 3,
+        "aircraft_records": 0,
+        "game_seconds": 18,
+        "speed": 1,
+        "batch_game_seconds": 0.25,
+        "wall_seconds": 0.2753,
+        "simulation_wall_ms_per_game_second": 15.296
+      },
+      {
+        "scenario": 0,
+        "ships": 3,
+        "aircraft_records": 0,
+        "game_seconds": 18,
+        "speed": 2,
+        "batch_game_seconds": 0.25,
+        "wall_seconds": 0.2513,
+        "simulation_wall_ms_per_game_second": 13.96
+      },
+      {
+        "scenario": 0,
+        "ships": 3,
+        "aircraft_records": 0,
+        "game_seconds": 18,
+        "speed": 3,
+        "batch_game_seconds": 0.25,
+        "wall_seconds": 0.2534,
+        "simulation_wall_ms_per_game_second": 14.078
+      },
+      {
+        "scenario": 1,
+        "ships": 3,
+        "aircraft_records": 0,
+        "game_seconds": 18,
+        "speed": 1,
+        "batch_game_seconds": 0.25,
+        "wall_seconds": 0.2814,
+        "simulation_wall_ms_per_game_second": 15.633
+      },
+      {
+        "scenario": 5,
+        "ships": 3,
+        "aircraft_records": 80,
+        "game_seconds": 18,
+        "speed": 1,
+        "batch_game_seconds": 0.25,
+        "wall_seconds": 0.475,
+        "simulation_wall_ms_per_game_second": 26.388
+      },
+      {
+        "scenario": 5,
+        "ships": 3,
+        "aircraft_records": 80,
+        "game_seconds": 18,
+        "speed": 2,
+        "batch_game_seconds": 0.25,
+        "wall_seconds": 0.4675,
+        "simulation_wall_ms_per_game_second": 25.973
+      },
+      {
+        "scenario": 5,
+        "ships": 3,
+        "aircraft_records": 80,
+        "game_seconds": 18,
+        "speed": 3,
+        "batch_game_seconds": 0.25,
+        "wall_seconds": 0.4692,
+        "simulation_wall_ms_per_game_second": 26.068
+      }
+    ]
+  },
+  "escort_comparison": {
+    "ordinary": {
+      "time": 18.0,
+      "shots": 192,
+      "hits": 175,
+      "flying": 12,
+      "pd": [
+        42,
+        22,
+        5
+      ],
+      "aircraft_fire": [
+        0,
+        0,
+        0
+      ],
+      "aircraft": {},
+      "bolts": 0,
+      "pods": {},
+      "people": {},
+      "entries": 0,
+      "ship_hp": [
+        13818.168,
+        21252.0,
+        130680.0
+      ],
+      "shields": [
+        527.992,
+        6600.0,
+        44200.0
+      ]
+    },
+    "air_defense": {
+      "time": 18.0,
+      "shots": 172,
+      "hits": 126,
+      "flying": 12,
+      "pd": [
+        153,
+        80,
+        34
+      ],
+      "aircraft_fire": [
+        0,
+        0,
+        0
+      ],
+      "aircraft": {},
+      "bolts": 0,
+      "pods": {},
+      "people": {},
+      "entries": 0,
+      "ship_hp": [
+        19196.949,
+        25410.0,
+        130680.0
+      ],
+      "shields": [
+        353.427,
+        8360.0,
+        45700.0
+      ]
+    },
+    "conditions": "Same seed/missile attacker; different escort hull, mount count and explicit range role. Not equal-fleet balance proof."
+  },
+  "passed": false
+}

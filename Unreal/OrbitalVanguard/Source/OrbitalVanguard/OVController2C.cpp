@@ -72,7 +72,10 @@ bool AOVController::StartPhase2CRange(int32 Scenario)
  const bool CarrierScene=Scenario==2||Scenario==5;
  const bool ShuttleScene=Scenario==4||Scenario==5;
  const bool Close=Scenario>=3;
- const FVector Locations[]={FVector(Close?-10000:-24000,-3500,2000),FVector(Close?-14000:-26000,7000,2000),FVector(Close?10000:24000,0,2000)};
+ // Keep the mixed scenario within pod range while separating larger carriers
+ // vertically so their collision boxes do not overlap at startup.
+ const double CarrierZ=CarrierScene&&Close?30.*OVCalibration::GetHullGeometryScale(TEXT("carrier"))+200.:0.;
+ const FVector Locations[]={FVector(Close?-10000:-24000,-3500,2000-CarrierZ),FVector(Close?-14000:-26000,7000,2000),FVector(Close?10000:24000,0,2000+CarrierZ)};
  const FName Keys[]={CarrierScene?FName(TEXT("carrier")):FName(TEXT("vector")),
   ShuttleScene?FName(TEXT("assault")):Scenario==1?FName(TEXT("air_defense")):FName(TEXT("vector")),
   Scenario<=1?FName(TEXT("missile_ship")):CarrierScene?FName(TEXT("carrier")):FName(TEXT("bastion"))};

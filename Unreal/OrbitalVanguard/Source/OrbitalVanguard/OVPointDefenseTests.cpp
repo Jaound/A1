@@ -81,6 +81,28 @@ struct FRange
 };
 }
 
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(FOVPDSideMountArc,"OrbitalVanguard.PointDefense.MarkedSideMountArc",EAutomationTestFlags::EditorContext|EAutomationTestFlags::EngineFilter)
+bool FOVPDSideMountArc::RunTest(const FString&)
+{
+    OVPDTest::FRange R;
+    auto* Layout=R.Escort->Systems->Layout.Get();
+    auto& Def=Layout->WeaponMounts.AddDefaulted_GetRef();
+    Def.WeaponId=TEXT("SidePD"); Def.Type=EOVWeaponType::Interception; Def.MaxHP=100;
+    Def.LocalPosition=FVector::ZeroVector; Def.LocalSurfaceNormal=FVector(0,1,0);
+    R.Escort->Systems->Initialize(Layout);
+    auto* Carrier=R.World->GetSubsystem<UOVCarrierSubsystem>(); Carrier->Reset(3104);
+    TestTrue(TEXT("Enemy carrier registers"),Carrier->RegisterCarrier(R.Source,1));
+    TestTrue(TEXT("Aircraft launch"),Carrier->Launch(R.Source)>0);
+    for(auto& Craft:Carrier->Aircraft){Craft.Position=R.Escort->GetActorLocation()+FVector(0,-3000,0);Craft.Shield=0;Craft.HP=1;Craft.Evasion=0;}
+    R.Register(); R.PD->Ships[0].Mounts[0].Profile.Range=50000;
+    R.Step(.1f);
+    TestEqual(TEXT("Hull blocks firing at opposite side"),R.PD->ShotCount,0);
+    for(auto& Craft:Carrier->Aircraft) Craft.Position=R.Escort->GetActorLocation()+FVector(0,3000,0);
+    R.Step(.1f);
+    TestTrue(TEXT("The same mount fires at a target on its outward side"),R.PD->ShotCount>0);
+    return true;
+}
+
 IMPLEMENT_SIMPLE_AUTOMATION_TEST(FOVPDAircraftWarning,"OrbitalVanguard.PointDefense.ActualAircraftKillsTriggerWarnings",EAutomationTestFlags::EditorContext|EAutomationTestFlags::EngineFilter)
 bool FOVPDAircraftWarning::RunTest(const FString&)
 {
