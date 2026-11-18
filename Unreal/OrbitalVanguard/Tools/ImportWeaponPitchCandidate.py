@@ -11,7 +11,10 @@ ident = os.environ.get('OV_WEAPON_PITCH_ID', '')
 run = os.environ.get('OV_WEAPON_PITCH_RUN', 'first')
 if not ident or not ident.replace('_', '').isalnum() or not run.replace('_', '').isalnum():
     raise ValueError('후보 ID와 실행 ID가 필요합니다')
-root = Path.home() / 'Documents/OrbitalVanguardAssets/Prepared/PlayUI_R2_WeaponPitchExports_v1' / ident
+version = os.environ.get('OV_WEAPON_PITCH_SOURCE_VERSION', 'v2')
+if not version.replace('_', '').isalnum():
+    raise ValueError('잘못된 FBX 버전')
+root = Path.home() / 'Documents/OrbitalVanguardAssets/Prepared' / ('PlayUI_R2_WeaponPitchExports_' + version) / ident
 dest = '/Game/Presentation/WeaponsPitchTrial/' + ident
 out = Path(unreal.Paths.convert_relative_path_to_full(unreal.Paths.project_saved_dir())) / 'Validation' / ('WeaponPitchImport_' + ident + '_' + run + '.json')
 if out.exists() or unreal.EditorAssetLibrary.does_directory_exist(dest):
@@ -31,6 +34,9 @@ try:
     source = json.loads((root / 'report.json').read_text(encoding='utf8'))
     verification = json.loads((root / 'reimport.json').read_text(encoding='utf8'))
     require(verification['passed'] and len(source['parts']) == 3, '세 부품 재반입 검사가 필요합니다')
+    require([p['generated_connector'] for p in source['parts']] == [False, False, True], '원본 부품과 시험 연결부 분류 오류')
+    require([p['name'] for p in source['parts']] == [ident + '_YawBody', ident + '_PitchTrial', ident + '_TrialPitchNeck'],
+            '포신 부품 순서 오류')
     original = unreal.EditorAssetLibrary.load_asset('/Game/Presentation/WeaponsFull/' + ident + '/M_Source')
     trial = unreal.EditorAssetLibrary.load_asset('/Engine/BasicShapes/BasicShapeMaterial.BasicShapeMaterial')
     require(isinstance(original, unreal.MaterialInterface) and trial, '원본 또는 시험 재질 없음')

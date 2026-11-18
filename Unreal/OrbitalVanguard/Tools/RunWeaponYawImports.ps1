@@ -22,7 +22,9 @@ foreach ($ident in $Ids) {
     $env:OV_WEAPON_YAW_RUN = $RunId
     Write-Output "START $ident"
     $arguments = @("`"$project`"", '-unattended', '-nullrhi', '-nosplash', "-ExecCmds=`"py $script`"", "-abslog=`"$log`"")
-    $process = Start-Process -FilePath $editor -ArgumentList $arguments -WindowStyle Hidden -Wait -PassThru
+    # Do not wait on unrelated child processes (such as a persistent trace server).
+    $process = Start-Process -FilePath $editor -ArgumentList $arguments -WindowStyle Hidden -PassThru
+    $process.WaitForExit()
     if (Test-Path -LiteralPath $result) {
         $record = Get-Content -LiteralPath $result -Raw -Encoding UTF8 | ConvertFrom-Json
         Write-Output "$ident exit=$($process.ExitCode) passed=$($record.passed) parts=$($record.parts.Count)"

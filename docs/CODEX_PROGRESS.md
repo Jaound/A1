@@ -1,5 +1,8 @@
 # 최신 진행: 원본 함재기 표시와 포탑 접합 작업
 
+**MB CIWS-B 재질 분류 오류 수정 (진행 중):** RG200까지 회전 후보 5/9종이 반입됐다([RG200](validation/PlayUIR2/MA_RG200_회전후보_UE반입.json)). 이후 플라즈마·MM24는 서로 다른 대상 폴더를 동시에 처리 중이며 두 프로세스가 끝나면 결과를 각각 확인한다. 첫 포신 UE 격리 시험 보고서는 `passed=true`였지만 FBX 내보내기에서 반복 변수 오류로 원본 몸체·포신까지 시험 연결부로 잘못 표시해 세 부품에 기본 재질이 연결됐다([오류 증거](validation/PlayUIR2/MB_CIWSB_재질분류_초기오류.json)); 이 결과는 실패로 취급하며 본 게임에 복사하지 않는다. `ExportWeaponPitchCandidate.py`를 수정하여 2차 FBX의 분류가 원본 몸체/원본 포신/시험 연결부 순서임을 확인하고 Blender 재반입했다([분류](validation/PlayUIR2/MB_CIWSB_포신FBX_v2.json), [재반입](validation/PlayUIR2/MB_CIWSB_포신FBX_v2_재반입.json)). `ImportWeaponPitchCandidate.py`에도 부품 이름·순서·분류 강제 검사를 추가했다. 2차 UE 반입은 원본 프로젝트를 건드리지 않는 별도 임시 프로젝트에서 실행 중이다. 다음: 2차의 원본 재질·LOD 재로드 검사 후 신규 폴더로만 본 프로젝트에 반입하고 실제 장착·포구·발사 및 화면 검증을 수행한다. 원본 9종의 게임 적용은 미완료다.
+
+
 **LZ CIWS-B 포신 분리 FBX 준비 (전장 미적용):** LY 후보의 원본 기반 몸체·포신과 별도 시험 연결부를 각 FBX로 분리하고 Blender에 다시 반입하여 3/3 삼각형·UV 레이어·파일 해시를 확인했다([결과](validation/PlayUIR2/LZ_CIWSB_포신후보_FBX검사.json)). 연결부는 원본이 아닌 시험 형상이다. `ImportWeaponPitchCandidate.py`는 `/Game/Presentation/WeaponsPitchTrial/ciws_beam_b`에 반입할 준비 코드이며 **아직 실행·검증하지 않았다.** 현재 회전 후보의 순차 UE 반입이 끝나면 새 에디터로 `$env:OV_WEAPON_PITCH_ID='ciws_beam_b'; $env:OV_WEAPON_PITCH_RUN='first'` 설정 후 `ImportWeaponPitchCandidate.py`를 실행하고 보고서·재로드·노멀·Boolean 신규 면 UV·포구 좌표를 검사한다. 실제 부품 조립과 사격 연동, 남은 8종의 포신 분리, 직접 화면·입력은 미완료다. 기존 사용자 UI 3파일은 보존한다.
 
 

@@ -51,7 +51,7 @@ for obj in parts:
                  'source_origin': list(transform.translation), 'triangles': len(mesh.loop_triangles),
                  'uv_layers': [layer.name for layer in mesh.uv_layers],
                  'materials': [mat.name if mat else None for mat in mesh.materials],
-                 'generated_connector': suffix == 'TrialPitchNeck'})
+                 'generated_connector': obj.name.endswith('_TrialPitchNeck')})
     bpy.data.objects.remove(export_obj, do_unlink=True)
     bpy.data.meshes.remove(mesh)
 after = sha(source)

@@ -1,0 +1,38 @@
+{
+  "id": "railgun_rg200",
+  "passed": true,
+  "scope": "원본 재질을 참조하는 회전 후보 격리 반입 및 시험 LOD. 전장 미적용.",
+  "parts": [
+    {
+      "asset": "/Game/Presentation/WeaponsYawTrial/railgun_rg200/SM_Base",
+      "fbx_sha256": "2e78c4cb45caddbf2bfc638cc75b9b9815bb974c2e710b9489d8b42c1c38c6e7",
+      "source_origin": [
+        1.7215403318405151,
+        0.0007683038711547852,
+        -0.4050000011920929
+      ],
+      "triangles": [
+        562798,
+        28140,
+        5628
+      ],
+      "source_material": "/Game/Presentation/WeaponsFull/railgun_rg200/M_Source.M_Source"
+    },
+    {
+      "asset": "/Game/Presentation/WeaponsYawTrial/railgun_rg200/SM_Yaw",
+      "fbx_sha256": "5841f56792529dbb1588cfc94067efebd5e01704cdd46ea2db1c4a907af73c49",
+      "source_origin": [
+        1.7215403318405151,
+        0.0007683038711547852,
+        -0.4050000011920929
+      ],
+      "triangles": [
+        1513234,
+        75662,
+        15132
+      ],
+      "source_material": "/Game/Presentation/WeaponsFull/railgun_rg200/M_Source.M_Source"
+    }
+  ],
+  "errors": []
+}

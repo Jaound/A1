@@ -1,0 +1,67 @@
+{
+  "scope": "포신 후보 FBX 3개. 연결부는 시험용 추가 형상. 전장 미적용.",
+  "source": "C:\\Users\\user\\Documents\\OrbitalVanguardAssets\\Prepared\\PlayUI_R2_WeaponPitchReliefCandidates_v5\\ciws_beam_b\\ciws_beam_b_PitchTrial.blend",
+  "source_before": "dec7f910be2a2058e9924a17f2b5f8fef2651199e043238d66866db49041c755",
+  "source_after": "dec7f910be2a2058e9924a17f2b5f8fef2651199e043238d66866db49041c755",
+  "parts": [
+    {
+      "name": "ciws_beam_b_YawBody",
+      "fbx": "C:\\Users\\user\\Documents\\OrbitalVanguardAssets\\Prepared\\PlayUI_R2_WeaponPitchExports_v2\\ciws_beam_b\\ciws_beam_b_YawBody.fbx",
+      "sha256": "618f783ffb6634b5ba68ef6e2c8825720e0177d5294c8ce8acd34377ffb8b618",
+      "source_origin": [
+        0.40920060873031616,
+        -0.0003419220447540283,
+        -0.4300000071525574
+      ],
+      "triangles": 576680,
+      "uv_layers": [
+        "UVMap"
+      ],
+      "materials": [
+        "Material.001",
+        "TrialCutCap",
+        "TrialPitchCutCap",
+        null
+      ],
+      "generated_connector": false
+    },
+    {
+      "name": "ciws_beam_b_PitchTrial",
+      "fbx": "C:\\Users\\user\\Documents\\OrbitalVanguardAssets\\Prepared\\PlayUI_R2_WeaponPitchExports_v2\\ciws_beam_b\\ciws_beam_b_PitchTrial.fbx",
+      "sha256": "6cbfe43e32904d197d9cf061d126fa19dcbe16690e8999c5b6190e521ba53fe5",
+      "source_origin": [
+        -0.30000001192092896,
+        0.0,
+        0.10000002384185791
+      ],
+      "triangles": 90510,
+      "uv_layers": [
+        "UVMap"
+      ],
+      "materials": [
+        "Material.001",
+        "TrialCutCap",
+        "TrialPitchCutCap"
+      ],
+      "generated_connector": false
+    },
+    {
+      "name": "ciws_beam_b_TrialPitchNeck",
+      "fbx": "C:\\Users\\user\\Documents\\OrbitalVanguardAssets\\Prepared\\PlayUI_R2_WeaponPitchExports_v2\\ciws_beam_b\\ciws_beam_b_TrialPitchNeck.fbx",
+      "sha256": "a1746187961736e477cff2aabf503dbfa988a72a908a56fb67426034175e71ba",
+      "source_origin": [
+        -0.23000001907348633,
+        0.0,
+        0.10000002384185791
+      ],
+      "triangles": 188,
+      "uv_layers": [
+        "UVMap"
+      ],
+      "materials": [
+        "TrialPitchNeckMaterial"
+      ],
+      "generated_connector": true
+    }
+  ]
+}
