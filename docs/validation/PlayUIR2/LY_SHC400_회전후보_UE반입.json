@@ -1,0 +1,38 @@
+{
+  "id": "heavy_cannon_shc400",
+  "passed": true,
+  "scope": "원본 재질을 참조하는 회전 후보 격리 반입 및 시험 LOD. 전장 미적용.",
+  "parts": [
+    {
+      "asset": "/Game/Presentation/WeaponsYawTrial/heavy_cannon_shc400/SM_Base",
+      "fbx_sha256": "f66fed259900dab85aba9d162e5ff66064c2f711c8a0991b0291ec3b654764de",
+      "source_origin": [
+        0.46212488412857056,
+        0.000729680061340332,
+        -0.5125001072883606
+      ],
+      "triangles": [
+        354026,
+        17702,
+        3540
+      ],
+      "source_material": "/Game/Presentation/WeaponsFull/heavy_cannon_shc400/M_Source.M_Source"
+    },
+    {
+      "asset": "/Game/Presentation/WeaponsYawTrial/heavy_cannon_shc400/SM_Yaw",
+      "fbx_sha256": "1e39602ded5e61f437cb734fab1a45d05948c98c8f1c8754e9137ae5d800ada6",
+      "source_origin": [
+        0.46212488412857056,
+        0.000729680061340332,
+        -0.5125001072883606
+      ],
+      "triangles": [
+        754502,
+        37726,
+        7546
+      ],
+      "source_material": "/Game/Presentation/WeaponsFull/heavy_cannon_shc400/M_Source.M_Source"
+    }
+  ],
+  "errors": []
+}

@@ -7,9 +7,12 @@ import sys
 import bpy
 
 args = sys.argv[sys.argv.index('--') + 1:]
-if len(args) != 2:
-    raise ValueError('후보 보고서와 새 결과 경로가 필요합니다')
-source, out = map(lambda arg: Path(arg).resolve(), args)
+if len(args) not in (2, 3):
+    raise ValueError('후보 보고서, 새 결과 경로 및 선택 부품 수가 필요합니다')
+source, out = map(lambda arg: Path(arg).resolve(), args[:2])
+expected_count = int(args[2]) if len(args) == 3 else 2
+if expected_count not in (2, 3):
+    raise ValueError('예상 부품 수는 2 또는 3이어야 합니다')
 if not source.is_file() or out.exists():
     raise RuntimeError('후보 보고서가 없거나 결과가 이미 존재합니다')
 data = json.loads(source.read_text(encoding='utf8'))
@@ -37,8 +40,8 @@ for part in data['parts']:
     rows.append({'name': part['name'], 'source_sha256': before,
                  'triangles': count, 'uv_layers': [layer.name for layer in mesh.uv_layers],
                  'material_slots': len(mesh.materials)})
-if len(rows) != 2:
-    raise RuntimeError('받침과 회전부 두 개가 필요합니다')
+if len(rows) != expected_count:
+    raise RuntimeError('예상 부품 수가 다릅니다')
 out.parent.mkdir(parents=True, exist_ok=True)
 out.write_text(json.dumps({'scope': 'FBX 재반입, UV와 삼각형 수만 확인. 재질·가동·게임 적용 검증 아님.',
                            'passed': True, 'parts': rows}, ensure_ascii=False, indent=2) + '\n', encoding='utf8')

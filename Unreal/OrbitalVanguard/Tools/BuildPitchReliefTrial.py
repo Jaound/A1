@@ -19,10 +19,14 @@ parser.add_argument('--radius', type=float, required=True)
 parser.add_argument('--bearing-radius', type=float, default=0.0)
 parser.add_argument('--shape', choices=('sphere', 'cylinder'), default='sphere')
 parser.add_argument('--depth', type=float, default=.5)
+parser.add_argument('--connector-radius', type=float, default=0.0)
+parser.add_argument('--connector-length', type=float, default=.35)
 args = parser.parse_args(sys.argv[sys.argv.index('--') + 1:])
 source = Path(bpy.data.filepath).resolve()
 out = Path(args.output).resolve()
-if out.exists() or not source.is_file() or not 0.05 <= args.radius <= 0.75 or not 0 <= args.bearing_radius < args.radius or not 0.05 <= args.depth <= 1.5:
+if (out.exists() or not source.is_file() or not 0.05 <= args.radius <= 0.75
+        or not 0 <= args.bearing_radius < args.radius or not 0.05 <= args.depth <= 1.5
+        or not 0 <= args.connector_radius <= .2 or not .05 <= args.connector_length <= .75):
     raise ValueError('입력 또는 시험 반지름이 유효하지 않습니다')
 
 def sha(path):
@@ -67,6 +71,21 @@ if args.bearing_radius:
     world = bearing.matrix_world.copy()
     bearing.parent = barrel
     bearing.matrix_world = world
+if args.connector_radius:
+    # A separate trial neck follows the barrel; it does not replace source artwork.
+    from mathutils import Vector
+    center = pivot + Vector((args.connector_length * .20, 0, 0))
+    bpy.ops.mesh.primitive_cylinder_add(vertices=48, radius=args.connector_radius,
+                                        depth=args.connector_length, location=center,
+                                        rotation=(0, math.pi / 2, 0))
+    neck = bpy.context.object
+    neck.name = args.prefix + '_TrialPitchNeck'
+    material = bpy.data.materials.new('TrialPitchNeckMaterial')
+    material.diffuse_color = (.19, .2, .21, 1)
+    neck.data.materials.append(material)
+    world = neck.matrix_world.copy()
+    neck.parent = barrel
+    neck.matrix_world = world
 bm = bmesh.new()
 bm.from_mesh(body.data)
 topology = {'faces': len(bm.faces), 'boundary_edges': sum(edge.is_boundary for edge in bm.edges),
@@ -86,6 +105,7 @@ if before != after:
 metadata.update({'source': str(source), 'source_before': before, 'source_after': after,
                  'trial_relief_shape': args.shape, 'trial_relief_depth': args.depth,
                  'trial_relief_radius': args.radius, 'trial_bearing_radius': args.bearing_radius, 'trial_relief_pivot': list(pivot),
+                 'trial_connector_radius': args.connector_radius, 'trial_connector_length': args.connector_length,
                  'relief_topology': topology,
                  'status': 'experimental pitch relief; geometry, UV, range and gameplay unapproved'})
 (out / 'report.json').write_text(json.dumps(metadata, ensure_ascii=False, indent=2) + '\n', encoding='utf8')
