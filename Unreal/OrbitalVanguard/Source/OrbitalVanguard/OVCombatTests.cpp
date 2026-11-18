@@ -2,6 +2,7 @@
 #include "OVBattleNotices.h"
 #include "OVShip.h"
 #include "OVShipSystemsComponent.h"
+#include "OVMarkedSlots.h"
 #include "Engine/World.h"
 #include "Misc/AutomationTest.h"
 #include "Misc/FileHelper.h"
@@ -27,6 +28,28 @@ bool LoadPC14TrialBoxes(TArray<FOVCombatHullBox>& Out)
         Box.HalfExtent=FVector(E[0]->AsNumber(),E[1]->AsNumber(),E[2]->AsNumber());Out.Add(Box);
     }
     return true;
+}
+bool LoadMarkedCandidateBoxes(FName HullId,TArray<FOVCombatHullBox>& Out)
+{
+    const FString Path=FPaths::ConvertRelativePathToFull(FPaths::Combine(FPaths::ProjectDir(),TEXT("../../docs/validation/PlayUIR2/KQ_선체충돌_후보.json")));
+    FString Content;TSharedPtr<FJsonObject> Data;const TArray<TSharedPtr<FJsonValue>>* Ships=nullptr;
+    if(!FFileHelper::LoadFileToString(Content,*Path)||!FJsonSerializer::Deserialize(TJsonReaderFactory<>::Create(Content),Data)
+        ||!Data.IsValid()||!Data->TryGetArrayField(TEXT("ships"),Ships)||!Ships)return false;
+    for(const auto& Value:*Ships)
+    {
+        const auto Ship=Value->AsObject();if(!Ship.IsValid()||FName(*Ship->GetStringField(TEXT("hull")))!=HullId)continue;
+        for(const auto& B:Ship->GetArrayField(TEXT("boxes")))
+        {
+            const auto Box=B->AsObject();if(!Box.IsValid())return false;
+            const auto& C=Box->GetArrayField(TEXT("local_center_cm"));const auto& E=Box->GetArrayField(TEXT("half_extent_cm"));
+            if(C.Num()!=3||E.Num()!=3)return false;
+            FOVCombatHullBox& Def=Out.AddDefaulted_GetRef();
+            Def.LocalCenter=FVector(C[0]->AsNumber(),C[1]->AsNumber(),C[2]->AsNumber());
+            Def.HalfExtent=FVector(E[0]->AsNumber(),E[1]->AsNumber(),E[2]->AsNumber());
+        }
+        return !Out.IsEmpty()&&Out.Num()<=32;
+    }
+    return false;
 }
 // Real Actors and the production subsystem in a disposable world. No DEV hit substitutes
 // for fire: fixtures only arrange initial state, then use RequestFire and Simulate.
@@ -98,6 +121,73 @@ struct FRange
                 Ship->Systems->DebugSetCrew(Ship->Systems->Slots[I].SlotId, 0);
     }
 };
+}
+
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(FOVMarkedCandidateActualWeaponHit, "OrbitalVanguard.Combat.MarkedCandidateActualWeaponHit",
+    EAutomationTestFlags::EditorContext | EAutomationTestFlags::EngineFilter)
+bool FOVMarkedCandidateActualWeaponHit::RunTest(const FString&)
+{
+    const FName Hulls[]={TEXT("corvette"),TEXT("frigate"),TEXT("vector"),TEXT("bastion"),TEXT("cruiser"),TEXT("air_defense"),
+        TEXT("radar"),TEXT("battleship"),TEXT("carrier"),TEXT("missile_ship"),TEXT("dreadnought"),TEXT("battlecarrier"),TEXT("repair"),TEXT("mining")};
+    int32 Attempts=0;
+    for(FName Hull: Hulls) for(const auto& Candidate:OVMarkedSlots::GetCandidates(Hull)) for(EOVAttackKind Kind:{EOVAttackKind::Beam,EOVAttackKind::Cannon}) for(int32 Angle=0;Angle<2;++Angle)
+    {
+        ++Attempts;OVCombatTest::FRange R;
+        auto* Layout=DuplicateObject<UShipLayoutDataAsset>(R.B->Systems->Layout,R.B);
+        Layout->LocalHalfExtent=FVector(175,75,30);
+        if(!TestTrue(TEXT("Candidate boxes load"),OVCombatTest::LoadMarkedCandidateBoxes(Hull,Layout->CombatHullBoxes)))continue;
+        Layout->WeaponMounts[0].LocalPosition=Candidate.LocalPosition;
+        R.B->Systems->Initialize(Layout);R.B->Systems->Shield=0;R.B->Systems->bShieldActive=false;
+        for(int32 I=1;I<R.B->Systems->WeaponMountStates.Num();++I)R.B->Systems->WeaponMountStates[I].HP=0;
+        const FString Id=Candidate.SlotId.ToString();
+        const FVector Direction=Id.StartsWith(TEXT("top_"))?FVector::UpVector:Id.StartsWith(TEXT("bottom_"))?FVector::DownVector:
+            Id.StartsWith(TEXT("left_"))?FVector(0,-1,0):FVector(0,1,0);
+        const FVector Target=R.B->GetActorLocation()+Candidate.LocalPosition;
+        const FVector Tangent=FMath::Abs(Direction.Z)>.5?FVector::ForwardVector:FVector::UpVector;
+        R.A->SetActorLocation(Target+Direction*1300+Tangent*(Angle?350:0));R.A->SetActorRotation((Target-R.A->GetActorLocation()).Rotation());
+        R.Combat->Settings->GuaranteedRange=100000;R.Combat->SetTarget(R.A,R.B);
+        R.Combat->SetAttackIntent(R.A,EOVAttackIntent::DisableWeapons);
+        auto& Gun=R.Gun();Gun.Profile.Kind=Kind;Gun.Profile.Accuracy=1;Gun.Profile.AimSpreadDegrees=0;
+        Gun.Profile.Range=100000;Gun.Profile.FireTolerance=180;Gun.Profile.Speed=60000;
+        Gun.Profile.TraverseSpeed=10000;Gun.Profile.TraverseAcceleration=100000;Gun.Profile.Damage=50;Gun.Profile.Salvo=1;
+        R.Combat->Simulate(.2f);
+        if(!TestTrue(TEXT("Actual attack request accepted"),R.Combat->RequestFire(R.A,Gun.MountId)))continue;
+        R.Combat->Simulate(.1f);
+        const bool Hit=R.Combat->HitCount==1&&!R.Combat->RecentEvents.IsEmpty()&&R.Combat->RecentEvents.Last().ImpactWeaponId==Layout->WeaponMounts[0].WeaponId;
+        TestTrue(*FString::Printf(TEXT("%s %s attack=%d angle=%d hits marked weapon"),*Hull.ToString(),*Id,int32(Kind),Angle),Hit);
+    }
+    TestEqual(TEXT("Every marked slot tested with beam and cannon from two angles"),Attempts,516);
+    return true;
+}
+
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(FOVMarkedCandidateHullDamage, "OrbitalVanguard.Combat.MarkedCandidateHullDamage",
+    EAutomationTestFlags::EditorContext | EAutomationTestFlags::EngineFilter)
+bool FOVMarkedCandidateHullDamage::RunTest(const FString&)
+{
+    const FName Hulls[]={TEXT("corvette"),TEXT("frigate"),TEXT("vector"),TEXT("bastion"),TEXT("cruiser"),TEXT("air_defense"),
+        TEXT("radar"),TEXT("battleship"),TEXT("carrier"),TEXT("missile_ship"),TEXT("dreadnought"),TEXT("battlecarrier"),TEXT("repair"),TEXT("mining")};
+    const FVector Directions[]={FVector::UpVector,FVector::DownVector,FVector(0,-1,0),FVector(0,1,0)};
+    for(FName Hull:Hulls) for(FVector Direction:Directions) for(EOVAttackKind Kind:{EOVAttackKind::Beam,EOVAttackKind::Cannon})
+    {
+        OVCombatTest::FRange R;auto* Layout=DuplicateObject<UShipLayoutDataAsset>(R.B->Systems->Layout,R.B);
+        Layout->LocalHalfExtent=FVector(175,75,30);
+        if(!TestTrue(TEXT("Candidate boxes load"),OVCombatTest::LoadMarkedCandidateBoxes(Hull,Layout->CombatHullBoxes)))continue;
+        R.B->Systems->Initialize(Layout);R.B->Systems->Shield=0;R.B->Systems->bShieldActive=false;
+        for(auto& Mount:R.B->Systems->WeaponMountStates)Mount.HP=0;
+        R.A->SetActorLocation(R.B->GetActorLocation()+Direction*1300);R.A->SetActorRotation((-Direction).Rotation());
+        R.Combat->Settings->GuaranteedRange=100000;R.Combat->SetTarget(R.A,R.B);
+        auto& Gun=R.Gun();Gun.Profile.Kind=Kind;Gun.Profile.Accuracy=1;Gun.Profile.AimSpreadDegrees=0;
+        Gun.Profile.Range=100000;Gun.Profile.FireTolerance=180;Gun.Profile.Speed=60000;
+        Gun.Profile.TraverseSpeed=10000;Gun.Profile.TraverseAcceleration=100000;Gun.Profile.Damage=50;Gun.Profile.Salvo=1;
+        R.Combat->Simulate(.2f);
+        if(!TestTrue(TEXT("Actual hull attack requested"),R.Combat->RequestFire(R.A,Gun.MountId)))continue;
+        R.Combat->Simulate(.1f);
+        const bool Hit=R.Combat->HitCount==1&&!R.Combat->RecentEvents.IsEmpty()&&R.Combat->RecentEvents.Last().ImpactWeaponId.IsNone()
+            &&!R.Combat->RecentEvents.Last().ArmorId.IsNone()&&!R.Combat->RecentEvents.Last().SlotId.IsNone()
+            &&R.Combat->RecentEvents.Last().HullDamage>0;
+        TestTrue(*FString::Printf(TEXT("%s direction=%s attack=%d reaches armor and hull"),*Hull.ToString(),*Direction.ToString(),int32(Kind)),Hit);
+    }
+    return true;
 }
 
 IMPLEMENT_SIMPLE_AUTOMATION_TEST(FOVBattleNoticeTest, "OrbitalVanguard.Combat.ConfirmedFriendlyNotices", EAutomationTestFlags::EditorContext | EAutomationTestFlags::EngineFilter)

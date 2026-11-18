@@ -15,10 +15,10 @@
 
 namespace
 {
-// The legacy box still encloses many authored turret proxies. Keep the
-// placement opt-in until a collision representation is validated.
+// Provisional source-surface boxes alter mission outcomes. Opt in while the
+// integrated mission regression and remaining collision coverage are resolved.
 TAutoConsoleVariable<int32> CVarOVMarkedMounts(TEXT("ov.Calibration.MarkedMounts"),0,
-    TEXT("Experimental drawing-based mounts; disabled until turret collision is validated."), ECVF_Default);
+    TEXT("Experimental drawing-based mounts and provisional source-surface collision boxes."), ECVF_Default);
 struct FWeapon
 {
     const TCHAR* Key;
@@ -28,6 +28,10 @@ struct FWeapon
 };
 
 struct FRadar { int32 Tier; float Range, Bonus; };
+struct FHullCollisionCandidate { const TCHAR* Hull; FVector Center, HalfExtent; };
+const FHullCollisionCandidate HullCollisionCandidates[] = {
+#include "OVHullCollisionCandidateData.inl"
+};
 struct FMount { int32 Weapon, Tier; bool bTop; };
 struct FHull
 {
@@ -205,7 +209,15 @@ UShipLayoutDataAsset* MakeLayout(UObject* Outer, const FHull& Hull)
         else ++Layout->MissileSlots;
     }
 
-    if (CVarOVMarkedMounts.GetValueOnGameThread() == 1) ApplyMarkedAttackMounts(Hull, *Layout);
+    if (CVarOVMarkedMounts.GetValueOnGameThread() == 1)
+    {
+        ApplyMarkedAttackMounts(Hull, *Layout);
+        for (const auto& Candidate:HullCollisionCandidates)
+            if (FName(Candidate.Hull)==FName(Hull.Key)) {
+                auto& Box=Layout->CombatHullBoxes.AddDefaulted_GetRef();
+                Box.LocalCenter=Candidate.Center;Box.HalfExtent=Candidate.HalfExtent;
+            }
+    }
     TArray<FString> Errors;
     if (Layout->ValidateLayout(Errors)) return Layout;
     UE_LOG(LogTemp, Error, TEXT("D116 invalid %s layout: %s"), Hull.Key, *FString::Join(Errors, TEXT("; ")));
@@ -439,6 +451,7 @@ bool FOVMarkedEquippedMountsTest::RunTest(const FString&)
         if (Candidates.IsEmpty()) continue;
         auto* Layout = MakeLayout(GetTransientPackage(), Hull);
         if (!TestNotNull(TEXT("Marked layout validates"), Layout)) continue;
+        TestTrue(TEXT("Marked ship receives nonempty candidate hull boxes"),Layout->CombatHullBoxes.Num()>0 && Layout->CombatHullBoxes.Num()<=32);
         TSet<FName> Used;
         for (int32 I = 0; I < Hull.MountCount; ++I)
         {

@@ -1,0 +1,21 @@
+{
+  "scope": "단일 PIE API 가속 배치 소요시간. 실제 렌더 프레임·CPU/GPU 부하 벤치마크 아님. 동작 결과/부하가 달라질 수 있으며 통계적 성능 보장 아님.",
+  "before": "KN_2C_API.json",
+  "candidate": "KU_2C_API.json",
+  "cases": [
+    {
+      "scenario": 0,
+      "before_ms_per_game_second": 14.705,
+      "candidate_ms_per_game_second": 18.583,
+      "before_aircraft_records": 0,
+      "candidate_aircraft_records": 0
+    },
+    {
+      "scenario": 5,
+      "before_ms_per_game_second": 22.405,
+      "candidate_ms_per_game_second": 25.686,
+      "before_aircraft_records": 80,
+      "candidate_aircraft_records": 80
+    }
+  ]
+}
