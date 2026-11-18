@@ -1,0 +1,210 @@
+[
+  {
+    "id": "corvette",
+    "bbox_size": [
+      3.500000238418579,
+      1.0828015804290771,
+      0.7768603563308716
+    ],
+    "bbox_volume": 2.944149876181454,
+    "mesh_volume": 0.8511371639691091,
+    "mesh_to_bbox": 0.28909437350826356,
+    "nonmanifold_edges": 0,
+    "closed_surface": true
+  },
+  {
+    "id": "vector",
+    "bbox_size": [
+      3.5,
+      1.1914910078048706,
+      0.670425534248352
+    ],
+    "bbox_volume": 2.7958209841089072,
+    "mesh_volume": 0.8121711298228962,
+    "mesh_to_bbox": 0.29049468275657636,
+    "nonmanifold_edges": 0,
+    "closed_surface": true
+  },
+  {
+    "id": "bastion",
+    "bbox_size": [
+      3.5,
+      1.01106858253479,
+      0.5876069068908691
+    ],
+    "bbox_volume": 2.079388088532312,
+    "mesh_volume": 0.8536510312872196,
+    "mesh_to_bbox": 0.41052992271863475,
+    "nonmanifold_edges": 0,
+    "closed_surface": true
+  },
+  {
+    "id": "carrier",
+    "bbox_size": [
+      3.5,
+      1.2965514659881592,
+      0.7862153649330139
+    ],
+    "bbox_volume": 3.5677903939521016,
+    "mesh_volume": 1.4229584291282775,
+    "mesh_to_bbox": 0.3988346489021297,
+    "nonmanifold_edges": 24,
+    "closed_surface": false
+  },
+  {
+    "id": "assault",
+    "bbox_size": [
+      3.500000476837158,
+      1.8815951347351074,
+      1.2066478729248047
+    ],
+    "bbox_volume": 7.946480767240166,
+    "mesh_volume": 3.4911849648268785,
+    "mesh_to_bbox": 0.4393372446353226,
+    "nonmanifold_edges": 0,
+    "closed_surface": true
+  },
+  {
+    "id": "missile_ship",
+    "bbox_size": [
+      3.500000238418579,
+      1.2713565826416016,
+      0.8666210174560547
+    ],
+    "bbox_volume": 3.8562454358799667,
+    "mesh_volume": 1.0298433745743183,
+    "mesh_to_bbox": 0.2670585655654243,
+    "nonmanifold_edges": 0,
+    "closed_surface": true
+  },
+  {
+    "id": "air_defense",
+    "bbox_size": [
+      3.5,
+      1.0375958681106567,
+      0.7195778489112854
+    ],
+    "bbox_volume": 2.6132085098500646,
+    "mesh_volume": 0.7715029848576933,
+    "mesh_to_bbox": 0.2952320803906915,
+    "nonmanifold_edges": 3,
+    "closed_surface": false
+  },
+  {
+    "id": "frigate",
+    "bbox_size": [
+      3.5,
+      0.9753753542900085,
+      0.6264539957046509
+    ],
+    "bbox_volume": 2.1385972580238537,
+    "mesh_volume": 0.9094908113781901,
+    "mesh_to_bbox": 0.4252744680962486,
+    "nonmanifold_edges": 14,
+    "closed_surface": false
+  },
+  {
+    "id": "cruiser",
+    "bbox_size": [
+      3.500000238418579,
+      0.8319733738899231,
+      0.7982485890388489
+    ],
+    "bbox_volume": 2.3244256597282478,
+    "mesh_volume": 0.8213547684591479,
+    "mesh_to_bbox": 0.35335815753951616,
+    "nonmanifold_edges": 0,
+    "closed_surface": true
+  },
+  {
+    "id": "radar",
+    "bbox_size": [
+      3.5,
+      1.5447527170181274,
+      1.0223242044448853
+    ],
+    "bbox_volume": 5.527333323713712,
+    "mesh_volume": 0.7966108544882928,
+    "mesh_to_bbox": 0.14412209429647077,
+    "nonmanifold_edges": 59,
+    "closed_surface": false
+  },
+  {
+    "id": "repair",
+    "bbox_size": [
+      3.5,
+      1.9228861331939697,
+      0.9857854247093201
+    ],
+    "bbox_volume": 6.634435932173979,
+    "mesh_volume": 3.168000656341921,
+    "mesh_to_bbox": 0.47750866670948877,
+    "nonmanifold_edges": 0,
+    "closed_surface": true
+  },
+  {
+    "id": "mining",
+    "bbox_size": [
+      3.500000238418579,
+      1.4666047096252441,
+      0.985333263874054
+    ],
+    "bbox_volume": 5.0578307632557085,
+    "mesh_volume": 2.2830559733546716,
+    "mesh_to_bbox": 0.4513903450350079,
+    "nonmanifold_edges": 0,
+    "closed_surface": true
+  },
+  {
+    "id": "transport",
+    "bbox_size": [
+      3.5,
+      1.6010499000549316,
+      0.9507414102554321
+    ],
+    "bbox_volume": 5.327645539536405,
+    "mesh_volume": 2.17363302375079,
+    "mesh_to_bbox": 0.40799129889935065,
+    "nonmanifold_edges": 0,
+    "closed_surface": true
+  },
+  {
+    "id": "battleship",
+    "bbox_size": [
+      3.5,
+      0.8708649277687073,
+      0.5731960535049438
+    ],
+    "bbox_volume": 1.7471171890651185,
+    "mesh_volume": 0.3770301904688948,
+    "mesh_to_bbox": 0.21580131706599684,
+    "nonmanifold_edges": 8,
+    "closed_surface": false
+  },
+  {
+    "id": "dreadnought",
+    "bbox_size": [
+      3.5,
+      1.0185574293136597,
+      0.5383275151252747
+    ],
+    "bbox_volume": 1.919111214771835,
+    "mesh_volume": 0.47593832934329905,
+    "mesh_to_bbox": 0.24799934765629714,
+    "nonmanifold_edges": 0,
+    "closed_surface": true
+  },
+  {
+    "id": "battlecarrier",
+    "bbox_size": [
+      3.5,
+      1.1033556461334229,
+      0.8518731594085693
+    ],
+    "bbox_volume": 3.289716710780368,
+    "mesh_volume": 1.0475130271080086,
+    "mesh_to_bbox": 0.3184204353144814,
+    "nonmanifold_edges": 9,
+    "closed_surface": false
+  }
+]
