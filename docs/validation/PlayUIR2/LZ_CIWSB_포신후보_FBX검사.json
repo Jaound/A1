@@ -1,0 +1,33 @@
+{
+  "scope": "FBX 재반입, UV와 삼각형 수만 확인. 재질·가동·게임 적용 검증 아님.",
+  "passed": true,
+  "parts": [
+    {
+      "name": "ciws_beam_b_YawBody",
+      "source_sha256": "bd0ddf37d750529c9d6b86930b20da10af9f8fc6c360f0913d9772e4e8b6501c",
+      "triangles": 576680,
+      "uv_layers": [
+        "UVMap"
+      ],
+      "material_slots": 3
+    },
+    {
+      "name": "ciws_beam_b_PitchTrial",
+      "source_sha256": "4484bc7a3e1281a603512f8269657aab3d60f59081849671189b887a00e66011",
+      "triangles": 90510,
+      "uv_layers": [
+        "UVMap"
+      ],
+      "material_slots": 3
+    },
+    {
+      "name": "ciws_beam_b_TrialPitchNeck",
+      "source_sha256": "668a230e5aeb050885db8c1b3b11fbf5ccbcb66abcb4a7e441e6f676914ceafd",
+      "triangles": 188,
+      "uv_layers": [
+        "UVMap"
+      ],
+      "material_slots": 1
+    }
+  ]
+}

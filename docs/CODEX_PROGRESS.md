@@ -1,5 +1,8 @@
 # 최신 진행: 원본 함재기 표시와 포탑 접합 작업
 
+**LZ CIWS-B 포신 분리 FBX 준비 (전장 미적용):** LY 후보의 원본 기반 몸체·포신과 별도 시험 연결부를 각 FBX로 분리하고 Blender에 다시 반입하여 3/3 삼각형·UV 레이어·파일 해시를 확인했다([결과](validation/PlayUIR2/LZ_CIWSB_포신후보_FBX검사.json)). 연결부는 원본이 아닌 시험 형상이다. `ImportWeaponPitchCandidate.py`는 `/Game/Presentation/WeaponsPitchTrial/ciws_beam_b`에 반입할 준비 코드이며 **아직 실행·검증하지 않았다.** 현재 회전 후보의 순차 UE 반입이 끝나면 새 에디터로 `$env:OV_WEAPON_PITCH_ID='ciws_beam_b'; $env:OV_WEAPON_PITCH_RUN='first'` 설정 후 `ImportWeaponPitchCandidate.py`를 실행하고 보고서·재로드·노멀·Boolean 신규 면 UV·포구 좌표를 검사한다. 실제 부품 조립과 사격 연동, 남은 8종의 포신 분리, 직접 화면·입력은 미완료다. 기존 사용자 UI 3파일은 보존한다.
+
+
 **LY 접합 대안과 4종 반입 (진행 중):** SHC400 회전 후보도 원본 재질·시험 LOD로 격리 반입되어 현재 CIWS-B·CIWS-6·LB30·SHC400의 4/9종이다([SHC400](validation/PlayUIR2/LY_SHC400_회전후보_UE반입.json)); 나머지는 순차 처리 중이다. CIWS-B 원본 복사본의 반지름 0.4 여유 공간에 작은 별도 연결부를 부착하고 회전부를 0.001 높인 후보에서 -180/-90/0/90/180도 좌우 회전과 -15~90도 고저각(15도 간격) 40개 조합을 표면 BVH로 측정했다. 덮개를 제외한 받침/본체·포신/본체·포신/받침·연결부/본체·연결부/받침 교차는 모두 0이었다([측정](validation/PlayUIR2/LY_CIWSB_연결부_간섭검사.json), [고저 30도 형상](validation/PlayUIR2/LY_CIWSB_연결부_시험.png)). 개별 부품 내부의 의도된 접합은 제외했고 이산 표본이며 연속 각도, 측면 설치, 원본 텍스처/Boolean 신규 면 UV, 포구, 실제 게임의 위치·회전·사격·성능을 확인하지 않았다. 기존 일반 피치 검사에서는 Boolean이 평면 캡을 대체해 `BODY-CAP-UV`가 실패하므로 성공으로 기록하지 않는다. 게임에는 적용하지 않았으며 작은 연결부는 원본이 아닌 시험용 추가 형상이다. 다음: CIWS-B 3부품을 별도 UE 자산으로 반입해 원본 재질·UV·포구와 실제 발사를 검증하고 다른 8종에도 모델별 축을 찾는다.
 
 
