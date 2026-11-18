@@ -76,8 +76,7 @@ bool AOVController::StartPhase2CRange(int32 Scenario)
  const FName Keys[]={CarrierScene?FName(TEXT("carrier")):FName(TEXT("vector")),
   ShuttleScene?FName(TEXT("assault")):Scenario==1?FName(TEXT("air_defense")):FName(TEXT("vector")),
   Scenario<=1?FName(TEXT("missile_ship")):CarrierScene?FName(TEXT("carrier")):FName(TEXT("bastion"))};
- const double Scale[]={CarrierScene?22.:10.,ShuttleScene?6.:Scenario==1?13.:10.,CarrierScene?22.:Scenario<=1?18.:13.};
- for(int32 I=0;I<3;++I) if(!OVCalibration::ConfigureHull(*Combat,*Ships[I],Keys[I],I!=2,Locations[I],Scale[I]))return false;
+ for(int32 I=0;I<3;++I) if(!OVCalibration::ConfigureHull(*Combat,*Ships[I],Keys[I],I!=2,Locations[I],OVCalibration::GetHullGeometryScale(Keys[I])))return false;
  const TCHAR* FriendlyNames[]={TEXT("백터 · 방어 대상"),TEXT("백터 · 일반 호위"),TEXT("항공모함 · 푸른날개"),TEXT("백터 · 포드 모함"),TEXT("백터 · 운송 모함"),TEXT("항공모함 · 혼성 편대")};
  Ships[0]->ShipName=FriendlyNames[Scenario];
  Ships[1]->ShipName=ShuttleScene?TEXT("강습선 · 수송 01"):Scenario==1?TEXT("방공함 · 호위 01"):TEXT("백터 · 호위 01");
@@ -171,7 +170,7 @@ bool AOVController::StartPhase2CStress(int32 ExtraCarrierPairs)
   AOVShip* PairShips[2]={};
   for(int32 Side=0;Side<2;++Side) {
    auto* Ship=GetWorld()->SpawnActor<AOVShip>(); Ships.Add(Ship); PairShips[Side]=Ship;
-   if(!OVCalibration::ConfigureHull(*Combat,*Ship,TEXT("carrier"),Side==0,FVector(Side?26000:-26000,(Pair+1)*43000,4000),22))return false;
+   if(!OVCalibration::ConfigureHull(*Combat,*Ship,TEXT("carrier"),Side==0,FVector(Side?26000:-26000,(Pair+1)*43000,4000),OVCalibration::GetHullGeometryScale(TEXT("carrier"))))return false;
    Ship->ShipName=FString::Printf(TEXT("DEV 항모 %d-%d"),Pair,Side);PointDefense->RegisterShip(Ship,5);
    Carrier->RegisterCarrier(Ship,20);
   }

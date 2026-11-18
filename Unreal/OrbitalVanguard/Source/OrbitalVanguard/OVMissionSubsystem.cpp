@@ -50,7 +50,6 @@ bool UOVMissionSubsystem::StartMission(AOVController* Controller,EOVMissionMode 
     auto* PD=GetWorld()->GetSubsystem<UOVPointDefenseSubsystem>();PD->Reset(Seed);
     while(Controller->Ships.Num()<6)Controller->Ships.Add(GetWorld()->SpawnActor<AOVShip>());
     const FName Hulls[]={TEXT("carrier"),TEXT("bastion"),TEXT("assault")};
-    const double Scales[]={22.,13.,6.};
     const TCHAR* Names[]={TEXT("항공모함"),TEXT("바스티온 호위"),TEXT("강습선")};
     const double Half=FMath::Clamp(double(Settings.CarrierSeparation)*.5,10000.,12000.);
     for(int32 Faction=0;Faction<2;++Faction)for(int32 Index=0;Index<3;++Index)
@@ -58,7 +57,7 @@ bool UOVMissionSubsystem::StartMission(AOVController* Controller,EOVMissionMode 
         AOVShip* Ship=Controller->Ships[Faction*3+Index];
         const double Side=Faction==0?-1.:1.;
         const FVector Position(Side*(Half+(Index==0?0:Index==1?7000:12000)),Index==1?14000:Index==2?-12000:0,2000);
-        if(!OVCalibration::ConfigureHull(*Combat,*Ship,Hulls[Index],Faction==0,Position,Scales[Index]))
+        if(!OVCalibration::ConfigureHull(*Combat,*Ship,Hulls[Index],Faction==0,Position,OVCalibration::GetHullGeometryScale(Hulls[Index])))
         { bStarting=false;Disable();Status=TEXT("통합 임무 생성 실패: 후보 함체/배치 확인");return false; }
         Ship->Systems->Layout->LayoutVersion=FName(*FString::Printf(TEXT("Interior_%s_D116_v1"),*Hulls[Index].ToString()));
         Ship->ShipName=(Faction==0?FString(TEXT("아군 ")):FString(TEXT("적 ")))+Names[Index];

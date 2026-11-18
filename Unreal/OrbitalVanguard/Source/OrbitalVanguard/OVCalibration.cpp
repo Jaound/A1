@@ -3,6 +3,7 @@
 #include "OVCombatSubsystem.h"
 #include "OVShip.h"
 #include "OVShipSystemsComponent.h"
+#include "Engine/World.h"
 
 #if WITH_DEV_AUTOMATION_TESTS
 #include "Misc/AutomationTest.h"
@@ -195,9 +196,14 @@ double OVCalibration::GetHullGeometryScale(FName HullId)
 {
     const FHull* Hull = FindHull(HullId);
     if (!Hull) return 0;
-    // Candidate placeholder geometry; established vector/bastion scales preserved.
-    if (HullId == TEXT("bastion")) return 13;
-    switch (Hull->Size) { case 1: return 6; case 2: return 10; case 3: return 18; case 4: return 28; default: return 0; }
+    // JU trial: shared layout boxes have equal local extents. Uniform root scale
+    // gives their enclosing volumes the requested 1:4:16:32 relationship.
+    // This is not the exact enclosed volume of the individual imported meshes.
+    // D119 makes transport medium; its older D116 combat metadata is retained
+    // pending the separate medium transport data revision.
+    const int32 Size=HullId==TEXT("transport")?2:Hull->Size;
+    constexpr double TrialVolumeRatios[]={1.,4.,16.,32.};
+    return Size>=1&&Size<=4 ? 6.0*FMath::Pow(TrialVolumeRatios[Size-1],1.0/3.0) : 0.0;
 }
 
 TArray<FName> OVCalibration::GetHullIds()
@@ -252,7 +258,7 @@ bool OVCalibration::Start(UOVCombatSubsystem& Combat, const TArray<AOVShip*>& Sh
         const auto& Hull = *Roster[I];
         const bool bFriendly = I != 2;
         const bool bInactive = bDuel && I == 1;
-        const double Scale = I == 1 ? 6 : I == 0 ? 10 : Scenario == 2 ? 18 : 13;
+        const double Scale = GetHullGeometryScale(FName(Keys[I]));
         Ship->Configure(I==0?TEXT("백터"):I==1?TEXT("초계함"):Scenario==2?TEXT("미사일함"):TEXT("바스티온"), bFriendly, Hull.Speed, Hull.Turn, FVector(Scale),
             bFriendly ? FLinearColor(.12f,.65f,1) : FLinearColor(1,.12f,.08f));
         Ship->SetCalibrationHull(&Layouts[I]->LocalHalfExtent);
@@ -327,6 +333,33 @@ bool OVCalibration::ConfigureHull(UOVCombatSubsystem& Combat, AOVShip& Ship, FNa
 }
 
 #if WITH_DEV_AUTOMATION_TESTS
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(FOVVolumeRatioTrial,
+    "OrbitalVanguard.Revision.VolumeRatioTrial",
+    EAutomationTestFlags::EditorContext | EAutomationTestFlags::EngineFilter)
+bool FOVVolumeRatioTrial::RunTest(const FString&)
+{
+    UWorld* World=UWorld::CreateWorld(EWorldType::Game,false);
+    TArray<AOVShip*> Ships={World->SpawnActor<AOVShip>(),World->SpawnActor<AOVShip>(),World->SpawnActor<AOVShip>()};
+    auto* Combat=World->GetSubsystem<UOVCombatSubsystem>();
+    if(TestTrue(TEXT("F6 scene starts"),OVCalibration::Start(*Combat,Ships,1)))
+    {
+        auto BoxVolume=[](const AOVShip* Ship) {
+            const FVector E=Ship->Systems->Layout->LocalHalfExtent*Ship->GetActorScale3D();
+            return E.X*E.Y*E.Z*8.;
+        };
+        const double Base=BoxVolume(Ships[1]);
+        TestTrue(TEXT("Small reference volume is positive"),Base>0);
+        TestTrue(TEXT("F6 vector and bastion are four times reference box volume"),
+            FMath::IsNearlyEqual(BoxVolume(Ships[0])/Base,4.,.001)&&FMath::IsNearlyEqual(BoxVolume(Ships[2])/Base,4.,.001));
+        const FName Ids[]={TEXT("carrier"),TEXT("dreadnought"),TEXT("transport")};
+        const double Ratios[]={16.,32.,4.};
+        for(int32 I=0;I<3;++I)
+            if(TestTrue(TEXT("Hull config succeeds"),OVCalibration::ConfigureHull(*Combat,*Ships[0],Ids[I],true,FVector::ZeroVector,OVCalibration::GetHullGeometryScale(Ids[I]))))
+                TestTrue(FString::Printf(TEXT("%s requested collision box ratio"),*Ids[I].ToString()),FMath::IsNearlyEqual(BoxVolume(Ships[0])/Base,Ratios[I],.001));
+    }
+    World->DestroyWorld(false);return true;
+}
+
 IMPLEMENT_SIMPLE_AUTOMATION_TEST(FOVD116CatalogTest, "OrbitalVanguard.Revision.D116CandidateCatalog",
     EAutomationTestFlags::EditorContext | EAutomationTestFlags::EngineFilter)
 bool FOVD116CatalogTest::RunTest(const FString&)

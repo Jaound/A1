@@ -1,0 +1,1584 @@
+{
+  "passed": true,
+  "planning": "035a4fba81d26f1d67daa1f44bded0f7e8d3a434",
+  "scope": "실제 DEV 생성·선택·이동·대표 무장 사격·피해·시설·완파·정리; 방공 비활성·동일 표적; 물리 입력/최종 밸런스 제외",
+  "checks": [
+    {
+      "id": "corvette / 실제 생성",
+      "passed": true,
+      "detail": "시험 함선 1척 생성 · 최초 재고/병력만 공급 · 캠페인 획득 아님"
+    },
+    {
+      "id": "corvette / 동일 표적 생성",
+      "passed": true,
+      "detail": "시험 함선 1척 생성 · 최초 재고/병력만 공급 · 캠페인 획득 아님"
+    },
+    {
+      "id": "corvette / PD 배제",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "corvette / 선택",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "corvette / 실제 이동",
+      "passed": true,
+      "detail": "2722.2038639015227"
+    },
+    {
+      "id": "corvette / 공격 무장 존재",
+      "passed": true,
+      "detail": "2"
+    },
+    {
+      "id": "corvette / 표적 지정",
+      "passed": true,
+      "detail": "표적 지정 수락 · 발사 명령과 별개"
+    },
+    {
+      "id": "corvette / 발사 요청",
+      "passed": true,
+      "detail": "발사 요청 수락 · 실제 발사 가능 조건은 별도 검사 / READY"
+    },
+    {
+      "id": "corvette / 재요청 중 발사 간격",
+      "passed": true,
+      "detail": "{'interval': 1.7999999523162842, 'minimum_observed': 1.8000000938773155, 'launches': 2}"
+    },
+    {
+      "id": "corvette / 실제 발사",
+      "passed": true,
+      "detail": "2"
+    },
+    {
+      "id": "corvette / 동일 표적 실제 피격",
+      "passed": true,
+      "detail": "표본 결과=['<OVAttackResult.HIT: 1>']"
+    },
+    {
+      "id": "corvette / 엔진 1개 및 가동",
+      "passed": true,
+      "detail": "1"
+    },
+    {
+      "id": "corvette / 실제 시설 피해",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "corvette / 엔진 기능 정지",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "corvette / 코어 완파",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "corvette / DEV 정리",
+      "passed": true,
+      "detail": "시험 함선과 해당 격납 시험 재고를 명시적으로 폐기 · 기발사 공격 기록은 유지"
+    },
+    {
+      "id": "corvette / 삭제 등록 정리",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "frigate / 실제 생성",
+      "passed": true,
+      "detail": "시험 함선 1척 생성 · 최초 재고/병력만 공급 · 캠페인 획득 아님"
+    },
+    {
+      "id": "frigate / 동일 표적 생성",
+      "passed": true,
+      "detail": "시험 함선 1척 생성 · 최초 재고/병력만 공급 · 캠페인 획득 아님"
+    },
+    {
+      "id": "frigate / PD 배제",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "frigate / 선택",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "frigate / 실제 이동",
+      "passed": true,
+      "detail": "2722.2038639015227"
+    },
+    {
+      "id": "frigate / 공격 무장 존재",
+      "passed": true,
+      "detail": "2"
+    },
+    {
+      "id": "frigate / 표적 지정",
+      "passed": true,
+      "detail": "표적 지정 수락 · 발사 명령과 별개"
+    },
+    {
+      "id": "frigate / 발사 요청",
+      "passed": true,
+      "detail": "발사 요청 수락 · 실제 발사 가능 조건은 별도 검사 / READY"
+    },
+    {
+      "id": "frigate / 재요청 중 발사 간격",
+      "passed": true,
+      "detail": "{'interval': 1.7999999523162842, 'minimum_observed': 1.8000000938773155, 'launches': 2}"
+    },
+    {
+      "id": "frigate / 실제 발사",
+      "passed": true,
+      "detail": "2"
+    },
+    {
+      "id": "frigate / 동일 표적 실제 피격",
+      "passed": true,
+      "detail": "표본 결과=['<OVAttackResult.HIT: 1>']"
+    },
+    {
+      "id": "frigate / 엔진 1개 및 가동",
+      "passed": true,
+      "detail": "1"
+    },
+    {
+      "id": "frigate / 실제 시설 피해",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "frigate / 엔진 기능 정지",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "frigate / 코어 완파",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "frigate / DEV 정리",
+      "passed": true,
+      "detail": "시험 함선과 해당 격납 시험 재고를 명시적으로 폐기 · 기발사 공격 기록은 유지"
+    },
+    {
+      "id": "frigate / 삭제 등록 정리",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "vector / 실제 생성",
+      "passed": true,
+      "detail": "시험 함선 1척 생성 · 최초 재고/병력만 공급 · 캠페인 획득 아님"
+    },
+    {
+      "id": "vector / 동일 표적 생성",
+      "passed": true,
+      "detail": "시험 함선 1척 생성 · 최초 재고/병력만 공급 · 캠페인 획득 아님"
+    },
+    {
+      "id": "vector / PD 배제",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "vector / 선택",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "vector / 실제 이동",
+      "passed": true,
+      "detail": "2722.2038639015227"
+    },
+    {
+      "id": "vector / 공격 무장 존재",
+      "passed": true,
+      "detail": "3"
+    },
+    {
+      "id": "vector / 표적 지정",
+      "passed": true,
+      "detail": "표적 지정 수락 · 발사 명령과 별개"
+    },
+    {
+      "id": "vector / 발사 요청",
+      "passed": true,
+      "detail": "발사 요청 수락 · 실제 발사 가능 조건은 별도 검사 / READY"
+    },
+    {
+      "id": "vector / 재요청 중 발사 간격",
+      "passed": true,
+      "detail": "{'interval': 1.7999999523162842, 'minimum_observed': 1.8000000938773155, 'launches': 2}"
+    },
+    {
+      "id": "vector / 실제 발사",
+      "passed": true,
+      "detail": "2"
+    },
+    {
+      "id": "vector / 동일 표적 실제 피격",
+      "passed": true,
+      "detail": "표본 결과=['<OVAttackResult.HIT: 1>']"
+    },
+    {
+      "id": "vector / 엔진 1개 및 가동",
+      "passed": true,
+      "detail": "1"
+    },
+    {
+      "id": "vector / 실제 시설 피해",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "vector / 엔진 기능 정지",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "vector / 코어 완파",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "vector / DEV 정리",
+      "passed": true,
+      "detail": "시험 함선과 해당 격납 시험 재고를 명시적으로 폐기 · 기발사 공격 기록은 유지"
+    },
+    {
+      "id": "vector / 삭제 등록 정리",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "bastion / 실제 생성",
+      "passed": true,
+      "detail": "시험 함선 1척 생성 · 최초 재고/병력만 공급 · 캠페인 획득 아님"
+    },
+    {
+      "id": "bastion / 동일 표적 생성",
+      "passed": true,
+      "detail": "시험 함선 1척 생성 · 최초 재고/병력만 공급 · 캠페인 획득 아님"
+    },
+    {
+      "id": "bastion / PD 배제",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "bastion / 선택",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "bastion / 실제 이동",
+      "passed": true,
+      "detail": "2670.4261533455574"
+    },
+    {
+      "id": "bastion / 공격 무장 존재",
+      "passed": true,
+      "detail": "5"
+    },
+    {
+      "id": "bastion / 표적 지정",
+      "passed": true,
+      "detail": "표적 지정 수락 · 발사 명령과 별개"
+    },
+    {
+      "id": "bastion / 발사 요청",
+      "passed": true,
+      "detail": "발사 요청 수락 · 실제 발사 가능 조건은 별도 검사 / READY"
+    },
+    {
+      "id": "bastion / 재요청 중 발사 간격",
+      "passed": true,
+      "detail": "{'interval': 1.7999999523162842, 'minimum_observed': 1.8000000938773155, 'launches': 2}"
+    },
+    {
+      "id": "bastion / 실제 발사",
+      "passed": true,
+      "detail": "2"
+    },
+    {
+      "id": "bastion / 동일 표적 실제 피격",
+      "passed": true,
+      "detail": "표본 결과=['<OVAttackResult.HIT: 1>']"
+    },
+    {
+      "id": "bastion / 엔진 1개 및 가동",
+      "passed": true,
+      "detail": "1"
+    },
+    {
+      "id": "bastion / 실제 시설 피해",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "bastion / 엔진 기능 정지",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "bastion / 코어 완파",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "bastion / DEV 정리",
+      "passed": true,
+      "detail": "시험 함선과 해당 격납 시험 재고를 명시적으로 폐기 · 기발사 공격 기록은 유지"
+    },
+    {
+      "id": "bastion / 삭제 등록 정리",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "cruiser / 실제 생성",
+      "passed": true,
+      "detail": "시험 함선 1척 생성 · 최초 재고/병력만 공급 · 캠페인 획득 아님"
+    },
+    {
+      "id": "cruiser / 동일 표적 생성",
+      "passed": true,
+      "detail": "시험 함선 1척 생성 · 최초 재고/병력만 공급 · 캠페인 획득 아님"
+    },
+    {
+      "id": "cruiser / PD 배제",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "cruiser / 선택",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "cruiser / 실제 이동",
+      "passed": true,
+      "detail": "2710.0062023309874"
+    },
+    {
+      "id": "cruiser / 공격 무장 존재",
+      "passed": true,
+      "detail": "5"
+    },
+    {
+      "id": "cruiser / 표적 지정",
+      "passed": true,
+      "detail": "표적 지정 수락 · 발사 명령과 별개"
+    },
+    {
+      "id": "cruiser / 발사 요청",
+      "passed": true,
+      "detail": "발사 요청 수락 · 실제 발사 가능 조건은 별도 검사 / READY"
+    },
+    {
+      "id": "cruiser / 재요청 중 발사 간격",
+      "passed": true,
+      "detail": "{'interval': 1.7999999523162842, 'minimum_observed': 1.8000000938773155, 'launches': 2}"
+    },
+    {
+      "id": "cruiser / 실제 발사",
+      "passed": true,
+      "detail": "2"
+    },
+    {
+      "id": "cruiser / 동일 표적 실제 피격",
+      "passed": true,
+      "detail": "표본 결과=['<OVAttackResult.HIT: 1>']"
+    },
+    {
+      "id": "cruiser / 엔진 1개 및 가동",
+      "passed": true,
+      "detail": "1"
+    },
+    {
+      "id": "cruiser / 실제 시설 피해",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "cruiser / 엔진 기능 정지",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "cruiser / 코어 완파",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "cruiser / DEV 정리",
+      "passed": true,
+      "detail": "시험 함선과 해당 격납 시험 재고를 명시적으로 폐기 · 기발사 공격 기록은 유지"
+    },
+    {
+      "id": "cruiser / 삭제 등록 정리",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "air_defense / 실제 생성",
+      "passed": true,
+      "detail": "시험 함선 1척 생성 · 최초 재고/병력만 공급 · 캠페인 획득 아님"
+    },
+    {
+      "id": "air_defense / 동일 표적 생성",
+      "passed": true,
+      "detail": "시험 함선 1척 생성 · 최초 재고/병력만 공급 · 캠페인 획득 아님"
+    },
+    {
+      "id": "air_defense / PD 배제",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "air_defense / 선택",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "air_defense / 실제 이동",
+      "passed": true,
+      "detail": "2710.0062023309874"
+    },
+    {
+      "id": "air_defense / 공격 무장 존재",
+      "passed": true,
+      "detail": "2"
+    },
+    {
+      "id": "air_defense / 표적 지정",
+      "passed": true,
+      "detail": "표적 지정 수락 · 발사 명령과 별개"
+    },
+    {
+      "id": "air_defense / 발사 요청",
+      "passed": true,
+      "detail": "발사 요청 수락 · 실제 발사 가능 조건은 별도 검사 / READY"
+    },
+    {
+      "id": "air_defense / 재요청 중 발사 간격",
+      "passed": true,
+      "detail": "{'interval': 0.8999999761581421, 'minimum_observed': 1.0000000521540642, 'launches': 2}"
+    },
+    {
+      "id": "air_defense / 실제 발사",
+      "passed": true,
+      "detail": "2"
+    },
+    {
+      "id": "air_defense / 동일 표적 실제 피격",
+      "passed": true,
+      "detail": "표본 결과=['<OVAttackResult.HIT: 1>', '<OVAttackResult.HIT: 1>']"
+    },
+    {
+      "id": "air_defense / 엔진 1개 및 가동",
+      "passed": true,
+      "detail": "1"
+    },
+    {
+      "id": "air_defense / 실제 시설 피해",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "air_defense / 엔진 기능 정지",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "air_defense / 코어 완파",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "air_defense / DEV 정리",
+      "passed": true,
+      "detail": "시험 함선과 해당 격납 시험 재고를 명시적으로 폐기 · 기발사 공격 기록은 유지"
+    },
+    {
+      "id": "air_defense / 삭제 등록 정리",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "radar / 실제 생성",
+      "passed": true,
+      "detail": "시험 함선 1척 생성 · 최초 재고/병력만 공급 · 캠페인 획득 아님"
+    },
+    {
+      "id": "radar / 동일 표적 생성",
+      "passed": true,
+      "detail": "시험 함선 1척 생성 · 최초 재고/병력만 공급 · 캠페인 획득 아님"
+    },
+    {
+      "id": "radar / PD 배제",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "radar / 선택",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "radar / 실제 이동",
+      "passed": true,
+      "detail": "2710.0062023309874"
+    },
+    {
+      "id": "radar / 공격 무장 존재",
+      "passed": true,
+      "detail": "1"
+    },
+    {
+      "id": "radar / 표적 지정",
+      "passed": true,
+      "detail": "표적 지정 수락 · 발사 명령과 별개"
+    },
+    {
+      "id": "radar / 발사 요청",
+      "passed": true,
+      "detail": "발사 요청 수락 · 실제 발사 가능 조건은 별도 검사 / READY"
+    },
+    {
+      "id": "radar / 재요청 중 발사 간격",
+      "passed": true,
+      "detail": "{'interval': 0.8999999761581421, 'minimum_observed': 1.0000000521540642, 'launches': 2}"
+    },
+    {
+      "id": "radar / 실제 발사",
+      "passed": true,
+      "detail": "2"
+    },
+    {
+      "id": "radar / 동일 표적 실제 피격",
+      "passed": true,
+      "detail": "표본 결과=['<OVAttackResult.HIT: 1>', '<OVAttackResult.HIT: 1>']"
+    },
+    {
+      "id": "radar / 엔진 1개 및 가동",
+      "passed": true,
+      "detail": "1"
+    },
+    {
+      "id": "radar / 실제 시설 피해",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "radar / 엔진 기능 정지",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "radar / 코어 완파",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "radar / DEV 정리",
+      "passed": true,
+      "detail": "시험 함선과 해당 격납 시험 재고를 명시적으로 폐기 · 기발사 공격 기록은 유지"
+    },
+    {
+      "id": "radar / 삭제 등록 정리",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "battleship / 실제 생성",
+      "passed": true,
+      "detail": "시험 함선 1척 생성 · 최초 재고/병력만 공급 · 캠페인 획득 아님"
+    },
+    {
+      "id": "battleship / 동일 표적 생성",
+      "passed": true,
+      "detail": "시험 함선 1척 생성 · 최초 재고/병력만 공급 · 캠페인 획득 아님"
+    },
+    {
+      "id": "battleship / PD 배제",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "battleship / 선택",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "battleship / 실제 이동",
+      "passed": true,
+      "detail": "2092.107978172804"
+    },
+    {
+      "id": "battleship / 공격 무장 존재",
+      "passed": true,
+      "detail": "10"
+    },
+    {
+      "id": "battleship / 표적 지정",
+      "passed": true,
+      "detail": "표적 지정 수락 · 발사 명령과 별개"
+    },
+    {
+      "id": "battleship / 발사 요청",
+      "passed": true,
+      "detail": "발사 요청 수락 · 실제 발사 가능 조건은 별도 검사 / READY"
+    },
+    {
+      "id": "battleship / 재요청 중 발사 간격",
+      "passed": true,
+      "detail": "{'interval': 1.7999999523162842, 'minimum_observed': 1.8000000938773155, 'launches': 2}"
+    },
+    {
+      "id": "battleship / 실제 발사",
+      "passed": true,
+      "detail": "2"
+    },
+    {
+      "id": "battleship / 동일 표적 실제 피격",
+      "passed": true,
+      "detail": "표본 결과=['<OVAttackResult.HIT: 1>']"
+    },
+    {
+      "id": "battleship / 엔진 1개 및 가동",
+      "passed": true,
+      "detail": "1"
+    },
+    {
+      "id": "battleship / 실제 시설 피해",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "battleship / 엔진 기능 정지",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "battleship / 코어 완파",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "battleship / DEV 정리",
+      "passed": true,
+      "detail": "시험 함선과 해당 격납 시험 재고를 명시적으로 폐기 · 기발사 공격 기록은 유지"
+    },
+    {
+      "id": "battleship / 삭제 등록 정리",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "carrier / 실제 생성",
+      "passed": true,
+      "detail": "시험 함선 1척 생성 · 최초 재고/병력만 공급 · 캠페인 획득 아님"
+    },
+    {
+      "id": "carrier / 동일 표적 생성",
+      "passed": true,
+      "detail": "시험 함선 1척 생성 · 최초 재고/병력만 공급 · 캠페인 획득 아님"
+    },
+    {
+      "id": "carrier / PD 배제",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "carrier / 선택",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "carrier / 실제 이동",
+      "passed": true,
+      "detail": "1966.4707128834852"
+    },
+    {
+      "id": "carrier / 공격 무장 존재",
+      "passed": true,
+      "detail": "4"
+    },
+    {
+      "id": "carrier / 표적 지정",
+      "passed": true,
+      "detail": "표적 지정 수락 · 발사 명령과 별개"
+    },
+    {
+      "id": "carrier / 발사 요청",
+      "passed": true,
+      "detail": "발사 요청 수락 · 실제 발사 가능 조건은 별도 검사 / READY"
+    },
+    {
+      "id": "carrier / 재요청 중 발사 간격",
+      "passed": true,
+      "detail": "{'interval': 0.8999999761581421, 'minimum_observed': 1.0000000521540642, 'launches': 2}"
+    },
+    {
+      "id": "carrier / 실제 발사",
+      "passed": true,
+      "detail": "2"
+    },
+    {
+      "id": "carrier / 동일 표적 실제 피격",
+      "passed": true,
+      "detail": "표본 결과=['<OVAttackResult.HIT: 1>', '<OVAttackResult.HIT: 1>']"
+    },
+    {
+      "id": "carrier / 엔진 1개 및 가동",
+      "passed": true,
+      "detail": "1"
+    },
+    {
+      "id": "carrier / 실제 시설 피해",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "carrier / 엔진 기능 정지",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "carrier / 코어 완파",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "carrier / DEV 정리",
+      "passed": true,
+      "detail": "시험 함선과 해당 격납 시험 재고를 명시적으로 폐기 · 기발사 공격 기록은 유지"
+    },
+    {
+      "id": "carrier / 삭제 등록 정리",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "missile_ship / 실제 생성",
+      "passed": true,
+      "detail": "시험 함선 1척 생성 · 최초 재고/병력만 공급 · 캠페인 획득 아님"
+    },
+    {
+      "id": "missile_ship / 동일 표적 생성",
+      "passed": true,
+      "detail": "시험 함선 1척 생성 · 최초 재고/병력만 공급 · 캠페인 획득 아님"
+    },
+    {
+      "id": "missile_ship / PD 배제",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "missile_ship / 선택",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "missile_ship / 실제 이동",
+      "passed": true,
+      "detail": "1966.4707128834852"
+    },
+    {
+      "id": "missile_ship / 공격 무장 존재",
+      "passed": true,
+      "detail": "10"
+    },
+    {
+      "id": "missile_ship / 표적 지정",
+      "passed": true,
+      "detail": "표적 지정 수락 · 발사 명령과 별개"
+    },
+    {
+      "id": "missile_ship / 발사 요청",
+      "passed": true,
+      "detail": "발사 요청 수락 · 실제 발사 가능 조건은 별도 검사 / READY"
+    },
+    {
+      "id": "missile_ship / 재요청 중 발사 간격",
+      "passed": true,
+      "detail": "{'interval': 0.8999999761581421, 'minimum_observed': 1.0000000521540642, 'launches': 2}"
+    },
+    {
+      "id": "missile_ship / 실제 발사",
+      "passed": true,
+      "detail": "2"
+    },
+    {
+      "id": "missile_ship / 동일 표적 실제 피격",
+      "passed": true,
+      "detail": "표본 결과=['<OVAttackResult.HIT: 1>', '<OVAttackResult.HIT: 1>']"
+    },
+    {
+      "id": "missile_ship / 엔진 1개 및 가동",
+      "passed": true,
+      "detail": "1"
+    },
+    {
+      "id": "missile_ship / 실제 시설 피해",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "missile_ship / 엔진 기능 정지",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "missile_ship / 코어 완파",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "missile_ship / DEV 정리",
+      "passed": true,
+      "detail": "시험 함선과 해당 격납 시험 재고를 명시적으로 폐기 · 기발사 공격 기록은 유지"
+    },
+    {
+      "id": "missile_ship / 삭제 등록 정리",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "dreadnought / 실제 생성",
+      "passed": true,
+      "detail": "시험 함선 1척 생성 · 최초 재고/병력만 공급 · 캠페인 획득 아님"
+    },
+    {
+      "id": "dreadnought / 동일 표적 생성",
+      "passed": true,
+      "detail": "시험 함선 1척 생성 · 최초 재고/병력만 공급 · 캠페인 획득 아님"
+    },
+    {
+      "id": "dreadnought / PD 배제",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "dreadnought / 선택",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "dreadnought / 실제 이동",
+      "passed": true,
+      "detail": "1250.0490923192701"
+    },
+    {
+      "id": "dreadnought / 공격 무장 존재",
+      "passed": true,
+      "detail": "16"
+    },
+    {
+      "id": "dreadnought / 표적 지정",
+      "passed": true,
+      "detail": "표적 지정 수락 · 발사 명령과 별개"
+    },
+    {
+      "id": "dreadnought / 발사 요청",
+      "passed": true,
+      "detail": "발사 요청 수락 · 실제 발사 가능 조건은 별도 검사 / READY"
+    },
+    {
+      "id": "dreadnought / 재요청 중 발사 간격",
+      "passed": true,
+      "detail": "{'interval': 1.7999999523162842, 'minimum_observed': 1.8000000938773155, 'launches': 2}"
+    },
+    {
+      "id": "dreadnought / 실제 발사",
+      "passed": true,
+      "detail": "2"
+    },
+    {
+      "id": "dreadnought / 동일 표적 실제 피격",
+      "passed": true,
+      "detail": "표본 결과=['<OVAttackResult.HIT: 1>']"
+    },
+    {
+      "id": "dreadnought / 엔진 1개 및 가동",
+      "passed": true,
+      "detail": "1"
+    },
+    {
+      "id": "dreadnought / 실제 시설 피해",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "dreadnought / 엔진 기능 정지",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "dreadnought / 코어 완파",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "dreadnought / DEV 정리",
+      "passed": true,
+      "detail": "시험 함선과 해당 격납 시험 재고를 명시적으로 폐기 · 기발사 공격 기록은 유지"
+    },
+    {
+      "id": "dreadnought / 삭제 등록 정리",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "battlecarrier / 실제 생성",
+      "passed": true,
+      "detail": "시험 함선 1척 생성 · 최초 재고/병력만 공급 · 캠페인 획득 아님"
+    },
+    {
+      "id": "battlecarrier / 동일 표적 생성",
+      "passed": true,
+      "detail": "시험 함선 1척 생성 · 최초 재고/병력만 공급 · 캠페인 획득 아님"
+    },
+    {
+      "id": "battlecarrier / PD 배제",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "battlecarrier / 선택",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "battlecarrier / 실제 이동",
+      "passed": true,
+      "detail": "1328.3089014345314"
+    },
+    {
+      "id": "battlecarrier / 공격 무장 존재",
+      "passed": true,
+      "detail": "10"
+    },
+    {
+      "id": "battlecarrier / 표적 지정",
+      "passed": true,
+      "detail": "표적 지정 수락 · 발사 명령과 별개"
+    },
+    {
+      "id": "battlecarrier / 발사 요청",
+      "passed": true,
+      "detail": "발사 요청 수락 · 실제 발사 가능 조건은 별도 검사 / READY"
+    },
+    {
+      "id": "battlecarrier / 재요청 중 발사 간격",
+      "passed": true,
+      "detail": "{'interval': 1.7999999523162842, 'minimum_observed': 1.8000000938773155, 'launches': 2}"
+    },
+    {
+      "id": "battlecarrier / 실제 발사",
+      "passed": true,
+      "detail": "2"
+    },
+    {
+      "id": "battlecarrier / 동일 표적 실제 피격",
+      "passed": true,
+      "detail": "표본 결과=['<OVAttackResult.HIT: 1>']"
+    },
+    {
+      "id": "battlecarrier / 엔진 1개 및 가동",
+      "passed": true,
+      "detail": "1"
+    },
+    {
+      "id": "battlecarrier / 실제 시설 피해",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "battlecarrier / 엔진 기능 정지",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "battlecarrier / 코어 완파",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "battlecarrier / DEV 정리",
+      "passed": true,
+      "detail": "시험 함선과 해당 격납 시험 재고를 명시적으로 폐기 · 기발사 공격 기록은 유지"
+    },
+    {
+      "id": "battlecarrier / 삭제 등록 정리",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "repair / 실제 생성",
+      "passed": true,
+      "detail": "시험 함선 1척 생성 · 최초 재고/병력만 공급 · 캠페인 획득 아님"
+    },
+    {
+      "id": "repair / 동일 표적 생성",
+      "passed": true,
+      "detail": "시험 함선 1척 생성 · 최초 재고/병력만 공급 · 캠페인 획득 아님"
+    },
+    {
+      "id": "repair / PD 배제",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "repair / 선택",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "repair / 실제 이동",
+      "passed": true,
+      "detail": "2722.2038639015227"
+    },
+    {
+      "id": "repair / 공격 무장 없음",
+      "passed": true,
+      "detail": "0"
+    },
+    {
+      "id": "repair / 자원 시설 가동",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "repair / 엔진 1개 및 가동",
+      "passed": true,
+      "detail": "1"
+    },
+    {
+      "id": "repair / 실제 시설 피해",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "repair / 엔진 기능 정지",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "repair / 코어 완파",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "repair / DEV 정리",
+      "passed": true,
+      "detail": "시험 함선과 해당 격납 시험 재고를 명시적으로 폐기 · 기발사 공격 기록은 유지"
+    },
+    {
+      "id": "repair / 삭제 등록 정리",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "mining / 실제 생성",
+      "passed": true,
+      "detail": "시험 함선 1척 생성 · 최초 재고/병력만 공급 · 캠페인 획득 아님"
+    },
+    {
+      "id": "mining / 동일 표적 생성",
+      "passed": true,
+      "detail": "시험 함선 1척 생성 · 최초 재고/병력만 공급 · 캠페인 획득 아님"
+    },
+    {
+      "id": "mining / PD 배제",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "mining / 선택",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "mining / 실제 이동",
+      "passed": true,
+      "detail": "2710.0062023309874"
+    },
+    {
+      "id": "mining / 공격 무장 없음",
+      "passed": true,
+      "detail": "0"
+    },
+    {
+      "id": "mining / 자원 시설 가동",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "mining / 엔진 1개 및 가동",
+      "passed": true,
+      "detail": "1"
+    },
+    {
+      "id": "mining / 실제 시설 피해",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "mining / 엔진 기능 정지",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "mining / 코어 완파",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "mining / DEV 정리",
+      "passed": true,
+      "detail": "시험 함선과 해당 격납 시험 재고를 명시적으로 폐기 · 기발사 공격 기록은 유지"
+    },
+    {
+      "id": "mining / 삭제 등록 정리",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "transport / 실제 생성",
+      "passed": true,
+      "detail": "시험 함선 1척 생성 · 최초 재고/병력만 공급 · 캠페인 획득 아님"
+    },
+    {
+      "id": "transport / 동일 표적 생성",
+      "passed": true,
+      "detail": "시험 함선 1척 생성 · 최초 재고/병력만 공급 · 캠페인 획득 아님"
+    },
+    {
+      "id": "transport / PD 배제",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "transport / 선택",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "transport / 실제 이동",
+      "passed": true,
+      "detail": "2722.19506430201"
+    },
+    {
+      "id": "transport / 공격 무장 없음",
+      "passed": true,
+      "detail": "0"
+    },
+    {
+      "id": "transport / 자원 시설 가동",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "transport / 엔진 1개 및 가동",
+      "passed": true,
+      "detail": "1"
+    },
+    {
+      "id": "transport / 실제 시설 피해",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "transport / 엔진 기능 정지",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "transport / 코어 완파",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "transport / DEV 정리",
+      "passed": true,
+      "detail": "시험 함선과 해당 격납 시험 재고를 명시적으로 폐기 · 기발사 공격 기록은 유지"
+    },
+    {
+      "id": "transport / 삭제 등록 정리",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "assault / 실제 생성",
+      "passed": true,
+      "detail": "시험 함선 1척 생성 · 최초 재고/병력만 공급 · 캠페인 획득 아님"
+    },
+    {
+      "id": "assault / 동일 표적 생성",
+      "passed": true,
+      "detail": "시험 함선 1척 생성 · 최초 재고/병력만 공급 · 캠페인 획득 아님"
+    },
+    {
+      "id": "assault / PD 배제",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "assault / 선택",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "assault / 실제 이동",
+      "passed": true,
+      "detail": "2722.2038639015227"
+    },
+    {
+      "id": "assault / 공격 무장 없음",
+      "passed": true,
+      "detail": "0"
+    },
+    {
+      "id": "assault / PD 1기",
+      "passed": true,
+      "detail": "1"
+    },
+    {
+      "id": "assault / 수송선 등록",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "assault / 엔진 1개 및 가동",
+      "passed": true,
+      "detail": "1"
+    },
+    {
+      "id": "assault / 실제 시설 피해",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "assault / 엔진 기능 정지",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "assault / 코어 완파",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "assault / DEV 정리",
+      "passed": true,
+      "detail": "시험 함선과 해당 격납 시험 재고를 명시적으로 폐기 · 기발사 공격 기록은 유지"
+    },
+    {
+      "id": "assault / 삭제 등록 정리",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "지원 / 실제 물류 서브시스템 조회",
+      "passed": true,
+      "detail": "Python world subsystem 접근"
+    },
+    {
+      "id": "지원 / 네 함선 실제 생성",
+      "passed": true,
+      "detail": "시험 함선 1척 생성 · 최초 재고/병력만 공급 · 캠페인 획득 아님"
+    },
+    {
+      "id": "채굴 / 유한 자원 차감",
+      "passed": true,
+      "detail": "15.0"
+    },
+    {
+      "id": "수송 / 채굴 재고 수거",
+      "passed": true,
+      "detail": "15.0"
+    },
+    {
+      "id": "수송 / 수리함 재고 이전",
+      "passed": true,
+      "detail": "15.0"
+    },
+    {
+      "id": "수리 / 유한 자원 링크 시작",
+      "passed": true,
+      "detail": "연결 준비"
+    },
+    {
+      "id": "수리 / 실제 복구·자원 차감",
+      "passed": true,
+      "detail": "(515.0, 510.2412109375, 5350.0, 5381.72607421875)"
+    },
+    {
+      "id": "carrier / 함재기 모함 생성",
+      "passed": true,
+      "detail": "시험 함선 1척 생성 · 최초 재고/병력만 공급 · 캠페인 획득 아님"
+    },
+    {
+      "id": "carrier / 실제 출격",
+      "passed": true,
+      "detail": "(4, 4)"
+    },
+    {
+      "id": "carrier / 실제 복귀와 동일 기체 재고",
+      "passed": true,
+      "detail": "(4, 4)"
+    },
+    {
+      "id": "battlecarrier / 함재기 모함 생성",
+      "passed": true,
+      "detail": "시험 함선 1척 생성 · 최초 재고/병력만 공급 · 캠페인 획득 아님"
+    },
+    {
+      "id": "battlecarrier / 실제 출격",
+      "passed": true,
+      "detail": "(4, 4)"
+    },
+    {
+      "id": "battlecarrier / 실제 복귀와 동일 기체 재고",
+      "passed": true,
+      "detail": "(4, 4)"
+    }
+  ],
+  "cases": [
+    {
+      "hull": "corvette",
+      "runtime_id": "OVShip_3",
+      "representative_weapon": "Weapon_0",
+      "shots": 2,
+      "hits": 1,
+      "pd": "비활성",
+      "target": "battleship",
+      "condition": "초기 중심 거리 60000cm, 동일 고정 표적; DEV 기체 재고 0",
+      "cooldown_check": {
+        "interval": 1.7999999523162842,
+        "minimum_observed": 1.8000000938773155,
+        "launches": 2
+      }
+    },
+    {
+      "hull": "frigate",
+      "runtime_id": "OVShip_5",
+      "representative_weapon": "Weapon_0",
+      "shots": 2,
+      "hits": 1,
+      "pd": "비활성",
+      "target": "battleship",
+      "condition": "초기 중심 거리 60000cm, 동일 고정 표적; DEV 기체 재고 0",
+      "cooldown_check": {
+        "interval": 1.7999999523162842,
+        "minimum_observed": 1.8000000938773155,
+        "launches": 2
+      }
+    },
+    {
+      "hull": "vector",
+      "runtime_id": "OVShip_7",
+      "representative_weapon": "Weapon_0",
+      "shots": 2,
+      "hits": 1,
+      "pd": "비활성",
+      "target": "battleship",
+      "condition": "초기 중심 거리 60000cm, 동일 고정 표적; DEV 기체 재고 0",
+      "cooldown_check": {
+        "interval": 1.7999999523162842,
+        "minimum_observed": 1.8000000938773155,
+        "launches": 2
+      }
+    },
+    {
+      "hull": "bastion",
+      "runtime_id": "OVShip_9",
+      "representative_weapon": "Weapon_0",
+      "shots": 2,
+      "hits": 1,
+      "pd": "비활성",
+      "target": "battleship",
+      "condition": "초기 중심 거리 60000cm, 동일 고정 표적; DEV 기체 재고 0",
+      "cooldown_check": {
+        "interval": 1.7999999523162842,
+        "minimum_observed": 1.8000000938773155,
+        "launches": 2
+      }
+    },
+    {
+      "hull": "cruiser",
+      "runtime_id": "OVShip_11",
+      "representative_weapon": "Weapon_0",
+      "shots": 2,
+      "hits": 1,
+      "pd": "비활성",
+      "target": "battleship",
+      "condition": "초기 중심 거리 60000cm, 동일 고정 표적; DEV 기체 재고 0",
+      "cooldown_check": {
+        "interval": 1.7999999523162842,
+        "minimum_observed": 1.8000000938773155,
+        "launches": 2
+      }
+    },
+    {
+      "hull": "air_defense",
+      "runtime_id": "OVShip_13",
+      "representative_weapon": "Weapon_0",
+      "shots": 2,
+      "hits": 2,
+      "pd": "비활성",
+      "target": "battleship",
+      "condition": "초기 중심 거리 60000cm, 동일 고정 표적; DEV 기체 재고 0",
+      "cooldown_check": {
+        "interval": 0.8999999761581421,
+        "minimum_observed": 1.0000000521540642,
+        "launches": 2
+      }
+    },
+    {
+      "hull": "radar",
+      "runtime_id": "OVShip_15",
+      "representative_weapon": "Weapon_0",
+      "shots": 2,
+      "hits": 2,
+      "pd": "비활성",
+      "target": "battleship",
+      "condition": "초기 중심 거리 60000cm, 동일 고정 표적; DEV 기체 재고 0",
+      "cooldown_check": {
+        "interval": 0.8999999761581421,
+        "minimum_observed": 1.0000000521540642,
+        "launches": 2
+      }
+    },
+    {
+      "hull": "battleship",
+      "runtime_id": "OVShip_17",
+      "representative_weapon": "Weapon_0",
+      "shots": 2,
+      "hits": 1,
+      "pd": "비활성",
+      "target": "battleship",
+      "condition": "초기 중심 거리 60000cm, 동일 고정 표적; DEV 기체 재고 0",
+      "cooldown_check": {
+        "interval": 1.7999999523162842,
+        "minimum_observed": 1.8000000938773155,
+        "launches": 2
+      }
+    },
+    {
+      "hull": "carrier",
+      "runtime_id": "OVShip_19",
+      "representative_weapon": "Weapon_0",
+      "shots": 2,
+      "hits": 2,
+      "pd": "비활성",
+      "target": "battleship",
+      "condition": "초기 중심 거리 60000cm, 동일 고정 표적; DEV 기체 재고 0",
+      "cooldown_check": {
+        "interval": 0.8999999761581421,
+        "minimum_observed": 1.0000000521540642,
+        "launches": 2
+      }
+    },
+    {
+      "hull": "missile_ship",
+      "runtime_id": "OVShip_21",
+      "representative_weapon": "Weapon_0",
+      "shots": 2,
+      "hits": 2,
+      "pd": "비활성",
+      "target": "battleship",
+      "condition": "초기 중심 거리 60000cm, 동일 고정 표적; DEV 기체 재고 0",
+      "cooldown_check": {
+        "interval": 0.8999999761581421,
+        "minimum_observed": 1.0000000521540642,
+        "launches": 2
+      }
+    },
+    {
+      "hull": "dreadnought",
+      "runtime_id": "OVShip_23",
+      "representative_weapon": "Weapon_0",
+      "shots": 2,
+      "hits": 1,
+      "pd": "비활성",
+      "target": "battleship",
+      "condition": "초기 중심 거리 60000cm, 동일 고정 표적; DEV 기체 재고 0",
+      "cooldown_check": {
+        "interval": 1.7999999523162842,
+        "minimum_observed": 1.8000000938773155,
+        "launches": 2
+      }
+    },
+    {
+      "hull": "battlecarrier",
+      "runtime_id": "OVShip_25",
+      "representative_weapon": "Weapon_0",
+      "shots": 2,
+      "hits": 1,
+      "pd": "비활성",
+      "target": "battleship",
+      "condition": "초기 중심 거리 60000cm, 동일 고정 표적; DEV 기체 재고 0",
+      "cooldown_check": {
+        "interval": 1.7999999523162842,
+        "minimum_observed": 1.8000000938773155,
+        "launches": 2
+      }
+    },
+    {
+      "hull": "repair",
+      "runtime_id": "OVShip_27",
+      "representative_weapon": null,
+      "shots": 0,
+      "hits": 0,
+      "pd": "비활성",
+      "target": "battleship",
+      "condition": "초기 중심 거리 60000cm, 동일 고정 표적; DEV 기체 재고 0",
+      "cooldown_check": "미실시"
+    },
+    {
+      "hull": "mining",
+      "runtime_id": "OVShip_29",
+      "representative_weapon": null,
+      "shots": 0,
+      "hits": 0,
+      "pd": "비활성",
+      "target": "battleship",
+      "condition": "초기 중심 거리 60000cm, 동일 고정 표적; DEV 기체 재고 0",
+      "cooldown_check": "미실시"
+    },
+    {
+      "hull": "transport",
+      "runtime_id": "OVShip_31",
+      "representative_weapon": null,
+      "shots": 0,
+      "hits": 0,
+      "pd": "비활성",
+      "target": "battleship",
+      "condition": "초기 중심 거리 60000cm, 동일 고정 표적; DEV 기체 재고 0",
+      "cooldown_check": "미실시"
+    },
+    {
+      "hull": "assault",
+      "runtime_id": "OVShip_33",
+      "representative_weapon": null,
+      "shots": 0,
+      "hits": 0,
+      "pd": "비활성",
+      "target": "battleship",
+      "condition": "초기 중심 거리 60000cm, 동일 고정 표적; DEV 기체 재고 0",
+      "cooldown_check": "미실시"
+    }
+  ],
+  "errors": []
+}
