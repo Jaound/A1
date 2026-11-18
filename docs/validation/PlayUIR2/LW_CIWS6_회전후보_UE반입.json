@@ -1,0 +1,38 @@
+{
+  "id": "ciws_gatling_6",
+  "passed": true,
+  "scope": "원본 재질을 참조하는 회전 후보 격리 반입 및 시험 LOD. 전장 미적용.",
+  "parts": [
+    {
+      "asset": "/Game/Presentation/WeaponsYawTrial/ciws_gatling_6/SM_Base",
+      "fbx_sha256": "ddcab5ac7af1692241673d1a3f09b1a066f9cbbb58a9f7646ddb7bdf079193a3",
+      "source_origin": [
+        0.3683440089225769,
+        0.0007568150758743286,
+        -0.3700000047683716
+      ],
+      "triangles": [
+        479552,
+        23978,
+        4796
+      ],
+      "source_material": "/Game/Presentation/WeaponsFull/ciws_gatling_6/M_Source.M_Source"
+    },
+    {
+      "asset": "/Game/Presentation/WeaponsYawTrial/ciws_gatling_6/SM_Yaw",
+      "fbx_sha256": "bbc5e937dc8909606dc6da88840976b60fa8942990e33b656a478e9fad5fff6d",
+      "source_origin": [
+        0.3683440089225769,
+        0.0007568150758743286,
+        -0.3700000047683716
+      ],
+      "triangles": [
+        816190,
+        40810,
+        8162
+      ],
+      "source_material": "/Game/Presentation/WeaponsFull/ciws_gatling_6/M_Source.M_Source"
+    }
+  ],
+  "errors": []
+}

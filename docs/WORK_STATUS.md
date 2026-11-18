@@ -1,5 +1,8 @@
 # 최신 작업 — 플레이 UI R2 진행 중
 
+**LW 회전 후보 반입과 포신 접합 대안 (진행 중):** CIWS-6 회전 후보도 원본 재질과 시험 LOD를 사용해 UE에 격리 반입됐다([결과](validation/PlayUIR2/LW_CIWS6_회전후보_UE반입.json)); 현재 CIWS-B·CIWS-6 두 종이며 나머지 순차 반입 중이다. `ValidateWeaponYawCandidatesUE.py`는 모든 반입이 끝난 뒤 새 에디터에서 원본 재질·LOD·UV를 확인할 도구다. CIWS-B의 원본 복사본에서 구형 여유 공간(반지름 0.35)을 잘라낸 시험은 표본 -30~30도에서 포신/본체 표면 교차가 0이었지만 접합부가 떠 보였다([검사](validation/PlayUIR2/LW_CIWSB_구형접합_검사.json)). 원통형 여유 공간과 임시 축을 둔 시험도 -30~30도는 0이나 -90도에서 본체 1000·받침 1400, +90도 본체 243 교차가 있고 임시 축이 눈에 띈다([검사](validation/PlayUIR2/LW_CIWSB_원통접합_검사.json), [시험 화면](validation/PlayUIR2/LW_CIWSB_원통접합_시험.png)). 두 검사에서 기존 `BODY-CAP-UV`는 평면 캡 대신 Boolean 곡면이 되어 실패한다. UV 레이어 자체는 있으나 신규 면의 UV와 화면 재질은 검증하지 않았다. `BuildPitchReliefTrial.py`의 두 시도 모두 원본과 게임에 적용하지 않았다. 다음: 잔여 7종 격리 반입 완료·재로드, 원본별 포구와 관절을 보정해 전체 각도·선체 간섭·재질·성능·게임 실제 발사를 확인한다. 단순 간격 조절로 9종 완료로 처리하지 않는다.
+
+
 **LV 원본 분리 FBX·첫 UE 시험 자산 (전장 적용 미완료):** 9종을 받침과 회전부 FBX로 내보내 각각 Blender 재반입한 결과 18/18에서 삼각형 수·UV·입력 SHA가 보존됐다([결과](validation/PlayUIR2/LV_원본무장9종_분리FBX검사.json)). `ExportWeaponYawCandidate.py`와 `ValidateWeaponYawExport.py`는 원본 .blend를 저장하지 않는다. CIWS-B의 두 부분을 `/Game/Presentation/WeaponsYawTrial/ciws_beam_b/`에 격리 반입하고 기존 원본 재질 및 시험 LOD 100%/5%/1%를 연결했다([결과](validation/PlayUIR2/LV_CIWSB_회전후보_UE반입.json)). 첫 UE 반입은 기본 퇴화 삼각형 제거로 원본 삼각형 수가 191개 차이나 실패했고([기록](validation/PlayUIR2/LV_CIWSB_UE반입_초기실패.json)), 제거를 끄고 다시 실행했다. 스무딩 그룹 경고가 있어 화면 노멀·재질은 별도 확인해야 한다. CIWS-B 상하 회전 후보는 계층 구조 검사는 통과했지만 절단면 제외 표면 교차가 30도 458개, -30도 654개 등으로 나타나([검사](validation/PlayUIR2/LV_CIWSB_피치후보_간섭.json)) 미승인이다. 9종의 UE 회전 후보 격리 반입은 순차 진행 중이며 회전 후보도 실제 전장의 무장이 아니다. 다음: 완료 보고서·재로드 검증을 수집하고 포신 축/접합부·포구를 개별 수정한다. 실제 교전 장착, 시각/직접 입력, 전투 성능 및 패키징은 미검증이다. 사용자 UI 3파일은 커밋에서 제외한다.
 
 

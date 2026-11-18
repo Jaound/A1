@@ -1,0 +1,142 @@
+{
+  "passed": false,
+  "checks": [
+    {
+      "id": "PITCH-PARENT-IS-YAW",
+      "passed": true
+    },
+    {
+      "id": "BODY-CLOSED",
+      "passed": true
+    },
+    {
+      "id": "BODY-CAP-UV",
+      "passed": false
+    },
+    {
+      "id": "PITCH-CLOSED",
+      "passed": true
+    },
+    {
+      "id": "PITCH-CAP-UV",
+      "passed": true
+    },
+    {
+      "id": "ZERO-PITCH-PIVOT",
+      "passed": true
+    },
+    {
+      "id": "ZERO-YAW-PIVOT",
+      "passed": true
+    },
+    {
+      "id": "PITCH-PIVOT-STATIONARY",
+      "passed": true
+    },
+    {
+      "id": "PITCH-ACTUALLY-ROTATES",
+      "passed": true
+    },
+    {
+      "id": "YAW-CARRIES-PITCH-PIVOT",
+      "passed": true
+    },
+    {
+      "id": "BASE-REMAINS-FIXED",
+      "passed": true
+    },
+    {
+      "id": "SOURCE-UNCHANGED",
+      "passed": true
+    }
+  ],
+  "parts": {
+    "BODY": {
+      "boundary_edges": 0,
+      "nonmanifold_edges": 0,
+      "pitch_cap_faces": 0,
+      "uv_layers": [
+        "UVMap"
+      ]
+    },
+    "PITCH": {
+      "boundary_edges": 0,
+      "nonmanifold_edges": 0,
+      "pitch_cap_faces": 3,
+      "uv_layers": [
+        "UVMap"
+      ]
+    }
+  },
+  "angles": [
+    {
+      "degrees": -90,
+      "surface_intersections": 656,
+      "base_intersections": 1400
+    },
+    {
+      "degrees": -75,
+      "surface_intersections": 128,
+      "base_intersections": 170
+    },
+    {
+      "degrees": -60,
+      "surface_intersections": 0,
+      "base_intersections": 0
+    },
+    {
+      "degrees": -45,
+      "surface_intersections": 0,
+      "base_intersections": 0
+    },
+    {
+      "degrees": -30,
+      "surface_intersections": 0,
+      "base_intersections": 0
+    },
+    {
+      "degrees": -15,
+      "surface_intersections": 0,
+      "base_intersections": 0
+    },
+    {
+      "degrees": 0,
+      "surface_intersections": 0,
+      "base_intersections": 0
+    },
+    {
+      "degrees": 15,
+      "surface_intersections": 0,
+      "base_intersections": 0
+    },
+    {
+      "degrees": 30,
+      "surface_intersections": 0,
+      "base_intersections": 0
+    },
+    {
+      "degrees": 45,
+      "surface_intersections": 0,
+      "base_intersections": 0
+    },
+    {
+      "degrees": 60,
+      "surface_intersections": 0,
+      "base_intersections": 0
+    },
+    {
+      "degrees": 75,
+      "surface_intersections": 0,
+      "base_intersections": 0
+    },
+    {
+      "degrees": 90,
+      "surface_intersections": 56,
+      "base_intersections": 0
+    }
+  ],
+  "source": "C:\\Users\\user\\Documents\\OrbitalVanguardAssets\\Prepared\\PlayUI_R2_WeaponPitchReliefCandidates_v1\\ciws_beam_b\\ciws_beam_b_PitchTrial.blend",
+  "source_before": "2c1e7785d4a3a3145e1b670cd9f9af6897febba6801ce39e1b5d5440d1777160",
+  "source_after": "2c1e7785d4a3a3145e1b670cd9f9af6897febba6801ce39e1b5d5440d1777160",
+  "scope": "hierarchy/closed meshes and sampled cap-free intersections only; visual joint, materials, continuous range, muzzle and gameplay unapproved"
+}
