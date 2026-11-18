@@ -1,0 +1,655 @@
+{
+  "scope": "원본 블렌더 표면 샘플 후보. 표시면 수직 입사에 대한 단순 상자/구 기하 비교이며 UE 공격·피해 검사가 아님.",
+  "hulls": 14,
+  "marks": 129,
+  "blocked": 0,
+  "heldout_covered": 2065,
+  "heldout_total": 2092,
+  "cases": [
+    {
+      "hull": "dreadnought",
+      "slot": "top_yellow_0",
+      "candidate_box_precedes_mount_sphere": false
+    },
+    {
+      "hull": "dreadnought",
+      "slot": "top_yellow_1",
+      "candidate_box_precedes_mount_sphere": false
+    },
+    {
+      "hull": "dreadnought",
+      "slot": "top_yellow_2",
+      "candidate_box_precedes_mount_sphere": false
+    },
+    {
+      "hull": "dreadnought",
+      "slot": "top_yellow_3",
+      "candidate_box_precedes_mount_sphere": false
+    },
+    {
+      "hull": "dreadnought",
+      "slot": "top_blue_0",
+      "candidate_box_precedes_mount_sphere": false
+    },
+    {
+      "hull": "dreadnought",
+      "slot": "top_blue_1",
+      "candidate_box_precedes_mount_sphere": false
+    },
+    {
+      "hull": "dreadnought",
+      "slot": "top_blue_2",
+      "candidate_box_precedes_mount_sphere": false
+    },
+    {
+      "hull": "dreadnought",
+      "slot": "top_blue_3",
+      "candidate_box_precedes_mount_sphere": false
+    },
+    {
+      "hull": "dreadnought",
+      "slot": "top_red_0",
+      "candidate_box_precedes_mount_sphere": false
+    },
+    {
+      "hull": "dreadnought",
+      "slot": "top_red_1",
+      "candidate_box_precedes_mount_sphere": false
+    },
+    {
+      "hull": "dreadnought",
+      "slot": "top_red_2",
+      "candidate_box_precedes_mount_sphere": false
+    },
+    {
+      "hull": "dreadnought",
+      "slot": "bottom_yellow_0",
+      "candidate_box_precedes_mount_sphere": false
+    },
+    {
+      "hull": "dreadnought",
+      "slot": "bottom_yellow_1",
+      "candidate_box_precedes_mount_sphere": false
+    },
+    {
+      "hull": "dreadnought",
+      "slot": "bottom_blue_0",
+      "candidate_box_precedes_mount_sphere": false
+    },
+    {
+      "hull": "dreadnought",
+      "slot": "bottom_blue_1",
+      "candidate_box_precedes_mount_sphere": false
+    },
+    {
+      "hull": "dreadnought",
+      "slot": "bottom_red_0",
+      "candidate_box_precedes_mount_sphere": false
+    },
+    {
+      "hull": "dreadnought",
+      "slot": "left_yellow_0",
+      "candidate_box_precedes_mount_sphere": false
+    },
+    {
+      "hull": "dreadnought",
+      "slot": "left_blue_0",
+      "candidate_box_precedes_mount_sphere": false
+    },
+    {
+      "hull": "dreadnought",
+      "slot": "left_blue_1",
+      "candidate_box_precedes_mount_sphere": false
+    },
+    {
+      "hull": "dreadnought",
+      "slot": "left_blue_2",
+      "candidate_box_precedes_mount_sphere": false
+    },
+    {
+      "hull": "dreadnought",
+      "slot": "right_yellow_0",
+      "candidate_box_precedes_mount_sphere": false
+    },
+    {
+      "hull": "dreadnought",
+      "slot": "right_blue_0",
+      "candidate_box_precedes_mount_sphere": false
+    },
+    {
+      "hull": "dreadnought",
+      "slot": "right_blue_1",
+      "candidate_box_precedes_mount_sphere": false
+    },
+    {
+      "hull": "dreadnought",
+      "slot": "right_blue_2",
+      "candidate_box_precedes_mount_sphere": false
+    },
+    {
+      "hull": "radar",
+      "slot": "bottom_yellow_0",
+      "candidate_box_precedes_mount_sphere": false
+    },
+    {
+      "hull": "radar",
+      "slot": "bottom_blue_0",
+      "candidate_box_precedes_mount_sphere": false
+    },
+    {
+      "hull": "bastion",
+      "slot": "top_yellow_0",
+      "candidate_box_precedes_mount_sphere": false
+    },
+    {
+      "hull": "bastion",
+      "slot": "top_yellow_1",
+      "candidate_box_precedes_mount_sphere": false
+    },
+    {
+      "hull": "bastion",
+      "slot": "top_blue_0",
+      "candidate_box_precedes_mount_sphere": false
+    },
+    {
+      "hull": "bastion",
+      "slot": "top_blue_1",
+      "candidate_box_precedes_mount_sphere": false
+    },
+    {
+      "hull": "bastion",
+      "slot": "top_blue_2",
+      "candidate_box_precedes_mount_sphere": false
+    },
+    {
+      "hull": "bastion",
+      "slot": "bottom_yellow_0",
+      "candidate_box_precedes_mount_sphere": false
+    },
+    {
+      "hull": "bastion",
+      "slot": "bottom_yellow_1",
+      "candidate_box_precedes_mount_sphere": false
+    },
+    {
+      "hull": "bastion",
+      "slot": "left_blue_0",
+      "candidate_box_precedes_mount_sphere": false
+    },
+    {
+      "hull": "bastion",
+      "slot": "right_blue_0",
+      "candidate_box_precedes_mount_sphere": false
+    },
+    {
+      "hull": "air_defense",
+      "slot": "top_yellow_0",
+      "candidate_box_precedes_mount_sphere": false
+    },
+    {
+      "hull": "air_defense",
+      "slot": "top_yellow_1",
+      "candidate_box_precedes_mount_sphere": false
+    },
+    {
+      "hull": "air_defense",
+      "slot": "top_yellow_2",
+      "candidate_box_precedes_mount_sphere": false
+    },
+    {
+      "hull": "air_defense",
+      "slot": "top_yellow_3",
+      "candidate_box_precedes_mount_sphere": false
+    },
+    {
+      "hull": "air_defense",
+      "slot": "top_yellow_4",
+      "candidate_box_precedes_mount_sphere": false
+    },
+    {
+      "hull": "air_defense",
+      "slot": "top_yellow_5",
+      "candidate_box_precedes_mount_sphere": false
+    },
+    {
+      "hull": "air_defense",
+      "slot": "top_yellow_6",
+      "candidate_box_precedes_mount_sphere": false
+    },
+    {
+      "hull": "air_defense",
+      "slot": "top_yellow_7",
+      "candidate_box_precedes_mount_sphere": false
+    },
+    {
+      "hull": "air_defense",
+      "slot": "top_blue_0",
+      "candidate_box_precedes_mount_sphere": false
+    },
+    {
+      "hull": "air_defense",
+      "slot": "bottom_yellow_0",
+      "candidate_box_precedes_mount_sphere": false
+    },
+    {
+      "hull": "air_defense",
+      "slot": "left_yellow_0",
+      "candidate_box_precedes_mount_sphere": false
+    },
+    {
+      "hull": "air_defense",
+      "slot": "right_yellow_0",
+      "candidate_box_precedes_mount_sphere": false
+    },
+    {
+      "hull": "vector",
+      "slot": "top_yellow_0",
+      "candidate_box_precedes_mount_sphere": false
+    },
+    {
+      "hull": "vector",
+      "slot": "top_blue_0",
+      "candidate_box_precedes_mount_sphere": false
+    },
+    {
+      "hull": "vector",
+      "slot": "bottom_yellow_0",
+      "candidate_box_precedes_mount_sphere": false
+    },
+    {
+      "hull": "vector",
+      "slot": "left_blue_0",
+      "candidate_box_precedes_mount_sphere": false
+    },
+    {
+      "hull": "vector",
+      "slot": "right_blue_0",
+      "candidate_box_precedes_mount_sphere": false
+    },
+    {
+      "hull": "repair",
+      "slot": "top_yellow_0",
+      "candidate_box_precedes_mount_sphere": false
+    },
+    {
+      "hull": "repair",
+      "slot": "bottom_yellow_0",
+      "candidate_box_precedes_mount_sphere": false
+    },
+    {
+      "hull": "cruiser",
+      "slot": "top_yellow_0",
+      "candidate_box_precedes_mount_sphere": false
+    },
+    {
+      "hull": "cruiser",
+      "slot": "top_yellow_1",
+      "candidate_box_precedes_mount_sphere": false
+    },
+    {
+      "hull": "cruiser",
+      "slot": "top_blue_0",
+      "candidate_box_precedes_mount_sphere": false
+    },
+    {
+      "hull": "cruiser",
+      "slot": "top_blue_1",
+      "candidate_box_precedes_mount_sphere": false
+    },
+    {
+      "hull": "cruiser",
+      "slot": "top_blue_2",
+      "candidate_box_precedes_mount_sphere": false
+    },
+    {
+      "hull": "cruiser",
+      "slot": "bottom_yellow_0",
+      "candidate_box_precedes_mount_sphere": false
+    },
+    {
+      "hull": "cruiser",
+      "slot": "left_blue_0",
+      "candidate_box_precedes_mount_sphere": false
+    },
+    {
+      "hull": "cruiser",
+      "slot": "right_blue_0",
+      "candidate_box_precedes_mount_sphere": false
+    },
+    {
+      "hull": "missile_ship",
+      "slot": "top_yellow_0",
+      "candidate_box_precedes_mount_sphere": false
+    },
+    {
+      "hull": "missile_ship",
+      "slot": "top_yellow_1",
+      "candidate_box_precedes_mount_sphere": false
+    },
+    {
+      "hull": "missile_ship",
+      "slot": "top_yellow_2",
+      "candidate_box_precedes_mount_sphere": false
+    },
+    {
+      "hull": "missile_ship",
+      "slot": "top_blue_0",
+      "candidate_box_precedes_mount_sphere": false
+    },
+    {
+      "hull": "missile_ship",
+      "slot": "top_blue_1",
+      "candidate_box_precedes_mount_sphere": false
+    },
+    {
+      "hull": "missile_ship",
+      "slot": "top_red_0",
+      "candidate_box_precedes_mount_sphere": false
+    },
+    {
+      "hull": "missile_ship",
+      "slot": "top_red_1",
+      "candidate_box_precedes_mount_sphere": false
+    },
+    {
+      "hull": "missile_ship",
+      "slot": "top_red_2",
+      "candidate_box_precedes_mount_sphere": false
+    },
+    {
+      "hull": "missile_ship",
+      "slot": "top_red_3",
+      "candidate_box_precedes_mount_sphere": false
+    },
+    {
+      "hull": "missile_ship",
+      "slot": "top_red_4",
+      "candidate_box_precedes_mount_sphere": false
+    },
+    {
+      "hull": "missile_ship",
+      "slot": "top_red_5",
+      "candidate_box_precedes_mount_sphere": false
+    },
+    {
+      "hull": "missile_ship",
+      "slot": "bottom_yellow_0",
+      "candidate_box_precedes_mount_sphere": false
+    },
+    {
+      "hull": "missile_ship",
+      "slot": "bottom_yellow_1",
+      "candidate_box_precedes_mount_sphere": false
+    },
+    {
+      "hull": "missile_ship",
+      "slot": "bottom_blue_0",
+      "candidate_box_precedes_mount_sphere": false
+    },
+    {
+      "hull": "missile_ship",
+      "slot": "bottom_blue_1",
+      "candidate_box_precedes_mount_sphere": false
+    },
+    {
+      "hull": "battleship",
+      "slot": "top_yellow_0",
+      "candidate_box_precedes_mount_sphere": false
+    },
+    {
+      "hull": "battleship",
+      "slot": "top_blue_0",
+      "candidate_box_precedes_mount_sphere": false
+    },
+    {
+      "hull": "battleship",
+      "slot": "top_blue_1",
+      "candidate_box_precedes_mount_sphere": false
+    },
+    {
+      "hull": "battleship",
+      "slot": "top_blue_2",
+      "candidate_box_precedes_mount_sphere": false
+    },
+    {
+      "hull": "battleship",
+      "slot": "top_blue_3",
+      "candidate_box_precedes_mount_sphere": false
+    },
+    {
+      "hull": "battleship",
+      "slot": "bottom_yellow_0",
+      "candidate_box_precedes_mount_sphere": false
+    },
+    {
+      "hull": "battleship",
+      "slot": "bottom_yellow_1",
+      "candidate_box_precedes_mount_sphere": false
+    },
+    {
+      "hull": "battleship",
+      "slot": "bottom_blue_0",
+      "candidate_box_precedes_mount_sphere": false
+    },
+    {
+      "hull": "battleship",
+      "slot": "bottom_blue_1",
+      "candidate_box_precedes_mount_sphere": false
+    },
+    {
+      "hull": "battleship",
+      "slot": "left_yellow_0",
+      "candidate_box_precedes_mount_sphere": false
+    },
+    {
+      "hull": "battleship",
+      "slot": "left_blue_0",
+      "candidate_box_precedes_mount_sphere": false
+    },
+    {
+      "hull": "battleship",
+      "slot": "left_blue_1",
+      "candidate_box_precedes_mount_sphere": false
+    },
+    {
+      "hull": "battleship",
+      "slot": "right_yellow_0",
+      "candidate_box_precedes_mount_sphere": false
+    },
+    {
+      "hull": "battleship",
+      "slot": "right_blue_0",
+      "candidate_box_precedes_mount_sphere": false
+    },
+    {
+      "hull": "battleship",
+      "slot": "right_blue_1",
+      "candidate_box_precedes_mount_sphere": false
+    },
+    {
+      "hull": "mining",
+      "slot": "left_yellow_0",
+      "candidate_box_precedes_mount_sphere": false
+    },
+    {
+      "hull": "mining",
+      "slot": "right_yellow_0",
+      "candidate_box_precedes_mount_sphere": false
+    },
+    {
+      "hull": "corvette",
+      "slot": "top_blue_0",
+      "candidate_box_precedes_mount_sphere": false
+    },
+    {
+      "hull": "corvette",
+      "slot": "top_blue_1",
+      "candidate_box_precedes_mount_sphere": false
+    },
+    {
+      "hull": "corvette",
+      "slot": "left_yellow_0",
+      "candidate_box_precedes_mount_sphere": false
+    },
+    {
+      "hull": "corvette",
+      "slot": "right_yellow_0",
+      "candidate_box_precedes_mount_sphere": false
+    },
+    {
+      "hull": "carrier",
+      "slot": "top_yellow_0",
+      "candidate_box_precedes_mount_sphere": false
+    },
+    {
+      "hull": "carrier",
+      "slot": "top_yellow_1",
+      "candidate_box_precedes_mount_sphere": false
+    },
+    {
+      "hull": "carrier",
+      "slot": "top_yellow_2",
+      "candidate_box_precedes_mount_sphere": false
+    },
+    {
+      "hull": "carrier",
+      "slot": "top_yellow_3",
+      "candidate_box_precedes_mount_sphere": false
+    },
+    {
+      "hull": "carrier",
+      "slot": "top_blue_0",
+      "candidate_box_precedes_mount_sphere": false
+    },
+    {
+      "hull": "carrier",
+      "slot": "top_blue_1",
+      "candidate_box_precedes_mount_sphere": false
+    },
+    {
+      "hull": "carrier",
+      "slot": "bottom_yellow_0",
+      "candidate_box_precedes_mount_sphere": false
+    },
+    {
+      "hull": "carrier",
+      "slot": "bottom_blue_0",
+      "candidate_box_precedes_mount_sphere": false
+    },
+    {
+      "hull": "carrier",
+      "slot": "bottom_blue_1",
+      "candidate_box_precedes_mount_sphere": false
+    },
+    {
+      "hull": "battlecarrier",
+      "slot": "top_yellow_0",
+      "candidate_box_precedes_mount_sphere": false
+    },
+    {
+      "hull": "battlecarrier",
+      "slot": "top_yellow_1",
+      "candidate_box_precedes_mount_sphere": false
+    },
+    {
+      "hull": "battlecarrier",
+      "slot": "top_yellow_2",
+      "candidate_box_precedes_mount_sphere": false
+    },
+    {
+      "hull": "battlecarrier",
+      "slot": "top_yellow_3",
+      "candidate_box_precedes_mount_sphere": false
+    },
+    {
+      "hull": "battlecarrier",
+      "slot": "top_blue_0",
+      "candidate_box_precedes_mount_sphere": false
+    },
+    {
+      "hull": "battlecarrier",
+      "slot": "top_blue_1",
+      "candidate_box_precedes_mount_sphere": false
+    },
+    {
+      "hull": "battlecarrier",
+      "slot": "top_blue_2",
+      "candidate_box_precedes_mount_sphere": false
+    },
+    {
+      "hull": "battlecarrier",
+      "slot": "top_red_0",
+      "candidate_box_precedes_mount_sphere": false
+    },
+    {
+      "hull": "battlecarrier",
+      "slot": "top_red_1",
+      "candidate_box_precedes_mount_sphere": false
+    },
+    {
+      "hull": "battlecarrier",
+      "slot": "bottom_yellow_0",
+      "candidate_box_precedes_mount_sphere": false
+    },
+    {
+      "hull": "battlecarrier",
+      "slot": "bottom_yellow_1",
+      "candidate_box_precedes_mount_sphere": false
+    },
+    {
+      "hull": "battlecarrier",
+      "slot": "bottom_blue_0",
+      "candidate_box_precedes_mount_sphere": false
+    },
+    {
+      "hull": "battlecarrier",
+      "slot": "bottom_blue_1",
+      "candidate_box_precedes_mount_sphere": false
+    },
+    {
+      "hull": "battlecarrier",
+      "slot": "bottom_blue_2",
+      "candidate_box_precedes_mount_sphere": false
+    },
+    {
+      "hull": "battlecarrier",
+      "slot": "left_yellow_0",
+      "candidate_box_precedes_mount_sphere": false
+    },
+    {
+      "hull": "battlecarrier",
+      "slot": "left_blue_0",
+      "candidate_box_precedes_mount_sphere": false
+    },
+    {
+      "hull": "battlecarrier",
+      "slot": "right_yellow_0",
+      "candidate_box_precedes_mount_sphere": false
+    },
+    {
+      "hull": "battlecarrier",
+      "slot": "right_blue_0",
+      "candidate_box_precedes_mount_sphere": false
+    },
+    {
+      "hull": "frigate",
+      "slot": "top_yellow_0",
+      "candidate_box_precedes_mount_sphere": false
+    },
+    {
+      "hull": "frigate",
+      "slot": "top_yellow_1",
+      "candidate_box_precedes_mount_sphere": false
+    },
+    {
+      "hull": "frigate",
+      "slot": "left_blue_0",
+      "candidate_box_precedes_mount_sphere": false
+    },
+    {
+      "hull": "frigate",
+      "slot": "right_blue_0",
+      "candidate_box_precedes_mount_sphere": false
+    }
+  ]
+}
