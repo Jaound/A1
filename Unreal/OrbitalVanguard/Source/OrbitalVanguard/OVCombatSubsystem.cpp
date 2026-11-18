@@ -446,7 +446,10 @@ void UOVCombatSubsystem::Step(float Delta)
         AOVShip* Ship = State.Ship;
         if (!IsValid(Ship) || !Ship->Systems || State.bDeparted || Ship->Systems->bWrecked || Ship->Systems->bNeutral) continue;
         const bool bAutomatic = Ship->IsAttackAutomatic() || !Ship->Systems->CanCommand();
-        if (bAutomatic && (!IsValidTarget(Ship, Ship->AttackTarget) || !GetDetection(Ship, Ship->AttackTarget).bDetected || (IsTargetProtected(Ship,Ship->AttackTarget) && State.ForcedMount.IsNone())))
+        const auto* Mission=GetWorld()->GetSubsystem<UOVMissionSubsystem>();
+        const bool bManualRequest=State.Mounts.ContainsByPredicate([](const FOVCombatMountState& M){return M.bFireRequested;});
+        const bool bAutoHeld=Mission&&Mission->ShouldHoldAutoAssaultFire(Ship,Ship->AttackTarget);
+        if (bAutomatic && (!IsValidTarget(Ship, Ship->AttackTarget) || !GetDetection(Ship, Ship->AttackTarget).bDetected || (IsTargetProtected(Ship,Ship->AttackTarget) && State.ForcedMount.IsNone()) || (bAutoHeld&&!bManualRequest&&State.ForcedMount.IsNone())))
         {
             AOVShip* Best = nullptr; double BestDistance = TNumericLimits<double>::Max();
             for (const FOVCombatShipState& Candidate : Ships)
@@ -454,7 +457,7 @@ void UOVCombatSubsystem::Step(float Delta)
                 AOVShip* Target = Candidate.Ship;
                 if (!IsValidTarget(Ship, Target) || !GetDetection(Ship, Target).bDetected) continue;
                 FVector CandidateAim;
-                if(IsTargetProtected(Ship,Target) || !ResolveAimPoint(State,Target,CandidateAim)) continue;
+                if(IsTargetProtected(Ship,Target) || (Mission&&Mission->ShouldHoldAutoAssaultFire(Ship,Target)) || !ResolveAimPoint(State,Target,CandidateAim)) continue;
                 const double Distance = FVector::DistSquared(Ship->GetActorLocation(), Target->GetActorLocation());
                 if (Distance < BestDistance) { Best = Target; BestDistance = Distance; }
             }
@@ -495,6 +498,8 @@ void UOVCombatSubsystem::Step(float Delta)
             if (Mount.SalvoRemaining > 0 && (Mount.SalvoTarget.Get() != Ship->AttackTarget
                 || (Mount.bAutomaticSalvo && !bAutomatic)))
             { Mount.SalvoRemaining = 0; Mount.SalvoTarget.Reset(); }
+            if (bAutomatic && !Mount.bFireRequested && Mount.SalvoRemaining<=0 && State.ForcedMount!=Mount.MountId && Mission
+                && Mission->ShouldHoldAutoAssaultFire(Ship,Ship->AttackTarget)) continue;
             if (!(bAutomatic || Mount.bFireRequested || Mount.SalvoRemaining > 0)) continue;
             const FOVFireReadiness Ready = Evaluate(State, Mount, false);
             if (!Ready.bReady)

@@ -2,6 +2,7 @@
 
 #include "OVCombatSubsystem.h"
 #include "OVMarkedSlots.h"
+#include "OVPointDefenseSubsystem.h"
 #include "OVShip.h"
 #include "OVShipSystemsComponent.h"
 #include "Engine/World.h"
@@ -15,8 +16,7 @@
 
 namespace
 {
-// Provisional source-surface boxes alter mission outcomes. Opt in while the
-// integrated mission regression and remaining collision coverage are resolved.
+// Provisional source-surface boxes remain opt-in while mission regression persists.
 TAutoConsoleVariable<int32> CVarOVMarkedMounts(TEXT("ov.Calibration.MarkedMounts"),0,
     TEXT("Experimental drawing-based mounts and provisional source-surface collision boxes."), ECVF_Default);
 struct FWeapon
@@ -124,6 +124,26 @@ bool ApplyMarkedAttackMounts(const FHull& Hull, UShipLayoutDataAsset& Layout)
     Place(RegularWeapons, General);
     Place(SpecialWeapons, Dedicated);
     return true;
+}
+
+void AppendDefenseMounts(const FHull& Hull,UShipLayoutDataAsset& Layout)
+{
+    const int32 First=Layout.WeaponMounts.Num();
+    for(int32 I=0;I<Hull.PD;++I) {
+        auto& M=Layout.WeaponMounts.AddDefaulted_GetRef();M.WeaponId=FName(*FString::Printf(TEXT("PD_%d"),I));
+        M.Type=EOVWeaponType::Interception;M.Tier=Layout.WeaponTier;M.MaxHP=100;
+        M.LocalPosition=FVector(FMath::Lerp(-.7,.7,(I+.5)/Hull.PD)*Layout.LocalHalfExtent.X,
+            (I%2?1:-1)*Layout.LocalHalfExtent.Y*.8,Layout.LocalHalfExtent.Z+8);
+    }
+    const auto Marked=OVMarkedSlots::GetCandidates(FName(Hull.Key));
+    TArray<const FOVMarkedSlotCandidate*> Slots;
+    for(const auto& Slot:Marked)if(Slot.Kind==EOVMarkedSlotKind::Interception)Slots.Add(&Slot);
+    if(CVarOVMarkedMounts.GetValueOnGameThread()==1&&Slots.Num()==Hull.PD)
+        for(int32 I=0;I<Hull.PD;++I) {
+            auto& Mount=Layout.WeaponMounts[First+I];Mount.AuthoredSlotId=Slots[I]->SlotId;
+            Mount.AuthoredSlotPurpose=TEXT("Interception");Mount.LocalPosition=Slots[I]->LocalPosition;
+            Mount.LocalSurfaceNormal=Slots[I]->LocalNormal;
+        }
 }
 
 void ApplyProfiles(UOVCombatSettings& Settings)
@@ -335,10 +355,21 @@ bool OVCalibration::Start(UOVCombatSubsystem& Combat, const TArray<AOVShip*>& Sh
         if (!Roster[I]) return false;
         Layouts[I] = MakeLayout(Ships[I], *Roster[I]);
         if (!Layouts[I]) return false;
+        if(CVarOVMarkedMounts.GetValueOnGameThread()==1)
+        {
+            bool HasControl=false;for(const auto& Slot:Layouts[I]->Slots)HasControl|=Slot.Facility==EOVFacilityType::Interception;
+            if(!HasControl)for(auto& Slot:Layouts[I]->Slots)if(Slot.Facility==EOVFacilityType::None) {
+                Slot.Facility=EOVFacilityType::Interception;Slot.AllowedFacilities.AddUnique(Slot.Facility);
+                Slot.MaxFacilityHP=100;Slot.RequiredCrew=10;break;
+            }
+            AppendDefenseMounts(*Roster[I],*Layouts[I]);
+        }
     }
 
     Combat.EnableCombat({}, 260112);
     ApplyProfiles(*Combat.Settings);
+    auto* Defense=Combat.GetWorld()->GetSubsystem<UOVPointDefenseSubsystem>();
+    if(Defense&&CVarOVMarkedMounts.GetValueOnGameThread()==1)Defense->Reset(260112);
     const FVector Positions[] = {FVector(-33000,-6200,2000), FVector(-37000,10500,2000), FVector(33000,0,2000)};
     for (int32 I = 0; I < 3; ++I)
     {
@@ -369,6 +400,7 @@ bool OVCalibration::Start(UOVCombatSubsystem& Combat, const TArray<AOVShip*>& Sh
         Ship->SetActorEnableCollision(!bInactive);
         Combat.RegisterShip(Ship, Hull.RadarTier, false, Hull.Size);
         if (bInactive) { Combat.NotifyFTLDeparture(Ship); continue; }
+        if(Defense&&CVarOVMarkedMounts.GetValueOnGameThread()==1)Defense->RegisterShip(Ship,Hull.PD);
 
         for (int32 M = 0; M < Hull.MountCount; ++M)
         {
@@ -399,23 +431,7 @@ bool OVCalibration::ConfigureHull(UOVCombatSubsystem& Combat, AOVShip& Ship, FNa
     Install(EOVFacilityType::Interception,1);
     Install(EOVFacilityType::Boarding,1);
     if(HullId==TEXT("carrier") || HullId==TEXT("battlecarrier")) { Install(EOVFacilityType::Hangar,2); Install(EOVFacilityType::FighterControl,1); }
-    for(int32 I=0;I<Hull->PD;++I) {
-        auto& M=Layout->WeaponMounts.AddDefaulted_GetRef(); M.WeaponId=FName(*FString::Printf(TEXT("PD_%d"),I));
-        M.Type=EOVWeaponType::Interception; M.Tier=Layout->WeaponTier; M.MaxHP=100;
-        M.LocalPosition=FVector(FMath::Lerp(-.7,.7,(I+.5)/Hull->PD)*Layout->LocalHalfExtent.X,
-            (I%2?1:-1)*Layout->LocalHalfExtent.Y*.8,Layout->LocalHalfExtent.Z+8);
-    }
-    const auto Marked = OVMarkedSlots::GetCandidates(HullId);
-    TArray<const FOVMarkedSlotCandidate*> PDSlots;
-    for (const auto& Slot : Marked) if (Slot.Kind == EOVMarkedSlotKind::Interception) PDSlots.Add(&Slot);
-    if (CVarOVMarkedMounts.GetValueOnGameThread() == 1 && PDSlots.Num() == Hull->PD)
-        for (int32 I = 0; I < Hull->PD; ++I) {
-            auto& Mount = Layout->WeaponMounts[Hull->MountCount + I];
-            Mount.AuthoredSlotId = PDSlots[I]->SlotId;
-            Mount.AuthoredSlotPurpose = TEXT("Interception");
-            Mount.LocalPosition = PDSlots[I]->LocalPosition;
-            Mount.LocalSurfaceNormal = PDSlots[I]->LocalNormal;
-        }
+    AppendDefenseMounts(*Hull,*Layout);
     Ship.Configure(HullId.ToString().ToUpper(),Friendly,Hull->Speed,Hull->Turn,FVector(Scale),Friendly?FLinearColor(.12f,.65f,1):FLinearColor(1,.15f,.08f));
     Ship.SetCalibrationHull(&Layout->LocalHalfExtent);
     auto& S=*Ship.Systems;
@@ -444,6 +460,17 @@ bool FOVMarkedEquippedMountsTest::RunTest(const FString&)
     UOVCombatSubsystem* Combat=World->GetSubsystem<UOVCombatSubsystem>();
     const bool Started=OVCalibration::Start(*Combat,Ships,1);
     TestTrue(TEXT("Calibration combat starts"),Started);
+    if(Started)
+    {
+        auto* Defense=World->GetSubsystem<UOVPointDefenseSubsystem>();
+        for(AOVShip* Ship:Ships)
+        {
+            const auto PD=Defense->GetShipState(Ship);
+            TestTrue(TEXT("F6 registers real PD mounts"),!PD.Mounts.IsEmpty());
+            for(const auto& Mount:PD.Mounts)
+                TestTrue(TEXT("F6 PD maps to the authored layout"),Mount.bLayoutMount && Ship->Systems->IsWeaponAvailable(Mount.MountId));
+        }
+    }
     for (const FHull& RawHull : Hulls)
     {
         const FHull& Hull = *FindHull(FName(RawHull.Key));

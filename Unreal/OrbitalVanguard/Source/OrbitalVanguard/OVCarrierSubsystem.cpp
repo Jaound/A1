@@ -1,6 +1,7 @@
 #include "OVCarrierSubsystem.h"
 #include "OVBattleNotices.h"
 #include "OVCombatSubsystem.h"
+#include "OVMissionSubsystem.h"
 #include "OVShip.h"
 #include "OVShipSystemsComponent.h"
 #include "OVPerformance.h"
@@ -499,7 +500,9 @@ void UOVCarrierSubsystem::RebuildStrikeCandidates()
         for (const auto& State : Combat->Ships)
         {
             AOVShip* Candidate = State.Ship.Get();
+            const auto* Mission=GetWorld()->GetSubsystem<UOVMissionSubsystem>();
             if (!LivingShip(Candidate) || State.bDeparted || Candidate->Systems->FactionId == Source->Systems->FactionId
+                || (Mission && Mission->ShouldHoldAutoAssaultFire(Source,Candidate))
                 || Combat->IsTargetProtected(Source, Candidate) || !Combat->GetDetection(Source, Candidate).bDetected) continue;
             Entry.Candidates.Add(Candidate);
         }
