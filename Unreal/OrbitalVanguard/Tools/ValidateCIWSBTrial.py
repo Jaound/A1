@@ -15,6 +15,9 @@ if lb30:
 bf120 = os.environ.get('OV_BF120_SOURCE_TRIAL', '0') == '1'
 if bf120:
     unreal.SystemLibrary.execute_console_command(editor.get_editor_world(), 'ov.Presentation.BF120SourceTrial 1')
+shc = os.environ.get('OV_SHC400_TRIAL', '0') == '1'
+if shc:
+    unreal.SystemLibrary.execute_console_command(editor.get_editor_world(), 'ov.Presentation.SHC400Trial 1')
 tool = os.path.join(unreal.Paths.project_dir(), 'Tools', 'ValidatePhase2C.py')
 with open(tool, encoding='utf8') as file:
     source = file.read()
@@ -44,6 +47,7 @@ def finish_trial(dt):
             kinetic = []
             beams = []
             cannons = []
+            heavy = []
             for ship in p(pc, 'ships'):
                 ship.refresh_weapon_visuals()
                 for component in ship.get_components_by_class(unreal.StaticMeshComponent):
@@ -56,12 +60,16 @@ def finish_trial(dt):
                         beams.append((ship, component))
                     if mesh and '/WeaponsPitchTrial/naval_gun_bf120/SM_Barrel' in mesh.get_path_name():
                         cannons.append((ship, component))
+                    if mesh and '/WeaponsPitchTrial/heavy_cannon_shc400/SM_Barrel' in mesh.get_path_name():
+                        heavy.append((ship, component))
             check('CIWSB-SOURCE-BARREL-LIVE', bool(candidates), len(candidates))
             check('CIWS6-SOURCE-BARREL-LIVE', bool(kinetic), len(kinetic))
             if lb30:
                 check('LB30-SOURCE-BARREL-LIVE', bool(beams), len(beams))
             if bf120:
                 check('BF120-SOURCE-BARREL-LIVE', bool(cannons), len(cannons))
+            if shc:
+                check('SHC400-SOURCE-BARREL-LIVE', bool(heavy), len(heavy))
             ship, barrel = candidates[0]
             pc.select_ship(ship)
             pc.set_editor_property('camera_focus', ship.get_actor_location())

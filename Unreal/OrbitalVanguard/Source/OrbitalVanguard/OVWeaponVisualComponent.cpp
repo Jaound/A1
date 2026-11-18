@@ -11,6 +11,8 @@ static TAutoConsoleVariable<int32> CVarLB30Trial(TEXT("ov.Presentation.LB30Trial
     TEXT("Opt-in isolated source beam turret trial; not final artwork."));
 static TAutoConsoleVariable<int32> CVarBF120SourceTrial(TEXT("ov.Presentation.BF120SourceTrial"), 0,
     TEXT("Opt-in isolated source twin cannon trial; not final artwork."));
+static TAutoConsoleVariable<int32> CVarSHC400Trial(TEXT("ov.Presentation.SHC400Trial"), 0,
+    TEXT("Opt-in isolated source heavy cannon trial; not final artwork."));
 
 namespace OVWeaponGeometry
 {
@@ -90,6 +92,23 @@ bool HasBF120SourceTrial(const FOVWeaponMountDefinition& Definition)
     if (!Neck.IsValid()) Neck=LoadObject<UStaticMesh>(nullptr,TEXT("/Game/Presentation/WeaponsPitchTrial/naval_gun_bf120/SM_TrialNeck.SM_TrialNeck"),nullptr,LOAD_NoWarn);
     return Base.IsValid()&&Body.IsValid()&&Barrel.IsValid()&&Neck.IsValid();
 }
+bool HasSHC400Trial(const FOVWeaponMountDefinition& Definition)
+{
+    if (Definition.Type!=EOVWeaponType::Cannon || Definition.PresentationProfile!=TEXT("SHC400Trial")) return false;
+    static TWeakObjectPtr<UStaticMesh> Base, Body, Barrel, Neck;
+    if (!Base.IsValid()) Base=LoadObject<UStaticMesh>(nullptr,TEXT("/Game/Presentation/WeaponsYawTrial/heavy_cannon_shc400/SM_Base.SM_Base"),nullptr,LOAD_NoWarn);
+    if (!Body.IsValid()) Body=LoadObject<UStaticMesh>(nullptr,TEXT("/Game/Presentation/WeaponsPitchTrial/heavy_cannon_shc400/SM_Body.SM_Body"),nullptr,LOAD_NoWarn);
+    if (!Barrel.IsValid()) Barrel=LoadObject<UStaticMesh>(nullptr,TEXT("/Game/Presentation/WeaponsPitchTrial/heavy_cannon_shc400/SM_Barrel.SM_Barrel"),nullptr,LOAD_NoWarn);
+    if (!Neck.IsValid()) Neck=LoadObject<UStaticMesh>(nullptr,TEXT("/Game/Presentation/WeaponsPitchTrial/heavy_cannon_shc400/SM_TrialNeck.SM_TrialNeck"),nullptr,LOAD_NoWarn);
+    return Base.IsValid()&&Body.IsValid()&&Barrel.IsValid()&&Neck.IsValid();
+}
+FName CannonSourceTrialProfile(const FOVWeaponMountDefinition& Definition)
+{
+    if (Definition.Type!=EOVWeaponType::Cannon || !Definition.PresentationProfile.IsNone()) return Definition.PresentationProfile;
+    const bool bBF=BF120SourceTrialEnabled(), bSHC=CVarSHC400Trial.GetValueOnGameThread()!=0;
+    if (bSHC&&(!bBF||Definition.Tier>=2)) return TEXT("SHC400Trial");
+    return bBF?FName(TEXT("BF120SourceTrial")):NAME_None;
+}
 
 struct FSourceTrialArt
 {
@@ -101,6 +120,16 @@ struct FSourceTrialArt
 
 static bool SourceTrialArt(const FOVWeaponMountDefinition& Definition,FSourceTrialArt& Out)
 {
+    if (HasSHC400Trial(Definition))
+    {
+        Out={241.34561,73.749985,FVector(-76.21249,.072968,70.25),
+             {FVector(-165.13312,-.17361,-.88664),FVector::ZeroVector},FVector(15,0,0),
+             TEXT("/Game/Presentation/WeaponsYawTrial/heavy_cannon_shc400/SM_Base.SM_Base"),
+             TEXT("/Game/Presentation/WeaponsPitchTrial/heavy_cannon_shc400/SM_Body.SM_Body"),
+             TEXT("/Game/Presentation/WeaponsPitchTrial/heavy_cannon_shc400/SM_Barrel.SM_Barrel"),
+             TEXT("/Game/Presentation/WeaponsPitchTrial/heavy_cannon_shc400/SM_TrialNeck.SM_TrialNeck"),false};
+        return true;
+    }
     if (HasBF120SourceTrial(Definition))
     {
         Out={342.3109,77.00002,FVector(-110.15539,-.03919,71.5),

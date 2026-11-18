@@ -307,12 +307,12 @@ bool FOVCIWSBSourceTrialTest::RunTest(const FString&)
 {
     OVWeaponVisualTest::FRange R;
     R.A->SetActorRotation(FRotator(7,31,13));
-    for (const FName Profile : {FName(TEXT("CIWSBTrial")),FName(TEXT("CIWS6Trial")),FName(TEXT("LB30Trial"))})
+    for (const FName Profile : {FName(TEXT("CIWSBTrial")),FName(TEXT("CIWS6Trial")),FName(TEXT("LB30Trial")),FName(TEXT("SHC400Trial"))})
     for (const FVector Normal : {FVector::UpVector,FVector::DownVector,FVector::RightVector,FVector::LeftVector})
     {
-        FOVWeaponMountDefinition Def;Def.WeaponId=TEXT("CIWSBTrialTest");Def.Type=Profile==TEXT("LB30Trial")?EOVWeaponType::Beam:EOVWeaponType::Interception;
+        FOVWeaponMountDefinition Def;Def.WeaponId=TEXT("CIWSBTrialTest");Def.Type=Profile==TEXT("LB30Trial")?EOVWeaponType::Beam:(Profile==TEXT("SHC400Trial")?EOVWeaponType::Cannon:EOVWeaponType::Interception);
         Def.LocalPosition=FVector(5,7,11);Def.LocalSurfaceNormal=Normal;Def.PresentationProfile=Profile;
-        if(!TestTrue(TEXT("All isolated trial assets exist"),OVWeaponGeometry::HasSourcePDTrial(Def)||OVWeaponGeometry::HasLB30Trial(Def)))return false;
+        if(!TestTrue(TEXT("All isolated trial assets exist"),OVWeaponGeometry::HasSourcePDTrial(Def)||OVWeaponGeometry::HasLB30Trial(Def)||OVWeaponGeometry::HasSHC400Trial(Def)))return false;
         auto* Visual=NewObject<UOVWeaponVisualComponent>(R.A);R.A->AddInstanceComponent(Visual);
         Visual->SetupAttachment(R.A->GetRootComponent());Visual->RegisterComponent();
         const FVector Extent(80,60,40);Visual->Initialize(Def,Extent);
@@ -424,6 +424,45 @@ bool FOVBF120NewSourceTrialTest::RunTest(const FString&)
         }
         Visual->DestroyComponent();
     }
+    return true;
+}
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(FOVSHC400SourceTrialTest, "OrbitalVanguard.Presentation.SHC400TrialActualCannon",
+    EAutomationTestFlags::EditorContext | EAutomationTestFlags::EngineFilter)
+bool FOVSHC400SourceTrialTest::RunTest(const FString&)
+{
+    OVWeaponVisualTest::FRange R;R.Accurate(0);
+    auto& Def=R.A->Systems->Layout->WeaponMounts[0];Def.PresentationProfile=TEXT("SHC400Trial");
+    if(!TestTrue(TEXT("SHC400 source trial assets exist"),OVWeaponGeometry::HasSHC400Trial(Def)))return false;
+    R.A->RefreshWeaponVisuals();auto& Gun=R.Gun(0);
+    R.Combat->RequestFire(R.A,Gun.MountId);R.Combat->Simulate(1.f/120.f);
+    if(!TestTrue(TEXT("Actual heavy cannon projectile exists"),R.Combat->Attacks.Num()>0))return false;
+    const auto& Attack=R.Combat->Attacks.Last();
+    TestEqual(TEXT("Heavy cannon fired once"),R.Combat->ShotCount,1);
+    TestTrue(TEXT("Projectile uses displayed source muzzle"),Attack.Origin.Equals(R.Visual(0).WorldMuzzle,.1));
+    TArray<UOVWeaponVisualComponent*> Visuals;R.A->GetComponents(Visuals);
+    auto** Found=Visuals.FindByPredicate([&](const UOVWeaponVisualComponent* V){return V&&V->GetMountId()==Def.WeaponId;});
+    if(!TestNotNull(TEXT("Heavy cannon source visual exists"),Found?*Found:nullptr))return false;
+    TArray<USceneComponent*> Children;(*Found)->GetChildrenComponents(true,Children);int32 SourceParts=0,Visible=0;
+    for(auto* Child:Children)if(auto* Mesh=Cast<UStaticMeshComponent>(Child);Mesh&&Mesh->GetStaticMesh())
+    {
+        const FString Path=Mesh->GetStaticMesh()->GetPathName();
+        if(Path.Contains(TEXT("/heavy_cannon_shc400/")))++SourceParts;
+        if(Path==TEXT("/Engine/BasicShapes/Sphere.Sphere")&&Mesh->IsVisible())
+        {++Visible;TestTrue(TEXT("Visible flash agrees with actual projectile"),Mesh->GetComponentLocation().Equals(Attack.Origin,.1));}
+    }
+    TestEqual(TEXT("SHC source parts and trial neck exist"),SourceParts,4);
+    TestEqual(TEXT("One heavy cannon flash is shown"),Visible,1);
+    auto* BF=IConsoleManager::Get().FindConsoleVariable(TEXT("ov.Presentation.BF120SourceTrial"));
+    auto* SHC=IConsoleManager::Get().FindConsoleVariable(TEXT("ov.Presentation.SHC400Trial"));
+    if(!TestNotNull(TEXT("BF switch exists"),BF)||!TestNotNull(TEXT("SHC switch exists"),SHC))return false;
+    const int32 OldBF=BF->GetInt(),OldSHC=SHC->GetInt();BF->Set(1,ECVF_SetByCode);SHC->Set(1,ECVF_SetByCode);
+    FOVWeaponMountDefinition Choice=Def;Choice.PresentationProfile=NAME_None;Choice.Tier=1;
+    TestEqual(TEXT("Both trial switches use BF for tier one"),OVWeaponGeometry::CannonSourceTrialProfile(Choice),FName(TEXT("BF120SourceTrial")));
+    Choice.Tier=2;
+    TestEqual(TEXT("Both trial switches use SHC for higher tiers"),OVWeaponGeometry::CannonSourceTrialProfile(Choice),FName(TEXT("SHC400Trial")));
+    Choice.PresentationProfile=TEXT("BF120Trial");
+    TestEqual(TEXT("Explicit prior trial remains authoritative"),OVWeaponGeometry::CannonSourceTrialProfile(Choice),FName(TEXT("BF120Trial")));
+    BF->Set(OldBF,ECVF_SetByCode);SHC->Set(OldSHC,ECVF_SetByCode);
     return true;
 }
 IMPLEMENT_SIMPLE_AUTOMATION_TEST(FOVSideMountGeometry,
