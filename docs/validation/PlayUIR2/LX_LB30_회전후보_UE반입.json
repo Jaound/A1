@@ -1,0 +1,38 @@
+{
+  "id": "laser_turret_lb30",
+  "passed": true,
+  "scope": "원본 재질을 참조하는 회전 후보 격리 반입 및 시험 LOD. 전장 미적용.",
+  "parts": [
+    {
+      "asset": "/Game/Presentation/WeaponsYawTrial/laser_turret_lb30/SM_Base",
+      "fbx_sha256": "a58d7f5760cff32447b8fe0b5a9384d8b3f22c51ee21525f151575986be24410",
+      "source_origin": [
+        0.9830499887466431,
+        -0.04373061656951904,
+        -0.3700000047683716
+      ],
+      "triangles": [
+        277630,
+        13882,
+        2776
+      ],
+      "source_material": "/Game/Presentation/WeaponsFull/laser_turret_lb30/M_Source.M_Source"
+    },
+    {
+      "asset": "/Game/Presentation/WeaponsYawTrial/laser_turret_lb30/SM_Yaw",
+      "fbx_sha256": "fd8103439e1790c5d1ba9e9497d1096e09f0ba875bae689b7195eac364befc23",
+      "source_origin": [
+        0.9830499887466431,
+        -0.04373061656951904,
+        -0.3700000047683716
+      ],
+      "triangles": [
+        1109302,
+        55466,
+        11094
+      ],
+      "source_material": "/Game/Presentation/WeaponsFull/laser_turret_lb30/M_Source.M_Source"
+    }
+  ],
+  "errors": []
+}

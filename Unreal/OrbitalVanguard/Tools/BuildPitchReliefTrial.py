@@ -87,6 +87,6 @@ metadata.update({'source': str(source), 'source_before': before, 'source_after':
                  'trial_relief_shape': args.shape, 'trial_relief_depth': args.depth,
                  'trial_relief_radius': args.radius, 'trial_bearing_radius': args.bearing_radius, 'trial_relief_pivot': list(pivot),
                  'relief_topology': topology,
-                 'status': 'experimental spherical pitch relief; geometry, UV, range and gameplay unapproved'})
+                 'status': 'experimental pitch relief; geometry, UV, range and gameplay unapproved'})
 (out / 'report.json').write_text(json.dumps(metadata, ensure_ascii=False, indent=2) + '\n', encoding='utf8')
 print('OV_PITCH_RELIEF_TRIAL', out)

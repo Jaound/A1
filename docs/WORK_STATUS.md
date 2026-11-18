@@ -1,5 +1,8 @@
 # 최신 작업 — 플레이 UI R2 진행 중
 
+**LX 원본 회전 후보 3종 격리 반입 (진행 중):** LB30의 원본 재질 참조 받침·회전부와 100%/5%/1% 시험 LOD를 별도 UE 폴더에 추가했다([결과](validation/PlayUIR2/LX_LB30_회전후보_UE반입.json)). 현재 CIWS-B·CIWS-6·LB30 3/9종 반입, 나머지 6종은 순차 처리 중이다. 기존 결과를 덮어쓰지 않고 재개하려면 먼저 열린 UE 작업이 종료됐는지 확인한 뒤 `Unreal/OrbitalVanguard/Tools/RunWeaponYawImports.ps1 -Ids @('heavy_cannon_shc400','railgun_rg200','plasma_heavy_cannon','missile_pod_mm24','missile_pod_mm48','naval_gun_bf120') -RunId retry1`를 실행한다. 스크립트는 기존 로그·결과·에셋을 보호한다. 이들은 모두 전장 미적용이다. 회전축·피치·포구·원본 재질의 화면·실제 전투·성능 검증이 남는다. 기존 렌더 켠 D116 79/79, 2C 78/78, 통합 29사례·268검사는 LU 및 LS 기록을 참조한다. 사용자 UI 3파일은 보존한다.
+
+
 **LW 회전 후보 반입과 포신 접합 대안 (진행 중):** CIWS-6 회전 후보도 원본 재질과 시험 LOD를 사용해 UE에 격리 반입됐다([결과](validation/PlayUIR2/LW_CIWS6_회전후보_UE반입.json)); 현재 CIWS-B·CIWS-6 두 종이며 나머지 순차 반입 중이다. `ValidateWeaponYawCandidatesUE.py`는 모든 반입이 끝난 뒤 새 에디터에서 원본 재질·LOD·UV를 확인할 도구다. CIWS-B의 원본 복사본에서 구형 여유 공간(반지름 0.35)을 잘라낸 시험은 표본 -30~30도에서 포신/본체 표면 교차가 0이었지만 접합부가 떠 보였다([검사](validation/PlayUIR2/LW_CIWSB_구형접합_검사.json)). 원통형 여유 공간과 임시 축을 둔 시험도 -30~30도는 0이나 -90도에서 본체 1000·받침 1400, +90도 본체 243 교차가 있고 임시 축이 눈에 띈다([검사](validation/PlayUIR2/LW_CIWSB_원통접합_검사.json), [시험 화면](validation/PlayUIR2/LW_CIWSB_원통접합_시험.png)). 두 검사에서 기존 `BODY-CAP-UV`는 평면 캡 대신 Boolean 곡면이 되어 실패한다. UV 레이어 자체는 있으나 신규 면의 UV와 화면 재질은 검증하지 않았다. `BuildPitchReliefTrial.py`의 두 시도 모두 원본과 게임에 적용하지 않았다. 다음: 잔여 7종 격리 반입 완료·재로드, 원본별 포구와 관절을 보정해 전체 각도·선체 간섭·재질·성능·게임 실제 발사를 확인한다. 단순 간격 조절로 9종 완료로 처리하지 않는다.
 
 
