@@ -1,0 +1,455 @@
+{
+  "scope": "원본 전체 메시·텍스처 복사. 관절 분리/UE/전장 미적용.",
+  "models": [
+    {
+      "id": "ciws_beam_b",
+      "source_fbx": "C:\\Users\\user\\Documents\\OrbitalVanguardAssets\\Source\\PlayUI_R2_20261117_inspect\\ciws_beam_b\\Meshy_AI_CIWS_Beam_B_20261112_image-to-3d-texture_fbx\\Meshy_AI_CIWS_Beam_B_20261112_image-to-3d-texture.fbx",
+      "source_sha256": "2f6aa4ccb4e7c050c287721effe615ecfa2cadb07da9fabed941dc630901653d",
+      "source_unchanged": true,
+      "prepared_fbx": "C:\\Users\\user\\Documents\\OrbitalVanguardAssets\\Prepared\\PlayUI_R2_WeaponFullSources_v1\\ciws_beam_b\\OV_ciws_beam_b_SourceFull.fbx",
+      "prepared_sha256": "ee55657f22fb9c857da6cb8ae4b155a29c5cb6b97d39b3c83506f08b3ce134e0",
+      "meshes": [
+        {
+          "name": "Mesh_0",
+          "vertices": 605518,
+          "polygons": 1211660,
+          "uv_layers": 1
+        }
+      ],
+      "textures": [
+        {
+          "file": "Image_0.jpg",
+          "sha256": "3e6d743ea57527b76b9c64ade99d2a37933054ea2d0081aee073810fecd60b10",
+          "size": [
+            4096,
+            4096
+          ]
+        },
+        {
+          "file": "Image_2.jpg",
+          "sha256": "35a3ffdbc62dc4f2e95dec75eefe3832f6ab82c50658692bb3d9615fa09f6f5b",
+          "size": [
+            4096,
+            4096
+          ]
+        },
+        {
+          "file": "texture_0_metallic.png.png",
+          "sha256": "17160b64a1ba84a3cfbdad249eb4d4e3ba651f85f45ad62ae3569dcf3e4ee46c",
+          "size": [
+            2048,
+            2048
+          ]
+        },
+        {
+          "file": "texture_0_roughness.png.png",
+          "sha256": "497c3a5986e112f81b4ad834c62dbc94ea6ee4f32dda307feae558644c281adf",
+          "size": [
+            2048,
+            2048
+          ]
+        }
+      ]
+    },
+    {
+      "id": "ciws_gatling_6",
+      "source_fbx": "C:\\Users\\user\\Documents\\OrbitalVanguardAssets\\Source\\PlayUI_v1_20261117\\ciws_gatling_6\\Meshy_AI_CIWS_Gatling_6_20261112_image-to-3d-texture_fbx\\Meshy_AI_CIWS_Gatling_6_20261112_image-to-3d-texture.fbx",
+      "source_sha256": "f131aecb92206f81f6e38835a1266ea3647d8a5b913df1538fecfcfaa834cc52",
+      "source_unchanged": true,
+      "prepared_fbx": "C:\\Users\\user\\Documents\\OrbitalVanguardAssets\\Prepared\\PlayUI_R2_WeaponFullSources_v1\\ciws_gatling_6\\OV_ciws_gatling_6_SourceFull.fbx",
+      "prepared_sha256": "6fab0cd8210d21414b45933ddac7f7cdeea643000050ed6c1491c4e9e1250ac6",
+      "meshes": [
+        {
+          "name": "Mesh_0",
+          "vertices": 646802,
+          "polygons": 1293768,
+          "uv_layers": 1
+        }
+      ],
+      "textures": [
+        {
+          "file": "Image_0.jpg",
+          "sha256": "420bd726412f4369f500459507a49c72a2ebe08c3bf08fbe9253a752fd4fa317",
+          "size": [
+            4096,
+            4096
+          ]
+        },
+        {
+          "file": "Image_2.jpg",
+          "sha256": "f227f86383655421a44fdf4424ccefa248f676d919de3667355b2f53a953f86e",
+          "size": [
+            4096,
+            4096
+          ]
+        },
+        {
+          "file": "texture_0_metallic.png.png",
+          "sha256": "813ef5691681a59350185f5ffcf6f967be4458ca7beb8c36fbbb43ee84e02b17",
+          "size": [
+            2048,
+            2048
+          ]
+        },
+        {
+          "file": "texture_0_roughness.png.png",
+          "sha256": "a410022cfcfa8d6cbcd0782aabd3b810d580297819e21ec7ca296a52438f9794",
+          "size": [
+            2048,
+            2048
+          ]
+        }
+      ]
+    },
+    {
+      "id": "heavy_cannon_shc400",
+      "source_fbx": "C:\\Users\\user\\Documents\\OrbitalVanguardAssets\\Source\\PlayUI_R2_20261117_inspect\\heavy_cannon_shc400\\Meshy_AI_Heavy_Cannon_SHC400_20261112_image-to-3d-texture_fbx\\Meshy_AI_Heavy_Cannon_SHC400_20261112_image-to-3d-texture.fbx",
+      "source_sha256": "b76b45942e4620efdfbf0ebb57fba3a259084ba15b9ad1195e5763a705c613de",
+      "source_unchanged": true,
+      "prepared_fbx": "C:\\Users\\user\\Documents\\OrbitalVanguardAssets\\Prepared\\PlayUI_R2_WeaponFullSources_v1\\heavy_cannon_shc400\\OV_heavy_cannon_shc400_SourceFull.fbx",
+      "prepared_sha256": "9488e4cdcad3aa7fe2c51861567b0358bec23b583094ffc9803911e10423bb1f",
+      "meshes": [
+        {
+          "name": "Mesh_0",
+          "vertices": 551210,
+          "polygons": 1102716,
+          "uv_layers": 1
+        }
+      ],
+      "textures": [
+        {
+          "file": "Image_0.jpg",
+          "sha256": "fb2af2656a45de9aa536a7afe1aaad7de080d1074891e71e2afdc0990283d1e0",
+          "size": [
+            4096,
+            4096
+          ]
+        },
+        {
+          "file": "Image_2.jpg",
+          "sha256": "8da7b349ca55aaa64215c38b9da0eb6c671dcf1fb1b40b24ac6f5e40cbc81c22",
+          "size": [
+            4096,
+            4096
+          ]
+        },
+        {
+          "file": "texture_0_metallic.png.png",
+          "sha256": "624f6e3e7c0da17f4c22530b1c47d7d38e424dcbd5f6e251ceba5d6ee1bf6b95",
+          "size": [
+            2048,
+            2048
+          ]
+        },
+        {
+          "file": "texture_0_roughness.png.png",
+          "sha256": "e967e2aa97ebb56d3e02eade27d417f2b27d40f7fbb77013672866bbeccc91fd",
+          "size": [
+            2048,
+            2048
+          ]
+        }
+      ]
+    },
+    {
+      "id": "laser_turret_lb30",
+      "source_fbx": "C:\\Users\\user\\Documents\\OrbitalVanguardAssets\\Source\\PlayUI_v1_20261117\\laser_turret_lb30\\Meshy_AI_Laser_Turret_LB30_20261112_image-to-3d-texture_fbx\\Meshy_AI_Laser_Turret_LB30_20261112_image-to-3d-texture.fbx",
+      "source_sha256": "946394db42384c78ea33eca8c874522c1f5935c95cc231700c7cc47d29f7555b",
+      "source_unchanged": true,
+      "prepared_fbx": "C:\\Users\\user\\Documents\\OrbitalVanguardAssets\\Prepared\\PlayUI_R2_WeaponFullSources_v1\\laser_turret_lb30\\OV_laser_turret_lb30_SourceFull.fbx",
+      "prepared_sha256": "8427b8f70c849ec8bf3feb425bd494a26d4bf129fb6402538d9b8fbe4e6246e2",
+      "meshes": [
+        {
+          "name": "Mesh_0",
+          "vertices": 688799,
+          "polygons": 1378046,
+          "uv_layers": 1
+        }
+      ],
+      "textures": [
+        {
+          "file": "Image_0.jpg",
+          "sha256": "18d39a45b5b386a0d8b771af057f1369a9c35a67fbbb4b7d60371acef8b15964",
+          "size": [
+            4096,
+            4096
+          ]
+        },
+        {
+          "file": "Image_2.jpg",
+          "sha256": "132b05fbec21698b00c910fca3012dee24f8bfaf0b405f68abd8f3bdb56a1bff",
+          "size": [
+            4096,
+            4096
+          ]
+        },
+        {
+          "file": "texture_0_metallic.png.png",
+          "sha256": "db3b8083bfa550ad83117da255747bc12f860c2afd5b3e3ff75d560bbc0854ab",
+          "size": [
+            2048,
+            2048
+          ]
+        },
+        {
+          "file": "texture_0_roughness.png.png",
+          "sha256": "4f3c40ea3fa2a4bdfb52554db65cd8b9d03917d5602fcd65f7e1d96bd4533be3",
+          "size": [
+            2048,
+            2048
+          ]
+        }
+      ]
+    },
+    {
+      "id": "missile_pod_mm24",
+      "source_fbx": "C:\\Users\\user\\Documents\\OrbitalVanguardAssets\\Source\\PlayUI_R2_20261117_inspect\\missile_pod_mm24\\Meshy_AI_Missile_Pod_MM24_20261112_image-to-3d-texture_fbx\\Meshy_AI_Missile_Pod_MM24_20261112_image-to-3d-texture.fbx",
+      "source_sha256": "ecb56c3a2f079a47770670048e2327621c284c5ced2e88a7dc67d7455a9140cd",
+      "source_unchanged": true,
+      "prepared_fbx": "C:\\Users\\user\\Documents\\OrbitalVanguardAssets\\Prepared\\PlayUI_R2_WeaponFullSources_v1\\missile_pod_mm24\\OV_missile_pod_mm24_SourceFull.fbx",
+      "prepared_sha256": "8a33f669332921d2f9e02bc10a5bd78da4341e47507d1e7d202eb08040bf6727",
+      "meshes": [
+        {
+          "name": "Mesh_0",
+          "vertices": 1124319,
+          "polygons": 2250958,
+          "uv_layers": 1
+        }
+      ],
+      "textures": [
+        {
+          "file": "Image_0.jpg",
+          "sha256": "d0f6a31f7da5853f556b8d3dfe26634a31e58996bc56d1c16c54cc981cc167f8",
+          "size": [
+            4096,
+            4096
+          ]
+        },
+        {
+          "file": "Image_2.jpg",
+          "sha256": "29dd5911b232ee1afc0a3a17ce95431e98d8cadb14dbb000534af6c4670b686e",
+          "size": [
+            4096,
+            4096
+          ]
+        },
+        {
+          "file": "texture_0_metallic.png.png",
+          "sha256": "bdba5afe8759f66189d2da93a51405304106a7be69c5572d50d4d632574da96a",
+          "size": [
+            2048,
+            2048
+          ]
+        },
+        {
+          "file": "texture_0_roughness.png.png",
+          "sha256": "58ec1a7a9ef90fdcde8899802dc2163e1ac439bee4736b5a04a88b4838f78474",
+          "size": [
+            2048,
+            2048
+          ]
+        }
+      ]
+    },
+    {
+      "id": "missile_pod_mm48",
+      "source_fbx": "C:\\Users\\user\\Documents\\OrbitalVanguardAssets\\Source\\PlayUI_R2_20261117_inspect\\missile_pod_mm48\\Meshy_AI_Missile_Pod_MM48_20261112_image-to-3d-texture_fbx\\Meshy_AI_Missile_Pod_MM48_20261112_image-to-3d-texture.fbx",
+      "source_sha256": "dba02308c7b4da283f97f1022bf90a20185571a1520ff363fd06a7054aaaa300",
+      "source_unchanged": true,
+      "prepared_fbx": "C:\\Users\\user\\Documents\\OrbitalVanguardAssets\\Prepared\\PlayUI_R2_WeaponFullSources_v1\\missile_pod_mm48\\OV_missile_pod_mm48_SourceFull.fbx",
+      "prepared_sha256": "5d5382e13eab7d5685d15d3a75ace58dff1f44828013135da773f1aa6d8481be",
+      "meshes": [
+        {
+          "name": "Mesh_0",
+          "vertices": 1642892,
+          "polygons": 3286864,
+          "uv_layers": 1
+        }
+      ],
+      "textures": [
+        {
+          "file": "Image_0.jpg",
+          "sha256": "97b414c4ec40c156a48f4beae64d778b3112178870d948224fe901845b37667f",
+          "size": [
+            4096,
+            4096
+          ]
+        },
+        {
+          "file": "Image_2.jpg",
+          "sha256": "8744fdd1845e18f4152f21f6ef2b320a3a007465eb56e655ccfaa4ba873b8dec",
+          "size": [
+            4096,
+            4096
+          ]
+        },
+        {
+          "file": "texture_0_metallic.png.png",
+          "sha256": "38edb01a02d5d6afb2f228d8dd0a6f755a53d5d05138270b42f41d117fb7be76",
+          "size": [
+            2048,
+            2048
+          ]
+        },
+        {
+          "file": "texture_0_roughness.png.png",
+          "sha256": "d980a7b46619f8171d3f081300fa37ca98464d73828fe62474cdc63b7f131884",
+          "size": [
+            2048,
+            2048
+          ]
+        }
+      ]
+    },
+    {
+      "id": "naval_gun_bf120",
+      "source_fbx": "C:\\Users\\user\\Documents\\OrbitalVanguardAssets\\Source\\PlayUI_v1_20261117\\naval_gun_bf120\\Meshy_AI_Naval_Gun_Turret_BF120_20261112_image-to-3d-texture_fbx\\Meshy_AI_Naval_Gun_Turret_BF120_20261112_image-to-3d-texture.fbx",
+      "source_sha256": "b2f4a04db585f4b0b2bc71ff4ba8c2f609013312787ee6bf83db5fb71b2df441",
+      "source_unchanged": true,
+      "prepared_fbx": "C:\\Users\\user\\Documents\\OrbitalVanguardAssets\\Prepared\\PlayUI_R2_WeaponFullSources_v1\\naval_gun_bf120\\OV_naval_gun_bf120_SourceFull.fbx",
+      "prepared_sha256": "0b16f7059c0d2ef4b90a971b1ef9fe217289530de65c54efadcccab345ddc5ac",
+      "meshes": [
+        {
+          "name": "Mesh_0",
+          "vertices": 501883,
+          "polygons": 1003858,
+          "uv_layers": 1
+        }
+      ],
+      "textures": [
+        {
+          "file": "Image_0.jpg",
+          "sha256": "4ef85a98d8e15057f5ef832bca741b6642b11c5f50c26ef149cfbe931792867d",
+          "size": [
+            4096,
+            4096
+          ]
+        },
+        {
+          "file": "Image_2.jpg",
+          "sha256": "1fb184be39cc7fa39ca2b98773f4e4d04438e8db2287f79893ae09038b596d40",
+          "size": [
+            4096,
+            4096
+          ]
+        },
+        {
+          "file": "texture_0_metallic.png.png",
+          "sha256": "cce691272387d06d077a0717b8089c2b7a8abd797a1d4e7d53ddccc2cee23fd7",
+          "size": [
+            2048,
+            2048
+          ]
+        },
+        {
+          "file": "texture_0_roughness.png.png",
+          "sha256": "98461dc155a98c48cb3b7c743894c1b152d45e3f10c6b991b2c492eb67088b1e",
+          "size": [
+            2048,
+            2048
+          ]
+        }
+      ]
+    },
+    {
+      "id": "plasma_heavy_cannon",
+      "source_fbx": "C:\\Users\\user\\Documents\\OrbitalVanguardAssets\\Source\\PlayUI_R2_20261117_inspect\\plasma_heavy_cannon\\Meshy_AI_Plasma_Heavy_Cannon_20261112_image-to-3d-texture_fbx\\Meshy_AI_Plasma_Heavy_Cannon_20261112_image-to-3d-texture.fbx",
+      "source_sha256": "f0918200de009b36ac47ba11be7332fa78e303957246cef2e9ffc819d359fffc",
+      "source_unchanged": true,
+      "prepared_fbx": "C:\\Users\\user\\Documents\\OrbitalVanguardAssets\\Prepared\\PlayUI_R2_WeaponFullSources_v1\\plasma_heavy_cannon\\OV_plasma_heavy_cannon_SourceFull.fbx",
+      "prepared_sha256": "206e2962971d6e7d379a52a2637906b5c9439606c4aea525a8ccd33e586af6e0",
+      "meshes": [
+        {
+          "name": "Mesh_0",
+          "vertices": 1258411,
+          "polygons": 2517506,
+          "uv_layers": 1
+        }
+      ],
+      "textures": [
+        {
+          "file": "Image_0.jpg",
+          "sha256": "b9fe3f7001578df6d85036ff84d043cd7fb1b63de37c4cbad7677ac158eb2472",
+          "size": [
+            4096,
+            4096
+          ]
+        },
+        {
+          "file": "Image_2.jpg",
+          "sha256": "d19a30e6f3d37d021a18c7f82c4053d02b3a5fa268af47a5788e0e382b8e6c6f",
+          "size": [
+            4096,
+            4096
+          ]
+        },
+        {
+          "file": "texture_0_metallic.png.png",
+          "sha256": "94034f8ee5f5b36f83e165cde736cbd48612603e5141f06bd6ab85e18353c13a",
+          "size": [
+            2048,
+            2048
+          ]
+        },
+        {
+          "file": "texture_0_roughness.png.png",
+          "sha256": "d13fad55c0df0d3f55f158d2097adc0d9f87cf83e9f97b24d5943ee9f1db47fb",
+          "size": [
+            2048,
+            2048
+          ]
+        }
+      ]
+    },
+    {
+      "id": "railgun_rg200",
+      "source_fbx": "C:\\Users\\user\\Documents\\OrbitalVanguardAssets\\Source\\PlayUI_R2_20261117_inspect\\railgun_rg200\\Meshy_AI_Railgun_RG200_20261112_image-to-3d-texture_fbx\\Meshy_AI_Railgun_RG200_20261112_image-to-3d-texture.fbx",
+      "source_sha256": "df013f23f06dc83fef832126af9e96911dfa65f9b0d5cca1a364a21783a55efd",
+      "source_unchanged": true,
+      "prepared_fbx": "C:\\Users\\user\\Documents\\OrbitalVanguardAssets\\Prepared\\PlayUI_R2_WeaponFullSources_v1\\railgun_rg200\\OV_railgun_rg200_SourceFull.fbx",
+      "prepared_sha256": "6ea041d93ea779ae2818adcd66eeafea90f1749416034617213f9abc5f8d4666",
+      "meshes": [
+        {
+          "name": "Mesh_0",
+          "vertices": 1032143,
+          "polygons": 2064814,
+          "uv_layers": 1
+        }
+      ],
+      "textures": [
+        {
+          "file": "Image_0.jpg",
+          "sha256": "0c847a2b5416b56878e4093f0bacf38b8b161111d2731fa0500f6f33126461ae",
+          "size": [
+            4096,
+            4096
+          ]
+        },
+        {
+          "file": "Image_2.jpg",
+          "sha256": "b7b7f17c334bf1fa1185c2f130ed4669da35097a48d326ce62b11a48a73a15d1",
+          "size": [
+            4096,
+            4096
+          ]
+        },
+        {
+          "file": "texture_0_metallic.png.png",
+          "sha256": "c946114b088b6a25817d615d035ae41a235d6be4cfb2c0057b57a7bff72c83aa",
+          "size": [
+            2048,
+            2048
+          ]
+        },
+        {
+          "file": "texture_0_roughness.png.png",
+          "sha256": "c52fe3ce790d717ef5e9cbd5e7bf27b886cf428da96503287d1f2056e2570a97",
+          "size": [
+            2048,
+            2048
+          ]
+        }
+      ]
+    }
+  ]
+}
