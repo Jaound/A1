@@ -1,0 +1,657 @@
+{
+  "scope": "UE 정적 메시 LOD0와 사용자 도면 투영점 거리; 시각 접합·피격·장착 검증 아님",
+  "count": 129,
+  "max_error_cm": 0.9431,
+  "threshold_cm": 1.0,
+  "source_logs": [
+    "MarkedSlots_KD_UESurface.log",
+    "MarkedSlots_KE_AllUESurface.log"
+  ],
+  "results": [
+    {
+      "hull": "frigate",
+      "slot": "top_yellow_0",
+      "error_cm": 0.0018
+    },
+    {
+      "hull": "frigate",
+      "slot": "top_yellow_1",
+      "error_cm": 0.0017
+    },
+    {
+      "hull": "frigate",
+      "slot": "left_blue_0",
+      "error_cm": 0.0242
+    },
+    {
+      "hull": "frigate",
+      "slot": "right_blue_0",
+      "error_cm": 0.0224
+    },
+    {
+      "hull": "vector",
+      "slot": "top_yellow_0",
+      "error_cm": 0.0003
+    },
+    {
+      "hull": "vector",
+      "slot": "top_blue_0",
+      "error_cm": 0.001
+    },
+    {
+      "hull": "vector",
+      "slot": "bottom_yellow_0",
+      "error_cm": 0.0002
+    },
+    {
+      "hull": "vector",
+      "slot": "left_blue_0",
+      "error_cm": 0.0209
+    },
+    {
+      "hull": "vector",
+      "slot": "right_blue_0",
+      "error_cm": 0.0363
+    },
+    {
+      "hull": "bastion",
+      "slot": "top_yellow_0",
+      "error_cm": 0.0111
+    },
+    {
+      "hull": "bastion",
+      "slot": "top_yellow_1",
+      "error_cm": 0.0121
+    },
+    {
+      "hull": "bastion",
+      "slot": "top_blue_0",
+      "error_cm": 0.0
+    },
+    {
+      "hull": "bastion",
+      "slot": "top_blue_1",
+      "error_cm": 0.0003
+    },
+    {
+      "hull": "bastion",
+      "slot": "top_blue_2",
+      "error_cm": 0.0004
+    },
+    {
+      "hull": "bastion",
+      "slot": "bottom_yellow_0",
+      "error_cm": 0.0
+    },
+    {
+      "hull": "bastion",
+      "slot": "bottom_yellow_1",
+      "error_cm": 0.0002
+    },
+    {
+      "hull": "bastion",
+      "slot": "left_blue_0",
+      "error_cm": 0.1997
+    },
+    {
+      "hull": "bastion",
+      "slot": "right_blue_0",
+      "error_cm": 0.2033
+    },
+    {
+      "hull": "cruiser",
+      "slot": "top_yellow_0",
+      "error_cm": 0.0064
+    },
+    {
+      "hull": "cruiser",
+      "slot": "top_yellow_1",
+      "error_cm": 0.0103
+    },
+    {
+      "hull": "cruiser",
+      "slot": "top_blue_0",
+      "error_cm": 0.0032
+    },
+    {
+      "hull": "cruiser",
+      "slot": "top_blue_1",
+      "error_cm": 0.042
+    },
+    {
+      "hull": "cruiser",
+      "slot": "top_blue_2",
+      "error_cm": 0.018
+    },
+    {
+      "hull": "cruiser",
+      "slot": "bottom_yellow_0",
+      "error_cm": 0.0001
+    },
+    {
+      "hull": "cruiser",
+      "slot": "left_blue_0",
+      "error_cm": 0.1102
+    },
+    {
+      "hull": "cruiser",
+      "slot": "right_blue_0",
+      "error_cm": 0.1067
+    },
+    {
+      "hull": "air_defense",
+      "slot": "top_yellow_0",
+      "error_cm": 0.0012
+    },
+    {
+      "hull": "air_defense",
+      "slot": "top_yellow_1",
+      "error_cm": 0.0018
+    },
+    {
+      "hull": "air_defense",
+      "slot": "top_yellow_2",
+      "error_cm": 0.0588
+    },
+    {
+      "hull": "air_defense",
+      "slot": "top_yellow_3",
+      "error_cm": 0.0106
+    },
+    {
+      "hull": "air_defense",
+      "slot": "top_yellow_4",
+      "error_cm": 0.0306
+    },
+    {
+      "hull": "air_defense",
+      "slot": "top_yellow_5",
+      "error_cm": 0.0062
+    },
+    {
+      "hull": "air_defense",
+      "slot": "top_yellow_6",
+      "error_cm": 0.0452
+    },
+    {
+      "hull": "air_defense",
+      "slot": "top_yellow_7",
+      "error_cm": 0.0031
+    },
+    {
+      "hull": "air_defense",
+      "slot": "top_blue_0",
+      "error_cm": 0.0023
+    },
+    {
+      "hull": "air_defense",
+      "slot": "bottom_yellow_0",
+      "error_cm": 0.0002
+    },
+    {
+      "hull": "air_defense",
+      "slot": "left_yellow_0",
+      "error_cm": 0.0357
+    },
+    {
+      "hull": "air_defense",
+      "slot": "right_yellow_0",
+      "error_cm": 0.0413
+    },
+    {
+      "hull": "radar",
+      "slot": "bottom_yellow_0",
+      "error_cm": 0.0011
+    },
+    {
+      "hull": "radar",
+      "slot": "bottom_blue_0",
+      "error_cm": 0.0169
+    },
+    {
+      "hull": "battleship",
+      "slot": "top_yellow_0",
+      "error_cm": 0.0009
+    },
+    {
+      "hull": "battleship",
+      "slot": "top_blue_0",
+      "error_cm": 0.0007
+    },
+    {
+      "hull": "battleship",
+      "slot": "top_blue_1",
+      "error_cm": 0.0034
+    },
+    {
+      "hull": "battleship",
+      "slot": "top_blue_2",
+      "error_cm": 0.0004
+    },
+    {
+      "hull": "battleship",
+      "slot": "top_blue_3",
+      "error_cm": 0.0004
+    },
+    {
+      "hull": "battleship",
+      "slot": "bottom_yellow_0",
+      "error_cm": 0.0006
+    },
+    {
+      "hull": "battleship",
+      "slot": "bottom_yellow_1",
+      "error_cm": 0.0028
+    },
+    {
+      "hull": "battleship",
+      "slot": "bottom_blue_0",
+      "error_cm": 0.0
+    },
+    {
+      "hull": "battleship",
+      "slot": "bottom_blue_1",
+      "error_cm": 0.0082
+    },
+    {
+      "hull": "battleship",
+      "slot": "left_yellow_0",
+      "error_cm": 0.0249
+    },
+    {
+      "hull": "battleship",
+      "slot": "left_blue_0",
+      "error_cm": 0.0465
+    },
+    {
+      "hull": "battleship",
+      "slot": "left_blue_1",
+      "error_cm": 0.044
+    },
+    {
+      "hull": "battleship",
+      "slot": "right_yellow_0",
+      "error_cm": 0.0169
+    },
+    {
+      "hull": "battleship",
+      "slot": "right_blue_0",
+      "error_cm": 0.0497
+    },
+    {
+      "hull": "battleship",
+      "slot": "right_blue_1",
+      "error_cm": 0.046
+    },
+    {
+      "hull": "carrier",
+      "slot": "top_yellow_0",
+      "error_cm": 0.0031
+    },
+    {
+      "hull": "carrier",
+      "slot": "top_yellow_1",
+      "error_cm": 0.0099
+    },
+    {
+      "hull": "carrier",
+      "slot": "top_yellow_2",
+      "error_cm": 0.0117
+    },
+    {
+      "hull": "carrier",
+      "slot": "top_yellow_3",
+      "error_cm": 0.0682
+    },
+    {
+      "hull": "carrier",
+      "slot": "top_blue_0",
+      "error_cm": 0.0655
+    },
+    {
+      "hull": "carrier",
+      "slot": "top_blue_1",
+      "error_cm": 0.0408
+    },
+    {
+      "hull": "carrier",
+      "slot": "bottom_yellow_0",
+      "error_cm": 0.0073
+    },
+    {
+      "hull": "carrier",
+      "slot": "bottom_blue_0",
+      "error_cm": 0.0033
+    },
+    {
+      "hull": "carrier",
+      "slot": "bottom_blue_1",
+      "error_cm": 0.0428
+    },
+    {
+      "hull": "missile_ship",
+      "slot": "top_yellow_0",
+      "error_cm": 0.0002
+    },
+    {
+      "hull": "missile_ship",
+      "slot": "top_yellow_1",
+      "error_cm": 0.0015
+    },
+    {
+      "hull": "missile_ship",
+      "slot": "top_yellow_2",
+      "error_cm": 0.0035
+    },
+    {
+      "hull": "missile_ship",
+      "slot": "top_blue_0",
+      "error_cm": 0.0069
+    },
+    {
+      "hull": "missile_ship",
+      "slot": "top_blue_1",
+      "error_cm": 0.0108
+    },
+    {
+      "hull": "missile_ship",
+      "slot": "top_red_0",
+      "error_cm": 0.3798
+    },
+    {
+      "hull": "missile_ship",
+      "slot": "top_red_1",
+      "error_cm": 0.0942
+    },
+    {
+      "hull": "missile_ship",
+      "slot": "top_red_2",
+      "error_cm": 0.6675
+    },
+    {
+      "hull": "missile_ship",
+      "slot": "top_red_3",
+      "error_cm": 0.9431
+    },
+    {
+      "hull": "missile_ship",
+      "slot": "top_red_4",
+      "error_cm": 0.6984
+    },
+    {
+      "hull": "missile_ship",
+      "slot": "top_red_5",
+      "error_cm": 0.2106
+    },
+    {
+      "hull": "missile_ship",
+      "slot": "bottom_yellow_0",
+      "error_cm": 0.0008
+    },
+    {
+      "hull": "missile_ship",
+      "slot": "bottom_yellow_1",
+      "error_cm": 0.0006
+    },
+    {
+      "hull": "missile_ship",
+      "slot": "bottom_blue_0",
+      "error_cm": 0.0009
+    },
+    {
+      "hull": "missile_ship",
+      "slot": "bottom_blue_1",
+      "error_cm": 0.0013
+    },
+    {
+      "hull": "dreadnought",
+      "slot": "top_yellow_0",
+      "error_cm": 0.0091
+    },
+    {
+      "hull": "dreadnought",
+      "slot": "top_yellow_1",
+      "error_cm": 0.0159
+    },
+    {
+      "hull": "dreadnought",
+      "slot": "top_yellow_2",
+      "error_cm": 0.0095
+    },
+    {
+      "hull": "dreadnought",
+      "slot": "top_yellow_3",
+      "error_cm": 0.0111
+    },
+    {
+      "hull": "dreadnought",
+      "slot": "top_blue_0",
+      "error_cm": 0.0026
+    },
+    {
+      "hull": "dreadnought",
+      "slot": "top_blue_1",
+      "error_cm": 0.0023
+    },
+    {
+      "hull": "dreadnought",
+      "slot": "top_blue_2",
+      "error_cm": 0.0017
+    },
+    {
+      "hull": "dreadnought",
+      "slot": "top_blue_3",
+      "error_cm": 0.0016
+    },
+    {
+      "hull": "dreadnought",
+      "slot": "top_red_0",
+      "error_cm": 0.0004
+    },
+    {
+      "hull": "dreadnought",
+      "slot": "top_red_1",
+      "error_cm": 0.0026
+    },
+    {
+      "hull": "dreadnought",
+      "slot": "top_red_2",
+      "error_cm": 0.0002
+    },
+    {
+      "hull": "dreadnought",
+      "slot": "bottom_yellow_0",
+      "error_cm": 0.0016
+    },
+    {
+      "hull": "dreadnought",
+      "slot": "bottom_yellow_1",
+      "error_cm": 0.0014
+    },
+    {
+      "hull": "dreadnought",
+      "slot": "bottom_blue_0",
+      "error_cm": 0.0028
+    },
+    {
+      "hull": "dreadnought",
+      "slot": "bottom_blue_1",
+      "error_cm": 0.002
+    },
+    {
+      "hull": "dreadnought",
+      "slot": "bottom_red_0",
+      "error_cm": 0.207
+    },
+    {
+      "hull": "dreadnought",
+      "slot": "left_yellow_0",
+      "error_cm": 0.1102
+    },
+    {
+      "hull": "dreadnought",
+      "slot": "left_blue_0",
+      "error_cm": 0.0307
+    },
+    {
+      "hull": "dreadnought",
+      "slot": "left_blue_1",
+      "error_cm": 0.1101
+    },
+    {
+      "hull": "dreadnought",
+      "slot": "left_blue_2",
+      "error_cm": 0.0308
+    },
+    {
+      "hull": "dreadnought",
+      "slot": "right_yellow_0",
+      "error_cm": 0.1221
+    },
+    {
+      "hull": "dreadnought",
+      "slot": "right_blue_0",
+      "error_cm": 0.0327
+    },
+    {
+      "hull": "dreadnought",
+      "slot": "right_blue_1",
+      "error_cm": 0.0786
+    },
+    {
+      "hull": "dreadnought",
+      "slot": "right_blue_2",
+      "error_cm": 0.0454
+    },
+    {
+      "hull": "battlecarrier",
+      "slot": "top_yellow_0",
+      "error_cm": 0.0208
+    },
+    {
+      "hull": "battlecarrier",
+      "slot": "top_yellow_1",
+      "error_cm": 0.0095
+    },
+    {
+      "hull": "battlecarrier",
+      "slot": "top_yellow_2",
+      "error_cm": 0.0008
+    },
+    {
+      "hull": "battlecarrier",
+      "slot": "top_yellow_3",
+      "error_cm": 0.0069
+    },
+    {
+      "hull": "battlecarrier",
+      "slot": "top_blue_0",
+      "error_cm": 0.0187
+    },
+    {
+      "hull": "battlecarrier",
+      "slot": "top_blue_1",
+      "error_cm": 0.0021
+    },
+    {
+      "hull": "battlecarrier",
+      "slot": "top_blue_2",
+      "error_cm": 0.0116
+    },
+    {
+      "hull": "battlecarrier",
+      "slot": "top_red_0",
+      "error_cm": 0.0007
+    },
+    {
+      "hull": "battlecarrier",
+      "slot": "top_red_1",
+      "error_cm": 0.0005
+    },
+    {
+      "hull": "battlecarrier",
+      "slot": "bottom_yellow_0",
+      "error_cm": 0.0119
+    },
+    {
+      "hull": "battlecarrier",
+      "slot": "bottom_yellow_1",
+      "error_cm": 0.0323
+    },
+    {
+      "hull": "battlecarrier",
+      "slot": "bottom_blue_0",
+      "error_cm": 0.0027
+    },
+    {
+      "hull": "battlecarrier",
+      "slot": "bottom_blue_1",
+      "error_cm": 0.0029
+    },
+    {
+      "hull": "battlecarrier",
+      "slot": "bottom_blue_2",
+      "error_cm": 0.0068
+    },
+    {
+      "hull": "battlecarrier",
+      "slot": "left_yellow_0",
+      "error_cm": 0.0527
+    },
+    {
+      "hull": "battlecarrier",
+      "slot": "left_blue_0",
+      "error_cm": 0.042
+    },
+    {
+      "hull": "battlecarrier",
+      "slot": "right_yellow_0",
+      "error_cm": 0.0457
+    },
+    {
+      "hull": "battlecarrier",
+      "slot": "right_blue_0",
+      "error_cm": 0.0648
+    },
+    {
+      "hull": "repair",
+      "slot": "top_yellow_0",
+      "error_cm": 0.0112
+    },
+    {
+      "hull": "repair",
+      "slot": "bottom_yellow_0",
+      "error_cm": 0.1266
+    },
+    {
+      "hull": "mining",
+      "slot": "left_yellow_0",
+      "error_cm": 0.1687
+    },
+    {
+      "hull": "mining",
+      "slot": "right_yellow_0",
+      "error_cm": 0.1682
+    },
+    {
+      "hull": "corvette",
+      "slot": "top_blue_0",
+      "error_cm": 0.0069
+    },
+    {
+      "hull": "corvette",
+      "slot": "top_blue_1",
+      "error_cm": 0.0033
+    },
+    {
+      "hull": "corvette",
+      "slot": "left_yellow_0",
+      "error_cm": 0.0532
+    },
+    {
+      "hull": "corvette",
+      "slot": "right_yellow_0",
+      "error_cm": 0.0599
+    }
+  ]
+}
