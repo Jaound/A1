@@ -1,0 +1,16 @@
+{
+  "source": "C:\\Users\\user\\Documents\\OrbitalVanguardAssets\\Prepared\\PlayUI_R2_MissilePitchCandidates_v3\\missile_pod_mm24\\missile_pod_mm24_MissilePitchTrial.blend",
+  "source_before": "10cf77f27c1fa9e5d650de159c13b957a23e068ba2ea108878f0d91201b89cfb",
+  "source_after": "10cf77f27c1fa9e5d650de159c13b957a23e068ba2ea108878f0d91201b89cfb",
+  "pivot": [
+    0.0,
+    0.0,
+    1.25
+  ],
+  "frame_x": 1.35,
+  "generated_posts": 2,
+  "generated_axle": true,
+  "generated_cover": true,
+  "removed_trial_cap_faces": 5,
+  "scope": "원본 상자·받침과 대체 지지대의 시각 시험. 실제 원본 관절·전장·간섭 미검증"
+}

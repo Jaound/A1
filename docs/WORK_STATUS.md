@@ -1,5 +1,8 @@
 # 최신 작업 — 플레이 UI R2 진행 중
 
+**ML 미사일 지지대 재구성 시험 — 미채택:** MM24 원본 발사 상자·받침은 유지하고 지지대·축·절단면 덮개를 새로 만든 후보를 별도 복사본에서 시험했다. [중립](validation/PlayUIR2/ML_MM24_새지지대_중립.png)과 [90도](validation/PlayUIR2/ML_MM24_새지지대_90도.png)에서 대체 지지대와 큰 덮개가 원본 형상을 가려 채택하지 않았다([입력 해시·시험 기록](validation/PlayUIR2/ML_MM24_새지지대_시험.json)). 원본 FBX와 본 프로젝트 자산은 수정하지 않았다. 단일 메시 자동 절단, 접합부 축소, 전체 회전, 가중 변형, 대체 지지대는 모두 실제 가동 기본 모델로 승인할 수 없었다. 화면 캡처가 계속 시간 초과여서 Blender에서 지지대 경계를 직접 편집하는 방법도 이 세션에서는 검증하지 못했다. 다음 재개는 분리된 발사 상자·회전 지지대·받침이 있는 원본이 있는지 확인하거나, 원본 FBX를 직접 리깅·접합 수정할 수 있는 화면 제어 환경에서 두 모델을 작업하는 것이다. 이후 포구·상하좌우 접합·VLS와 유도탄 발사·간섭·회귀를 검증해야 한다. 현 단계는 요청 전체 완료가 아니다. 최신 검증은 바로 아래 MK 기록을 따른다.
+
+
 **MK 최신 상태 — 통합 임무·기존 회귀 통과, 원본 무장 전체 적용 미완료:** 코드 체크포인트 `1f1b18a`에서 Win64 Development Editor `MarkedModule_Main_Build3.log` 성공, 시험 무장 7종 활성 자동 `MarkedModule_All_Automation3.log` 132/132, [일반 슬롯 교체 포함 2C API 83/83](validation/PlayUIR2/MJ_일반슬롯교체_시설검사_API.json), [2A API 57/57](validation/PlayUIR2/MK_모듈코드_2A_API.json), [D116 API 79/79](validation/PlayUIR2/MK_모듈코드_D116_API.json), [통합 임무 29사례·268검사](validation/PlayUIR2/MK_모듈코드_통합임무_API.json) 통과. 임무 결과는 1승·8패·20사례 진행 중이며 승패를 검사 통과와 혼동하지 않는다. 한국어 엔진 자체 검사 오류는 기존과 별개다.
 
 별도 게임 창을 실행했지만 Windows 캡처가 두 번 모두 `window capture timed out: timed out waiting on channel`로 실패했다([기록](validation/PlayUIR2/MK_직접화면_검증.json)). 실제 키보드·마우스 입력은 수행하지 않았다. 창은 열어두었다. 사용자 기존 UI 변경 `OVHUD.cpp`, `OVHUD.h`, `ValidatePlayWindows.py`는 보존했고 검증 빌드에는 포함되지만 커밋에는 넣지 않았다.
