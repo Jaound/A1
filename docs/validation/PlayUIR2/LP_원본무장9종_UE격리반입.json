@@ -1,0 +1,430 @@
+{
+  "scope": "원본 전체 메시·재질의 UE 격리 반입 및 별도 에디터 재로드. 회전부·장착·발사·성능·실제 플레이는 미검증.",
+  "passed": true,
+  "models": [
+    {
+      "id": "ciws_beam_b",
+      "mesh": "/Game/Presentation/WeaponsFull/ciws_beam_b/SM_Source",
+      "material": "/Game/Presentation/WeaponsFull/ciws_beam_b/M_Source",
+      "triangles": 1211660,
+      "source_sha256": "2f6aa4ccb4e7c050c287721effe615ecfa2cadb07da9fabed941dc630901653d",
+      "articulated": false,
+      "battle_applied": false
+    },
+    {
+      "id": "ciws_gatling_6",
+      "mesh": "/Game/Presentation/WeaponsFull/ciws_gatling_6/SM_Source",
+      "material": "/Game/Presentation/WeaponsFull/ciws_gatling_6/M_Source",
+      "triangles": 1293768,
+      "source_sha256": "f131aecb92206f81f6e38835a1266ea3647d8a5b913df1538fecfcfaa834cc52",
+      "articulated": false,
+      "battle_applied": false
+    },
+    {
+      "id": "heavy_cannon_shc400",
+      "mesh": "/Game/Presentation/WeaponsFull/heavy_cannon_shc400/SM_Source",
+      "material": "/Game/Presentation/WeaponsFull/heavy_cannon_shc400/M_Source",
+      "triangles": 1102716,
+      "source_sha256": "b76b45942e4620efdfbf0ebb57fba3a259084ba15b9ad1195e5763a705c613de",
+      "articulated": false,
+      "battle_applied": false
+    },
+    {
+      "id": "laser_turret_lb30",
+      "mesh": "/Game/Presentation/WeaponsFull/laser_turret_lb30/SM_Source",
+      "material": "/Game/Presentation/WeaponsFull/laser_turret_lb30/M_Source",
+      "triangles": 1378046,
+      "source_sha256": "946394db42384c78ea33eca8c874522c1f5935c95cc231700c7cc47d29f7555b",
+      "articulated": false,
+      "battle_applied": false
+    },
+    {
+      "id": "missile_pod_mm24",
+      "mesh": "/Game/Presentation/WeaponsFull/missile_pod_mm24/SM_Source",
+      "material": "/Game/Presentation/WeaponsFull/missile_pod_mm24/M_Source",
+      "triangles": 2250958,
+      "source_sha256": "ecb56c3a2f079a47770670048e2327621c284c5ced2e88a7dc67d7455a9140cd",
+      "articulated": false,
+      "battle_applied": false
+    },
+    {
+      "id": "missile_pod_mm48",
+      "mesh": "/Game/Presentation/WeaponsFull/missile_pod_mm48/SM_Source",
+      "material": "/Game/Presentation/WeaponsFull/missile_pod_mm48/M_Source",
+      "triangles": 3286864,
+      "source_sha256": "dba02308c7b4da283f97f1022bf90a20185571a1520ff363fd06a7054aaaa300",
+      "articulated": false,
+      "battle_applied": false
+    },
+    {
+      "id": "naval_gun_bf120",
+      "mesh": "/Game/Presentation/WeaponsFull/naval_gun_bf120/SM_Source",
+      "material": "/Game/Presentation/WeaponsFull/naval_gun_bf120/M_Source",
+      "triangles": 1003858,
+      "source_sha256": "b2f4a04db585f4b0b2bc71ff4ba8c2f609013312787ee6bf83db5fb71b2df441",
+      "articulated": false,
+      "battle_applied": false
+    },
+    {
+      "id": "plasma_heavy_cannon",
+      "mesh": "/Game/Presentation/WeaponsFull/plasma_heavy_cannon/SM_Source",
+      "material": "/Game/Presentation/WeaponsFull/plasma_heavy_cannon/M_Source",
+      "triangles": 2517506,
+      "source_sha256": "f0918200de009b36ac47ba11be7332fa78e303957246cef2e9ffc819d359fffc",
+      "articulated": false,
+      "battle_applied": false
+    },
+    {
+      "id": "railgun_rg200",
+      "mesh": "/Game/Presentation/WeaponsFull/railgun_rg200/SM_Source",
+      "material": "/Game/Presentation/WeaponsFull/railgun_rg200/M_Source",
+      "triangles": 2064814,
+      "source_sha256": "df013f23f06dc83fef832126af9e96911dfa65f9b0d5cca1a364a21783a55efd",
+      "articulated": false,
+      "battle_applied": false
+    }
+  ],
+  "reload": {
+    "scope": "독립 에디터 정적 에셋 재로드. 전장 적용/회전/포구/직접 플레이는 미검증.",
+    "passed": true,
+    "models": [
+      {
+        "id": "ciws_beam_b",
+        "triangles": 1211660,
+        "uv_channels": 1,
+        "material_matches": true,
+        "passed": true
+      },
+      {
+        "id": "ciws_gatling_6",
+        "triangles": 1293768,
+        "uv_channels": 1,
+        "material_matches": true,
+        "passed": true
+      },
+      {
+        "id": "heavy_cannon_shc400",
+        "triangles": 1102716,
+        "uv_channels": 1,
+        "material_matches": true,
+        "passed": true
+      },
+      {
+        "id": "laser_turret_lb30",
+        "triangles": 1378046,
+        "uv_channels": 1,
+        "material_matches": true,
+        "passed": true
+      },
+      {
+        "id": "missile_pod_mm24",
+        "triangles": 2250958,
+        "uv_channels": 1,
+        "material_matches": true,
+        "passed": true
+      },
+      {
+        "id": "missile_pod_mm48",
+        "triangles": 3286864,
+        "uv_channels": 1,
+        "material_matches": true,
+        "passed": true
+      },
+      {
+        "id": "naval_gun_bf120",
+        "triangles": 1003858,
+        "uv_channels": 1,
+        "material_matches": true,
+        "passed": true
+      },
+      {
+        "id": "plasma_heavy_cannon",
+        "triangles": 2517506,
+        "uv_channels": 1,
+        "material_matches": true,
+        "passed": true
+      },
+      {
+        "id": "railgun_rg200",
+        "triangles": 2064814,
+        "uv_channels": 1,
+        "material_matches": true,
+        "passed": true
+      }
+    ],
+    "errors": []
+  },
+  "assets": [
+    {
+      "path": "Unreal/OrbitalVanguard/Content/Presentation/WeaponsFull/ciws_beam_b/M_Source.uasset",
+      "bytes": 7160,
+      "sha256": "30f14a8db23d454e40b111886137495f7929cb36403e0df0d3b47beb8da669c6"
+    },
+    {
+      "path": "Unreal/OrbitalVanguard/Content/Presentation/WeaponsFull/ciws_beam_b/SM_Source.uasset",
+      "bytes": 52971485,
+      "sha256": "19f123e43281239d2f93df302ee8de79b1a2a87e6c38896cd8b11b2b30994256"
+    },
+    {
+      "path": "Unreal/OrbitalVanguard/Content/Presentation/WeaponsFull/ciws_beam_b/T_Base.uasset",
+      "bytes": 11414272,
+      "sha256": "7ca91f4b3dafdd1cd4baee37bf7dc70241e8feceacd8cdb68edc6895bd604317"
+    },
+    {
+      "path": "Unreal/OrbitalVanguard/Content/Presentation/WeaponsFull/ciws_beam_b/T_Metallic.uasset",
+      "bytes": 962245,
+      "sha256": "5870bc9645a634794c3f7bea6ceaf8c6ca1c5562a6802223e175b469943afda9"
+    },
+    {
+      "path": "Unreal/OrbitalVanguard/Content/Presentation/WeaponsFull/ciws_beam_b/T_Normal.uasset",
+      "bytes": 8568203,
+      "sha256": "6317fbeb3323d23cc2213b39cfa7b9a02d0cb8cf7ed538b2af8b783188fc2f67"
+    },
+    {
+      "path": "Unreal/OrbitalVanguard/Content/Presentation/WeaponsFull/ciws_beam_b/T_Roughness.uasset",
+      "bytes": 1732782,
+      "sha256": "26f68a80e65158797927f6261962cdbc82a8d9da701ce66ac6570033cba83b6a"
+    },
+    {
+      "path": "Unreal/OrbitalVanguard/Content/Presentation/WeaponsFull/ciws_gatling_6/M_Source.uasset",
+      "bytes": 7178,
+      "sha256": "a6c431c40cc1f37569ce9a66e5984cc33b59706690cd1d28eb943da30965f793"
+    },
+    {
+      "path": "Unreal/OrbitalVanguard/Content/Presentation/WeaponsFull/ciws_gatling_6/SM_Source.uasset",
+      "bytes": 55766590,
+      "sha256": "ca5f9bceb302e949f86557bf1ff04eaa44de522150ef01eede14d5c9fe6edfe0"
+    },
+    {
+      "path": "Unreal/OrbitalVanguard/Content/Presentation/WeaponsFull/ciws_gatling_6/T_Base.uasset",
+      "bytes": 10662010,
+      "sha256": "9b7a26d90ba3efd1d51b45f16285b8eb6574480d46773c77ac97376629276bf7"
+    },
+    {
+      "path": "Unreal/OrbitalVanguard/Content/Presentation/WeaponsFull/ciws_gatling_6/T_Metallic.uasset",
+      "bytes": 319378,
+      "sha256": "101e3822f789f2b67dda541b499959544c1e1106040d3f9dd43ec4088fba55f9"
+    },
+    {
+      "path": "Unreal/OrbitalVanguard/Content/Presentation/WeaponsFull/ciws_gatling_6/T_Normal.uasset",
+      "bytes": 8169958,
+      "sha256": "8aa34ba1b2e1a0bea8f23195b456979ef6c178e32e8aa4ea34efd8ca2600de35"
+    },
+    {
+      "path": "Unreal/OrbitalVanguard/Content/Presentation/WeaponsFull/ciws_gatling_6/T_Roughness.uasset",
+      "bytes": 1750270,
+      "sha256": "52f03e3fd528ac8a289c541705ad18a9962167d57e18803621422fece4befa66"
+    },
+    {
+      "path": "Unreal/OrbitalVanguard/Content/Presentation/WeaponsFull/heavy_cannon_shc400/M_Source.uasset",
+      "bytes": 7208,
+      "sha256": "417633d255a273ec1a2f30757e382cd6486f6beb1a3a54da1c820f05f1956541"
+    },
+    {
+      "path": "Unreal/OrbitalVanguard/Content/Presentation/WeaponsFull/heavy_cannon_shc400/SM_Source.uasset",
+      "bytes": 47750613,
+      "sha256": "4c2719ba176c51aef79306a0804d5abab533de16aa746a9dbff1eef3a557751b"
+    },
+    {
+      "path": "Unreal/OrbitalVanguard/Content/Presentation/WeaponsFull/heavy_cannon_shc400/T_Base.uasset",
+      "bytes": 10891852,
+      "sha256": "fd1f07684add67ea776269ad64b542f29c247ed846a896014cb0f06613834e62"
+    },
+    {
+      "path": "Unreal/OrbitalVanguard/Content/Presentation/WeaponsFull/heavy_cannon_shc400/T_Metallic.uasset",
+      "bytes": 1724301,
+      "sha256": "57c57039be09c1c4bc080dce9771309151e255d5e065084f44e685abc71edaf5"
+    },
+    {
+      "path": "Unreal/OrbitalVanguard/Content/Presentation/WeaponsFull/heavy_cannon_shc400/T_Normal.uasset",
+      "bytes": 8354499,
+      "sha256": "da677ef04b2069708c94e1c678f136df18ee42b11c32199a03728601df329d2f"
+    },
+    {
+      "path": "Unreal/OrbitalVanguard/Content/Presentation/WeaponsFull/heavy_cannon_shc400/T_Roughness.uasset",
+      "bytes": 1607173,
+      "sha256": "5b4a04caf7a9238d8220154ee895f186214451f950fb1263a2f138dee0a301f7"
+    },
+    {
+      "path": "Unreal/OrbitalVanguard/Content/Presentation/WeaponsFull/laser_turret_lb30/M_Source.uasset",
+      "bytes": 7196,
+      "sha256": "89d705080de6c3e66e0bd1a45babffbd77d443af4692b6f1c713f9944316d7c1"
+    },
+    {
+      "path": "Unreal/OrbitalVanguard/Content/Presentation/WeaponsFull/laser_turret_lb30/SM_Source.uasset",
+      "bytes": 62354772,
+      "sha256": "1d005dc4bc1072876dde372433ab67f59821fda4c6b60c0d0d471fadcf3f73e5"
+    },
+    {
+      "path": "Unreal/OrbitalVanguard/Content/Presentation/WeaponsFull/laser_turret_lb30/T_Base.uasset",
+      "bytes": 11730474,
+      "sha256": "a9182644bce22f851f9d813dcbaf8e0a8a54cdb2cc40ab30a2592ce3a0a6d300"
+    },
+    {
+      "path": "Unreal/OrbitalVanguard/Content/Presentation/WeaponsFull/laser_turret_lb30/T_Metallic.uasset",
+      "bytes": 1540425,
+      "sha256": "a9627e3fcdbcc5526d02985df07161d669db15bcb25ec407dbab5a59767fcebc"
+    },
+    {
+      "path": "Unreal/OrbitalVanguard/Content/Presentation/WeaponsFull/laser_turret_lb30/T_Normal.uasset",
+      "bytes": 8537657,
+      "sha256": "71c484723bb01bb8751635d565f2cb9720c21482df0a48314a6ea8bbe93b981b"
+    },
+    {
+      "path": "Unreal/OrbitalVanguard/Content/Presentation/WeaponsFull/laser_turret_lb30/T_Roughness.uasset",
+      "bytes": 1688628,
+      "sha256": "b31e5af467dcbb87077f7b604fb7ed8e56cca1fdd93047c2083ce9b5f91251c5"
+    },
+    {
+      "path": "Unreal/OrbitalVanguard/Content/Presentation/WeaponsFull/missile_pod_mm24/M_Source.uasset",
+      "bytes": 7190,
+      "sha256": "3feac7316a28eb571743b6438d0cbfbdf6b3bb58963a935ddd54e8399bca836d"
+    },
+    {
+      "path": "Unreal/OrbitalVanguard/Content/Presentation/WeaponsFull/missile_pod_mm24/SM_Source.uasset",
+      "bytes": 103374425,
+      "sha256": "dc223244ed90e961ddc81edba6ddb537f8e19a1ee9eca1c18d2b10fcdae1c494"
+    },
+    {
+      "path": "Unreal/OrbitalVanguard/Content/Presentation/WeaponsFull/missile_pod_mm24/T_Base.uasset",
+      "bytes": 10788499,
+      "sha256": "fafd2bfec11ef9abbbf8bc599156e3f0de1cb5de215ee203d20f74c22de3b349"
+    },
+    {
+      "path": "Unreal/OrbitalVanguard/Content/Presentation/WeaponsFull/missile_pod_mm24/T_Metallic.uasset",
+      "bytes": 11568,
+      "sha256": "960d5455a29e831c901ec7cce83d793c89e246b01a39260873af5010404f5567"
+    },
+    {
+      "path": "Unreal/OrbitalVanguard/Content/Presentation/WeaponsFull/missile_pod_mm24/T_Normal.uasset",
+      "bytes": 8404015,
+      "sha256": "b968dcc4619810ba0cf7c45550a495d960981de4cb74b08b8e06809c6f6725c6"
+    },
+    {
+      "path": "Unreal/OrbitalVanguard/Content/Presentation/WeaponsFull/missile_pod_mm24/T_Roughness.uasset",
+      "bytes": 1865983,
+      "sha256": "e520be472884b25515c8acd7828bab129a4510f1b4743c9a7cef4ad18b14cd10"
+    },
+    {
+      "path": "Unreal/OrbitalVanguard/Content/Presentation/WeaponsFull/missile_pod_mm48/M_Source.uasset",
+      "bytes": 7190,
+      "sha256": "0c99d0ca18826a5c2bd90fe3bc58e80163d55d3a45e34f56582ad2019cf990d5"
+    },
+    {
+      "path": "Unreal/OrbitalVanguard/Content/Presentation/WeaponsFull/missile_pod_mm48/SM_Source.uasset",
+      "bytes": 156974070,
+      "sha256": "5faca5bc9abfb6ab33b1159395009bf02bd6c89c51def8425baa9101a908719c"
+    },
+    {
+      "path": "Unreal/OrbitalVanguard/Content/Presentation/WeaponsFull/missile_pod_mm48/T_Base.uasset",
+      "bytes": 10026839,
+      "sha256": "d034ba91ea6a27f3d76a7b500bd78df2bc8f61bfd6b1f262abff98623444e021"
+    },
+    {
+      "path": "Unreal/OrbitalVanguard/Content/Presentation/WeaponsFull/missile_pod_mm48/T_Metallic.uasset",
+      "bytes": 63255,
+      "sha256": "cac6bbc0c854ec78c888cacfae97ec763673dac89b75947c4155a0ccdea00b2f"
+    },
+    {
+      "path": "Unreal/OrbitalVanguard/Content/Presentation/WeaponsFull/missile_pod_mm48/T_Normal.uasset",
+      "bytes": 7658932,
+      "sha256": "c5ed0e510c261fab505db60f7a5b9896b7249659dbb1a83c1977dd3b9717f96e"
+    },
+    {
+      "path": "Unreal/OrbitalVanguard/Content/Presentation/WeaponsFull/missile_pod_mm48/T_Roughness.uasset",
+      "bytes": 1876929,
+      "sha256": "12b21f0c2eff8f338141512e379167d5d0aea0ed854cd4988757206940a62c33"
+    },
+    {
+      "path": "Unreal/OrbitalVanguard/Content/Presentation/WeaponsFull/naval_gun_bf120/M_Source.uasset",
+      "bytes": 7184,
+      "sha256": "0230c1a4c845086287c5164d9b7465b8be964a3524bef7ae6e463122a5170d88"
+    },
+    {
+      "path": "Unreal/OrbitalVanguard/Content/Presentation/WeaponsFull/naval_gun_bf120/SM_Source.uasset",
+      "bytes": 43688524,
+      "sha256": "c8257df1df5271fdd04a8e85a939056f8b85e68094dba2503620901da19356e3"
+    },
+    {
+      "path": "Unreal/OrbitalVanguard/Content/Presentation/WeaponsFull/naval_gun_bf120/T_Base.uasset",
+      "bytes": 11080636,
+      "sha256": "5cb7b5e56b9ff6298cf0b08ed0580fb8f2511b56329fda17a01f8ccdfba2b4b5"
+    },
+    {
+      "path": "Unreal/OrbitalVanguard/Content/Presentation/WeaponsFull/naval_gun_bf120/T_Metallic.uasset",
+      "bytes": 1370959,
+      "sha256": "208b87915c002f04d5b56400dba220cb6386a42417cdad03f8a2fa3a3f753ef4"
+    },
+    {
+      "path": "Unreal/OrbitalVanguard/Content/Presentation/WeaponsFull/naval_gun_bf120/T_Normal.uasset",
+      "bytes": 8121364,
+      "sha256": "b7e40608b6d4ed98fd983576cfed08df0e330d3e86908b2df981fec6c78261e0"
+    },
+    {
+      "path": "Unreal/OrbitalVanguard/Content/Presentation/WeaponsFull/naval_gun_bf120/T_Roughness.uasset",
+      "bytes": 1501046,
+      "sha256": "f9c4cbfe6daa1c0ca7b4b3859e2b14fa83c3fae7870cc2977affc30677c1ab6b"
+    },
+    {
+      "path": "Unreal/OrbitalVanguard/Content/Presentation/WeaponsFull/plasma_heavy_cannon/M_Source.uasset",
+      "bytes": 7208,
+      "sha256": "3e2df90ac9187c4e71dfcdd2fe1fd835e77bf33adfbdbb05b8eeab22c6ddc67f"
+    },
+    {
+      "path": "Unreal/OrbitalVanguard/Content/Presentation/WeaponsFull/plasma_heavy_cannon/SM_Source.uasset",
+      "bytes": 112063826,
+      "sha256": "785503ca61572a2e6b129aef1856158a2432e861b99296c59a5d7b5446e12164"
+    },
+    {
+      "path": "Unreal/OrbitalVanguard/Content/Presentation/WeaponsFull/plasma_heavy_cannon/T_Base.uasset",
+      "bytes": 12530229,
+      "sha256": "6f2c99f1d13453184e032b01ed43b79856e411dc6c37aa603dcc6f647cf12582"
+    },
+    {
+      "path": "Unreal/OrbitalVanguard/Content/Presentation/WeaponsFull/plasma_heavy_cannon/T_Metallic.uasset",
+      "bytes": 992227,
+      "sha256": "1184d6647b2eb42f5b92e241817a90d0b8c2706e46a2f45886ba15427b3fb7c2"
+    },
+    {
+      "path": "Unreal/OrbitalVanguard/Content/Presentation/WeaponsFull/plasma_heavy_cannon/T_Normal.uasset",
+      "bytes": 9060818,
+      "sha256": "eb6b85981b90a72077af931e7207b9c714696f84a87bf8c3a5a4455e26fce7d3"
+    },
+    {
+      "path": "Unreal/OrbitalVanguard/Content/Presentation/WeaponsFull/plasma_heavy_cannon/T_Roughness.uasset",
+      "bytes": 1684716,
+      "sha256": "54dbb0c74b85f8644603e13d43306f86e632efb0a8b764d8c6bb2891786e2c32"
+    },
+    {
+      "path": "Unreal/OrbitalVanguard/Content/Presentation/WeaponsFull/railgun_rg200/M_Source.uasset",
+      "bytes": 7172,
+      "sha256": "88ed2f960ff22e66c739947590f63b140c26e8b97a32b0daf61099c86e81d90e"
+    },
+    {
+      "path": "Unreal/OrbitalVanguard/Content/Presentation/WeaponsFull/railgun_rg200/SM_Source.uasset",
+      "bytes": 90695598,
+      "sha256": "c05022745ceb6545521b34c86e5304b5141929c3648ce111fc2d7dcdf0a3ba9d"
+    },
+    {
+      "path": "Unreal/OrbitalVanguard/Content/Presentation/WeaponsFull/railgun_rg200/T_Base.uasset",
+      "bytes": 11079779,
+      "sha256": "ee24990c3846ad48eac39a783cde1e0623168a3d21ba96bb79ab563c1779fe9c"
+    },
+    {
+      "path": "Unreal/OrbitalVanguard/Content/Presentation/WeaponsFull/railgun_rg200/T_Metallic.uasset",
+      "bytes": 1894780,
+      "sha256": "cc32c6a0f51c23e4d0fd96b3bcfac1bc168a5be0d4d105d2ccbf9def073b465d"
+    },
+    {
+      "path": "Unreal/OrbitalVanguard/Content/Presentation/WeaponsFull/railgun_rg200/T_Normal.uasset",
+      "bytes": 8134520,
+      "sha256": "0062a7f5943cc55e8cb9f517af84e27c9547f8438da5ffac13087db9d72249dc"
+    },
+    {
+      "path": "Unreal/OrbitalVanguard/Content/Presentation/WeaponsFull/railgun_rg200/T_Roughness.uasset",
+      "bytes": 1774453,
+      "sha256": "6227abff1a6e56719f1907d2f10234d2882c046952e8100c3c731115d0d5ea68"
+    }
+  ],
+  "total_bytes": 925280263
+}

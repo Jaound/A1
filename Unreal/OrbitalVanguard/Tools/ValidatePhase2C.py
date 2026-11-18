@@ -114,6 +114,18 @@ def counts(items, key="state"):
     return dict(sorted(collections.Counter(str(p(x, key)) for x in items).items()))
 
 
+def f6_pd_clean(pc, combat, pd):
+    ships = p(pc, "ships")
+    active = [s for s in ships if not p(combat.get_ship_state(s), "departed")]
+    expected = [s for s in active if any(p(m, "type") == unreal.OVWeaponType.INTERCEPTION
+        for m in p(p(p(s, "systems"), "layout"), "weapon_mounts"))]
+    records = p(pd, "ships")
+    return (bool(p(pd, "enabled")) == bool(expected) and len(records) == len(expected)
+            and all(p(record, "ship") in expected and len(p(record, "mounts")) ==
+                sum(p(m, "type") == unreal.OVWeaponType.INTERCEPTION for m in p(p(p(p(record, "ship"), "systems"), "layout"), "weapon_mounts"))
+                for record in records))
+
+
 def snapshot(pc, carrier, pd, transport):
     combat = p(pc, "combat")
     return {
@@ -190,8 +202,7 @@ def run_scenes(pc, world, carrier, pd, transport):
     pc.start_calibration_range(1)
     f6_ships = p(pc, "ships")
     f6_pd_counts = [sum(p(m, "type") == unreal.OVWeaponType.INTERCEPTION for m in p(p(p(s, "systems"), "layout"), "weapon_mounts")) for s in f6_ships]
-    f6_pd_ok = (not any(f6_pd_counts) and not p(pd, "enabled")) or (p(pd, "enabled") and
-        all(len(p(pd.get_ship_state(s), "mounts")) == count for s, count in zip(f6_ships, f6_pd_counts)))
+    f6_pd_ok = f6_pd_clean(pc, combat, pd)
     check("2C-F6-RESTORE", p(pc, "phase2_c_scenario") == -1 and f6_pd_ok
           and not p(transport, "enabled") and p(p(combat, "settings"), "guaranteed_range") == 25000)
     check("2C-F6-PD-REGISTRATION", f6_pd_ok, f6_pd_counts)
@@ -361,7 +372,7 @@ def run_control_regressions(pc, world, carrier, pd, transport):
           and not p(pd, "ships") and not p(carrier, "aircraft")
           and len(unreal.GameplayStatics.get_all_actors_of_class(world, unreal.OVShip)) == 3)
     method(1); pc.action("CalibrationRange")
-    check("2C-STRESS-F6-CLEANUP", len(p(pc, "ships")) == 3 and not p(pd, "ships") and not p(carrier, "aircraft"))
+    check("2C-STRESS-F6-CLEANUP", len(p(pc, "ships")) == 3 and f6_pd_clean(pc, combat, pd) and not p(carrier, "aircraft"))
     method(1); pc.action("Phase2C")
     check("2C-STRESS-F7-CLEANUP", len(p(pc, "ships")) == 3 and len(p(pd, "ships")) == 3
           and not p(carrier, "aircraft") and len(unreal.GameplayStatics.get_all_actors_of_class(world, unreal.OVShip)) == 3)
@@ -419,7 +430,7 @@ def tick(dt):
                 if len(p(carrier, "aircraft")) != before:
                     raise AssertionError("Restart duplicated aircraft inventory")
                 pc.start_combat_range(); pc.start_calibration_range(1)
-            check("2C-REPEATED-SCENE-RESET", not p(pd, "enabled") and not p(transport, "enabled") and not p(carrier, "aircraft"))
+            check("2C-REPEATED-SCENE-RESET", f6_pd_clean(pc, p(pc, "combat"), pd) and not p(transport, "enabled") and not p(carrier, "aircraft"))
             start(pc, 5); pc.set_editor_property("developer_mode", False); pc.get_hud().set_details_open(False)
             state.update(phase=2, at=time.monotonic())
             return
