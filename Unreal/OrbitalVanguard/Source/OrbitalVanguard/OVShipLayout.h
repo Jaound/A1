@@ -24,6 +24,16 @@ enum class EOVArmorFace : uint8 { Front, Rear, Left, Right, Top, Bottom };
 UENUM(BlueprintType)
 enum class EOVWeaponType : uint8 { Cannon, Beam, Missile, Interception };
 
+UENUM(BlueprintType)
+enum class EOVHullSizeClass : uint8
+{
+    Unspecified = 0,
+    Small = 1,
+    Medium = 2,
+    Large = 3,
+    ExtraLarge = 4
+};
+
 USTRUCT(BlueprintType)
 struct ORBITALVANGUARD_API FOVArmorDefinition
 {
@@ -110,9 +120,12 @@ class ORBITALVANGUARD_API UShipLayoutDataAsset : public UDataAsset
 public:
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Layout") FName LayoutVersion = TEXT("PrototypeInterior_v1");
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Layout") int32 DeckCount = 1;
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Layout") EOVHullSizeClass HullSizeClass = EOVHullSizeClass::Unspecified;
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Layout") bool bSmallHull = true;
     // -1: no confirmed hull-specific limit; this is not an installed facility count.
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Layout") int32 MaxHangarInstallations = -1;
+    // D126 R15: only Carrier and Battlecarrier may install fighter facilities or launch aircraft.
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Layout") bool bAllowAircraftOperations = true;
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Layout") FName CoreSlotId;
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Layout") TArray<FName> BridgeAllowedSlots;
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Layout") TArray<FOVSlotDefinition> Slots;
@@ -133,6 +146,27 @@ public:
 
     UFUNCTION(BlueprintCallable, Category="Layout")
     static UShipLayoutDataAsset* MakeTestLayout(UObject* Outer, int32 Decks);
+
+    UFUNCTION(BlueprintPure, Category="Layout")
+    static int32 GetMaxFloorSlotsForClass(EOVHullSizeClass SizeClass);
+
+    static bool ComputeExpectedD126DeckSlots(EOVHullSizeClass SizeClass, int32 Decks, bool bTopHeavy, TArray<int32>& OutCounts);
+
+    UFUNCTION(BlueprintCallable, Category="Layout")
+    static UShipLayoutDataAsset* MakeD126Layout(
+        UObject* Outer,
+        EOVHullSizeClass SizeClass,
+        int32 Decks,
+        bool bTopHeavy = false,
+        int32 MaxHangars = 0,
+        bool bAircraftCapable = false);
+
+    /** Audits whether desired facilities fit without merging/deleting mandatory facilities. */
+    static bool AuditFacilityCapacity(
+        const UShipLayoutDataAsset* Layout,
+        const TArray<EOVFacilityType>& DesiredFacilities,
+        TArray<EOVFacilityType>& OutUnplaced,
+        FString& OutReport);
 
     UFUNCTION(BlueprintPure, Category="Layout") int32 GetSlotIndex(FName SlotId) const;
     UFUNCTION(BlueprintCallable, Category="Layout") bool ValidateLayout(TArray<FString>& Errors) const;

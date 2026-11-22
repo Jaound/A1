@@ -10,6 +10,8 @@
 #include "OVInteriorSubsystem.h"
 #include "OVMissionSubsystem.h"
 #include "OVPlayScenarioSubsystem.h"
+#include "OVBlackHoleHazardActor.h"
+#include "OVSpaceEnvironmentTypes.h"
 #include "OVDevelopmentSubsystem.h"
 #include "OVHeroSubsystem.h"
 #include "Engine/GameInstance.h"
@@ -316,9 +318,9 @@ void AOVController::SetSpaceEnvironment(EOVSpaceEnvironmentType NewEnvironment)
  EnvironmentTickAccum=0.f;
  SolarFlareCycleTime=0.f;
  bSolarFlareWaveApplied=false;
- const float Scale=CalibrationScenario>=0?20.f:1.f;
- ActiveBlackHoleCenter=FVector(0.f,0.f,280.f*Scale);
- ActiveBlackHoleRadius=2500.f*Scale;
+ const float Scale=(CalibrationScenario>=0 || bPlayScenarioSession)?20.f:1.f;
+ ActiveBlackHoleCenter=FVector(0.f,0.f,(CalibrationScenario>=0 || bPlayScenarioSession)?2000.f:280.f);
+ ActiveBlackHoleRadius=FOVSpaceEnvironmentProfile::MakeBlackHoleE1Profile().InfluenceRadiusCm;
  if(NewEnvironment==EOVSpaceEnvironmentType::AsteroidField) {
   const FVector4 PresetAsteroids[]={
    FVector4(-420,-180,300,240),FVector4(-150,420,340,260),FVector4(220,-520,280,230),
@@ -1356,18 +1358,30 @@ void AOVController::ResolveContacts(float SimDelta)
   }
  }
  if(ActiveEnvironment==EOVSpaceEnvironmentType::BlackHole) {
-  for(AOVShip* Ship:Ships) {
-   if(!IsValid(Ship)||!Ship->Systems||Ship->Systems->bWrecked) continue;
-   if(Combat&&Combat->bEnabled&&Combat->IsDeparted(Ship)) continue;
-   if(!Ship->Systems->CanMove()||Ship->bHold||Ship->bFTLCharging) continue;
-   const FVector ToCenter=ActiveBlackHoleCenter-Ship->GetActorLocation();
-   const double Dist=ToCenter.Size();
-   if(Dist<ActiveBlackHoleRadius && Dist>80.0) {
-    const FVector Dir=ToCenter/Dist;
-    const float GravityFactor=FMath::Clamp(1.f-float(Dist/ActiveBlackHoleRadius),0.f,1.f);
-    Ship->Velocity+=Dir*(120.f*GravityFactor*SimDelta);
-    if(FVector::DotProduct(Ship->Velocity,Dir)<0.f)
-     Ship->Velocity*=FMath::Max(0.85f,1.f-0.25f*GravityFactor*SimDelta);
+  const auto* PlayScenario=GetWorld()?GetWorld()->GetSubsystem<UOVPlayScenarioSubsystem>():nullptr;
+  const bool bManagedByHazardActor=PlayScenario && PlayScenario->GetActiveBlackHoleHazard()!=nullptr;
+  if(!bManagedByHazardActor) {
+   const FOVSpaceEnvironmentProfile BH=FOVSpaceEnvironmentProfile::MakeBlackHoleE1Profile();
+   for(AOVShip* Ship:Ships) {
+    if(!IsValid(Ship)||!Ship->Systems||Ship->Systems->bWrecked) continue;
+    if(Combat&&Combat->bEnabled&&Combat->IsDeparted(Ship)) continue;
+    const FVector ToCenter=ActiveBlackHoleCenter-Ship->GetActorLocation();
+    const double Dist=ToCenter.Size();
+    if(Dist<=BH.CoreHazardRadiusCm) {
+     Ship->Systems->ForceWreckInstant();
+     Ship->TriggerWreckDissolve();
+     continue;
+    }
+    if(Dist<BH.InfluenceRadiusCm && Dist>KINDA_SMALL_NUMBER) {
+     const FVector Dir=ToCenter/Dist;
+     const float Accel=FOVSpaceEnvironmentProfile::ComputeBlackHoleGravityAccelerationCm(
+         float(Dist),BH.CoreHazardRadiusCm,BH.InfluenceRadiusCm,BH.MaxAccelerationCmPerSec2);
+     if(Ship->bFTLCharging || Ship->bHold || !Ship->Systems->CanMove()) {
+      Ship->AddActorWorldOffset(Dir*(0.5f*Accel*SimDelta*SimDelta + Accel*SimDelta),false);
+     } else {
+      Ship->Velocity+=Dir*(Accel*SimDelta);
+     }
+    }
    }
   }
  }

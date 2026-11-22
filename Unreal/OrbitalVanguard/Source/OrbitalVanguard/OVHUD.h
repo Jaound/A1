@@ -23,7 +23,10 @@ public:
  UFUNCTION(BlueprintPure, Category="UI") UOVTitleScreenWidget* GetTitleScreen() const { return TitleScreenWidget; }
  UFUNCTION(BlueprintPure, Category="UI") bool IsTitleScreenOpen() const { return bTitleScreenOpen; }
  UFUNCTION(BlueprintCallable, Category="UI") void OpenTitleScreen();
+ UFUNCTION(BlueprintCallable, Category="UI") void OpenTutorialGuide();
  UFUNCTION(BlueprintCallable, Category="UI") void CloseTitleScreen();
+ UFUNCTION(BlueprintCallable, Category="UI") void SetUserUIScaleMultiplier(float NewScale, bool bPersist = true);
+ UFUNCTION(BlueprintPure, Category="UI") float GetUserUIScaleMultiplier() const { return UserUIScaleMultiplier; }
  UFUNCTION(BlueprintPure, Category="UI") int32 GetPreviewMeshCount() const;
  UFUNCTION(BlueprintPure, Category="UI") int32 GetWeaponPreviewVisibleMeshCount() const;
  UFUNCTION(BlueprintPure, Category="UI") int32 GetWeaponPreviewFocus() const;
@@ -142,6 +145,7 @@ private:
  static FString ReadinessKorean(const FString& Key);
  TMap<FName,FVector2D> ActionCenters;
  float UIScale=1.f;
+ float UserUIScaleMultiplier=1.f;
  FVector2D ViewportPixels=FVector2D(1280,740);
  bool bDragging=false,bResizing=false;
  bool bInteriorDragging=false,bInteriorResizing=false;

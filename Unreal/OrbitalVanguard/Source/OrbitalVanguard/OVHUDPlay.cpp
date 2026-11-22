@@ -105,6 +105,7 @@ void AOVHUD::DrawPlayHUD()
  Button(TEXT("Speed2"),TEXT("2배"),468,18,52,PC->SimulationSpeed==2);
  Button(TEXT("Speed3"),TEXT("3배"),526,18,52,PC->SimulationSpeed==3);
  Button(TEXT("Overview"),TEXT("전체 보기"),596,18,100);
+ Button(TEXT("OpenTutorialGuide"),TEXT("가이드"),W-470,18,66,bTitleScreenOpen);
  Button(TEXT("StarMapToggle"),TEXT("은하 지도"),W-396,18,88,bStarMapOpen);
  Button(TEXT("BattleFeedToggle"),TEXT("전투 알림"),W-300,18,90,bBattleFeedOpen);
  Button(TEXT("HeroPanel"),TEXT("영웅"),W-202,18,82,bHeroPanelOpen);
@@ -159,7 +160,7 @@ void AOVHUD::DrawPlayHUD()
    EnvStatus=TEXT("우주 방사능 지대 · 구역 내 지속 방사능 하중 (활성 쉴드 우선 흡수)");
    EnvColor=FLinearColor(0.4f,1.f,0.75f);
   } else if(PC->ActiveEnvironment==EOVSpaceEnvironmentType::BlackHole) {
-   EnvStatus=TEXT("소규모 블랙홀 · 중력권 내 추진·선회·이탈 속도 부담 활성");
+   EnvStatus=TEXT("소규모 블랙홀(E1) · 중력권 1,000m(0.8m/s²) · FTL 중에도 적용 · 45m 즉사");
    EnvColor=FLinearColor(0.95f,0.72f,1.f);
   }
   DrawText(EnvStatus,EnvColor,BX+10,BY+4,GEngine->GetSmallFont());
@@ -442,7 +443,7 @@ void AOVHUD::DrawStarMap()
  const TCHAR* EnvDesc=Sel->Environment==EOVSpaceEnvironmentType::AsteroidField?TEXT("• 3D 운석이 직사/투사체를 물리 차폐하고 항로 폭을 제한"):
   Sel->Environment==EOVSpaceEnvironmentType::RadiationZone?TEXT("• 경계 구역 내 지속 방사능 하중 (활성 쉴드가 우선 흡수)"):
   Sel->Environment==EOVSpaceEnvironmentType::SolarFlare?TEXT("• 예고→파동 통과 주기 사건 · 비엄폐 시 쉴드 부하 및 레이더 교란"):
-  Sel->Environment==EOVSpaceEnvironmentType::BlackHole?TEXT("• 중력권 내부 추진·선회·이탈 속도 부담 (위치 유지/FTL 보존)"):
+  Sel->Environment==EOVSpaceEnvironmentType::BlackHole?TEXT("• 중력권 1,000m(0.8m/s²) · FTL 충전 중에도 중력 변위 · 중심 45m 즉시 완파"):
   TEXT("• 환경 제약 없는 표준 우주 전장");
  DrawText(EnvDesc,PlayInk,IX+12,IY+78,GEngine->GetSmallFont());
  DrawText(FString::Printf(TEXT("자원 산출 (주기당): 일반 +%d  ·  고급 +%d  ·  최고급 +%d"),Sel->CommonYield,Sel->AdvancedYield,Sel->SupremeYield),

@@ -44,37 +44,49 @@ struct FHull
 
 #include "OVCalibrationData.inl"
 
+struct FD126HullRule
+{
+    bool bTopHeavy = false;
+    int32 MaxHangars = 0;
+    bool bAircraftCapable = false;
+    float ArmorMaxReduction = 0.60f;
+};
+
+FD126HullRule GetD126HullRule(FName Key)
+{
+    if (Key == TEXT("battlecarrier")) return { true,  6, true,  0.60f }; // 9-12-15 (36), aircraft capable
+    if (Key == TEXT("carrier"))       return { true,  4, true,  0.60f }; // 6-9-12 (27), aircraft capable
+    if (Key == TEXT("dreadnought"))   return { false, 4, false, 0.60f }; // 15-12-9 (36), small-craft bay only
+    if (Key == TEXT("battleship"))    return { false, 2, false, 0.60f }; // 12-9-6 (27), small-craft bay only
+    if (Key == TEXT("missile_ship"))  return { true,  1, false, 0.60f }; // 9-12 (21), small-craft bay only
+    if (Key == TEXT("vector"))        return { false, 0, false, 0.26f }; // 9 (1F), D126 26% armor cap
+    if (Key == TEXT("bastion"))       return { false, 0, false, 0.42f }; // 9-6 (15), D126 42% armor cap
+    return { false, 0, false, 0.60f };
+}
+
+EOVHullSizeClass ToHullSizeClass(int32 Size)
+{
+    switch (Size)
+    {
+    case 1: return EOVHullSizeClass::Small;
+    case 2: return EOVHullSizeClass::Medium;
+    case 3: return EOVHullSizeClass::Large;
+    case 4: return EOVHullSizeClass::ExtraLarge;
+    default: return EOVHullSizeClass::Unspecified;
+    }
+}
+
 const FHull* FindHull(FName Key)
 {
     for (const FHull& Hull : Hulls)
         if (FName(Hull.Key) == Key)
         {
-            // D121 overrides the historical D116 candidate without changing its source data.
-            if (Key == TEXT("battlecarrier"))
-            {
-                static const FHull Revised = [&Hull]() {
-                    FHull Result = Hull;
-                    Result.MountCount = 10; // eight T3 cannons and two T4 spinal guns
-                    return Result;
-                }();
-                return &Revised;
-            }
             if (Key == TEXT("air_defense") && CVarOVMarkedMounts.GetValueOnGameThread() == 1)
             {
                 // The user-authored drawing has one general slot. Keep the
                 // first existing profile equipped; the second source candidate
                 // remains in D116 data rather than firing from an unmarked slot.
                 static const FHull Revised = [&Hull]() { FHull Result = Hull; Result.MountCount = 1; return Result; }();
-                return &Revised;
-            }
-            if (Key == TEXT("missile_ship"))
-            {
-                static const FHull Revised = [&Hull]() {
-                    FHull Result = Hull;
-                    Result.Mounts[0].Weapon = 5;
-                    Result.Mounts[1].Weapon = 5;
-                    return Result;
-                }();
                 return &Revised;
             }
             return &Hull;
@@ -94,8 +106,9 @@ FName ProfileId(const FWeapon& Weapon, int32 Tier)
     return FName(*FString::Printf(TEXT("D116_%s_T%d"), Weapon.Key, Tier));
 }
 
-// Keep the equipped weapon IDs/profiles and map them onto the user's slots.
-// A count mismatch must not silently create, delete, or overlap equipment.
+// Keep the equipped weapon IDs/profiles and map them onto the user's authored slots.
+// When D126 expands mount counts beyond legacy D116 drawing marks (e.g. frigate/vector/bastion),
+// bind every available authored slot deterministically without duplicating slots and keep extra D126 mounts on hull surface positions.
 bool ApplyMarkedAttackMounts(const FHull& Hull, UShipLayoutDataAsset& Layout)
 {
     const FName HullId(Hull.Key);
@@ -107,7 +120,8 @@ bool ApplyMarkedAttackMounts(const FHull& Hull, UShipLayoutDataAsset& Layout)
         if (Slot.Kind == EOVMarkedSlotKind::General) General.Add(&Slot);
         else if (Slot.Kind == EOVMarkedSlotKind::Dedicated) Dedicated.Add(&Slot);
     }
-    if (General.Num() + Dedicated.Num() != Hull.MountCount) return false;
+    if (General.IsEmpty() && Dedicated.IsEmpty()) return false;
+
     TArray<int32> SpecialWeapons, RegularWeapons;
     for (int32 I = 0; I < Hull.MountCount; ++I)
     {
@@ -115,45 +129,60 @@ bool ApplyMarkedAttackMounts(const FHull& Hull, UShipLayoutDataAsset& Layout)
             (HullId == TEXT("missile_ship") && Hull.Mounts[I].Weapon >= 4 && SpecialWeapons.Num() < Dedicated.Num());
         (bSpecial ? SpecialWeapons : RegularWeapons).Add(I);
     }
-    if (SpecialWeapons.Num() != Dedicated.Num() || RegularWeapons.Num() != General.Num()) return false;
-    const auto Place = [&Layout,&Hull](const TArray<int32>& WeaponsToPlace, const TArray<const FOVMarkedSlotCandidate*>& Slots)
+
+    const auto Place = [&Layout, &Hull](const TArray<int32>& WeaponsToPlace, const TArray<const FOVMarkedSlotCandidate*>& Slots)
     {
-        for (int32 I = 0; I < WeaponsToPlace.Num(); ++I)
+        const int32 Count = FMath::Min(WeaponsToPlace.Num(), Slots.Num());
+        for (int32 I = 0; I < Count; ++I)
         {
             auto& Mount = Layout.WeaponMounts[WeaponsToPlace[I]];
             Mount.AuthoredSlotId = Slots[I]->SlotId;
             Mount.AuthoredSlotPurpose = Slots[I]->Kind == EOVMarkedSlotKind::Dedicated ? FName(TEXT("Dedicated")) : FName(TEXT("General"));
-            if (Slots[I]->Kind == EOVMarkedSlotKind::Dedicated) {
+            if (Slots[I]->Kind == EOVMarkedSlotKind::Dedicated)
+            {
                 const FMount& Source = Hull.Mounts[WeaponsToPlace[I]];
-                Mount.RequiredProfileId = ProfileId(Weapons[Source.Weapon],Source.Tier);
+                Mount.RequiredProfileId = ProfileId(Weapons[Source.Weapon], Source.Tier);
             }
             Mount.LocalPosition = Slots[I]->LocalPosition;
             Mount.LocalSurfaceNormal = Slots[I]->LocalNormal;
         }
+        return Count;
     };
-    Place(RegularWeapons, General);
-    Place(SpecialWeapons, Dedicated);
-    return true;
+
+    const int32 PlacedSpecial = Place(SpecialWeapons, Dedicated);
+    const int32 PlacedRegular = Place(RegularWeapons, General);
+    return (PlacedSpecial + PlacedRegular) > 0;
 }
 
-void AppendDefenseMounts(const FHull& Hull,UShipLayoutDataAsset& Layout)
+void AppendDefenseMounts(const FHull& Hull, UShipLayoutDataAsset& Layout)
 {
-    const int32 First=Layout.WeaponMounts.Num();
-    for(int32 I=0;I<Hull.PD;++I) {
-        auto& M=Layout.WeaponMounts.AddDefaulted_GetRef();M.WeaponId=FName(*FString::Printf(TEXT("PD_%d"),I));
-        M.Type=EOVWeaponType::Interception;M.Tier=Layout.WeaponTier;M.MaxHP=100;
-        M.LocalPosition=FVector(FMath::Lerp(-.7,.7,(I+.5)/Hull.PD)*Layout.LocalHalfExtent.X,
-            (I%2?1:-1)*Layout.LocalHalfExtent.Y*.8,Layout.LocalHalfExtent.Z+8);
+    const int32 First = Layout.WeaponMounts.Num();
+    for (int32 I = 0; I < Hull.PD; ++I)
+    {
+        auto& M = Layout.WeaponMounts.AddDefaulted_GetRef();
+        M.WeaponId = FName(*FString::Printf(TEXT("PD_%d"), I));
+        M.Type = EOVWeaponType::Interception;
+        M.Tier = Layout.WeaponTier;
+        M.MaxHP = 100;
+        M.LocalPosition = FVector(FMath::Lerp(-.7, .7, (I + .5) / Hull.PD) * Layout.LocalHalfExtent.X,
+            (I % 2 ? 1 : -1) * Layout.LocalHalfExtent.Y * .8, Layout.LocalHalfExtent.Z + 8);
     }
-    const auto Marked=OVMarkedSlots::GetCandidates(FName(Hull.Key));
+    const auto Marked = OVMarkedSlots::GetCandidates(FName(Hull.Key));
     TArray<const FOVMarkedSlotCandidate*> Slots;
-    for(const auto& Slot:Marked)if(Slot.Kind==EOVMarkedSlotKind::Interception)Slots.Add(&Slot);
-    if(CVarOVMarkedMounts.GetValueOnGameThread()==1&&Slots.Num()==Hull.PD)
-        for(int32 I=0;I<Hull.PD;++I) {
-            auto& Mount=Layout.WeaponMounts[First+I];Mount.AuthoredSlotId=Slots[I]->SlotId;
-            Mount.AuthoredSlotPurpose=TEXT("Interception");Mount.LocalPosition=Slots[I]->LocalPosition;
-            Mount.LocalSurfaceNormal=Slots[I]->LocalNormal;
+    for (const auto& Slot : Marked)
+        if (Slot.Kind == EOVMarkedSlotKind::Interception) Slots.Add(&Slot);
+    if (CVarOVMarkedMounts.GetValueOnGameThread() == 1 && !Slots.IsEmpty())
+    {
+        const int32 Count = FMath::Min(Slots.Num(), Hull.PD);
+        for (int32 I = 0; I < Count; ++I)
+        {
+            auto& Mount = Layout.WeaponMounts[First + I];
+            Mount.AuthoredSlotId = Slots[I]->SlotId;
+            Mount.AuthoredSlotPurpose = TEXT("Interception");
+            Mount.LocalPosition = Slots[I]->LocalPosition;
+            Mount.LocalSurfaceNormal = Slots[I]->LocalNormal;
         }
+    }
 }
 
 void ApplyProfiles(UOVCombatSettings& Settings)
@@ -199,28 +228,23 @@ void ApplyProfiles(UOVCombatSettings& Settings)
 
 UShipLayoutDataAsset* MakeLayout(UObject* Outer, const FHull& Hull)
 {
-    auto* Layout = UShipLayoutDataAsset::MakeTestLayout(Outer, Hull.Decks);
-    Layout->bSmallHull = Hull.Size == 1;
-    if (FName(Hull.Key) == TEXT("carrier")) Layout->MaxHangarInstallations = 4;
-    else if (FName(Hull.Key) == TEXT("battlecarrier")) Layout->MaxHangarInstallations = 8;
+    const FName HullId(Hull.Key);
+    const FD126HullRule Rule = GetD126HullRule(HullId);
+    const EOVHullSizeClass SizeClass = ToHullSizeClass(Hull.Size);
+    auto* Layout = UShipLayoutDataAsset::MakeD126Layout(
+        Outer, SizeClass, Hull.Decks, Rule.bTopHeavy, Rule.MaxHangars, Rule.bAircraftCapable);
+    if (!Layout)
+    {
+        UE_LOG(LogTemp, Error, TEXT("D126 failed to construct layout for %s (size=%d decks=%d)"), Hull.Key, Hull.Size, Hull.Decks);
+        return nullptr;
+    }
+
     Layout->MaxHullHP = Hull.HP;
     Layout->WeaponMounts.Reset();
     Layout->CannonSlots = Layout->BeamSlots = Layout->MissileSlots = 0;
     Layout->WeaponTier = Hull.MountCount > 0 ? Hull.Mounts[0].Tier : 1;
     for (auto& Armor : Layout->ArmorSections)
         Armor.MaxArmor = Armor.Face == EOVArmorFace::Front ? Hull.FrontArmor : Hull.Armor;
-    TSet<EOVFacilityType> SingletonFacilities;
-    for (auto& Slot : Layout->Slots)
-    {
-        if (Slot.Facility != EOVFacilityType::ShieldControl && Slot.Facility != EOVFacilityType::Engine
-            && Slot.Facility != EOVFacilityType::Radar) continue;
-        if (SingletonFacilities.Contains(Slot.Facility))
-        {
-            Slot.Facility = EOVFacilityType::None;
-            Slot.RequiredCrew = Slot.MaxFacilityHP = 0;
-        }
-        else SingletonFacilities.Add(Slot.Facility);
-    }
 
     for (int32 I = 0; I < Hull.MountCount; ++I)
     {
@@ -232,7 +256,7 @@ UShipLayoutDataAsset* MakeLayout(UObject* Outer, const FHull& Hull)
         Def.Tier = Mount.Tier;
         Def.ExplosionTierCoefficient = TierDamage[Mount.Tier - 1];
         Def.MaxHP = Weapon.HP * TierDamage[Mount.Tier - 1];
-        if (FName(Hull.Key) == TEXT("missile_ship"))
+        if (HullId == TEXT("missile_ship"))
             Def.PresentationProfile = TEXT("AntiShipMissileModule");
         const double X = FMath::Lerp(-.8, .8, (I + 1.0) / (Hull.MountCount + 1.0));
         Def.LocalPosition = FVector(X * Layout->LocalHalfExtent.X, 0,
@@ -242,18 +266,70 @@ UShipLayoutDataAsset* MakeLayout(UObject* Outer, const FHull& Hull)
         else ++Layout->MissileSlots;
     }
 
+    // Build ordered desired facility list: mandatory weapon supply rooms first (never merged/deleted),
+    // followed by role-essential and tactical support rooms.
+    TArray<EOVFacilityType> DesiredFacilities;
+    if (Hull.MountCount > 0) DesiredFacilities.Add(EOVFacilityType::WeaponControl);
+    if (Layout->CannonSlots > 0) DesiredFacilities.Add(EOVFacilityType::Ammo);
+    if (Layout->BeamSlots > 0) DesiredFacilities.Add(EOVFacilityType::Capacitor);
+    if (Layout->MissileSlots > 0) DesiredFacilities.Add(EOVFacilityType::MissileStorage);
+    if (HullId == TEXT("repair") || HullId == TEXT("mining") || HullId == TEXT("transport"))
+        DesiredFacilities.Add(EOVFacilityType::ResourceStorage);
+    if (HullId == TEXT("assault"))
+        DesiredFacilities.Add(EOVFacilityType::Boarding);
+    if (Hull.Shield > 0.f) DesiredFacilities.Add(EOVFacilityType::ShieldControl);
+    if (Hull.PD > 0) DesiredFacilities.Add(EOVFacilityType::Interception);
+    DesiredFacilities.Add(EOVFacilityType::Radar);
+
+    auto TryInstallSingle = [&](EOVFacilityType Type) -> bool
+    {
+        for (const auto& Slot : Layout->Slots)
+            if (Slot.Facility == Type) return true;
+        for (auto& Slot : Layout->Slots)
+        {
+            if (Slot.Facility != EOVFacilityType::None) continue;
+            if (!Slot.AllowedFacilities.Contains(Type)) continue;
+            Slot.Facility = Type;
+            Slot.MaxFacilityHP = 100.f;
+            Slot.RequiredCrew = (Type == EOVFacilityType::None || Type == EOVFacilityType::Core ||
+                                 Type == EOVFacilityType::Security) ? 0.f : 10.f;
+            return true;
+        }
+        return false;
+    };
+
+    TArray<EOVFacilityType> AuditList = {
+        EOVFacilityType::Core, EOVFacilityType::Bridge, EOVFacilityType::LifeSupport, EOVFacilityType::Engine
+    };
+    for (EOVFacilityType Fac : DesiredFacilities)
+    {
+        AuditList.Add(Fac);
+        TryInstallSingle(Fac);
+    }
+
+    // Explicitly audit and log Small-7 / Medium-9 capacity conflicts without merging or dropping mandatory facilities.
+    TArray<EOVFacilityType> Unplaced;
+    FString AuditReport;
+    if (!UShipLayoutDataAsset::AuditFacilityCapacity(Layout, AuditList, Unplaced, AuditReport))
+    {
+        UE_LOG(LogTemp, Display, TEXT("D126 Capacity Audit [%s]: %s"), Hull.Key, *AuditReport);
+    }
+
     if (CVarOVMarkedMounts.GetValueOnGameThread() == 1)
     {
         ApplyMarkedAttackMounts(Hull, *Layout);
-        for (const auto& Candidate:HullCollisionCandidates)
-            if (FName(Candidate.Hull)==FName(Hull.Key)) {
-                auto& Box=Layout->CombatHullBoxes.AddDefaulted_GetRef();
-                Box.LocalCenter=Candidate.Center;Box.HalfExtent=Candidate.HalfExtent;
+        for (const auto& Candidate : HullCollisionCandidates)
+            if (FName(Candidate.Hull) == HullId)
+            {
+                auto& Box = Layout->CombatHullBoxes.AddDefaulted_GetRef();
+                Box.LocalCenter = Candidate.Center;
+                Box.HalfExtent = Candidate.HalfExtent;
             }
     }
+
     TArray<FString> Errors;
     if (Layout->ValidateLayout(Errors)) return Layout;
-    UE_LOG(LogTemp, Error, TEXT("D116 invalid %s layout: %s"), Hull.Key, *FString::Join(Errors, TEXT("; ")));
+    UE_LOG(LogTemp, Error, TEXT("D126 invalid %s layout: %s"), Hull.Key, *FString::Join(Errors, TEXT("; ")));
     return nullptr;
 }
 }
@@ -263,23 +339,42 @@ bool OVCalibration::GetHullMetadata(FName HullId, FOVHullMetadata& OutMetadata)
     OutMetadata = {};
     const FHull* Hull = FindHull(HullId);
     if (!Hull) return false;
+    const FD126HullRule Rule = GetD126HullRule(HullId);
+    const EOVHullSizeClass SizeClass = ToHullSizeClass(Hull->Size);
+
     OutMetadata.SizeClass = Hull->Size;
     OutMetadata.FleetCost = Hull->FleetCost;
+    OutMetadata.DeckCount = Hull->Decks;
+    UShipLayoutDataAsset::ComputeExpectedD126DeckSlots(SizeClass, Hull->Decks, Rule.bTopHeavy, OutMetadata.DeckSlotCounts);
+    OutMetadata.TotalInteriorSlots = 0;
+    for (int32 Count : OutMetadata.DeckSlotCounts) OutMetadata.TotalInteriorSlots += Count;
+    OutMetadata.MaxHangarInstallations = Rule.MaxHangars;
+    OutMetadata.bAllowAircraftOperations = Rule.bAircraftCapable;
+    OutMetadata.MoveSpeedCmPerSec = Hull->Speed;
+    OutMetadata.AttackMountCount = Hull->MountCount;
+    OutMetadata.PointDefenseCount = Hull->PD;
+    OutMetadata.ArmorMaxReduction = Rule.ArmorMaxReduction;
+
     if (Hull->MountCount > 0) OutMetadata.RoleTags.Add(TEXT("공격"));
     // Explicit documented specializations; neither PD count nor weapon count infers a role.
     if (HullId == TEXT("corvette")) OutMetadata.RoleTags.Add(TEXT("정찰"));
     if (HullId == TEXT("frigate")) OutMetadata.RoleTags.Add(TEXT("호위"));
     if (HullId == TEXT("air_defense")) OutMetadata.RoleTags.Add(TEXT("방공"));
     if (HullId == TEXT("radar")) OutMetadata.RoleTags.Add(TEXT("탐지 지원"));
-    if (HullId == TEXT("carrier") || HullId == TEXT("battlecarrier")) OutMetadata.RoleTags.Add(TEXT("함재기 운용"));
+    if (Rule.bAircraftCapable) OutMetadata.RoleTags.Add(TEXT("함재기 운용"));
     if (HullId == TEXT("missile_ship")) OutMetadata.RoleTags.Add(TEXT("미사일"));
     if (HullId == TEXT("repair")) OutMetadata.RoleTags.Add(TEXT("수리"));
     if (HullId == TEXT("mining")) OutMetadata.RoleTags.Add(TEXT("채굴"));
     if (HullId == TEXT("transport")) OutMetadata.RoleTags.Add(TEXT("수송"));
     if (HullId == TEXT("assault")) OutMetadata.RoleTags.Add(TEXT("강습"));
-    OutMetadata.Description = FString::Printf(TEXT("D116 후보 · 체급 %d · 시험 편성 코스트 %d · %d층 · 선체 %.0f · 쉴드 %.0f · 장갑/칸 %.0f · 전면 장갑/칸 %.0f · 속도 %.0fcm/s · 선회 %.1f도/s · 레이더 T%d · 공격 장착점 %d / PD %d · 함체별 총 승무원 미정"),
-        Hull->Size, Hull->FleetCost, Hull->Decks, Hull->HP, Hull->Shield, Hull->Armor, Hull->FrontArmor,
-        Hull->Speed, Hull->Turn, Hull->RadarTier, Hull->MountCount, Hull->PD);
+
+    const TCHAR* HangarDesc = Rule.MaxHangars <= 0 ? TEXT("격납 불가")
+        : (Rule.bAircraftCapable ? TEXT("함재기 운용 가능") : TEXT("소형함 격납 전용(함재기 불가)"));
+    OutMetadata.Description = FString::Printf(
+        TEXT("D126 기준 · 체급 %d · 편성 코스트 %d · %d층(%d슬롯) · 격납 %d(%s) · 선체 %.0f · 쉴드 %.0f · 장갑감쇠 %.0f%% · 속도 %.0fm/s(%.0fcm/s) · 선회 %.1f도/s · 레이더 T%d · 공격 %d문 / PD %d"),
+        Hull->Size, Hull->FleetCost, Hull->Decks, OutMetadata.TotalInteriorSlots,
+        Rule.MaxHangars, HangarDesc, Hull->HP, Hull->Shield, Rule.ArmorMaxReduction * 100.f,
+        Hull->Speed / 100.f, Hull->Speed, Hull->Turn, Hull->RadarTier, Hull->MountCount, Hull->PD);
     return true;
 }
 
@@ -399,10 +494,12 @@ bool OVCalibration::Start(UOVCombatSubsystem& Combat, const TArray<AOVShip*>& Sh
         Ship->Configure(I==0?TEXT("백터"):I==1?TEXT("초계함"):Scenario==2?TEXT("미사일함"):TEXT("바스티온"), bFriendly, Hull.Speed, Hull.Turn, FVector(Scale),
             bFriendly ? FLinearColor(.12f,.65f,1) : FLinearColor(1,.12f,.08f));
         Ship->SetCalibrationHull(&Layouts[I]->LocalHalfExtent);
+        const FD126HullRule Rule = GetD126HullRule(FName(Keys[I]));
         auto& Systems = *Ship->Systems;
         Systems.Tuning = GetDefault<UOVShipSystemsComponent>()->Tuning;
         Systems.Tuning.ShieldBase = Hull.Shield;
         Systems.Tuning.ExplosionBase = 40; // D116 provisional balance
+        Systems.Tuning.ArmorMaxReduction = Rule.ArmorMaxReduction;
         Systems.Tuning.ShieldRegenFraction = ShieldCombat;
         Systems.Tuning.ShieldNonCombatRegenFraction = ShieldNonCombat;
         Systems.Tuning.NoHitRecoveryInterval = ShieldTransition;
@@ -435,25 +532,31 @@ bool OVCalibration::ConfigureHull(UOVCombatSubsystem& Combat, AOVShip& Ship, FNa
 {
     const FHull* Hull=FindHull(HullId);
     if(!Hull || !Combat.Settings) return false;
+    const FD126HullRule Rule = GetD126HullRule(HullId);
     UShipLayoutDataAsset* Layout=MakeLayout(&Ship,*Hull);
     if(!Layout) return false;
     auto Install=[&](EOVFacilityType Type, int32 Count) {
+        if (Type == EOVFacilityType::Hangar && Layout->MaxHangarInstallations <= 0) return;
+        if (Type == EOVFacilityType::FighterControl && !Layout->bAllowAircraftOperations) return;
         int32 Existing=0;
         for(const auto& S:Layout->Slots) if(S.Facility==Type)++Existing;
-        for(auto& S:Layout->Slots) if(Existing<Count && S.Facility==EOVFacilityType::None) {
-            S.Facility=Type; S.AllowedFacilities.AddUnique(Type); S.MaxFacilityHP=100; S.RequiredCrew=10; ++Existing;
+        const int32 TargetCount = (Type == EOVFacilityType::Hangar && Layout->MaxHangarInstallations >= 0)
+            ? FMath::Min(Count, Layout->MaxHangarInstallations) : Count;
+        for(auto& S:Layout->Slots) if(Existing<TargetCount && S.Facility==EOVFacilityType::None && S.AllowedFacilities.Contains(Type)) {
+            S.Facility=Type; S.MaxFacilityHP=100; S.RequiredCrew=10; ++Existing;
         }
     };
     if (HullId == TEXT("repair") || HullId == TEXT("mining") || HullId == TEXT("transport"))
         Install(EOVFacilityType::ResourceStorage, 1);
     Install(EOVFacilityType::Interception,1);
     Install(EOVFacilityType::Boarding,1);
-    if(HullId==TEXT("carrier") || HullId==TEXT("battlecarrier")) { Install(EOVFacilityType::Hangar,2); Install(EOVFacilityType::FighterControl,1); }
+    if(Rule.bAircraftCapable && Rule.MaxHangars > 0) { Install(EOVFacilityType::Hangar,2); Install(EOVFacilityType::FighterControl,1); }
     AppendDefenseMounts(*Hull,*Layout);
     Ship.Configure(HullId.ToString().ToUpper(),Friendly,Hull->Speed,Hull->Turn,FVector(Scale),Friendly?FLinearColor(.12f,.65f,1):FLinearColor(1,.15f,.08f));
     Ship.SetCalibrationHull(&Layout->LocalHalfExtent);
     auto& S=*Ship.Systems;
     S.Tuning=GetDefault<UOVShipSystemsComponent>()->Tuning; S.Tuning.ShieldBase=Hull->Shield; S.Tuning.ExplosionBase=40; // D116 provisional balance
+    S.Tuning.ArmorMaxReduction = Rule.ArmorMaxReduction;
     S.Tuning.ShieldRegenFraction=ShieldCombat; S.Tuning.ShieldNonCombatRegenFraction=ShieldNonCombat;
     S.Tuning.NoHitRecoveryInterval=ShieldTransition; S.Tuning.ShieldRecoveryDelay=ShieldDelay; S.Tuning.CrewDamageCoefficient=CrewInjury;
     S.FactionId=Friendly?0:1; S.Initialize(Layout);
@@ -485,8 +588,16 @@ bool FOVMarkedEquippedMountsTest::RunTest(const FString&)
         {
             const auto PD=Defense->GetShipState(Ship);
             TestTrue(TEXT("F6 registers real PD mounts"),!PD.Mounts.IsEmpty());
+            const bool bHasInterceptionRoom = Ship->Systems->Layout->Slots.ContainsByPredicate(
+                [](const FOVSlotDefinition& Slot) { return Slot.Facility == EOVFacilityType::Interception; });
             for(const auto& Mount:PD.Mounts)
-                TestTrue(TEXT("F6 PD maps to the authored layout"),Mount.bLayoutMount && Ship->Systems->IsWeaponAvailable(Mount.MountId));
+            {
+                TestTrue(TEXT("F6 PD maps to the authored layout"), Mount.bLayoutMount);
+                if (bHasInterceptionRoom)
+                {
+                    TestTrue(TEXT("F6 PD available when Interception facility fits"), Ship->Systems->IsWeaponAvailable(Mount.MountId));
+                }
+            }
         }
     }
     for (const FHull& RawHull : Hulls)
@@ -497,10 +608,18 @@ bool FOVMarkedEquippedMountsTest::RunTest(const FString&)
         auto* Layout = MakeLayout(GetTransientPackage(), Hull);
         if (!TestNotNull(TEXT("Marked layout validates"), Layout)) continue;
         TestTrue(TEXT("Marked ship receives nonempty candidate hull boxes"),Layout->CombatHullBoxes.Num()>0 && Layout->CombatHullBoxes.Num()<=32);
+        int32 MarkedAttackCount = 0;
+        int32 MarkedPDCount = 0;
+        for (const auto& C : Candidates)
+        {
+            if (C.Kind == EOVMarkedSlotKind::Interception) ++MarkedPDCount;
+            else ++MarkedAttackCount;
+        }
         TSet<FName> Used;
         for (int32 I = 0; I < Hull.MountCount; ++I)
         {
             const auto& Mount = Layout->WeaponMounts[I];
+            if (Mount.AuthoredSlotId.IsNone()) continue;
             const auto* Found = Candidates.FindByPredicate([&](const FOVMarkedSlotCandidate& C) {
                 return C.Kind != EOVMarkedSlotKind::Interception && C.LocalPosition.Equals(Mount.LocalPosition, .001);
             });
@@ -513,6 +632,7 @@ bool FOVMarkedEquippedMountsTest::RunTest(const FString&)
             if (Found->Kind == EOVMarkedSlotKind::Dedicated)
                 TestEqual(TEXT("Dedicated slot has an explicit profile constraint"),Mount.RequiredProfileId,ProfileId(Weapons[Hull.Mounts[I].Weapon],Hull.Mounts[I].Tier));
         }
+        TestEqual(TEXT("All available marked attack slots bound without overlap"), Used.Num(), FMath::Min(MarkedAttackCount, Hull.MountCount));
         // Each hull gets a fresh combat registration; RegisterShip intentionally
         // does not replace an existing ship's equipped runtime state.
         Combat->Ships.RemoveAll([&Ships](const FOVCombatShipState& S){return S.Ship==Ships[0];});
@@ -529,7 +649,7 @@ bool FOVMarkedEquippedMountsTest::RunTest(const FString&)
                     });
                     if (Other) TestFalse(TEXT("Dedicated slot rejects another same-tier family profile"),Combat->SetWeaponProfile(Ships[0],Mount.WeaponId,Other->ProfileId));
                 }
-                if (Mount.Type != EOVWeaponType::Interception) continue;
+                if (Mount.Type != EOVWeaponType::Interception || Mount.AuthoredSlotId.IsNone()) continue;
                 const auto* Found=Candidates.FindByPredicate([&](const FOVMarkedSlotCandidate& C) {
                     return C.Kind == EOVMarkedSlotKind::Interception && C.LocalPosition.Equals(Mount.LocalPosition,.001);
                 });
@@ -538,7 +658,7 @@ bool FOVMarkedEquippedMountsTest::RunTest(const FString&)
                 TestFalse(TEXT("PD slots are independently equipped"),UsedPD.Contains(Found->SlotId));
                 UsedPD.Add(Found->SlotId);
             }
-            TestEqual(TEXT("All marked PD slots have one actual mount"),UsedPD.Num(),Hull.PD);
+            TestEqual(TEXT("All marked PD slots have one actual mount"), UsedPD.Num(), FMath::Min(MarkedPDCount, Hull.PD));
         }
     }
     World->DestroyWorld(false);
@@ -592,9 +712,9 @@ bool FOVD116CatalogTest::RunTest(const FString&)
     const FHull* Bastion = FindHull(TEXT("bastion"));
     const FHull* Dreadnought = FindHull(TEXT("dreadnought"));
     if (!Vector || !Bastion || !Dreadnought) return false;
-    TestTrue(TEXT("Distinct destroyer deck, attack and PD metadata"),
-        Vector->Decks == 1 && Vector->MountCount == 3 && Vector->PD == 2
-        && Bastion->Decks == 2 && Bastion->MountCount == 5 && Bastion->PD == 4);
+    TestTrue(TEXT("D126 distinct destroyer deck, attack, PD, and speed metadata"),
+        Vector->Decks == 1 && Vector->MountCount == 4 && Vector->PD == 3 && FMath::IsNearlyEqual(Vector->Speed, 14800.f)
+        && Bastion->Decks == 2 && Bastion->MountCount == 7 && Bastion->PD == 4 && FMath::IsNearlyEqual(Bastion->Speed, 8800.f));
     TestEqual(TEXT("Extra-large hull HP remains absolute"), Dreadnought->HP, 825000.f);
     const FHull* Battlecarrier = FindHull(TEXT("battlecarrier"));
     const FHull* Carrier = FindHull(TEXT("carrier"));
@@ -603,8 +723,9 @@ bool FOVD116CatalogTest::RunTest(const FString&)
         if (!Hull) { AddError(TEXT("Missing carrier hull")); continue; }
         UShipLayoutDataAsset* Layout = MakeLayout(GetTransientPackage(), *Hull);
         if (!TestNotNull(TEXT("Carrier layout exists"), Layout)) continue;
-        const int32 Limit = Hull == Carrier ? 4 : 8;
-        TestEqual(TEXT("D121 installation limit"), Layout->MaxHangarInstallations, Limit);
+        const int32 Limit = Hull == Carrier ? 4 : 6;
+        TestEqual(TEXT("D126 hangar installation limit"), Layout->MaxHangarInstallations, Limit);
+        TestTrue(TEXT("D126 carrier/battlecarrier allow aircraft operations"), Layout->bAllowAircraftOperations);
         int32 Installed = Layout->Slots.FilterByPredicate([](const FOVSlotDefinition& Slot) {
             return Slot.Facility == EOVFacilityType::Hangar;
         }).Num();
@@ -653,11 +774,15 @@ bool FOVD116CatalogTest::RunTest(const FString&)
     }
     FOVHullMetadata Meta;
     TestTrue(TEXT("Vector metadata exists"), OVCalibration::GetHullMetadata(TEXT("vector"), Meta));
-    TestTrue(TEXT("Vector class and source fleet cost"), Meta.SizeClass == 2 && Meta.FleetCost == 5 && Meta.RoleTags.Contains(TEXT("공격")));
+    TestTrue(TEXT("Vector class, fleet cost, D126 armor cap, and slots"),
+        Meta.SizeClass == 2 && Meta.FleetCost == 5 && Meta.TotalInteriorSlots == 9
+        && FMath::IsNearlyEqual(Meta.ArmorMaxReduction, 0.26f) && Meta.RoleTags.Contains(TEXT("공격")));
     TestTrue(TEXT("Air defense documented role"), OVCalibration::GetHullMetadata(TEXT("air_defense"), Meta) && Meta.RoleTags.Contains(TEXT("방공")));
     TestTrue(TEXT("Radar is not inferred to be air defense"), OVCalibration::GetHullMetadata(TEXT("radar"), Meta) && Meta.RoleTags.Contains(TEXT("탐지 지원")) && !Meta.RoleTags.Contains(TEXT("방공")));
     TestTrue(TEXT("Support source fleet cost and role"), OVCalibration::GetHullMetadata(TEXT("repair"), Meta) && Meta.FleetCost == 1 && Meta.RoleTags.Contains(TEXT("수리")));
-    TestTrue(TEXT("Extra-large source fleet cost"), OVCalibration::GetHullMetadata(TEXT("dreadnought"), Meta) && Meta.SizeClass == 4 && Meta.FleetCost == 125);
+    TestTrue(TEXT("Extra-large source fleet cost and D126 non-aircraft hangar limit"),
+        OVCalibration::GetHullMetadata(TEXT("dreadnought"), Meta) && Meta.SizeClass == 4 && Meta.FleetCost == 125
+        && Meta.TotalInteriorSlots == 36 && Meta.MaxHangarInstallations == 4 && !Meta.bAllowAircraftOperations);
     TestFalse(TEXT("Unknown metadata rejected"), OVCalibration::GetHullMetadata(TEXT("not_a_hull"), Meta));
     TestTrue(TEXT("Unknown metadata has no synthetic values"), Meta.SizeClass == 0 && Meta.FleetCost == 0 && Meta.RoleTags.IsEmpty());
     TestEqual(TEXT("Public hull catalog matches source"), OVCalibration::GetHullIds().Num(), 16);

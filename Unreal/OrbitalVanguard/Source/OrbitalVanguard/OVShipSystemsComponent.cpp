@@ -110,7 +110,10 @@ bool UOVShipSystemsComponent::CanFireMissiles() const { return CanAct() && GetEf
 bool UOVShipSystemsComponent::HasLifeSupport() const { return CanAct() && GetEfficiency(EOVFacilityType::LifeSupport) > 0; }
 bool UOVShipSystemsComponent::HasRadar() const { return CanAct() && GetEfficiency(EOVFacilityType::Radar) > 0; }
 bool UOVShipSystemsComponent::CanIntercept() const { return CanAct() && GetEfficiency(EOVFacilityType::Interception) > 0; }
-bool UOVShipSystemsComponent::CanLaunchFighters() const { return CanUseHangar() && GetEfficiency(EOVFacilityType::FighterControl) > 0; }
+bool UOVShipSystemsComponent::CanLaunchFighters() const
+{
+    return Layout && Layout->bAllowAircraftOperations && CanUseHangar() && GetEfficiency(EOVFacilityType::FighterControl) > 0;
+}
 bool UOVShipSystemsComponent::CanUseHangar() const { return CanAct() && GetEfficiency(EOVFacilityType::Hangar) > 0; }
 bool UOVShipSystemsComponent::CanUseResources() const { return CanAct() && GetEfficiency(EOVFacilityType::ResourceStorage) > 0; }
 float UOVShipSystemsComponent::GetRadarRange() const { return HasRadar() ? Layout->BaseRadarRange : 0; }
@@ -134,6 +137,15 @@ void UOVShipSystemsComponent::MarkWrecked()
     bWrecked = true; ++WreckEventCount;
     Shield = 0; MaxShield = 0; ShieldRegen = 0; bShieldActive = false;
     for (FOVFacilityState& Slot : Slots) Slot.Crew = 0;
+}
+
+void UOVShipSystemsComponent::ForceWreckInstant()
+{
+    if (bWrecked) return;
+    HullHP = 0.0f;
+    Shield = 0.0f;
+    bShieldActive = false;
+    MarkWrecked();
 }
 
 void UOVShipSystemsComponent::RefreshDerivedState()

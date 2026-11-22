@@ -183,6 +183,377 @@ UShipLayoutDataAsset* UShipLayoutDataAsset::MakeTestLayout(UObject* Outer, int32
     return Layout;
 }
 
+int32 UShipLayoutDataAsset::GetMaxFloorSlotsForClass(EOVHullSizeClass SizeClass)
+{
+    switch (SizeClass)
+    {
+    case EOVHullSizeClass::Small:      return 7;
+    case EOVHullSizeClass::Medium:     return 9;
+    case EOVHullSizeClass::Large:      return 12;
+    case EOVHullSizeClass::ExtraLarge: return 15;
+    default:                           return 0;
+    }
+}
+
+bool UShipLayoutDataAsset::ComputeExpectedD126DeckSlots(EOVHullSizeClass SizeClass, int32 Decks, bool bTopHeavy, TArray<int32>& OutCounts)
+{
+    OutCounts.Reset();
+    const int32 MaxFloor = GetMaxFloorSlotsForClass(SizeClass);
+    if (MaxFloor <= 0 || Decks < 1 || Decks > 3) return false;
+
+    // D126 R17 allowed deck counts per hull size class:
+    // Small: 1F only (7)
+    // Medium: 1F (9) or 2F (9-6 / 6-9)
+    // Large: 2F (12-9 / 9-12) or 3F (12-9-6 / 6-9-12)
+    // ExtraLarge: 3F only (15-12-9 / 9-12-15)
+    if (SizeClass == EOVHullSizeClass::Small && Decks != 1) return false;
+    if (SizeClass == EOVHullSizeClass::Medium && (Decks < 1 || Decks > 2)) return false;
+    if (SizeClass == EOVHullSizeClass::Large && (Decks < 2 || Decks > 3)) return false;
+    if (SizeClass == EOVHullSizeClass::ExtraLarge && Decks != 3) return false;
+
+    OutCounts.SetNum(Decks);
+    for (int32 D = 0; D < Decks; ++D)
+    {
+        const int32 StepFromPeak = bTopHeavy ? (Decks - 1 - D) : D;
+        const int32 Count = MaxFloor - StepFromPeak * 3;
+        if (Count <= 0) return false;
+        OutCounts[D] = Count;
+    }
+    return true;
+}
+
+UShipLayoutDataAsset* UShipLayoutDataAsset::MakeD126Layout(
+    UObject* Outer,
+    EOVHullSizeClass SizeClass,
+    int32 Decks,
+    bool bTopHeavy,
+    int32 MaxHangars,
+    bool bAircraftCapable)
+{
+    TArray<int32> DeckSlots;
+    if (!ComputeExpectedD126DeckSlots(SizeClass, Decks, bTopHeavy, DeckSlots)) return nullptr;
+
+    UShipLayoutDataAsset* Layout = NewObject<UShipLayoutDataAsset>(Outer ? Outer : GetTransientPackage());
+    Layout->LayoutVersion = TEXT("D126_Grid_v1");
+    Layout->DeckCount = Decks;
+    Layout->HullSizeClass = SizeClass;
+    Layout->bSmallHull = (SizeClass == EOVHullSizeClass::Small);
+    const bool bCanHaveHangars = (SizeClass == EOVHullSizeClass::Large || SizeClass == EOVHullSizeClass::ExtraLarge);
+    Layout->MaxHangarInstallations = bCanHaveHangars ? FMath::Max(0, MaxHangars) : 0;
+    Layout->bAllowAircraftOperations = bCanHaveHangars && bAircraftCapable && Layout->MaxHangarInstallations > 0;
+    Layout->MaxHullHP = 2000 + Decks * 1000;
+    Layout->CannonSlots = Layout->BeamSlots = Layout->MissileSlots = 0;
+
+    // 3-deck core is strictly placed on 2F; 1-2 deck core is placed on 1F at exact (0,0) center column XY_2_1.
+    const int32 CoreDeck = (Decks == 3) ? 2 : 1;
+    Layout->CoreSlotId = FName(*FString::Printf(TEXT("D%d_X2_Y1"), CoreDeck));
+
+    const float DeckHalfHeight = Layout->HalfHeight / Decks;
+
+    // Exact symmetric 5-band X-partition (X = -140, -70, 0, +70, +140; HalfX = 35)
+    // Every count {6, 7, 9, 12, 15} tiles 100% of [-175..+175] x [-75..+75] with zero gaps,
+    // guarantees exact (0,0) column XY_2_1 and exact bow (+140,0) column XY_4_1 on EVERY deck.
+    auto BandCountsForFloor = [](int32 FloorSlots, int32 OutBands[5])
+    {
+        switch (FloorSlots)
+        {
+        case 15: OutBands[0]=3; OutBands[1]=3; OutBands[2]=3; OutBands[3]=3; OutBands[4]=3; return true;
+        case 12: OutBands[0]=2; OutBands[1]=3; OutBands[2]=3; OutBands[3]=3; OutBands[4]=1; return true;
+        case 9:  OutBands[0]=1; OutBands[1]=2; OutBands[2]=3; OutBands[3]=2; OutBands[4]=1; return true;
+        case 7:  OutBands[0]=1; OutBands[1]=1; OutBands[2]=3; OutBands[3]=1; OutBands[4]=1; return true;
+        case 6:  OutBands[0]=1; OutBands[1]=2; OutBands[2]=1; OutBands[3]=1; OutBands[4]=1; return true;
+        default: return false;
+        }
+    };
+
+    TArray<TArray<TArray<FName>>> DeckBandSlots; // [DeckIdx][BandX 0..4][Row]
+    DeckBandSlots.SetNum(Decks);
+
+    for (int32 Deck = 1; Deck <= Decks; ++Deck)
+    {
+        int32 Bands[5] = {};
+        if (!BandCountsForFloor(DeckSlots[Deck - 1], Bands)) return nullptr;
+        DeckBandSlots[Deck - 1].SetNum(5);
+
+        const double ZCenter = -Layout->HalfHeight + DeckHalfHeight * (2 * Deck - 1);
+        for (int32 BX = 0; BX < 5; ++BX)
+        {
+            const int32 RowsInBand = Bands[BX];
+            const double XCenter = (BX - 2) * 70.0;
+            for (int32 R = 0; R < RowsInBand; ++R)
+            {
+                double YCenter = 0.0;
+                double HalfY = 75.0;
+                FName ColId;
+                FName SlotId;
+                if (RowsInBand == 1)
+                {
+                    YCenter = 0.0;
+                    HalfY = 75.0;
+                    ColId = FName(*FString::Printf(TEXT("XY_%d_1"), BX));
+                    SlotId = FName(*FString::Printf(TEXT("D%d_X%d_Y1"), Deck, BX));
+                }
+                else if (RowsInBand == 2)
+                {
+                    YCenter = (R == 0) ? -37.5 : 37.5;
+                    HalfY = 37.5;
+                    ColId = FName(*FString::Printf(TEXT("XY_%d_H%d"), BX, R));
+                    SlotId = FName(*FString::Printf(TEXT("D%d_X%d_H%d"), Deck, BX, R));
+                }
+                else
+                {
+                    YCenter = (R - 1) * 50.0;
+                    HalfY = 25.0;
+                    ColId = FName(*FString::Printf(TEXT("XY_%d_%d"), BX, R));
+                    SlotId = FName(*FString::Printf(TEXT("D%d_X%d_Y%d"), Deck, BX, R));
+                }
+
+                FOVSlotDefinition Slot;
+                Slot.SlotId = SlotId;
+                Slot.DeckId = Deck;
+                Slot.ColumnId = ColId;
+                Slot.LocalCenter = FVector(XCenter, YCenter, ZCenter);
+                Slot.HalfExtent = FVector(35.0, HalfY, DeckHalfHeight);
+                Slot.AllowedFacilities.Add(EOVFacilityType::None);
+                for (int32 Type = static_cast<int32>(EOVFacilityType::LifeSupport); Type <= static_cast<int32>(EOVFacilityType::Security); ++Type)
+                {
+                    const EOVFacilityType Fac = static_cast<EOVFacilityType>(Type);
+                    if (Fac == EOVFacilityType::Hangar && (!bCanHaveHangars || Layout->MaxHangarInstallations <= 0)) continue;
+                    if (Fac == EOVFacilityType::FighterControl && !Layout->bAllowAircraftOperations) continue;
+                    Slot.AllowedFacilities.Add(Fac);
+                }
+                if (Slot.SlotId == Layout->CoreSlotId)
+                {
+                    Slot.AllowedFacilities.Add(EOVFacilityType::Core);
+                }
+                const bool bOuterDeck = (Decks != 3 || Deck != 2);
+                const bool bOuterBowOrStern = (BX == 4 && FMath::IsNearlyZero(YCenter)) || (BX == 0 && FMath::IsNearlyZero(YCenter));
+                if (bOuterDeck && bOuterBowOrStern)
+                {
+                    Layout->BridgeAllowedSlots.AddUnique(Slot.SlotId);
+                    Slot.AllowedFacilities.AddUnique(EOVFacilityType::Bridge);
+                }
+                Layout->Slots.Add(Slot);
+                DeckBandSlots[Deck - 1][BX].Add(Slot.SlotId);
+            }
+        }
+    }
+
+    auto InstallAt = [&](int32 Index, EOVFacilityType Type)
+    {
+        if (!Layout->Slots.IsValidIndex(Index)) return;
+        FOVSlotDefinition& Slot = Layout->Slots[Index];
+        Slot.Facility = Type;
+        Slot.MaxFacilityHP = Type == EOVFacilityType::Bridge ? 180.f : 100.f;
+        Slot.RequiredCrew = OVLayout::Uncrewed(Type) ? 0.f : 10.f;
+    };
+
+    InstallAt(Layout->GetSlotIndex(Layout->CoreSlotId), EOVFacilityType::Core);
+    const FName BridgeSlotId(*FString::Printf(TEXT("D%d_X4_Y1"), Decks));
+    InstallAt(Layout->GetSlotIndex(BridgeSlotId), EOVFacilityType::Bridge);
+
+    // Base mandatory life support + engine; caller (OVCalibration or customizer) populates remaining weapon/role rooms.
+    TArray<EOVFacilityType> BaseMandatory = { EOVFacilityType::LifeSupport, EOVFacilityType::Engine };
+    int32 Next = 0;
+    for (int32 Index = 0; Index < Layout->Slots.Num() && Next < BaseMandatory.Num(); ++Index)
+    {
+        if (Layout->Slots[Index].Facility == EOVFacilityType::None)
+        {
+            InstallAt(Index, BaseMandatory[Next++]);
+        }
+    }
+
+    // Build fully connected passage graph (Door within band, Corridor between adjacent X bands, Vertical along XY_2_1)
+    auto Connect = [&](FName A, FName B, EOVConnectionKind Kind)
+    {
+        if (A == B) return;
+        const int32 IA = Layout->GetSlotIndex(A);
+        const int32 IB = Layout->GetSlotIndex(B);
+        if (!Layout->Slots.IsValidIndex(IA) || !Layout->Slots.IsValidIndex(IB)) return;
+        FOVConnectionDefinition Link;
+        Link.ConnectionId = FName(*FString::Printf(TEXT("Passage_%03d"), Layout->Connections.Num()));
+        Link.FromSlot = A;
+        Link.ToSlot = B;
+        Link.Kind = Kind;
+        Layout->Slots[IA].ConnectionIds.Add(Link.ConnectionId);
+        Layout->Slots[IB].ConnectionIds.Add(Link.ConnectionId);
+        Layout->Connections.Add(Link);
+    };
+
+    for (int32 Deck = 1; Deck <= Decks; ++Deck)
+    {
+        const auto& Bands = DeckBandSlots[Deck - 1];
+        for (int32 BX = 0; BX < 5; ++BX)
+        {
+            for (int32 R = 0; R + 1 < Bands[BX].Num(); ++R)
+            {
+                Connect(Bands[BX][R], Bands[BX][R + 1], EOVConnectionKind::Door);
+            }
+            if (BX < 4)
+            {
+                // Connect every room in band BX to its closest Y neighbor in band BX+1
+                const auto& NextBand = Bands[BX + 1];
+                TSet<TPair<FName, FName>> Added;
+                for (FName FromId : Bands[BX])
+                {
+                    const double FromY = Layout->Slots[Layout->GetSlotIndex(FromId)].LocalCenter.Y;
+                    FName BestTo = NextBand[0];
+                    double BestDist = TNumericLimits<double>::Max();
+                    for (FName ToId : NextBand)
+                    {
+                        const double Dist = FMath::Abs(Layout->Slots[Layout->GetSlotIndex(ToId)].LocalCenter.Y - FromY);
+                        if (Dist < BestDist) { BestDist = Dist; BestTo = ToId; }
+                    }
+                    if (!Added.Contains({FromId, BestTo}))
+                    {
+                        Added.Add({FromId, BestTo});
+                        Connect(FromId, BestTo, EOVConnectionKind::Corridor);
+                    }
+                }
+                for (FName ToId : NextBand)
+                {
+                    const double ToY = Layout->Slots[Layout->GetSlotIndex(ToId)].LocalCenter.Y;
+                    FName BestFrom = Bands[BX][0];
+                    double BestDist = TNumericLimits<double>::Max();
+                    for (FName FromId : Bands[BX])
+                    {
+                        const double Dist = FMath::Abs(Layout->Slots[Layout->GetSlotIndex(FromId)].LocalCenter.Y - ToY);
+                        if (Dist < BestDist) { BestDist = Dist; BestFrom = FromId; }
+                    }
+                    if (!Added.Contains({BestFrom, ToId}))
+                    {
+                        Added.Add({BestFrom, ToId});
+                        Connect(BestFrom, ToId, EOVConnectionKind::Corridor);
+                    }
+                }
+            }
+        }
+        if (Deck < Decks)
+        {
+            const FName LowerShaft(*FString::Printf(TEXT("D%d_X2_Y1"), Deck));
+            const FName UpperShaft(*FString::Printf(TEXT("D%d_X2_Y1"), Deck + 1));
+            Connect(LowerShaft, UpperShaft, EOVConnectionKind::Vertical);
+        }
+    }
+
+    // Preserve exact 14 / 26 / 38 armor section partitioning (independent of internal slot counts!)
+    for (int32 FaceIndex = 0; FaceIndex < 6; ++FaceIndex)
+    {
+        const EOVArmorFace Face = static_cast<EOVArmorFace>(FaceIndex);
+        const bool End = OVLayout::IsEnd(Face);
+        const int32 Rows = End ? 1 : Decks;
+        const int32 Columns = End ? 1 : 3;
+        for (int32 Row = 0; Row < Rows; ++Row)
+        {
+            for (int32 Column = 0; Column < Columns; ++Column)
+            {
+                FOVArmorDefinition Armor;
+                Armor.Face = Face; Armor.Row = Row; Armor.Column = Column;
+                Armor.ArmorId = FName(*FString::Printf(TEXT("Armor_F%d_R%d_C%d"), FaceIndex, Row, Column));
+                Armor.NormalizedMin = FVector2D(-1.0 + 2.0 * Column / Columns, -1.0 + 2.0 * Row / Rows);
+                Armor.NormalizedMax = FVector2D(-1.0 + 2.0 * (Column + 1) / Columns, -1.0 + 2.0 * (Row + 1) / Rows);
+                const FVector2D Mid = (Armor.NormalizedMin + Armor.NormalizedMax) * .5;
+                const FVector2D UVHalf = (Armor.NormalizedMax - Armor.NormalizedMin) * .5;
+                const FVector Bounds = Layout->LocalHalfExtent;
+                if (End)
+                {
+                    Armor.LocalCenter = FVector(Face == EOVArmorFace::Front ? Bounds.X : -Bounds.X, Mid.X * Bounds.Y, Mid.Y * Bounds.Z);
+                    Armor.HalfExtent = FVector(1, UVHalf.X * Bounds.Y, UVHalf.Y * Bounds.Z);
+                }
+                else if (OVLayout::IsSide(Face))
+                {
+                    Armor.LocalCenter = FVector(Mid.X * Bounds.X, Face == EOVArmorFace::Right ? Bounds.Y : -Bounds.Y, Mid.Y * Bounds.Z);
+                    Armor.HalfExtent = FVector(UVHalf.X * Bounds.X, 1, UVHalf.Y * Bounds.Z);
+                }
+                else
+                {
+                    Armor.LocalCenter = FVector(Mid.X * Bounds.X, Mid.Y * Bounds.Y, Face == EOVArmorFace::Top ? Bounds.Z : -Bounds.Z);
+                    Armor.HalfExtent = FVector(UVHalf.X * Bounds.X, UVHalf.Y * Bounds.Y, 1);
+                }
+                Armor.MaxArmor = Face == EOVArmorFace::Front ? 400.f : 100.f;
+                for (const FOVSlotDefinition& Slot : Layout->Slots)
+                {
+                    if (OVLayout::SurfaceSlot(Slot, Face, Bounds, Decks) && OVLayout::SectionOverlapsSlot(Armor, Slot, Bounds))
+                    {
+                        Armor.InnerSlotIds.Add(Slot.SlotId);
+                    }
+                }
+                Layout->ArmorSections.Add(Armor);
+            }
+        }
+    }
+
+    return Layout;
+}
+
+bool UShipLayoutDataAsset::AuditFacilityCapacity(
+    const UShipLayoutDataAsset* Layout,
+    const TArray<EOVFacilityType>& DesiredFacilities,
+    TArray<EOVFacilityType>& OutUnplaced,
+    FString& OutReport)
+{
+    OutUnplaced.Reset();
+    OutReport.Reset();
+    if (!Layout)
+    {
+        OutReport = TEXT("Audit failed: Layout is null");
+        return false;
+    }
+
+    TMap<EOVFacilityType, int32> Installed;
+    int32 FreeSlots = 0;
+    for (const FOVSlotDefinition& Slot : Layout->Slots)
+    {
+        if (Slot.Facility == EOVFacilityType::None) ++FreeSlots;
+        else ++Installed.FindOrAdd(Slot.Facility);
+    }
+
+    TMap<EOVFacilityType, int32> Needed;
+    for (EOVFacilityType Fac : DesiredFacilities)
+    {
+        if (Fac != EOVFacilityType::None) ++Needed.FindOrAdd(Fac);
+    }
+
+    int32 AdditionalRequired = 0;
+    for (const auto& Pair : Needed)
+    {
+        const int32 Have = Installed.FindRef(Pair.Key);
+        if (Pair.Value > Have)
+        {
+            const int32 Deficit = Pair.Value - Have;
+            for (int32 K = 0; K < Deficit; ++K)
+            {
+                if (AdditionalRequired < FreeSlots)
+                {
+                    ++AdditionalRequired;
+                }
+                else
+                {
+                    OutUnplaced.Add(Pair.Key);
+                }
+            }
+        }
+    }
+
+    if (OutUnplaced.IsEmpty())
+    {
+        OutReport = FString::Printf(TEXT("OK: %d total slots accommodate all %d desired facilities (free remaining: %d)"),
+            Layout->Slots.Num(), DesiredFacilities.Num(), FreeSlots - AdditionalRequired);
+        return true;
+    }
+
+    TArray<FString> MissingNames;
+    const UEnum* FacEnum = StaticEnum<EOVFacilityType>();
+    for (EOVFacilityType Missing : OutUnplaced)
+    {
+        MissingNames.Add(FacEnum ? FacEnum->GetNameStringByValue(static_cast<int64>(Missing)) : FString::FromInt(int32(Missing)));
+    }
+    OutReport = FString::Printf(
+        TEXT("D126 Capacity Deficit: %d slots available cannot hold %d desired facilities without merging/deleting (%d unplaced: %s)"),
+        Layout->Slots.Num(), DesiredFacilities.Num(), OutUnplaced.Num(), *FString::Join(MissingNames, TEXT(", ")));
+    return false;
+}
+
 int32 UShipLayoutDataAsset::GetSlotIndex(FName SlotId) const
 {
     return Slots.IndexOfByPredicate([SlotId](const FOVSlotDefinition& Slot) { return Slot.SlotId == SlotId; });
@@ -293,8 +664,50 @@ bool UShipLayoutDataAsset::ValidateLayout(TArray<FString>& Errors) const
         Require(FMath::IsFinite(Slot.MaxFacilityHP) && (Slot.Facility == EOVFacilityType::None ? Slot.MaxFacilityHP >= 0 : Slot.MaxFacilityHP > 0), TEXT("Invalid facility HP"));
         Require(FMath::IsFinite(Slot.RequiredCrew) && (OVLayout::Uncrewed(Slot.Facility) ? Slot.RequiredCrew == 0 : Slot.RequiredCrew > 0), TEXT("Invalid crew requirement or unmanned exception"));
         Require(!(bSmallHull && Slot.Facility == EOVFacilityType::Hangar), TEXT("Small hulls cannot install hangars"));
+        if (HullSizeClass == EOVHullSizeClass::Medium)
+        {
+            Require(Slot.Facility != EOVFacilityType::Hangar, TEXT("Medium hulls cannot install hangars (D126 R15: Large+ only)"));
+        }
+        if (!bAllowAircraftOperations)
+        {
+            Require(Slot.Facility != EOVFacilityType::FighterControl, TEXT("Non-aircraft hull cannot install fighter control facility"));
+        }
         if (Slot.Facility == EOVFacilityType::Bridge)
             Require(BridgeAllowedSlots.Contains(Slot.SlotId) && (DeckCount != 3 || Slot.DeckId != 2), TEXT("Bridge must occupy an explicit outer-deck slot"));
+    }
+    if (LayoutVersion == TEXT("D126_Grid_v1") || HullSizeClass != EOVHullSizeClass::Unspecified)
+    {
+        const int32 MaxFloor = GetMaxFloorSlotsForClass(HullSizeClass);
+        Require(MaxFloor > 0, TEXT("D126 layout requires a valid HullSizeClass (Small..ExtraLarge)"));
+        if (HullSizeClass == EOVHullSizeClass::Small)
+            Require(DeckCount == 1, TEXT("D126 Small hulls must be 1 deck"));
+        else if (HullSizeClass == EOVHullSizeClass::Medium)
+            Require(DeckCount >= 1 && DeckCount <= 2, TEXT("D126 Medium hulls must be 1..2 decks"));
+        else if (HullSizeClass == EOVHullSizeClass::Large)
+            Require(DeckCount >= 2 && DeckCount <= 3, TEXT("D126 Large hulls must be 2..3 decks"));
+        else if (HullSizeClass == EOVHullSizeClass::ExtraLarge)
+            Require(DeckCount == 3, TEXT("D126 ExtraLarge hulls must be 3 decks only"));
+
+        if (MaxFloor > 0 && DeckCount >= 1 && DeckCount <= 3)
+        {
+            TArray<int32> DeckSlotCounts;
+            DeckSlotCounts.Init(0, DeckCount);
+            for (const FOVSlotDefinition& Slot : Slots)
+            {
+                if (Slot.DeckId >= 1 && Slot.DeckId <= DeckCount) ++DeckSlotCounts[Slot.DeckId - 1];
+            }
+            TArray<int32> ExpectedBottomHeavy, ExpectedTopHeavy;
+            const bool bHasBottom = ComputeExpectedD126DeckSlots(HullSizeClass, DeckCount, false, ExpectedBottomHeavy);
+            const bool bHasTop = ComputeExpectedD126DeckSlots(HullSizeClass, DeckCount, true, ExpectedTopHeavy);
+            const bool bMatchesMonotonic = (bHasBottom && DeckSlotCounts == ExpectedBottomHeavy)
+                || (bHasTop && DeckSlotCounts == ExpectedTopHeavy);
+            Require(bMatchesMonotonic, TEXT("D126 deck slot counts must decrease monotonically by 3 from bottom (1F) or top deck"));
+        }
+        if (HullSizeClass == EOVHullSizeClass::Small || HullSizeClass == EOVHullSizeClass::Medium)
+        {
+            Require(MaxHangarInstallations <= 0, TEXT("D126 R15: Small/Medium hulls must have MaxHangarInstallations <= 0"));
+            Require(!bAllowAircraftOperations, TEXT("D126 R15: Small/Medium hulls cannot operate aircraft"));
+        }
     }
     Require(Counts.FindRef(EOVFacilityType::Core) == 1 && Counts.FindRef(EOVFacilityType::Bridge) == 1, TEXT("Exactly one core and bridge required"));
     Require(MaxHangarInstallations >= -1, TEXT("Invalid hangar installation limit"));

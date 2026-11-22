@@ -1,5 +1,7 @@
 # 게임 시작 화면 및 메뉴 구성 기획서 (Orbital Vanguard · UE 5.8)
 
+> 현행 메뉴 기획(2026-11-21 정합화): 메뉴 구조는 본 문서, 함체/전투/물류의 최신 변경값은 D126을 따른다. 아래 코드 상태는62adc17의 과거 구현 스냅샷이며 현재 기획값과 구분한다.
+
 > **기준 원격 상태**: 기획 브랜치 `work` (`f0ac7fb`) · UE 5.8 코드 브랜치 `codex/phase1-playground` (`62adc17`)
 > **작성 배경**: 현재 `OrbitalVanguard.uproject`(UE 5.8, DX11)는 `ControlRange` 맵 직진입 후 상단 Canvas `장면` 메뉴(`bSceneMenuOpen`) 및 `F5/F6/F7` 단축키로 6종 플레이 시나리오를 호출하는 구조입니다. 본 문서는 기존 C++ 서브시스템(`UOVPlayScenarioSubsystem`, `AOVController`, `AOVHUD`)과 자동/PIE 회귀 경로를 유지하면서 정식 **시작 화면 · 임무 선택 · 일시정지 · 환경 설정 · 작전 결과 메뉴**를 UMG/Slate로 구축하기 위한 기획 명세입니다.
 
@@ -12,7 +14,7 @@
 | 부트 및 맵 | `GameDefaultMap=/Game/Maps/ControlRange`, `OVGameMode` | 별도 타이틀 맵 분리 없이 `ControlRange` 궤도 카메라 위 UMG 오버레이 마운트 |
 | 플레이 시나리오 | `UOVPlayScenarioSubsystem` 6종 정의 (`Fleet100/200/300`, `Sandbox` 가동 / `Logistics`, `Evacuation` 준비 중) | `Definitions()`, `Start(Controller, Id)`, `Clear()` API 직접 바인딩 |
 | 조작 및 HUD | `PlayGame3` 기본 프로필 + `Legacy` 비교(`P`), Canvas 전장 HUD + UMG 카드/영웅 위젯 | 환경 설정 조작 탭, `UIScale` DPI 보정, D122 창 화면 안 복구 연결 |
-| 자동화·PIE 회귀 | C++ 자동 134/134, PIE 51/51, 2C API 83/83 (`-OVPlayScene=` CLI 인자 사용) | CLI 인자 또는 자동화 테스트 감지 시 타이틀 화면 자동 우회 필수 |
+| 자동화·PIE 회귀 | C++ 자동 134/134, PIE 51/51, 2C API 83/83 (`-OVPlayScene=` CLI 인자 사용) | 명시적 CLI 인자·시험 전용 진입 경로에서 타이틀 화면 우회 필수 |
 | 미결정 연계 | `R13`(ESC·키 배치), `R27`(자동 일시정지 옵션), 카드·결과 UI 후속 예정 | 본 메뉴 기획에서 ESC 4단계 우선순위 및 R27 설정 매트릭스 확정 제안 |
 
 ---
@@ -20,7 +22,7 @@
 ## 2. 전체 메뉴 상태 전이 흐름 (State Machine)
 
 1. **부트 판별 (`AOVController::BeginPlay`)**
-   - `-OVPlayScene=<Id>` 인자 또는 자동화/API 직접 호출 존재 → **전장 즉시 진입** (기존 51/51 PIE 회귀 무손상).
+   - 명시적 `-OVPlayScene=<Id>` 인자 또는 시험 전용 초기화 경로 사용 → **전장 즉시 진입** (기존 51/51 PIE 회귀 무손상).
    - 일반 실행 → **01. 타이틀 화면 (`WBP_OVTitleScreen`)** 진입 (시간 정지, 궤도 카메라 완속 패닝).
 2. **타이틀 → 임무 선택 (`WBP_OVScenarioSelect`)**
    - 6종 플레이 시나리오 카드 표시. 가동 항목(`bAvailable == true`) 선택 시 `UOVPlayScenarioSubsystem::Start(Controller, Id)` 호출 후 전투 HUD로 전환.
@@ -47,29 +49,30 @@
 
 ### 3.2 플레이 임무 선택 화면 (`WBP_OVScenarioSelect`)
 - **2단 분할 구조**: 좌측 6종 임무 카드 목록(42%) + 우측 선택 임무 브리핑(58%).
-- **6종 임무 바인딩 명세 (`OVPlayScenarioSubsystem.cpp` 일치)**:
+- **6종 임무 바인딩 명세:** ID·가동 상태·초기 편성은62adc17 스냅샷이며 제한 규칙 열은D126에 맞춘 수정 목표다. 현재 코드의900초 제한이 이미 제거됐다는 뜻은 아니다.
 
 | ID | 임무명 | 상태 | 한쪽 코스트 | 격납고 / 함재기 | 제한 규칙 | 단축키 |
 | --- | --- | --- | ---: | ---: | --- | --- |
-| `Fleet100` | 100코스트 함대전 | 가동 | 100 | 2 / 20 | 교착 120s · 제한 900s | `F5` |
-| `Fleet200` | 200코스트 함대전 | 가동 | 200 | 2 / 20 | 교착 120s · 제한 900s | `F6` |
-| `Fleet300` | 300코스트 함대전 | 가동 | 300 | 4 / 40 | 교착 120s · 제한 900s | `F7` |
+| `Fleet100` | 100코스트 함대전 | 가동 | 100 | 2 / 20 | 교착 감지 재검증 · 시간 제한 기본 해제 | `F5` |
+| `Fleet200` | 200코스트 함대전 | 가동 | 200 | 2 / 20 | 교착 감지 재검증 · 시간 제한 기본 해제 | `F6` |
+| `Fleet300` | 300코스트 함대전 | 가동 | 300 | 4 / 40 | 교착 감지 재검증 · 시간 제한 기본 해제 | `F7` |
 | `Logistics` | 채굴·수송 엄호 | 준비 중 | 미정 | - | 중형 수송선·물류 연동 후속 | - |
 | `Evacuation` | 공습 생존·퇴각 | 준비 중 | 미정 | - | 예고 파동·FTL 회수/포기 후속 | - |
 | `Sandbox` | 자유 전투 시험장 | 가동 | 자유 | 자유 | 개발 도구 배치 전용 | - |
 
+- **시간 제한:** D126 예상 함대전18/21.9/26.9분과 충돌하는900초 고정 종료는 현행 기본 규칙에서 제거한다. 일반 함대전은 제한 시간 기본 해제, 개발용 제한은 명시적 선택값으로 분리한다. 과거 코드의900초·120초HP합계 교착은 수정 대상이다. 쉴드 피해·접근·발사체·강습/점령 진행을 누락해 정상 전투를 종료하지 않는다.
 - **우측 브리핑 필수 요소**: 임무 목표, 함체별 편성 수량·코스트 표(초계함~구축전함/항공순양함), 승패·교착·이탈 판정 요약, 영웅/캠페인 명단 격리 고지, 하단 단일 Primary CTA **`작전 출격`**.
 - `bAvailable == false` 항목 선택 시에도 기획 개요와 다음 개발 마일스톤을 확인할 수 있으나 `작전 출격` 버튼은 비활성화(`준비 중`)한다.
 
 ### 3.3 일시정지 / 시스템 메뉴 (`WBP_OVPauseMenu`)
 - **항목**: `전투 재개`, `임무 재시작` (확인 후 `Start(ActiveId)`), `임무 목록으로 복귀` (`Clear()` 후 선택 화면), `조작 · 환경 설정`, `타이틀 화면으로`.
-- **세션 보호 규칙**: 전투 일시정지 진입 시 현재 시간 배속(`F1~F4`)을 기억하고 0배속으로 동결하며, 재개 시 직전 배속으로 복원한다.
+- **세션 보호 규칙**: 전투 일시정지 진입 시 현재 시간 배속(실제 조작 바인딩 기준)을 기억하고 0배속으로 동결하며, 재개 시 직전 배속으로 복원한다.
 
 ### 3.4 환경 설정 메뉴 (`WBP_OVSettingsMenu`)
 1. **조작 탭 (`OVControlProfile`)**
    - 조작 프로필 선택: `PlayGame3 (기본)` / `Legacy` (기존 `P` 토글과 양방향 동기화).
    - 카메라 회전 감도, 줌 속도, 고도 드래그 임계(`8px` 기본), 적함 우클릭 표적 임계(`25px` 기본) 확인 및 조정.
-   - 핵심 단축키 일람표(`F1~F4`, `Space`, `1~9`, `Ctrl+1~9`, `V/Enter`, `R`, `F`, `M`, `B`).
+   - 핵심 단축키 일람표(실제 컨트롤러 바인딩과 대조한 일시정지/배속 키, `Space`, `1~9`, `Ctrl+1~9`, `V/Enter`, `R`, `F`, `M`, `B`).
 2. **전술 · 자동 일시정지 탭 (`R27`)**
    - D122/D123 긴급 사건별 자동 일시정지 개별 체크박스:
      - [x] 아군 함선 선내 침입 발생 시 자동 정지
@@ -85,7 +88,7 @@
 
 ### 3.5 작전 결과 화면 (`WBP_OVResultScreen`)
 - `EOVPlaySceneResult` 6개 종료 상태를 모두 명시적으로 구분 표시한다:
-  - `Victory` (승리) · `Defeat` (패배) · `MutualDestruction` (쌍방 전멸) · `NoCombatCapability` (전투 불능 무승부) · `Stalemate` (120초 교착) · `TimeLimit` (900초 시간 초과).
+  - `Victory` (승리) · `Defeat` (패배) · `MutualDestruction` (쌍방 전멸) · `NoCombatCapability` (전투 불능 무승부) · `Stalemate` (진척 기반 교착) · `TimeLimit` (별도로 설정한 제한 시간 초과).
 - **핵심 지표 (고정폭 숫자 정렬)**: 경과 게임 시간(`ElapsedSeconds`), 아군/적군 잔존 코스트 대 초기 코스트(`InitialCosts`), 함재기 생존/초기(`InitialAircraft`), **이탈 함선 수(완파와 별도 집계)**.
 - **행동 버튼**: `같은 임무 재시작`, `임무 목록으로 복귀`, `전장 둘러보기`(결과창 임시 최소화 토글).
 
@@ -97,8 +100,8 @@
     - `WBP_OVScenarioSelect`에서 임무를 선택하면 배경 편대도 해당 임무 주력함(`BattleshipFull` / `DreadnoughtFull` / `BattlecarrierFull` / `TransportFull`)으로 즉시 교체한다.
     - 전투 시작(`UOVPlayScenarioSubsystem::Start`) 즉시 프록시 스테이지를 비활성화/제거해 전투 성능 영향을 0으로 유지한다.
   - **방식 B · 인게임 모델 사전 렌더 이미지 (`PreRenderedInGameImage`, 경량 폴백)**:
-    - 저사양·초기 로딩 최적화·`-nullrhi` 환경에서는 이미 활성화된 `PythonScriptPlugin` / `EditorScriptingUtilities` 스크립트로 동일 `SM_Hull` 편대를 16:9 구도로 캡처한 `/Game/UI/Title/T_TitleBackdrop_*.uasset`(`UTexture2D`)을 UMG `Image` 위젯에 바인딩한다.
-    - 함선 모델이나 재질이 갱신될 때 캡처 스크립트만 재실행하면 타이틀 이미지도 항상 인게임 실물과 일치한다.
+    - 저사양·초기 로딩 최적화·렌더가 있는 환경에서 이미 활성화된 `PythonScriptPlugin` / `EditorScriptingUtilities` 스크립트로 동일 `SM_Hull` 편대를 16:9 구도로 캡처한 `/Game/UI/Title/T_TitleBackdrop_*.uasset`(`UTexture2D`)을 UMG `Image` 위젯에 바인딩한다.
+    - `-nullrhi` 자동화에서는 렌더/캡처를 건너뛰며 UI 논리만 검사한다. 런타임에는 미리 생성한 이미지를 읽고 Editor 전용 플러그인을 요구하지 않는다. 함선 모델이나 재질이 갱신될 때 캡처 스크립트만 재실행하면 타이틀 이미지도 항상 인게임 실물과 일치한다.
 - **기본 타이틀 편대 실물 에셋 매핑**:
   - 중앙 기함: `/Game/Presentation/Ships/DreadnoughtFull/SM_Hull` (구축전함)
   - 후방 모함: `/Game/Presentation/Ships/CarrierFull/SM_Hull` (항공모함)

@@ -1,4 +1,5 @@
 #include "OVShip.h"
+#include "OVAudioSubsystem.h"
 #include "OVInteriorSubsystem.h"
 #include "OVCombatSubsystem.h"
 #include "OVCombatVFXSubsystem.h"
@@ -1011,6 +1012,10 @@ void AOVShip::TriggerShieldImpact(FVector HitLocation, FVector HitNormal, float 
     LastShieldHitStrength = FMath::Clamp(Damage / 45.0f, 0.75f, 1.85f);
     ShieldImpactRemaining = 0.65f;
     UpdateShieldImpactVisuals(1.0f);
+    if (UOVAudioSubsystem* Audio = UOVAudioSubsystem::Get(this))
+    {
+        Audio->PlayCombatSFX(EOVAudioCue::ShieldHit, HitLocation);
+    }
 }
 
 void AOVShip::TriggerWreckDissolve()
@@ -1018,6 +1023,10 @@ void AOVShip::TriggerWreckDissolve()
     if (bDissolving) return;
     bDissolving = true;
     DissolveProgress = 0.0f;
+    if (UOVAudioSubsystem* Audio = UOVAudioSubsystem::Get(this))
+    {
+        Audio->PlayCombatSFX(EOVAudioCue::WreckExplosion, GetActorLocation());
+    }
 
     // Swap to burning dissolve material across all hull material slots on wreck
     static TWeakObjectPtr<UMaterialInterface> CachedDissolveMat;

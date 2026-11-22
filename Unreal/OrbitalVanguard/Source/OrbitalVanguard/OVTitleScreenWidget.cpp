@@ -1,5 +1,6 @@
 #include "OVTitleScreenWidget.h"
 
+#include "OVAudioSubsystem.h"
 #include "OVController.h"
 #include "OVHUD.h"
 #include "OVPlayScenarioSubsystem.h"
@@ -16,12 +17,14 @@
 #include "Components/Overlay.h"
 #include "Components/OverlaySlot.h"
 #include "Components/SizeBox.h"
+#include "Components/Slider.h"
 #include "Components/Spacer.h"
 #include "Components/TextBlock.h"
 #include "Components/VerticalBox.h"
 #include "Components/VerticalBoxSlot.h"
 #include "Engine/Font.h"
 #include "Engine/Texture2D.h"
+#include "GameFramework/GameUserSettings.h"
 #include "Kismet/KismetSystemLibrary.h"
 #include "Styling/CoreStyle.h"
 #include "Styling/SlateBrush.h"
@@ -29,7 +32,6 @@
 
 namespace OVStyle
 {
-// High-tech sci-fi color palette matching reference wireframes
 static const FLinearColor CyanAccent(0.00f, 0.898f, 1.00f, 1.0f);       // #00E5FF
 static const FLinearColor CyanHover(0.20f, 0.93f, 1.00f, 1.0f);        // #33EBFF
 static const FLinearColor CyanPressed(0.00f, 0.72f, 0.82f, 1.0f);      // #00B8D4
@@ -48,13 +50,34 @@ static const FLinearColor TextWhite(0.96f, 0.98f, 1.00f, 1.0f);
 static const FLinearColor TextSlate(0.58f, 0.69f, 0.80f, 1.0f);        // #94A3B8
 static const FLinearColor TextDim(0.40f, 0.50f, 0.60f, 1.0f);          // #64748B
 static const FLinearColor AmberBadge(0.96f, 0.62f, 0.05f, 1.0f);       // #F59E0B
+static const FLinearColor PurpleBadge(0.76f, 0.52f, 1.00f, 1.0f);
+
+static const FIntPoint ResolutionPresets[] = {
+    FIntPoint(1280, 720),
+    FIntPoint(1600, 900),
+    FIntPoint(1920, 1080),
+    FIntPoint(2560, 1440)
+};
+
+static const TCHAR* WindowModeLabels[] = {
+    TEXT("전체화면"),
+    TEXT("테두리 없는 창"),
+    TEXT("창모드")
+};
+
+static const TCHAR* QualityLabels[] = {
+    TEXT("낮음"),
+    TEXT("보통"),
+    TEXT("높음"),
+    TEXT("에픽")
+};
 
 inline UFont* GetFontRegular()
 {
     static TWeakObjectPtr<UFont> Cached;
     if (!Cached.IsValid())
     {
-        Cached = LoadObject<UFont>(nullptr, TEXT("/Game/UI/Fonts/Font_Malgun.Font_Malgun"));
+        Cached = LoadObject<UFont>(nullptr, TEXT("/Game/UI/Fonts/Font_Malgun.Font_Malgun"), nullptr, LOAD_NoWarn);
     }
     return Cached.Get();
 }
@@ -64,7 +87,7 @@ inline UFont* GetFontBold()
     static TWeakObjectPtr<UFont> Cached;
     if (!Cached.IsValid())
     {
-        Cached = LoadObject<UFont>(nullptr, TEXT("/Game/UI/Fonts/Font_MalgunBold.Font_MalgunBold"));
+        Cached = LoadObject<UFont>(nullptr, TEXT("/Game/UI/Fonts/Font_MalgunBold.Font_MalgunBold"), nullptr, LOAD_NoWarn);
     }
     return Cached.Get();
 }
@@ -137,7 +160,6 @@ UButton* MakeMenuButton(
     UHorizontalBox* HBox = Tree->ConstructWidget<UHorizontalBox>();
     Btn->AddChild(HBox);
 
-    // Left text
     UTextBlock* LeftText = MakeLabel(
         Tree,
         Title,
@@ -148,18 +170,16 @@ UButton* MakeMenuButton(
 
     if (UHorizontalBoxSlot* LeftSlot = HBox->AddChildToHorizontalBox(LeftText))
     {
-        LeftSlot->SetPadding(FMargin(14.f, 10.f, 10.f, 10.f));
+        LeftSlot->SetPadding(FMargin(14.f, 9.f, 10.f, 9.f));
         LeftSlot->SetVerticalAlignment(VAlign_Center);
     }
 
-    // Spacer
     USpacer* Spacer = Tree->ConstructWidget<USpacer>();
     if (UHorizontalBoxSlot* SpacerSlot = HBox->AddChildToHorizontalBox(Spacer))
     {
         SpacerSlot->SetSize(FSlateChildSize(ESlateSizeRule::Fill));
     }
 
-    // Right badge / chevron
     if (!RightBadge.IsEmpty())
     {
         UTextBlock* RightText = MakeLabel(
@@ -172,7 +192,7 @@ UButton* MakeMenuButton(
 
         if (UHorizontalBoxSlot* RightSlot = HBox->AddChildToHorizontalBox(RightText))
         {
-            RightSlot->SetPadding(FMargin(10.f, 10.f, 14.f, 10.f));
+            RightSlot->SetPadding(FMargin(10.f, 9.f, 14.f, 9.f));
             RightSlot->SetVerticalAlignment(VAlign_Center);
         }
     }
@@ -184,7 +204,7 @@ UButton* MakeMenuButton(
 
     if (UVerticalBoxSlot* Slot = Parent->AddChildToVerticalBox(Btn))
     {
-        Slot->SetPadding(FMargin(0.f, 4.f));
+        Slot->SetPadding(FMargin(0.f, 3.5f));
         Slot->SetHorizontalAlignment(HAlign_Fill);
     }
     return Btn;
@@ -213,6 +233,7 @@ void UOVTitleScreenWidget::NativeOnInitialized()
     Super::NativeOnInitialized();
     EnsureGradientTexture();
     BuildProgrammaticTree();
+    SyncSettingsWidgetsFromSystem();
     ShowPanel(EOVTitleMenuPanel::Title);
 }
 
@@ -222,6 +243,14 @@ void UOVTitleScreenWidget::NativeTick(const FGeometry& MyGeometry, float InDelta
     if (bBackdropActive && BackdropStage)
     {
         BackdropStage->StepIdleMotion(InDeltaTime);
+    }
+}
+
+void UOVTitleScreenWidget::PlayClickAudio()
+{
+    if (UOVAudioSubsystem* Audio = UOVAudioSubsystem::Get(this))
+    {
+        Audio->PlayUIClick();
     }
 }
 
@@ -246,10 +275,9 @@ void UOVTitleScreenWidget::EnsureGradientTexture()
         for (int32 X = 0; X < TexWidth; ++X)
         {
             const float U = (float)X / (float)(TexWidth - 1);
-            // Left 35% deep navy, smooth cubic falloff to transparent on the right
             const float Falloff = FMath::Clamp(1.0f - FMath::Pow(U, 1.45f), 0.0f, 1.0f);
             const uint8 Alpha = (uint8)(Falloff * 235.f);
-            Pixels[Y * TexWidth + X] = FColor(10, 18, 30, Alpha); // Slate Navy #0A121E
+            Pixels[Y * TexWidth + X] = FColor(10, 18, 30, Alpha);
         }
     }
     ScrimGradientTexture->GetPlatformData()->Mips[0].BulkData.Unlock();
@@ -276,19 +304,13 @@ void UOVTitleScreenWidget::BuildProgrammaticTree()
         BgSlot->SetVerticalAlignment(VAlign_Fill);
     }
 
-    // Layer 2: Left Menu Scrim (Condition 2: UBackgroundBlur + Horizontal Gradient Scrim Brush)
+    // Layer 2: Left Menu Scrim (UBackgroundBlur + Horizontal Gradient Scrim Brush)
     USizeBox* LeftScrimBox = WidgetTree->ConstructWidget<USizeBox>();
     LeftScrimBox->SetWidthOverride(500.f);
-    if (UOverlaySlot* ScrimOverlaySlot = RootOverlay->AddChildToOverlay(LeftScrimBox))
-    {
-        ScrimOverlaySlot->SetHorizontalAlignment(HAlign_Left);
-        ScrimOverlaySlot->SetVerticalAlignment(VAlign_Fill);
-    }
 
     UOverlay* ScrimStack = WidgetTree->ConstructWidget<UOverlay>();
     LeftScrimBox->SetContent(ScrimStack);
 
-    // 2a. Background blur behind left menu so 3D ships blur gently
     UBackgroundBlur* BlurEffect = WidgetTree->ConstructWidget<UBackgroundBlur>();
     BlurEffect->SetBlurStrength(20.0f);
     BlurEffect->SetApplyAlphaToBlur(true);
@@ -298,7 +320,6 @@ void UOVTitleScreenWidget::BuildProgrammaticTree()
         BlurSlot->SetVerticalAlignment(VAlign_Fill);
     }
 
-    // 2b. Gradient scrim image
     UImage* ScrimGradient = WidgetTree->ConstructWidget<UImage>();
     if (ScrimGradientTexture)
     {
@@ -310,43 +331,40 @@ void UOVTitleScreenWidget::BuildProgrammaticTree()
         GradSlot->SetVerticalAlignment(VAlign_Fill);
     }
 
-    // 2c. Left Menu Content Column
     UVerticalBox* LeftMenuVBox = WidgetTree->ConstructWidget<UVerticalBox>();
     if (UOverlaySlot* ContentSlot = ScrimStack->AddChildToOverlay(LeftMenuVBox))
     {
-        ContentSlot->SetPadding(FMargin(44.f, 36.f, 40.f, 32.f));
+        ContentSlot->SetPadding(FMargin(44.f, 34.f, 40.f, 30.f));
         ContentSlot->SetHorizontalAlignment(HAlign_Fill);
         ContentSlot->SetVerticalAlignment(VAlign_Fill);
     }
 
-    // Top Meta Strip
     UHorizontalBox* TopMeta = WidgetTree->ConstructWidget<UHorizontalBox>();
-    LeftMenuVBox->AddChildToVerticalBox(TopMeta)->SetPadding(FMargin(0.f, 0.f, 0.f, 32.f));
+    LeftMenuVBox->AddChildToVerticalBox(TopMeta)->SetPadding(FMargin(0.f, 0.f, 0.f, 26.f));
     TopMeta->AddChildToHorizontalBox(OVStyle::MakeLabel(
         WidgetTree, TEXT("MAP: /Game/Maps/ControlRange · MODE: AOVGameMode"), 11, OVStyle::TextDim, false));
 
-    // Subtitle (11pt Cyan with tracking)
     LeftMenuVBox->AddChildToVerticalBox(OVStyle::MakeLabel(
         WidgetTree, TEXT("3D FLEET COMMAND & BOARDING TACTICS"), 11, OVStyle::CyanAccent, true));
 
-    // Title (44pt Bold)
     UTextBlock* TitleLabel = OVStyle::MakeLabel(
         WidgetTree, TEXT("ORBITAL VANGUARD"), 40, OVStyle::TextWhite, true);
-    LeftMenuVBox->AddChildToVerticalBox(TitleLabel)->SetPadding(FMargin(0.f, 6.f, 0.f, 12.f));
+    LeftMenuVBox->AddChildToVerticalBox(TitleLabel)->SetPadding(FMargin(0.f, 6.f, 0.f, 10.f));
 
-    // Description (13pt Slate)
     LeftMenuVBox->AddChildToVerticalBox(OVStyle::MakeLabel(
         WidgetTree, TEXT("3D 우주 함대전과 함선 내부 2D 강습 작전을 단일 시뮬레이션으로 지휘합니다."), 13, OVStyle::TextSlate, false))
-        ->SetPadding(FMargin(0.f, 0.f, 0.f, 32.f));
+        ->SetPadding(FMargin(0.f, 0.f, 0.f, 26.f));
 
-    // Menu Buttons
     UButton* StartBtn = OVStyle::MakeMenuButton(WidgetTree, LeftMenuVBox, TEXT("작전 개시 · 임무 선택"), TEXT(">"), true);
     StartBtn->OnClicked.AddDynamic(this, &UOVTitleScreenWidget::HandleOpenScenarios);
 
-    UButton* CampaignBtn = OVStyle::MakeMenuButton(WidgetTree, LeftMenuVBox, TEXT("[잠김] 캠페인"), TEXT("4단계 예정"), false, true);
+    OVStyle::MakeMenuButton(WidgetTree, LeftMenuVBox, TEXT("[잠김] 캠페인"), TEXT("4단계 예정"), false, true);
 
     UButton* SandboxBtn = OVStyle::MakeMenuButton(WidgetTree, LeftMenuVBox, TEXT("자유 전투 시험장"), TEXT("Sandbox"), false);
     SandboxBtn->OnClicked.AddDynamic(this, &UOVTitleScreenWidget::HandleOpenSandbox);
+
+    UButton* TutorialBtn = OVStyle::MakeMenuButton(WidgetTree, LeftMenuVBox, TEXT("게임 가이드 / 튜토리얼"), TEXT("5단계 요약"), false);
+    TutorialBtn->OnClicked.AddDynamic(this, &UOVTitleScreenWidget::HandleOpenTutorial);
 
     UButton* SettingsBtn = OVStyle::MakeMenuButton(WidgetTree, LeftMenuVBox, TEXT("환경 설정"), TEXT("설정"), false);
     SettingsBtn->OnClicked.AddDynamic(this, &UOVTitleScreenWidget::HandleOpenSettings);
@@ -354,33 +372,33 @@ void UOVTitleScreenWidget::BuildProgrammaticTree()
     UButton* QuitBtn = OVStyle::MakeMenuButton(WidgetTree, LeftMenuVBox, TEXT("게임 종료"), TEXT(""), false);
     QuitBtn->OnClicked.AddDynamic(this, &UOVTitleScreenWidget::HandleQuitGame);
 
-    // Spacer pushing footer to bottom
     USpacer* LeftSpacer = WidgetTree->ConstructWidget<USpacer>();
     if (UVerticalBoxSlot* SpacerSlot = LeftMenuVBox->AddChildToVerticalBox(LeftSpacer))
     {
         SpacerSlot->SetSize(FSlateChildSize(ESlateSizeRule::Fill));
     }
 
-    // Left Footer
     UHorizontalBox* LeftFooter = WidgetTree->ConstructWidget<UHorizontalBox>();
-    LeftMenuVBox->AddChildToVerticalBox(LeftFooter)->SetPadding(FMargin(0.f, 16.f, 0.f, 0.f));
+    LeftMenuVBox->AddChildToVerticalBox(LeftFooter)->SetPadding(FMargin(0.f, 14.f, 0.f, 0.f));
     LeftFooter->AddChildToHorizontalBox(OVStyle::MakeLabel(
         WidgetTree, TEXT("조작 프로필: PlayGame3 · F5/F6/F7 빠른 함대전"), 11, OVStyle::TextDim, false));
     USpacer* FootSpacer = WidgetTree->ConstructWidget<USpacer>();
     LeftFooter->AddChildToHorizontalBox(FootSpacer)->SetSize(FSlateChildSize(ESlateSizeRule::Fill));
-    LeftFooter->AddChildToHorizontalBox(OVStyle::MakeLabel(
-        WidgetTree, TEXT("UI 배율: 100%"), 11, OVStyle::TextDim, false));
+    FooterUIScaleText = OVStyle::MakeLabel(WidgetTree, TEXT("UI 배율: 100%"), 11, OVStyle::TextDim, false);
+    LeftFooter->AddChildToHorizontalBox(FooterUIScaleText);
 
-    // Wrap Left Menu in TitlePanelContainer so it can be toggled
     TitlePanelContainer = WidgetTree->ConstructWidget<UBorder>();
     TitlePanelContainer->SetBrush(OVStyle::MakeRoundedBoxBrush(FLinearColor::Transparent, FLinearColor::Transparent, 0.f, 0.f));
     TitlePanelContainer->SetPadding(FMargin(0.f));
-    // The Left Scrim is already part of Title presentation; we keep TitlePanelContainer referencing the overlay
     TitlePanelContainer->SetContent(LeftScrimBox);
-    RootOverlay->AddChildToOverlay(TitlePanelContainer);
+    if (UOverlaySlot* TitleSlot = RootOverlay->AddChildToOverlay(TitlePanelContainer))
+    {
+        TitleSlot->SetHorizontalAlignment(HAlign_Left);
+        TitleSlot->SetVerticalAlignment(VAlign_Fill);
+    }
 
     // =========================================================================
-    // LAYER 3: SCREEN 02 - SCENARIO SELECT MODAL CARD (Matching Image 2)
+    // LAYER 3: SCREEN 02 - SCENARIO SELECT MODAL CARD
     // =========================================================================
     ScenarioPanelContainer = WidgetTree->ConstructWidget<UBorder>();
     ScenarioPanelContainer->SetBrush(OVStyle::MakeRoundedBoxBrush(
@@ -396,22 +414,22 @@ void UOVTitleScreenWidget::BuildProgrammaticTree()
 
     USizeBox* ModalCardBox = WidgetTree->ConstructWidget<USizeBox>();
     ModalCardBox->SetWidthOverride(980.f);
-    ModalCardBox->SetHeightOverride(580.f);
+    ModalCardBox->SetHeightOverride(610.f);
     ScenarioPanelContainer->SetContent(ModalCardBox);
 
     UVerticalBox* ModalVBox = WidgetTree->ConstructWidget<UVerticalBox>();
     ModalCardBox->SetContent(ModalVBox);
 
-    // Header Row: Left Title + Subtitle, Right "타이틀로" button
     UHorizontalBox* ModalHeader = WidgetTree->ConstructWidget<UHorizontalBox>();
-    ModalVBox->AddChildToVerticalBox(ModalHeader)->SetPadding(FMargin(0.f, 0.f, 0.f, 18.f));
+    ModalVBox->AddChildToVerticalBox(ModalHeader)->SetPadding(FMargin(0.f, 0.f, 0.f, 16.f));
 
     UVerticalBox* HeaderTitles = WidgetTree->ConstructWidget<UVerticalBox>();
     ModalHeader->AddChildToHorizontalBox(HeaderTitles);
     HeaderTitles->AddChildToVerticalBox(OVStyle::MakeLabel(
-        WidgetTree, TEXT("플레이 임무 선택 (6종)"), 20, OVStyle::TextWhite, true));
+        WidgetTree, FString::Printf(TEXT("플레이 임무 선택 (%d종)"), UOVPlayScenarioSubsystem::Definitions().Num()),
+        20, OVStyle::TextWhite, true));
     HeaderTitles->AddChildToVerticalBox(OVStyle::MakeLabel(
-        WidgetTree, TEXT("UOVPlayScenarioSubsystem::Definitions() 실데이터 기준"), 11, OVStyle::TextDim, false))
+        WidgetTree, TEXT("UOVPlayScenarioSubsystem::Definitions() 실데이터 기준 · D126/E1 동기화"), 11, OVStyle::TextDim, false))
         ->SetPadding(FMargin(0.f, 3.f, 0.f, 0.f));
 
     USpacer* HeaderSpacer = WidgetTree->ConstructWidget<USpacer>();
@@ -427,14 +445,12 @@ void UOVTitleScreenWidget::BuildProgrammaticTree()
         BackSlot->SetVerticalAlignment(VAlign_Top);
     }
 
-    // Main 2-Column Split
     UHorizontalBox* MainSplit = WidgetTree->ConstructWidget<UHorizontalBox>();
     if (UVerticalBoxSlot* SplitSlot = ModalVBox->AddChildToVerticalBox(MainSplit))
     {
         SplitSlot->SetSize(FSlateChildSize(ESlateSizeRule::Fill));
     }
 
-    // Left Column: 6 Mission Buttons (Width 320px)
     USizeBox* LeftListWidth = WidgetTree->ConstructWidget<USizeBox>();
     LeftListWidth->SetWidthOverride(320.f);
     MainSplit->AddChildToHorizontalBox(LeftListWidth);
@@ -454,48 +470,45 @@ void UOVTitleScreenWidget::BuildProgrammaticTree()
         UVerticalBox* TextCol = WidgetTree->ConstructWidget<UVerticalBox>();
         if (UHorizontalBoxSlot* TextSlot = BtnContent->AddChildToHorizontalBox(TextCol))
         {
-            TextSlot->SetPadding(FMargin(12.f, 8.f, 8.f, 8.f));
+            TextSlot->SetPadding(FMargin(12.f, 6.f, 8.f, 6.f));
             TextSlot->SetVerticalAlignment(VAlign_Center);
         }
 
-        PickBtn->TitleText = OVStyle::MakeLabel(
-            WidgetTree, Def.Title, 14, OVStyle::TextWhite, true);
+        PickBtn->TitleText = OVStyle::MakeLabel(WidgetTree, Def.Title, 13, OVStyle::TextWhite, true);
         TextCol->AddChildToVerticalBox(PickBtn->TitleText);
 
         const FString SubStr = (Def.FleetBudget > 0)
             ? FString::Printf(TEXT("%s · %d Cost"), *Def.Id.ToString(), Def.FleetBudget)
             : Def.Id.ToString();
-        PickBtn->SubText = OVStyle::MakeLabel(
-            WidgetTree, SubStr, 11, OVStyle::TextDim, false);
+        PickBtn->SubText = OVStyle::MakeLabel(WidgetTree, SubStr, 10, OVStyle::TextDim, false);
         TextCol->AddChildToVerticalBox(PickBtn->SubText);
 
         USpacer* BtnSpacer = WidgetTree->ConstructWidget<USpacer>();
         BtnContent->AddChildToHorizontalBox(BtnSpacer)->SetSize(FSlateChildSize(ESlateSizeRule::Fill));
 
-        // Right Badge (F5 / F6 / F7 / 준비 중 / Sandbox)
         FString BadgeStr;
         FLinearColor BadgeCol = OVStyle::CyanAccent;
         if (Def.Id == TEXT("Fleet100")) { BadgeStr = TEXT("F5"); }
         else if (Def.Id == TEXT("Fleet200")) { BadgeStr = TEXT("F6"); }
         else if (Def.Id == TEXT("Fleet300")) { BadgeStr = TEXT("F7"); }
+        else if (Def.Id == TEXT("BlackHoleTrial")) { BadgeStr = TEXT("E1"); BadgeCol = OVStyle::PurpleBadge; }
         else if (!Def.bAvailable) { BadgeStr = TEXT("준비 중"); BadgeCol = OVStyle::AmberBadge; }
         else if (Def.Id == TEXT("Sandbox")) { BadgeStr = TEXT("Sandbox"); BadgeCol = OVStyle::TextDim; }
 
         PickBtn->BadgeText = OVStyle::MakeLabel(WidgetTree, BadgeStr, 11, BadgeCol, true);
         if (UHorizontalBoxSlot* BadgeSlot = BtnContent->AddChildToHorizontalBox(PickBtn->BadgeText))
         {
-            BadgeSlot->SetPadding(FMargin(8.f, 8.f, 14.f, 8.f));
+            BadgeSlot->SetPadding(FMargin(8.f, 6.f, 12.f, 6.f));
             BadgeSlot->SetVerticalAlignment(VAlign_Center);
         }
 
         PickBtn->SetSelectedState(Def.Id == SelectedScenarioId);
         PickBtn->OnClicked.AddDynamic(PickBtn, &UOVScenarioPickButton::HandleClicked);
 
-        ScenarioListBox->AddChildToVerticalBox(PickBtn)->SetPadding(FMargin(0.f, 3.f));
+        ScenarioListBox->AddChildToVerticalBox(PickBtn)->SetPadding(FMargin(0.f, 2.5f));
         ScenarioButtons.Add(PickBtn);
     }
 
-    // Right Column: Rich Briefing Card (Width 620px)
     USizeBox* RightCardWidth = WidgetTree->ConstructWidget<USizeBox>();
     RightCardWidth->SetWidthOverride(620.f);
     if (UHorizontalBoxSlot* RightSlot = MainSplit->AddChildToHorizontalBox(RightCardWidth))
@@ -513,27 +526,22 @@ void UOVTitleScreenWidget::BuildProgrammaticTree()
     UVerticalBox* BriefingBox = WidgetTree->ConstructWidget<UVerticalBox>();
     BriefingBorder->SetContent(BriefingBox);
 
-    // Briefing Header: Title + Status Badge
     UHorizontalBox* BriefHeader = WidgetTree->ConstructWidget<UHorizontalBox>();
     BriefingBox->AddChildToVerticalBox(BriefHeader)->SetPadding(FMargin(0.f, 0.f, 0.f, 8.f));
 
-    ScenarioTitleText = OVStyle::MakeLabel(
-        WidgetTree, TEXT("200코스트 함대전"), 22, OVStyle::TextWhite, true);
+    ScenarioTitleText = OVStyle::MakeLabel(WidgetTree, TEXT("200코스트 함대전"), 22, OVStyle::TextWhite, true);
     BriefHeader->AddChildToHorizontalBox(ScenarioTitleText);
 
     USpacer* BriefSpacer = WidgetTree->ConstructWidget<USpacer>();
     BriefHeader->AddChildToHorizontalBox(BriefSpacer)->SetSize(FSlateChildSize(ESlateSizeRule::Fill));
 
-    ScenarioBadgeText = OVStyle::MakeLabel(
-        WidgetTree, TEXT("PIE API 51/51 통과 · 즉시 출격 가능"), 11, OVStyle::CyanAccent, true);
+    ScenarioBadgeText = OVStyle::MakeLabel(WidgetTree, TEXT("즉시 출격 가능"), 11, OVStyle::CyanAccent, true);
     BriefHeader->AddChildToHorizontalBox(ScenarioBadgeText)->SetVerticalAlignment(VAlign_Center);
 
-    // Briefing Objective / Description
     ScenarioObjectiveText = OVStyle::MakeLabel(
         WidgetTree, TEXT("초대형 주력함과 호위 함대로 상대를 무력화하세요."), 13, OVStyle::TextSlate, false);
     BriefingBox->AddChildToVerticalBox(ScenarioObjectiveText)->SetPadding(FMargin(0.f, 0.f, 0.f, 16.f));
 
-    // 3-Metric Summary Block (3 columns inside dark card)
     UBorder* MetricsCard = WidgetTree->ConstructWidget<UBorder>();
     MetricsCard->SetBrush(OVStyle::MakeRoundedBoxBrush(
         FLinearColor(0.010f, 0.020f, 0.038f, 0.95f), OVStyle::SubtleBorder, 4.0f, 1.0f));
@@ -547,7 +555,7 @@ void UOVTitleScreenWidget::BuildProgrammaticTree()
     {
         UVerticalBox* Col = WidgetTree->ConstructWidget<UVerticalBox>();
         Col->AddChildToVerticalBox(OVStyle::MakeLabel(WidgetTree, Label, 11, OVStyle::TextDim, false));
-        ValPtr = OVStyle::MakeLabel(WidgetTree, TEXT("-"), 18, OVStyle::TextWhite, true);
+        ValPtr = OVStyle::MakeLabel(WidgetTree, TEXT("-"), 17, OVStyle::TextWhite, true);
         Col->AddChildToVerticalBox(ValPtr)->SetPadding(FMargin(0.f, 2.f, 0.f, 0.f));
         if (UHorizontalBoxSlot* ColSlot = MetricsHBox->AddChildToHorizontalBox(Col))
         {
@@ -558,12 +566,10 @@ void UOVTitleScreenWidget::BuildProgrammaticTree()
     AddMetricCol(TEXT("격납고 / 함재기"), MetricHangarVal);
     AddMetricCol(TEXT("교착 / 제한 시간"), MetricTimeVal);
 
-    // Roster Subtitle
     BriefingBox->AddChildToVerticalBox(OVStyle::MakeLabel(
-        WidgetTree, TEXT("양측 기본 편성 (12척 · 영웅 0명 격리 세션)"), 12, OVStyle::CyanAccent, true))
+        WidgetTree, TEXT("양측 기본 편성 (D126 규칙 기준)"), 12, OVStyle::CyanAccent, true))
         ->SetPadding(FMargin(0.f, 0.f, 0.f, 8.f));
 
-    // Roster Breakdown 2-Column Grid
     UHorizontalBox* RosterSplit = WidgetTree->ConstructWidget<UHorizontalBox>();
     if (UVerticalBoxSlot* RosterSlot = BriefingBox->AddChildToVerticalBox(RosterSplit))
     {
@@ -584,7 +590,6 @@ void UOVTitleScreenWidget::BuildProgrammaticTree()
         RosterRSlot->SetSize(FSlateChildSize(ESlateSizeRule::Fill));
     }
 
-    // Bottom Action Row: CLI Snippet on left, Primary "▷ 작전 출격" Button on right
     UHorizontalBox* BottomActionRow = WidgetTree->ConstructWidget<UHorizontalBox>();
     BriefingBox->AddChildToVerticalBox(BottomActionRow);
 
@@ -608,13 +613,22 @@ void UOVTitleScreenWidget::BuildProgrammaticTree()
         LaunchSlot->SetVerticalAlignment(VAlign_Center);
     }
 
-    // =========================================================================
-    // LAYER 4: SCREEN 03 - SETTINGS MODAL
-    // =========================================================================
+    // LAYER 4: EXPANDED SETTINGS MODAL
+    BuildSettingsModal(RootOverlay);
+
+    // LAYER 5: 5-STEP BEGINNER TUTORIAL / GAME GUIDE MODAL
+    BuildTutorialModal(RootOverlay);
+
+    RefreshScenarioBriefing();
+    RefreshModeLabel();
+}
+
+void UOVTitleScreenWidget::BuildSettingsModal(UOverlay* RootOverlay)
+{
     SettingsPanelContainer = WidgetTree->ConstructWidget<UBorder>();
     SettingsPanelContainer->SetBrush(OVStyle::MakeRoundedBoxBrush(
-        FLinearColor(0.025f, 0.055f, 0.095f, 0.94f), OVStyle::SlateBorder, 8.0f, 1.0f));
-    SettingsPanelContainer->SetPadding(FMargin(28.f));
+        FLinearColor(0.025f, 0.055f, 0.095f, 0.96f), OVStyle::SlateBorder, 8.0f, 1.0f));
+    SettingsPanelContainer->SetPadding(FMargin(28.f, 22.f));
     SettingsPanelContainer->SetVisibility(ESlateVisibility::Collapsed);
 
     if (UOverlaySlot* SettingsSlot = RootOverlay->AddChildToOverlay(SettingsPanelContainer))
@@ -624,34 +638,306 @@ void UOVTitleScreenWidget::BuildProgrammaticTree()
     }
 
     USizeBox* SettingsSize = WidgetTree->ConstructWidget<USizeBox>();
-    SettingsSize->SetWidthOverride(500.f);
+    SettingsSize->SetWidthOverride(640.f);
     SettingsPanelContainer->SetContent(SettingsSize);
 
     UVerticalBox* SettingsBox = WidgetTree->ConstructWidget<UVerticalBox>();
     SettingsSize->SetContent(SettingsBox);
 
     SettingsBox->AddChildToVerticalBox(OVStyle::MakeLabel(
-        WidgetTree, TEXT("환경 설정 · 타이틀 배경 파이프라인"), 18, OVStyle::TextWhite, true))
-        ->SetPadding(FMargin(0.f, 0.f, 0.f, 14.f));
+        WidgetTree, TEXT("환경 설정 · 화면 / 그래픽 / 오디오 / UI"), 20, OVStyle::TextWhite, true))
+        ->SetPadding(FMargin(0.f, 0.f, 0.f, 12.f));
 
-    SettingsBackdropModeText = OVStyle::MakeLabel(
-        WidgetTree, TEXT(""), 13, OVStyle::TextSlate, false);
-    SettingsBox->AddChildToVerticalBox(SettingsBackdropModeText)->SetPadding(FMargin(0.f, 0.f, 0.f, 14.f));
+    auto AddCycleRow = [&](const FString& RowLabel, TObjectPtr<UTextBlock>& OutValueText, UButton*& OutButton)
+    {
+        UHorizontalBox* Row = WidgetTree->ConstructWidget<UHorizontalBox>();
+        SettingsBox->AddChildToVerticalBox(Row)->SetPadding(FMargin(0.f, 4.f));
+
+        UTextBlock* Label = OVStyle::MakeLabel(WidgetTree, RowLabel, 13, OVStyle::TextSlate, true);
+        Label->SetAutoWrapText(false);
+        if (UHorizontalBoxSlot* LSlot = Row->AddChildToHorizontalBox(Label))
+        {
+            LSlot->SetVerticalAlignment(VAlign_Center);
+            LSlot->SetSize(FSlateChildSize(ESlateSizeRule::Fill));
+        }
+
+        OutButton = WidgetTree->ConstructWidget<UButton>();
+        OutButton->SetStyle(OVStyle::MakeSecondaryButtonStyle(false));
+        OutValueText = OVStyle::MakeLabel(WidgetTree, TEXT("-"), 13, OVStyle::CyanAccent, true);
+        OutValueText->SetAutoWrapText(false);
+        OutButton->AddChild(OutValueText);
+
+        USizeBox* BtnWidth = WidgetTree->ConstructWidget<USizeBox>();
+        BtnWidth->SetWidthOverride(220.f);
+        BtnWidth->SetContent(OutButton);
+        if (UHorizontalBoxSlot* BSlot = Row->AddChildToHorizontalBox(BtnWidth))
+        {
+            BSlot->SetVerticalAlignment(VAlign_Center);
+        }
+    };
+
+    UButton* WindowModeBtn = nullptr;
+    AddCycleRow(TEXT("화면 모드"), SettingsWindowModeValueText, WindowModeBtn);
+    WindowModeBtn->OnClicked.AddDynamic(this, &UOVTitleScreenWidget::HandleCycleWindowMode);
+
+    UButton* ResolutionBtn = nullptr;
+    AddCycleRow(TEXT("해상도"), SettingsResolutionValueText, ResolutionBtn);
+    ResolutionBtn->OnClicked.AddDynamic(this, &UOVTitleScreenWidget::HandleCycleResolution);
+
+    UButton* QualityBtn = nullptr;
+    AddCycleRow(TEXT("그래픽 품질 프리셋"), SettingsQualityValueText, QualityBtn);
+    QualityBtn->OnClicked.AddDynamic(this, &UOVTitleScreenWidget::HandleCycleGraphicsQuality);
+
+    auto AddSliderRow = [&](const FString& RowLabel, float MinVal, float MaxVal, float Step,
+        TObjectPtr<USlider>& OutSlider, TObjectPtr<UTextBlock>& OutValText)
+    {
+        UHorizontalBox* Row = WidgetTree->ConstructWidget<UHorizontalBox>();
+        SettingsBox->AddChildToVerticalBox(Row)->SetPadding(FMargin(0.f, 5.f));
+
+        USizeBox* LabelBox = WidgetTree->ConstructWidget<USizeBox>();
+        LabelBox->SetWidthOverride(170.f);
+        UTextBlock* Label = OVStyle::MakeLabel(WidgetTree, RowLabel, 13, OVStyle::TextSlate, true);
+        Label->SetAutoWrapText(false);
+        LabelBox->SetContent(Label);
+        Row->AddChildToHorizontalBox(LabelBox)->SetVerticalAlignment(VAlign_Center);
+
+        OutSlider = WidgetTree->ConstructWidget<USlider>();
+        OutSlider->SetMinValue(MinVal);
+        OutSlider->SetMaxValue(MaxVal);
+        OutSlider->SetStepSize(Step);
+        OutSlider->SetSliderBarColor(OVStyle::SlateBorder);
+        OutSlider->SetSliderHandleColor(OVStyle::CyanAccent);
+        if (UHorizontalBoxSlot* SSlot = Row->AddChildToHorizontalBox(OutSlider))
+        {
+            SSlot->SetSize(FSlateChildSize(ESlateSizeRule::Fill));
+            SSlot->SetPadding(FMargin(10.f, 0.f));
+            SSlot->SetVerticalAlignment(VAlign_Center);
+        }
+
+        USizeBox* ValBox = WidgetTree->ConstructWidget<USizeBox>();
+        ValBox->SetWidthOverride(64.f);
+        OutValText = OVStyle::MakeLabel(WidgetTree, TEXT("100%"), 13, OVStyle::TextWhite, true);
+        OutValText->SetAutoWrapText(false);
+        ValBox->SetContent(OutValText);
+        Row->AddChildToHorizontalBox(ValBox)->SetVerticalAlignment(VAlign_Center);
+    };
+
+    AddSliderRow(TEXT("마스터 볼륨"), 0.0f, 1.0f, 0.05f, MasterVolumeSlider, SettingsMasterVolText);
+    MasterVolumeSlider->OnValueChanged.AddDynamic(this, &UOVTitleScreenWidget::HandleMasterVolumeChanged);
+
+    AddSliderRow(TEXT("BGM 볼륨"), 0.0f, 1.0f, 0.05f, BGMVolumeSlider, SettingsBGMVolText);
+    BGMVolumeSlider->OnValueChanged.AddDynamic(this, &UOVTitleScreenWidget::HandleBGMVolumeChanged);
+
+    AddSliderRow(TEXT("효과음 (SFX) 볼륨"), 0.0f, 1.0f, 0.05f, SFXVolumeSlider, SettingsSFXVolText);
+    SFXVolumeSlider->OnValueChanged.AddDynamic(this, &UOVTitleScreenWidget::HandleSFXVolumeChanged);
+
+    AddSliderRow(TEXT("UI 배율 (80~150%)"), 0.80f, 1.50f, 0.05f, UIScaleSlider, SettingsUIScaleText);
+    UIScaleSlider->OnValueChanged.AddDynamic(this, &UOVTitleScreenWidget::HandleUIScaleChanged);
+
+    SettingsBackdropModeText = OVStyle::MakeLabel(WidgetTree, TEXT(""), 12, OVStyle::TextDim, false);
+    SettingsBox->AddChildToVerticalBox(SettingsBackdropModeText)->SetPadding(FMargin(0.f, 10.f, 0.f, 6.f));
 
     UButton* ToggleBackdropBtn = OVStyle::MakeMenuButton(
-        WidgetTree, SettingsBox, TEXT("배경 방식 전환 (방식 A 실시간 3D ↔ 방식 B 사전 렌더)"), TEXT(""), true);
+        WidgetTree, SettingsBox, TEXT("타이틀 배경 방식 전환 (방식 A 실시간 3D ↔ 방식 B 사전 렌더)"), TEXT("전환"), false);
     ToggleBackdropBtn->OnClicked.AddDynamic(this, &UOVTitleScreenWidget::HandleToggleBackdropMode);
+
+    SettingsFeedbackText = OVStyle::MakeLabel(WidgetTree, TEXT("변경 후 [적용 및 저장]을 누르면 로컬 설정에 기록됩니다."), 11, OVStyle::TextDim, false);
+    SettingsBox->AddChildToVerticalBox(SettingsFeedbackText)->SetPadding(FMargin(0.f, 6.f, 0.f, 8.f));
+
+    UButton* ApplyBtn = OVStyle::MakeMenuButton(
+        WidgetTree, SettingsBox, TEXT("설정 적용 및 저장"), TEXT("Save"), true);
+    ApplyBtn->OnClicked.AddDynamic(this, &UOVTitleScreenWidget::HandleApplyAndSaveSettings);
 
     UButton* BackBtn = OVStyle::MakeMenuButton(
         WidgetTree, SettingsBox, TEXT("← 타이틀로 돌아가기"), TEXT(""), false);
     BackBtn->OnClicked.AddDynamic(this, &UOVTitleScreenWidget::HandleBackToTitle);
+}
 
-    RefreshScenarioBriefing();
-    RefreshModeLabel();
+void UOVTitleScreenWidget::BuildTutorialModal(UOverlay* RootOverlay)
+{
+    TutorialPanelContainer = WidgetTree->ConstructWidget<UBorder>();
+    TutorialPanelContainer->SetBrush(OVStyle::MakeRoundedBoxBrush(
+        FLinearColor(0.020f, 0.045f, 0.082f, 0.96f), OVStyle::CyanBorder, 8.0f, 1.2f));
+    TutorialPanelContainer->SetPadding(FMargin(28.f, 22.f));
+    TutorialPanelContainer->SetVisibility(ESlateVisibility::Collapsed);
+
+    if (UOverlaySlot* TutSlot = RootOverlay->AddChildToOverlay(TutorialPanelContainer))
+    {
+        TutSlot->SetHorizontalAlignment(HAlign_Center);
+        TutSlot->SetVerticalAlignment(VAlign_Center);
+    }
+
+    USizeBox* TutSize = WidgetTree->ConstructWidget<USizeBox>();
+    TutSize->SetWidthOverride(860.f);
+    TutorialPanelContainer->SetContent(TutSize);
+
+    UVerticalBox* TutBox = WidgetTree->ConstructWidget<UVerticalBox>();
+    TutSize->SetContent(TutBox);
+
+    TutBox->AddChildToVerticalBox(OVStyle::MakeLabel(
+        WidgetTree, TEXT("오비탈 뱅가드 · 초보자 핵심 가이드 (5단계)"), 21, OVStyle::TextWhite, true));
+    TutBox->AddChildToVerticalBox(OVStyle::MakeLabel(
+        WidgetTree, TEXT("처음 지휘하는 사령관을 위한 핵심 진행 흐름입니다. 전투 중 상단 [가이드] 버튼으로 언제든 다시 열 수 있습니다."),
+        12, OVStyle::TextSlate, false))->SetPadding(FMargin(0.f, 4.f, 0.f, 14.f));
+
+    struct FGuideStep
+    {
+        const TCHAR* Badge;
+        const TCHAR* Title;
+        const TCHAR* Body;
+    };
+    const FGuideStep Steps[] = {
+        { TEXT("STEP 01"), TEXT("① 어떤 게임인가 — 실시간 + 언제든 일시정지 우주 함대전 RTS"),
+          TEXT("Space 일시정지 및 1~3배속으로 전황을 정밀 통제합니다. 3D 우주 공간의 기동·화력전과 함선 내부 2D 강습이 단일 시뮬레이션으로 동시 진행됩니다.") },
+        { TEXT("STEP 02"), TEXT("② 기지 & 자원 전초기지 확장 — 원거리 채굴과 중형 수송선(R37) 물류"),
+          TEXT("은하 지도에서 인접 성계로 FTL 확장하세요. [자원 전초기지]는 채굴선 하역·창고·중형 수송선 왕복 보급 허브 역할을 하며, [전투 전초기지]는 방어 거점으로 분리 운용됩니다.") },
+        { TEXT("STEP 03"), TEXT("③ 함선 1~3층 내부 배치 — D126 단조 감산(-3) 그리드와 격납고 규칙"),
+          TEXT("소형(7) · 중형(9 / 9-6) · 대형(12-9 / 12-9-6) · 초대형(15-12-9) 슬롯에 코어·함교·엔진·무기제어실·탄약고를 배치합니다. 함재기는 항공모함(최대 4)·항공순양함(최대 6) 전용입니다.") },
+        { TEXT("STEP 04"), TEXT("④ 영웅 선내 강습 · 나포 — 내부 핵심 시설 제압과 방어"),
+          TEXT("포드 발사실·강습선으로 영웅과 승무원을 적함 내부에 투입해 코어·함교·무기제어실을 점령하거나, 아군 함선 내부에서 침투 방어·긴급 수리를 지휘합니다.") },
+        { TEXT("STEP 05"), TEXT("⑤ 함대전 & 승리 조건 — F5/F6/F7 및 블랙홀(E1) 전술 운용"),
+          TEXT("표적 지정 후 쉴드·장갑·무장을 무력화해 적 전투 전력을 소실시키면 승리합니다. 블랙홀(중력권 1,000m · 중심 45m 즉사)은 FTL 충전 중에도 끌어당기므로 항로 관리가 핵심입니다.") }
+    };
+
+    for (const FGuideStep& Step : Steps)
+    {
+        UBorder* StepCard = WidgetTree->ConstructWidget<UBorder>();
+        StepCard->SetBrush(OVStyle::MakeRoundedBoxBrush(
+            FLinearColor(0.012f, 0.026f, 0.048f, 0.94f), OVStyle::SlateBorder, 6.0f, 1.0f));
+        StepCard->SetPadding(FMargin(14.f, 10.f));
+        TutBox->AddChildToVerticalBox(StepCard)->SetPadding(FMargin(0.f, 4.f));
+
+        UVerticalBox* CardVBox = WidgetTree->ConstructWidget<UVerticalBox>();
+        StepCard->SetContent(CardVBox);
+
+        UHorizontalBox* TitleRow = WidgetTree->ConstructWidget<UHorizontalBox>();
+        CardVBox->AddChildToVerticalBox(TitleRow);
+
+        UTextBlock* Badge = OVStyle::MakeLabel(WidgetTree, Step.Badge, 11, OVStyle::CyanAccent, true);
+        Badge->SetAutoWrapText(false);
+        TitleRow->AddChildToHorizontalBox(Badge)->SetPadding(FMargin(0.f, 1.f, 10.f, 0.f));
+
+        TitleRow->AddChildToHorizontalBox(OVStyle::MakeLabel(WidgetTree, Step.Title, 13, OVStyle::TextWhite, true));
+
+        CardVBox->AddChildToVerticalBox(OVStyle::MakeLabel(WidgetTree, Step.Body, 12, OVStyle::TextSlate, false))
+            ->SetPadding(FMargin(0.f, 4.f, 0.f, 0.f));
+    }
+
+    UButton* CloseBtn = WidgetTree->ConstructWidget<UButton>();
+    CloseBtn->SetStyle(OVStyle::MakePrimaryButtonStyle());
+    TutorialCloseButtonText = OVStyle::MakeLabel(WidgetTree, TEXT("← 타이틀로 돌아가기"), 14, OVStyle::DarkText, true);
+    TutorialCloseButtonText->SetAutoWrapText(false);
+    CloseBtn->AddChild(TutorialCloseButtonText);
+    CloseBtn->OnClicked.AddDynamic(this, &UOVTitleScreenWidget::HandleCloseTutorial);
+    if (UVerticalBoxSlot* CloseSlot = TutBox->AddChildToVerticalBox(CloseBtn))
+    {
+        CloseSlot->SetPadding(FMargin(0.f, 14.f, 0.f, 0.f));
+        CloseSlot->SetHorizontalAlignment(HAlign_Right);
+    }
+}
+
+void UOVTitleScreenWidget::SyncSettingsWidgetsFromSystem()
+{
+    bSuppressSliderCallbacks = true;
+
+    if (UGameUserSettings* GUS = GEngine ? GEngine->GetGameUserSettings() : nullptr)
+    {
+        const EWindowMode::Type Mode = GUS->GetFullscreenMode();
+        WindowModeIndex = (Mode == EWindowMode::Fullscreen) ? 0 : (Mode == EWindowMode::Windowed ? 2 : 1);
+
+        const FIntPoint CurRes = GUS->GetScreenResolution();
+        ResolutionIndex = 2;
+        for (int32 I = 0; I < UE_ARRAY_COUNT(OVStyle::ResolutionPresets); ++I)
+        {
+            if (OVStyle::ResolutionPresets[I] == CurRes)
+            {
+                ResolutionIndex = I;
+                break;
+            }
+        }
+
+        const int32 Quality = GUS->GetOverallScalabilityLevel();
+        GraphicsQualityIndex = FMath::Clamp(Quality >= 0 ? Quality : 2, 0, 3);
+    }
+
+    if (UOVAudioSubsystem* Audio = UOVAudioSubsystem::Get(this))
+    {
+        PendingMasterVolume = Audio->GetMasterVolume();
+        PendingBGMVolume = Audio->GetBGMVolume();
+        PendingSFXVolume = Audio->GetSFXVolume();
+    }
+
+    if (UWorld* World = GetWorld())
+    {
+        if (APlayerController* PC = World->GetFirstPlayerController())
+        {
+            if (AOVHUD* HUD = Cast<AOVHUD>(PC->GetHUD()))
+            {
+                PendingUIScale = HUD->GetUserUIScaleMultiplier();
+            }
+        }
+    }
+
+    if (MasterVolumeSlider) MasterVolumeSlider->SetValue(PendingMasterVolume);
+    if (BGMVolumeSlider) BGMVolumeSlider->SetValue(PendingBGMVolume);
+    if (SFXVolumeSlider) SFXVolumeSlider->SetValue(PendingSFXVolume);
+    if (UIScaleSlider) UIScaleSlider->SetValue(PendingUIScale);
+
+    bSuppressSliderCallbacks = false;
+    RefreshSettingsLabels();
+}
+
+void UOVTitleScreenWidget::RefreshSettingsLabels()
+{
+    if (SettingsWindowModeValueText)
+    {
+        SettingsWindowModeValueText->SetText(FText::FromString(
+            OVStyle::WindowModeLabels[FMath::Clamp(WindowModeIndex, 0, 2)]));
+    }
+    if (SettingsResolutionValueText)
+    {
+        const FIntPoint Res = OVStyle::ResolutionPresets[FMath::Clamp(ResolutionIndex, 0, UE_ARRAY_COUNT(OVStyle::ResolutionPresets) - 1)];
+        SettingsResolutionValueText->SetText(FText::FromString(FString::Printf(TEXT("%d × %d"), Res.X, Res.Y)));
+    }
+    if (SettingsQualityValueText)
+    {
+        SettingsQualityValueText->SetText(FText::FromString(
+            OVStyle::QualityLabels[FMath::Clamp(GraphicsQualityIndex, 0, 3)]));
+    }
+    if (SettingsMasterVolText)
+    {
+        SettingsMasterVolText->SetText(FText::FromString(FString::Printf(TEXT("%d%%"), FMath::RoundToInt(PendingMasterVolume * 100.f))));
+    }
+    if (SettingsBGMVolText)
+    {
+        SettingsBGMVolText->SetText(FText::FromString(FString::Printf(TEXT("%d%%"), FMath::RoundToInt(PendingBGMVolume * 100.f))));
+    }
+    if (SettingsSFXVolText)
+    {
+        SettingsSFXVolText->SetText(FText::FromString(FString::Printf(TEXT("%d%%"), FMath::RoundToInt(PendingSFXVolume * 100.f))));
+    }
+    if (SettingsUIScaleText)
+    {
+        SettingsUIScaleText->SetText(FText::FromString(FString::Printf(TEXT("%d%%"), FMath::RoundToInt(PendingUIScale * 100.f))));
+    }
+    if (FooterUIScaleText)
+    {
+        FooterUIScaleText->SetText(FText::FromString(FString::Printf(TEXT("UI 배율: %d%%"), FMath::RoundToInt(PendingUIScale * 100.f))));
+    }
+}
+
+void UOVTitleScreenWidget::RefreshTutorialReturnLabel()
+{
+    if (TutorialCloseButtonText)
+    {
+        TutorialCloseButtonText->SetText(FText::FromString(
+            bOpenedFromInGame ? TEXT("← 전투로 돌아가기") : TEXT("← 타이틀로 돌아가기")));
+    }
 }
 
 void UOVTitleScreenWidget::ActivateTitleScreen()
 {
+    bOpenedFromInGame = false;
     if (!BackdropStage)
     {
         BackdropStage = NewObject<UOVTitleBackdropStage>(this);
@@ -663,19 +949,44 @@ void UOVTitleScreenWidget::ActivateTitleScreen()
         bBackdropActive = true;
     }
 
+    if (UOVAudioSubsystem* Audio = UOVAudioSubsystem::Get(this))
+    {
+        Audio->PlayTitleBGM();
+    }
+
+    SyncSettingsWidgetsFromSystem();
+    RefreshTutorialReturnLabel();
     ShowPanel(EOVTitleMenuPanel::Title);
     RefreshBackdropBrush();
     RefreshModeLabel();
     SetVisibility(ESlateVisibility::Visible);
 }
 
+void UOVTitleScreenWidget::ActivateInGameTutorial()
+{
+    bOpenedFromInGame = true;
+    bBackdropActive = false;
+    if (BackdropImage)
+    {
+        BackdropImage->SetVisibility(ESlateVisibility::Collapsed);
+    }
+    RefreshTutorialReturnLabel();
+    ShowPanel(EOVTitleMenuPanel::Tutorial);
+    SetVisibility(ESlateVisibility::Visible);
+}
+
 void UOVTitleScreenWidget::DeactivateTitleScreen()
 {
     bBackdropActive = false;
+    bOpenedFromInGame = false;
     SetVisibility(ESlateVisibility::Collapsed);
     if (BackdropStage)
     {
         BackdropStage->Release();
+    }
+    if (UOVAudioSubsystem* Audio = UOVAudioSubsystem::Get(this))
+    {
+        Audio->StopTitleBGM();
     }
 }
 
@@ -703,10 +1014,15 @@ void UOVTitleScreenWidget::ShowPanel(EOVTitleMenuPanel Panel)
     {
         SettingsPanelContainer->SetVisibility(Panel == EOVTitleMenuPanel::Settings ? ESlateVisibility::Visible : ESlateVisibility::Collapsed);
     }
+    if (TutorialPanelContainer)
+    {
+        TutorialPanelContainer->SetVisibility(Panel == EOVTitleMenuPanel::Tutorial ? ESlateVisibility::Visible : ESlateVisibility::Collapsed);
+    }
 }
 
 void UOVTitleScreenWidget::SelectScenario(FName ScenarioId)
 {
+    PlayClickAudio();
     SelectedScenarioId = ScenarioId;
     RefreshScenarioBriefing();
 
@@ -733,14 +1049,12 @@ void UOVTitleScreenWidget::RefreshBackdropBrush()
         return;
     }
 
-    // In Way A (LiveProxyStage), direct viewport camera renders the full 3D scene; BackdropImage is collapsed
     if (PreferredBackdropMode == EOVTitleBackdropMode::LiveProxyStage)
     {
         BackdropImage->SetVisibility(ESlateVisibility::Collapsed);
         return;
     }
 
-    // In Way B (PreRendered), display the baked 2D texture
     if (BackdropStage)
     {
         if (UTexture* Tex = BackdropStage->GetActiveTexture())
@@ -777,7 +1091,9 @@ void UOVTitleScreenWidget::RefreshScenarioBriefing()
     if (ScenarioBadgeText)
     {
         const FString StatusStr = TargetDef->bAvailable
-            ? TEXT("PIE API 51/51 통과 · 즉시 출격 가능")
+            ? (TargetDef->EnvironmentHazard == EOVSpaceHazardKind::BlackHole
+                ? TEXT("E1 블랙홀 중력전 · 즉시 출격 가능")
+                : TEXT("D126 규칙 동기화 · 즉시 출격 가능"))
             : TEXT("준비 중 · 프로토타입 단계");
         ScenarioBadgeText->SetText(FText::FromString(StatusStr));
         ScenarioBadgeText->SetColorAndOpacity(FSlateColor(TargetDef->bAvailable ? OVStyle::CyanAccent : OVStyle::AmberBadge));
@@ -787,7 +1103,6 @@ void UOVTitleScreenWidget::RefreshScenarioBriefing()
         ScenarioObjectiveText->SetText(FText::FromString(TargetDef->Objective));
     }
 
-    // Metrics
     if (MetricBudgetVal)
     {
         const FString BudgetStr = TargetDef->FleetBudget > 0
@@ -798,9 +1113,9 @@ void UOVTitleScreenWidget::RefreshScenarioBriefing()
     if (MetricHangarVal)
     {
         FString HangarStr = TEXT("0 / 0기");
-        if (TargetDef->Id == TEXT("Fleet100")) { HangarStr = TEXT("1 / 10기"); }
+        if (TargetDef->Id == TEXT("Fleet100") || TargetDef->Id == TEXT("BlackHoleTrial")) { HangarStr = TEXT("2 / 20기"); }
         else if (TargetDef->Id == TEXT("Fleet200")) { HangarStr = TEXT("2 / 20기"); }
-        else if (TargetDef->Id == TEXT("Fleet300")) { HangarStr = TEXT("2 / 20기"); }
+        else if (TargetDef->Id == TEXT("Fleet300")) { HangarStr = TEXT("4 / 40기"); }
         else if (TargetDef->Id == TEXT("Logistics")) { HangarStr = TEXT("4척"); }
         else if (TargetDef->Id == TEXT("Evacuation")) { HangarStr = TEXT("60% 이탈"); }
         else if (TargetDef->Id == TEXT("Sandbox")) { HangarStr = TEXT("자유"); }
@@ -810,7 +1125,7 @@ void UOVTitleScreenWidget::RefreshScenarioBriefing()
     {
         const FString TimeStr = TargetDef->LimitSeconds > 0
             ? FString::Printf(TEXT("%.0fs / %.0fs"), TargetDef->StalemateSeconds, TargetDef->LimitSeconds)
-            : TEXT("무제한");
+            : FString::Printf(TEXT("%.0fs / 무제한"), TargetDef->StalemateSeconds);
         MetricTimeVal->SetText(FText::FromString(TimeStr));
     }
 
@@ -820,7 +1135,6 @@ void UOVTitleScreenWidget::RefreshScenarioBriefing()
             FString::Printf(TEXT("Start(Controller, \"%s\") · -OVPlayScene=%s"), *TargetDef->Id.ToString(), *TargetDef->Id.ToString())));
     }
 
-    // Populate Roster Table
     if (RosterColLeft && RosterColRight)
     {
         RosterColLeft->ClearChildren();
@@ -843,7 +1157,7 @@ void UOVTitleScreenWidget::RefreshScenarioBriefing()
             Col->AddChildToVerticalBox(Row)->SetPadding(FMargin(0.f, 2.f));
         };
 
-        if (TargetDef->Id == TEXT("Fleet100"))
+        if (TargetDef->Id == TEXT("Fleet100") || TargetDef->Id == TEXT("BlackHoleTrial"))
         {
             AddRosterRow(RosterColLeft, TEXT("초계함"), 3, 3);
             AddRosterRow(RosterColLeft, TEXT("보급수리함"), 1, 1);
@@ -886,7 +1200,7 @@ void UOVTitleScreenWidget::RefreshScenarioBriefing()
         }
         else if (TargetDef->Id == TEXT("Logistics"))
         {
-            AddRosterRow(RosterColLeft, TEXT("수송선 (호송 대상)"), 2, 10);
+            AddRosterRow(RosterColLeft, TEXT("중형 수송선 (R37)"), 2, 10);
             AddRosterRow(RosterColLeft, TEXT("채굴선"), 2, 10);
             AddRosterRow(RosterColRight, TEXT("순양함 (호위 주력)"), 1, 25);
             AddRosterRow(RosterColRight, TEXT("호위함"), 2, 2);
@@ -914,50 +1228,77 @@ void UOVTitleScreenWidget::RefreshModeLabel()
 
     if (BackdropStatusText)
     {
-        BackdropStatusText->SetText(FText::FromString(
-            FString::Printf(TEXT("BACKDROP: %s"), *ModeStr)));
+        BackdropStatusText->SetText(FText::FromString(FString::Printf(TEXT("BACKDROP: %s"), *ModeStr)));
     }
     if (SettingsBackdropModeText)
     {
-        SettingsBackdropModeText->SetText(FText::FromString(
-            FString::Printf(TEXT("현재 활성 배경 파이프라인: %s"), *ModeStr)));
+        SettingsBackdropModeText->SetText(FText::FromString(FString::Printf(TEXT("현재 활성 배경 파이프라인: %s"), *ModeStr)));
     }
 }
 
 void UOVTitleScreenWidget::HandleOpenScenarios()
 {
+    PlayClickAudio();
     ShowPanel(EOVTitleMenuPanel::ScenarioSelect);
 }
 
 void UOVTitleScreenWidget::HandleOpenSandbox()
 {
+    PlayClickAudio();
     SelectScenario(TEXT("Sandbox"));
     ShowPanel(EOVTitleMenuPanel::ScenarioSelect);
 }
 
+void UOVTitleScreenWidget::HandleOpenTutorial()
+{
+    PlayClickAudio();
+    RefreshTutorialReturnLabel();
+    ShowPanel(EOVTitleMenuPanel::Tutorial);
+}
+
 void UOVTitleScreenWidget::HandleOpenSettings()
 {
+    PlayClickAudio();
+    SyncSettingsWidgetsFromSystem();
     ShowPanel(EOVTitleMenuPanel::Settings);
 }
 
 void UOVTitleScreenWidget::HandleBackToTitle()
 {
+    PlayClickAudio();
+    ShowPanel(EOVTitleMenuPanel::Title);
+}
+
+void UOVTitleScreenWidget::HandleCloseTutorial()
+{
+    PlayClickAudio();
+    if (bOpenedFromInGame)
+    {
+        if (UWorld* World = GetWorld())
+        {
+            if (APlayerController* PC = World->GetFirstPlayerController())
+            {
+                if (AOVHUD* HUD = Cast<AOVHUD>(PC->GetHUD()))
+                {
+                    HUD->CloseTitleScreen();
+                    return;
+                }
+            }
+        }
+        DeactivateTitleScreen();
+        return;
+    }
     ShowPanel(EOVTitleMenuPanel::Title);
 }
 
 void UOVTitleScreenWidget::HandleLaunchSelectedScenario()
 {
+    PlayClickAudio();
     UWorld* World = GetWorld();
-    if (!World)
-    {
-        return;
-    }
+    if (!World) return;
 
     AOVController* Controller = Cast<AOVController>(World->GetFirstPlayerController());
-    if (!Controller)
-    {
-        return;
-    }
+    if (!Controller) return;
 
     if (AOVHUD* HUD = Cast<AOVHUD>(Controller->GetHUD()))
     {
@@ -972,6 +1313,7 @@ void UOVTitleScreenWidget::HandleLaunchSelectedScenario()
 
 void UOVTitleScreenWidget::HandleToggleBackdropMode()
 {
+    PlayClickAudio();
     PreferredBackdropMode = (PreferredBackdropMode == EOVTitleBackdropMode::LiveProxyStage)
         ? EOVTitleBackdropMode::PreRenderedInGameImage
         : EOVTitleBackdropMode::LiveProxyStage;
@@ -984,7 +1326,118 @@ void UOVTitleScreenWidget::HandleToggleBackdropMode()
     RefreshModeLabel();
 }
 
+void UOVTitleScreenWidget::HandleCycleWindowMode()
+{
+    PlayClickAudio();
+    WindowModeIndex = (WindowModeIndex + 1) % 3;
+    RefreshSettingsLabels();
+}
+
+void UOVTitleScreenWidget::HandleCycleResolution()
+{
+    PlayClickAudio();
+    ResolutionIndex = (ResolutionIndex + 1) % UE_ARRAY_COUNT(OVStyle::ResolutionPresets);
+    RefreshSettingsLabels();
+}
+
+void UOVTitleScreenWidget::HandleCycleGraphicsQuality()
+{
+    PlayClickAudio();
+    GraphicsQualityIndex = (GraphicsQualityIndex + 1) % 4;
+    RefreshSettingsLabels();
+}
+
+void UOVTitleScreenWidget::HandleMasterVolumeChanged(float Value)
+{
+    if (bSuppressSliderCallbacks) return;
+    PendingMasterVolume = FMath::Clamp(Value, 0.0f, 1.0f);
+    if (UOVAudioSubsystem* Audio = UOVAudioSubsystem::Get(this))
+    {
+        Audio->SetVolumes(PendingMasterVolume, PendingBGMVolume, PendingSFXVolume, false);
+    }
+    RefreshSettingsLabels();
+}
+
+void UOVTitleScreenWidget::HandleBGMVolumeChanged(float Value)
+{
+    if (bSuppressSliderCallbacks) return;
+    PendingBGMVolume = FMath::Clamp(Value, 0.0f, 1.0f);
+    if (UOVAudioSubsystem* Audio = UOVAudioSubsystem::Get(this))
+    {
+        Audio->SetVolumes(PendingMasterVolume, PendingBGMVolume, PendingSFXVolume, false);
+    }
+    RefreshSettingsLabels();
+}
+
+void UOVTitleScreenWidget::HandleSFXVolumeChanged(float Value)
+{
+    if (bSuppressSliderCallbacks) return;
+    PendingSFXVolume = FMath::Clamp(Value, 0.0f, 1.0f);
+    if (UOVAudioSubsystem* Audio = UOVAudioSubsystem::Get(this))
+    {
+        Audio->SetVolumes(PendingMasterVolume, PendingBGMVolume, PendingSFXVolume, false);
+    }
+    RefreshSettingsLabels();
+}
+
+void UOVTitleScreenWidget::HandleUIScaleChanged(float Value)
+{
+    if (bSuppressSliderCallbacks) return;
+    PendingUIScale = FMath::Clamp(Value, 0.80f, 1.50f);
+    if (UWorld* World = GetWorld())
+    {
+        if (APlayerController* PC = World->GetFirstPlayerController())
+        {
+            if (AOVHUD* HUD = Cast<AOVHUD>(PC->GetHUD()))
+            {
+                HUD->SetUserUIScaleMultiplier(PendingUIScale, false);
+            }
+        }
+    }
+    RefreshSettingsLabels();
+}
+
+void UOVTitleScreenWidget::HandleApplyAndSaveSettings()
+{
+    PlayClickAudio();
+    if (UGameUserSettings* GUS = GEngine ? GEngine->GetGameUserSettings() : nullptr)
+    {
+        const EWindowMode::Type Mode = WindowModeIndex == 0 ? EWindowMode::Fullscreen
+            : (WindowModeIndex == 2 ? EWindowMode::Windowed : EWindowMode::WindowedFullscreen);
+        const FIntPoint Res = OVStyle::ResolutionPresets[FMath::Clamp(ResolutionIndex, 0, UE_ARRAY_COUNT(OVStyle::ResolutionPresets) - 1)];
+        GUS->SetFullscreenMode(Mode);
+        GUS->SetScreenResolution(Res);
+        GUS->SetOverallScalabilityLevel(FMath::Clamp(GraphicsQualityIndex, 0, 3));
+        GUS->ApplySettings(false);
+        GUS->SaveSettings();
+    }
+
+    if (UOVAudioSubsystem* Audio = UOVAudioSubsystem::Get(this))
+    {
+        Audio->SetVolumes(PendingMasterVolume, PendingBGMVolume, PendingSFXVolume, true);
+    }
+
+    if (UWorld* World = GetWorld())
+    {
+        if (APlayerController* PC = World->GetFirstPlayerController())
+        {
+            if (AOVHUD* HUD = Cast<AOVHUD>(PC->GetHUD()))
+            {
+                HUD->SetUserUIScaleMultiplier(PendingUIScale, true);
+            }
+        }
+    }
+
+    if (SettingsFeedbackText)
+    {
+        SettingsFeedbackText->SetText(FText::FromString(TEXT("설정이 적용되고 로컬 구성 파일(GameUserSettings.ini)에 저장되었습니다.")));
+        SettingsFeedbackText->SetColorAndOpacity(FSlateColor(OVStyle::CyanAccent));
+    }
+    RefreshSettingsLabels();
+}
+
 void UOVTitleScreenWidget::HandleQuitGame()
 {
+    PlayClickAudio();
     UKismetSystemLibrary::QuitGame(GetWorld(), GetWorld()->GetFirstPlayerController(), EQuitPreference::Quit, false);
 }

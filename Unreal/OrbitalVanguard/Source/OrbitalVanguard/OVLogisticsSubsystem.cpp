@@ -121,4 +121,304 @@ void UOVLogisticsSubsystem::Simulate(float GameDelta)
         L.TimeRemaining -= Time;
         if (HP <= 0 || L.HPRemaining <= KINDA_SMALL_NUMBER || L.TimeRemaining <= KINDA_SMALL_NUMBER || L.Target->Systems->HullHP >= L.Target->Systems->MaxHullHP || ResourceLimit(*C, Cost) <= KINDA_SMALL_NUMBER) { LastReason = TEXT("수리 완료 또는 자원 소진"); RepairLinks.RemoveAt(I); }
     }
+    if (!Outposts.IsEmpty() || !RemoteMiners.IsEmpty() || !TransportRoutes.IsEmpty())
+    {
+        SimulateOutpostLogistics(GameDelta);
+    }
+}
+
+void UOVLogisticsSubsystem::ResetOutpostLogistics()
+{
+    Outposts.Reset();
+    RemoteMiners.Reset();
+    TransportRoutes.Reset();
+    HomeBaseDelivered.Reset();
+    OutpostLogisticsElapsedSeconds = 0.0;
+    NextOutpostId = 1;
+    NextMinerAssignmentId = 1;
+    NextTransportRouteId = 1;
+}
+
+int32 UOVLogisticsSubsystem::AddRemoteOutpost(
+    FName StarSystemId,
+    int32 FactionId,
+    EOVOutpostRole Role,
+    int32 SystemDistanceHops,
+    float WarehouseCapacity)
+{
+    if (StarSystemId.IsNone() || SystemDistanceHops <= 0)
+    {
+        LastReason = TEXT("전초기지는 본 기지 성계가 아닌 타 성계(거리 1성계 이상)에만 건설 가능");
+        return 0;
+    }
+    if (Role == EOVOutpostRole::ResourceOutpost && (!FMath::IsFinite(WarehouseCapacity) || WarehouseCapacity <= 0.f))
+    {
+        LastReason = TEXT("자원 전초기지 창고 용량이 유효하지 않음");
+        return 0;
+    }
+
+    FOVRemoteOutpostState& State = Outposts.AddDefaulted_GetRef();
+    State.OutpostId = NextOutpostId++;
+    State.StarSystemId = StarSystemId;
+    State.FactionId = FactionId;
+    State.Role = Role;
+    State.SystemDistanceHops = SystemDistanceHops;
+    State.WarehouseCapacity = (Role == EOVOutpostRole::ResourceOutpost) ? WarehouseCapacity : 0.0f;
+    LastReason = (Role == EOVOutpostRole::ResourceOutpost) ? TEXT("자원 전초기지 건설 완료") : TEXT("전투 전초기지 건설 완료");
+    return State.OutpostId;
+}
+
+int32 UOVLogisticsSubsystem::AssignRemoteMiners(
+    int32 FactionId,
+    int32 OutpostId,
+    int32 MinerCount,
+    float CargoPerMiner,
+    float MiningSecondsPerLoad,
+    float RoundTripSeconds)
+{
+    if (MinerCount <= 0 || !FMath::IsFinite(CargoPerMiner) || CargoPerMiner <= 0.f
+        || !FMath::IsFinite(MiningSecondsPerLoad) || MiningSecondsPerLoad <= 0.f
+        || !FMath::IsFinite(RoundTripSeconds) || RoundTripSeconds < 0.f)
+    {
+        LastReason = TEXT("채굴 배정 인자가 유효하지 않음");
+        return 0;
+    }
+
+    if (OutpostId > 0)
+    {
+        const FOVRemoteOutpostState* Outpost = Outposts.FindByPredicate(
+            [OutpostId](const FOVRemoteOutpostState& O) { return O.OutpostId == OutpostId; });
+        if (!Outpost || Outpost->FactionId != FactionId)
+        {
+            LastReason = TEXT("유효한 아군 전초기지를 찾을 수 없음");
+            return 0;
+        }
+        if (Outpost->Role != EOVOutpostRole::ResourceOutpost)
+        {
+            LastReason = TEXT("전투 전초기지는 채굴 하역 허브로 사용할 수 없음 (자원 전초기지 전용)");
+            return 0;
+        }
+    }
+
+    FOVRemoteMiningAssignment& Assign = RemoteMiners.AddDefaulted_GetRef();
+    Assign.AssignmentId = NextMinerAssignmentId++;
+    Assign.FactionId = FactionId;
+    Assign.OutpostId = OutpostId;
+    Assign.MinerCount = MinerCount;
+    Assign.CargoPerMiner = CargoPerMiner;
+    Assign.MiningSecondsPerLoad = MiningSecondsPerLoad;
+    Assign.RoundTripSeconds = RoundTripSeconds;
+    LastReason = OutpostId > 0 ? TEXT("자원 전초기지 채굴선 배정 완료") : TEXT("본 기지 직송 채굴선 배정 완료");
+    return Assign.AssignmentId;
+}
+
+int32 UOVLogisticsSubsystem::AddMediumTransportRoute(
+    int32 FactionId,
+    int32 OutpostId,
+    int32 TransportCount,
+    float CargoCapacityPerShip,
+    float OneWayTransitSeconds,
+    float LoadUnloadSeconds)
+{
+    const FOVRemoteOutpostState* Outpost = Outposts.FindByPredicate(
+        [OutpostId](const FOVRemoteOutpostState& O) { return O.OutpostId == OutpostId; });
+    if (!Outpost || Outpost->FactionId != FactionId)
+    {
+        LastReason = TEXT("중형 수송선(R37) 노선 대상 전초기지가 없음");
+        return 0;
+    }
+    if (Outpost->Role != EOVOutpostRole::ResourceOutpost)
+    {
+        LastReason = TEXT("전투 전초기지에는 자원 수송 노선을 연결할 수 없음 (자원 전초기지 전용)");
+        return 0;
+    }
+    if (TransportCount <= 0 || !FMath::IsFinite(CargoCapacityPerShip) || CargoCapacityPerShip <= 0.f
+        || !FMath::IsFinite(OneWayTransitSeconds) || OneWayTransitSeconds <= 0.f
+        || !FMath::IsFinite(LoadUnloadSeconds) || LoadUnloadSeconds < 0.f)
+    {
+        LastReason = TEXT("중형 수송선(R37) 노선 파라미터가 유효하지 않음");
+        return 0;
+    }
+
+    FOVMediumTransportRoute& Route = TransportRoutes.AddDefaulted_GetRef();
+    Route.RouteId = NextTransportRouteId++;
+    Route.FactionId = FactionId;
+    Route.OutpostId = OutpostId;
+    Route.TransportCount = TransportCount;
+    Route.CargoCapacityPerShip = CargoCapacityPerShip;
+    Route.OneWayTransitSeconds = OneWayTransitSeconds;
+    Route.LoadUnloadSeconds = LoadUnloadSeconds;
+    Route.Phase = 0;
+    Route.PhaseRemainingSeconds = 0.0f;
+    LastReason = TEXT("중형 수송선(R37) 왕복 물류 노선 연결 완료");
+    return Route.RouteId;
+}
+
+void UOVLogisticsSubsystem::SimulateOutpostLogistics(float GameDeltaSeconds)
+{
+    if (!FMath::IsFinite(GameDeltaSeconds) || GameDeltaSeconds <= 0.f) return;
+
+    // Step in <= 1.0 s substeps for deterministic cycle accounting across large time jumps.
+    float Remaining = GameDeltaSeconds;
+    while (Remaining > KINDA_SMALL_NUMBER)
+    {
+        const float Dt = FMath::Min(Remaining, 1.0f);
+        Remaining -= Dt;
+        OutpostLogisticsElapsedSeconds += Dt;
+
+        // 1. Local / Direct Mining -> Outpost Warehouse or Direct Home Base
+        for (FOVRemoteMiningAssignment& Miner : RemoteMiners)
+        {
+            const float CycleSeconds = FMath::Max(1.0f, Miner.MiningSecondsPerLoad + Miner.RoundTripSeconds);
+            const float BatchCargo = Miner.CargoPerMiner * Miner.MinerCount;
+
+            if (Miner.OutpostId > 0)
+            {
+                FOVRemoteOutpostState* Outpost = Outposts.FindByPredicate(
+                    [&Miner](const FOVRemoteOutpostState& O) { return O.OutpostId == Miner.OutpostId; });
+                if (!Outpost || Outpost->Role != EOVOutpostRole::ResourceOutpost) continue;
+
+                // Flush pending unload first if warehouse has free space
+                if (Miner.PendingUnload > KINDA_SMALL_NUMBER)
+                {
+                    const float FreeSpace = FMath::Max(0.0f, Outpost->WarehouseCapacity - Outpost->StoredResources);
+                    const float Deposited = FMath::Min(Miner.PendingUnload, FreeSpace);
+                    Outpost->StoredResources += Deposited;
+                    Outpost->TotalUnloaded += Deposited;
+                    Miner.PendingUnload -= Deposited;
+                    if (Miner.PendingUnload > KINDA_SMALL_NUMBER)
+                    {
+                        Outpost->WarehouseCongestedSeconds += Dt;
+                        Outpost->bWarehouseBottleneck = true;
+                        continue; // Miners blocked waiting for warehouse space
+                    }
+                }
+
+                Miner.CycleProgressSeconds += Dt;
+                while (Miner.CycleProgressSeconds >= CycleSeconds)
+                {
+                    Miner.CycleProgressSeconds -= CycleSeconds;
+                    const float FreeSpace = FMath::Max(0.0f, Outpost->WarehouseCapacity - Outpost->StoredResources);
+                    const float Deposited = FMath::Min(BatchCargo, FreeSpace);
+                    Outpost->StoredResources += Deposited;
+                    Outpost->TotalUnloaded += Deposited;
+                    const float Overflow = BatchCargo - Deposited;
+                    if (Overflow > KINDA_SMALL_NUMBER)
+                    {
+                        Miner.PendingUnload += Overflow;
+                        Outpost->WarehouseCongestedSeconds += Dt;
+                        Outpost->bWarehouseBottleneck = true;
+                        break;
+                    }
+                }
+            }
+            else
+            {
+                // Direct multi-system haul to Home Base (no outpost)
+                Miner.CycleProgressSeconds += Dt;
+                while (Miner.CycleProgressSeconds >= CycleSeconds)
+                {
+                    Miner.CycleProgressSeconds -= CycleSeconds;
+                    HomeBaseDelivered.FindOrAdd(Miner.FactionId) += BatchCargo;
+                }
+            }
+        }
+
+        // 2. Medium Transport (R37) Shuttle: ResourceOutpost <-> Home Base
+        for (FOVMediumTransportRoute& Route : TransportRoutes)
+        {
+            FOVRemoteOutpostState* Outpost = Outposts.FindByPredicate(
+                [&Route](const FOVRemoteOutpostState& O) { return O.OutpostId == Route.OutpostId; });
+            if (!Outpost || Outpost->Role != EOVOutpostRole::ResourceOutpost) continue;
+
+            const float FleetCapacity = Route.CargoCapacityPerShip * Route.TransportCount;
+            if (Route.Phase == 0)
+            {
+                // Loading at ResourceOutpost once enough stock is available (or >= 50% capacity ready)
+                if (Outpost->StoredResources >= FMath::Min(FleetCapacity, Outpost->WarehouseCapacity * 0.25f)
+                    && Outpost->StoredResources > KINDA_SMALL_NUMBER)
+                {
+                    const float Loaded = FMath::Min(FleetCapacity, Outpost->StoredResources);
+                    Outpost->StoredResources -= Loaded;
+                    Outpost->TotalDispatched += Loaded;
+                    Route.CarriedCargo = Loaded;
+                    Route.Phase = 1;
+                    Route.PhaseRemainingSeconds = Route.OneWayTransitSeconds + Route.LoadUnloadSeconds;
+                }
+            }
+            else if (Route.Phase == 1)
+            {
+                Route.PhaseRemainingSeconds -= Dt;
+                if (Route.PhaseRemainingSeconds <= 0.0f)
+                {
+                    HomeBaseDelivered.FindOrAdd(Route.FactionId) += Route.CarriedCargo;
+                    Route.TotalDelivered += Route.CarriedCargo;
+                    Route.CarriedCargo = 0.0f;
+                    Route.Phase = 2;
+                    Route.PhaseRemainingSeconds = Route.OneWayTransitSeconds;
+                }
+            }
+            else
+            {
+                Route.PhaseRemainingSeconds -= Dt;
+                if (Route.PhaseRemainingSeconds <= 0.0f)
+                {
+                    Route.Phase = 0;
+                    Route.PhaseRemainingSeconds = 0.0f;
+                }
+            }
+        }
+
+        // 3. Warehouse fill-ratio congestion monitoring
+        for (FOVRemoteOutpostState& Outpost : Outposts)
+        {
+            if (Outpost.Role == EOVOutpostRole::ResourceOutpost && Outpost.WarehouseCapacity > 0.0f)
+            {
+                if (Outpost.StoredResources >= Outpost.WarehouseCapacity * 0.90f)
+                {
+                    Outpost.WarehouseCongestedSeconds += Dt;
+                    Outpost.bWarehouseBottleneck = true;
+                }
+            }
+        }
+    }
+}
+
+float UOVLogisticsSubsystem::GetHomeBaseDelivered(int32 FactionId) const
+{
+    if (const float* Value = HomeBaseDelivered.Find(FactionId)) return *Value;
+    return 0.0f;
+}
+
+float UOVLogisticsSubsystem::GetHomeBaseRatePerMinute(int32 FactionId) const
+{
+    if (OutpostLogisticsElapsedSeconds <= KINDA_SMALL_NUMBER) return 0.0f;
+    return static_cast<float>((GetHomeBaseDelivered(FactionId) / OutpostLogisticsElapsedSeconds) * 60.0);
+}
+
+bool UOVLogisticsSubsystem::DiagnoseOutpostBottleneck(int32 OutpostId, FString& OutDiagnosis) const
+{
+    const FOVRemoteOutpostState* Outpost = Outposts.FindByPredicate(
+        [OutpostId](const FOVRemoteOutpostState& O) { return O.OutpostId == OutpostId; });
+    if (!Outpost)
+    {
+        OutDiagnosis = TEXT("지정된 전초기지를 찾을 수 없습니다.");
+        return false;
+    }
+    if (Outpost->Role != EOVOutpostRole::ResourceOutpost)
+    {
+        OutDiagnosis = TEXT("전투 전초기지는 자원 물류 창고를 운용하지 않습니다.");
+        return false;
+    }
+    const float FillRatio = Outpost->WarehouseCapacity > 0.0f
+        ? (Outpost->StoredResources / Outpost->WarehouseCapacity) : 0.0f;
+    if (Outpost->bWarehouseBottleneck || Outpost->WarehouseCongestedSeconds > 0.0f || FillRatio >= 0.85f)
+    {
+        OutDiagnosis = FString::Printf(
+            TEXT("자원 전초기지 창고에 자원이 적체 중입니다 (적재율 %.0f%%, 적체 %.0f초). 중형 수송선(R37) 대수나 적재량을 늘려야 합니다."),
+            FillRatio * 100.0f, Outpost->WarehouseCongestedSeconds);
+        return true;
+    }
+    OutDiagnosis = FString::Printf(TEXT("자원 전초기지 물류 정상 (창고 적재율 %.0f%%)."), FillRatio * 100.0f);
+    return false;
 }

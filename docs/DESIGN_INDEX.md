@@ -1,14 +1,28 @@
 # 기획 문서 지도와 관리 원칙
 
-> 정리일: 2026-11-17(KST). 이 문서는 기획의 입구와 담당 범위를 정한다. 게임 기능 구현 완료를 뜻하지 않는다.
+> 정리일: 2026-11-21(KST). 이 문서는 기획의 입구와 담당 범위를 정한다. 게임 기능 구현 완료를 뜻하지 않는다.
 
 ## 폴더와 담당 범위
 
 [폴더 안내](README.md)는 개요/분야 명세/수치/개발/분석/참조/과거 자료의 분류 기준을 정한다. 예전 경로는 [대응표](DOCUMENT_PATHS.json)로 찾는다. 이 문서는 계속 기획의 입구로 유지한다.
 
+## 최신 기획 우선 — D126
+
+**사용자의 최신 확정 기획이 과거 본문·프로필·작업 프롬프트보다 우선한다.** 바뀐 항목은 담당 본문을 직접 교체하며 아래에 상충 규칙을 덧붙이지 않는다. 수정하지 않은 분야까지 자동 폐기하지 않는다. 코드 구현·검증 상태는 기획 확정과 별도다.
+
+[D126 통합 수치](02_balance/GRID_HULL_OUTPOST_DECISIONS.md), [함선 내부](01_design/fleet/SHIP_SYSTEMS.md), [격납고](01_design/fleet/CARRIER_OPERATIONS.md), [함대](01_design/fleet/FLEET_COMBAT.md), [시작·메뉴](01_design/interface/START_SCREEN_AND_MENU_SPEC.md)를 우선 읽는다. 내부 슬롯·격납고 상한6/4/4/2/1·구축함4/3 및7/4·1대1 미러10~15분·전초 물류를 반영했다. 원시 결과가 없는 새 표는 채택 설계값이며UE 검증 완료로 표시하지 않는다.
+
+## D125 단독 환경 초기 수치와 비교
+
+[환경E1](02_balance/SPACE_ENVIRONMENT_BALANCE.md)·[결과](04_analysis/SPACE_ENVIRONMENT_RESULTS.md)·[원시자료](../reference/SpaceEnvironmentCalibration/README.md)에네환경을한번에하나씩적용한최종140개고유표본과추가교정을정리했다. 실제UE환경완료나모든메타균형을뜻하지않는다.
+
+## D123 우주 환경 행동 규칙
+
+[환경 명세](01_design/strategy/SPACE_ENVIRONMENTS.md)에 운석 충돌·파괴·지형 변화, 방사능 노출 피해·전투 판정, 플레어 부분 엄폐·정지, 블랙홀 실제 견인·중심부 완파·FTL 외력 예외를 채택했다. D124는 이동·무장·요격 등 작동 기능 일시 중단을 확정하고 [초기 정지시간 민감도](../reference/SpaceEnvironmentCalibration/README.md)에서3초/강한5초를 시험 후보로 제안했다. 수치·기능별 재개·인양은 R36에서 계속 설계한다. 현재UI/모델 작업에 환경 구현을 자동 추가하거나 기존 결과를 새 환경 검증으로 바꾸지 않는다.
+
 ## D121/D122 최신 제작 우선순위
 
-항공모함 최대4격납고·항공순양함 최대8격납고/T4전용주포2문을 정식동기화한다. 실제장착/기체재고는별개다. [UI 명세](01_design/interface/UI_SYSTEMS.md)의 좌측중심지휘·자동상세·영웅/함재기이미지카드·이동/리사이즈창·무장라이브뷰·사건경보와 실제모델적용을 우선한다. [로컬 실행 지시](03_development/PLAY_UI_R2_PROMPT.md)를 따르며UE구현완료나캠페인확장을뜻하지않는다.
+항공모함 최대4격납고·항공순양함 D126최대6격납고/T4전용주포2문을 정식동기화한다. 실제장착/기체재고는별개다. [UI 명세](01_design/interface/UI_SYSTEMS.md)의 좌측중심지휘·자동상세·영웅/함재기이미지카드·이동/리사이즈창·무장라이브뷰·사건경보와 실제모델적용을 우선한다. [로컬 실행 지시](03_development/PLAY_UI_R2_PROMPT.md)를 따르며UE구현완료나캠페인확장을뜻하지않는다.
 
 ## D116 현행 통합 시험
 
@@ -16,7 +30,7 @@
 
 ## D118 UE 작업 재개
 
-현재 확인한 원격2B는 ca6e8e5이며 최초 제작을 반복하지 않는다. [구현 상태](03_development/IMPLEMENTATION_STATUS.md) → [2B-R v1](03_development/PHASE2_PLAN.md) → [로컬 실행 프롬프트](03_development/PHASE2B_REVISION_PROMPT.md)를 사용한다. D116확정 정책·시험 수치·D117환경 초안을 구분해 이번 적용/후속 범위를 정했다.
+이 절은D118 당시2B 재개 경로의 이력이다. 최신 확인 개발 코드는62adc17(2026-11-19 기준)이며2B 재제작 완료를 새 작업의 목표로 삼지 않는다. [구현 상태](03_development/IMPLEMENTATION_STATUS.md) → [2B-R v1](03_development/PHASE2_PLAN.md) → [로컬 실행 프롬프트](03_development/PHASE2B_REVISION_PROMPT.md)를 사용한다. D116확정 정책·시험 수치·D117환경 초안을 구분해 이번 적용/후속 범위를 정했다.
 
 ## D119 수송선 체급 변경
 
@@ -53,7 +67,7 @@
 - **미결정:** 상충하는 최신 문구나 미정 수치. 대안·추천을 자동 확정하지 않는다. `R` 번호로 관리한다.
 - **설계 초안:** [기지·생산·연구 밸런스v0.1](02_balance/BASE_BALANCE_DRAFT.md)의 새 비용/시간/운영안. 사용자 요청으로 제안했지만 채택/실측 전이며 확정 규칙을 대체하지 않는다.
 - **D113 운송/영웅 검토:** [개인별 포드·강습선·공방 영웅 수·코스트 원인](04_analysis/BOARDING_REVIEW.md). 초대형 화력 유지와 강습선 공격0/PD1은 확정, 새 절대 수치는 후보이며 기존v0.3 연동의PD/방어자 가정을 대체해 읽는다.
-- **이전 장기전 후보:** [v0.3](02_balance/FLEET_ENDURANCE_BALANCE.md)·[전 함종/100·200·300 결과](04_analysis/FLEET_ENDURANCE_RESULTS.md). 사용자 목표는10~15분이며 새 수치/공간 근사는 제안이다. 이전v0.2는 비교/영웅L1 출발값으로 보존한다.
+- **이전 장기전 후보:** [v0.3](02_balance/FLEET_ENDURANCE_BALANCE.md)·[전 함종/100·200·300 결과](04_analysis/FLEET_ENDURANCE_RESULTS.md). 당시 일반전 목표는10~15분이었고 현재D126은1대1 미러 기준이며 새 수치/공간 근사는 제안이다. 이전v0.2는 비교/영웅L1 출발값으로 보존한다.
 - **이전 전투 수치 초안:** [전투 수치v0.2](archive/balance/COMBAT_BALANCE.md)의 HP/무장/영웅/가격 제안. [축소 모형 분석](archive/analysis/COMBAT_SIMULATION.md)의 표본/범위와 함께 읽으며 UE 실측·전체 전투 밸런스 확정과 구분한다.
 - **시험 기준값:** 프로토타입에서 채택한 밸런스 출발값. 원형·단위를 명시하며 전체 티어의 고정 규칙으로 확대하지 않는다.
 - **임시 구현:** 로컬 코드를 작동시키기 위한 선택. 사용자 확정 기획과 구분하며 교체 가능한 설정으로 둔다.

@@ -1,4 +1,5 @@
 #include "OVPlayScenarioSubsystem.h"
+#include "OVBlackHoleHazardActor.h"
 #include "OVCalibration.h"
 #include "OVCarrierSubsystem.h"
 #include "OVCombatSubsystem.h"
@@ -15,27 +16,32 @@ namespace
 constexpr int32 ScenarioSeed = 260112;
 constexpr int32 FactionCount = 2;
 
-// D116 equipment is resolved from the hull definition. Trial deployment and
+// D126 equipment is resolved from the hull definition. Trial deployment and
 // starting stocks are authored here independently of its combat statistics.
+// LimitSeconds defaults to 0 (disabled) to respect D126 18~26.9 min fleet battle duration.
 const FOVPlaySceneDefinition Scenes[] = {
     {TEXT("Fleet100"), TEXT("100코스트 함대전"), TEXT("혼성 함대로 상대의 전투 능력을 무력화하세요."),
      EOVPlaySceneKind::Fleet, 100, {{TEXT("corvette"),3}, {TEXT("frigate"),1}, {TEXT("vector"),1},
      {TEXT("bastion"),1}, {TEXT("battleship"),2}, {TEXT("air_defense"),1}, {TEXT("radar"),1},
-     {TEXT("carrier"),1,10}, {TEXT("repair"),1}}},
+     {TEXT("carrier"),1,10}, {TEXT("repair"),1}}, true, 120.f, 0.f, EOVSpaceHazardKind::None},
     {TEXT("Fleet200"), TEXT("200코스트 함대전"), TEXT("초대형 주력함과 호위 함대로 상대를 무력화하세요."),
      EOVPlaySceneKind::Fleet, 200, {{TEXT("corvette"),3}, {TEXT("frigate"),1}, {TEXT("vector"),1},
      {TEXT("bastion"),1}, {TEXT("dreadnought"),1}, {TEXT("air_defense"),1}, {TEXT("radar"),1},
-     {TEXT("battleship"),1}, {TEXT("carrier"),1,10}, {TEXT("repair"),1}}},
+     {TEXT("battleship"),1}, {TEXT("carrier"),1,10}, {TEXT("repair"),1}}, true, 120.f, 0.f, EOVSpaceHazardKind::None},
     {TEXT("Fleet300"), TEXT("300코스트 함대전"), TEXT("두 초대형함과 혼성 호위 전력을 운용하세요."),
      EOVPlaySceneKind::Fleet, 300, {{TEXT("corvette"),3}, {TEXT("frigate"),1}, {TEXT("vector"),1},
      {TEXT("bastion"),1}, {TEXT("dreadnought"),1}, {TEXT("battlecarrier"),1,10}, {TEXT("air_defense"),1},
-     {TEXT("radar"),1}, {TEXT("carrier"),1,10}, {TEXT("repair"),1}}},
+     {TEXT("radar"),1}, {TEXT("carrier"),1,10}, {TEXT("repair"),1}}, true, 120.f, 0.f, EOVSpaceHazardKind::None},
+    {TEXT("BlackHoleTrial"), TEXT("블랙홀 중력전 (E1)"), TEXT("블랙홀 1,000m 중력권과 45m 즉사 중심부를 피해 상대를 무력화하세요."),
+     EOVPlaySceneKind::Fleet, 100, {{TEXT("corvette"),3}, {TEXT("frigate"),1}, {TEXT("vector"),1},
+     {TEXT("bastion"),1}, {TEXT("battleship"),2}, {TEXT("air_defense"),1}, {TEXT("radar"),1},
+     {TEXT("carrier"),1,10}, {TEXT("repair"),1}}, true, 120.f, 0.f, EOVSpaceHazardKind::BlackHole, FVector(0.f, 0.f, 2000.f)},
     {TEXT("Logistics"), TEXT("채굴·수송 엄호"), TEXT("채굴선과 수송선을 보호하고 자원을 납품하세요."),
-     EOVPlaySceneKind::Logistics, 0, {}, false},
+     EOVPlaySceneKind::Logistics, 0, {}, false, 120.f, 0.f, EOVSpaceHazardKind::None},
     {TEXT("Evacuation"), TEXT("공습 생존·퇴각"), TEXT("공습을 버티고 함선을 초광속으로 이탈시키세요."),
-     EOVPlaySceneKind::Evacuation, 0, {}, false},
+     EOVPlaySceneKind::Evacuation, 0, {}, false, 120.f, 0.f, EOVSpaceHazardKind::None},
     {TEXT("Sandbox"), TEXT("자유 전투 시험장"), TEXT("개발 도구에서 함선을 배치하고 시험하세요."),
-     EOVPlaySceneKind::Sandbox}
+     EOVPlaySceneKind::Sandbox, 0, {}, true, 120.f, 0.f, EOVSpaceHazardKind::None}
 };
 
 const FOVPlaySceneDefinition* FindDefinition(FName Id)
@@ -85,13 +91,69 @@ bool HasAttackPotential(const UOVShipSystemsComponent& Systems)
     }
     return false;
 }
+
+EOVSpaceEnvironmentType ToControllerEnvironment(EOVSpaceHazardKind Kind)
+{
+    switch (Kind)
+    {
+    case EOVSpaceHazardKind::BlackHole:     return EOVSpaceEnvironmentType::BlackHole;
+    case EOVSpaceHazardKind::SolarFlare:    return EOVSpaceEnvironmentType::SolarFlare;
+    case EOVSpaceHazardKind::RadiationZone: return EOVSpaceEnvironmentType::RadiationZone;
+    case EOVSpaceHazardKind::AsteroidField: return EOVSpaceEnvironmentType::AsteroidField;
+    default:                                return EOVSpaceEnvironmentType::None;
+    }
+}
 }
 
 TConstArrayView<FOVPlaySceneDefinition> UOVPlayScenarioSubsystem::Definitions() { return MakeArrayView(Scenes); }
 const FOVPlaySceneDefinition* UOVPlayScenarioSubsystem::GetActiveDefinition() const { return FindDefinition(ActiveId); }
 
+void UOVPlayScenarioSubsystem::DestroyActiveHazardActors()
+{
+    if (AOVBlackHoleHazardActor* BlackHole = ActiveBlackHoleActor.Get())
+    {
+        BlackHole->Destroy();
+    }
+    ActiveBlackHoleActor.Reset();
+}
+
+void UOVPlayScenarioSubsystem::SyncEnvironmentHazard(AOVController& Controller, EOVSpaceHazardKind HazardKind, const FVector& Location)
+{
+    DestroyActiveHazardActors();
+    Controller.SetSpaceEnvironment(ToControllerEnvironment(HazardKind));
+    if (HazardKind == EOVSpaceHazardKind::BlackHole && GetWorld())
+    {
+        FActorSpawnParameters Params;
+        Params.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
+        if (AOVBlackHoleHazardActor* BlackHole = GetWorld()->SpawnActor<AOVBlackHoleHazardActor>(
+                AOVBlackHoleHazardActor::StaticClass(), Location, FRotator::ZeroRotator, Params))
+        {
+            BlackHole->ApplyEnvironmentProfile(FOVSpaceEnvironmentProfile::MakeBlackHoleE1Profile());
+            BlackHole->bExternallyStepped = true;
+            ActiveBlackHoleActor = BlackHole;
+            Controller.ActiveBlackHoleCenter = Location;
+            Controller.ActiveBlackHoleRadius = BlackHole->GravityPullRadius;
+        }
+    }
+}
+
+void UOVPlayScenarioSubsystem::SetEnvironmentOverride(EOVSpaceHazardKind Kind)
+{
+    EnvironmentOverride = Kind;
+    if (AOVController* Controller = Owner.Get())
+    {
+        const FOVPlaySceneDefinition* Def = GetActiveDefinition();
+        const EOVSpaceHazardKind Effective = (EnvironmentOverride != EOVSpaceHazardKind::None)
+            ? EnvironmentOverride
+            : (Def ? Def->EnvironmentHazard : EOVSpaceHazardKind::None);
+        const FVector Loc = Def ? Def->HazardLocation : FVector(0.f, 0.f, 2000.f);
+        SyncEnvironmentHazard(*Controller, Effective, Loc);
+    }
+}
+
 void UOVPlayScenarioSubsystem::Clear()
 {
+    DestroyActiveHazardActors();
     Owner.Reset();
     ActiveId = NAME_None;
     Result = EOVPlaySceneResult::Running;
@@ -119,6 +181,12 @@ bool UOVPlayScenarioSubsystem::Start(AOVController& Controller, FName Id)
     Controller.Transport->ResetScenario({});
     auto* Interior = GetWorld()->GetSubsystem<UOVInteriorSubsystem>();
     Interior->ResetScenario({}, ScenarioSeed);
+
+    const EOVSpaceHazardKind EffectiveHazard = (EnvironmentOverride != EOVSpaceHazardKind::None)
+        ? EnvironmentOverride
+        : Definition->EnvironmentHazard;
+    SyncEnvironmentHazard(Controller, EffectiveHazard, Definition->HazardLocation);
+
     for (int32 Faction = 0; Faction < FactionCount; ++Faction)
     {
         int32 Ordinal = 0;
@@ -186,6 +254,14 @@ bool UOVPlayScenarioSubsystem::HandleAction(AOVController& Controller, FName Act
         Start(Controller, ActiveId);
         return true;
     }
+    if (Action == TEXT("ToggleBlackHoleEnv"))
+    {
+        const EOVSpaceHazardKind Next = (EnvironmentOverride == EOVSpaceHazardKind::BlackHole)
+            ? EOVSpaceHazardKind::None
+            : EOVSpaceHazardKind::BlackHole;
+        SetEnvironmentOverride(Next);
+        return true;
+    }
     if (Action == TEXT("Pause") && Result != EOVPlaySceneResult::Running) return true;
     if (!ActiveId.IsNone() && (Action == TEXT("LaunchAircraft") || Action == TEXT("RecallAircraft")))
     {
@@ -206,8 +282,14 @@ void UOVPlayScenarioSubsystem::Step(float Delta)
 {
     const FOVPlaySceneDefinition* Definition = GetActiveDefinition();
     AOVController* Controller = Owner.Get();
-    if (!Controller || !Definition || Definition->Kind != EOVPlaySceneKind::Fleet ||
-        Result != EOVPlaySceneResult::Running) return;
+    if (!Controller || !Definition || Result != EOVPlaySceneResult::Running) return;
+
+    if (AOVBlackHoleHazardActor* BlackHole = ActiveBlackHoleActor.Get())
+    {
+        BlackHole->SimulateHazard(Delta);
+    }
+
+    if (Definition->Kind != EOVPlaySceneKind::Fleet) return;
     ElapsedSeconds += Delta;
     DecisionRemaining -= Delta;
     if (DecisionRemaining > 0) return;
@@ -231,7 +313,7 @@ void UOVPlayScenarioSubsystem::CheckFleetResult(AOVController& Controller, const
         if (Controller.Combat->IsDeparted(Ship)) continue;
         ++Active[Faction];
         Potential[Faction] |= HasAttackPotential(Systems);
-        Integrity += Systems.HullHP;
+        Integrity += Systems.HullHP + Systems.Shield;
         for (const auto& Armor : Systems.ArmorSections) Integrity += Armor.HP;
         for (const auto& Mount : Systems.WeaponMountStates) Integrity += Mount.HP;
         for (const auto& Facility : Systems.Slots) Integrity += Facility.HP;
@@ -260,6 +342,8 @@ void UOVPlayScenarioSubsystem::CheckFleetResult(AOVController& Controller, const
         PreviousIntegrity = Integrity;
         LastProgressAt = ElapsedSeconds;
     }
+
+    const float EffectiveLimit = CustomLimitSeconds > 0.f ? CustomLimitSeconds : Definition.LimitSeconds;
     if (!Potential[0] && !Potential[1])
     {
         if (Active[0] == 0 && Active[1] == 0 && Wrecked[0] && Wrecked[1])
@@ -270,7 +354,7 @@ void UOVPlayScenarioSubsystem::CheckFleetResult(AOVController& Controller, const
         Finish(Controller, EOVPlaySceneResult::Victory, Active[1] ? TEXT("적 전투 전력 무력화") : TEXT("적 주력 이탈 또는 완파"));
     else if (!Potential[0])
         Finish(Controller, EOVPlaySceneResult::Defeat, Active[0] ? TEXT("아군 전투 전력 무력화") : TEXT("아군 주력 이탈 또는 완파"));
-    else if (ElapsedSeconds >= Definition.LimitSeconds)
+    else if (EffectiveLimit > 0.f && ElapsedSeconds >= EffectiveLimit)
         Finish(Controller, EOVPlaySceneResult::TimeLimit, TEXT("시험 시간 초과"));
     else if (ElapsedSeconds - LastProgressAt >= Definition.StalemateSeconds)
         Finish(Controller, EOVPlaySceneResult::Stalemate, TEXT("교착 · 전력 변화 없음"));
@@ -292,6 +376,7 @@ FString UOVPlayScenarioSubsystem::GetStatus() const
         return Resolution;
     }
     if (InitialCosts.Num() != FactionCount || InitialCosts[0] == 0) return FString();
-    return FString::Printf(TEXT("양측 %d코스트 · 아군 함재기 %d기 · %d초"),
-        InitialCosts[0], InitialAircraft[0], FMath::FloorToInt(ElapsedSeconds));
+    const TCHAR* HazardTag = ActiveBlackHoleActor.IsValid() ? TEXT(" · 블랙홀(E1)") : TEXT("");
+    return FString::Printf(TEXT("양측 %d코스트 · 아군 함재기 %d기 · %d초%s"),
+        InitialCosts[0], InitialAircraft[0], FMath::FloorToInt(ElapsedSeconds), HazardTag);
 }

@@ -1,4 +1,5 @@
 #include "OVHUD.h"
+#include "Misc/ConfigCacheIni.h"
 #include "UnrealClient.h"
 #include "Camera/CameraActor.h"
 #include "OVDevelopmentWidget.h"
@@ -90,7 +91,8 @@ bool AOVHUD::HandlePointer(float X,float Y,bool Pressed,bool Down,float Wheel,bo
 {
  const auto* PC=Cast<AOVController>(PlayerOwner);
  if(PC) { int32 Width=0,Height=0; PC->GetViewportSize(Width,Height); if(Width>0&&Height>0) ViewportPixels=FVector2D(Width,Height); }
- UIScale=FMath::Max(.25f,FMath::Min(1.f,FMath::Min(ViewportPixels.X/1280.f,ViewportPixels.Y/740.f)));
+ const float BaseScale=FMath::Max(.25f,FMath::Min(1.f,FMath::Min(ViewportPixels.X/1280.f,ViewportPixels.Y/740.f)));
+ UIScale=FMath::Clamp(BaseScale*UserUIScaleMultiplier,.25f,1.5f);
  // AHUD::Canvas is cleared by the viewport after rendering. Input runs outside DrawHUD.
  const bool Over=IsOverPanel(X,Y);
  if(PC&&PC->bDeveloperMode){
@@ -178,6 +180,7 @@ void AOVHUD::NotifyHitBoxClick(FName N)
  if(HandleInteriorAction(N)) return;
  if(N==TEXT("HeroPanel")) { SetHeroPanelOpen(!bHeroPanelOpen);return; }
  if(N==TEXT("TitleScreen")) { OpenTitleScreen(); return; }
+ if(N==TEXT("OpenTutorialGuide")) { OpenTutorialGuide(); return; }
  if(N==TEXT("BattleFeedToggle")) { bBattleFeedOpen=!bBattleFeedOpen;BattleFeedPage=0;BattleFeedFilter=0;return; }
  if(N==TEXT("BattleWarningLevel")) {if(bBattleFeedOpen)WarningLevel=(WarningLevel+2)%3;return;}
  if(N==TEXT("BattleFeedFilter")) {if(bBattleFeedOpen){BattleFeedFilter=(BattleFeedFilter+1)%6;BattleFeedPage=0;}return;}
@@ -218,7 +221,7 @@ void AOVHUD::NotifyHitBoxClick(FName N)
  if(N==TEXT("CommandShipLabel")||N==TEXT("CommandTargetLabel"))return;
  if(N==TEXT("SceneMenu")) { bSceneMenuOpen=!bSceneMenuOpen; if(bSceneMenuOpen) bStarMapOpen=false; return; }
  if(N==TEXT("PlaySceneExit")) { if(auto* PC=Cast<AOVController>(PlayerOwner)) PC->LeavePlayScenario(); bSceneMenuOpen=true; return; }
- if(N==TEXT("Fleet100")||N==TEXT("Fleet200")||N==TEXT("Fleet300")||N==TEXT("Sandbox"))
+ if(N==TEXT("Fleet100")||N==TEXT("Fleet200")||N==TEXT("Fleet300")||N==TEXT("BlackHoleTrial")||N==TEXT("Sandbox"))
  {
   if(auto* PC=Cast<AOVController>(PlayerOwner);PC&&PC->StartPlayScenario(N)) bSceneMenuOpen=false;
   return;
@@ -594,7 +597,8 @@ void AOVHUD::DrawHUD()
  Super::DrawHUD();auto* PC=Cast<AOVController>(PlayerOwner);if(!PC||!Canvas||PC->Ships.Num()<3)return;
  if(WeaponPreview&&(!HasOrbitPreview()||!IsValid(PC->Selected)||PC->Selected->IsHidden()||PC->Selected->Systems->bWrecked||(PC->Combat&&PC->Combat->IsDeparted(PC->Selected))))WeaponPreview->Release();
  ViewportPixels=FVector2D(Canvas->SizeX,Canvas->SizeY);
- UIScale=FMath::Max(.25f,FMath::Min(1.f,FMath::Min(Canvas->SizeX/1280.f,Canvas->SizeY/740.f)));
+ const float BaseDrawScale=FMath::Max(.25f,FMath::Min(1.f,FMath::Min(Canvas->SizeX/1280.f,Canvas->SizeY/740.f)));
+ UIScale=FMath::Clamp(BaseDrawScale*UserUIScaleMultiplier,.25f,1.5f);
  Canvas->Canvas->PushRelativeTransform(FScaleMatrix(FVector(UIScale,UIScale,1)));
  DrawPlayHUD(); DrawWorldIndicators(); DrawPhase2C(); DrawMission();
  DrawBattleNotices();
@@ -688,6 +692,14 @@ void AOVHUD::BeginPlay()
  HeroWidget=CreateWidget<UOVHeroWidget>(PlayerOwner,UOVHeroWidget::StaticClass());
  if(DevelopmentWidget){DevelopmentWidget->AddToViewport(20);DevelopmentWidget->SetVisibility(ESlateVisibility::Collapsed);}
  if(HeroWidget)HeroWidget->AddToViewport(10);
+ if(GConfig)
+ {
+  float SavedScale=1.f;
+  if(GConfig->GetFloat(TEXT("OrbitalVanguard.UI"),TEXT("UIScaleMultiplier"),SavedScale,GGameUserSettingsIni))
+  {
+   UserUIScaleMultiplier=FMath::Clamp(SavedScale,.80f,1.50f);
+  }
+ }
  TitleScreenWidget=CreateWidget<UOVTitleScreenWidget>(PlayerOwner,UOVTitleScreenWidget::StaticClass());
  if(TitleScreenWidget){TitleScreenWidget->AddToViewport(50);TitleScreenWidget->SetVisibility(ESlateVisibility::Collapsed);}
  const TCHAR* Cmd=FCommandLine::Get();
@@ -711,6 +723,10 @@ void AOVHUD::BeginPlay()
    else if(InitialPanel.Equals(TEXT("Settings"),ESearchCase::IgnoreCase))
    {
     if(TitleScreenWidget) { TitleScreenWidget->ShowPanel(EOVTitleMenuPanel::Settings); }
+   }
+   else if(InitialPanel.Equals(TEXT("Tutorial"),ESearchCase::IgnoreCase)||InitialPanel.Equals(TEXT("Guide"),ESearchCase::IgnoreCase))
+   {
+    if(TitleScreenWidget) { TitleScreenWidget->ShowPanel(EOVTitleMenuPanel::Tutorial); }
    }
   }
  }
@@ -1049,6 +1065,24 @@ void AOVHUD::OpenTitleScreen()
  if(auto* PC=Cast<AOVController>(PlayerOwner)) { PC->bSimulationPaused=true; }
  if(TitleScreenWidget) { TitleScreenWidget->ActivateTitleScreen(); }
  SyncAddedUI();
+}
+void AOVHUD::OpenTutorialGuide()
+{
+ bTitleScreenOpen=true;
+ bSceneMenuOpen=false;
+ bStarMapOpen=false;
+ if(auto* PC=Cast<AOVController>(PlayerOwner)) { PC->bSimulationPaused=true; }
+ if(TitleScreenWidget) { TitleScreenWidget->ActivateInGameTutorial(); }
+ SyncAddedUI();
+}
+void AOVHUD::SetUserUIScaleMultiplier(float NewScale, bool bPersist)
+{
+ UserUIScaleMultiplier=FMath::Clamp(NewScale,.80f,1.50f);
+ if(bPersist && GConfig)
+ {
+  GConfig->SetFloat(TEXT("OrbitalVanguard.UI"),TEXT("UIScaleMultiplier"),UserUIScaleMultiplier,GGameUserSettingsIni);
+  GConfig->Flush(false,GGameUserSettingsIni);
+ }
 }
 void AOVHUD::CloseTitleScreen()
 {

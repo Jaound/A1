@@ -129,6 +129,8 @@ public:
     UFUNCTION(BlueprintPure, Category="Systems") FOVFacilityState GetSlotState(FName SlotId) const;
     UFUNCTION(BlueprintPure, Category="Systems") FString GetSlotStatus(FName SlotId) const;
     UFUNCTION(BlueprintCallable, Category="Damage") void ApplyWorldHit(FVector WorldPoint, FVector WorldNormal, float Damage, EOVDamageCause Cause, bool bCombatAttack = false);
+    /** E1 Space Environment: instant core destruction ignoring remaining HullHP and active Shield. */
+    UFUNCTION(BlueprintCallable, Category="Damage") void ForceWreckInstant();
     /** D089: the external shield protects mounts; remaining damage never spills into the hull. */
     UFUNCTION(BlueprintCallable, Category="Damage") void ApplyWorldWeaponHit(FName WeaponMountId, FVector WorldPoint, FVector WorldNormal, float Damage, bool bCombatAttack = false);
     UFUNCTION(BlueprintCallable, Category="Debug") void DebugDestroySlot(FName SlotId, EOVDamageCause Cause);

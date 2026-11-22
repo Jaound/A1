@@ -10,6 +10,15 @@ struct ORBITALVANGUARD_API FOVHullMetadata
 {
     int32 SizeClass = 0;
     int32 FleetCost = 0;
+    int32 DeckCount = 0;
+    TArray<int32> DeckSlotCounts;
+    int32 TotalInteriorSlots = 0;
+    int32 MaxHangarInstallations = 0;
+    bool bAllowAircraftOperations = false;
+    float MoveSpeedCmPerSec = 0.0f;
+    int32 AttackMountCount = 0;
+    int32 PointDefenseCount = 0;
+    float ArmorMaxReduction = 0.60f;
     TArray<FName> RoleTags;
     FString Description;
 };

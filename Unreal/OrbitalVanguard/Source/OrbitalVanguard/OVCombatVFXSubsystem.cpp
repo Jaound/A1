@@ -1,5 +1,6 @@
 #include "OVCombatVFXSubsystem.h"
 
+#include "OVAudioSubsystem.h"
 #include "Components/StaticMeshComponent.h"
 #include "Engine/StaticMesh.h"
 #include "Engine/World.h"
@@ -142,6 +143,13 @@ void UOVCombatVFXSubsystem::SynchronizeVFX(float DeltaSeconds)
             }
             ActiveProjectiles.Add(NewItem);
             Found = &ActiveProjectiles.Last();
+
+            if (UOVAudioSubsystem* Audio = UOVAudioSubsystem::Get(this))
+            {
+                Audio->PlayCombatSFX(
+                    Attack.Weapon.Kind == EOVAttackKind::Beam ? EOVAudioCue::LaserFire : EOVAudioCue::CannonFire,
+                    Attack.Origin);
+            }
         }
 
         if (Found && IsValid(Found->MeshComponent))
@@ -207,6 +215,22 @@ void UOVCombatVFXSubsystem::SynchronizeVFX(float DeltaSeconds)
             }
 
             SpawnImpactSlashSparks(Evt.Position, Evt.Direction, bShieldHit, bEnemyTarget);
+
+            if (UOVAudioSubsystem* Audio = UOVAudioSubsystem::Get(this))
+            {
+                if (Evt.bShieldDepleted)
+                {
+                    Audio->PlayCombatSFX(EOVAudioCue::ShieldBreak, Evt.Position);
+                }
+                else if (Evt.Explosions > 0)
+                {
+                    Audio->PlayCombatSFX(EOVAudioCue::WreckExplosion, Evt.Position);
+                }
+                else if (bShieldHit)
+                {
+                    Audio->PlayCombatSFX(EOVAudioCue::ShieldHit, Evt.Position);
+                }
+            }
 
             if (Evt.bShieldDepleted || Evt.Explosions > 0)
             {

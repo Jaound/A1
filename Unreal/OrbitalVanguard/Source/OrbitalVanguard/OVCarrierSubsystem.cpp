@@ -80,9 +80,13 @@ FOVAircraftOverview UOVCarrierSubsystem::GetAircraftOverview(AOVShip* Ship) cons
 bool UOVCarrierSubsystem::RegisterCarrier(AOVShip* Ship, int32 InitialPerHangar)
 {
     if (!LivingShip(Ship) || Ship->Systems->Layout->bSmallHull) return false;
+    const UShipLayoutDataAsset* Layout = Ship->Systems->Layout.Get();
+    // D126 R15: Only Large+ aircraft-capable hulls (Carrier, Battlecarrier) may register/operate aircraft.
+    if (!Layout->bAllowAircraftOperations) return false;
+    if (Layout->HullSizeClass == EOVHullSizeClass::Small || Layout->HullSizeClass == EOVHullSizeClass::Medium) return false;
     if (Carriers.ContainsByPredicate([Ship](const FOVCarrierState& S) { return S.Carrier == Ship; })) return false;
     TArray<FString> LayoutErrors;
-    if (!Ship->Systems->Layout->ValidateLayout(LayoutErrors)) return false;
+    if (!Layout->ValidateLayout(LayoutErrors)) return false;
     bool bAny = false;
     for (const auto& Slot : Ship->Systems->Layout->Slots)
     {
@@ -207,7 +211,7 @@ EOVHangarAvailability UOVCarrierSubsystem::GetHangarAvailability(int32 HangarId)
 bool UOVCarrierSubsystem::HasControl(AOVShip* Ship) const
 {
     const auto* Combat = GetWorld()->GetSubsystem<UOVCombatSubsystem>();
-    return LivingShip(Ship) && !Combat->IsDeparted(Ship)
+    return LivingShip(Ship) && Ship->Systems->Layout->bAllowAircraftOperations && !Combat->IsDeparted(Ship)
         && Ship->Systems->GetEfficiency(EOVFacilityType::FighterControl) > 0;
 }
 
@@ -278,6 +282,14 @@ bool UOVCarrierSubsystem::SetHangarMode(int32 HangarId, EOVHangarMode Mode)
 {
     auto* H = Hangars.FindByPredicate([HangarId](const FOVHangarState& V) { return V.HangarId == HangarId; });
     if (!H) return false;
+    if (Mode == EOVHangarMode::Aircraft)
+    {
+        const AOVShip* OwnerShip = H->Carrier.Get();
+        if (!IsValid(OwnerShip) || !OwnerShip->Systems || !OwnerShip->Systems->Layout || !OwnerShip->Systems->Layout->bAllowAircraftOperations)
+        {
+            return false;
+        }
+    }
     if (H->Mode == Mode) return true;
     if (H->StoredSmallShip.IsValid() || Aircraft.ContainsByPredicate([HangarId](const FOVAircraftRecord& C)
         { return C.HangarId == HangarId && C.State != EOVAircraftState::Wrecked; })) return false;

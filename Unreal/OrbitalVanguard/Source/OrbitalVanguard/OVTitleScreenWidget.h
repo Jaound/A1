@@ -9,6 +9,7 @@
 class UBorder;
 class UImage;
 class UOVTitleBackdropStage;
+class USlider;
 class UTextBlock;
 class UVerticalBox;
 class UTexture2D;
@@ -19,7 +20,8 @@ enum class EOVTitleMenuPanel : uint8
 {
     Title,
     ScenarioSelect,
-    Settings
+    Settings,
+    Tutorial
 };
 
 UCLASS()
@@ -53,10 +55,12 @@ public:
  * Programmatic Start Screen & Main Menu UMG widget for Orbital Vanguard.
  * Features:
  *  - Viewport-direct 3D ship formations via UOVTitleBackdropStage (or Way B high-res backdrop)
- *  - Slate RoundedBox + 1px outline styling (Condition 2)
- *  - Left-to-right gradient scrim + UBackgroundBlur (Condition 2)
- *  - Korean typography hierarchy with imported Sans-serif font (Condition 3)
- *  - Screen 01 (Title) and Screen 02 (6 Playable Scenarios) matching reference designs
+ *  - Slate RoundedBox + 1px outline styling
+ *  - Left-to-right gradient scrim + UBackgroundBlur
+ *  - Korean typography hierarchy with imported Sans-serif font
+ *  - Screen 01 (Title), Screen 02 (Playable Scenarios incl. E1 Black Hole Trial),
+ *    Screen 03 (Expanded Settings: Window Mode, Resolution, Graphics Preset, Master/BGM/SFX Volume, UI Scale, Backdrop Way A/B),
+ *    Screen 04 (5-Step Beginner Tutorial / Game Guide accessible from Title & In-Game HUD)
  */
 UCLASS(Blueprintable, BlueprintType)
 class ORBITALVANGUARD_API UOVTitleScreenWidget : public UUserWidget
@@ -69,6 +73,10 @@ public:
 
     UFUNCTION(BlueprintCallable, Category = "UI|TitleScreen")
     void ActivateTitleScreen();
+
+    /** Opens the 5-step beginner guide modal as an overlay from in-game battle without replacing the combat camera. */
+    UFUNCTION(BlueprintCallable, Category = "UI|TitleScreen")
+    void ActivateInGameTutorial();
 
     UFUNCTION(BlueprintCallable, Category = "UI|TitleScreen")
     void DeactivateTitleScreen();
@@ -86,14 +94,23 @@ public:
     FName GetSelectedScenarioId() const { return SelectedScenarioId; }
 
     UFUNCTION(BlueprintPure, Category = "UI|TitleScreen")
+    EOVTitleMenuPanel GetCurrentPanel() const { return CurrentPanel; }
+
+    UFUNCTION(BlueprintPure, Category = "UI|TitleScreen")
     UOVTitleBackdropStage* GetBackdropStage() const { return BackdropStage; }
 
 private:
     void BuildProgrammaticTree();
+    void BuildSettingsModal(class UOverlay* RootOverlay);
+    void BuildTutorialModal(class UOverlay* RootOverlay);
+    void SyncSettingsWidgetsFromSystem();
     void RefreshBackdropBrush();
     void RefreshScenarioBriefing();
     void RefreshModeLabel();
+    void RefreshSettingsLabels();
+    void RefreshTutorialReturnLabel();
     void EnsureGradientTexture();
+    void PlayClickAudio();
 
     UFUNCTION()
     void HandleOpenScenarios();
@@ -102,16 +119,46 @@ private:
     void HandleOpenSandbox();
 
     UFUNCTION()
+    void HandleOpenTutorial();
+
+    UFUNCTION()
     void HandleOpenSettings();
 
     UFUNCTION()
     void HandleBackToTitle();
 
     UFUNCTION()
+    void HandleCloseTutorial();
+
+    UFUNCTION()
     void HandleLaunchSelectedScenario();
 
     UFUNCTION()
     void HandleToggleBackdropMode();
+
+    UFUNCTION()
+    void HandleCycleWindowMode();
+
+    UFUNCTION()
+    void HandleCycleResolution();
+
+    UFUNCTION()
+    void HandleCycleGraphicsQuality();
+
+    UFUNCTION()
+    void HandleMasterVolumeChanged(float Value);
+
+    UFUNCTION()
+    void HandleBGMVolumeChanged(float Value);
+
+    UFUNCTION()
+    void HandleSFXVolumeChanged(float Value);
+
+    UFUNCTION()
+    void HandleUIScaleChanged(float Value);
+
+    UFUNCTION()
+    void HandleApplyAndSaveSettings();
 
     UFUNCTION()
     void HandleQuitGame();
@@ -133,6 +180,9 @@ private:
 
     UPROPERTY()
     TObjectPtr<UBorder> SettingsPanelContainer;
+
+    UPROPERTY()
+    TObjectPtr<UBorder> TutorialPanelContainer;
 
     UPROPERTY()
     TObjectPtr<UVerticalBox> ScenarioListBox;
@@ -172,7 +222,51 @@ private:
     TObjectPtr<UTextBlock> BackdropStatusText;
 
     UPROPERTY()
+    TObjectPtr<UTextBlock> FooterUIScaleText;
+
+    // Settings Controls
+    UPROPERTY()
     TObjectPtr<UTextBlock> SettingsBackdropModeText;
+
+    UPROPERTY()
+    TObjectPtr<UTextBlock> SettingsWindowModeValueText;
+
+    UPROPERTY()
+    TObjectPtr<UTextBlock> SettingsResolutionValueText;
+
+    UPROPERTY()
+    TObjectPtr<UTextBlock> SettingsQualityValueText;
+
+    UPROPERTY()
+    TObjectPtr<UTextBlock> SettingsMasterVolText;
+
+    UPROPERTY()
+    TObjectPtr<UTextBlock> SettingsBGMVolText;
+
+    UPROPERTY()
+    TObjectPtr<UTextBlock> SettingsSFXVolText;
+
+    UPROPERTY()
+    TObjectPtr<UTextBlock> SettingsUIScaleText;
+
+    UPROPERTY()
+    TObjectPtr<UTextBlock> SettingsFeedbackText;
+
+    UPROPERTY()
+    TObjectPtr<USlider> MasterVolumeSlider;
+
+    UPROPERTY()
+    TObjectPtr<USlider> BGMVolumeSlider;
+
+    UPROPERTY()
+    TObjectPtr<USlider> SFXVolumeSlider;
+
+    UPROPERTY()
+    TObjectPtr<USlider> UIScaleSlider;
+
+    // Tutorial Return Label
+    UPROPERTY()
+    TObjectPtr<UTextBlock> TutorialCloseButtonText;
 
     UPROPERTY()
     TObjectPtr<UButton> LaunchScenarioButton;
@@ -181,4 +275,15 @@ private:
     EOVTitleMenuPanel CurrentPanel = EOVTitleMenuPanel::Title;
     FName SelectedScenarioId = TEXT("Fleet200");
     bool bBackdropActive = false;
+    bool bOpenedFromInGame = false;
+    bool bSuppressSliderCallbacks = false;
+
+    // Pending settings state
+    int32 WindowModeIndex = 1;       // 0=Fullscreen, 1=WindowedFullscreen, 2=Windowed
+    int32 ResolutionIndex = 2;       // 0=1280x720, 1=1600x900, 2=1920x1080, 3=2560x1440
+    int32 GraphicsQualityIndex = 2;  // 0=Low, 1=Medium, 2=High, 3=Epic
+    float PendingMasterVolume = 0.85f;
+    float PendingBGMVolume = 0.70f;
+    float PendingSFXVolume = 0.85f;
+    float PendingUIScale = 1.00f;
 };
