@@ -1,4 +1,5 @@
 #include "OVCombatSubsystem.h"
+#include "OVCombatVFXSubsystem.h"
 #include "OVBattleNotices.h"
 #include "OVCarrierSubsystem.h"
 #include "OVTransportSubsystem.h"
@@ -465,7 +466,18 @@ void UOVCombatSubsystem::Simulate(float GameDelta)
         if (Accumulator < 0) Accumulator = 0;
     }
     // Display synchronizes once per outer frame, not for every 120 Hz combat substep.
-    for (const auto& State : Ships) if (IsValid(State.Ship)) State.Ship->RefreshWeaponVisuals();
+    for (const auto& State : Ships)
+    {
+        if (IsValid(State.Ship))
+        {
+            State.Ship->RefreshWeaponVisuals();
+            State.Ship->RefreshShipVisualVFX(GameDelta);
+        }
+    }
+    if (UOVCombatVFXSubsystem* VFX = GetWorld()->GetSubsystem<UOVCombatVFXSubsystem>())
+    {
+        VFX->SynchronizeVFX(GameDelta);
+    }
 }
 
 void UOVCombatSubsystem::Step(float Delta)
@@ -845,6 +857,14 @@ bool UOVCombatSubsystem::ResolveImpact(FOVAttackState& Attack, AOVShip* HitShip,
     }
     Attack.ArmorId = Systems->LastArmorSection; Attack.SlotId = Systems->LastDamageSlot;
     Attack.HullDamage = Systems->LastHullDamage; Attack.Explosions = Systems->LastExplosionCount;
+    if (bShieldWasActive)
+    {
+        HitShip->TriggerShieldImpact(Point, Normal, Attack.Damage);
+    }
+    if (Systems->bWrecked)
+    {
+        HitShip->TriggerWreckDissolve();
+    }
     ++HitCount;
     return true;
 }

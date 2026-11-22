@@ -9,6 +9,7 @@ class UStaticMeshComponent;
 class UBoxComponent;
 class UOVShipSystemsComponent;
 class UMaterialInterface;
+class UMaterialInstanceDynamic;
 
 /** Placeholder vessel. The controller supplies the single simulation clock. */
 UCLASS()
@@ -82,6 +83,37 @@ public:
     UFUNCTION(BlueprintPure, Category="Presentation") TArray<FOVWeaponVisualState> GetWeaponVisualStates() const;
     UFUNCTION(BlueprintPure, Category="Presentation") FVector GetWeaponMuzzleWorld(FName MountId) const;
     void ClearWeaponVisuals();
+
+    /** Presentation: Thruster flames, wing trails, shield ripple impact, wreck dissolve. */
+    UFUNCTION(BlueprintCallable, Category="Presentation") void RefreshShipVisualVFX(float DeltaSeconds = 0.016f);
+    UFUNCTION(BlueprintCallable, Category="Presentation") void TriggerShieldImpact(FVector HitLocation, FVector HitNormal, float Damage);
+    UFUNCTION(BlueprintCallable, Category="Presentation") void TriggerWreckDissolve();
+    UFUNCTION(BlueprintCallable, Category="Presentation") void ResetShipVisualVFX();
+    bool IsDissolving() const { return bDissolving; }
+
+private:
+    void EnsureShipVFXInitialized();
+    bool IsEnemyShip() const;
+    void UpdateShieldImpactVisuals(float Pulse);
+    FVector GetVisualHullHalfExtent() const;
+    FVector GetVisualHullCenterOffset() const;
+    UPROPERTY() TArray<TObjectPtr<class UNiagaraComponent>> ThrusterVFX;
+    UPROPERTY() TArray<TObjectPtr<class UNiagaraComponent>> WingTrailVFX;
+    UPROPERTY() TObjectPtr<class UNiagaraComponent> ShieldVFX;
+    UPROPERTY(Transient) TArray<TObjectPtr<UStaticMeshComponent>> ThrusterCoreMeshes;
+    UPROPERTY(Transient) TArray<TObjectPtr<UStaticMeshComponent>> ThrusterJetMeshes;
+    UPROPERTY(Transient) TArray<TObjectPtr<UMaterialInstanceDynamic>> ThrusterCoreDyns;
+    UPROPERTY(Transient) TArray<TObjectPtr<UMaterialInstanceDynamic>> ThrusterJetDyns;
+    UPROPERTY(Transient) TObjectPtr<UStaticMeshComponent> ShieldImpactWFMesh;
+    UPROPERTY(Transient) TObjectPtr<UStaticMeshComponent> ShieldImpactGlowMesh;
+    UPROPERTY(Transient) TObjectPtr<UMaterialInstanceDynamic> ShieldImpactWFDyn;
+    UPROPERTY(Transient) TObjectPtr<UMaterialInstanceDynamic> ShieldImpactGlowDyn;
+    bool bVFXInitialized = false;
+    bool bDissolving = false;
+    float DissolveProgress = 0.0f;
+    float ShieldImpactRemaining = 0.0f;
+    FVector LastShieldHitLocation = FVector::ZeroVector;
+    float LastShieldHitStrength = 1.0f;
 
 private:
     // Detect legacy direct bManual writes while preserving the four D101 combinations.

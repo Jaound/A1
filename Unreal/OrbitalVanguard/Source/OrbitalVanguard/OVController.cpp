@@ -1079,6 +1079,10 @@ void AOVController::ApplyCameraInput(FVector2D OrbitDelta, FVector LocalPan, flo
 
 void AOVController::UpdateCamera()
 {
+ if(const auto* OVHUD=Cast<AOVHUD>(GetHUD()))
+ {
+  if(OVHUD->IsTitleScreenOpen()) return;
+ }
  if(!RangeCamera) return;
  auto* Camera=RangeCamera->GetCameraComponent();
  Camera->bOverrideAspectRatioAxisConstraint=bPlayGame3;

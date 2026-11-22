@@ -1,6 +1,9 @@
 #include "OVHUD.h"
+#include "UnrealClient.h"
+#include "Camera/CameraActor.h"
 #include "OVDevelopmentWidget.h"
 #include "OVHeroWidget.h"
+#include "OVTitleScreenWidget.h"
 #include "OVShipPreview.h"
 #include "OVCarrierSubsystem.h"
 #include "Engine/TextureRenderTarget2D.h"
@@ -174,6 +177,7 @@ void AOVHUD::NotifyHitBoxClick(FName N)
  if(N==TEXT("SceneMenuClose")){bSceneMenuOpen=false;return;}
  if(HandleInteriorAction(N)) return;
  if(N==TEXT("HeroPanel")) { SetHeroPanelOpen(!bHeroPanelOpen);return; }
+ if(N==TEXT("TitleScreen")) { OpenTitleScreen(); return; }
  if(N==TEXT("BattleFeedToggle")) { bBattleFeedOpen=!bBattleFeedOpen;BattleFeedPage=0;BattleFeedFilter=0;return; }
  if(N==TEXT("BattleWarningLevel")) {if(bBattleFeedOpen)WarningLevel=(WarningLevel+2)%3;return;}
  if(N==TEXT("BattleFeedFilter")) {if(bBattleFeedOpen){BattleFeedFilter=(BattleFeedFilter+1)%6;BattleFeedPage=0;}return;}
@@ -585,6 +589,7 @@ void AOVHUD::DrawHUD()
     CSV_SCOPED_TIMING_STAT_EXCLUSIVE(OV_HUD);
     TRACE_CPUPROFILER_EVENT_SCOPE(OV_HUD);
  SyncAddedUI();
+ if(bTitleScreenOpen){ Super::DrawHUD(); return; }
  ActionCenters.Reset();
  Super::DrawHUD();auto* PC=Cast<AOVController>(PlayerOwner);if(!PC||!Canvas||PC->Ships.Num()<3)return;
  if(WeaponPreview&&(!HasOrbitPreview()||!IsValid(PC->Selected)||PC->Selected->IsHidden()||PC->Selected->Systems->bWrecked||(PC->Combat&&PC->Combat->IsDeparted(PC->Selected))))WeaponPreview->Release();
@@ -683,13 +688,69 @@ void AOVHUD::BeginPlay()
  HeroWidget=CreateWidget<UOVHeroWidget>(PlayerOwner,UOVHeroWidget::StaticClass());
  if(DevelopmentWidget){DevelopmentWidget->AddToViewport(20);DevelopmentWidget->SetVisibility(ESlateVisibility::Collapsed);}
  if(HeroWidget)HeroWidget->AddToViewport(10);
+ TitleScreenWidget=CreateWidget<UOVTitleScreenWidget>(PlayerOwner,UOVTitleScreenWidget::StaticClass());
+ if(TitleScreenWidget){TitleScreenWidget->AddToViewport(50);TitleScreenWidget->SetVisibility(ESlateVisibility::Collapsed);}
+ const TCHAR* Cmd=FCommandLine::Get();
+ int32 IgnoredInt=-1; FString IgnoredStr;
+ const bool bForceTitle=FParse::Param(Cmd,TEXT("OVTitleScreen"));
+ const bool bSkipTitle=FParse::Param(Cmd,TEXT("OVSkipTitle"))
+  || FParse::Value(Cmd,TEXT("OVPlayScene="),IgnoredStr)
+  || FParse::Value(Cmd,TEXT("OV2CScene="),IgnoredInt)
+  || FParse::Value(Cmd,TEXT("OVMission="),IgnoredInt);
+ const bool bIsPIE=GetWorld()&&GetWorld()->WorldType==EWorldType::PIE;
+ if(bForceTitle || (!bIsPIE && !bSkipTitle))
+ {
+  OpenTitleScreen();
+  FString InitialPanel;
+  if(FParse::Value(Cmd,TEXT("OVTitlePanel="),InitialPanel))
+  {
+   if(InitialPanel.Equals(TEXT("ScenarioSelect"),ESearchCase::IgnoreCase)||InitialPanel.Equals(TEXT("MissionSelect"),ESearchCase::IgnoreCase))
+   {
+    if(TitleScreenWidget) { TitleScreenWidget->ShowPanel(EOVTitleMenuPanel::ScenarioSelect); }
+   }
+   else if(InitialPanel.Equals(TEXT("Settings"),ESearchCase::IgnoreCase))
+   {
+    if(TitleScreenWidget) { TitleScreenWidget->ShowPanel(EOVTitleMenuPanel::Settings); }
+   }
+  }
+ }
  SyncAddedUI();
+
+ FString CapturePath;
+ if(FParse::Value(Cmd,TEXT("OVCaptureTitleScreen="),CapturePath))
+ {
+  if (GEngine)
+  {
+   GEngine->bEnableOnScreenDebugMessages = false;
+  }
+  if (APlayerController* PC = GetOwningPlayerController())
+  {
+   PC->ConsoleCommand(TEXT("DisableAllScreenMessages"));
+  }
+
+  FTimerHandle CaptureTimer;
+  GetWorldTimerManager().SetTimer(CaptureTimer,[this,CapturePath]()
+  {
+   FScreenshotRequest::RequestScreenshot(CapturePath,true,false);
+   FScreenshotRequest::OnScreenshotRequestProcessed().AddLambda([]()
+   {
+    FGenericPlatformMisc::RequestExit(false);
+   });
+  },5.0f,false);
+
+  FTimerHandle SafetyExitTimer;
+  GetWorldTimerManager().SetTimer(SafetyExitTimer,[]()
+  {
+   FGenericPlatformMisc::RequestExit(false);
+  },8.0f,false);
+ }
 }
 void AOVHUD::EndPlay(const EEndPlayReason::Type Reason)
 {
  if(ShipPreview)ShipPreview->Release();
  if(WeaponPreview)WeaponPreview->Release();
  for(auto Preview:PinnedPreviews)if(Preview)Preview->Release();
+ if(TitleScreenWidget)TitleScreenWidget->ReleaseBackdrop();
  Super::EndPlay(Reason);
 }
 int32 AOVHUD::GetPreviewMeshCount() const
@@ -929,6 +990,7 @@ void AOVHUD::ResetDevelopmentWindow(){DevelopmentPosition=FVector2D(-1,-1);Devel
 
 void AOVHUD::ResetPlaySessionUI()
 {
+ CloseTitleScreen();
  CancelPointerDrag();
  SetDetailsOpen(false);
  SetHeroPanelOpen(false);
@@ -968,10 +1030,37 @@ void AOVHUD::SyncAddedUI()
  const FVector2D HeroSize(FMath::Min(400.f,W*.34f),FMath::Max(260.f,H-240.f));
  const FVector2D HeroPos(W-HeroSize.X-12.f,76.f);HeroRect=FBox2D(HeroPos,HeroPos+HeroSize);
  if(DevelopmentWidget){DevelopmentWidget->SetFrameState(bDevelopmentMinimized,bDevelopmentMaximized);DevelopmentWidget->SetPositionInViewport(DevPos/Dpi,false);DevelopmentWidget->SetDesiredSizeInViewport(DevSize/Dpi);DevelopmentWidget->SetVisibility(PC->bDeveloperMode?ESlateVisibility::Visible:ESlateVisibility::Collapsed);}
+ if(TitleScreenWidget){
+  TitleScreenWidget->SetPositionInViewport(FVector2D::ZeroVector,false);
+  TitleScreenWidget->SetDesiredSizeInViewport(FVector2D(W/Dpi,H/Dpi));
+  TitleScreenWidget->SetVisibility(bTitleScreenOpen?ESlateVisibility::Visible:ESlateVisibility::Collapsed);
+ }
+ if(bTitleScreenOpen){
+  if(DevelopmentWidget)DevelopmentWidget->SetVisibility(ESlateVisibility::Collapsed);
+  if(HeroWidget)HeroWidget->SetVisibility(ESlateVisibility::Collapsed);
+  return;
+ }
  if(HeroWidget){HeroWidget->SetPositionInViewport(HeroPos/Dpi,false);HeroWidget->SetDesiredSizeInViewport(HeroSize/Dpi);HeroWidget->SetVisibility(PC->bDeveloperMode||!bHeroPanelOpen?ESlateVisibility::Collapsed:ESlateVisibility::Visible);}
+}
+void AOVHUD::OpenTitleScreen()
+{
+ bTitleScreenOpen=true;
+ bSceneMenuOpen=false;
+ if(auto* PC=Cast<AOVController>(PlayerOwner)) { PC->bSimulationPaused=true; }
+ if(TitleScreenWidget) { TitleScreenWidget->ActivateTitleScreen(); }
+ SyncAddedUI();
+}
+void AOVHUD::CloseTitleScreen()
+{
+ if(!bTitleScreenOpen) return;
+ bTitleScreenOpen=false;
+ if(TitleScreenWidget) { TitleScreenWidget->DeactivateTitleScreen(); }
+ if(auto* PC=Cast<AOVController>(PlayerOwner)) { if(PC->RangeCamera) PC->SetViewTarget(PC->RangeCamera); }
+ SyncAddedUI();
 }
 bool AOVHUD::IsOverAddedUI(float X,float Y) const
 {
+ if(bTitleScreenOpen) return true;
  const auto* PC=Cast<AOVController>(PlayerOwner);if(!PC)return false;const FVector2D P(X,Y);
  return PC->bDeveloperMode?DevelopmentWidget&&DevelopmentRect.IsInsideOrOn(P):bHeroPanelOpen&&HeroWidget&&HeroRect.IsInsideOrOn(P);
 }

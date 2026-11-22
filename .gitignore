@@ -10,3 +10,11 @@ Unreal/**/__pycache__/
 
 # Local build identity is generated for each build.
 Unreal/OrbitalVanguard/Config/BuildIdentity.generated.json
+
+# Third-party Fab / Marketplace asset packs (installed locally, excluded from Git/LFS)
+Unreal/OrbitalVanguard/Content/AtmosphereV2/
+Unreal/OrbitalVanguard/Content/BlackHole/
+Unreal/OrbitalVanguard/Content/MixedVFX/
+Unreal/OrbitalVanguard/Content/Planet_Project/
+Unreal/OrbitalVanguard/Content/SpaceshipVFXStarter/
+Unreal/OrbitalVanguard/Content/StarfieldFree/

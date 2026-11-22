@@ -5,6 +5,7 @@
 class AOVShip;
 class UOVDevelopmentWidget;
 class UOVHeroWidget;
+class UOVTitleScreenWidget;
 class UOVShipPreview;
 class UOVBattleNotices;
 UCLASS()
@@ -19,6 +20,10 @@ public:
  bool IsAddedUIEditing() const;
  UFUNCTION(BlueprintPure, Category="UI") UOVDevelopmentWidget* GetDevelopmentPanel() const { return DevelopmentWidget; }
  UFUNCTION(BlueprintPure, Category="UI") UOVHeroWidget* GetHeroPanel() const { return HeroWidget; }
+ UFUNCTION(BlueprintPure, Category="UI") UOVTitleScreenWidget* GetTitleScreen() const { return TitleScreenWidget; }
+ UFUNCTION(BlueprintPure, Category="UI") bool IsTitleScreenOpen() const { return bTitleScreenOpen; }
+ UFUNCTION(BlueprintCallable, Category="UI") void OpenTitleScreen();
+ UFUNCTION(BlueprintCallable, Category="UI") void CloseTitleScreen();
  UFUNCTION(BlueprintPure, Category="UI") int32 GetPreviewMeshCount() const;
  UFUNCTION(BlueprintPure, Category="UI") int32 GetWeaponPreviewVisibleMeshCount() const;
  UFUNCTION(BlueprintPure, Category="UI") int32 GetWeaponPreviewFocus() const;
@@ -98,6 +103,8 @@ public:
 private:
  UPROPERTY() TObjectPtr<UOVDevelopmentWidget> DevelopmentWidget;
  UPROPERTY() TObjectPtr<UOVHeroWidget> HeroWidget;
+ UPROPERTY() TObjectPtr<UOVTitleScreenWidget> TitleScreenWidget;
+ bool bTitleScreenOpen=false;
  UPROPERTY() TObjectPtr<UOVShipPreview> ShipPreview;
  UPROPERTY() TObjectPtr<UOVShipPreview> WeaponPreview;
  UPROPERTY() TArray<TObjectPtr<UOVShipPreview>> PinnedPreviews;

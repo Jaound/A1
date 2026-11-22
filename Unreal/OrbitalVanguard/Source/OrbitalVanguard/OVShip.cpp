@@ -1,6 +1,7 @@
 #include "OVShip.h"
 #include "OVInteriorSubsystem.h"
 #include "OVCombatSubsystem.h"
+#include "OVCombatVFXSubsystem.h"
 #include "OVPointDefenseSubsystem.h"
 #include "Engine/World.h"
 #include "Engine/StaticMesh.h"
@@ -11,6 +12,8 @@
 #include "Materials/MaterialInstanceDynamic.h"
 #include "UObject/ConstructorHelpers.h"
 #include "HAL/IConsoleManager.h"
+#include "NiagaraComponent.h"
+#include "NiagaraSystem.h"
 
 // PC14 uses the full source mesh and source-resolution maps; mount surfaces
 // still need art alignment. Combat and selection geometry remain unchanged.
@@ -148,6 +151,7 @@ AOVShip::AOVShip()
 
 void AOVShip::SetCalibrationHull(const FVector* LocalHalfExtent)
 {
+    ResetShipVisualVFX();
     for(const auto& Support:PresentationMountSupports)if(IsValid(Support.Get()))Support->DestroyComponent();
     PresentationMountSupports.Reset();
     if(bSavedHullMaterial){Hull->SetMaterial(0,SavedHullMaterial);SavedHullMaterial=nullptr;bSavedHullMaterial=false;}
@@ -181,6 +185,7 @@ void AOVShip::SetCalibrationHull(const FVector* LocalHalfExtent)
 
 void AOVShip::ApplyPresentationHull(FName DefinitionId)
 {
+    ResetShipVisualVFX();
     if(CVarOVImportedHull.GetValueOnGameThread()!=1 || !Systems || !Systems->Layout)return;
     const bool bCorvette=DefinitionId==TEXT("corvette");
     const TCHAR* MeshPath=bCorvette?TEXT("/Game/Presentation/Ships/SM_PC14_FullMesh.SM_PC14_FullMesh"):
@@ -276,6 +281,7 @@ void AOVShip::ApplyPresentationHull(FName DefinitionId)
 void AOVShip::Configure(const FString& Name, bool Friendly, float Speed, float RotationRate,
     const FVector& Scale, const FLinearColor& Color)
 {
+    ResetShipVisualVFX();
     if(bSavedHullMaterial){Hull->SetMaterial(0,SavedHullMaterial);SavedHullMaterial=nullptr;bSavedHullMaterial=false;}
     ShipName = Name;
     bFriendly = Friendly;
@@ -497,12 +503,548 @@ void AOVShip::DebugResetMotion()
 {
     StopMovement(); Velocity=FVector::ZeroVector; bManualAttitude=false;
     ManualAttitude=GetActorRotation(); bFTLCharging=false; AttackTarget=nullptr; SetAutomation(false,false);
+    ResetShipVisualVFX();
 }
 
 void AOVShip::DebugSetFTLCharging(bool bCharging)
 {
     bFTLCharging=bCharging;
     if(bCharging) { StopMovement(); Velocity=FVector::ZeroVector; }
+}
+
+bool AOVShip::IsEnemyShip() const
+{
+    return !bFriendly || (Systems && Systems->FactionId != 0);
+}
+
+void AOVShip::UpdateShieldImpactVisuals(float Pulse)
+{
+    const bool bShow = Pulse > 0.0f && !bDissolving && (!Systems || !Systems->bWrecked);
+    if (!bShow)
+    {
+        if (IsValid(ShieldImpactWFMesh)) ShieldImpactWFMesh->SetVisibility(false);
+        if (IsValid(ShieldImpactGlowMesh)) ShieldImpactGlowMesh->SetVisibility(false);
+        return;
+    }
+
+    const bool bEnemy = IsEnemyShip();
+    const FVector LayoutExt = (Systems && Systems->Layout) ? Systems->Layout->LocalHalfExtent : FVector(175.f, 75.f, 30.f);
+    const float ClampedPulse = FMath::Clamp(Pulse, 0.0f, 1.0f);
+    const float RippleExpand = 1.0f + 0.022f * (1.0f - ClampedPulse);
+    const FVector BaseScale = LayoutExt * FVector(1.228f, 1.328f, 1.428f) / 50.0f;
+
+    // Deep saturated faction hues so UE5 ACES Filmic tonemapper preserves rich crimson red (enemy)
+    // and crisp electric cyan-blue (friendly) without desaturating to peach/white under bloom.
+    const FLinearColor WFColor = bEnemy
+        ? FLinearColor(1.0f, 0.025f, 0.015f, 1.0f)
+        : FLinearColor(0.06f, 0.60f, 1.0f, 1.0f);
+    const FLinearColor GlowColor = bEnemy
+        ? FLinearColor(1.0f, 0.02f, 0.01f, 1.0f)
+        : FLinearColor(0.04f, 0.52f, 1.0f, 1.0f);
+
+    const FLinearColor HitLocParam(LastShieldHitLocation.X, LastShieldHitLocation.Y, LastShieldHitLocation.Z, 1.0f);
+    const float ImpactRad = FMath::Max(160.0f, float(LayoutExt.X) * FMath::Max(0.5f, float(GetActorScale3D().X)) * 0.95f);
+
+    if (IsValid(ShieldImpactWFMesh))
+    {
+        ShieldImpactWFMesh->SetRelativeLocation(FVector::ZeroVector);
+        ShieldImpactWFMesh->SetRelativeScale3D(BaseScale * RippleExpand);
+        ShieldImpactWFMesh->SetVisibility(true);
+        if (IsValid(ShieldImpactWFDyn))
+        {
+            ShieldImpactWFDyn->SetVectorParameterValue(TEXT("ShieldColor"), WFColor);
+            ShieldImpactWFDyn->SetScalarParameterValue(TEXT("Intensity"), 0.62f * LastShieldHitStrength * ClampedPulse);
+            ShieldImpactWFDyn->SetVectorParameterValue(TEXT("HitLocation"), HitLocParam);
+            ShieldImpactWFDyn->SetScalarParameterValue(TEXT("ImpactRadius"), ImpactRad);
+            ShieldImpactWFDyn->SetScalarParameterValue(TEXT("HotspotStrength"), 1.8f);
+        }
+    }
+
+    if (IsValid(ShieldImpactGlowMesh))
+    {
+        ShieldImpactGlowMesh->SetRelativeLocation(FVector::ZeroVector);
+        ShieldImpactGlowMesh->SetRelativeScale3D(BaseScale * (RippleExpand * 1.004f));
+        ShieldImpactGlowMesh->SetVisibility(true);
+        if (IsValid(ShieldImpactGlowDyn))
+        {
+            ShieldImpactGlowDyn->SetVectorParameterValue(TEXT("ShieldColor"), GlowColor);
+            ShieldImpactGlowDyn->SetScalarParameterValue(TEXT("Intensity"), 0.34f * LastShieldHitStrength * ClampedPulse);
+            ShieldImpactGlowDyn->SetVectorParameterValue(TEXT("HitLocation"), HitLocParam);
+            ShieldImpactGlowDyn->SetScalarParameterValue(TEXT("ImpactRadius"), ImpactRad);
+            ShieldImpactGlowDyn->SetScalarParameterValue(TEXT("HotspotStrength"), 1.5f);
+        }
+    }
+}
+
+void AOVShip::ResetShipVisualVFX()
+{
+    bDissolving = false;
+    DissolveProgress = 0.0f;
+    ShieldImpactRemaining = 0.0f;
+    LastShieldHitLocation = FVector::ZeroVector;
+    LastShieldHitStrength = 1.0f;
+    if (IsValid(ShieldVFX) && ShieldVFX->IsActive())
+    {
+        ShieldVFX->Deactivate();
+    }
+    if (IsValid(ShieldImpactWFMesh))
+    {
+        ShieldImpactWFMesh->SetVisibility(false);
+    }
+    if (IsValid(ShieldImpactGlowMesh))
+    {
+        ShieldImpactGlowMesh->SetVisibility(false);
+    }
+    for (UNiagaraComponent* Comp : WingTrailVFX)
+    {
+        if (IsValid(Comp) && Comp->IsActive())
+        {
+            Comp->Deactivate();
+        }
+    }
+}
+
+FVector AOVShip::GetVisualHullHalfExtent() const
+{
+    if (Hull && Hull->GetStaticMesh() && !Hull->GetStaticMesh()->GetPathName().StartsWith(TEXT("/Engine/BasicShapes/")))
+    {
+        const FVector MeshExtent = Hull->GetStaticMesh()->GetBounds().BoxExtent * Hull->GetRelativeScale3D();
+        if (MeshExtent.X > 5.0f && MeshExtent.Y > 2.0f)
+        {
+            return FVector(
+                FMath::Max(MeshExtent.X, 40.0f),
+                FMath::Max(MeshExtent.Y, 18.0f),
+                FMath::Max(MeshExtent.Z, 14.0f));
+        }
+    }
+    return (Systems && Systems->Layout) ? Systems->Layout->LocalHalfExtent : FVector(160.f, 50.f, 30.f);
+}
+
+FVector AOVShip::GetVisualHullCenterOffset() const
+{
+    if (Hull && Hull->GetStaticMesh() && !Hull->GetStaticMesh()->GetPathName().StartsWith(TEXT("/Engine/BasicShapes/")))
+    {
+        const FVector MeshOrigin = Hull->GetStaticMesh()->GetBounds().Origin * Hull->GetRelativeScale3D();
+        return Hull->GetRelativeLocation() + Hull->GetRelativeRotation().RotateVector(MeshOrigin);
+    }
+    return FVector::ZeroVector;
+}
+
+void AOVShip::EnsureShipVFXInitialized()
+{
+    if (bVFXInitialized || !GetWorld()) return;
+    bVFXInitialized = true;
+
+    static TWeakObjectPtr<UNiagaraSystem> CachedThrusterSys;
+    static TWeakObjectPtr<UNiagaraSystem> CachedWingTrailSys;
+    static TWeakObjectPtr<UNiagaraSystem> CachedShieldSys;
+    if (!CachedThrusterSys.IsValid())
+        CachedThrusterSys = LoadObject<UNiagaraSystem>(nullptr, TEXT("/Game/SpaceshipVFXStarter/VFX/ThrusterTrail/NS_ThrusterTrailAdditive_Seamless.NS_ThrusterTrailAdditive_Seamless"), nullptr, LOAD_NoWarn);
+    if (!CachedWingTrailSys.IsValid())
+        CachedWingTrailSys = LoadObject<UNiagaraSystem>(nullptr, TEXT("/Game/SpaceshipVFXStarter/VFX/WingTrail/NS_WingTrail.NS_WingTrail"), nullptr, LOAD_NoWarn);
+    if (!CachedShieldSys.IsValid())
+        CachedShieldSys = LoadObject<UNiagaraSystem>(nullptr, TEXT("/Game/SpaceshipVFXStarter/VFX/Shield/NS_ShieldStandard.NS_ShieldStandard"), nullptr, LOAD_NoWarn);
+
+    const FVector E = GetVisualHullHalfExtent();
+    const FVector C = GetVisualHullCenterOffset();
+
+    // 1. Dual Directional Main Engine Thruster Plumes (compact ignition core + tapered blue-white ion jet aft of stern)
+    static TWeakObjectPtr<UStaticMesh> CachedThrusterSphereMesh;
+    static TWeakObjectPtr<UStaticMesh> CachedThrusterConeMesh;
+    static TWeakObjectPtr<UMaterialInterface> CachedThrusterCoreMat;
+    static TWeakObjectPtr<UMaterialInterface> CachedThrusterJetMat;
+    if (!CachedThrusterSphereMesh.IsValid())
+        CachedThrusterSphereMesh = LoadObject<UStaticMesh>(nullptr, TEXT("/Engine/BasicShapes/Sphere.Sphere"), nullptr, LOAD_NoWarn);
+    if (!CachedThrusterConeMesh.IsValid())
+        CachedThrusterConeMesh = LoadObject<UStaticMesh>(nullptr, TEXT("/Engine/BasicShapes/Cone.Cone"), nullptr, LOAD_NoWarn);
+    if (!CachedThrusterCoreMat.IsValid())
+        CachedThrusterCoreMat = LoadObject<UMaterialInterface>(nullptr, TEXT("/Game/Presentation/Effects/M_ThrusterCore.M_ThrusterCore"), nullptr, LOAD_NoWarn);
+    if (!CachedThrusterJetMat.IsValid())
+        CachedThrusterJetMat = LoadObject<UMaterialInterface>(nullptr, TEXT("/Game/Presentation/Effects/M_ThrusterJet.M_ThrusterJet"), nullptr, LOAD_NoWarn);
+
+    const FRotator AsternZRot = FRotationMatrix::MakeFromZ(FVector(-1.0f, 0.0f, 0.0f)).Rotator();
+    for (int32 i = 0; i < 2; ++i)
+    {
+        const float Sign = (i == 0) ? -1.0f : 1.0f;
+        const FVector NozzleExit = C + FVector(-E.X * 1.02f, Sign * E.Y * 0.30f, 0.0f);
+
+        if (CachedThrusterSphereMesh.IsValid() && CachedThrusterCoreMat.IsValid())
+        {
+            const FName CoreName = (i == 0) ? FName(TEXT("ThrusterCoreMesh_0")) : FName(TEXT("ThrusterCoreMesh_1"));
+            UStaticMeshComponent* CoreComp = NewObject<UStaticMeshComponent>(this, CoreName);
+            AddInstanceComponent(CoreComp);
+            CoreComp->SetupAttachment(GetRootComponent());
+            CoreComp->SetStaticMesh(CachedThrusterSphereMesh.Get());
+            CoreComp->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+            CoreComp->SetCollisionResponseToAllChannels(ECR_Ignore);
+            CoreComp->SetGenerateOverlapEvents(false);
+            CoreComp->SetCanEverAffectNavigation(false);
+            CoreComp->SetCastShadow(false);
+            CoreComp->SetRelativeLocation(NozzleExit + FVector(-4.5f, 0.0f, 0.0f));
+            CoreComp->SetRelativeScale3D(FVector(0.15f, 0.13f, 0.13f));
+            UMaterialInstanceDynamic* CoreDyn = UMaterialInstanceDynamic::Create(CachedThrusterCoreMat.Get(), this);
+            if (CoreDyn)
+            {
+                CoreComp->SetMaterial(0, CoreDyn);
+            }
+            CoreComp->RegisterComponent();
+            ThrusterCoreMeshes.Add(CoreComp);
+            ThrusterCoreDyns.Add(CoreDyn);
+        }
+
+        if (CachedThrusterConeMesh.IsValid() && CachedThrusterJetMat.IsValid())
+        {
+            const FName JetName = (i == 0) ? FName(TEXT("ThrusterJetMesh_0")) : FName(TEXT("ThrusterJetMesh_1"));
+            UStaticMeshComponent* JetComp = NewObject<UStaticMeshComponent>(this, JetName);
+            AddInstanceComponent(JetComp);
+            JetComp->SetupAttachment(GetRootComponent());
+            JetComp->SetStaticMesh(CachedThrusterConeMesh.Get());
+            JetComp->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+            JetComp->SetCollisionResponseToAllChannels(ECR_Ignore);
+            JetComp->SetGenerateOverlapEvents(false);
+            JetComp->SetCanEverAffectNavigation(false);
+            JetComp->SetCastShadow(false);
+            JetComp->SetRelativeLocation(NozzleExit + FVector(-22.0f, 0.0f, 0.0f));
+            JetComp->SetRelativeRotation(AsternZRot);
+            JetComp->SetRelativeScale3D(FVector(0.16f, 0.16f, 0.38f));
+            UMaterialInstanceDynamic* JetDyn = UMaterialInstanceDynamic::Create(CachedThrusterJetMat.Get(), this);
+            if (JetDyn)
+            {
+                JetComp->SetMaterial(0, JetDyn);
+            }
+            JetComp->RegisterComponent();
+            ThrusterJetMeshes.Add(JetComp);
+            ThrusterJetDyns.Add(JetDyn);
+        }
+    }
+
+    // Keep standby Niagara thruster components deactivated (prevents NS_ThrusterTrailAdditive_Seamless's
+    // unscaled spherical yellow glow sprite from overlapping the stern nozzles like an explosion).
+    if (CachedThrusterSys.IsValid())
+    {
+        const FVector ThrusterOffsets[] = {
+            C + FVector(-E.X * 1.02f, -E.Y * 0.30f, 0.0f),
+            C + FVector(-E.X * 1.02f,  E.Y * 0.30f, 0.0f)
+        };
+        for (int32 i = 0; i < 2; ++i)
+        {
+            UNiagaraComponent* Comp = NewObject<UNiagaraComponent>(this);
+            Comp->SetupAttachment(GetRootComponent());
+            Comp->SetAsset(CachedThrusterSys.Get());
+            Comp->SetRelativeLocation(ThrusterOffsets[i]);
+            Comp->SetRelativeRotation(FRotator(0.f, 90.f, 90.f));
+            Comp->SetRelativeScale3D(FVector(0.10f));
+            Comp->SetAutoActivate(false);
+            Comp->RegisterComponent();
+            Comp->Deactivate();
+            ThrusterVFX.Add(Comp);
+        }
+    }
+
+    // 2. Dual Wing Ribbon Slipstream Trails (Origin-centered at port/starboard rear wingtips inside shield)
+    if (CachedWingTrailSys.IsValid())
+    {
+        const FVector WingOffsets[] = {
+            C + FVector(-E.X * 0.72f, -E.Y * 0.78f, 0.0f),
+            C + FVector(-E.X * 0.72f,  E.Y * 0.78f, 0.0f)
+        };
+        for (int32 i = 0; i < 2; ++i)
+        {
+            UNiagaraComponent* Comp = NewObject<UNiagaraComponent>(this);
+            Comp->SetupAttachment(GetRootComponent());
+            Comp->SetAsset(CachedWingTrailSys.Get());
+            Comp->SetRelativeLocation(WingOffsets[i]);
+            Comp->SetRelativeScale3D(FVector(0.16f));
+            Comp->SetVariableFloat(TEXT("User.Width"), 8.0f);
+            Comp->RegisterComponent();
+            WingTrailVFX.Add(Comp);
+        }
+    }
+
+    // 3. Ellipsoid-Scaled Faction-Colored Shield Impact Meshes (flush with M_ShieldBubble surface)
+    // Enemy ships render crimson-red wireframe + red Fresnel rim + localized impact hotspot;
+    // friendly ships render cyan-blue wireframe + blue Fresnel rim + localized impact hotspot.
+    static TWeakObjectPtr<UStaticMesh> CachedShieldSphereMesh;
+    static TWeakObjectPtr<UMaterialInterface> CachedShieldWFMat;
+    static TWeakObjectPtr<UMaterialInterface> CachedShieldGlowMat;
+    if (!CachedShieldSphereMesh.IsValid())
+        CachedShieldSphereMesh = LoadObject<UStaticMesh>(nullptr, TEXT("/Engine/BasicShapes/Sphere.Sphere"), nullptr, LOAD_NoWarn);
+    if (!CachedShieldWFMat.IsValid())
+        CachedShieldWFMat = LoadObject<UMaterialInterface>(nullptr, TEXT("/Game/Presentation/Effects/M_ShieldImpactWF.M_ShieldImpactWF"), nullptr, LOAD_NoWarn);
+    if (!CachedShieldGlowMat.IsValid())
+        CachedShieldGlowMat = LoadObject<UMaterialInterface>(nullptr, TEXT("/Game/Presentation/Effects/M_ShieldImpactGlow.M_ShieldImpactGlow"), nullptr, LOAD_NoWarn);
+
+    const FVector LayoutExt = (Systems && Systems->Layout) ? Systems->Layout->LocalHalfExtent : FVector(175.f, 75.f, 30.f);
+    const FVector MeshShieldScale = LayoutExt * FVector(1.228f, 1.328f, 1.428f) / 50.0f;
+    if (CachedShieldSphereMesh.IsValid())
+    {
+        if (CachedShieldWFMat.IsValid())
+        {
+            ShieldImpactWFMesh = NewObject<UStaticMeshComponent>(this, TEXT("ShieldImpactWFMesh"));
+            AddInstanceComponent(ShieldImpactWFMesh);
+            ShieldImpactWFMesh->SetupAttachment(GetRootComponent());
+            ShieldImpactWFMesh->SetStaticMesh(CachedShieldSphereMesh.Get());
+            ShieldImpactWFMesh->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+            ShieldImpactWFMesh->SetCollisionResponseToAllChannels(ECR_Ignore);
+            ShieldImpactWFMesh->SetGenerateOverlapEvents(false);
+            ShieldImpactWFMesh->SetCanEverAffectNavigation(false);
+            ShieldImpactWFMesh->SetCastShadow(false);
+            ShieldImpactWFMesh->SetRelativeLocation(FVector::ZeroVector);
+            ShieldImpactWFMesh->SetRelativeScale3D(MeshShieldScale);
+            ShieldImpactWFDyn = UMaterialInstanceDynamic::Create(CachedShieldWFMat.Get(), this);
+            if (ShieldImpactWFDyn)
+            {
+                ShieldImpactWFMesh->SetMaterial(0, ShieldImpactWFDyn);
+            }
+            ShieldImpactWFMesh->SetVisibility(false);
+            ShieldImpactWFMesh->RegisterComponent();
+        }
+        if (CachedShieldGlowMat.IsValid())
+        {
+            ShieldImpactGlowMesh = NewObject<UStaticMeshComponent>(this, TEXT("ShieldImpactGlowMesh"));
+            AddInstanceComponent(ShieldImpactGlowMesh);
+            ShieldImpactGlowMesh->SetupAttachment(GetRootComponent());
+            ShieldImpactGlowMesh->SetStaticMesh(CachedShieldSphereMesh.Get());
+            ShieldImpactGlowMesh->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+            ShieldImpactGlowMesh->SetCollisionResponseToAllChannels(ECR_Ignore);
+            ShieldImpactGlowMesh->SetGenerateOverlapEvents(false);
+            ShieldImpactGlowMesh->SetCanEverAffectNavigation(false);
+            ShieldImpactGlowMesh->SetCastShadow(false);
+            ShieldImpactGlowMesh->SetRelativeLocation(FVector::ZeroVector);
+            ShieldImpactGlowMesh->SetRelativeScale3D(MeshShieldScale * 1.004f);
+            ShieldImpactGlowDyn = UMaterialInstanceDynamic::Create(CachedShieldGlowMat.Get(), this);
+            if (ShieldImpactGlowDyn)
+            {
+                ShieldImpactGlowMesh->SetMaterial(0, ShieldImpactGlowDyn);
+            }
+            ShieldImpactGlowMesh->SetVisibility(false);
+            ShieldImpactGlowMesh->RegisterComponent();
+        }
+    }
+
+    // Keep standby ShieldVFX component deactivated (faction-colored impact is rendered by ShieldImpactWFMesh/GlowMesh
+    // so enemy hits never display NS_ShieldStandard's hardcoded blue particle color or demo Points sprites).
+    if (CachedShieldSys.IsValid())
+    {
+        const FVector ShieldScale = LayoutExt * FVector(1.22f, 1.32f, 1.42f) / 1000.0f;
+        ShieldVFX = NewObject<UNiagaraComponent>(this);
+        ShieldVFX->SetupAttachment(GetRootComponent());
+        ShieldVFX->SetAsset(CachedShieldSys.Get());
+        ShieldVFX->SetRelativeLocation(FVector::ZeroVector);
+        ShieldVFX->SetRelativeScale3D(ShieldScale);
+        ShieldVFX->SetVariableFloat(TEXT("User.SpriteSize"), 0.0f);
+        ShieldVFX->SetVariableVec2(TEXT("User.SpriteSize"), FVector2D::ZeroVector);
+        ShieldVFX->SetAutoActivate(false);
+        ShieldVFX->RegisterComponent();
+        ShieldVFX->Deactivate();
+    }
+}
+
+void AOVShip::RefreshShipVisualVFX(float DeltaSeconds)
+{
+    EnsureShipVFXInitialized();
+
+    const float SafeDt = FMath::Clamp(DeltaSeconds, 0.0f, 0.25f);
+    const FVector E = GetVisualHullHalfExtent();
+    const FVector C = GetVisualHullCenterOffset();
+    const float CurrentSpeed = Velocity.Size();
+    const float SpeedRatio = MoveSpeed > 0.0f ? FMath::Clamp(CurrentSpeed / MoveSpeed, 0.0f, 1.0f) : 0.0f;
+    const bool bMoving = !bHold && CurrentSpeed > 10.0f && !bDissolving && (!Systems || !Systems->bWrecked);
+
+    // Keep directional thruster ignition cores + blue-white ion jets strictly aft of stern nozzles (zero hull overlap)
+    // Compact proportions stay cleanly inside the ship's ellipsoid shield bubble while streaming straight astern (-X).
+    const bool bThrusterAlive = !bDissolving && (!Systems || !Systems->bWrecked);
+    const float CoreRadius = bMoving
+        ? FMath::Clamp(E.Y * FMath::Lerp(0.105f, 0.125f, SpeedRatio), 4.6f, 6.6f)
+        : FMath::Clamp(E.Y * 0.095f, 4.2f, 5.8f);
+    const float JetRadius = bMoving
+        ? FMath::Clamp(E.Y * FMath::Lerp(0.115f, 0.140f, SpeedRatio), 5.0f, 7.6f)
+        : FMath::Clamp(E.Y * 0.105f, 4.6f, 6.6f);
+    const float JetLength = bMoving
+        ? FMath::Clamp(E.X * FMath::Lerp(0.19f, 0.24f, SpeedRatio), 30.0f, 41.0f)
+        : FMath::Clamp(E.X * 0.17f, 26.0f, 32.0f);
+    const float CoreIntensity = bMoving ? FMath::Lerp(0.76f, 0.96f, SpeedRatio) : 0.68f;
+    const float JetIntensity = bMoving ? FMath::Lerp(0.95f, 1.25f, SpeedRatio) : 0.85f;
+    const FRotator AsternZRot = FRotationMatrix::MakeFromZ(FVector(-1.0f, 0.0f, 0.0f)).Rotator();
+
+    for (int32 i = 0; i < 2; ++i)
+    {
+        const float Sign = (i == 0) ? -1.0f : 1.0f;
+        const FVector NozzleExit = C + FVector(-E.X * 1.015f, Sign * E.Y * 0.30f, 0.0f);
+
+        if (ThrusterCoreMeshes.IsValidIndex(i) && IsValid(ThrusterCoreMeshes[i]))
+        {
+            UStaticMeshComponent* CoreComp = ThrusterCoreMeshes[i];
+            CoreComp->SetVisibility(bThrusterAlive);
+            CoreComp->SetRelativeLocation(NozzleExit + FVector(-CoreRadius * 0.70f, 0.0f, 0.0f));
+            CoreComp->SetRelativeRotation(FRotator::ZeroRotator);
+            CoreComp->SetRelativeScale3D(FVector(
+                (CoreRadius * 1.15f) / 50.0f,
+                CoreRadius / 50.0f,
+                CoreRadius / 50.0f));
+            if (ThrusterCoreDyns.IsValidIndex(i) && IsValid(ThrusterCoreDyns[i]))
+            {
+                ThrusterCoreDyns[i]->SetVectorParameterValue(TEXT("CoreColor"), FLinearColor(1.0f, 0.90f, 0.68f, 1.0f));
+                ThrusterCoreDyns[i]->SetVectorParameterValue(TEXT("HaloColor"), FLinearColor(1.0f, 0.36f, 0.02f, 1.0f));
+                ThrusterCoreDyns[i]->SetScalarParameterValue(TEXT("Intensity"), CoreIntensity);
+            }
+        }
+
+        if (ThrusterJetMeshes.IsValidIndex(i) && IsValid(ThrusterJetMeshes[i]))
+        {
+            UStaticMeshComponent* JetComp = ThrusterJetMeshes[i];
+            JetComp->SetVisibility(bThrusterAlive);
+            JetComp->SetRelativeLocation(NozzleExit + FVector(-CoreRadius * 0.55f - JetLength * 0.5f, 0.0f, 0.0f));
+            JetComp->SetRelativeRotation(AsternZRot);
+            JetComp->SetRelativeScale3D(FVector(
+                JetRadius / 50.0f,
+                JetRadius / 50.0f,
+                JetLength / 100.0f));
+            if (ThrusterJetDyns.IsValidIndex(i) && IsValid(ThrusterJetDyns[i]))
+            {
+                ThrusterJetDyns[i]->SetVectorParameterValue(TEXT("OuterColor"), FLinearColor(0.03f, 0.32f, 1.0f, 1.0f));
+                ThrusterJetDyns[i]->SetVectorParameterValue(TEXT("InnerColor"), FLinearColor(0.68f, 0.90f, 1.0f, 1.0f));
+                ThrusterJetDyns[i]->SetScalarParameterValue(TEXT("Intensity"), JetIntensity);
+            }
+        }
+    }
+
+    // Keep standby legacy Niagara thruster components deactivated and synced to nozzle positions
+    for (int32 i = 0; i < ThrusterVFX.Num(); ++i)
+    {
+        UNiagaraComponent* Comp = ThrusterVFX[i];
+        if (IsValid(Comp))
+        {
+            const float Sign = (i == 0) ? -1.0f : 1.0f;
+            Comp->SetRelativeLocation(C + FVector(-E.X * 1.02f, Sign * E.Y * 0.30f, 0.0f));
+            if (Comp->IsActive())
+            {
+                Comp->Deactivate();
+            }
+        }
+    }
+
+    // Wing trails activate dynamically when maneuvering/cruising
+    for (int32 i = 0; i < WingTrailVFX.Num(); ++i)
+    {
+        UNiagaraComponent* Comp = WingTrailVFX[i];
+        if (IsValid(Comp))
+        {
+            const float Sign = (i == 0) ? -1.0f : 1.0f;
+            Comp->SetRelativeLocation(C + FVector(-E.X * 0.72f, Sign * E.Y * 0.78f, 0.0f));
+            Comp->SetRelativeScale3D(FVector(0.16f));
+            Comp->SetVariableFloat(TEXT("User.Width"), 8.0f);
+            if (bMoving && !Comp->IsActive())
+            {
+                Comp->Activate(false);
+            }
+            else if (!bMoving && Comp->IsActive())
+            {
+                Comp->Deactivate();
+            }
+        }
+    }
+
+    // Keep faction-colored shield impact meshes synchronized and smoothly decay after impact flash duration
+    if (IsValid(ShieldVFX) && ShieldVFX->IsActive())
+    {
+        ShieldVFX->Deactivate();
+    }
+    if (ShieldImpactRemaining > 0.0f)
+    {
+        ShieldImpactRemaining = FMath::Max(0.0f, ShieldImpactRemaining - SafeDt);
+        UpdateShieldImpactVisuals(ShieldImpactRemaining / 0.65f);
+    }
+    else
+    {
+        UpdateShieldImpactVisuals(0.0f);
+    }
+
+    // Dissolve sequence on wreck
+    if (bDissolving)
+    {
+        const float Step = (SafeDt > 0.0f ? SafeDt : 0.016f) * 0.45f;
+        DissolveProgress = FMath::Clamp(DissolveProgress + Step, 0.0f, 1.0f);
+        if (Hull)
+        {
+            for (int32 SlotIdx = 0; SlotIdx < Hull->GetNumMaterials(); ++SlotIdx)
+            {
+                if (UMaterialInstanceDynamic* DynMat = Cast<UMaterialInstanceDynamic>(Hull->GetMaterial(SlotIdx)))
+                {
+                    DynMat->SetScalarParameterValue(TEXT("DissolveAmount"), DissolveProgress);
+                    DynMat->SetScalarParameterValue(TEXT("DissolvePower"), DissolveProgress);
+                    DynMat->SetScalarParameterValue(TEXT("Dissolve"), DissolveProgress);
+                }
+            }
+        }
+        for (UStaticMeshComponent* Part : AccentMeshes)
+        {
+            if (IsValid(Part))
+            {
+                if (UMaterialInstanceDynamic* DynMat = Cast<UMaterialInstanceDynamic>(Part->GetMaterial(0)))
+                {
+                    DynMat->SetScalarParameterValue(TEXT("DissolveAmount"), DissolveProgress);
+                    DynMat->SetScalarParameterValue(TEXT("DissolvePower"), DissolveProgress);
+                }
+            }
+        }
+        if (DissolveProgress >= 1.0f)
+        {
+            for (UNiagaraComponent* Comp : ThrusterVFX) if (IsValid(Comp)) Comp->Deactivate();
+            for (UStaticMeshComponent* Comp : ThrusterCoreMeshes) if (IsValid(Comp)) Comp->SetVisibility(false);
+            for (UStaticMeshComponent* Comp : ThrusterJetMeshes) if (IsValid(Comp)) Comp->SetVisibility(false);
+            for (UNiagaraComponent* Comp : WingTrailVFX) if (IsValid(Comp)) Comp->Deactivate();
+            if (IsValid(ShieldVFX)) ShieldVFX->Deactivate();
+            UpdateShieldImpactVisuals(0.0f);
+        }
+    }
+}
+
+void AOVShip::TriggerShieldImpact(FVector HitLocation, FVector HitNormal, float Damage)
+{
+    EnsureShipVFXInitialized();
+    if (IsValid(ShieldVFX) && ShieldVFX->IsActive())
+    {
+        ShieldVFX->Deactivate();
+    }
+    LastShieldHitLocation = HitLocation;
+    LastShieldHitStrength = FMath::Clamp(Damage / 45.0f, 0.75f, 1.85f);
+    ShieldImpactRemaining = 0.65f;
+    UpdateShieldImpactVisuals(1.0f);
+}
+
+void AOVShip::TriggerWreckDissolve()
+{
+    if (bDissolving) return;
+    bDissolving = true;
+    DissolveProgress = 0.0f;
+
+    // Swap to burning dissolve material across all hull material slots on wreck
+    static TWeakObjectPtr<UMaterialInterface> CachedDissolveMat;
+    if (!CachedDissolveMat.IsValid())
+    {
+        CachedDissolveMat = LoadObject<UMaterialInterface>(nullptr, TEXT("/Game/MixedVFX/Materials/M_DissolverMaster.M_DissolverMaster"), nullptr, LOAD_NoWarn);
+        if (!CachedDissolveMat.IsValid())
+        {
+            CachedDissolveMat = LoadObject<UMaterialInterface>(nullptr, TEXT("/Game/MixedVFX/Materials/M_SimpleDissolver.M_SimpleDissolver"), nullptr, LOAD_NoWarn);
+        }
+    }
+    if (CachedDissolveMat.IsValid() && Hull)
+    {
+        if (UMaterialInstanceDynamic* DissolveDyn = UMaterialInstanceDynamic::Create(CachedDissolveMat.Get(), this))
+        {
+            // Color_01 = dark charred gunmetal hull body; Color_02 = scorching molten orange-red fracture border
+            DissolveDyn->SetVectorParameterValue(TEXT("Color_01"), FLinearColor(0.015f, 0.015f, 0.020f, 1.0f));
+            DissolveDyn->SetVectorParameterValue(TEXT("Color_02"), FLinearColor(4.2f, 0.45f, 0.02f, 1.0f));
+            DissolveDyn->SetScalarParameterValue(TEXT("DissolveTilling"), 8.0f);
+            DissolveDyn->SetScalarParameterValue(TEXT("DissolvePower"), 0.48f);
+            const int32 NumMats = FMath::Max(1, Hull->GetNumMaterials());
+            for (int32 SlotIdx = 0; SlotIdx < NumMats; ++SlotIdx)
+            {
+                Hull->SetMaterial(SlotIdx, DissolveDyn);
+            }
+        }
+    }
 }
 
 #if WITH_DEV_AUTOMATION_TESTS
