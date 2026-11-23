@@ -436,7 +436,25 @@ void AOVHUD::DrawPlayHUD()
  }
  if(!Ship->bFriendly) {DrawText(TEXT("적 함선 · 관측된 외장 정보"),PlayInk,24,Y+72,GEngine->GetSmallFont());return;}
  auto* Logistics=GetWorld()->GetSubsystem<UOVLogisticsSubsystem>();
- const float ServiceY=Y+PanelHeight-33;
+ const float ServiceY=Y+PanelHeight-55;
+ if(PC->Combat && PC->Combat->bEnabled && Ship->Systems->Layout) {
+  const auto State=PC->Combat->GetShipState(Ship);
+  const float OwnRange=Ship->Systems->GetRadarRange()/100.f;
+  FString Line;
+  if(OwnRange>0)Line=FString::Printf(TEXT("자체 레이더 %.0fm"),OwnRange);
+  else Line=Ship->Systems->Layout->Slots.ContainsByPredicate([](const auto& D){return D.Facility==EOVFacilityType::Radar;})
+   ?TEXT("자체 레이더 정지"):TEXT("자체 레이더 없음");
+  if(State.Mounts.IsValidIndex(PC->SelectedWeapon))
+   Line+=FString::Printf(TEXT("   ·   무장 %.0fm"),State.Mounts[PC->SelectedWeapon].Profile.Range/100.f);
+  if(IsValid(Ship->AttackTarget)) {
+   const auto D=PC->Combat->GetDetection(Ship,Ship->AttackTarget);
+   const TCHAR* Source=!D.bDetected?TEXT("미탐지"):D.Source==TEXT("SUPPORT RADAR")?TEXT("레이더함 공유"):
+    D.Source==TEXT("SHARED RADAR")?TEXT("아군 공유"):D.Source==TEXT("OWN RADAR")?TEXT("자체 탐지"):
+    D.Source==TEXT("GUARANTEED NEAR")?TEXT("근거리 탐지"):TEXT("시험 탐지");
+   Line+=FString::Printf(TEXT("   ·   표적 %.0fm (%s)"),FVector::Dist(Ship->GetActorLocation(),Ship->AttackTarget->GetActorLocation())/100.,Source);
+  }
+  DrawText(Line,PlayInk,24,Y+PanelHeight-21,GEngine->GetSmallFont());
+ }
  if(Ship->Systems->Layout->Slots.ContainsByPredicate([](const auto& D){return D.Facility==EOVFacilityType::ResourceStorage;})){
   const bool Enabled=Logistics->InternalRepairEnabled(Ship);
   Button(TEXT("InternalRepair"),Enabled?TEXT("자가 수리 켜짐"):TEXT("자가 수리 꺼짐"),24,ServiceY,110,Enabled);
@@ -545,7 +563,7 @@ float AOVHUD::CommandPanelHeight() const
  if(!Ship || !Ship->bFriendly || !Ship->Systems || !Ship->Systems->Layout)return 210.f;
  const bool HasServiceRow=Ship->HullDefinitionId==TEXT("radar") || Ship->HullDefinitionId==TEXT("repair") ||
      Ship->Systems->Layout->Slots.ContainsByPredicate([](const auto& D){return D.Facility==EOVFacilityType::ResourceStorage;});
- return (Ship->Systems->Layout->bAllowAircraftOperations?242.f:210.f)+(HasServiceRow?36.f:0.f);
+ return (Ship->Systems->Layout->bAllowAircraftOperations?242.f:210.f)+(HasServiceRow?36.f:0.f)+22.f;
 }
 
 int32 AOVHUD::BattleNoticeRows() const
@@ -653,6 +671,14 @@ void AOVHUD::DrawWorldIndicators()
   DrawRect(FLinearColor(.25f,.4f,1),Label.X,Label.Y+22,86*Ship->Systems->Shield/FMath::Max(1.f,Ship->Systems->MaxShield),3);
   if(bInThroe)DrawText(FString::Printf(TEXT("★ 침몰 붕괴 (%.1fs)"),ThroeRemaining),FLinearColor(1.f,0.45f,0.2f),Label.X,Label.Y+29,GEngine->GetSmallFont());
   else if((Selected||Target) && !PC->FormationPreview.Contains(Ship))DrawText(FString::Printf(TEXT("고도 %.0fm"),Ship->GetActorLocation().Z/100),PlayInk,Label.X,Label.Y+29,GEngine->GetSmallFont());
+  if(const double* ETA=PC->SelectedMissileApproach.Find(Ship)) {
+   const FString Warning=FString::Printf(TEXT("미사일 최근접 %.1f초"),*ETA);
+   float TW,TH;GetTextSize(Warning,TW,TH,GEngine->GetSmallFont());
+   const float WY=Label.Y-TH-7;
+   DrawRect(FLinearColor(.075f,.042f,.024f,.98f),Label.X,WY,TW+14,TH+5);
+   DrawRect(FLinearColor(1,.52f,.16f),Label.X,WY,3,TH+5);
+   DrawText(Warning,FLinearColor(1,.80f,.48f),Label.X+7,WY+2,GEngine->GetSmallFont());
+  }
   const FName Marker(*FString::Printf(TEXT("WorldPick_%d"),I));
   AddHitBox((P-FVector2D(Radius+6,Radius+6))*UIScale,FVector2D(2*Radius+12,2*Radius+12)*UIScale,Marker,true,5);
   ActionCenters.Add(Marker,P);

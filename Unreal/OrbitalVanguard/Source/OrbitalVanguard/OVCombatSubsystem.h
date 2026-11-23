@@ -11,7 +11,7 @@ UENUM(BlueprintType)
 enum class EOVAttackKind : uint8 { Beam, Cannon, Missile, GuidedMissile };
 
 UENUM(BlueprintType)
-enum class EOVAttackResult : uint8 { Flying, Hit, Miss, Expired, TargetWrecked, TargetDeparted, TrackingExpired, Intercepted };
+enum class EOVAttackResult : uint8 { Flying, Hit, Miss, Expired, TargetWrecked, TargetDeparted, TrackingExpired, Intercepted, SelfDestructed };
 
 /** Values here are the explicitly provisional 2B test profile, in cm and game seconds. */
 USTRUCT(BlueprintType)
@@ -169,6 +169,8 @@ struct ORBITALVANGUARD_API FOVAttackState
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly) FVector FrozenAimPoint = FVector::ZeroVector;
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly) FVector VLSControlPoint = FVector::ZeroVector;
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly) float VLSDuration = 0;
+    UPROPERTY(VisibleAnywhere, BlueprintReadOnly) float PassedAimAge = -1;
+    static constexpr float MissFuseSeconds = 3.f;
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly) float Age = 0;
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly) double LaunchTime = 0;
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly) double ResolvedAt = 0;
@@ -230,7 +232,10 @@ public:
     // Reuses immutable damage metadata; resolved attacks cannot deliver damage twice.
     bool ResolveImpact(FOVAttackState& Attack, AOVShip* HitShip, FVector Point, FVector Normal, FName HitWeaponId = NAME_None);
     using FMissilePath = TArray<FVector,TInlineAllocator<25>>;
-    static void PredictMissilePath(const FOVAttackState& Shot, FMissilePath& Points);
+    using FPathTimes = TArray<double,TInlineAllocator<25>>;
+    static void PredictMissilePath(const FOVAttackState& Shot, FMissilePath& Points, FPathTimes* Times = nullptr);
+    static bool ClosestMissileApproach(const FMissilePath& Path, const FPathTimes& Times,
+        const AOVShip& Ship, double& Seconds);
     static bool SegmentBox(FVector Start, FVector End, const FTransform& Transform,
         FVector HalfExtent, float& HitFraction, FVector& HitNormal);
 private:

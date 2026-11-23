@@ -542,6 +542,44 @@ bool FOVMissileGuideTest::RunTest(const FString&)
     return true;
 }
 
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(FOVMissilePassFuseTest,"OrbitalVanguard.Combat.EvadedMissileFuseAndClosestApproach",EAutomationTestFlags::EditorContext|EAutomationTestFlags::EngineFilter)
+bool FOVMissilePassFuseTest::RunTest(const FString&)
+{
+    for (const auto Kind:{EOVAttackKind::Missile,EOVAttackKind::GuidedMissile})
+    {
+        OVCombatTest::FRange R;
+        R.Exact(2);
+        auto& Profile=R.Gun(2).Profile;
+        Profile.Kind=Kind; Profile.Salvo=1; Profile.Speed=500; Profile.Lifetime=30; Profile.AimSpreadDegrees=0;
+        R.Fire(2,.05f);
+        if (!TestEqual(TEXT("One real launch"),R.Combat->Attacks.Num(),1)) return false;
+        UOVCombatSubsystem::FMissilePath Points;
+        UOVCombatSubsystem::FPathTimes Times;
+        UOVCombatSubsystem::PredictMissilePath(R.Combat->Attacks[0],Points,&Times);
+        double ETA=0;
+        TestTrue(TEXT("Stationary intended victim sees a timed approach"),UOVCombatSubsystem::ClosestMissileApproach(Points,Times,*R.B,ETA) && ETA>0);
+        R.B->SetActorLocation(R.B->GetActorLocation()+FVector(0,2000,0));
+        TestFalse(TEXT("Moving clear removes the original threat"),UOVCombatSubsystem::ClosestMissileApproach(Points,Times,*R.B,ETA));
+        // A deterministic guidance offset makes the tracked point pass beside the physical hull.
+        if(Kind==EOVAttackKind::GuidedMissile) R.Combat->Attacks[0].AimOffset-=FVector(0,2000,0);
+        for(int32 I=0; I<1200 && !R.Combat->Attacks.IsEmpty() && R.Combat->Attacks[0].PassedAimAge<0; ++I)
+            R.Combat->Simulate(1.f/120);
+        if(!TestTrue(TEXT("Passing the aim point arms one fuse"),!R.Combat->Attacks.IsEmpty() && R.Combat->Attacks[0].PassedAimAge>=0)) return false;
+        const auto Pass=R.Combat->Attacks[0];
+        UOVCombatSubsystem::PredictMissilePath(Pass,Points,&Times);
+        TestTrue(TEXT("Guide ends at the burst time"),Times.Num()>1 && FMath::IsNearlyEqual(Times.Last(),double(Pass.PassedAimAge+3-Pass.Age),.001));
+        R.Combat->Simulate(2.95f);
+        TestEqual(TEXT("Before three seconds missile is still flying"),R.Combat->Attacks.Num(),1);
+        R.Combat->Simulate(.1f);
+        TestTrue(TEXT("Timed airburst removes projectile without any hit"),
+            R.Combat->Attacks.IsEmpty() && R.Combat->HitCount==0 &&
+            R.Combat->RecentEvents.Num()==1 && R.Combat->RecentEvents[0].Result==EOVAttackResult::SelfDestructed);
+        R.Combat->Simulate(.5f);
+        TestEqual(TEXT("No repeated detonation"),R.Combat->RecentEvents.Num(),1);
+    }
+    return true;
+}
+
 IMPLEMENT_SIMPLE_AUTOMATION_TEST(FOVCombatFlightTest, "OrbitalVanguard.Combat.TrajectoryLifetimeAndLaunchOwnership", EAutomationTestFlags::EditorContext | EAutomationTestFlags::EngineFilter)
 bool FOVCombatFlightTest::RunTest(const FString&)
 {

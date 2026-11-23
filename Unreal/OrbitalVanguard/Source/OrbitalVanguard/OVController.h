@@ -71,6 +71,8 @@ public:
  virtual void PlayerTick(float DeltaTime) override;
  virtual bool InputKey(const FInputKeyEventArgs& Params) override;
  virtual void FlushPressedKeys() override;
+ // Refreshed alongside the flight guides, in game seconds from the current frame.
+ TMap<TWeakObjectPtr<AOVShip>,double> SelectedMissileApproach;
  /** Render-only copies of live aircraft; gameplay remains in the carrier subsystem. */
  UFUNCTION(BlueprintCallable, Category="Presentation") void UpdateAircraftPresentation();
  UFUNCTION(BlueprintCallable, Category="Presentation") void UpdateCombatPresentation();

@@ -462,6 +462,7 @@ void AOVController::UpdateAircraftPresentation()
 }
 void AOVController::UpdateCombatPresentation()
 {
+ SelectedMissileApproach.Reset();
  if(!IsValid(AircraftPresentationActor)) return;
  auto SyncInstances=[](UInstancedStaticMeshComponent* Mesh,const TArray<FTransform>& Transforms) {
   if(!Mesh) return;
@@ -551,10 +552,21 @@ void AOVController::UpdateCombatPresentation()
    } else {
     const FQuat Rot=Dir.Rotation().Quaternion()*FRotator(0,180,0).Quaternion();
     UOVCombatSubsystem::FMissilePath Path;
-    UOVCombatSubsystem::PredictMissilePath(Shot,Path);
+    UOVCombatSubsystem::FPathTimes Times;
+    UOVCombatSubsystem::PredictMissilePath(Shot,Path,&Times);
+    bool Threat=false;
+    for(AOVShip* Ally:Selection) {
+     if(!IsValid(Ally)||!Ally->bFriendly||!Ally->Systems||Ally->Systems->bWrecked||Ally->IsHidden()||
+        Shot.FactionId==Ally->Systems->FactionId)continue;
+     double ETA=0;
+     if(!UOVCombatSubsystem::ClosestMissileApproach(Path,Times,*Ally,ETA))continue;
+     double& Earliest=SelectedMissileApproach.FindOrAdd(Ally,ETA);
+     Earliest=FMath::Min(Earliest,ETA);Threat=true;
+    }
+    const float Width=Threat?3.8f:(!Selection.IsEmpty() && Shot.FactionId!=0?.85f:1.4f);
     auto& Guides=Shot.FactionId==0?FriendlyBeams:EnemyBeams;
     for(int32 I=1;I<Path.Num();++I)
-     AddSegmentCylinder(Guides,Path[I-1],FMath::Lerp(Path[I-1],Path[I],.58),1.4f*FX);
+     AddSegmentCylinder(Guides,Path[I-1],FMath::Lerp(Path[I-1],Path[I],Threat?.78:.58),Width*FX);
     const float ScaleFactor=MissileScale;
     if(Shot.bAntiShipMissile) {
      const float S=AntiShipScale;
@@ -593,6 +605,10 @@ void AOVController::UpdateCombatPresentation()
    if(Event.Weapon.Kind==EOVAttackKind::Beam) {
     auto& BeamList=Event.FactionId==0?FriendlyBeams:EnemyBeams;
     AddSegmentCylinder(BeamList,Event.Origin,ImpactPos,5.2f*FX*Alpha);
+   }
+   if(Event.Result==EOVAttackResult::SelfDestructed) {
+    const float Radius=(12.f+28.f*(1.f-Alpha))*FX;
+    HullHits.Emplace(FQuat::Identity,ImpactPos,FVector(Radius/50.f));
    }
    if(Event.Result==EOVAttackResult::Hit && !ImpactPos.ContainsNaN()) {
     const float ImpactRadius=(16.f+(1.f-Alpha)*32.f)*FX;

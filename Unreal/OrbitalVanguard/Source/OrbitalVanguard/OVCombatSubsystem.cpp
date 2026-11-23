@@ -479,10 +479,23 @@ FOVFireReadiness UOVCombatSubsystem::Evaluate(const FOVCombatShipState& State, c
     R.bReady = true; R.Reason = TEXT("READY"); return R;
 }
 
-void UOVCombatSubsystem::PredictMissilePath(const FOVAttackState& Shot, FMissilePath& Points)
+void UOVCombatSubsystem::PredictMissilePath(const FOVAttackState& Shot, FMissilePath& Points, FPathTimes* Times)
 {
     Points.Reset();
-    Points.Add(Shot.Position);
+    if (Times) Times->Reset();
+    const auto Add=[&](FVector Point,double Time){ Points.Add(Point); if(Times) Times->Add(Time); };
+    Add(Shot.Position,0);
+    if (Shot.PassedAimAge>=0)
+    {
+        const double Remaining=Shot.PassedAimAge+FOVAttackState::MissFuseSeconds-Shot.Age;
+        if (Remaining>0)
+            for(int32 I=1; I<=8; ++I)
+            {
+                const double Time=Remaining*I/8.;
+                Add(Shot.Position+Shot.Direction*Shot.Weapon.Speed*Time,Time);
+            }
+        return;
+    }
     constexpr int32 Samples = 20;
     if (Shot.Weapon.Kind == EOVAttackKind::Missile && Shot.VLSDuration > 0)
     {
@@ -490,7 +503,10 @@ void UOVCombatSubsystem::PredictMissilePath(const FOVAttackState& Shot, FMissile
         const double End = FMath::Min(1., double(Shot.Weapon.Lifetime / Shot.VLSDuration));
         if (Start < End)
             for (int32 I=1; I<=Samples; ++I)
-                Points.Add(FixedVLSPoint(Shot, FMath::Lerp(Start, End, double(I)/Samples)));
+            {
+                const double Alpha=FMath::Lerp(Start,End,double(I)/Samples);
+                Add(FixedVLSPoint(Shot,Alpha),Alpha*Shot.VLSDuration-Shot.Age);
+            }
     }
     else if (Shot.Weapon.Kind == EOVAttackKind::GuidedMissile)
     {
@@ -504,12 +520,36 @@ void UOVCombatSubsystem::PredictMissilePath(const FOVAttackState& Shot, FMissile
         for (int32 I=1; I<=Samples*4; ++I)
         {
             const FVector Offset = Aim - Position;
-            if (Offset.SizeSquared() <= FMath::Square(Dt*Shot.Weapon.Speed)) { Points.Add(Aim); break; }
+            if (Offset.SizeSquared() <= FMath::Square(Dt*Shot.Weapon.Speed)) { Add(Aim,(I-1)*Dt+Offset.Size()/Shot.Weapon.Speed); break; }
             Direction = GuidedDirection(Direction,Offset.GetSafeNormal(),Shot.Weapon.GuidanceTurnRate,Dt);
             Position += Direction*Shot.Weapon.Speed*Dt;
-            if (I%4 == 0) Points.Add(Position);
+            if (I%4 == 0) Add(Position,I*Dt);
         }
     }
+}
+
+bool UOVCombatSubsystem::ClosestMissileApproach(const FMissilePath& Path,const FPathTimes& Times,
+    const AOVShip& Ship,double& Seconds)
+{
+    if (Times.Num()!=Path.Num() || Path.Num()<2) return false;
+    const FVector Radii=Ship.GetLocalShieldRadii().ComponentMax(FVector(1.));
+    const FTransform Transform=Ship.GetActorTransform();
+    // Normalize by the oriented envelope; extrapolate the selected ship at its current velocity.
+    const auto Relative=[&](int32 I){
+        return Transform.InverseTransformPosition(Path[I]-Ship.Velocity*Times[I])/Radii;
+    };
+    double Best=1.3*1.3;
+    bool Threat=false;
+    FVector From=Relative(0);
+    for(int32 I=1; I<Path.Num(); ++I)
+    {
+        const FVector To=Relative(I), Step=To-From;
+        const double T=FMath::Clamp(-FVector::DotProduct(From,Step)/FMath::Max(Step.SizeSquared(),UE_DOUBLE_SMALL_NUMBER),0.,1.);
+        const double Separation=(From+Step*T).SizeSquared();
+        if (Separation<Best) { Best=Separation; Seconds=FMath::Lerp(Times[I-1],Times[I],T); Threat=true; }
+        From=To;
+    }
+    return Threat;
 }
 
 AOVShip* UOVCombatSubsystem::FindBlockingFriend(AOVShip* Ship, AOVShip* Target, FVector Origin, const FMissilePath* Path) const
@@ -1003,8 +1043,9 @@ void UOVCombatSubsystem::AdvanceAttacks(float Delta)
     TRACE_CPUPROFILER_EVENT_SCOPE(OV_CombatCollision);
     for (FOVAttackState& Attack : Attacks)
     {
+        const FVector BeforeStep=Attack.Position;
         Attack.Age += Delta;
-        if (Attack.Weapon.Kind == EOVAttackKind::GuidedMissile)
+        if (Attack.PassedAimAge<0 && Attack.Weapon.Kind == EOVAttackKind::GuidedMissile)
         {
             AOVShip* Target = Attack.Target.Get();
             // Sensor/source state is deliberately absent here: this attack already owns its launch snapshot.
@@ -1019,7 +1060,15 @@ void UOVCombatSubsystem::AdvanceAttacks(float Delta)
         }
         if (Attack.Result == EOVAttackResult::Flying)
         {
-            if (Attack.Age >= Attack.Weapon.Lifetime) Attack.Result = EOVAttackResult::Expired;
+            if (Attack.PassedAimAge>=0)
+            {
+                const float Deadline=Attack.PassedAimAge+FOVAttackState::MissFuseSeconds;
+                const float Travel=FMath::Clamp(Deadline-(Attack.Age-Delta),0.f,Delta);
+                SweepAttack(Attack,BeforeStep+Attack.Direction*Attack.Weapon.Speed*Travel);
+                if (Attack.Result==EOVAttackResult::Flying && Attack.Age>=Deadline)
+                    Attack.Result=EOVAttackResult::SelfDestructed;
+            }
+            else if (Attack.Age >= Attack.Weapon.Lifetime) Attack.Result = EOVAttackResult::Expired;
             else if (Attack.Weapon.Kind == EOVAttackKind::Missile && Attack.VLSDuration > 0)
             {
                 // Every coefficient was frozen at launch. This branch never reads Target or attacker transforms.
@@ -1031,6 +1080,30 @@ void UOVCombatSubsystem::AdvanceAttacks(float Delta)
                 SweepAttack(Attack, End);
             }
             else SweepAttack(Attack, Attack.Position + Attack.Direction * Attack.Weapon.Speed * Delta);
+            if (Attack.Result==EOVAttackResult::Flying && Attack.PassedAimAge<0)
+            {
+                if (Attack.Weapon.Kind==EOVAttackKind::Missile && Attack.VLSDuration>0 && Attack.Age>=Attack.VLSDuration)
+                {
+                    Attack.PassedAimAge=Attack.VLSDuration;
+                    Attack.Direction=(Attack.FrozenAimPoint-Attack.VLSControlPoint).GetSafeNormal();
+                }
+                else if (Attack.Weapon.Kind==EOVAttackKind::GuidedMissile && Attack.Target.IsValid())
+                {
+                    const FVector Aim=Attack.Target->GetActorTransform().TransformPosition(Attack.TargetLocalPoint)+Attack.AimOffset;
+                    const FVector Axis=(Aim-Attack.Origin).GetSafeNormal(UE_SMALL_NUMBER,Attack.Direction);
+                    const double Before=FVector::DotProduct(Aim-BeforeStep,Axis), After=FVector::DotProduct(Aim-Attack.Position,Axis);
+                    if (After<=0)
+                        Attack.PassedAimAge=Attack.Age-Delta+Delta*FMath::Clamp(Before/FMath::Max(Before-After,UE_DOUBLE_SMALL_NUMBER),0.,1.);
+                    else
+                    {
+                        // A crossing target can slip past the seeker sideways before the terminal plane.
+                        const double Ahead=FVector::DotProduct(Aim-BeforeStep,Attack.Direction);
+                        const double Travel=FVector::Dist(BeforeStep,Attack.Position);
+                        if (Ahead>=0 && Ahead<=Travel && Travel>UE_SMALL_NUMBER)
+                            Attack.PassedAimAge=Attack.Age-Delta+Delta*(Ahead/Travel);
+                    }
+                }
+            }
         }
         if (Attack.Result != EOVAttackResult::Flying)
         { Attack.ResolvedAt = GameTime; RecordEvent(Attack); }

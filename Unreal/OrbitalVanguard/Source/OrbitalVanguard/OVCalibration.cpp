@@ -356,6 +356,8 @@ UShipLayoutDataAsset* MakeLayout(UObject* Outer, const FHull& Hull)
         return nullptr;
     }
 
+    for (const FRadar& Radar:Radars)
+        if (Radar.Tier==Hull.RadarTier) { Layout->BaseRadarRange=Radar.Range; break; }
     FVector Extent = FittedHullExtent(HullId);
     // HalfHeight is serialized as a float; use its representable extent throughout.
     Extent.Z = static_cast<float>(Extent.Z);
@@ -669,7 +671,7 @@ bool OVCalibration::Start(UOVCombatSubsystem& Combat, const TArray<AOVShip*>& Sh
         Ship->SetAutomation(!bFriendly,!bFriendly);
         Ship->SetActorHiddenInGame(bInactive);
         Ship->SetActorEnableCollision(!bInactive);
-        Combat.RegisterShip(Ship, Hull.RadarTier, false, Hull.Size);
+        Combat.RegisterShip(Ship, Hull.RadarTier, FName(Keys[I])==TEXT("radar"), Hull.Size);
         if (bInactive) { Combat.NotifyFTLDeparture(Ship); continue; }
         if(Defense&&CVarOVMarkedMounts.GetValueOnGameThread()==1)Defense->RegisterShip(Ship,Hull.PD);
 
