@@ -1,0 +1,26 @@
+{
+  "WingDoctrineFinal": [
+    "WING_BALANCE defenders=1 seed=126 seconds=19.5 hull_pct=[97.35] shield_pct=[0.00] survivors=0 waves=[40] fighters=40 destroyed=0 kits_left=0 shots=586 hits=576",
+    "WING_DEFENCE defenders=1 core_hp=[0.0] pd_shots=396 pd_hits=116 pd_kills=0",
+    "WING_BALANCE defenders=3 seed=126 seconds=29.1 hull_pct=[97.48,98.00,96.96] shield_pct=[0.00,0.00,0.00] survivors=0 waves=[80] fighters=81 destroyed=1 kits_left=99 shots=1764 hits=1726",
+    "WING_DEFENCE defenders=3 core_hp=[0.0,0.0,0.0] pd_shots=1183 pd_hits=324 pd_kills=1",
+    "WING_BALANCE defenders=2 seed=126 seconds=19.4 hull_pct=[97.71,98.12] shield_pct=[0.00,0.00] survivors=0 waves=[80] fighters=80 destroyed=0 kits_left=100 shots=1145 hits=1113",
+    "WING_DEFENCE defenders=2 core_hp=[0.0,0.0] pd_shots=599 pd_hits=171 pd_kills=0"
+  ],
+  "WingSkin": [
+    "WING_BALANCE defenders=1 seed=126 seconds=163.6 hull_pct=[4.93] shield_pct=[31.33] survivors=1 waves=[40] fighters=40 destroyed=40 kits_left=0 shots=3351 hits=3351",
+    "WING_DEFENCE defenders=1 core_hp=[100.0] pd_shots=3467 pd_hits=945 pd_kills=40",
+    "WING_BALANCE defenders=3 seed=126 seconds=251.6 hull_pct=[0.00,0.00,0.00] shield_pct=[0.00,0.00,0.00] survivors=0 waves=[80,80] fighters=173 destroyed=95 kits_left=7 shots=10199 hits=10176",
+    "WING_DEFENCE defenders=3 core_hp=[100.0,100.0,100.0] pd_shots=9247 pd_hits=2529 pd_kills=92",
+    "WING_BALANCE defenders=2 seed=126 seconds=122.2 hull_pct=[0.00,0.00] shield_pct=[0.00,0.00] survivors=0 waves=[80] fighters=106 destroyed=29 kits_left=74 shots=6687 hits=6677",
+    "WING_DEFENCE defenders=2 core_hp=[100.0,100.0] pd_shots=3775 pd_hits=1039 pd_kills=29"
+  ],
+  "WingReform": [
+    "WING_BALANCE defenders=1 seed=126 seconds=168.4 hull_pct=[45.06] shield_pct=[23.98] survivors=1 waves=[40] fighters=40 destroyed=40 kits_left=0 shots=2343 hits=2343",
+    "WING_DEFENCE defenders=1 core_hp=[100.0] pd_shots=3460 pd_hits=947 pd_kills=40",
+    "WING_BALANCE defenders=3 seed=126 seconds=311.5 hull_pct=[45.17,53.39,48.83] shield_pct=[12.05,33.18,0.68] survivors=3 waves=[80,80,20] fighters=180 destroyed=180 kits_left=0 shots=7070 hits=7070",
+    "WING_DEFENCE defenders=3 core_hp=[100.0,100.0,100.0] pd_shots=15638 pd_hits=4288 pd_kills=179",
+    "WING_BALANCE defenders=2 seed=126 seconds=265.4 hull_pct=[0.00,0.00] shield_pct=[0.00,0.00] survivors=0 waves=[80,80] fighters=171 destroyed=92 kits_left=9 shots=7353 hits=7342",
+    "WING_DEFENCE defenders=2 core_hp=[100.0,100.0] pd_shots=9812 pd_hits=2688 pd_kills=90"
+  ]
+}

@@ -1,4 +1,13 @@
-## 현재 · 함대 명령과 전투 UI (2026-11-23)
+## 현재 · 2026-11-23 진형과 함재기 보충
+
+개발 `codex/phase1-playground`, 시작 `6b0959d`, 구현 `d1624c6`·`2d70797`, 확인한 기획 `6d32a1f`. 균형 전열·항모 호위·수송 호위, 초계함 단일 함포 2문과 쉴드, Fleet50 방공함, 함재기 사거리 100m, 유상 병렬 생산과 집결 일제 출격을 적용했다. 실행 안내는 [시나리오 가이드](PLAY_SCENARIOS_GUIDE.md)에 있다.
+
+- UE 5.8.4 Win64 Development Editor 빌드와 C++ 149/149, 함대 PIE API 70/70, HUD API·렌더 15/15 통과. 실제 마우스·키보드 입력은 미검증이다.
+- 시드 126·127·128의 격납고 2개/4개 교전에서 1척·3척의 방공 성공과 2척 방어 실패를 확인했다. 개별 잔여 선체와 공격·요격 수, 스크린샷, 재실행 명령은 [검증 기록](validation/WingDoctrine_20261123/README.md)에 있다.
+- 관련 파일은 `OVFormation`, `OVController`, `OVShip`, `OVCalibration`, `OVCarrierSubsystem`, `OVLogisticsSubsystem`, `OVShipSystemsComponent`, `OVPlayScenarioSubsystem`, `OVDevelopmentSubsystem`, `OVHUD` 계열, `OVCarrierTests`·`OVD126SyncTests` 및 Tools의 함대·HUD 검사다. PD 무장 수치와 기존 검증 자료를 보존했다.
+- 다음 직접 확인은 200코스트 임무에서 진형 미리보기·적용, 항모의 수동 출격·자동 재개·항공 보급이다. 전체 캠페인 밸런스와 대규모 성능 측정은 이 검증 범위 밖이다.
+
+## 이전 검증 · 함대 명령과 전투 UI (2026-11-23)
 
 개발 브랜치 `codex/phase1-playground`의 로컬 수정본(시작 HEAD `fc9e4f3`, 기획 `6d32a1f`). 50코스트 함대전, 아군 선택 카드, 수리함의 접근·유상 수리, 화물 표시, 도약 목적지 지정과 알림 설정이 연결됐다. 일반 전함의 두 일반 슬롯에서 일반·유도 미사일을 시험할 수 있다. 8개 장면의 시작·판정과 여유가 다른 창에서의 표시를 점검했다.
 

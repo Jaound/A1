@@ -1,3 +1,12 @@
+## 현재 · 2026-11-23 진형과 함재기 보충
+
+개발 `codex/phase1-playground`, 시작 `6b0959d`, 구현 `d1624c6`·`2d70797`, 확인한 기획 `6d32a1f`. 균형 전열·항모 호위·수송 호위, 초계함 단일 함포 2문과 쉴드, Fleet50 방공함, 함재기 사거리 100m, 유상 병렬 생산과 집결 일제 출격을 적용했다. 실행 안내는 [시나리오 가이드](PLAY_SCENARIOS_GUIDE.md)에 있다.
+
+- UE 5.8.4 Win64 Development Editor 빌드와 C++ 149/149, 함대 PIE API 70/70, HUD API·렌더 15/15 통과. 실제 마우스·키보드 입력은 미검증이다.
+- 시드 126·127·128의 격납고 2개/4개 교전에서 1척·3척의 방공 성공과 2척 방어 실패를 확인했다. 개별 잔여 선체와 공격·요격 수, 스크린샷, 재실행 명령은 [검증 기록](validation/WingDoctrine_20261123/README.md)에 있다.
+- 관련 파일은 `OVFormation`, `OVController`, `OVShip`, `OVCalibration`, `OVCarrierSubsystem`, `OVLogisticsSubsystem`, `OVShipSystemsComponent`, `OVPlayScenarioSubsystem`, `OVDevelopmentSubsystem`, `OVHUD` 계열, `OVCarrierTests`·`OVD126SyncTests` 및 Tools의 함대·HUD 검사다. PD 무장 수치와 기존 검증 자료를 보존했다.
+- 다음 직접 확인은 200코스트 임무에서 진형 미리보기·적용, 항모의 수동 출격·자동 재개·항공 보급이다. 전체 캠페인 밸런스와 대규모 성능 측정은 이 검증 범위 밖이다.
+
 ## 2026-11-23 · HUD 해상도와 선택 함대 이름
 
 기준은 개발 브랜치 `6b0959d`다. Windows 게임의 고해상도 표시를 켜고 전장 HUD 글리프를 최종 표시 크기로 그린다. 함선·무장 상세 미리보기는 표시 영역의 픽셀 폭에 맞춰 크기를 갱신하며 긴 축의 상한은 4,096픽셀이다. 선택 카드의 함종별 초상은 384픽셀 원본과 축소 단계 이미지를 캐시한다. 함명과 번호는 카드 아래, 도약 표시는 그림 위에 둔다. 좁은 창에서는 열 수를 줄이고 페이지를 넘긴다.

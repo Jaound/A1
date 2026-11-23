@@ -1,0 +1,66 @@
+{
+  "checks": [
+    {
+      "id": "200코스트 장면",
+      "passed": true
+    },
+    {
+      "id": "선택 카드의 진형 단추",
+      "passed": true
+    },
+    {
+      "id": "FormationScreen",
+      "passed": true
+    },
+    {
+      "id": "FormationCarrier",
+      "passed": true
+    },
+    {
+      "id": "FormationConvoy",
+      "passed": true
+    },
+    {
+      "id": "전열 미리보기 적용 단추",
+      "passed": true
+    },
+    {
+      "id": "formation 렌더",
+      "passed": true
+    },
+    {
+      "id": "진형 이동 명령",
+      "passed": true
+    },
+    {
+      "id": "AutoWing",
+      "passed": true
+    },
+    {
+      "id": "WingSupply",
+      "passed": true
+    },
+    {
+      "id": "LaunchAircraft",
+      "passed": true
+    },
+    {
+      "id": "RecallAircraft",
+      "passed": true
+    },
+    {
+      "id": "도약과 항공 보급 단추 분리",
+      "passed": true
+    },
+    {
+      "id": "carrier 렌더",
+      "passed": true
+    },
+    {
+      "id": "실제 80대 출격",
+      "passed": true
+    }
+  ],
+  "physical_input": false,
+  "passed": true
+}
