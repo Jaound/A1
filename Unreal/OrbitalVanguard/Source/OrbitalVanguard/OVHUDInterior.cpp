@@ -29,6 +29,19 @@ FString State(EOVInteriorState Value)
  return Names[FMath::Clamp(int32(Value),0,10)];
 }
 bool Living(const FOVInteriorUnitRecord& U) { return U.HP>0 && U.State!=EOVInteriorState::Dead; }
+int32 FormationTeam(const UOVPlayScenarioSubsystem* Play,const FOVInteriorUnitRecord& Unit)
+{
+ if(!Play || Play->ActiveId!=TEXT("HeroArena") || Unit.FactionId!=0)return INDEX_NONE;
+ const int32 Key=Unit.SquadId>0?Unit.SquadId:Unit.UnitId;
+ for(int32 I=0;I<3;++I)if(Play->ArenaGroups[I].Contains(Key))return I;
+ return INDEX_NONE;
+}
+
+FString CardName(const FOVInteriorUnitRecord& Unit)
+{
+ return Unit.Role==EOVInteriorRole::Trooper?FString::Printf(TEXT("일반병 %d"),Unit.UnitId):Unit.Name;
+}
+
 }
 
 FBox2D AOVHUD::InteriorBounds() const
@@ -54,7 +67,7 @@ bool AOVHUD::HandleInteriorAction(FName Action)
  auto* PC=Cast<AOVController>(PlayerOwner);
  if(!PC||!PC->Interior||!PC->Interior->bEnabled) { bInteriorOpen=false;return true; }
  auto* Interior=PC->Interior.Get();
- auto ViewShip=[&](AOVShip* Ship) { InteriorShip=Ship;InteriorDeck=1;InteriorTargetSlot=NAME_None;InteriorUnitPage=0;InteriorSelectedUnits.Reset(); };
+ auto ViewShip=[&](AOVShip* Ship) { InteriorShip=Ship;InteriorDeck=1;InteriorTargetSlot=NAME_None;InteriorCardColumn=0;InteriorTeamFilter=INDEX_NONE;InteriorSelectedUnits.Reset(); };
  if(Action==TEXT("InteriorEntryA") || Action==TEXT("InteriorEntryB")){
   const auto* Play=PC->GetPlayScenario();
   if(!bInteriorOpen || !Play || Play->ActiveId!=TEXT("HeroArena"))return true;
@@ -96,13 +109,46 @@ bool AOVHUD::HandleInteriorAction(FName Action)
  AOVShip* Ship=InteriorShip.Get();
  if(!IsValid(Ship)||!Ship->Systems||!Ship->Systems->Layout||!Interior->IsStructureKnown(0,Ship))return true;
  if(Name.StartsWith(TEXT("InteriorDeck_"))) { InteriorDeck=FMath::Clamp(FCString::Atoi(*Name.RightChop(13)),1,Ship->Systems->Layout->DeckCount);return true; }
- if(Action==TEXT("InteriorPrev")) { InteriorUnitPage=FMath::Max(0,InteriorUnitPage-1);return true; }
- if(Action==TEXT("InteriorNext")) { ++InteriorUnitPage;return true; }
+ if(Name.StartsWith(TEXT("InteriorFilter_"))){
+  InteriorTeamFilter=FMath::Clamp(FCString::Atoi(*Name.Mid(15))-1,INDEX_NONE,2);
+  if(InteriorTeamFilter!=INDEX_NONE){
+   const auto* Play=PC->GetPlayScenario();
+   InteriorSelectedUnits.RemoveAll([&](int32 Id){
+    return OVInteriorUI::FormationTeam(Play,Interior->GetUnit(Id))!=InteriorTeamFilter;
+   });
+  }
+  InteriorCardColumn=0;
+  return true;
+ }
+ if(Action==TEXT("InteriorPrev") || Action==TEXT("InteriorNext")){
+  InteriorCardColumn=FMath::Clamp(InteriorCardColumn+(Action==TEXT("InteriorNext")?1:-1),0,InteriorLastColumn);
+  return true;
+ }
+ if(Name.StartsWith(TEXT("InteriorSquad_"))){
+  const auto Leader=Interior->GetUnit(FCString::Atoi(*Name.Mid(14)));
+  if(Leader.Ship!=Ship || Leader.FactionId!=0 || Leader.SquadId<=0)return true;
+  InteriorSelectedUnits.Reset();
+  for(const auto& Member:Interior->Units)
+   if(Member.Ship==Ship && Member.FactionId==0 && Member.SquadId==Leader.SquadId && Member.NodeId==Leader.NodeId && OVInteriorUI::Living(Member))
+    InteriorSelectedUnits.Add(Member.UnitId);
+  return true;
+ }
+ if(Name.StartsWith(TEXT("InteriorCard_"))){
+  const auto Unit=Interior->GetUnit(FCString::Atoi(*Name.Mid(13)));
+  if(Unit.Ship!=Ship || Unit.FactionId!=0)return true;
+  const bool Extend=PC->IsInputKeyDown(EKeys::LeftShift)||PC->IsInputKeyDown(EKeys::RightShift);
+  if(!Extend)InteriorSelectedUnits.Reset();
+  if(Extend && InteriorSelectedUnits.Contains(Unit.UnitId))InteriorSelectedUnits.Remove(Unit.UnitId);
+  else InteriorSelectedUnits.AddUnique(Unit.UnitId);
+  const auto* Layout=Ship->Systems->Layout.Get();
+  if(const int32 Node=Layout->GetSlotIndex(Unit.NodeId);Layout->Slots.IsValidIndex(Node))InteriorDeck=Layout->Slots[Node].DeckId;
+  return true;
+ }
  if(Action==TEXT("InteriorClear")) { InteriorSelectedUnits.Reset();return true; }
  if(Action==TEXT("InteriorAll"))
  {
   InteriorSelectedUnits.Reset();
-  for(const auto& U:Interior->Units) if(U.Ship==Ship&&U.FactionId==0&&OVInteriorUI::Living(U))InteriorSelectedUnits.Add(U.UnitId);
+  for(const auto& U:Interior->Units) if(U.Ship==Ship&&U.FactionId==0&&OVInteriorUI::Living(U) && (InteriorTeamFilter==INDEX_NONE || OVInteriorUI::FormationTeam(PC->GetPlayScenario(),U)==InteriorTeamFilter))InteriorSelectedUnits.Add(U.UnitId);
   return true;
  }
  if(Name.StartsWith(TEXT("InteriorUnit_")))
@@ -142,6 +188,7 @@ bool AOVHUD::HandleInteriorAction(FName Action)
 void AOVHUD::DrawInterior()
 {
  using namespace OVInteriorUI;
+ InteriorScrollTrack.Init();
  auto* PC=Cast<AOVController>(PlayerOwner);
  if(!PC||!PC->Interior||!PC->Interior->bEnabled) { bInteriorOpen=false;InteriorSelectedUnits.Reset();InteriorShip.Reset();return; }
  if(PC->bDeveloperMode)Button(TEXT("InteriorToggle"),TEXT("선내 작전"),1040,55,120,bInteriorOpen);
@@ -170,43 +217,128 @@ void AOVHUD::DrawInterior()
   return;
  }
  const auto* L=Ship->Systems->Layout.Get();InteriorDeck=FMath::Clamp(InteriorDeck,1,L->DeckCount);
- for(int32 D=1;D<=L->DeckCount;++D)Button(FName(*FString::Printf(TEXT("InteriorDeck_%d"),D)),FString::Printf(TEXT("%d층"),D),X+234+(D-1)*64,Y+76,58,InteriorDeck==D);
- Button(TEXT("InteriorAll"),TEXT("아군 전체"),X+12,Y+76,100);
- Button(TEXT("InteriorClear"),TEXT("선택 해제"),X+120,Y+76,100);
- TArray<const FOVInteriorUnitRecord*> Own;
- for(const auto& U:Interior->Units)if(U.Ship==Ship&&U.FactionId==0)Own.Add(&U);
- InteriorUnitPage=FMath::Clamp(InteriorUnitPage,0,FMath::Max(0,(Own.Num()-1)/6));
- for(int32 Row=0;Row<6;++Row)
- {
-  const int32 Index=InteriorUnitPage*6+Row;if(!Own.IsValidIndex(Index))break;
-  const auto& U=*Own[Index];const float RY=Y+114+Row*38;
-  const FString ShortName=U.Name.IsEmpty()?OVInteriorUI::Role(U.Role):U.Name;
-  Button(FName(*FString::Printf(TEXT("InteriorUnit_%d"),U.UnitId)),FString::Printf(TEXT("%s · %s"),*ShortName.Left(9),*OVInteriorUI::State(U.State)),X+12,RY,208,InteriorSelectedUnits.Contains(U.UnitId));
-  DrawRect(FLinearColor(.1f,.13f,.17f),X+14,RY+29,202,4);
-  DrawRect(Living(U)?Accent:FLinearColor::Gray,X+14,RY+29,202*FMath::Clamp(U.HP/FMath::Max(1.f,U.MaxHP),0.f,1.f),4);
+ const auto* Play=PC->GetPlayScenario();
+ const bool Arena=Play && Play->ActiveId==TEXT("HeroArena");
+ if(!Arena)InteriorTeamFilter=INDEX_NONE;
+ const float Footer=Y+H-208, CardsX=X+174, Right=X+W-12, CardsWidth=Right-CardsX;
+ const FLinearColor Surface(.025f,.052f,.084f), Soft(.43f,.61f,.7f);
+ for(int32 D=1;D<=L->DeckCount;++D)Button(FName(*FString::Printf(TEXT("InteriorDeck_%d"),D)),FString::Printf(TEXT("%d층"),D),X+12+(D-1)*64,Y+70,58,InteriorDeck==D);
+ DrawRect(FLinearColor(.014f,.034f,.053f),X+10,Y+100,W-20,Footer-Y-103);
+ DrawLine(X+10,Footer-2,Right,Footer-2,Accent,1);
+ DrawRect(Surface,X+10,Footer+3,154,194);
+
+ TArray<const FOVInteriorUnitRecord*> Own,VisibleCards;
+ const FOVInteriorUnitRecord* Focus=nullptr;
+ int32 Fighting=0,Injured=0;
+ for(const auto& U:Interior->Units){
+  if(U.Ship!=Ship || U.FactionId!=0)continue;
+  Own.Add(&U);
+  if(InteriorTeamFilter==INDEX_NONE || FormationTeam(Play,U)==InteriorTeamFilter)VisibleCards.Add(&U);
+  if(!InteriorSelectedUnits.Contains(U.UnitId))continue;
+  if(!Focus)Focus=&U;
+  Fighting+=U.State==EOVInteriorState::Fighting;
+  Injured+=Living(U) && U.HP<U.MaxHP;
  }
- Button(TEXT("InteriorPrev"),TEXT("이전"),X+12,Y+346,62);
- Button(TEXT("InteriorNext"),TEXT("다음"),X+158,Y+346,62);
- DrawText(FString::Printf(TEXT("%d / %d"),InteriorUnitPage+1,FMath::Max(1,(Own.Num()+5)/6)),Ink,X+86,Y+353,GEngine->GetSmallFont());
- DrawText(FString::Printf(TEXT("선택 %d명"),InteriorSelectedUnits.Num()),Ink,X+12,Y+386,GEngine->GetSmallFont());
- const auto* FocusEntry=Own.FindByPredicate([&](const auto* U){return InteriorSelectedUnits.Contains(U->UnitId);});
- const FOVInteriorUnitRecord* Focus=FocusEntry?*FocusEntry:nullptr;
- if(Focus)
- {
-  const auto* Definition=Focus->DefinitionId.IsNone()?nullptr:GetGameInstance()->GetSubsystem<UOVHeroSubsystem>()->Definition(Focus->DefinitionId);
-  if(Definition && Definition->Portrait)DrawTexture(Definition->Portrait,X+173,Y+402,38,38,0,0,1,1);
-  DrawText(Focus->Name,Accent,X+12,Y+408,GEngine->GetSmallFont());
-  DrawText(FString::Printf(TEXT("HP %.0f / %.0f"),Focus->HP,Focus->MaxHP),Ink,X+12,Y+428,GEngine->GetSmallFont());
-  if(Focus->State==EOVInteriorState::Operating)
-  {
-   DrawRect(FLinearColor(.1f,.15f,.2f),X+12,Y+450,204,6);
-   DrawRect(Accent,X+12,Y+450,204*FMath::Clamp(Focus->Progress,0.f,1.f),6);
+ // Keep actual heroes at the front of the strip; maintain stable personal IDs within each role.
+ VisibleCards.StableSort([](const FOVInteriorUnitRecord& A,const FOVInteriorUnitRecord& B){
+  const bool HeroA=A.Role!=EOVInteriorRole::Trooper,HeroB=B.Role!=EOVInteriorRole::Trooper;
+  return HeroA!=HeroB?HeroA:A.UnitId<B.UnitId;
+ });
+ auto Text=[&](const FString& Value,FLinearColor Color,float TX,float TY){DrawText(Value,Color,TX,TY,GEngine->GetSmallFont());};
+ Text(FString::Printf(TEXT("선택  %d명"),InteriorSelectedUnits.Num()),Soft,X+18,Footer+10);
+ if(Focus && InteriorSelectedUnits.Num()==1){
+  const auto* Definition=GetGameInstance()->GetSubsystem<UOVHeroSubsystem>()->Definition(Focus->DefinitionId);
+  if(Definition && Definition->Portrait)DrawTexture(Definition->Portrait,X+119,Footer+31,34,34,0,0,1,1);
+  Text(CardName(*Focus),Accent,X+18,Footer+34);
+  Text(FString::Printf(TEXT("HP %.0f / %.0f"),Focus->HP,Focus->MaxHP),Ink,X+18,Footer+60);
+  Text(OVInteriorUI::Role(Focus->Role)+TEXT(" · ")+OVInteriorUI::State(Focus->State),Ink,X+18,Footer+80);
+  if(const int32 Node=L->GetSlotIndex(Focus->NodeId);L->Slots.IsValidIndex(Node)){
+   const auto& Slot=L->Slots[Node];
+   Text(FString::Printf(TEXT("%d층 · %s"),Slot.DeckId,*Facility(Slot.Facility)),Ink,X+18,Footer+100);
   }
+  if(Focus->State==EOVInteriorState::Operating){
+   DrawRect(Soft,X+18,Footer+121,130,4);
+   DrawRect(Accent,X+18,Footer+121,130*FMath::Clamp(Focus->Progress,0.f,1.f),4);
+  }
+ }else if(Focus){
+  Text(FString::Printf(TEXT("교전 %d · 부상 %d"),Fighting,Injured),Ink,X+18,Footer+43);
+ }else Text(TEXT("아래 카드를 선택하세요"),Ink,X+18,Footer+43);
+ const int32 FilterCount=Arena?4:1;
+ const TCHAR* FilterLabels[]={TEXT("전체"),TEXT("A팀"),TEXT("B팀"),TEXT("예비")};
+ for(int32 Filter=0;Filter<FilterCount;++Filter)
+  Button(FName(*FString::Printf(TEXT("InteriorFilter_%d"),Filter)),FilterLabels[Filter],CardsX+Filter*48,Footer+36,44,InteriorTeamFilter==Filter-1);
+ Button(TEXT("InteriorAll"),TEXT("모두 선택"),Right-148,Footer+36,74);
+ Button(TEXT("InteriorClear"),TEXT("선택 해제"),Right-70,Footer+36,70);
+ const int32 Columns=FMath::Max(1,FMath::FloorToInt(CardsWidth/112.f));
+ const int32 TotalColumns=FMath::DivideAndRoundUp(VisibleCards.Num(),2);
+ InteriorLastColumn=FMath::Max(0,TotalColumns-Columns);
+ InteriorCardColumn=FMath::Clamp(InteriorCardColumn,0,InteriorLastColumn);
+ const float Pitch=CardsWidth/Columns;
+ const auto* Roster=GetGameInstance()->GetSubsystem<UOVHeroSubsystem>();
+ for(int32 Column=0;Column<Columns;++Column)for(int32 Row=0;Row<2;++Row){
+  const int32 Index=2*(Column+InteriorCardColumn)+Row;
+  if(!VisibleCards.IsValidIndex(Index))continue;
+  const auto& U=*VisibleCards[Index];
+  const float CX=CardsX+Column*Pitch,CY=Footer+68+Row*49,CW=Pitch-4;
+  const bool Selected=InteriorSelectedUnits.Contains(U.UnitId);
+  DrawRect(Selected?FLinearColor(.035f,.21f,.26f):Surface,CX,CY,CW,45);
+  if(Selected)DrawRect(Accent,CX,CY,3,45);
+  const auto* Def=U.DefinitionId.IsNone()?nullptr:Roster->Definition(U.DefinitionId);
+  if(Def && Def->Portrait)DrawTexture(Def->Portrait,CX+5,CY+4,32,32,0,0,1,1);
+  else {
+   const bool Soldier=U.Role==EOVInteriorRole::Trooper;
+   const FLinearColor Badge=Soldier?Soft:FLinearColor(.93f,.68f,.3f);
+   DrawRect(FLinearColor(.045f,.082f,.11f),CX+5,CY+4,32,32);
+   // Helmet and shoulder silhouette doubles as the fallback portrait.
+   DrawRect(Badge,CX+16,CY+8,10,10);
+   DrawRect(Panel,CX+18,CY+12,8,2);
+   DrawLine(CX+10,CY+27,CX+16,CY+21,Badge,3);
+   DrawRect(Badge,CX+16,CY+20,10,10);
+   DrawLine(CX+26,CY+21,CX+32,CY+27,Badge,3);
+  }
+  const float Bar=CW-46;
+  FString Label=CardName(U);
+  float TW=0,TH=0;
+  GetTextSize(Label,TW,TH,GEngine->GetSmallFont());
+  if(TW>Bar){
+   do{
+    Label.LeftChopInline(1);
+    GetTextSize(Label+TEXT("…"),TW,TH,GEngine->GetSmallFont());
+   }while(TW>Bar && !Label.IsEmpty());
+   Label+=TEXT("…");
+  }
+  Text(Label,Ink,CX+40,CY+2);
+  Text(OVInteriorUI::State(U.State),Soft,CX+40,CY+18);
+  const float HP=FMath::Clamp(U.HP/FMath::Max(1.f,U.MaxHP),0.f,1.f);
+  DrawRect(Panel,CX+40,CY+36,Bar,4);
+  DrawRect(HP<.35f?Enemy:Accent,CX+40,CY+36,Bar*HP,4);
+  const FName Action(*FString::Printf(TEXT("InteriorCard_%d"),U.UnitId));
+  AddHitBox(FVector2D(CX,CY)*UIScale,FVector2D(CW,45)*UIScale,Action,true,211);
+  ActionCenters.Add(Action,FVector2D(CX+CW*.5,CY+22));
  }
- // Static layout is known; enemy units and room runtime state still need observation.
- auto Project=[&](FVector Local)
- {
-  return FVector2D(X+276+(Local.X/L->LocalHalfExtent.X*InteriorMapScale+1)*(W-330)*.5,Y+130+(Local.Y/L->LocalHalfExtent.Y*InteriorMapScale+1)*66);
+ if(VisibleCards.IsEmpty())Text(TEXT("이 함선에 해당 인원이 없습니다"),Soft,CardsX+8,Footer+83);
+ const float TrackY=Footer+174;
+ InteriorScrollTrack=FBox2D(FVector2D(CardsX+34,TrackY),FVector2D(Right-34,TrackY+19));
+ const float TrackWidth=InteriorScrollTrack.GetSize().X;
+ InteriorThumbWidth=TrackWidth*Columns/FMath::Max(Columns,TotalColumns);
+ const float ThumbLeft=InteriorScrollTrack.Min.X+(InteriorLastColumn?(TrackWidth-InteriorThumbWidth)*InteriorCardColumn/InteriorLastColumn:0);
+ DrawRect(Surface,InteriorScrollTrack.Min.X,TrackY+5,TrackWidth,9);
+ DrawRect(InteriorLastColumn?Accent:Soft,ThumbLeft,TrackY+5,InteriorThumbWidth,9);
+ if(InteriorLastColumn){
+  Button(TEXT("InteriorPrev"),TEXT("◀"),CardsX,TrackY-3,29);
+  Button(TEXT("InteriorNext"),TEXT("▶"),Right-29,TrackY-3,29);
+ }
+ const float MapTop=Y+104,MapBottom=Footer-5;
+ // Fit this deck's room centers to the available map, leaving room for labels and occupants.
+ FBox2D Rooms(ForceInit);
+ for(const auto& Slot:L->Slots)if(Slot.DeckId==InteriorDeck)Rooms+=FVector2D(Slot.LocalCenter.X,Slot.LocalCenter.Y);
+ if(!Rooms.bIsValid)return;
+ const FVector2D Mid=Rooms.GetCenter(),RoomExtent=Rooms.GetExtent();
+ auto Project=[&](FVector Local){
+  const double NX=FMath::Clamp((Local.X-Mid.X)/FMath::Max(1.,RoomExtent.X),-1.12,1.12);
+  const double NY=FMath::Clamp((Local.Y-Mid.Y)/FMath::Max(1.,RoomExtent.Y),-1.12,1.12);
+  return FVector2D(X+W*.5+NX*(W*.5-78)*InteriorMapScale,
+      (MapTop+MapBottom)*.5-18+NY*FMath::Max(10.f,(MapBottom-MapTop)*.5f-46)*InteriorMapScale);
  };
  for(const auto& Link:L->Connections)
  {
@@ -225,20 +357,70 @@ void AOVHUD::DrawInterior()
   const FVector2D P=Project(L->Slots[A].LocalCenter),Q=Project(L->Slots[B].LocalCenter);
   DrawLine(P.X,P.Y,Q.X,Q.Y,FLinearColor(.3f,1,.45f),3);
  }
+ TArray<FBox2D> Markers;
  for(const auto& Slot:L->Slots)if(Slot.DeckId==InteriorDeck)
  {
   const FVector2D P=Project(Slot.LocalCenter);
+  Markers.Emplace(P-FVector2D(35,13),P+FVector2D(35,14));
   Button(FName(*(TEXT("InteriorSlot_")+Slot.SlotId.ToString())),Facility(Slot.Facility),P.X-35,P.Y-13,70,Slot.SlotId==InteriorTargetSlot);
+ }
+ // Squads are split by room, allegiance and visibility. A separated survivor keeps a marker.
+ TMap<TTuple<FName,int32,int32>,TArray<int32>> RoomSquads;
+ for(const auto& U:Interior->Units){
+  if(U.Ship==Ship && U.Role==EOVInteriorRole::Trooper && U.SquadId>0 && Living(U) && Interior->CanObserve(0,U.UnitId))
+   RoomSquads.FindOrAdd(MakeTuple(U.NodeId,U.FactionId,U.SquadId)).Add(U.UnitId);
  }
  TMap<FName,int32> RoomOccupants;
  for(const auto& U:Interior->Units)if(U.Ship==Ship&&Interior->CanObserve(0,U.UnitId))
  {
   const int32 Node=L->GetSlotIndex(U.NodeId);if(!L->Slots.IsValidIndex(Node)||L->Slots[Node].DeckId!=InteriorDeck)continue;
   const bool Hero=U.Role!=EOVInteriorRole::Trooper,Selected=InteriorSelectedUnits.Contains(U.UnitId);
+  const auto* Squad=!Hero && Living(U)?RoomSquads.Find(MakeTuple(U.NodeId,U.FactionId,U.SquadId)):nullptr;
+  if(Squad && (*Squad)[0]!=U.UnitId)continue;
+  if(!Hero && !Living(U))continue; // Individual casualty cards and notices remain available.
   const bool Moving=U.State==EOVInteriorState::Moving||U.State==EOVInteriorState::Retreating;
   const float Step=Moving?FMath::Sin(Interior->GameTime*10+U.UnitId)*2.f:0.f;
   const int32 Place=RoomOccupants.FindOrAdd(U.NodeId)++;
-  const FVector2D P=Project(U.LocalPosition)+FVector2D((Place%4-1.5f)*24,28+(Place/4)*25);
+  FVector2D P=Project(U.LocalPosition)+FVector2D((Place%4-1.5f)*33,24+(Place/4)*24);
+  P.X=FMath::Clamp(P.X,X+28.,X+W-29.);
+  P.Y=FMath::Clamp(P.Y,MapTop+17.,MapBottom-17.);
+  const FVector2D Anchor=Project(U.LocalPosition);
+  const FVector2D HalfSize=Squad?FVector2D(17,9):FVector2D(13,17);
+  auto FreePosition=[&](FVector2D Center){
+   const FBox2D Box(Center-HalfSize,Center+HalfSize);
+   return !Markers.ContainsByPredicate([&](const auto& Occupied){return Occupied.Intersect(Box);});
+  };
+  if(!FreePosition(P)){
+   // Use the nearest clear space around this unit, independently of mouse selection.
+   const FVector2D Directions[]={{0,1},{1,0},{-1,0},{0,-1},{1,1},{-1,1},{1,-1},{-1,-1}};
+   bool Found=false;
+   for(int32 Ring=1;Ring<=3 && !Found;++Ring){
+    for(const auto& Direction:Directions){
+     const FVector2D Candidate=P+Direction*FVector2D(20,18)*Ring;
+     if(Candidate.X<X+28 || Candidate.X>X+W-29 || Candidate.Y<MapTop+17 || Candidate.Y>MapBottom-17 || !FreePosition(Candidate))continue;
+     P=Candidate;Found=true;break;
+    }
+   }
+  }
+  Markers.Emplace(P-HalfSize,P+HalfSize);
+  if(FVector2D::DistSquared(P,Anchor)>FMath::Square(40.f))
+   DrawLine(Anchor.X,Anchor.Y,P.X,P.Y,Soft.CopyWithNewOpacity(.45f),1);
+  if(Squad){
+   const bool Friendly=U.FactionId==0;
+   const FLinearColor Tint=Friendly?Accent:Enemy;
+   const bool AnySelected=Squad->ContainsByPredicate([&](int32 Id){return InteriorSelectedUnits.Contains(Id);});
+   DrawRect(AnySelected?FLinearColor(.035f,.21f,.26f):Surface,P.X-16,P.Y-7,32,15);
+   DrawRect(Tint,P.X-16,P.Y-7,2,15);
+   const int32 Team=FormationTeam(Play,U);
+   const TCHAR* Symbol=Team==0?TEXT("A"):Team==1?TEXT("B"):Friendly?TEXT("◆"):TEXT("◇");
+   Text(FString::Printf(TEXT("%s×%d"),Symbol,Squad->Num()),Tint,P.X-12,P.Y-8);
+   if(Friendly){
+    const FName Marker(*FString::Printf(TEXT("InteriorSquad_%d"),U.UnitId));
+    AddHitBox(FVector2D(P.X-16,P.Y-8)*UIScale,FVector2D(32,18)*UIScale,Marker,true,215);
+    ActionCenters.Add(Marker,P);
+   }
+   continue;
+  }
   const FLinearColor RoleColors[]={Ink,FLinearColor(.2f,.75f,1),FLinearColor(1,.65f,.2f),FLinearColor(.25f,1,.6f),FLinearColor(.75f,.55f,1)};
   FLinearColor C=U.FactionId==0?RoleColors[FMath::Clamp(int32(U.Role),0,4)]:Enemy;
   if(U.State==EOVInteriorState::Dead)C=FLinearColor(.45f,.45f,.5f);
@@ -260,7 +442,7 @@ void AOVHUD::DrawInterior()
   }
   else if(ArtVisible)
   {
-   const float Height=46.f*Art->Scale*InteriorMapScale;
+   const float Height=31.f*Art->Scale*InteriorMapScale;
    const bool Hit=Interior->GameTime-U.LastDamagedAt<.18;
    const bool Skill=Interior->GameTime-U.LastPhaseArcAt<.35 || Interior->GameTime<U.SkillActiveUntil;
    const FName Pose=Dead?TEXT("death"):Hit?TEXT("hit"):Skill?TEXT("skill"):Moving?TEXT("move"):
@@ -341,7 +523,7 @@ void AOVHUD::DrawInterior()
    ActionCenters.Add(Marker,P);
   }
  }
- if(const auto* Play=PC->GetPlayScenario();Play && Play->ActiveId==TEXT("HeroArena")){
+ if(Arena){
   for(int32 I=0;I<2;++I){
    bool HasEntry=false;
    TSet<FName> Labelled;
@@ -352,8 +534,11 @@ void AOVHUD::DrawInterior()
     if(Play->ArenaTeamForUnit(Person.RuntimeUnitId)!=I)continue;
     HasEntry=true;
     if(Entry.Deck!=InteriorDeck)continue;
-    const FVector2D Point=Project(Entry.LocalPoint);
-    const FVector2D Label(FMath::Clamp(Point.X+9.,X+240.,X+W-66.),Point.Y+(I==0?-29:17));
+    FVector2D Point=Project(Entry.LocalPoint);
+    Point.X=FMath::Clamp(Point.X,X+16.,X+W-16.);
+    Point.Y=FMath::Clamp(Point.Y,MapTop+5.,MapBottom-5.);
+    const FVector2D Label(FMath::Clamp(Point.X+9.,X+12.,X+W-72.),
+        FMath::Clamp(Point.Y+(I==0?-29:17),MapTop+2.,MapBottom-18.));
     DrawLine(Point.X-4,Point.Y,Point.X+4,Point.Y,Color,2);
     DrawLine(Point.X,Point.Y-4,Point.X,Point.Y+4,Color,2);
     if(Labelled.Contains(Entry.SlotId))continue;
@@ -365,26 +550,22 @@ void AOVHUD::DrawInterior()
    if(HasEntry)Button(I==0?TEXT("InteriorEntryA"):TEXT("InteriorEntryB"),I==0?TEXT("A 진입층"):TEXT("B 진입층"),X+318+I*84,Y+37,80);
   }
  }
+ if(PC->bDeveloperMode)Text(L->LayoutVersion.ToString(),Soft,X+W-165,Y+77);
  const int32 SlotIndex=L->GetSlotIndex(InteriorTargetSlot);
  if(L->Slots.IsValidIndex(SlotIndex)&&Ship->Systems->Slots.IsValidIndex(SlotIndex))
  {
   const auto& Slot=L->Slots[SlotIndex];const auto& S=Ship->Systems->Slots[SlotIndex];
-  DrawText(TEXT("목표: ")+Facility(Slot.Facility)+FString::Printf(TEXT(" · %d층"),Slot.DeckId),Accent,X+234,Y+288,GEngine->GetSmallFont());
+  Text(Facility(Slot.Facility)+FString::Printf(TEXT(" · %d층"),Slot.DeckId),Accent,X+18,Footer+131);
   const bool Observed=Ship->Systems->FactionId==0||Own.ContainsByPredicate([&](const auto* U){return Living(*U)&&U->State!=EOVInteriorState::InTransit&&U->State!=EOVInteriorState::RescueWaiting&&U->NodeId==Slot.SlotId;});
-  if(Observed)
-  {
-   DrawText(FString::Printf(TEXT("물리 HP %.0f/%.0f · 운영 인원 %.0f/%.0f"),S.HP,Slot.MaxFacilityHP,S.Crew,Slot.RequiredCrew),Ink,X+234,Y+308,GEngine->GetSmallFont());
-   DrawText(S.OccupyingFaction<0?TEXT("점령 없음"):S.OccupyingFaction==0?TEXT("아군 점령"):TEXT("적 점령"),Ink,X+234,Y+328,GEngine->GetSmallFont());
-  }
-  else DrawText(TEXT("시설 상태 미관측 · 아군 도착 시 확인"),Ink,X+234,Y+312,GEngine->GetSmallFont());
+  if(Observed){
+   Text(FString::Printf(TEXT("시설 HP %.0f/%.0f"),S.HP,Slot.MaxFacilityHP),Ink,X+18,Footer+150);
+   Text(FString::Printf(TEXT("운영 %.0f/%.0f · %s"),S.Crew,Slot.RequiredCrew,S.OccupyingFaction<0?TEXT("미점령"):S.OccupyingFaction==0?TEXT("아군"):TEXT("적군")),Ink,X+18,Footer+169);
+  }else Text(TEXT("시설 상태 미관측"),Soft,X+18,Footer+151);
  }
- else DrawText(TEXT("층과 목표 시설을 선택하세요."),Ink,X+234,Y+300,GEngine->GetSmallFont());
  const FName Commands[]={TEXT("InteriorCapture"),TEXT("InteriorSabotage"),TEXT("InteriorDefend"),TEXT("InteriorRetreat"),TEXT("InteriorCancel")};
  const TCHAR* Labels[]={TEXT("점령"),TEXT("공작"),TEXT("수호"),TEXT("철수"),TEXT("취소")};
- const float CommandWidth=(W-246)/5;
- for(int32 I=0;I<5;++I)Button(Commands[I],Labels[I],X+234+I*CommandWidth,Y+364,CommandWidth-5);
- if(Focus&&Focus->State==EOVInteriorState::Retreating)DrawText(TEXT("원 진입점으로 철수 중"),Accent,X+234,Y+408,GEngine->GetSmallFont());
- const FString Feedback=Focus&&!Focus->Reason.IsEmpty()?Focus->Reason:InteriorFeedback;
- DrawText(Feedback.Left(58),FLinearColor(1,.8f,.25f),X+12,Y+H-28,GEngine->GetSmallFont());
- if(PC->bDeveloperMode)DrawText(TEXT("배치 ")+L->LayoutVersion.ToString(),Ink,X+234,Y+H-53,GEngine->GetSmallFont());
+ const float CommandWidth=CardsWidth/5;
+ for(int32 I=0;I<5;++I)Button(Commands[I],Labels[I],CardsX+I*CommandWidth,Footer+3,CommandWidth-5);
+ const FString Feedback=Focus&&InteriorSelectedUnits.Num()==1&&!Focus->Reason.IsEmpty()?Focus->Reason:InteriorFeedback;
+ if(!Feedback.IsEmpty())Text(Feedback.Left(56),FLinearColor(1,.8f,.25f),CardsX,Y+H-15);
 }

@@ -92,7 +92,10 @@ def run():
         check(label+" 영웅·일반병 구성",num_heroes==8,num_heroes)
         check(label+" 원 수송수단 사용",len(pods)==[24,0,12][route] and len(docked())==[2,0,1][route],stats)
         hud.execute_ui_action("ArenaViewB")
-        for _ in range(2): yield
+        # Slate callbacks may run before the game viewport repaints in a background editor.
+        for _ in range(120):
+            yield
+            if all(hud.get_action_center("InteriorEntry"+letter).x>=0 for letter in "AB"): break
         check(label+" 선내 지휘 지도",prop(hud,"interior_ship")==target,prop(hud,"interior_ship"))
         for number,letter in enumerate("AB"):
             button="InteriorEntry"+letter

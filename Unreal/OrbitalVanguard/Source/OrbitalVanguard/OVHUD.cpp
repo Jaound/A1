@@ -128,7 +128,7 @@ bool AOVHUD::HandlePointer(float X,float Y,bool Pressed,bool Down,float Wheel,bo
  if (bStarMapOpen || bTitleScreenOpen) return true;
  const bool Over=IsOverPanel(X,Y);
  if(PC&&PC->bDeveloperMode){
-  bDragging=false;bResizing=false;bInteriorDragging=false;bInteriorResizing=false;DraggedPin=INDEX_NONE;bPinResizing=false;
+  bDragging=false;bResizing=false;bInteriorDragging=false;bInteriorResizing=false;bInteriorScrolling=false;DraggedPin=INDEX_NONE;bPinResizing=false;
   const FVector2D Cursor(X,Y);
   if(Pressed&&DevelopmentRect.IsInsideOrOn(Cursor)) {
    const float Dpi=FMath::Max(.01f,UWidgetLayoutLibrary::GetViewportScale(this));
@@ -155,7 +155,22 @@ bool AOVHUD::HandlePointer(float X,float Y,bool Pressed,bool Down,float Wheel,bo
       FMath::Clamp(P.Y-PinDragOffset.Y,56.,FMath::Max(56.,double(Height-Size.Y))));
   return true;
  }
- if(!bDragging&&!bResizing&&(bInteriorDragging||bInteriorResizing||IsOverInteriorPanel(X,Y))) {
+ if(!bDragging&&!bResizing&&(bInteriorDragging||bInteriorResizing||bInteriorScrolling||IsOverInteriorPanel(X,Y))) {
+  if(bInteriorOpen && !bInteriorMinimized && InteriorScrollTrack.bIsValid && InteriorLastColumn>0){
+   const float Travel=InteriorScrollTrack.GetSize().X-InteriorThumbWidth;
+   if(Pressed && InteriorScrollTrack.IsInsideOrOn(P) && Travel>0){
+    const float ThumbLeft=InteriorScrollTrack.Min.X+Travel*InteriorCardColumn/InteriorLastColumn;
+    InteriorThumbGrab=P.X>=ThumbLeft && P.X<=ThumbLeft+InteriorThumbWidth ? P.X-ThumbLeft : InteriorThumbWidth*.5f;
+    bInteriorScrolling=true;
+   }
+   if(bInteriorScrolling && Travel>0){
+    InteriorCardColumn=FMath::RoundToInt(FMath::Clamp((P.X-InteriorScrollTrack.Min.X-InteriorThumbGrab)/Travel,0.,1.)*InteriorLastColumn);
+    if(!Down)bInteriorScrolling=false;
+    return true;
+   }
+   if(Wheel!=0 && P.X>=InteriorScrollTrack.Min.X-32 && P.Y>=InteriorScrollTrack.Min.Y-104)
+    InteriorCardColumn=FMath::Clamp(InteriorCardColumn+(Wheel<0?1:-1),0,InteriorLastColumn);
+  }else bInteriorScrolling=false;
   const FBox2D Bounds=InteriorBounds();
   if(Pressed) {
    if(P.X>=Bounds.Min.X&&P.X<Bounds.Max.X-164&&P.Y>=Bounds.Min.Y&&P.Y<Bounds.Min.Y+30) {bInteriorDragging=true;InteriorDragOffset=P-Bounds.Min;}
@@ -223,7 +238,7 @@ void AOVHUD::NotifyHitBoxClick(FName N)
     const auto U=PC->Interior->GetUnit(Id);
     if(!Present.Contains(Id))continue;
     if(InteriorSelectedUnits.IsEmpty()){
-     InteriorShip=U.Ship;bInteriorOpen=true;bInteriorMinimized=false;InteriorTargetSlot=NAME_None;
+     InteriorShip=U.Ship;InteriorCardColumn=0;InteriorTeamFilter=INDEX_NONE;bInteriorOpen=true;bInteriorMinimized=false;InteriorTargetSlot=NAME_None;
      const auto* L=U.Ship->Systems->Layout.Get();const int32 Slot=L->GetSlotIndex(U.NodeId);
      if(L->Slots.IsValidIndex(Slot))InteriorDeck=L->Slots[Slot].DeckId;
     }

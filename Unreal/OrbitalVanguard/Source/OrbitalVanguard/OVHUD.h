@@ -70,7 +70,7 @@ public:
  UFUNCTION(BlueprintPure, Category="UI") float GetPreviewZoom() const { return PreviewZoom; }
  bool IsOverOrbitPreview(FVector2D Cursor) const;
  void OrbitPreview(FVector2D Delta);
- UFUNCTION(BlueprintCallable, Category="UI") void CancelPointerDrag() { bDragging=false; bResizing=false; bInteriorDragging=false; bInteriorResizing=false; bDevDragging=false; bDevResizing=false; DraggedPin=INDEX_NONE; bPinResizing=false; }
+ UFUNCTION(BlueprintCallable, Category="UI") void CancelPointerDrag() { bInteriorScrolling=false; bDragging=false; bResizing=false; bInteriorDragging=false; bInteriorResizing=false; bDevDragging=false; bDevResizing=false; DraggedPin=INDEX_NONE; bPinResizing=false; }
  void OpenSurvey(){bHangarView=false;OpenDetails();}
  void OpenDetails() { bDetailsOpen=true; bMinimized=false; bHeroPanelOpen=false; SyncAddedUI(); }
  UFUNCTION(BlueprintCallable, Category="UI") bool HandlePointer(float X,float Y,bool Pressed,bool Down,float Wheel,bool Orbit,float DX,float DY);
@@ -176,7 +176,11 @@ private:
  FVector2D InteriorRestorePosition=FVector2D(-1,-1),InteriorRestoreSize=FVector2D(780,550);
  bool bDrawingDetails=false;
  bool bDrawingInterior=false;
- int32 InteriorUnitPage=0;
+ // The two card rows share one horizontally scrollable column index.
+ int32 InteriorCardColumn=0, InteriorLastColumn=0, InteriorTeamFilter=INDEX_NONE;
+ FBox2D InteriorScrollTrack=FBox2D(ForceInit);
+ float InteriorThumbWidth=0, InteriorThumbGrab=0;
+ bool bInteriorScrolling=false;
  FBox2D InteriorBounds() const;
  void DrawInterior();
  void DrawMission();
