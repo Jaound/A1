@@ -161,3 +161,62 @@ L→L+1 필요XP는120+40×(L−1)+10×(L−1)²이다. L20은 장비 없이L1 �
 ## 통합 시험과 남은 검증
 
 D116에서15명 전체세력 배치·성장/스킬·공간 정원·새 수리를 연결한 [통합 모형 시험](../../04_analysis/INTEGRATED_COMBAT_RESULTS.md)을 재개했다. 이전공격/방어 승률은L1/옛스킬 조건으로 한정한다. 기체/개인 보급·포로/비상탈출 전 경로·실제 문/모델·5시간 성장 경제는 여전히 후속이다. 산술표와 축소 모형이 실제5시간 도달/UE 전투력/생환율을 보장하지 않는다.
+
+---
+
+<!-- A1_GDD_STUDIO_START:HERO_ROSTER_34_V06 -->
+## 고유 영웅 30인 · 기본(일반·적군 공용) 영웅 4인 확장 및 C++ 실구현·밸런스 검증 (v0.6)
+
+- **구성 정원**: 고유 영웅 **30명** (근거리 10 · 원거리 10 · 지원 5 · 지휘 5) + 기본 영웅 **4명** (`G01`~`G04`, 일반 영입 및 AI 적군 공용 — 고유 패시브·시그니처 없음).
+- **전장 역할 분포 (고유 30인)**: 함대전 특화 13명 · 함대전/선내 양면 6명 · 선내 강습/수호 11명 (중복 능력 0건).
+- **UE 5.8 C++ 실구현 감사 결과 (`codex/phase1-playground`)**: 미구현·폐기 기능 참조 **0건**, v0.5 상한 위반 **0건**.
+  - 제거/교정 항목: 화재 확산 → `OVInteriorSubsystem::Disasters`(20초, 2 HP/s) / 쉴드 개시 지연(D116 폐기) → `ShieldRegenFraction`·`NoHitRecoveryInterval` / PD 표적 전환 지연(즉시 획득) → `FOVPDProfile.Interval`·`Accuracy` / 함선 회피율 → `OVShip` 가속·제동·횡가속 및 `GuidanceTurnRate` / 선내 경직 → `SlowUntil`·`SlowFraction`.
+- **전투 시뮬레이션 밸런스 요약 (기본 영웅 `G01`~`G04` 대비)**: 고유 영웅 주력 전장 우위 **+5.1% ~ +10.5%** (평균 **+8.1%**, 허용 밴드 +3% ~ +14.5% 전원 통과).
+- **연동 문서**:
+  - 상세 기획 · C++ 훅 · 밸런스 시트: `docs/01_design/boarding/HERO_ROSTER_30_DETAIL.md`
+  - 34인 반실사 2D 애니 스탠딩 + 선내전투용 SD 변환 프롬프트 카탈로그: `docs/01_design/boarding/HERO_IMAGE_PROMPTS_30.md`
+
+### 기본(일반 · 적군 공용) 영웅 4종 요약
+
+| 코드 | 명칭 | 유형 | 보직 | 고유 패시브 / 시그니처 |
+| --- | --- | --- | --- | --- |
+| `G01` | 표준 근거리 장교 | 근거리형 | 보직 없음 (표준 강습·수호 전열) | 없음 (v0.5 기본 4스킬만 사용) |
+| `G02` | 표준 원거리 사수 | 원거리형 | 무기제어실 (표준 명중 +2~4%p · 연사 +15~25%) | 없음 (v0.5 기본 4스킬만 사용) |
+| `G03` | 표준 지원 정비관 | 지원형 | 정비 노드 (표준 재난 -15~30% · 선체 복구 0.5~1.0%) | 없음 (v0.5 기본 4스킬만 사용) |
+| `G04` | 표준 함교 지휘관 | 지휘형 | 함교 (표준 속도/선회 +5~9% · 급선회 +10~20%) | 없음 (v0.5 기본 4스킬만 사용) |
+
+### 고유 영웅 30인 C++ 연동 · 시뮬레이션 검증 요약
+
+| 코드 | 영웅 | 유형 | 주력 전장 우위 | 연동 C++ 서브시스템 | 판정 |
+| --- | --- | --- | ---: | --- | --- |
+| `M01` | 카엘 반 | 근거리형 | +8.4% | `OVInteriorSubsystem` | BALANCED |
+| `M02` | 이리스 베인 | 근거리형 | +6.2% | `OVInteriorSubsystem` | BALANCED |
+| `M03` | 도리안 크루거 | 근거리형 | +7.6% | `OVInteriorSubsystem` | BALANCED |
+| `M04` | 세린 카이 | 근거리형 | +5.1% | `OVInteriorSubsystem` | BALANCED |
+| `M05` | 볼칸 드라그 | 근거리형 | +7.8% | `OVInteriorSubsystem` | BALANCED |
+| `M06` | 라일라 녹스 | 근거리형 | +6.8% | `OVInteriorSubsystem + OVTransportSubsystem` | BALANCED |
+| `M07` | 가렌 호크 | 근거리형 | +7.3% | `OVInteriorSubsystem` | BALANCED |
+| `M08` | 미라 솔라리스 | 근거리형 | +5.5% | `OVInteriorSubsystem` | BALANCED |
+| `M09` | 타릭 오르 | 근거리형 | +8% | `OVInteriorSubsystem` | BALANCED |
+| `M10` | 헤라 크림슨 | 근거리형 | +8.6% | `OVInteriorSubsystem` | BALANCED |
+| `R01` | 세라 린 | 원거리형 | +7.5% | `OVCombatSubsystem + OVInteriorSubsystem` | BALANCED |
+| `R02` | 마커스 케인 | 원거리형 | +10.5% | `OVPointDefenseSubsystem + OVInteriorSubsystem` | BALANCED |
+| `R03` | 엘레나 보스 | 원거리형 | +8.5% | `OVCombatSubsystem + OVInteriorSubsystem` | BALANCED |
+| `R04` | 제이드 하퍼 | 원거리형 | +7.1% | `OVInteriorSubsystem` | BALANCED |
+| `R05` | 노아 발렌틴 | 원거리형 | +9.2% | `OVCombatSubsystem + OVInteriorSubsystem` | BALANCED |
+| `R06` | 클라라 벡 | 원거리형 | +5.7% | `OVInteriorSubsystem` | BALANCED |
+| `R07` | 시온 아르카 | 원거리형 | +8.8% | `OVCarrierSubsystem + OVInteriorSubsystem` | BALANCED |
+| `R08` | 비비안 록 | 원거리형 | +8.1% | `OVInteriorSubsystem` | BALANCED |
+| `R09` | 렉스 벤토 | 원거리형 | +8.6% | `OVCombatSubsystem + OVInteriorSubsystem` | BALANCED |
+| `R10` | 아리아 실바 | 원거리형 | +7.2% | `OVCombatSubsystem + OVInteriorSubsystem` | BALANCED |
+| `S01` | 유나 하야시 | 지원형 | +8% | `OVInteriorSubsystem` | BALANCED |
+| `S02` | 오웬 크래프트 | 지원형 | +9% | `OVLogisticsSubsystem + OVShipSystemsComponent` | BALANCED |
+| `S03` | 셀레네 루 | 지원형 | +9.5% | `OVShipSystemsComponent + OVInteriorSubsystem` | BALANCED |
+| `S04` | 하준 킴 | 지원형 | +9.6% | `OVCarrierSubsystem + OVShipSystemsComponent` | BALANCED |
+| `S05` | 나디아 벨 | 지원형 | +9.5% | `OVInteriorSubsystem` | BALANCED |
+| `C01` | 마르쿠스 솔 | 지휘형 | +8% | `OVInteriorSubsystem` | BALANCED |
+| `C02` | 발레리아 스턴 | 지휘형 | +9.2% | `OVShip + OVInteriorSubsystem` | BALANCED |
+| `C03` | 루시안 베일 | 지휘형 | +9.3% | `OVCombatSubsystem + OVShip` | BALANCED |
+| `C04` | 소피아 렌 | 지휘형 | +9.4% | `OVCarrierSubsystem + OVInteriorSubsystem` | BALANCED |
+| `C05` | 빅터 칼리온 | 지휘형 | +8.5% | `OVTransportSubsystem + OVInteriorSubsystem` | BALANCED |
+<!-- A1_GDD_STUDIO_END:HERO_ROSTER_34_V06 -->
