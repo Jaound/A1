@@ -1,0 +1,17 @@
+{
+  "code": "a717492",
+  "automation": {
+    "succeeded": 104,
+    "succeededWithWarnings": 50,
+    "failed": 0,
+    "notRun": 0
+  },
+  "ai_regression_cases": 6,
+  "enemy_boarding": {
+    "shield_held": true,
+    "pods": 1,
+    "arrival_and_capture_order": true
+  },
+  "render": "PIE DX11 1600x900",
+  "physical_input": false
+}

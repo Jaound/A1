@@ -1,0 +1,33 @@
+{
+  "checks": {
+    "레이더함 자체 범위(m)": {
+      "passed": true,
+      "value": "1450.0"
+    },
+    "1540m 지원선 부재": {
+      "passed": true,
+      "value": "NO DETECTION"
+    },
+    "1540m 전진 레이더함 탐지": {
+      "passed": true,
+      "value": "SUPPORT RADAR"
+    },
+    "공유 탐지로 실제 대함 미사일 발사": {
+      "passed": true,
+      "value": "1"
+    },
+    "1700m 공유 탐지 유지": {
+      "passed": true,
+      "value": "SUPPORT RADAR"
+    },
+    "1700m 무장 최대거리로 발사 차단": {
+      "passed": true,
+      "value": "OUT OF RANGE"
+    },
+    "레이더 시설 파괴 후 지원 소실": {
+      "passed": true,
+      "value": "NO DETECTION"
+    }
+  },
+  "passed": true
+}
