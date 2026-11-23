@@ -475,7 +475,7 @@ void UOVTitleScreenWidget::BuildProgrammaticTree()
         PickBtn->AddChild(BtnContent);
 
         const FString PhotoId=Def.Id.ToString();
-        const FString AssetPath = FString::Printf(TEXT("/Game/UI/MissionCards/%s.%s"), *PhotoId, *PhotoId);
+        const FString AssetPath = Def.Id==TEXT("HeroArena") ? FString(TEXT("/Game/UI/Heroes/M02/T_portrait.T_portrait")) : FString::Printf(TEXT("/Game/UI/MissionCards/%s.%s"), *PhotoId, *PhotoId);
         UTexture2D* Photo = LoadObject<UTexture2D>(nullptr, *AssetPath);
         ScenarioPhotos.Add(Def.Id, Photo);
         UImage* Thumbnail = WidgetTree->ConstructWidget<UImage>();

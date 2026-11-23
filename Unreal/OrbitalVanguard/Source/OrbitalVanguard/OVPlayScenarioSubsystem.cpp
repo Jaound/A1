@@ -226,9 +226,19 @@ void UOVPlayScenarioSubsystem::SetEnvironmentOverride(EOVSpaceHazardKind Kind)
     }
 }
 
+void UOVPlayScenarioSubsystem::RestoreArenaRoster()
+{
+    if(bArenaOwnsRoster && ArenaRoster.IsValid()){ArenaRoster->Heroes=MoveTemp(ArenaSavedRoster);ArenaRoster->CommandTiers=MoveTemp(ArenaSavedTiers);}
+    bArenaOwnsRoster=false;ArenaRoster.Reset();
+}
+void UOVPlayScenarioSubsystem::Deinitialize()
+{
+    RestoreArenaRoster();
+    Super::Deinitialize();
+}
 void UOVPlayScenarioSubsystem::Clear()
 {
-    ArenaPicked.Reset(); ArenaCandidate=0; bArenaStarted=false;
+    ArenaPicked.Reset(); ArenaCandidate=0;ArenaLevel=1; bArenaStarted=false;
     EndSandboxPlacement();
     bSandboxHullMenu = false;
     SandboxFaction = 0;
@@ -240,12 +250,7 @@ void UOVPlayScenarioSubsystem::Clear()
     FreshDeployments.Reset();
     if(auto* GI=GetWorld()->GetGameInstance()) if(auto* Roster=GI->GetSubsystem<UOVHeroSubsystem>())
         Roster->Heroes.RemoveAll([this](const auto& H){return ScenarioHeroes.Contains(H.HeroId);});
-    if(bArenaOwnsRoster)
-    {
-        if(auto* GI=GetWorld()->GetGameInstance())
-            GI->GetSubsystem<UOVHeroSubsystem>()->Heroes=MoveTemp(ArenaSavedRoster);
-        bArenaOwnsRoster=false;
-    }
+    RestoreArenaRoster();
     ScenarioHeroes.Reset();
     for(int32& Count:IssuedHeroes)Count=0;
     DestroyActiveHazardActors();
@@ -324,8 +329,12 @@ bool UOVPlayScenarioSubsystem::Start(AOVController& Controller, FName Id)
         for (int32 Side = 0; Side < (bEvacuation ? 1 : 2); ++Side) ArrangeFleet(Controller, Side, bEvacuation);
     if (Definition->Kind==EOVPlaySceneKind::HeroArena)
     {
-        ArenaSavedRoster=MoveTemp(Controller.GetGameInstance()->GetSubsystem<UOVHeroSubsystem>()->Heroes);
+        ArenaRoster=Controller.GetGameInstance()->GetSubsystem<UOVHeroSubsystem>();
+        ArenaSavedRoster=MoveTemp(ArenaRoster->Heroes);
+        ArenaSavedTiers=MoveTemp(ArenaRoster->CommandTiers);ArenaRoster->CommandTiers.Add(0,3);ArenaRoster->CommandTiers.Add(1,3);
         bArenaOwnsRoster=true;
+        const auto& Definitions=Controller.GetGameInstance()->GetSubsystem<UOVHeroSubsystem>()->Definitions;
+        ArenaCandidate=FMath::Max(0,Definitions.IndexOfByPredicate([](const auto& D){return D.Id==TEXT("M02");}));
         for(int32 I=0; I<ArenaTeamSize; ++I)
             if(!AddArenaHero(Controller,1,I%4))
             {
@@ -359,11 +368,12 @@ TArray<FGuid> UOVPlayScenarioSubsystem::ArenaOwnedCandidates() const
 
 FString UOVPlayScenarioSubsystem::ArenaCandidateLabel() const
 {
-    static const TCHAR* Labels[]={TEXT("근거리 장교"),TEXT("원거리 사수"),TEXT("지원 정비관"),TEXT("함교 지휘관")};
-    if(ArenaCandidate>=0 && ArenaCandidate<4) return Labels[ArenaCandidate];
+    const auto* Roster=GetWorld()->GetGameInstance()->GetSubsystem<UOVHeroSubsystem>();
+    if(Roster->Definitions.IsValidIndex(ArenaCandidate)) return Roster->Definitions[ArenaCandidate].Name;
     const auto Candidates=ArenaOwnedCandidates();
-    if(Candidates.IsValidIndex(ArenaCandidate-4))
-        for(const auto& H:ArenaSavedRoster) if(H.HeroId==Candidates[ArenaCandidate-4]) return H.Name;
+    const int32 Index=ArenaCandidate-Roster->Definitions.Num();
+    if(Candidates.IsValidIndex(Index))
+        for(const auto& H:ArenaSavedRoster) if(H.HeroId==Candidates[Index]) return H.Name;
     return TEXT("후보 선택");
 }
 
@@ -373,13 +383,18 @@ bool UOVPlayScenarioSubsystem::AddArenaHero(AOVController& PC,int32 Side,int32 C
     auto* Roster=PC.GetGameInstance()->GetSubsystem<UOVHeroSubsystem>();
     const auto Pool=ArenaOwnedCandidates();
     const FOVHeroRecord* Source=nullptr;
-    if(Choice>=4 && Pool.IsValidIndex(Choice-4))
-        Source=ArenaSavedRoster.FindByPredicate([&](const auto& H){return H.HeroId==Pool[Choice-4];});
-    if(Choice<0 || (Choice>=4 && !Source)) return false;
-    static const TCHAR* Labels[]={TEXT("근거리 장교"),TEXT("원거리 사수"),TEXT("지원 정비관"),TEXT("함교 지휘관")};
-    const auto Role=Source?Source->Role:static_cast<EOVInteriorRole>(Choice+1);
-    const auto Id=Roster->CreateRosterEntry(Side,Role,Source?Source->Name:FString::Printf(TEXT("%s %02d"),Labels[Choice],IssuedHeroes[Side]+1),true);
+    const int32 OwnedIndex=Choice-Roster->Definitions.Num();
+    if(Pool.IsValidIndex(OwnedIndex))
+        Source=ArenaSavedRoster.FindByPredicate([&](const auto& H){return H.HeroId==Pool[OwnedIndex];});
+    const auto* D=Source?Roster->Definition(Source->DefinitionId):
+        Roster->Definitions.IsValidIndex(Choice)?&Roster->Definitions[Choice]:nullptr;
+    if(!D) return false;
+    if(!D->Passive.IsEmpty() && Roster->Heroes.ContainsByPredicate([&](const auto& H){return H.DefinitionId==D->Id && H.FactionId==Side;}))
+    {PC.LastAction=TEXT("같은 고유 영웅은 한 번만 배치할 수 있습니다");return false;}
+    const FGuid Id=Roster->CreateRosterEntry(Side,D->Role,Source?Source->Name:D->Name,true);
+    if(auto* H=Roster->FindHero(Id)) H->DefinitionId=D->Id;
     if(!Id.IsValid()) return false;
+    if(!Source && Side==0)Roster->SetArenaLevel(Id,ArenaLevel);
     if(Source)
     {
         auto* H=Roster->FindHero(Id);
@@ -476,7 +491,10 @@ bool UOVPlayScenarioSubsystem::HandleAction(AOVController& Controller, FName Act
     if(ActiveId==TEXT("HeroArena") && Action.ToString().StartsWith(TEXT("Arena")))
     {
         if(bArenaStarted || Controller.Ships.Num()!=2) return true;
-        if(Action==TEXT("ArenaNext")) ArenaCandidate=(ArenaCandidate+1)%(4+ArenaOwnedCandidates().Num());
+        const int32 Choices=Controller.GetGameInstance()->GetSubsystem<UOVHeroSubsystem>()->Definitions.Num()+ArenaOwnedCandidates().Num();
+        if(Choices>0 && (Action==TEXT("ArenaNext") || Action==TEXT("ArenaPrev")))
+            ArenaCandidate=(ArenaCandidate+Choices+(Action==TEXT("ArenaNext")?1:-1))%Choices;
+        if(Action==TEXT("ArenaLevel"))ArenaLevel=ArenaLevel==1?5:ArenaLevel==5?10:ArenaLevel==10?15:ArenaLevel==15?20:1;
         if(Action==TEXT("ArenaAdd")) AddArenaHero(Controller,0,ArenaCandidate);
         if(Action==TEXT("ArenaFill"))
             while(IssuedHeroes[0]<ArenaTeamSize && AddArenaHero(Controller,0,IssuedHeroes[0]%4)) {}
@@ -734,7 +752,7 @@ FString UOVPlayScenarioSubsystem::GetStatus() const
     }
     if(ActiveId==TEXT("HeroArena"))
         return bArenaStarted ? TEXT("강습 진행 · 선내 지도에서 적 함교를 목표로 지정하세요") :
-            FString::Printf(TEXT("아군 편성 %d / %d   ·   %s"),IssuedHeroes[0],ArenaTeamSize,*ArenaCandidateLabel());
+            FString::Printf(TEXT("아군 %d / %d   ·   %s   ·   시험 생성 Lv.%d"),IssuedHeroes[0],ArenaTeamSize,*ArenaCandidateLabel(),ArenaLevel);
     if (ActiveId == TEXT("Evacuation")) return GetEvacuationStatus(nullptr);
     if (ActiveId == TEXT("Logistics"))
         return FString::Printf(TEXT("납품 %d / %.0f   ·   %s"), FMath::FloorToInt(DeliveredCargo), EscortQuota(),

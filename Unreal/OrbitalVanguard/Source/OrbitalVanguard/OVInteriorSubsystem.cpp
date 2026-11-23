@@ -101,8 +101,16 @@ int32 UOVInteriorSubsystem::SpawnRosterHero(AOVShip* Ship,FGuid HeroId,FName Slo
     {LastMessage=TEXT("영웅 배치 불가: 해당 함선을 수송 시스템에 등록할 수 없습니다");return 0;}
     const int32 Id=RegisterUnit(Ship,H->FactionId,H->Role,SlotId);
     auto* U=FindUnit(Id);if(!U)return 0;
-    U->HeroId=HeroId;U->Name=H->Name;U->HeroSkillRanks=H->SkillRanks;U->HeroLevel=H->Level;U->AmplifierCharges=H->AmplifierCharges;U->DevRepairBaseCost=H->DevRepairBaseCost;
+    U->DefinitionId=H->DefinitionId; U->HeroId=HeroId;U->Name=H->Name;U->HeroSkillRanks=H->SkillRanks;U->HeroLevel=H->Level;U->AmplifierCharges=H->AmplifierCharges;U->DevRepairBaseCost=H->DevRepairBaseCost;
+    if(U->DefinitionId==TEXT("R04"))U->Range=2000;
     U->MaxHP*=1+.06f*(H->Level-1);U->Damage*=1+.08f*(H->Level-1);
+    U->Damage*=1+.05f*FMath::Clamp(H->FocusTier,0,4);
+    U->MaxHP*=1+.05f*FMath::Clamp(H->ArmorTier,0,4);
+    U->Armor+=.02f*FMath::Clamp(H->ArmorTier-1,0,3);
+    const float Tactical=H->TacticalTier>0?.02f+.03f*FMath::Clamp(H->TacticalTier,1,4):0;
+    if(H->TacticalMode==TEXT("Move"))U->EquipmentMove=Tactical;
+    if(H->TacticalMode==TEXT("Heal"))U->EquipmentHeal=Tactical;
+    if(H->TacticalMode==TEXT("Capture"))U->EquipmentCapture=Tactical;
     U->bWounded=H->bWounded;U->bSkill4Armed=H->bSkill4Armed;if(U->bWounded)U->MaxHP*=.9f;
     U->HP=H->CurrentHP<0?U->MaxHP:FMath::Clamp(H->CurrentHP,0.f,U->MaxHP);
     U->Medkits=H->Catalysts;
@@ -153,18 +161,68 @@ bool UOVInteriorSubsystem::SetHeroDuty(int32 UnitId,bool bEnable,FName SlotId)
     LastMessage=TEXT("보직 시설 이동 및 인계 준비");return true;
 }
 
+bool UOVInteriorSubsystem::ActiveDuty(const FOVInteriorUnitRecord& U) const
+{
+    const auto* Ship=U.Ship.Get();
+    if(!U.bDutyActive || !Ship || Ship->Systems->bWrecked || U.FactionId!=Ship->Systems->FactionId || U.NodeId!=U.DutySlot || !IsOnboard(U))return false;
+    if(GetWorld()->GetSubsystem<UOVCombatSubsystem>()->IsDeparted(U.Ship.Get()))return false;
+    const auto P=GetWorld()->GetSubsystem<UOVTransportSubsystem>()->GetPerson(U.PersonId);
+    if(P.CurrentShip!=U.Ship || (P.State!=EOVPassengerState::Aboard && P.State!=EOVPassengerState::InsideTarget))return false;
+    const auto S=Ship->Systems->GetSlotState(U.DutySlot);
+    return S.HP>0 && S.Crew>0 && (S.OccupyingFaction<0 || S.OccupyingFaction==U.FactionId);
+}
+float UOVInteriorSubsystem::FormationRadarBonus(const AOVShip* Receiver) const
+{
+    for(const auto& U:Units)
+        if(U.DefinitionId==TEXT("C03") && U.FactionId==Receiver->Systems->FactionId && ActiveDuty(U) &&
+            FVector::DistSquared(Receiver->GetActorLocation(),U.Ship->GetActorLocation())<=FMath::Square(40000.))return .2f;
+    return 0;
+}
+
 FOVHeroDutyBonuses UOVInteriorSubsystem::GetDutyBonuses(AOVShip* Ship) const
 {
     FOVHeroDutyBonuses B;
     if(!IsValid(Ship) || !Ship->Systems || Ship->Systems->bWrecked || GetWorld()->GetSubsystem<UOVCombatSubsystem>()->IsDeparted(Ship))return B;
     for(const auto& U:Units)
     {
-        if(!U.bDutyActive || U.Ship!=Ship || U.NodeId!=U.DutySlot || U.FactionId!=Ship->Systems->FactionId || !IsOnboard(U))continue;
-        const auto P=GetWorld()->GetSubsystem<UOVTransportSubsystem>()->GetPerson(U.PersonId);
-        if(P.CurrentShip.Get()!=Ship || (P.State!=EOVPassengerState::Aboard && P.State!=EOVPassengerState::InsideTarget))continue;
-        const auto State=Ship->Systems->GetSlotState(U.DutySlot);
-        if(State.HP<=0 || State.Crew<=0 || (State.OccupyingFaction>=0 && State.OccupyingFaction!=U.FactionId))continue;
+        if(U.Ship!=Ship)
+        {
+            if(U.DefinitionId==TEXT("C03") && U.FactionId==Ship->Systems->FactionId && GameTime<U.Skill3ActiveUntil &&
+                Ship->Systems->Layout && Ship->Systems->Layout->HullSizeClass>=EOVHullSizeClass::Large && ActiveDuty(U))
+            {
+                double Best=FMath::Square(40000.); AOVShip* Nearest=nullptr;
+                for(const auto& Candidate:GetWorld()->GetSubsystem<UOVCombatSubsystem>()->Ships){
+                    AOVShip* Other=Candidate.Ship;
+                    if(!IsValid(Other) || Candidate.bDeparted || Other==U.Ship.Get() || !Other->Systems->CanAct() ||
+                        Other->Systems->FactionId!=U.FactionId || Other->Systems->Layout->HullSizeClass<EOVHullSizeClass::Large)continue;
+                    const double D=FVector::DistSquared(Other->GetActorLocation(),U.Ship->GetActorLocation());
+                    if(D<=Best){Best=D;Nearest=Other;}
+                }
+                if(Nearest==Ship)B.TurnBonus=FMath::Max(B.TurnBonus,.08f);
+            }
+            continue;
+        }
+        if(!ActiveDuty(U))continue;
         const int32 Rank=OVInterior::Rank(U,0), SkillRank=OVInterior::Rank(U,2);
+        const bool Active=SkillRank>0 && GameTime<U.Skill3ActiveUntil;
+        if(U.DefinitionId==TEXT("S02"))B.bEngineering=true;
+        if(U.DefinitionId==TEXT("S03")){B.bShieldHarmonizer=true;B.bShipDisasterField|=Active;}
+        if(Ship->Systems->Layout->bAllowAircraftOperations){
+            if(U.DefinitionId==TEXT("R07")){B.BoltSpeedScale=1.12f;B.WingEvasion=.03f;if(Active)B.WingPeriodScale=.9f;}
+            if(U.DefinitionId==TEXT("S04")){B.ProductionScale=.9f;B.DockScale=.65f;B.bHangarEfficiency|=Active;}
+            if(U.DefinitionId==TEXT("C04")){B.SectionScale=.75f;B.ReformScale=.88f;if(Active)B.ReturnScale=1.1f;}
+        }
+        if(U.DefinitionId==TEXT("C05") && Ship->Systems->Layout->HullSizeClass>=EOVHullSizeClass::Large){
+            B.PodScale=1.12f;B.ShuttleDockScale=.8f;
+            if(Active)B.ShipCombatTempo=FMath::Max(B.ShipCombatTempo,(.10f+.025f*(SkillRank-1))*.5f);
+        }
+        if(U.DefinitionId==TEXT("R02")) {B.PDInterval=.9f/(Active?1.15f:1.f);B.PDAccuracy=.02f;}
+        if(U.DefinitionId==TEXT("R01")) B.bOpeningAim=true;
+        if(U.DefinitionId==TEXT("R03")) B.bLongAim=true;
+        if(U.DefinitionId==TEXT("R05")) {B.MissileInterval=.92f;if(Active){B.GuidedTurn=1.25f;B.GuidedSpread=.85f;}}
+        if(U.DefinitionId==TEXT("R09")) B.bNearTraverse=true;
+        if(U.DefinitionId==TEXT("R10")) B.bExposedAim=true;
+        if(U.DefinitionId==TEXT("C02")) {B.AccelerationScale=1.12f;if(Active)B.LateralScale=1.18f;}
         if(U.Role==EOVInteriorRole::Ranged)
         {
             B.AccuracyBonus=FMath::Max(B.AccuracyBonus,.02f+.01f*(Rank-1));
@@ -245,8 +303,10 @@ int32 UOVInteriorSubsystem::CountActiveHeroes(int32 Faction) const
 
 int32 UOVInteriorSubsystem::RegisterUnit(AOVShip* Ship,int32 Faction,EOVInteriorRole Role,FName SlotId)
 {
+    const auto* GI=GetWorld()->GetGameInstance();
+    const int32 Limit=GI?GI->GetSubsystem<UOVHeroSubsystem>()->DeploymentLimit(Faction):15;
     if(!bEnabled || !FindGraph(Ship) || Faction<0 || Ship->Systems->bWrecked ||
-        (Role!=EOVInteriorRole::Trooper && CountActiveHeroes(Faction)>=FMath::Min(15,Settings.MaxActiveHeroesPerFaction)))
+        (Role!=EOVInteriorRole::Trooper && CountActiveHeroes(Faction)>=FMath::Min(Limit,Settings.MaxActiveHeroesPerFaction)))
     { LastMessage=TEXT("인원 등록 불가: 배치·생존·세력 영웅 15명 한도 확인"); return 0; }
     if(Role!=EOVInteriorRole::Trooper && GetWorld()->GetSubsystem<UOVPlayScenarioSubsystem>()->GetActiveDefinition() &&
        CountEmbarkedHeroes(Ship,Faction)>=GetWorld()->GetSubsystem<UOVPlayScenarioSubsystem>()->CurrentHeroBerths()){
@@ -342,13 +402,17 @@ bool UOVInteriorSubsystem::MovePoint(FOVInteriorUnitRecord& U,FVector Goal,float
     const FVector Scale=U.Ship->GetActorScale3D();const FVector WorldDelta=(Goal-U.LocalPosition)*Scale;
     const float Distance=WorldDelta.Size();
     if(Distance<=Settings.ArrivalTolerance) {U.LocalPosition=Goal;return true;}
-    float Bonus=0;
+    float Bonus=U.EquipmentMove;
     if(U.Order==EOVInteriorOrder::Retreat || U.Order==EOVInteriorOrder::Defend)
         for(const auto& Friend:Units)if(!Friend.bDutyRequested && Friend.Role==EOVInteriorRole::Commander && Friend.FactionId==U.FactionId && Friend.Ship==U.Ship && Friend.NodeId==U.NodeId && IsOnboard(Friend) && OVInterior::Rank(Friend,3)>0)
             Bonus=FMath::Max(Bonus,.05f+.025f*(OVInterior::Rank(Friend,3)-1));
+    if(U.Order==EOVInteriorOrder::Retreat || U.Order==EOVInteriorOrder::Defend)
+        if(Units.ContainsByPredicate([&](const auto& A){return A.DefinitionId==TEXT("C01") && A.FactionId==U.FactionId &&
+           !A.bDutyRequested && GameTime<A.Skill3ActiveUntil && Visible(A,U,1400);}))Bonus+=.05f;
+    if(GameTime<U.InvasionAlertUntil && (U.TargetSlot==U.InvasionSlot || U.PlannedGoal==U.InvasionSlot))Bonus+=.12f;
     float Speed=U.Speed*(1+FMath::Min(.20f,Bonus));
     if(U.Role==EOVInteriorRole::Melee && GameTime<U.Skill3ActiveUntil)Speed*=1.5f;
-    if(GameTime<U.SlowUntil)Speed*=1-FMath::Clamp(U.SlowFraction,0.f,1.f);
+    Speed*=1-FMath::Clamp(FMath::Max(GameTime<U.GuardSlowUntil?.2f:0.f,GameTime<U.SlowUntil?U.SlowFraction:0.f),0.f,1.f);
     const float Travel=FMath::Min(Distance,Speed*Delta);
     U.LocalPosition+=(Goal-U.LocalPosition)*(Travel/Distance);U.DistanceTravelled+=Travel;
     return Travel>=Distance;
@@ -434,7 +498,7 @@ void UOVInteriorSubsystem::ApplyDamage(FOVInteriorUnitRecord& U,float Amount,con
     U.HP=FMath::Max(0.f,U.HP-Amount);U.LastDamagedAt=GameTime;
     if(U.HP>0)if(auto* Feed=GetWorld()->GetSubsystem<UOVBattleNotices>())Feed->RecordInteriorEvent(TEXT("Damage"),U,GameTime);
     if(U.HP>0 && U.Role==EOVInteriorRole::Melee && OVInterior::Rank(U,3)>0 && U.HP<U.MaxHP*.25f && U.bSkill4Armed && GameTime>=U.Skill4ReadyAt)
-    {U.Skill4ActiveUntil=GameTime+3;U.Skill4ReadyAt=GameTime+120;U.bSkill4Armed=false;++U.SkillUses;}
+    {if(U.DefinitionId==TEXT("M08"))U.ApexUntil=GameTime+4;U.Skill4ActiveUntil=GameTime+3;U.Skill4ReadyAt=GameTime+120;U.bSkill4Armed=false;++U.SkillUses;}
     if(U.HP<U.MaxHP*.25f)U.bWasCriticallyInjured=true;
     if(U.HP<=0)Kill(U,Reason);
 }
@@ -458,6 +522,13 @@ void UOVInteriorSubsystem::SyncTransport(FOVInteriorUnitRecord& U)
                Arrived->Systems->Layout->GetSlotIndex(P.EntrySlot)==INDEX_NONE || P.EntryLocalPoint.ContainsNaN() || !AddShip(Arrived))
             {U.Ship=Arrived;U.State=EOVInteriorState::Blocked;U.Reason=TEXT("진입함 내부 배치 검증 실패 · 인원 보존");return;}
             U.Ship=P.CurrentShip;U.NodeId=P.EntrySlot;U.LocalPosition=P.EntryLocalPoint;U.LayoutVersion=P.EntryLayoutVersion;
+            if(P.PodId>0) {
+                U.PodEntryAt=GameTime;
+                for(auto& Guard:Units) if(Guard.DefinitionId==TEXT("M06") && IsOnboard(Guard) && Guard.Ship==Arrived &&
+                    Guard.FactionId==Arrived->Systems->FactionId && Guard.FactionId!=U.FactionId){
+                    Guard.InvasionAlertUntil=GameTime+8;Guard.InvasionSlot=P.EntrySlot;
+                }
+            }
             U.EntryShip=P.CurrentShip;U.EntrySlot=P.EntrySlot;U.EntryLocalPoint=P.EntryLocalPoint;U.bWasInsideTarget=true;
             U.Path.Reset();U.PlannedGoal=NAME_None;
             if(U.Order==EOVInteriorOrder::Defend||U.Order==EOVInteriorOrder::None)U.TargetSlot=U.NodeId;
@@ -477,36 +548,107 @@ void UOVInteriorSubsystem::SyncTransport(FOVInteriorUnitRecord& U)
         if(U.Ship.IsValid()) {U.NodeId=U.Ship->Systems->Layout->CoreSlotId;U.LocalPosition=U.Ship->Systems->Layout->Slots[U.Ship->Systems->Layout->GetSlotIndex(U.NodeId)].LocalCenter;U.LayoutVersion=U.Ship->Systems->Layout->LayoutVersion;}
         U.Order=EOVInteriorOrder::Defend;U.TargetSlot=U.NodeId;U.State=EOVInteriorState::Aboard;
         if(U.bWasCriticallyInjured && OVInterior::Hero(U) && !U.bWounded)
-        {U.bWounded=true;U.MaxHP*=.9f;U.HP=FMath::Min(U.HP,U.MaxHP);}
+        {
+            auto* Medic=Units.FindByPredicate([&](const auto& A){return A.DefinitionId==TEXT("S05") && A.bTraumaTreatmentAvailable &&
+                A.FactionId==U.FactionId && A.Ship==Returned && A.NodeId==U.NodeId && IsOnboard(A);});
+            if(Medic){Medic->bTraumaTreatmentAvailable=false;U.bWasCriticallyInjured=false;}
+            else {U.bWounded=true;U.MaxHP*=.9f;U.HP=FMath::Min(U.HP,U.MaxHP);}
+        }
         U.Reason=TEXT("생존 귀환 · HP/촉매/쿨타임 보존");Emit(TEXT("Return"),U,U.Reason);
+    }
+}
+
+float UOVInteriorSubsystem::InteriorReduction(const FOVInteriorUnitRecord& Target,float Ignore,bool bPhaseStrike) const
+{
+    float Armor=Target.Armor;
+    if(Target.Role==EOVInteriorRole::Melee && GameTime<Target.SkillActiveUntil)
+        Armor+=Settings.MeleeReduction+.05f*(OVInterior::Rank(Target,0)-1);
+    if(Target.Role==EOVInteriorRole::Melee && GameTime<Target.Skill4ActiveUntil)
+        Armor+=.1f+.05f*(OVInterior::Rank(Target,3)-1);
+    float Cover=0;
+    for(const auto& Ally:Units)
+    {
+        if(Ally.UnitId==Target.UnitId || Ally.FactionId!=Target.FactionId || !IsOnboard(Ally) || Ally.Ship!=Target.Ship)continue;
+        const bool Same=Ally.NodeId==Target.NodeId;
+        if(Same && Ally.DefinitionId==TEXT("M09") && Target.bDutyActive) Cover=FMath::Max(Cover,.10f);
+        if(Same && Ally.DefinitionId==TEXT("M03") && GameTime<Ally.SkillActiveUntil && !OVInterior::Hero(Target)) Cover=FMath::Max(Cover,.06f);
+        const float Radius=Ally.DefinitionId==TEXT("M01") && GameTime-Ally.PodEntryAt<6 ?450.f:300.f;
+        if(Same && Ally.DefinitionId==TEXT("C01") && Ally.State==EOVInteriorState::Operating &&
+           Ally.Order==EOVInteriorOrder::Capture && !OVInterior::Hero(Target)){
+            const int32 Room=Ally.Ship->Systems->Layout->GetSlotIndex(Ally.NodeId);
+            if(Room!=INDEX_NONE && Ally.Ship->Systems->Layout->Slots[Room].Facility==EOVFacilityType::Bridge)Cover=FMath::Max(Cover,.08f);
+        }
+        if(!Ally.bDutyRequested && Ally.Role==EOVInteriorRole::Melee && OVInterior::Rank(Ally,1)>0 && Visible(Target,Ally,Radius))
+        {
+            float Rate=.08f+.02f*(OVInterior::Rank(Ally,1)-1);
+            if(Same && Ally.DefinitionId==TEXT("M07") && GameTime<Ally.SkillActiveUntil && Target.HP<=Target.MaxHP*.5f)Rate*=1.5f;
+            Cover=FMath::Max(Cover,Rate);
+        }
+    }
+    const float Combined=FMath::Clamp(1-(1-FMath::Clamp(Armor-Ignore,0.f,.65f))*(1-Cover),0.f,.65f);
+    return bPhaseStrike && Combined>=.20f ? Combined-.08f : Combined;
+}
+
+void UOVInteriorSubsystem::ReleaseIrisField(FOVInteriorUnitRecord& Unit)
+{
+    Unit.bPendingIrisArc=false;
+    if(Unit.bDutyRequested || Unit.Order==EOVInteriorOrder::Retreat || !IsOnboard(Unit))return;
+    const auto* Layout=Unit.Ship->Systems->Layout.Get();
+    const int32 From=Layout->GetSlotIndex(Unit.NodeId);
+    if(From==INDEX_NONE)return;
+    ++Unit.SignatureUses;
+    Emit(TEXT("PhaseArc"),Unit,TEXT("위상 잔영 베기"));
+    for(auto& Target:Units)
+    {
+        if(Target.FactionId==Unit.FactionId || !Visible(Unit,Target,250.f))continue;
+        const int32 To=Layout->GetSlotIndex(Target.NodeId);
+        if(To==INDEX_NONE || Layout->Slots[From].DeckId!=Layout->Slots[To].DeckId)continue;
+        const FVector Offset=(Target.LocalPosition-Unit.LocalPosition)*Unit.Ship->GetActorScale3D();
+        if(!Offset.IsNearlyZero() && FVector::DotProduct(Offset.GetSafeNormal(),Unit.FieldFacing)<.5)continue;
+        ApplyDamage(Target,Unit.Damage*(Unit.bWounded?.9f:1.f)*1.4f*(1-InteriorReduction(Target,0,true)),TEXT("위상 잔영 베기"));
     }
 }
 
 void UOVInteriorSubsystem::AdvanceUnit(FOVInteriorUnitRecord& U,float Delta)
 {
-    if(!IsOnboard(U)||U.State==EOVInteriorState::AwaitingRecovery)return;
+    if(!IsOnboard(U)||U.State==EOVInteriorState::AwaitingRecovery){U.bPendingIrisArc=false;return;}
+    if(U.bDutyRequested || U.Order==EOVInteriorOrder::Retreat)U.bPendingIrisArc=false;
     if(!FindGraph(U.Ship.Get())){U.State=EOVInteriorState::Blocked;U.Reason=TEXT("내부 배치가 없어 이동할 수 없습니다");return;}
     if(GetWorld()->GetSubsystem<UOVCombatSubsystem>()->IsDeparted(U.Ship.Get()))
     {if(U.HeroId.IsValid())GetWorld()->GetSubsystem<UOVLogisticsSubsystem>()->CancelDevRepair(U.Ship.Get(),U.HeroId);U.bDutyActive=false;U.State=EOVInteriorState::Blocked;U.Reason=TEXT("목표 초광속 이탈 · 인원 보존, 성계 밖 작전/회수 미지원");return;}
     const auto* L=U.Ship->Systems->Layout.Get();
     if(U.LayoutVersion!=L->LayoutVersion){U.State=EOVInteriorState::Blocked;U.Reason=TEXT("배치 버전 불일치: 이동 중지");return;}
+    if(U.bPendingIrisArc && GameTime>=U.SkillActiveUntil)ReleaseIrisField(U);
     if(U.HP>=U.MaxHP*.4f)U.bSkill4Armed=true;
+    if(U.DefinitionId==TEXT("M03")){
+        TSet<int32> Here;
+        if(U.Ship->Systems->FactionId==U.FactionId && U.Order==EOVInteriorOrder::Defend)
+            for(auto& Other:Units)if(Other.bWasInsideTarget && Other.FactionId!=U.FactionId && IsOnboard(Other) && Other.Ship==U.Ship && Other.NodeId==U.NodeId){
+                Here.Add(Other.UnitId);
+                if(!U.GuardContacts.Contains(Other.UnitId)) Other.GuardSlowUntil=GameTime+2;
+            }
+        U.GuardContacts=MoveTemp(Here);
+    }
     if(U.bDutyRequested)
     {
         const auto Facility=U.Ship->Systems->GetSlotState(U.DutySlot);
         if(U.Ship->Systems->FactionId!=U.FactionId || Facility.HP<=0 || Facility.Crew<=0 || (Facility.OccupyingFaction>=0 && Facility.OccupyingFaction!=U.FactionId))
         {if(U.HeroId.IsValid())GetWorld()->GetSubsystem<UOVLogisticsSubsystem>()->CancelDevRepair(U.Ship.Get(),U.HeroId);U.bDutyActive=false;U.DutyReadyAt=0;U.State=EOVInteriorState::Blocked;U.Reason=TEXT("보직 시설 가동 조건 미충족");return;}
         if(!MoveTowards(U,U.DutySlot,Delta)){U.bDutyActive=false;U.DutyReadyAt=0;U.State=EOVInteriorState::Moving;return;}
-        if(U.DutyReadyAt<=0)U.DutyReadyAt=GameTime+3;
+        if(U.DutyReadyAt<=0){
+            const bool Escort=U.LastDutySlot==U.DutySlot && Units.ContainsByPredicate([&](const auto& A){
+                return A.DefinitionId==TEXT("M09") && A.FactionId==U.FactionId && A.Ship==U.Ship && A.NodeId==U.NodeId && IsOnboard(A);});
+            U.DutyReadyAt=GameTime+(Escort?1:3);
+        }
         if(GameTime<U.DutyReadyAt){U.State=EOVInteriorState::Operating;U.Reason=TEXT("보직 인계 중");return;}
-        U.bDutyActive=true;U.State=EOVInteriorState::Operating;U.Reason=TEXT("보직 수행 중");
+        U.LastDutySlot=U.DutySlot;U.bDutyActive=true;U.State=EOVInteriorState::Operating;U.Reason=TEXT("보직 수행 중");
         if((U.Role==EOVInteriorRole::Ranged || U.Role==EOVInteriorRole::Commander) && OVInterior::Rank(U,2)>0 && GameTime>=U.Skill3ReadyAt)
-        {U.Skill3ReadyAt=GameTime+60;U.Skill3ActiveUntil=GameTime+(U.Role==EOVInteriorRole::Ranged?8:10);++U.SkillUses;}
+        {U.Skill3ReadyAt=GameTime+60;U.Skill3ActiveUntil=GameTime+(U.Role==EOVInteriorRole::Ranged && U.DefinitionId!=TEXT("R09")?8:10);++U.SkillUses;}
         if(U.Role==EOVInteriorRole::Support && U.HeroId.IsValid() && OVInterior::Rank(U,2)>0 && U.AmplifierCharges>0 && GameTime>=U.Skill3ReadyAt && !U.DevRepairBaseCost.IsNearlyZero())
         {
             const float Total=U.Ship->Systems->MaxHullHP*(.0025f+.0025f*OVInterior::Rank(U,2));
             auto* Logistics=GetWorld()->GetSubsystem<UOVLogisticsSubsystem>();
-            if(Logistics->StartDevRepair(U.Ship.Get(),U.Ship.Get(),true,U.HeroId,U.DevRepairBaseCost,0,Total/10,10,Total))
+            if(Logistics->StartDevRepair(U.Ship.Get(),U.Ship.Get(),true,U.HeroId,U.DevRepairBaseCost*(U.DefinitionId==TEXT("S02")?1.25/1.5:1.),0,Total/10,10,Total))
             {--U.AmplifierCharges;U.Skill3ReadyAt=GameTime+90;++U.SkillUses;Emit(TEXT("DutyRepair"),U,TEXT("지원 보직 수리 · 유한 자원과 충전 소모"));}
         }
         return;
@@ -533,7 +675,7 @@ void UOVInteriorSubsystem::AdvanceUnit(FOVInteriorUnitRecord& U,float Delta)
         FOVInteriorUnitRecord* Patient=nullptr;float Lowest=.50001f;
         for(auto& Friend:Units)if(Friend.FactionId==U.FactionId && Visible(U,Friend,U.Range))
             if(Friend.HP/Friend.MaxHP<Lowest){Lowest=Friend.HP/Friend.MaxHP;Patient=&Friend;}
-        if(Patient){const int32 R=OVInterior::Rank(U,0);const float Heal=(Settings.SupportHeal+15*(R-1))*(1+.06f*(U.HeroLevel-1));Patient->HP=FMath::Min(Patient->MaxHP,Patient->HP+FMath::Max(0.f,Heal));--U.Medkits;U.SkillReadyAt=GameTime+FMath::Max(.1f,Settings.SupportCooldown-.5f*(R-1));++U.SkillUses;Emit(TEXT("Heal"),U,TEXT("생체 재구성 · 촉매 1개 소모"));}
+        if(Patient){const int32 R=OVInterior::Rank(U,0);const float Heal=(Settings.SupportHeal+15*(R-1))*(1+.06f*(U.HeroLevel-1));Patient->HP=FMath::Min(Patient->MaxHP,Patient->HP+FMath::Max(0.f,Heal)*(1+U.EquipmentHeal)*(U.DefinitionId==TEXT("S01") && Patient->HP<Patient->MaxHP*.3f?1.1f:1.f));--U.Medkits;U.SkillReadyAt=GameTime+FMath::Max(.1f,Settings.SupportCooldown-.5f*(R-1)-(U.DefinitionId==TEXT("S05")?1.f:0.f));++U.SkillUses;Emit(TEXT("Heal"),U,TEXT("생체 재구성 · 촉매 1개 소모"));}
     }
     FOVInteriorUnitRecord* Enemy=nullptr;
     if(U.EnemyId>0) {auto* Existing=FindUnit(U.EnemyId);if(Existing && Existing->FactionId!=U.FactionId && Visible(U,*Existing,Settings.SightRange))Enemy=Existing;}
@@ -554,43 +696,98 @@ void UOVInteriorSubsystem::AdvanceUnit(FOVInteriorUnitRecord& U,float Delta)
         if(Distance>U.Range)
         {
             if(U.Role==EOVInteriorRole::Melee && OVInterior::Rank(U,2)>0 && Distance<=(500+100*OVInterior::Rank(U,2)) && GameTime>=U.Skill3ReadyAt)
-            {U.Skill3ReadyAt=GameTime+30;U.Skill3ActiveUntil=GameTime+2;U.bRushAttack=true;++U.SkillUses;}
+            {U.Skill3ReadyAt=GameTime+30;U.Skill3ActiveUntil=GameTime+2;U.bRushAttack=true;U.RushTargets.Reset();U.bRushWeakened=false;
+             for(auto& Counter:Units)if(Counter.DefinitionId==TEXT("R08") && Counter.FactionId!=U.FactionId &&
+                 !Counter.bDutyRequested && GameTime>=Counter.AttackReadyAt && Visible(Counter,U,1200)){
+                 Counter.AttackReadyAt=GameTime+Counter.Period;++Counter.Shots;
+                 if(Random.FRand()<.92f*(1-U.Evasion)){++Counter.Hits;U.bRushWeakened=true;
+                     ApplyDamage(U,Counter.Damage*(1-InteriorReduction(U,0,false)),TEXT("돌입 견제 사격"));}
+                 if(!OVInterior::Living(U))return;
+             }
+             U.RushRefundUntil=U.DefinitionId==TEXT("M10")?GameTime+5:0;++U.SkillUses;}
+            const FVector Before=U.LocalPosition;
             if(U.NodeId==Enemy->NodeId)MovePoint(U,Enemy->LocalPosition,Delta);
             else MoveTowards(U,Enemy->NodeId,Delta);
+            if(U.DefinitionId==TEXT("M04") && U.bRushAttack && GameTime<U.Skill3ActiveUntil){
+                const auto Scale=U.Ship->GetActorScale3D();
+                for(auto& Other:Units)if(U.RushTargets.Num()<2 && Other.FactionId!=U.FactionId && !U.RushTargets.Contains(Other.UnitId) &&
+                   Visible(U,Other,U.Range) && FMath::PointDistToSegment(Other.LocalPosition*Scale,Before*Scale,U.LocalPosition*Scale)<=80){
+                    U.RushTargets.Add(Other.UnitId);ApplyDamage(Other,U.Damage*.65f*(1-InteriorReduction(Other,0,false)),TEXT("유성 연쇄 돌입"));
+                }
+            }
             return;
         }
         if(U.Role==EOVInteriorRole::Melee && GameTime>=U.SkillReadyAt)
-        {U.SkillReadyAt=GameTime+FMath::Max(.1f,Settings.MeleeCooldown);U.SkillActiveUntil=GameTime+FMath::Max(0.f,Settings.MeleeDuration);++U.SkillUses;Emit(TEXT("ForceField"),U,TEXT("역장 방어 가동"));}
+        {U.SkillReadyAt=GameTime+FMath::Max(.1f,Settings.MeleeCooldown);U.SkillActiveUntil=GameTime+FMath::Max(0.f,Settings.MeleeDuration);++U.SkillUses;
+         if(U.DefinitionId==TEXT("M02")){
+             U.bPendingIrisArc=true;
+             FVector Aim=(Enemy->LocalPosition-U.LocalPosition)*U.Ship->GetActorScale3D();
+             if(!Aim.IsNearlyZero())U.FieldFacing=Aim.GetSafeNormal();
+         }
+         if(U.DefinitionId==TEXT("M06")) for(auto& Other:Units)
+             if(Other.Role==EOVInteriorRole::Ranged && Other.FactionId!=U.FactionId && Visible(U,Other,250))Other.JamUntil=GameTime+3;
+         Emit(TEXT("ForceField"),U,TEXT("역장 방어 가동"));}
         if(GameTime<U.AttackReadyAt)return;
         if(U.Role==EOVInteriorRole::Ranged && OVInterior::Rank(U,2)>0 && U.BurstRemaining==0 && GameTime>=U.Skill3ReadyAt)
         {U.Skill3ReadyAt=GameTime+30;U.BurstRemaining=3;U.BurstTargetId=Enemy->UnitId;++U.SkillUses;}
         const bool bBurst=U.BurstRemaining>0 && U.BurstTargetId==Enemy->UnitId;
-        float AttackSpeed=0;
+        const float ShipTempo=U.FactionId==U.Ship->Systems->FactionId?GetDutyBonuses(U.Ship.Get()).ShipCombatTempo:0;
+        float AttackSpeed=FMath::Max(ShipTempo,GameTime<U.ApexUntil?.15f:0.f);
         for(const auto& Friend:Units)if(!Friend.bDutyRequested && Friend.Role==EOVInteriorRole::Commander && Friend.FactionId==U.FactionId && GameTime<Friend.Skill3ActiveUntil && OVInterior::Rank(Friend,2)>0 && Visible(U,Friend,1400))
             AttackSpeed=FMath::Max(AttackSpeed,.10f+.025f*(OVInterior::Rank(Friend,2)-1));
         if(bBurst){--U.BurstRemaining;U.AttackReadyAt=GameTime+(U.BurstRemaining>0?.3f:FMath::Max(.05f,U.Period/(1+AttackSpeed)));}
         else U.AttackReadyAt=GameTime+FMath::Max(.05f,U.Period/(1+AttackSpeed));
         ++U.Shots;
         float Damage=U.Damage*(U.bWounded?.9f:1.f);
+        if(GameTime<U.ApexUntil)Damage*=1.10f;
+        if(U.DefinitionId==TEXT("R06") && U.bWasInsideTarget &&
+            Units.ContainsByPredicate([&](const auto& A){return IsOnboard(A) && A.Ship==U.Ship && A.NodeId==U.NodeId && A.FactionId==U.FactionId &&
+                A.Role==EOVInteriorRole::Melee && A.State==EOVInteriorState::Fighting && A.EnemyId==Enemy->UnitId;})) Damage*=1.1f;
+        if(U.DefinitionId==TEXT("M05") && (Enemy->bDutyActive || Enemy->Order==EOVInteriorOrder::Defend) &&
+           OVInterior::Hero(*Enemy))Damage*=1.12f;
         if(bBurst)Damage*=.5f;
-        if(U.Role==EOVInteriorRole::Melee && U.bRushAttack){Damage*=1+.1f*(OVInterior::Rank(U,2)+1);U.bRushAttack=false;}
-        if(U.Role==EOVInteriorRole::Ranged && OVInterior::Rank(U,3)>0 && GameTime-U.TrackedSince>=4)Damage*=1+.05f*(OVInterior::Rank(U,3)+1);
-        if(!bBurst && U.Role==EOVInteriorRole::Ranged && GameTime>=U.SkillReadyAt)
-        {Damage*=FMath::Max(1.f,Settings.RangedMultiplier+.25f*(OVInterior::Rank(U,0)-1));U.SkillReadyAt=GameTime+FMath::Max(.1f,Settings.RangedCooldown);++U.SkillUses;}
+        if(U.Role==EOVInteriorRole::Melee && U.bRushAttack){Damage*=1+.1f*(OVInterior::Rank(U,2)+1);U.bRushAttack=false;if(U.bRushWeakened)Damage*=.85f;
+         if(U.DefinitionId==TEXT("M01")) for(auto& Other:Units)
+            if(Other.FactionId!=U.FactionId && Visible(U,Other,200)){
+                if(GameTime>=Other.SlowUntil)Other.SlowFraction=0;
+                Other.SlowUntil=FMath::Max(Other.SlowUntil,GameTime+(OVInterior::Hero(Other)?1.2:2.5));
+                Other.SlowFraction=FMath::Max(Other.SlowFraction,.25f);
+            }
+        }
+        const bool Tracked=OVInterior::Rank(U,3)>0 && GameTime-U.TrackedSince>=
+            (U.DefinitionId==TEXT("R10") && Enemy->HP<=Enemy->MaxHP*.4f?2.5:4.0);
+        if(U.Role==EOVInteriorRole::Ranged && Tracked)Damage*=1+.05f*(OVInterior::Rank(U,3)+1);
+        const bool AimedShot=!bBurst && U.Role==EOVInteriorRole::Ranged && GameTime>=U.SkillReadyAt;
+        if(AimedShot)
+        {Damage*=FMath::Max(1.f,Settings.RangedMultiplier+.25f*(OVInterior::Rank(U,0)-1)+(U.DefinitionId==TEXT("R06") && OVInterior::Rank(U,1)>0?.2f:0.f));U.SkillReadyAt=GameTime+FMath::Max(.1f,Settings.RangedCooldown);++U.SkillUses;}
         float Aura=0;for(const auto& Friend:Units)if(!Friend.bDutyRequested && Friend.FactionId==U.FactionId && Friend.Role==EOVInteriorRole::Commander && Visible(U,Friend,Settings.CommanderAuraRange))
         Aura=FMath::Max(Aura,Settings.CommanderDamageBonus+.03f*(OVInterior::Rank(Friend,0)-1));
-        Damage*=1+FMath::Max(0.f,Aura);
-        if(Random.FRand()>=FMath::Clamp(.92f*(1-Enemy->Evasion),0.f,1.f))return;
+        const bool Isolated=Units.ContainsByPredicate([&](const auto& Duelist){return Duelist.DefinitionId==TEXT("M08") &&
+            Duelist.State==EOVInteriorState::Fighting && Duelist.EnemyId==U.UnitId && Duelist.FactionId!=U.FactionId &&
+            GameTime-Duelist.TrackedSince>=5 && Visible(Duelist,U,Duelist.Range);});
+        Damage*=1+FMath::Max(0.f,Aura)*(Isolated?.5f:1.f);
+        if(AimedShot && Tracked && U.DefinitionId==TEXT("R10") && Enemy->HP<=Enemy->MaxHP*.35f)Damage*=1.15f;
+        const float Aim=.92f-(GameTime<U.JamUntil?.08f:0.f)+(U.DefinitionId==TEXT("R04") && Distance>=1200?.03f:0.f);
+        const float Evasion=Enemy->Evasion+(Enemy->DefinitionId==TEXT("M04") && GameTime<Enemy->Skill3ActiveUntil?.06f:0.f);
+        if(Random.FRand()>=FMath::Clamp(Aim*(1-Evasion),0.f,1.f))return;
+        if(AimedShot && U.DefinitionId==TEXT("R08") && OVInterior::Hero(*Enemy)){
+            for(double* Ready:{&Enemy->SkillReadyAt,&Enemy->Skill3ReadyAt,&Enemy->Skill4ReadyAt})
+                if(*Ready>GameTime)*Ready+=2;
+        }
         ++U.Hits;
         const int32 Weakness=U.Role==EOVInteriorRole::Ranged?OVInterior::Rank(U,1):0;
         const float Ignore=Weakness>0?.08f+.04f*(Weakness-1):0;
-        const float Emergency=(Enemy->Role==EOVInteriorRole::Melee && GameTime<Enemy->Skill4ActiveUntil)?(.10f+.05f*(OVInterior::Rank(*Enemy,3)-1)):0;
-        const float Reduction=FMath::Clamp(Enemy->Armor+((Enemy->Role==EOVInteriorRole::Melee && GameTime<Enemy->SkillActiveUntil)?Settings.MeleeReduction+.05f*(OVInterior::Rank(*Enemy,0)-1):0.f)+Emergency-Ignore,0.f,.65f);
-        float Cover=0;
-        for(const auto& Friend:Units)if(!Friend.bDutyRequested && Friend.UnitId!=Enemy->UnitId && Friend.FactionId==Enemy->FactionId && Friend.Role==EOVInteriorRole::Melee && OVInterior::Rank(Friend,1)>0 && Visible(*Enemy,Friend,300))
-            Cover=FMath::Max(Cover,.08f+.02f*(OVInterior::Rank(Friend,1)-1));
-        if(bBurst){if(GameTime>=Enemy->SlowUntil)Enemy->SlowFraction=0;Enemy->SlowUntil=GameTime+4;Enemy->SlowFraction=FMath::Max(Enemy->SlowFraction,.20f+.05f*(OVInterior::Rank(U,2)-1));}
-        ApplyDamage(*Enemy,Damage*(1-Reduction)*(1-Cover),TEXT("선내 교전 사망"));return;
+        const bool Phase=U.DefinitionId==TEXT("M02");
+        const float Reduction=InteriorReduction(*Enemy,Ignore,Phase);
+        if(Phase && Reduction+UE_SMALL_NUMBER<InteriorReduction(*Enemy,Ignore,false))++U.PassiveHits;
+        if(bBurst){if(GameTime>=Enemy->SlowUntil)Enemy->SlowFraction=0;Enemy->SlowUntil=FMath::Max(Enemy->SlowUntil,GameTime+4+(U.DefinitionId==TEXT("R01") && Tracked?1.5:0.));
+            if(U.DefinitionId==TEXT("R04") && Enemy->State==EOVInteriorState::Operating)Enemy->SuppressedUntil=GameTime+2.5;Enemy->SlowFraction=FMath::Max(Enemy->SlowFraction,.20f+.05f*(OVInterior::Rank(U,2)-1));}
+        ApplyDamage(*Enemy,Damage*(1-Reduction),TEXT("선내 교전 사망"));
+        if(U.DefinitionId==TEXT("M10") && Enemy->HP<=0){
+            if(OVInterior::Hero(*Enemy))U.KillRallyUntil=GameTime+10;
+            if(GameTime<U.RushRefundUntil){U.Skill3ReadyAt=FMath::Max(GameTime,U.Skill3ReadyAt-6);U.RushRefundUntil=0;}
+        }
+        return;
     }
     if(U.Order==EOVInteriorOrder::None){U.State=EOVInteriorState::Defending;U.Reason=TEXT("명령 대기");return;}
     if(U.TargetSlot.IsNone()){U.State=EOVInteriorState::Blocked;U.Reason=TEXT("시설 목표를 지정하세요");return;}
@@ -604,7 +801,9 @@ void UOVInteriorSubsystem::AdvanceOperations(float Delta)
     TMap<int32,TArray<int32>> Workers;
     for(int32 I=0;I<Units.Num();++I)
     {
-        auto& U=Units[I];if(!IsOnboard(U)||U.State==EOVInteriorState::AwaitingRecovery||U.State==EOVInteriorState::Blocked||U.State==EOVInteriorState::Fighting||
+        auto& U=Units[I];
+        const bool Engineer=U.DefinitionId==TEXT("M05") && U.Order==EOVInteriorOrder::Sabotage;
+        if(GameTime<U.SuppressedUntil || !IsOnboard(U)||U.State==EOVInteriorState::AwaitingRecovery||U.State==EOVInteriorState::Blocked||(U.State==EOVInteriorState::Fighting && !Engineer)||
             (U.Order!=EOVInteriorOrder::Capture && U.Order!=EOVInteriorOrder::Sabotage)||U.NodeId!=U.TargetSlot)continue;
         const auto* L=U.Ship->Systems->Layout.Get();const int32 Index=L->GetSlotIndex(U.TargetSlot);if(Index==INDEX_NONE)continue;
         if(((U.LocalPosition-L->Slots[Index].LocalCenter)*U.Ship->GetActorScale3D()).Size()>Settings.ArrivalTolerance)continue;
@@ -613,7 +812,7 @@ void UOVInteriorSubsystem::AdvanceOperations(float Delta)
         if(Facility.HP<=0){U.State=EOVInteriorState::Blocked;U.Reason=TEXT("목표 시설 물리 파괴 · 점령 불가");continue;}
         const int32 Owner=Facility.OccupyingFaction<0?U.Ship->Systems->FactionId:Facility.OccupyingFaction;
         bool Contested=false;for(const auto& Other:Units)if(Other.FactionId!=U.FactionId && IsOnboard(Other) && Other.Ship==U.Ship && Other.NodeId==U.NodeId){Contested=true;break;}
-        if(Contested){U.Reason=TEXT("방 내부 적 잔류 · 점령 중단");continue;}
+        if(Contested && !Engineer){U.Reason=TEXT("방 내부 적 잔류 · 점령 중단");continue;}
         if(U.Order!=EOVInteriorOrder::Sabotage && Owner==U.FactionId)
         {
             if(U.Order==EOVInteriorOrder::Capture)
@@ -624,7 +823,7 @@ void UOVInteriorSubsystem::AdvanceOperations(float Delta)
         int32 Op=Operations.IndexOfByPredicate([&](const auto& O){return O.Ship==U.Ship&&O.SlotId==U.TargetSlot&&O.FactionId==U.FactionId&&O.Kind==Kind;});
         if(Op==INDEX_NONE){FOVInteriorOperation O;O.Ship=U.Ship;O.SlotId=U.TargetSlot;O.FactionId=U.FactionId;O.Kind=Kind;Op=Operations.Add(O);}
         if(Operations[Op].bCompleted){Operations[Op].bCompleted=false;Operations[Op].Progress=Operations[Op].Checkpoint=0;Operations[Op].ParticipantUnitIds.Reset();}
-        Workers.FindOrAdd(Op).Add(I);U.State=EOVInteriorState::Operating;
+        Workers.FindOrAdd(Op).Add(I);if(!Contested)U.State=EOVInteriorState::Operating;
     }
     for(int32 I=0;I<Operations.Num();++I)
     {
@@ -638,9 +837,23 @@ void UOVInteriorSubsystem::AdvanceOperations(float Delta)
         float Command=0;
         for(int32 Unit:*W)if(Units[Unit].Role==EOVInteriorRole::Commander && OVInterior::Rank(Units[Unit],1)>0)
             Command+=.10f+.05f*(OVInterior::Rank(Units[Unit],1)-1);
+        if(O.Kind==EOVInteriorOrder::Capture && Units.ContainsByPredicate([&](const auto& A){
+            return IsOnboard(A) && A.FactionId==O.FactionId && A.Ship==O.Ship && A.NodeId==O.SlotId && GameTime<A.KillRallyUntil;}))Command+=.12f;
+        if(O.Kind==EOVInteriorOrder::Capture){
+            float Equipment=0; for(int32 N:*W)Equipment=FMath::Max(Equipment,Units[N].EquipmentCapture);
+            Command+=Equipment;
+        }
         const float Speed=FMath::Clamp(1+Settings.AdditionalWorkerBonus*(W->Num()-1)+Command,1.f,2.f);
-        O.Progress=FMath::Min(1.f,O.Progress+Delta*Speed/FMath::Max(.1f,Duration));
+        const bool Fighting=W->ContainsByPredicate([&](int32 N){return Units[N].State==EOVInteriorState::Fighting;});
+        const float Before=O.Checkpoint;
+        O.Progress=FMath::Min(1.f,O.Progress+Delta*(Fighting?.5f:1.f)*Speed/FMath::Max(.1f,Duration));
         if(O.Kind==EOVInteriorOrder::Sabotage)O.Checkpoint=FMath::Min(2.f/3,FMath::FloorToFloat(O.Progress*3)/3);
+        if(O.Checkpoint>Before && W->ContainsByPredicate([&](int32 N){return Units[N].DefinitionId==TEXT("M05");}))
+            for(auto& Other:Units)if(IsOnboard(Other) && Other.Ship==O.Ship && Other.NodeId==O.SlotId && Other.FactionId!=O.FactionId){
+                if(GameTime>=Other.SlowUntil)Other.SlowFraction=0;
+                Other.SlowUntil=FMath::Max(Other.SlowUntil,GameTime+2.5);
+                Other.SlowFraction=FMath::Max(Other.SlowFraction,.25f);
+            }
         for(int32 Unit:*W){Units[Unit].Progress=O.Progress;Units[Unit].Reason=FString::Printf(TEXT("%s 진행 %.0f%%"),O.Kind==EOVInteriorOrder::Sabotage?TEXT("공작"):TEXT("점령"),100*O.Progress);}
         if(O.Progress<1)continue;
         if(O.Ship->Systems->CompleteInteriorOperation(O.SlotId,O.FactionId,O.Kind==EOVInteriorOrder::Sabotage))
@@ -666,7 +879,13 @@ void UOVInteriorSubsystem::ProcessFacilityDamage(float Delta)
             if(Slot.HP>=Previous || Previous<=0)continue;
             const int32 Index=L->GetSlotIndex(Slot.SlotId);
             if(Index==INDEX_NONE)continue;
-            if(Slot.HP<=0)G.Disasters.Add(Slot.SlotId,GameTime+Settings.DisasterSeconds);
+            if(Slot.HP<=0){
+                const auto Type=L->Slots[Index].Facility;
+                const bool Warden=(Type==EOVFacilityType::Engine || Type==EOVFacilityType::Core) &&
+                    Units.ContainsByPredicate([&](const auto& A){return A.DefinitionId==TEXT("M07") && IsOnboard(A) &&
+                        A.FactionId==Ship->Systems->FactionId && A.Ship==Ship && A.NodeId==Slot.SlotId;});
+                G.Disasters.Add(Slot.SlotId,GameTime+Settings.DisasterSeconds*(Warden?.75f:1.f));
+            }
             for(auto& U:Units)if(IsOnboard(U)&&U.Ship==Ship&&U.NodeId==Slot.SlotId)
             {
                 if(Slot.HP<=0 && L->Slots[Index].Facility==EOVFacilityType::Bridge && Ship->Systems->bCapturedBridgeDestroyed)
@@ -684,7 +903,13 @@ void UOVInteriorSubsystem::ProcessFacilityDamage(float Delta)
             float Protection=0;
             for(const auto& Friend:Units)if(IsOnboard(Friend)&&Friend.Ship==Ship&&Friend.NodeId==U.NodeId&&Friend.FactionId==U.FactionId&&Friend.Role==EOVInteriorRole::Support&&OVInterior::Rank(Friend,1)>0)
                 Protection=FMath::Max(Protection,.15f+.075f*(OVInterior::Rank(Friend,1)-1));
-            ApplyDamage(U,Settings.DisasterDamagePerSecond*Delta*(1-Protection),TEXT("파괴 구역 재난 사망"));
+            if(Units.ContainsByPredicate([&](const auto& A){return A.DefinitionId==TEXT("S01") && IsOnboard(A) &&
+                !A.bDutyRequested && A.Ship==U.Ship && A.NodeId==U.NodeId && A.FactionId==U.FactionId && GameTime<A.Skill3ActiveUntil;}))Protection=FMath::Min(.65f,Protection+.1f);
+            if(U.FactionId==Ship->Systems->FactionId && GetDutyBonuses(Ship).bShipDisasterField)Protection=FMath::Min(.65f,Protection+.25f);
+            const int32 Room=L->GetSlotIndex(U.NodeId);
+            const bool Warden=U.DefinitionId==TEXT("M07") && U.FactionId==Ship->Systems->FactionId && Room!=INDEX_NONE &&
+                (L->Slots[Room].Facility==EOVFacilityType::Engine || L->Slots[Room].Facility==EOVFacilityType::Core);
+            ApplyDamage(U,Settings.DisasterDamagePerSecond*Delta*(1-Protection)*(Warden?.75f:1.f),TEXT("파괴 구역 재난 사망"));
         }
         for(auto It=G.Disasters.CreateIterator();It;++It)if(GameTime>=It.Value())It.RemoveCurrent();
     }
@@ -718,7 +943,7 @@ void UOVInteriorSubsystem::Step(float Delta)
     for(auto& Patient:Units)if(IsOnboard(Patient))
     {
         float Rate=0;
-        for(const auto& Healer:Units)if(Healer.Role==EOVInteriorRole::Support && Healer.FactionId==Patient.FactionId && !Healer.bDutyActive && GameTime<Healer.Skill3ActiveUntil && OVInterior::Rank(Healer,2)>0 && Visible(Healer,Patient,600))
+        for(const auto& Healer:Units)if(Healer.Role==EOVInteriorRole::Support && Healer.FactionId==Patient.FactionId && !Healer.bDutyActive && GameTime<Healer.Skill3ActiveUntil && OVInterior::Rank(Healer,2)>0 && Visible(Healer,Patient,Healer.DefinitionId==TEXT("S05")?800:600))
             Rate=FMath::Max(Rate,.01f+.01f*OVInterior::Rank(Healer,2));
         if(Rate>0)Patient.HP=FMath::Min(Patient.MaxHP,Patient.HP+Patient.MaxHP*Rate*Delta);
     }

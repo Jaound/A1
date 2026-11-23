@@ -61,6 +61,7 @@ public:
     const FOVPlaySceneDefinition* GetActiveDefinition() const;
     bool Start(AOVController& Controller, FName Id);
     void Clear();
+    virtual void Deinitialize() override;
     bool bSandboxPlacing = false;
     bool bSandboxHullMenu = false;
     UPROPERTY(BlueprintReadOnly) bool bSandboxEngaged = false;
@@ -131,9 +132,13 @@ private:
     FString Resolution;
     int32 IssuedHeroes[2]={};
     int32 ArenaCandidate=0;
+    int32 ArenaLevel=1;
     TSet<FGuid> ArenaPicked;
     TArray<FOVHeroRecord> ArenaSavedRoster;
+    TMap<int32,int32> ArenaSavedTiers;
     bool bArenaOwnsRoster=false;
+    TWeakObjectPtr<UOVHeroSubsystem> ArenaRoster;
+    void RestoreArenaRoster();
     TArray<FGuid> ArenaOwnedCandidates() const;
     bool AddArenaHero(AOVController& PC,int32 Side,int32 Choice);
     TArray<FGuid> ScenarioHeroes;

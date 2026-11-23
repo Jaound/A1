@@ -141,6 +141,9 @@ struct ORBITALVANGUARD_API FOVCombatShipState
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly) EOVAttackIntent Intent = EOVAttackIntent::DestroyHull;
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly) EOVProtectionPolicy Protection = EOVProtectionPolicy::UntilExit;
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly) FName ForcedMount;
+    double FirstAttackAt=-1;
+    double FocusFireSince=-1;
+    TWeakObjectPtr<AOVShip> FocusTarget;
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly) bool bLastAttackAutomatic = false;
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly) int32 OrderFaction = -1;
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly) int32 TargetFaction = -1;

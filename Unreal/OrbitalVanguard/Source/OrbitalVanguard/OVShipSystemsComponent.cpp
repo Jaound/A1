@@ -3,6 +3,7 @@
 #include "OVShip.h"
 #include "OVLogisticsSubsystem.h"
 #include "OVCombatSubsystem.h"
+#include "OVInteriorSubsystem.h"
 #include "OVBattleNotices.h"
 #include "Engine/World.h"
 
@@ -96,7 +97,13 @@ float UOVShipSystemsComponent::GetEfficiency(EOVFacilityType Type) const
     {
         if (Layout->Slots[Index].Facility != Type || !IsOperational(Index)) continue;
         const FOVSlotDefinition& Def = Layout->Slots[Index];
-        const float Ratio = Unmanned(Type) ? 1.f : FMath::Clamp(Slots[Index].Crew / Def.RequiredCrew, 0.f, 1.f);
+        float Ratio = Unmanned(Type) ? 1.f : FMath::Clamp(Slots[Index].Crew / Def.RequiredCrew, 0.f, 1.f);
+        if(Ratio<1 && Slots[Index].HP<Def.MaxFacilityHP && (Type==EOVFacilityType::Engine || Type==EOVFacilityType::WeaponControl || Type==EOVFacilityType::Hangar))
+            if(auto* W=GetWorld()) if(auto* Interior=W->GetSubsystem<UOVInteriorSubsystem>();Interior && !Interior->Units.IsEmpty()){
+                const auto Duty=Interior->GetDutyBonuses(Cast<AOVShip>(GetOwner()));
+                const float Relief=Type==EOVFacilityType::Hangar?(Duty.bHangarEfficiency?.2f:0.f):(Duty.bEngineering?.12f:0.f);
+                Ratio+=(1-Ratio)*Relief;
+            }
         Sum += Ratio; Highest = FMath::Max(Highest, Ratio);
     }
     return 0.5f * (Sum + Highest);
@@ -202,9 +209,12 @@ void UOVShipSystemsComponent::Simulate(float SimDelta)
     if (MaxShield <= 0 || bShieldManualOff || bShieldActive) return;
     const float RecoverTime = SimDelta;
     const float RecoveryStart = TimeSinceExternalHit - RecoverTime;
-    const float CombatTime = FMath::Clamp(Tuning.NoHitRecoveryInterval - RecoveryStart, 0.f, RecoverTime);
+    bool Harmonized=false;
+    if(auto* W=GetWorld())if(auto* Interior=W->GetSubsystem<UOVInteriorSubsystem>();Interior && !Interior->Units.IsEmpty())
+        Harmonized=Interior->GetDutyBonuses(Cast<AOVShip>(GetOwner())).bShieldHarmonizer;
+    const float CombatTime = FMath::Clamp(Tuning.NoHitRecoveryInterval*(Harmonized?.8f:1.f) - RecoveryStart, 0.f, RecoverTime);
     const float NonCombatTime = RecoverTime - CombatTime;
-    const float Recovery = ShieldRegen * CombatTime
+    const float Recovery = ShieldRegen * CombatTime*(Harmonized?1.15f:1.f)
         + MaxShield * FMath::Max(0.f, Tuning.ShieldNonCombatRegenFraction) * ShieldCrewEfficiency * NonCombatTime;
     const float Half = 0.5f * MaxShield;
     Shield = FMath::Min(Half, Shield + Recovery);

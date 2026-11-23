@@ -9,17 +9,40 @@
 UENUM(BlueprintType)
 enum class EOVHeroStatus : uint8 { Reserve, Deployed, RescueWaiting, Captured, Missing, Dead };
 
+USTRUCT(BlueprintType)
+struct FOVHeroDefinition
+{
+    GENERATED_BODY()
+    UPROPERTY(BlueprintReadOnly) FName Id;
+    UPROPERTY(BlueprintReadOnly) FString Name;
+    UPROPERTY(BlueprintReadOnly) EOVInteriorRole Role=EOVInteriorRole::Melee;
+    UPROPERTY(BlueprintReadOnly) FString Origin;
+    UPROPERTY(BlueprintReadOnly) FString Story;
+    UPROPERTY(BlueprintReadOnly) FString Passive;
+    UPROPERTY(BlueprintReadOnly) FString Signature;
+    UPROPERTY(Transient) TObjectPtr<UTexture2D> Portrait;
+    UPROPERTY(Transient) TObjectPtr<UTexture2D> Standing;
+    UPROPERTY(Transient) TObjectPtr<UTexture2D> SD;
+    FVector2D Foot=FVector2D(.5,.95);
+    float Scale=1;
+};
+
 /** D114 v0.5 성장/정원은 실게임 검증 전 후보. HeroId는 개인, UnitId/PersonId는 장면 실행 ID다. */
 USTRUCT(BlueprintType)
 struct ORBITALVANGUARD_API FOVHeroRecord
 {
     GENERATED_BODY()
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly) FGuid HeroId;
+    UPROPERTY(VisibleAnywhere, BlueprintReadOnly) FName DefinitionId;
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly) int32 FactionId = -1;
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly) FString Name;
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly) EOVInteriorRole Role = EOVInteriorRole::Melee;
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly) EOVHeroStatus Status = EOVHeroStatus::Reserve;
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly) bool bDeploymentReserved = false;
+    UPROPERTY(VisibleAnywhere, BlueprintReadOnly) int32 FocusTier=0;
+    UPROPERTY(VisibleAnywhere, BlueprintReadOnly) int32 ArmorTier=0;
+    UPROPERTY(VisibleAnywhere, BlueprintReadOnly) int32 TacticalTier=0;
+    UPROPERTY(VisibleAnywhere, BlueprintReadOnly) FName TacticalMode;
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly) int32 XP = 0;
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly) int32 Level = 1;
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly) int32 SkillPoints = 0;
@@ -41,7 +64,8 @@ class ORBITALVANGUARD_API UOVHeroSaveGame : public USaveGame
 {
     GENERATED_BODY()
 public:
-    UPROPERTY() int32 Version = 1;
+    UPROPERTY() int32 Version = 2;
+    UPROPERTY() TMap<int32,int32> CommandTiers;
     UPROPERTY() TArray<FOVHeroRecord> Heroes;
 };
 
@@ -50,6 +74,13 @@ class ORBITALVANGUARD_API UOVHeroSubsystem : public UGameInstanceSubsystem
 {
     GENERATED_BODY()
 public:
+    UPROPERTY(BlueprintReadOnly) TMap<int32,int32> CommandTiers;
+    UFUNCTION(BlueprintPure) int32 DeploymentLimit(int32 Faction) const;
+    UFUNCTION(BlueprintCallable) bool SetTrialCommandTier(int32 Faction,int32 Tier);
+    virtual void Initialize(FSubsystemCollectionBase& Collection) override;
+    UPROPERTY(BlueprintReadOnly) TArray<FOVHeroDefinition> Definitions;
+    const FOVHeroDefinition* Definition(FName Id) const;
+    UFUNCTION(BlueprintCallable) FGuid CreateDefinedHero(int32 FactionId,FName DefinitionId);
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly) FName ProfileId = TEXT("Hero_D114_v05_Candidate");
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly) TArray<FOVHeroRecord> Heroes;
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly) FString LastMessage;
@@ -70,5 +101,6 @@ public:
     FOVHeroRecord* FindHero(FGuid Id);
 private:
     friend class UOVPlayScenarioSubsystem;
+    void SetArenaLevel(FGuid Id,int32 Level);
     FGuid CreateRosterEntry(int32 FactionId,EOVInteriorRole Role,const FString& Name,bool bDeploy);
 };

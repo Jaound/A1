@@ -13,6 +13,11 @@
 #include "OVShip.h"
 #include "Blueprint/WidgetTree.h"
 #include "Components/Border.h"
+#include "Components/Image.h"
+#include "Components/EditableTextBox.h"
+#include "OVPlayScenarioSubsystem.h"
+#include "Components/ScaleBox.h"
+#include "Engine/Texture2D.h"
 #include "Components/ButtonSlot.h"
 #include "Components/ScrollBox.h"
 #include "Components/SizeBox.h"
@@ -103,7 +108,7 @@ void UOVHeroCard::Pick() { if (Owner) Owner->PickCard(HeroId,UnitId); }
 void UOVHeroCard::Update(const FOVHeroCardView& View)
 {
     HeroId = View.HeroId; UnitId = View.UnitId;
-    Portrait->Configure(View.RoleIndex,View.bSelected,View.bLost);
+    if(Portrait) Portrait->Configure(View.RoleIndex,View.bSelected,View.bLost);
     FString DisplayName=View.Name;
     if(View.bMissionOnly)DisplayName.RemoveFromEnd(TEXT(" 영웅"));
     if(DisplayName.Len()>14)DisplayName=DisplayName.Left(13)+TEXT("…");
@@ -132,6 +137,10 @@ void UOVHeroWidget::NativeOnInitialized()
     CloseButton->OnClicked.AddDynamic(this,&UOVHeroWidget::Close);
     if(auto* CloseSlot=Cast<UHorizontalBoxSlot>(CloseButton->Slot))CloseSlot->SetSize(FSlateChildSize(ESlateSizeRule::Automatic));
     // Selection and its primary actions remain visible while the roster scrolls.
+    StandingBox=WidgetTree->ConstructWidget<USizeBox>(); StandingBox->SetHeightOverride(205);
+    Box->AddChildToVerticalBox(StandingBox);
+    auto* ArtFit=WidgetTree->ConstructWidget<UScaleBox>();ArtFit->SetStretch(EStretch::ScaleToFit);
+    StandingBox->AddChild(ArtFit); Standing=WidgetTree->ConstructWidget<UImage>();ArtFit->AddChild(Standing);
     Detail = Text(WidgetTree,TEXT("초상화를 선택하세요.")); Frame->AddChildToVerticalBox(Detail)->SetPadding(FMargin(0,6,0,4));
     auto* Actions = WidgetTree->ConstructWidget<UHorizontalBox>(); Frame->AddChildToVerticalBox(Actions);
     LocateButton = RowButton(WidgetTree,Actions,TEXT("위치 찾기")); LocateButton->OnClicked.AddDynamic(this,&UOVHeroWidget::Locate);
@@ -142,6 +151,10 @@ void UOVHeroWidget::NativeOnInitialized()
     Feedback->SetVisibility(ESlateVisibility::Collapsed); Frame->AddChildToVerticalBox(Feedback);
     Frame->AddChildToVerticalBox(Outer)->SetSize(FSlateChildSize(ESlateSizeRule::Fill));
     EmptyHelp = Text(WidgetTree,TEXT("보유 영웅 없음")); Box->AddChildToVerticalBox(EmptyHelp);
+    Search=WidgetTree->ConstructWidget<UEditableTextBox>();
+    Search->SetHintText(FText::FromString(TEXT("이름 · 유형 · 위치 · 상태 검색")));
+    Search->SetForegroundColor(FLinearColor(.05f,.10f,.15f));
+    Box->AddChildToVerticalBox(Search);
     OwnedLabel = Text(WidgetTree,TEXT("보유 영웅")); Box->AddChildToVerticalBox(OwnedLabel)->SetPadding(FMargin(0,6));
     OwnedCards = WidgetTree->ConstructWidget<UWrapBox>(); OwnedCards->SetInnerSlotPadding(FVector2D(6,6)); Box->AddChildToVerticalBox(OwnedCards);
     MissionLabel = Text(WidgetTree,TEXT("임무 전용 영웅")); Box->AddChildToVerticalBox(MissionLabel)->SetPadding(FMargin(0,6));
@@ -158,6 +171,14 @@ void UOVHeroWidget::NativeOnInitialized()
     SkillButtons[2]->OnClicked.AddDynamic(this,&UOVHeroWidget::Skill2); SkillButtons[3]->OnClicked.AddDynamic(this,&UOVHeroWidget::Skill3);
     Button(WidgetTree,Box,TEXT("편성 · 보직 설정"))->OnClicked.AddDynamic(this,&UOVHeroWidget::ToggleFormation);
     FormationBox = WidgetTree->ConstructWidget<UVerticalBox>(); Box->AddChildToVerticalBox(FormationBox); FormationBox->SetVisibility(ESlateVisibility::Collapsed);
+    TemplateChoice=WidgetTree->ConstructWidget<UComboBoxString>();
+    for(const auto& D:GetGameInstance()->GetSubsystem<UOVHeroSubsystem>()->Definitions)
+        TemplateChoice->AddOption(D.Name);
+    TemplateChoice->SetSelectedIndex(0); FormationBox->AddChildToVerticalBox(TemplateChoice);
+    Button(WidgetTree,FormationBox,TEXT("편성실에서 시험 영웅 생성"))->OnClicked.AddDynamic(this,&UOVHeroWidget::CreateTemplate);
+    Button(WidgetTree,FormationBox,TEXT("개발 · 정의와 아트 현황"))->OnClicked.AddDynamic(this,&UOVHeroWidget::ToggleCatalogue);
+    CatalogueReport=Text(WidgetTree,TEXT(""),13); FormationBox->AddChildToVerticalBox(CatalogueReport);
+    CatalogueReport->SetVisibility(ESlateVisibility::Collapsed);
     auto* ReserveRow = WidgetTree->ConstructWidget<UHorizontalBox>(); FormationBox->AddChildToVerticalBox(ReserveRow);
     auto* Reserve = RowButton(WidgetTree,ReserveRow,TEXT("편성")); Reserve->OnClicked.AddDynamic(this,&UOVHeroWidget::Deploy); OwnedActions.Add(Reserve);
     auto* Unreserve = RowButton(WidgetTree,ReserveRow,TEXT("편성 해제")); Unreserve->OnClicked.AddDynamic(this,&UOVHeroWidget::Release); OwnedActions.Add(Unreserve);
@@ -172,7 +193,7 @@ void UOVHeroWidget::NativeOnInitialized()
     Button(WidgetTree,FormationBox,TEXT("편성실 이동"))->OnClicked.AddDynamic(this,&UOVHeroWidget::RosterRoom);
     Button(WidgetTree,FormationBox,TEXT("보유 편제로 출전"))->OnClicked.AddDynamic(this,&UOVHeroWidget::StartMission);
     auto* Trial = Button(WidgetTree,Box,TEXT("영웅 시험 장면")); Trial->OnClicked.AddDynamic(this,&UOVHeroWidget::StartTrial);
-    Trial->SetToolTipText(FText::FromString(TEXT("전장을 재시작하고 임무 전용 대표 영웅 4명으로 연습합니다. 보유 명단에는 추가하지 않습니다.")));
+    Trial->SetToolTipText(FText::FromString(TEXT("무장 없는 구축전함에서 10명씩 편성합니다. 보유 명단은 시험 후 복원됩니다.")));
     Refresh();
 }
 
@@ -201,7 +222,15 @@ void UOVHeroWidget::RebuildCards()
             ContentSlot->SetPadding(FMargin(4));
         }
         auto* PictureSize = WidgetTree->ConstructWidget<USizeBox>(); PictureSize->SetHeightOverride(78); Stack->AddChildToVerticalBox(PictureSize); PortraitSizes.Add(PictureSize);
+        const auto* Def=GetGameInstance()->GetSubsystem<UOVHeroSubsystem>()->Definition(View.DefinitionId);
+        if(Def && Def->Portrait)
+        {
+            auto* Fit=WidgetTree->ConstructWidget<UScaleBox>(); Fit->SetStretch(EStretch::ScaleToFit); PictureSize->AddChild(Fit);
+            auto* Image=WidgetTree->ConstructWidget<UImage>(); Image->SetBrushFromTexture(Def->Portrait,true); Fit->AddChild(Image);
+        }
+        else {
         Card->Portrait = WidgetTree->ConstructWidget<UOVPortraitWidget>(); Card->Portrait->SetVisibility(ESlateVisibility::HitTestInvisible); PictureSize->AddChild(Card->Portrait);
+        }
         Card->NameLabel = OVHeroUI::Text(WidgetTree,View.Name,17); Stack->AddChildToVerticalBox(Card->NameLabel);
         Card->RoleLabel = OVHeroUI::Text(WidgetTree,TEXT(""),14); Stack->AddChildToVerticalBox(Card->RoleLabel);
         auto* BarSize = WidgetTree->ConstructWidget<USizeBox>(); BarSize->SetHeightOverride(5); Stack->AddChildToVerticalBox(BarSize)->SetPadding(FMargin(0,3));
@@ -232,7 +261,7 @@ void UOVHeroWidget::Refresh()
     const auto Owned = Heroes->GetHeroes(0);
     for (const auto& Hero : Owned)
     {
-        FOVHeroCardView View; View.HeroId=Hero.HeroId; View.Name=Hero.Name; View.RoleIndex=int32(Hero.Role); View.Role=OVHeroUI::Role(View.RoleIndex); View.Level=Hero.Level;
+        FOVHeroCardView View; View.HeroId=Hero.HeroId; View.DefinitionId=Hero.DefinitionId; View.Name=Hero.Name; View.RoleIndex=int32(Hero.Role); View.Role=OVHeroUI::Role(View.RoleIndex); View.Level=Hero.Level;
         const TCHAR* States[] = {TEXT("대기"),TEXT("편성"),TEXT("구조 대기"),TEXT("포로"),TEXT("실종"),TEXT("사망")};
         View.State=States[FMath::Clamp(int32(Hero.Status),0,5)]; View.Location=TEXT("대기 명단"); View.bLost=Hero.Status==EOVHeroStatus::Dead;
         if (PC->Interior && Hero.RuntimeUnitId>0)
@@ -253,6 +282,9 @@ void UOVHeroWidget::Refresh()
         View.State=OVHeroUI::State(Unit); View.Location=OVHeroUI::Location(Unit); View.HP=Unit.HP; View.MaxHP=Unit.MaxHP;
         View.bHPKnown=true; View.bMissionOnly=true; View.bLost=Unit.State==EOVInteriorState::Dead; Views.Add(View);
     }
+    const FString Filter=Search->GetText().ToString().TrimStartAndEnd();
+    if(!Filter.IsEmpty())
+        Views.RemoveAll([&](const auto& V){return !(V.Name+TEXT(" ")+V.Role+TEXT(" ")+V.Location+TEXT(" ")+V.State).Contains(Filter);});
     const bool HasSelection = Views.ContainsByPredicate([&](const FOVHeroCardView& V) { return SelectedHeroId.IsValid() ? V.HeroId==SelectedHeroId : V.bMissionOnly && V.UnitId==SelectedMissionUnitId; });
     if (!HasSelection)
     {
@@ -267,9 +299,9 @@ void UOVHeroWidget::Refresh()
     }
     if (RosterSignature!=Signature) { RosterSignature=Signature; RebuildCards(); }
     for (int32 I=0; I<Cards.Num()&&I<Views.Num(); ++I) Cards[I]->Update(Views[I]);
-    const int32 OwnedCount=Owned.Num(), MissionCount=Views.Num()-OwnedCount;
-    Header->SetText(FText::FromString(FString::Printf(TEXT("영웅 · 보유 편성 %d / 15"),Heroes->CountDeployed(0))));
-    OwnedLabel->SetText(FText::FromString(FString::Printf(TEXT("보유 영웅 %d"),OwnedCount)));
+    const int32 OwnedCount=Owned.Num(), MissionCount=Views.FilterByPredicate([](const auto& V){return V.bMissionOnly;}).Num();
+    Header->SetText(FText::FromString(FString::Printf(TEXT("영웅 · 현역 %d / %d"),Heroes->CountDeployed(0),Heroes->DeploymentLimit(0))));
+    OwnedLabel->SetText(FText::FromString(FString::Printf(TEXT("보유 영웅 %d / 30"),OwnedCount)));
     OwnedLabel->SetVisibility(OwnedCount?ESlateVisibility::Visible:ESlateVisibility::Collapsed);
     MissionLabel->SetText(FText::FromString(FString::Printf(TEXT("임무 전용 영웅 %d"),MissionCount)));
     MissionLabel->SetVisibility(MissionCount?ESlateVisibility::Visible:ESlateVisibility::Collapsed);
@@ -280,6 +312,10 @@ void UOVHeroWidget::Refresh()
     LocateButton->SetIsEnabled(bUnit); InteriorButton->SetIsEnabled(bUnit); RetreatButton->SetIsEnabled(bUnit&&!Selected->bLost);
     for (const auto& Action : OwnedActions) Action->SetIsEnabled(bOwned);
     DutyChoice->SetIsEnabled(bOwned&&bUnit);
+    const auto* Def=Selected?Heroes->Definition(Selected->DefinitionId):nullptr;
+    StandingBox->SetVisibility(Def && Def->Standing?ESlateVisibility::Visible:ESlateVisibility::Collapsed);
+    if(Def && Def->Standing && Standing->GetBrush().GetResourceObject()!=Def->Standing)
+        Standing->SetBrushFromTexture(Def->Standing,true);
     if (!Selected)
     {
         Detail->SetText(FText::FromString(TEXT("시험 장면에서 대표 영웅을 만나보세요.")));
@@ -293,7 +329,10 @@ void UOVHeroWidget::Refresh()
     if (Selected->bHPKnown) Summary+=FString::Printf(TEXT("\nHP %.0f / %.0f"),Selected->HP,Selected->MaxHP);
     if (bOwned) Summary+=FString::Printf(TEXT("  ·  경험치 %d"),Hero.XP);
     if (Selected->RoleIndex==int32(EOVInteriorRole::Support)) Summary+=FString::Printf(TEXT("  ·  촉매 %d"),bUnit?Unit.Medkits:Hero.Catalysts);
-    Detail->SetText(FText::FromString(Summary)); Detail->SetToolTipText(FText::FromString(Unit.Reason));
+    if(bOwned && (Hero.ArmorTier || Hero.FocusTier || Hero.TacticalTier))
+        Summary+=FString::Printf(TEXT("\n초점 T%d · 외피 T%d · 증폭 T%d"),Hero.FocusTier,Hero.ArmorTier,Hero.TacticalTier);
+    if(Def && !Def->Passive.IsEmpty())Summary+=Def->Id==TEXT("M02")?TEXT("\n고경감 파쇄 · 역장 종료 시 잔영 베기"):TEXT("\n고유 능력 · 상세 설명 보기");
+    Detail->SetText(FText::FromString(Summary)); Detail->SetToolTipText(FText::FromString(Def ? Def->Story+TEXT("\n")+Def->Passive+TEXT("\n")+Def->Signature+TEXT("\n")+Unit.Reason : Unit.Reason));
     AOVShip* UnitShip=Unit.Ship.Get();
     if (DutyHero!=SelectedHeroId || DutyShip.Get()!=UnitShip)
     {
@@ -430,6 +469,26 @@ void UOVHeroWidget::DutyOff()
 }
 void UOVHeroWidget::Spend(int32 Index) { if (auto* Heroes=GetGameInstance()->GetSubsystem<UOVHeroSubsystem>()) { Heroes->SpendSkillPoint(SelectedId(),Index); SetFeedback(Heroes->LastMessage); } Refresh(); }
 void UOVHeroWidget::Skill0(){Spend(0);} void UOVHeroWidget::Skill1(){Spend(1);} void UOVHeroWidget::Skill2(){Spend(2);} void UOVHeroWidget::Skill3(){Spend(3);}
+void UOVHeroWidget::CreateTemplate()
+{
+    auto* Roster=GetGameInstance()->GetSubsystem<UOVHeroSubsystem>();
+    const int32 Index=TemplateChoice->GetSelectedIndex();
+    if(!Roster->CanChangeRoster()){SetFeedback(TEXT("먼저 편성실로 이동하세요"));return;}
+    if(!Roster->Definitions.IsValidIndex(Index))return;
+    const auto Id=Roster->CreateDefinedHero(0,Roster->Definitions[Index].Id);
+    if(Id.IsValid()){SelectedHeroId=Id;Search->SetText(FText::GetEmpty());}
+    SetFeedback(Roster->LastMessage);Refresh();
+}
+void UOVHeroWidget::ToggleCatalogue()
+{
+    if(CatalogueReport->GetVisibility()!=ESlateVisibility::Collapsed){CatalogueReport->SetVisibility(ESlateVisibility::Collapsed);return;}
+    FString Lines=TEXT("정의  ·  스탠딩 / 초상 / 선내  ·  고유 효과");
+    for(const auto& D:GetGameInstance()->GetSubsystem<UOVHeroSubsystem>()->Definitions)
+        Lines+=FString::Printf(TEXT("\n%s  %s   %s / %s / %s   %s"),*D.Id.ToString(),*D.Name,
+            D.Standing?TEXT("●"):TEXT("―"),D.Portrait?TEXT("●"):TEXT("―"),D.SD?TEXT("●"):TEXT("―"),
+            D.Passive.IsEmpty()?TEXT("공통 기술"):D.Id==TEXT("M02")?TEXT("개별 판정 연결"):TEXT("개별 검증 대기"));
+    CatalogueReport->SetText(FText::FromString(Lines));CatalogueReport->SetVisibility(ESlateVisibility::Visible);
+}
 void UOVHeroWidget::RosterRoom() { if (auto* Development=GetWorld()->GetSubsystem<UOVDevelopmentSubsystem>()) { Development->OpenRosterRoom(); SetFeedback(Development->LastMessage); Refresh(); } }
 void UOVHeroWidget::StartMission()
 {
@@ -437,7 +496,7 @@ void UOVHeroWidget::StartMission()
 }
 void UOVHeroWidget::StartTrial()
 {
-    auto* PC=Cast<AOVController>(GetOwningPlayer()); if (PC&&PC->Mission) { const bool Started=PC->Mission->StartMission(PC,EOVMissionMode::Attack,260112,4,2,false); SetFeedback(Started?TEXT("영웅 시험 장면 · 명단 추가 없음"):PC->Mission->Status); Refresh(); }
+    auto* PC=Cast<AOVController>(GetOwningPlayer()); if(PC)PC->StartPlayScenario(TEXT("HeroArena"));
 }
 void UOVHeroWidget::Close() { if (auto* PC=Cast<AOVController>(GetOwningPlayer())) if (auto* HUD=Cast<AOVHUD>(PC->GetHUD())) HUD->SetHeroPanelOpen(false); }
 void UOVHeroWidget::SetBoarding(bool bAssigned)

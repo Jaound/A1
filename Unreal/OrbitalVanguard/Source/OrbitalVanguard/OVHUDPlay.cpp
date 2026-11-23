@@ -269,10 +269,12 @@ void AOVHUD::DrawPlayHUD()
    DrawText(FitCommandLabel(this,GEngine->GetSmallFont(),Play->GetActiveDefinition()->Objective,470),PlayAccent,14,Evac?190:160,GEngine->GetSmallFont());
   }
   if(Play->ActiveId==TEXT("HeroArena") && !Play->bArenaStarted) {
-   Button(TEXT("ArenaNext"),TEXT("후보 변경"),12,122,92);
+   Button(TEXT("ArenaPrev"),TEXT("◀"),12,122,30);
+   Button(TEXT("ArenaNext"),TEXT("다음 ▶"),45,122,60);
    Button(TEXT("ArenaAdd"),TEXT("1명 배치"),108,122,92);
    Button(TEXT("ArenaFill"),TEXT("빈자리 채우기"),204,122,116);
-   Button(TEXT("ArenaFight"),TEXT("강습 시작"),324,122,100,true);
+   Button(TEXT("ArenaFight"),TEXT("강습 시작"),324,122,95,true);
+   Button(TEXT("ArenaLevel"),TEXT("생성 레벨"),423,122,76);
   }
   if (Play->ActiveId == TEXT("Logistics")) {
    DrawText(Play->GetConvoyStatus(), PlayInk, 10, 127, GEngine->GetSmallFont());

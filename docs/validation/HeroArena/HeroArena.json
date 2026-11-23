@@ -1,0 +1,224 @@
+{
+  "checks": {
+    "34종 고유 정의": {
+      "passed": true,
+      "value": "['G01', 'G02', 'G03', 'G04', 'M01', 'M02', 'M03', 'M04', 'M05', 'M06', 'M07', 'M08', 'M09', 'M10', 'R01', 'R02', 'R03', 'R04', 'R05', 'R06', 'R07', 'R08', 'R09', 'R10', 'S01', 'S02', 'S03', 'S04', 'S05', 'C01', 'C02', 'C03', 'C04', 'C05']"
+    },
+    "구축전함 두 척": {
+      "passed": true,
+      "value": "2"
+    },
+    "OVShip_3 무장·쉴드 해제": {
+      "passed": true,
+      "value": "0.0"
+    },
+    "OVShip_4 무장·쉴드 해제": {
+      "passed": true,
+      "value": "0.0"
+    },
+    "편성 전 적 수호대": {
+      "passed": true,
+      "value": "10"
+    },
+    "양측 10명과 고유 개인 ID": {
+      "passed": true,
+      "value": "20"
+    },
+    "이리스 정의와 런타임 연결": {
+      "passed": true,
+      "value": "이리스 베인"
+    },
+    "이리스 standing 텍스처": {
+      "passed": true,
+      "value": "T_standing"
+    },
+    "이리스 portrait 텍스처": {
+      "passed": true,
+      "value": "T_portrait"
+    },
+    "이리스 sd 텍스처": {
+      "passed": true,
+      "value": "T_sd"
+    },
+    "명단 카드에서 이리스 선택": {
+      "passed": true,
+      "value": "10"
+    },
+    "원 포드 10기": {
+      "passed": true,
+      "value": "10"
+    },
+    "열 명 실제 진입 및 이동 명령": {
+      "passed": true,
+      "value": "10"
+    },
+    "선내 실제 명중": {
+      "passed": true,
+      "value": "3"
+    },
+    "일반 함대 무장 복원": {
+      "passed": true,
+      "value": "20"
+    },
+    "원 명단 복원": {
+      "passed": true,
+      "value": "[]"
+    },
+    "정의별 실제 편성 0": {
+      "passed": true,
+      "value": "['G01', 'G02', 'G03', 'G04', 'M01', 'M02', 'M03', 'M04', 'M05', 'M06']"
+    },
+    "정의별 실제 포드 진입 0": {
+      "passed": true,
+      "value": "['G01', 'G02', 'G03', 'G04', 'M01', 'M02', 'M03', 'M04', 'M05', 'M06']"
+    },
+    "정의별 실제 편성 10": {
+      "passed": true,
+      "value": "['M07', 'M08', 'M09', 'M10', 'R01', 'R02', 'R03', 'R04', 'R05', 'R06']"
+    },
+    "정의별 실제 포드 진입 10": {
+      "passed": true,
+      "value": "['M07', 'M08', 'M09', 'M10', 'R01', 'R02', 'R03', 'R04', 'R05', 'R06']"
+    },
+    "정의별 실제 편성 20": {
+      "passed": true,
+      "value": "['R07', 'R08', 'R09', 'R10', 'S01', 'S02', 'S03', 'S04', 'S05', 'C01']"
+    },
+    "정의별 실제 포드 진입 20": {
+      "passed": true,
+      "value": "['R07', 'R08', 'R09', 'R10', 'S01', 'S02', 'S03', 'S04', 'S05', 'C01']"
+    },
+    "정의별 실제 편성 30": {
+      "passed": true,
+      "value": "['C02', 'C03', 'C04', 'C05']"
+    },
+    "정의별 실제 포드 진입 30": {
+      "passed": true,
+      "value": "['C02', 'C03', 'C04', 'C05', 'G01', 'G02', 'G03', 'G04', 'G01', 'G02']"
+    }
+  },
+  "이리스 교전 관찰": {
+    "hp": "0.0",
+    "shots": "1",
+    "hits": "1",
+    "node_id": "D3_X3_H0",
+    "state": "<OVInteriorState.DEAD: 9>",
+    "reason": "선내 교전 사망",
+    "signature_uses": "0",
+    "passive_hits": "0"
+  },
+  "수호대 관찰": [
+    {
+      "node_id": "D3_X4_Y1",
+      "state": "<OVInteriorState.DEAD: 9>",
+      "shots": "6",
+      "hp": "0.0"
+    },
+    {
+      "node_id": "D3_X4_Y1",
+      "state": "<OVInteriorState.MOVING: 1>",
+      "shots": "25",
+      "hp": "240.0"
+    },
+    {
+      "node_id": "D3_X4_Y1",
+      "state": "<OVInteriorState.MOVING: 1>",
+      "shots": "20",
+      "hp": "240.0"
+    },
+    {
+      "node_id": "D3_X4_Y1",
+      "state": "<OVInteriorState.MOVING: 1>",
+      "shots": "22",
+      "hp": "64.03195190429688"
+    },
+    {
+      "node_id": "D3_X4_Y1",
+      "state": "<OVInteriorState.DEAD: 9>",
+      "shots": "7",
+      "hp": "0.0"
+    },
+    {
+      "node_id": "D3_X4_Y1",
+      "state": "<OVInteriorState.MOVING: 1>",
+      "shots": "24",
+      "hp": "240.0"
+    },
+    {
+      "node_id": "D3_X4_Y1",
+      "state": "<OVInteriorState.MOVING: 1>",
+      "shots": "20",
+      "hp": "240.0"
+    },
+    {
+      "node_id": "D3_X4_Y1",
+      "state": "<OVInteriorState.MOVING: 1>",
+      "shots": "21",
+      "hp": "280.0"
+    },
+    {
+      "node_id": "D3_X4_Y1",
+      "state": "<OVInteriorState.DEAD: 9>",
+      "shots": "12",
+      "hp": "0.0"
+    },
+    {
+      "node_id": "D3_X4_Y1",
+      "state": "<OVInteriorState.MOVING: 1>",
+      "shots": "24",
+      "hp": "240.0"
+    }
+  ],
+  "이리스 고경감 적중": 0,
+  "PIE 프레임 간격(ms)": {
+    "조건": "마지막 시험장, 함선 2척·초기 영웅 20명, DX11, Slate 후처리 콜백 240프레임",
+    "평균": 8.66489708332665,
+    "p95": 9.42669999494683,
+    "최대": 54.76479999924777
+  },
+  "편성·진입 검증": [
+    [
+      "G01",
+      "G02",
+      "G03",
+      "G04",
+      "M01",
+      "M02",
+      "M03",
+      "M04",
+      "M05",
+      "M06"
+    ],
+    [
+      "M07",
+      "M08",
+      "M09",
+      "M10",
+      "R01",
+      "R02",
+      "R03",
+      "R04",
+      "R05",
+      "R06"
+    ],
+    [
+      "R07",
+      "R08",
+      "R09",
+      "R10",
+      "S01",
+      "S02",
+      "S03",
+      "S04",
+      "S05",
+      "C01"
+    ],
+    [
+      "C02",
+      "C03",
+      "C04",
+      "C05"
+    ]
+  ],
+  "passed": true
+}

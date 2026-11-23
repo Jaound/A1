@@ -4,6 +4,8 @@
 #include "OVShip.h"
 #include "OVShipSystemsComponent.h"
 #include "Engine/Canvas.h"
+#include "Engine/Texture2D.h"
+#include "OVHeroSubsystem.h"
 #include "Engine/Engine.h"
 
 namespace OVInteriorUI
@@ -52,6 +54,7 @@ bool AOVHUD::HandleInteriorAction(FName Action)
  auto* Interior=PC->Interior.Get();
  auto ViewShip=[&](AOVShip* Ship) { InteriorShip=Ship;InteriorDeck=1;InteriorTargetSlot=NAME_None;InteriorUnitPage=0;InteriorSelectedUnits.Reset(); };
  if(Action==TEXT("InteriorToggle")||Action==TEXT("InteriorMissionToggle")) { bInteriorOpen=!bInteriorOpen;if(bInteriorOpen)ViewShip(PC->Selected);else CancelPointerDrag();return true; }
+ if(Action==TEXT("InteriorZoomIn") || Action==TEXT("InteriorZoomOut")){InteriorMapScale=FMath::Clamp(InteriorMapScale+(Action==TEXT("InteriorZoomIn")?.2f:-.2f),.6f,1.f);return true;}
  if(Action==TEXT("InteriorClose")) { bInteriorOpen=false;CancelPointerDrag();return true; }
  if(Action==TEXT("InteriorMin")) { bInteriorMinimized=!bInteriorMinimized;CancelPointerDrag();return true; }
  if(Action==TEXT("InteriorMax")) {
@@ -140,6 +143,8 @@ void AOVHUD::DrawInterior()
  Button(TEXT("InteriorHeroPanel"),TEXT("영웅"),X+W-158,Y+2,60);
  if(bInteriorMinimized)return;
  Button(TEXT("InteriorSelectedShip"),TEXT("선택 함선 보기"),X+12,Y+37,140);
+ Button(TEXT("InteriorZoomOut"),TEXT("−"),X+W-74,Y+37,30);
+ Button(TEXT("InteriorZoomIn"),TEXT("+"),X+W-40,Y+37,30);
  Button(TEXT("InteriorShipNext"),TEXT("다음 알려진 함선"),X+160,Y+37,150);
  if(!IsValid(Ship)||!Ship->Systems||!Ship->Systems->Layout||!Interior->IsStructureKnown(0,Ship))
  {
@@ -181,7 +186,7 @@ void AOVHUD::DrawInterior()
  // Static layout is known; enemy units and room runtime state still need observation.
  auto Project=[&](FVector Local)
  {
-  return FVector2D(X+276+(Local.X/L->LocalHalfExtent.X+1)*(W-330)*.5,Y+130+(Local.Y/L->LocalHalfExtent.Y+1)*66);
+  return FVector2D(X+276+(Local.X/L->LocalHalfExtent.X*InteriorMapScale+1)*(W-330)*.5,Y+130+(Local.Y/L->LocalHalfExtent.Y*InteriorMapScale+1)*66);
  };
  for(const auto& Link:L->Connections)
  {
@@ -205,17 +210,20 @@ void AOVHUD::DrawInterior()
   const FVector2D P=Project(Slot.LocalCenter);
   Button(FName(*(TEXT("InteriorSlot_")+Slot.SlotId.ToString())),Facility(Slot.Facility),P.X-35,P.Y-13,70,Slot.SlotId==InteriorTargetSlot);
  }
+ TMap<FName,int32> RoomOccupants;
  for(const auto& U:Interior->Units)if(U.Ship==Ship&&Interior->CanObserve(0,U.UnitId))
  {
   const int32 Node=L->GetSlotIndex(U.NodeId);if(!L->Slots.IsValidIndex(Node)||L->Slots[Node].DeckId!=InteriorDeck)continue;
   const bool Hero=U.Role!=EOVInteriorRole::Trooper,Selected=InteriorSelectedUnits.Contains(U.UnitId);
   const bool Moving=U.State==EOVInteriorState::Moving||U.State==EOVInteriorState::Retreating;
   const float Step=Moving?FMath::Sin(Interior->GameTime*10+U.UnitId)*2.f:0.f;
-  const FVector2D P=Project(U.LocalPosition)+FVector2D((U.UnitId%4-1.5f)*14,27+(U.UnitId%3)*16);
+  const int32 Place=RoomOccupants.FindOrAdd(U.NodeId)++;
+  const FVector2D P=Project(U.LocalPosition)+FVector2D((Place%4-1.5f)*24,28+(Place/4)*25);
   const FLinearColor RoleColors[]={Ink,FLinearColor(.2f,.75f,1),FLinearColor(1,.65f,.2f),FLinearColor(.25f,1,.6f),FLinearColor(.75f,.55f,1)};
   FLinearColor C=U.FactionId==0?RoleColors[FMath::Clamp(int32(U.Role),0,4)]:Enemy;
   if(U.State==EOVInteriorState::Dead)C=FLinearColor(.45f,.45f,.5f);
   if(Interior->GameTime-U.LastDamagedAt<.18)C=FLinearColor(1,.2f,.18f);
+  const auto* Art=Hero && !U.DefinitionId.IsNone()?GetWorld()->GetGameInstance()->GetSubsystem<UOVHeroSubsystem>()->Definition(U.DefinitionId):nullptr;
   const float Body=Hero?8.f:5.f;
   if(Selected)
   {
@@ -227,6 +235,13 @@ void AOVHUD::DrawInterior()
   if(U.State==EOVInteriorState::Dead)
   {
    DrawLine(P.X-6,P.Y-4,P.X+6,P.Y+7,C,3);DrawLine(P.X-6,P.Y+7,P.X+6,P.Y-4,C,3);
+  }
+  else if(Art && Art->SD && InteriorMapScale>=.79f)
+  {
+   const float Size=46.f*Art->Scale*InteriorMapScale;
+   DrawTexture(Art->SD,P.X-Size*Art->Foot.X,P.Y+11-Size*Art->Foot.Y+Step,Size,Size,0,0,1,1,
+       Interior->GameTime-U.LastDamagedAt<.18?FLinearColor(1,.55f,.55f):FLinearColor::White);
+   DrawLine(P.X-7,P.Y+13,P.X+7,P.Y+13,Selected?Accent:C,2);
   }
   else
   {
@@ -242,6 +257,8 @@ void AOVHUD::DrawInterior()
     else if(U.Role==EOVInteriorRole::Support){DrawLine(P.X+7,P.Y-4+Step,P.X+7,P.Y+4+Step,C,2);DrawLine(P.X+3,P.Y+Step,P.X+11,P.Y+Step,C,2);}
     else {DrawLine(P.X-7,P.Y-11+Step,P.X+7,P.Y-11+Step,C,2);DrawLine(P.X-7,P.Y-11+Step,P.X-4,P.Y-15+Step,C,2);DrawLine(P.X+7,P.Y-11+Step,P.X+4,P.Y-15+Step,C,2);}
    }
+  }
+  if(U.State!=EOVInteriorState::Dead){
    const double SinceShot=Interior->GameTime-(U.AttackReadyAt-U.Period);
    if(U.Shots>0&&U.State==EOVInteriorState::Fighting&&SinceShot>=0&&SinceShot<.16)
    {

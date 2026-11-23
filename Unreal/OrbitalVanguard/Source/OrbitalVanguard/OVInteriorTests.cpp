@@ -549,4 +549,59 @@ bool FOVInteriorResidentDeparture::RunTest(const FString&)
     R.Advance(1);TestEqual(TEXT("FTL/완파 반복 처리 사망 중복 없음"),R.Interior->TotalDeaths,2);
     return true;
 }
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(FOVIrisFieldTest,"OrbitalVanguard.Hero.IrisPhaseDuel",
+    EAutomationTestFlags::EditorContext|EAutomationTestFlags::EngineFilter)
+bool FOVIrisFieldTest::RunTest(const FString&)
+{
+    OVInteriorTest::FRange R;
+    const auto Ids=R.Enter();
+    if(!TestEqual(TEXT("실제 강습 인원"),Ids.Num(),1))return false;
+    const auto Arrival=R.Interior->GetUnit(Ids[0]);
+    const int32 Guard=R.Interior->RegisterUnit(R.Target,1,EOVInteriorRole::Melee,Arrival.NodeId);
+    if(!TestTrue(TEXT("도착 격실 수호대"),Guard>0))return false;
+    for(auto& U:R.Interior->Units)
+    {
+        if(U.UnitId==Ids[0])U.DefinitionId=TEXT("M02");
+        if(U.UnitId==Guard){U.LocalPosition=Arrival.LocalPosition;U.Armor=.3f;}
+    }
+    const float Hull=R.Target->Systems->HullHP;
+    R.Advance(.25f);
+    TestEqual(TEXT("역장 종료 전 방출 금지"),R.Interior->GetUnit(Ids[0]).SignatureUses,0);
+    R.Advance(R.Interior->Settings.MeleeDuration+.25f);
+    const auto After=R.Interior->GetUnit(Ids[0]);
+    TestEqual(TEXT("역장 종료 한 번 방출"),After.SignatureUses,1);
+    TestTrue(TEXT("고경감 실제 표적 기본 공격"),After.PassiveHits>0);
+    TestTrue(TEXT("수호대 실제 피해"),R.Interior->GetUnit(Guard).HP<R.Interior->GetUnit(Guard).MaxHP);
+    R.Advance(.25f);
+    TestEqual(TEXT("방출 중복 없음"),R.Interior->GetUnit(Ids[0]).SignatureUses,1);
+    TestEqual(TEXT("개인 검 선체 피해 없음"),R.Target->Systems->HullHP,Hull);
+    return true;
+}
+
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(FOVOfficerIdentityTest,"OrbitalVanguard.Hero.NamedDutyLifecycle",
+    EAutomationTestFlags::EditorContext|EAutomationTestFlags::EngineFilter)
+bool FOVOfficerIdentityTest::RunTest(const FString&)
+{
+    OVInteriorTest::FRange R;
+    const FName Room=R.Slot(EOVFacilityType::WeaponControl);
+    const int32 Id=R.Interior->RegisterUnit(R.Target,1,EOVInteriorRole::Ranged,Room);
+    if(!TestTrue(TEXT("실제 포술 보직자 등록"),Id>0))return false;
+    auto& Officer=R.Interior->Units.Last();
+    Officer.DefinitionId=TEXT("R02");Officer.HeroSkillRanks={1,1,1,0};
+    if(!TestTrue(TEXT("보직 인계 지시"),R.Interior->SetHeroDuty(Id,true,Room)))return false;
+    R.Advance(3.4f);
+    const auto Pd=R.Interior->GetDutyBonuses(R.Target);
+    TestTrue(TEXT("숙련 보직 발동 시 요격 주기와 명중"),Pd.PDInterval<.9f && Pd.PDAccuracy>0);
+    TestEqual(TEXT("반대 세력 요격 보정 없음"),R.Interior->GetDutyBonuses(R.Origin).PDAccuracy,0.f);
+    TestTrue(TEXT("보직 해제"),R.Interior->SetHeroDuty(Id,false,NAME_None));
+    TestEqual(TEXT("해제 즉시 기본 주기로 복원"),R.Interior->GetDutyBonuses(R.Target).PDInterval,1.f);
+    Officer.DefinitionId=TEXT("R05");
+    R.Interior->SetHeroDuty(Id,true,Room); R.Advance(3.4f);
+    TestTrue(TEXT("다른 장교의 미사일 전용 효과"),R.Interior->GetDutyBonuses(R.Target).MissileInterval<1);
+    TestEqual(TEXT("옛 요격 보정 미잔류"),R.Interior->GetDutyBonuses(R.Target).PDAccuracy,0.f);
+    R.Target->Systems->DebugDestroySlot(Room,EOVDamageCause::Sabotage);
+    TestEqual(TEXT("보직 시설 파괴 즉시 효과 소멸"),R.Interior->GetDutyBonuses(R.Target).MissileInterval,1.f);
+    return true;
+}
+
 #endif

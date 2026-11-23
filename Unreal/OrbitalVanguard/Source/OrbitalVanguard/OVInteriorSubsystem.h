@@ -71,6 +71,26 @@ struct ORBITALVANGUARD_API FOVInteriorUnitRecord
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly) int32 PersonId = 0;
     // 영속 로스터의 개인 ID. 기존 시험용 인원은 유효하지 않은 ID를 유지한다.
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly) FGuid HeroId;
+    UPROPERTY(VisibleAnywhere, BlueprintReadOnly) FName DefinitionId;
+    double PodEntryAt=-1000;
+    double SuppressedUntil=0;
+    double KillRallyUntil=0;
+    double RushRefundUntil=0;
+    float EquipmentMove=0, EquipmentHeal=0, EquipmentCapture=0;
+    double ApexUntil=0;
+    double GuardSlowUntil=0;
+    TSet<int32> GuardContacts;
+    TSet<int32> RushTargets;
+    double JamUntil=0;
+    double InvasionAlertUntil=0;
+    FName InvasionSlot;
+    FName LastDutySlot;
+    bool bTraumaTreatmentAvailable=true;
+    bool bRushWeakened=false;
+    bool bPendingIrisArc=false;
+    FVector FieldFacing=FVector::ForwardVector;
+    UPROPERTY(VisibleAnywhere, BlueprintReadOnly) int32 SignatureUses=0;
+    UPROPERTY(VisibleAnywhere, BlueprintReadOnly) int32 PassiveHits=0;
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly) TArray<int32> HeroSkillRanks;
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly) int32 HeroLevel = 1;
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly) int32 AmplifierCharges = 0;
@@ -139,6 +159,14 @@ USTRUCT(BlueprintType)
 struct ORBITALVANGUARD_API FOVHeroDutyBonuses
 {
     GENERATED_BODY()
+    float PDInterval=1, PDAccuracy=0, MissileInterval=1, GuidedTurn=1, GuidedSpread=1;
+    float AccelerationScale=1, LateralScale=1;
+    bool bNearTraverse=false, bLongAim=false, bExposedAim=false;
+    bool bShieldHarmonizer=false, bShipDisasterField=false, bEngineering=false, bHangarEfficiency=false;
+    float ProductionScale=1, DockScale=1, BoltSpeedScale=1, WingPeriodScale=1, WingEvasion=0;
+    float SectionScale=1, ReformScale=1, ReturnScale=1, PodScale=1, ShuttleDockScale=1;
+    float ShipCombatTempo=0;
+    bool bOpeningAim=false;
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly) float AccuracyBonus = 0;
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly) float FireRateBonus = 0;
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly) float SpeedBonus = 0;
@@ -199,6 +227,7 @@ public:
     UFUNCTION(BlueprintCallable) int32 SpawnRosterHero(AOVShip* Ship, FGuid HeroId, FName SlotId = NAME_None);
     UFUNCTION(BlueprintCallable) bool SetHeroBoardingAssignment(int32 UnitId, bool bAssigned);
     UFUNCTION(BlueprintCallable) bool SetHeroDuty(int32 UnitId, bool bEnable, FName SlotId = NAME_None);
+    float FormationRadarBonus(const AOVShip* Receiver) const;
     UFUNCTION(BlueprintPure) FOVHeroDutyBonuses GetDutyBonuses(AOVShip* Ship) const;
     UFUNCTION(BlueprintCallable) TArray<int32> RegisterBoardingTeam(AOVShip* Origin, int32 Faction, int32 HeroCount, int32 Troops);
     UFUNCTION(BlueprintCallable) bool IssueOrder(const TArray<int32>& UnitIds, EOVInteriorOrder Order, FName TargetSlot = NAME_None);
@@ -242,6 +271,9 @@ private:
     bool IsOnboard(const FOVInteriorUnitRecord& Unit) const;
     void Step(float Delta);
     void SyncTransport(FOVInteriorUnitRecord& Unit);
+    float InteriorReduction(const FOVInteriorUnitRecord& Target,float Ignore,bool bPhaseStrike) const;
+    bool ActiveDuty(const FOVInteriorUnitRecord& Unit) const;
+    void ReleaseIrisField(FOVInteriorUnitRecord& Unit);
     void AdvanceUnit(FOVInteriorUnitRecord& Unit, float Delta);
     void AdvanceOperations(float Delta);
     void ApplyDamage(FOVInteriorUnitRecord& Unit, float Amount, const FString& Reason);

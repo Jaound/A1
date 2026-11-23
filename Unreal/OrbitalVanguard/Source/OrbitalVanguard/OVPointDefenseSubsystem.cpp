@@ -1,4 +1,5 @@
 #include "OVPointDefenseSubsystem.h"
+#include "OVInteriorSubsystem.h"
 #include "ProfilingDebugging/CsvProfiler.h"
 #include "ProfilingDebugging/CpuProfilerTrace.h"
 
@@ -164,6 +165,7 @@ void UOVPointDefenseSubsystem::Step(float GameDelta)
         AOVShip* Ship = State.Ship;
         State.Status = GetReadiness(Ship);
         if (State.Status != TEXT("DEFENDING")) continue;
+        const auto Duty=GetWorld()->GetSubsystem<UOVInteriorSubsystem>()->GetDutyBonuses(Ship);
         const float Efficiency = Ship->Systems->GetEfficiency(EOVFacilityType::Interception);
         for (FOVPDMountState& Mount : State.Mounts)
         {
@@ -230,7 +232,7 @@ void UOVPointDefenseSubsystem::Step(float GameDelta)
             Event.MountId = Mount.MountId; Event.WeaponKind = Mount.Profile.Kind;
             Event.Origin = Ship->GetWeaponMuzzleWorld(Mount.MountId); Event.TargetPosition = Chosen.Position;
             Event.TargetKind = Chosen.Kind; Event.TargetId = Chosen.Id;
-            Event.HitProbability = HitProbability(Mount.Profile.Accuracy, Chosen.Evasion);
+            Event.HitProbability = HitProbability(Mount.Profile.Accuracy+Duty.PDAccuracy, Chosen.Evasion);
             // Exactly one roll. No second evasion check in the target's damage path.
             Event.bHit = Random.FRand() < Event.HitProbability && DamageTarget(GetWorld(), Chosen, Mount.Profile.Damage);
             if (Event.bHit)
@@ -242,7 +244,7 @@ void UOVPointDefenseSubsystem::Step(float GameDelta)
             }
             ++Mount.ShotCount;
             Mount.LastShotId = Event.EventId; Mount.LastShotTime = GameTime;
-            Mount.Cooldown = Mount.Profile.Interval;
+            Mount.Cooldown = Mount.Profile.Interval*FMath::Max(1.f/1.3f,Duty.PDInterval);
             Ship->Systems->NotifyCombatParticipation();
             RecentEvents.Add(Event);
             if (RecentEvents.Num() > 128) RecentEvents.RemoveAt(0, RecentEvents.Num() - 128);

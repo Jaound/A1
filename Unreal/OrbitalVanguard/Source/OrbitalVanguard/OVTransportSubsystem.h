@@ -69,6 +69,7 @@ struct ORBITALVANGUARD_API FOVPodState
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly) FVector Position = FVector::ZeroVector;
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly) float HP = 0;
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly) float Evasion = .4f;
+    float SpeedScale=1;
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly) double LaunchTime = -1;
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly) double ScheduledTime = 0;
 };

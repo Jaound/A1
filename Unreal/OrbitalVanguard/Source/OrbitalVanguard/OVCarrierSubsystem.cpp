@@ -47,7 +47,7 @@ void UOVCarrierSubsystem::Reset(int32 Seed)
 {
     Hangars.Reset(); Aircraft.Reset(); Bolts.Reset(); RecentEvents.Reset(); Carriers.Reset();
     StrikeCandidateCache.Reset();
-    FriendlyWarningGroups.Reset();FleetWarningGroup=FAirWarningGroup();
+    WingDuty.Reset();FriendlyWarningGroups.Reset();FleetWarningGroup=FAirWarningGroup();
     Profile = FOVAircraftProfile();
     ManeuverProfile = FOVAircraftManeuverProfile();
     GameTime = Accumulator = 0;
@@ -257,7 +257,7 @@ int32 UOVCarrierSubsystem::Launch(AOVShip* Ship)
         Craft.State = EOVAircraftState::Sortie; Craft.Leg = EOVAircraftLeg::Ingress;
         Craft.Maneuver = EOVAircraftManeuver::Approach; Craft.StrikeTarget.Reset();
         Craft.InterceptTargetId = 0; Craft.DefensiveRemaining = Craft.RejoinRemaining = 0;
-        Craft.AttackDelay = ((Craft.AircraftId - 1) % FMath::Max(1, ManeuverProfile.SectionSize)) * ManeuverProfile.SectionDelay;
+        Craft.AttackDelay = ((Craft.AircraftId - 1) % FMath::Max(1, ManeuverProfile.SectionSize)) * ManeuverProfile.SectionDelay*WingDuty.FindRef(Ship).SectionScale;
         Craft.FactionId = Ship->Systems->FactionId;
         const double Angle = PatternOffset + Craft.AircraftId * 2.399963229728653;
         const FVector Offset(400 * FMath::Cos(Angle), 400 * FMath::Sin(Angle), 120 * (Craft.AircraftId % 5));
@@ -439,7 +439,7 @@ void UOVCarrierSubsystem::AdvanceProduction(AOVShip* Ship,const FOVAircraftOverv
         if(H.Mode!=EOVHangarMode::Aircraft || IsHangarDestroyed(H) || Vacancies<=0) { H.ProductionSeconds=0; continue; }
         if(Wing.ReplacementKits<=0 || !Ship->Systems->CanUseResources() || !IsHangarOperational(H)) continue;
         const int32 I=Ship->Systems->Layout->GetSlotIndex(H.SlotId);
-        H.ProductionSeconds+=Delta*FMath::Clamp(Ship->Systems->Slots[I].Crew/Ship->Systems->Layout->Slots[I].RequiredCrew,0.f,1.f);
+        H.ProductionSeconds+=Delta/WingDuty.FindRef(Ship).ProductionScale*FMath::Clamp(Ship->Systems->Slots[I].Crew/Ship->Systems->Layout->Slots[I].RequiredCrew,0.f,1.f);
         if(H.ProductionSeconds+KINDA_SMALL_NUMBER<ProductionPeriod) continue;
         // A working line may deliver to another operating bay with space.
         auto Available=[&](const FOVHangarState& Bay) {
@@ -460,6 +460,7 @@ void UOVCarrierSubsystem::AdvanceProduction(AOVShip* Ship,const FOVAircraftOverv
 void UOVCarrierSubsystem::Step(float Delta)
 {
     GameTime += Delta;
+    WingDuty.Reset();
     for (auto& State : Carriers)
     {
         auto* Ship = State.Carrier.Get();
@@ -471,6 +472,7 @@ void UOVCarrierSubsystem::Step(float Delta)
         if (Ship->bFTLCharging && !State.bWasFTLCharging) Recall(Ship);
         State.bWasFTLCharging = Ship->bFTLCharging;
         if (GetWorld()->GetSubsystem<UOVCombatSubsystem>()->IsDeparted(Ship)) continue;
+        WingDuty.Add(Ship,GetWorld()->GetSubsystem<UOVInteriorSubsystem>()->GetDutyBonuses(Ship));
         const auto Wing=GetAircraftOverview(Ship);
         AdvanceProduction(Ship,Wing,Delta);
         if ((Ship->Systems->FactionId!=0 || State.bAutoLaunch) && !State.bRecallOrdered && !Ship->bFTLCharging &&
@@ -510,15 +512,17 @@ void UOVCarrierSubsystem::AdvanceAircraft(FOVAircraftRecord& Craft, float Delta)
     }
     if (Craft.State == EOVAircraftState::ControlLost) Craft.State = Craft.ResumeState;
     Craft.Cooldown = FMath::Max(0.f, Craft.Cooldown - Delta);
+    const auto Duty=WingDuty.FindRef(Craft.Carrier);
+    Craft.Evasion=Profile.Evasion+Duty.WingEvasion;
     if (Craft.State == EOVAircraftState::Returning || Craft.State == EOVAircraftState::DockWaiting)
     {
         FOVHangarState* Dock = FindDock(Craft);
-        if (!Dock) { Craft.State = EOVAircraftState::DockWaiting; Craft.DockRemaining = Profile.DockSeconds; return; }
+        if (!Dock) { Craft.State = EOVAircraftState::DockWaiting; Craft.DockRemaining = Profile.DockSeconds*Duty.DockScale; return; }
         const FVector Point = HangarPosition(*Dock);
         const FVector V = Point - Craft.Position;
-        if (V.Size() <= FMath::Max(100.f, Profile.ReturnSpeed * Delta))
+        if (V.Size() <= FMath::Max(100.f, Profile.ReturnSpeed * Duty.ReturnScale * Delta))
         {
-            if (Craft.State != EOVAircraftState::DockWaiting || Craft.HangarId != Dock->HangarId) Craft.DockRemaining = Profile.DockSeconds;
+            if (Craft.State != EOVAircraftState::DockWaiting || Craft.HangarId != Dock->HangarId) Craft.DockRemaining = Profile.DockSeconds*Duty.DockScale;
             Craft.HangarId = Dock->HangarId; Craft.Position = Point; Craft.State = EOVAircraftState::DockWaiting;
             Craft.DockRemaining = FMath::Max(0.f, Craft.DockRemaining - Delta);
             if (Craft.DockRemaining <= 0) Craft.State = EOVAircraftState::Stored;
@@ -526,7 +530,7 @@ void UOVCarrierSubsystem::AdvanceAircraft(FOVAircraftRecord& Craft, float Delta)
         else
         {
             Craft.State = EOVAircraftState::Returning; Craft.Direction = V.GetSafeNormal();
-            Craft.Position += Craft.Direction * FMath::Min(double(Profile.ReturnSpeed * Delta), V.Size());
+            Craft.Position += Craft.Direction * FMath::Min(double(Profile.ReturnSpeed * Duty.ReturnScale * Delta), V.Size());
         }
         return;
     }
@@ -683,7 +687,7 @@ void UOVCarrierSubsystem::FlyToward(FOVAircraftRecord& Craft, FVector Point, flo
 void UOVCarrierSubsystem::AdvanceStrike(FOVAircraftRecord& Craft, AOVShip* Target, float Delta, bool bSplit)
 {
     // Separate attack lanes need extra time to re-form before crossing the escort group again.
-    const float ReformTime=FMath::Max(0.f,ManeuverProfile.ReformSeconds+(bSplit?ManeuverProfile.SplitReformSeconds:0.f));
+    const float ReformTime=FMath::Max(0.f,ManeuverProfile.ReformSeconds*WingDuty.FindRef(Craft.Carrier).ReformScale+(bSplit?ManeuverProfile.SplitReformSeconds:0.f));
     Craft.StrikeCenter = Target->GetActorLocation();
     Craft.TurnRadius = Profile.Speed / FMath::DegreesToRadians(FMath::Max(1.f, ManeuverProfile.TurnDegreesPerSecond));
     const double HullRadius = (Target->Systems->Layout->LocalHalfExtent * Target->GetActorScale3D()).Size();
@@ -737,7 +741,7 @@ void UOVCarrierSubsystem::AdvanceStrike(FOVAircraftRecord& Craft, AOVShip* Targe
             else Skin.Z=FMath::Sign(View.Z);
             // Aim just inside the surface so glancing rays still cross the hull.
             const FVector Surface=Transform.TransformPosition(Skin*Extent*.99);
-            const FVector Aim=LeadPoint(Craft.Position,Surface,Target->Velocity,Profile.BoltSpeed,Profile.BoltLifetime);
+            const FVector Aim=LeadPoint(Craft.Position,Surface,Target->Velocity,Profile.BoltSpeed*WingDuty.FindRef(Craft.Carrier).BoltSpeedScale,Profile.BoltLifetime);
             if (Fire(Craft, Aim, FName(*Target->ShipName)))
             {
                 ++Craft.AttackPasses; Craft.LegRemaining = ManeuverProfile.EgressSeconds;
@@ -768,7 +772,7 @@ void UOVCarrierSubsystem::AdvanceDogfight(FOVAircraftRecord& Craft, const FOVAir
 {
     // Independent pursuit: a ship mission has a bounded defensive excursion; pure dogfight has no ship leash.
     Craft.Maneuver = EOVAircraftManeuver::Dogfight;
-    const FVector Aim = LeadPoint(Craft.Position, Target.Position, Target.Velocity, Profile.BoltSpeed, Profile.BoltLifetime);
+    const FVector Aim = LeadPoint(Craft.Position, Target.Position, Target.Velocity, Profile.BoltSpeed*WingDuty.FindRef(Craft.Carrier).BoltSpeedScale, Profile.BoltLifetime);
     if (Craft.Cooldown <= 0 && FVector::DistSquared(Craft.Position, Target.Position) <= FMath::Square(double(Profile.AttackRange)))
         Fire(Craft, Aim, FName(*FString::Printf(TEXT("Aircraft_%d"), Target.AircraftId)));
     const double Side = Craft.AircraftId % 2 ? -1 : 1;
@@ -800,8 +804,8 @@ bool UOVCarrierSubsystem::Fire(FOVAircraftRecord& Craft, FVector AimPoint, FName
     Bolt.SourceId = FName(*FString::Printf(TEXT("Aircraft_%d"), Craft.AircraftId)); Bolt.ProfileId = Profile.ProfileId;
     Bolt.TargetId = TargetId;
     Bolt.Origin = Bolt.Position = Craft.Position; Bolt.Direction = (AimPoint - Craft.Position).GetSafeNormal();
-    Bolt.Damage = Profile.Damage; Bolt.Speed = Profile.BoltSpeed; Bolt.Lifetime = Profile.BoltLifetime;
-    Craft.Cooldown = FMath::Max(.01f, Profile.Period); ++Craft.ShotsFired; ++ShotCount;
+    Bolt.Damage = Profile.Damage; Bolt.Speed = Profile.BoltSpeed*WingDuty.FindRef(Craft.Carrier).BoltSpeedScale; Bolt.Lifetime = Profile.BoltLifetime;
+    Craft.Cooldown = FMath::Max(.01f, Profile.Period*WingDuty.FindRef(Craft.Carrier).WingPeriodScale); ++Craft.ShotsFired; ++ShotCount;
     if (auto* Ship = Craft.Carrier.Get()) Ship->Systems->NotifyCombatParticipation();
     return true;
 }

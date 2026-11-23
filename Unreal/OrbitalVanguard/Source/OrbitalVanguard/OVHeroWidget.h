@@ -20,6 +20,7 @@ struct ORBITALVANGUARD_API FOVHeroCardView
 {
     GENERATED_BODY()
     UPROPERTY(BlueprintReadOnly) FGuid HeroId;
+    UPROPERTY(BlueprintReadOnly) FName DefinitionId;
     UPROPERTY(BlueprintReadOnly) int32 UnitId = 0;
     UPROPERTY(BlueprintReadOnly) FString Name;
     UPROPERTY(BlueprintReadOnly) FString Role;
@@ -71,8 +72,15 @@ public:
     UFUNCTION(BlueprintCallable, Category="UI") bool LocateSelectedHero();
     void PickCard(FGuid HeroId, int32 UnitId);
 private:
+    UPROPERTY() TObjectPtr<class UEditableTextBox> Search;
+    UPROPERTY() TObjectPtr<UComboBoxString> TemplateChoice;
+    UPROPERTY() TObjectPtr<UTextBlock> CatalogueReport;
+    UFUNCTION() void CreateTemplate();
+    UFUNCTION() void ToggleCatalogue();
     UPROPERTY() TObjectPtr<UTextBlock> Header;
     UPROPERTY() TObjectPtr<UTextBlock> Detail;
+    UPROPERTY() TObjectPtr<class UImage> Standing;
+    UPROPERTY() TObjectPtr<class USizeBox> StandingBox;
     UPROPERTY() TObjectPtr<UTextBlock> EmptyHelp;
     UPROPERTY() TObjectPtr<UTextBlock> Feedback;
     UPROPERTY() TObjectPtr<UTextBlock> OwnedLabel;

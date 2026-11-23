@@ -2,6 +2,7 @@
 
 #include "CoreMinimal.h"
 #include "Subsystems/WorldSubsystem.h"
+#include "OVInteriorSubsystem.h"
 #include "OVCarrierSubsystem.generated.h"
 
 class AOVShip;
@@ -209,6 +210,7 @@ private:
         int32 Living=0;
         int32 Severity=0;
     };
+    TMap<TWeakObjectPtr<AOVShip>, FOVHeroDutyBonuses> WingDuty;
     TMap<TWeakObjectPtr<AOVShip>, FAirWarningGroup> FriendlyWarningGroups;
     FAirWarningGroup FleetWarningGroup;
     static int32 WarningSeverity(const FAirWarningGroup& Group);

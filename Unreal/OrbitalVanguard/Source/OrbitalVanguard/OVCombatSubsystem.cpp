@@ -384,8 +384,10 @@ FOVDetectionInfo UOVCombatSubsystem::GetDetection(AOVShip* Ship, AOVShip* Target
         const FOVRadarProfile* Radar = Settings->Radars.FindByPredicate(
             [&](const FOVRadarProfile& R) { return R.Tier == Observer.RadarTier; });
         if (!Radar || FVector::Dist(Sensor->GetActorLocation(), Target->GetActorLocation()) > Radar->Range) continue;
-        const float Coefficient = Sensor == Ship ? 1.f : Observer.bRadarSupport
+        float Coefficient = Sensor == Ship ? 1.f : Observer.bRadarSupport
             ? Settings->SupportShareCoefficient : Settings->OrdinaryShareCoefficient;
+        if(Sensor!=Ship && !Observer.bRadarSupport && Coefficient>0)
+            Coefficient*=1+GetWorld()->GetSubsystem<UOVInteriorSubsystem>()->FormationRadarBonus(Ship);
         const float Bonus = Radar->AccuracyBonus * Sensor->Systems->GetEfficiency(EOVFacilityType::Radar) * Coefficient;
         if (!Best.bDetected || Bonus > Best.AccuracyBonus)
         {
@@ -449,13 +451,19 @@ FOVFireReadiness UOVCombatSubsystem::Evaluate(const FOVCombatShipState& State, c
     if (!R.Detection.bDetected) return Block(TEXT("NO DETECTION"));
     const float ControlBonus = Settings->ControlAccuracyBonus * (Systems->GetEfficiency(EOVFacilityType::WeaponControl) - 1.f);
     const auto Duty = GetWorld()->GetSubsystem<UOVInteriorSubsystem>()->GetDutyBonuses(State.Ship);
-    R.Accuracy = FMath::Clamp(Mount.Profile.Accuracy + R.Detection.AccuracyBonus + ControlBonus + Duty.AccuracyBonus, 0.f,
+    const bool Opening=Duty.bOpeningAim && (State.FirstAttackAt<0 || GameTime-State.FirstAttackAt<8);
+    const float HeroAim=FMath::Min(.08f,Duty.AccuracyBonus+(Opening?.02f:0.f)+
+        (Duty.bLongAim && R.Distance>=Mount.Profile.Range*.7f?.03f:0.f)+
+        (Duty.bExposedAim && !Target->Systems->bShieldActive?.03f:0.f));
+    R.Accuracy = FMath::Clamp(Mount.Profile.Accuracy + R.Detection.AccuracyBonus + ControlBonus + HeroAim, 0.f,
         Mount.Profile.Kind == EOVAttackKind::Beam ? (Settings->bHeroD114Aim?0.98f:0.995f) : 1.f);
     R.AimSpreadDegrees = Mount.Profile.Kind == EOVAttackKind::Beam ? 0.f
         : FMath::Clamp(Mount.Profile.AimSpreadDegrees * (1.f - R.Accuracy), 0.f, 45.f);
     if(Settings->bHeroD114Aim && Mount.Profile.Kind!=EOVAttackKind::Beam)
         R.AimSpreadDegrees=FMath::Clamp(Mount.Profile.AimSpreadDegrees /
-            (1.f+4.f*FMath::Max(0.f,R.Detection.AccuracyBonus+Duty.AccuracyBonus)),0.f,45.f);
+            (1.f+4.f*FMath::Max(0.f,R.Detection.AccuracyBonus+HeroAim)),0.f,45.f);
+    if(Opening)R.AimSpreadDegrees*=.88f;
+    if(Mount.Profile.Kind==EOVAttackKind::GuidedMissile) R.AimSpreadDegrees*=Duty.GuidedSpread;
     const FVector LocalDirection = Ship->GetActorQuat().UnrotateVector(Offset).GetSafeNormal();
     const double FaceDot=FVector::DotProduct(OVWeaponGeometry::SurfaceNormal(*Def),LocalDirection);
     if (FaceDot < -FMath::Sin(FMath::DegreesToRadians(double(NeutralElevation)))) return Block(TEXT("MOUNT BLIND ARC"));
@@ -633,6 +641,7 @@ void UOVCombatSubsystem::Step(float Delta)
         AOVShip* Ship = State.Ship;
         if (!IsValid(Ship) || !Ship->Systems || State.bDeparted) continue;
         if(State.OrderFaction!=Ship->Systems->FactionId) {
+            State.FirstAttackAt=-1;State.FocusFireSince=-1;State.FocusTarget.Reset();
             Ship->bFTLCharging=false;
             Ship->StopMovement(); Ship->Velocity=FVector::ZeroVector;
             Ship->bManualAttitude=false; Ship->SetAutomation(false,false);
@@ -642,6 +651,7 @@ void UOVCombatSubsystem::Step(float Delta)
             ClearPending(State); State.Intent=EOVAttackIntent::DestroyHull; Ship->AttackTarget=nullptr; State.TargetFaction=-1;
         }
         if(State.bLastAttackAutomatic!=Ship->IsAttackAutomatic()) { ClearPending(State); State.bLastAttackAutomatic=Ship->IsAttackAutomatic(); }
+        if(State.FocusTarget.Get()!=Ship->AttackTarget){State.FocusTarget.Reset();State.FocusFireSince=-1;}
         State.OrderFaction=Ship->Systems->FactionId;
         if(Ship->Systems->bWrecked || (Ship->AttackTarget && !IsValidTarget(Ship,Ship->AttackTarget))) { ClearPending(State); Ship->AttackTarget=nullptr; }
         Ship->Systems->Simulate(Delta);
@@ -784,8 +794,10 @@ void UOVCombatSubsystem::UpdateAim(FOVCombatShipState& State, FOVCombatMountStat
     const double FaceDot = FVector::DotProduct(OVWeaponGeometry::SurfaceNormal(*Def), LocalDir);
     const bool bInArc = FaceDot >= -FMath::Sin(FMath::DegreesToRadians(double(NeutralElevation)));
     const FRotator Desired = (bDetected || Mount.TrackingRemaining > 0) && bInArc ? Local.Rotation() : Mount.Profile.StandbyAim;
-    TurnAxis(Mount.LocalAim.Yaw, Mount.AngularVelocity.X, Desired.Yaw, Mount.Profile.TraverseSpeed, Mount.Profile.TraverseAcceleration, Delta);
-    TurnAxis(Mount.LocalAim.Pitch, Mount.AngularVelocity.Y, Desired.Pitch, Mount.Profile.TraverseSpeed, Mount.Profile.TraverseAcceleration, Delta);
+    const bool Close=bDetected && Local.Size()<=Mount.Profile.Range*.5f;
+    const float Traverse=Mount.Profile.TraverseSpeed*(Close && GetWorld()->GetSubsystem<UOVInteriorSubsystem>()->GetDutyBonuses(Ship).bNearTraverse?1.2f:1.f);
+    TurnAxis(Mount.LocalAim.Yaw, Mount.AngularVelocity.X, Desired.Yaw, Traverse, Mount.Profile.TraverseAcceleration, Delta);
+    TurnAxis(Mount.LocalAim.Pitch, Mount.AngularVelocity.Y, Desired.Pitch, Traverse, Mount.Profile.TraverseAcceleration, Delta);
     Mount.LocalAim.Roll = 0;
 }
 
@@ -800,10 +812,14 @@ void UOVCombatSubsystem::Launch(FOVCombatShipState& State, FOVCombatMountState& 
     Attack.FactionId = State.Ship->Systems->FactionId;
     Attack.LaunchTime = GameTime; Attack.TrackingLifetime = Settings->GuidedTrackingSeconds;
     Attack.WeaponId = Mount.MountId; Attack.Weapon = Mount.Profile;
+    const auto Duty = GetWorld()->GetSubsystem<UOVInteriorSubsystem>()->GetDutyBonuses(State.Ship);
+    if(Attack.Weapon.Kind==EOVAttackKind::GuidedMissile) Attack.Weapon.GuidanceTurnRate*=Duty.GuidedTurn;
     Attack.bAntiShipMissile = Def->IsAntiShipMissile();
     Attack.InterceptHP = (Attack.Weapon.Kind == EOVAttackKind::Missile || Attack.Weapon.Kind == EOVAttackKind::GuidedMissile)
         ? FMath::Max(0.f, Attack.Weapon.ProjectileHP) : 0;
     Attack.Target = State.Ship->AttackTarget;
+    if(State.FirstAttackAt<0)State.FirstAttackAt=GameTime;
+    if(State.FocusTarget!=Attack.Target){State.FocusTarget=Attack.Target;State.FocusFireSince=GameTime;}
     Attack.Origin = Attack.Position = MountOrigin(State, *Def);
     Attack.Accuracy = Ready.Accuracy;
     Attack.Damage = Mount.Profile.Damage * State.Ship->Systems->GetEfficiency(SupplyFor(Def->Type));
@@ -840,8 +856,9 @@ void UOVCombatSubsystem::Launch(FOVCombatShipState& State, FOVCombatMountState& 
         * State.Ship->Systems->GetEfficiency(SupplyFor(Def->Type));
     if (Mount.SalvoRemaining <= 0)
     {
-        const auto Duty = GetWorld()->GetSubsystem<UOVInteriorSubsystem>()->GetDutyBonuses(State.Ship);
-        Mount.Cooldown = FMath::Max(0.01f, Mount.Profile.Interval / FMath::Max(0.05f, Efficiency * (1.f+Duty.FireRateBonus)));
+        const float FocusRate=Duty.bLongAim && Attack.Target.IsValid() && Attack.Target->Systems->Layout->HullSizeClass>=EOVHullSizeClass::Large && GameTime-State.FocusFireSince>=10?.06f:0.f;
+        const float IntervalScale=Mount.Profile.Family==EOVWeaponType::Missile?Duty.MissileInterval:1.f;
+        Mount.Cooldown = FMath::Max(0.01f, Mount.Profile.Interval / FMath::Max(0.05f, Efficiency * FMath::Min(1.3f,(1.f+Duty.FireRateBonus+FocusRate)/IntervalScale)));
         Mount.SalvoRemaining = FMath::Max(1, Mount.Profile.Salvo);
         Mount.SalvoTarget = Attack.Target; Mount.bAutomaticSalvo = bAutomatic;
     }

@@ -514,7 +514,7 @@ void AOVShip::Simulate(float SimDelta)
     if (bHasDestination && !bHold)
     {
         if (OVShipMotion::Advance(Position, Orientation, Velocity, Destination, MoveSpeed * EngineEfficiency * (1.f+Duty.SpeedBonus), TurnRate * EngineEfficiency * (1.f+Duty.TurnBonus),
-            SimDelta, Acceleration, Braking, ArrivalRadius, bManualAttitude, ManualAttitude.Quaternion(), LateralAcceleration))
+            SimDelta, Acceleration*Duty.AccelerationScale, Braking*Duty.AccelerationScale, ArrivalRadius, bManualAttitude, ManualAttitude.Quaternion(), LateralAcceleration*Duty.LateralScale))
         {
             bHasDestination = false;
             bHold = true;
@@ -522,7 +522,7 @@ void AOVShip::Simulate(float SimDelta)
     }
     else
     {
-        OVShipMotion::Brake(Position, Velocity, Braking, SimDelta);
+        OVShipMotion::Brake(Position, Velocity, Braking*Duty.AccelerationScale, SimDelta);
         if (bManualAttitude) OVShipMotion::Turn(Orientation, ManualAttitude.Quaternion(), TurnRate * EngineEfficiency * (1.f+Duty.TurnBonus), SimDelta);
     }
     SetActorLocationAndRotation(Position, Orientation, false, nullptr, ETeleportType::TeleportPhysics);

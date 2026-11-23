@@ -1,4 +1,5 @@
 #include "OVTransportSubsystem.h"
+#include "OVInteriorSubsystem.h"
 #include "OVBattleNotices.h"
 #include "OVCombatSubsystem.h"
 #include "OVShip.h"
@@ -338,6 +339,7 @@ void UOVTransportSubsystem::AdvancePod(FOVPodState& Pod, float Delta)
             (Person->RuntimeUnitId>0 && !Person->bBoardingAssigned) ||
             Person->State != EOVPassengerState::Aboard || Person->CurrentShip != Origin)
         { Pod.State = EOVPodFlightState::Cancelled; return; }
+        Pod.SpeedScale=GetWorld()->GetSubsystem<UOVInteriorSubsystem>()->GetDutyBonuses(Origin).PodScale;
         Pod.State = EOVPodFlightState::Outbound; Pod.LaunchTime = GameTime; Pod.Position = Origin->GetActorLocation();
         Person->State = EOVPassengerState::InPod; Person->CurrentShip = nullptr; Person->PodId = Pod.PodId; Person->Shuttle = nullptr;
     }
@@ -348,7 +350,7 @@ void UOVTransportSubsystem::AdvancePod(FOVPodState& Pod, float Delta)
     AOVShip* Destination = Pod.State == EOVPodFlightState::Outbound ? Pod.Target.Get() : Pod.ReturnDestination.Get();
     if (!Usable(Destination)) return;
     const FVector Direction = (Destination->GetActorLocation() - Pod.Position).GetSafeNormal();
-    const FVector End = Pod.Position + Direction * FMath::Min(FVector::Distance(Pod.Position, Destination->GetActorLocation()), Settings.PodSpeed * Delta);
+    const FVector End = Pod.Position + Direction * FMath::Min(FVector::Distance(Pod.Position, Destination->GetActorLocation()), Settings.PodSpeed * Pod.SpeedScale * Delta);
     float Fraction; FVector Normal;
     if (UOVCombatSubsystem::SegmentBox(Pod.Position, End, Destination->GetActorTransform(), Destination->Systems->Layout->LocalHalfExtent, Fraction, Normal))
     {
@@ -507,7 +509,10 @@ void UOVTransportSubsystem::AdvanceShuttle(FOVShuttleRecord& Shuttle, float Delt
         }
     }
     Shuttle.Progress += Delta;
-    if (Shuttle.Progress < Settings.DockingSeconds) return;
+    AOVShip* Host=Shuttle.Home.Get();
+    const auto DockScale=Host && Host->Systems->FactionId==Ship->Systems->FactionId?
+        GetWorld()->GetSubsystem<UOVInteriorSubsystem>()->GetDutyBonuses(Host).ShuttleDockScale:1.f;
+    if (Shuttle.Progress < Settings.DockingSeconds*DockScale) return;
     float Fraction; FVector Normal;
     const FVector RayStart = Target->GetActorLocation() + Direction * Separation;
     if (!UOVCombatSubsystem::SegmentBox(RayStart, Target->GetActorLocation(), Target->GetActorTransform(), Target->Systems->Layout->LocalHalfExtent, Fraction, Normal)) return;

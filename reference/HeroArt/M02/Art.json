@@ -1,0 +1,13 @@
+{
+  "id": "M02",
+  "faceCrop": [
+    0.29,
+    0.005,
+    0.36
+  ],
+  "textures": {
+    "standing": "Source/Standing.png",
+    "portrait": "Prepared/Portrait.png",
+    "sd": "Prepared/SD.png"
+  }
+}
