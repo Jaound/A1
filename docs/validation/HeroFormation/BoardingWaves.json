@@ -1,0 +1,339 @@
+{
+  "checks": {
+    "포드 패널 입력 ArenaFight": {
+      "passed": true,
+      "value": "<Struct 'Vector2D' (0x00000251E61CD4A0) {x: 387.000000, y: 201.500000}>"
+    },
+    "포드 패널 입력 ArenaWaveB": {
+      "passed": true,
+      "value": "<Struct 'Vector2D' (0x00000251E60F93A0) {x: 387.000000, y: 236.500000}>"
+    },
+    "포드 실제 모함 격납고": {
+      "passed": true,
+      "value": "2"
+    },
+    "지정 영웅·분대만 A팀 출발": {
+      "passed": true,
+      "value": "[15, 16, 17, 18, 27, 28, 29, 30, 48, 49, 50, 56]"
+    },
+    "포드 조기 후속 출발 차단": {
+      "passed": true,
+      "value": "30.0"
+    },
+    "포드 동일 목표 두 팀": {
+      "passed": true,
+      "value": "{'활동팀': 2, '명령': '개인 포드 발사 개시', '강습선': [], '승객': {'<OVPassengerState.ABOARD: 0>': 44, '<OVPassengerState.INSIDE_TARGET: 2>': 12}}"
+    },
+    "포드 팀별 진입 알림": {
+      "passed": true,
+      "value": "[('A팀', 12), ('B팀', 12)]"
+    },
+    "A팀에서 옮긴 영웅은 B팀으로만 진입": {
+      "passed": true,
+      "value": "{47, 19, 20, 21, 22, 23, 24, 25, 26, 52, 53, 54}"
+    },
+    "포드 실제 24명 진입": {
+      "passed": true,
+      "value": "{'진입 인원': 24, '진입 완료 시 생존': 24, '포드': 24, '격납고 대기': 2, '강습선 상태': []}"
+    },
+    "포드 영웅·일반병 구성": {
+      "passed": true,
+      "value": "8"
+    },
+    "포드 원 수송수단 사용": {
+      "passed": true,
+      "value": "{'진입 인원': 24, '진입 완료 시 생존': 24, '포드': 24, '격납고 대기': 2, '강습선 상태': []}"
+    },
+    "포드 선내 지휘 지도": {
+      "passed": true,
+      "value": "<Object '/Game/Maps/UEDPIE_0_ControlRange.ControlRange:PersistentLevel.OVShip_4' (0x00000252273DAF00) Class 'OVShip'>"
+    },
+    "포드 지도 버튼 A": {
+      "passed": true,
+      "value": "<Struct 'Vector2D' (0x00000251E60F57A0) {x: 1162.000000, y: 140.500000}>"
+    },
+    "포드 실제 진입층 A": {
+      "passed": true,
+      "value": "{2}"
+    },
+    "포드 지도 버튼 B": {
+      "passed": true,
+      "value": "<Struct 'Vector2D' (0x00000251E60F5760) {x: 1246.000000, y: 140.500000}>"
+    },
+    "포드 실제 진입층 B": {
+      "passed": true,
+      "value": "{2}"
+    },
+    "포드 생존자 원함 귀환": {
+      "passed": true,
+      "value": "{'진입 인원': 24, '진입 완료 시 생존': 24, '포드': 24, '격납고 대기': 2, '강습선 상태': [], '복귀 결과': '<OVPlaySceneResult.PARTIAL_VICTORY: 7>', '귀환 강습선': 2, '실제 귀환 인원': 24, '사망': 0}"
+    },
+    "포드 철수 전후 손실 대조": {
+      "passed": true,
+      "value": "[0, [[0, 0], [0, 0], [0, 0]]]"
+    },
+    "포드 결산 진입 전": {
+      "passed": true,
+      "value": "진입 전    A팀  전사 0 · 구조 대기 0      B팀  전사 0 · 구조 대기 0"
+    },
+    "포드 결산 선내 교전": {
+      "passed": true,
+      "value": "선내 교전    A팀  전사 0 · 구조 대기 0      B팀  전사 0 · 구조 대기 0"
+    },
+    "포드 결산 철수 중": {
+      "passed": true,
+      "value": "철수 중    A팀  전사 0 · 구조 대기 0      B팀  전사 0 · 구조 대기 0"
+    },
+    "포드 전사 개인 단위 기록": {
+      "passed": true,
+      "value": "[]"
+    },
+    "강습선 패널 입력 ArenaFight": {
+      "passed": true,
+      "value": "<Struct 'Vector2D' (0x00000251E60F5960) {x: 387.000000, y: 201.500000}>"
+    },
+    "강습선 패널 입력 ArenaWaveB": {
+      "passed": true,
+      "value": "<Struct 'Vector2D' (0x00000251E60F6320) {x: 387.000000, y: 236.500000}>"
+    },
+    "강습선 실제 모함 격납고": {
+      "passed": true,
+      "value": "2"
+    },
+    "강습선 조기 후속 출발 차단": {
+      "passed": true,
+      "value": "30.0"
+    },
+    "강습선 동일 목표 두 팀": {
+      "passed": true,
+      "value": "{'활동팀': 2, '명령': '격납고에서 강습선 출발', '강습선': [('<OVShuttleState.DELIVERED: 3>', '실제 선내 이송 완료 · 내부 아군 보호 활성', \"<Struct 'Vector' (0x00000251E60D0B00) {x: 3211.120516, y: 291.789010, z: 2575.091854}>\"), ('<OVShuttleState.APPROACHING: 1>', '', \"<Struct 'Vector' (0x00000251E60BB490) {x: -7129.400444, y: -907.291678, z: 3788.196386}>\")], '승객': {'<OVPassengerState.DEAD: 6>': 18, '<OVPassengerState.ABOARD: 0>': 23, '<OVPassengerState.IN_SHUTTLE: 3>': 12, '<OVPassengerState.INSIDE_TARGET: 2>': 3}}"
+    },
+    "강습선 팀별 진입 알림": {
+      "passed": true,
+      "value": "[('A팀', 12), ('B팀', 12)]"
+    },
+    "강습선 실제 24명 진입": {
+      "passed": true,
+      "value": "{'진입 인원': 24, '진입 완료 시 생존': 15, '포드': 0, '격납고 대기': 0, '강습선 상태': ['<OVShuttleState.DELIVERED: 3>', '<OVShuttleState.DELIVERED: 3>']}"
+    },
+    "강습선 영웅·일반병 구성": {
+      "passed": true,
+      "value": "8"
+    },
+    "강습선 원 수송수단 사용": {
+      "passed": true,
+      "value": "{'진입 인원': 24, '진입 완료 시 생존': 15, '포드': 0, '격납고 대기': 0, '강습선 상태': ['<OVShuttleState.DELIVERED: 3>', '<OVShuttleState.DELIVERED: 3>']}"
+    },
+    "강습선 선내 지휘 지도": {
+      "passed": true,
+      "value": "<Object '/Game/Maps/UEDPIE_0_ControlRange.ControlRange:PersistentLevel.OVShip_8' (0x000002522871C400) Class 'OVShip'>"
+    },
+    "강습선 지도 버튼 A": {
+      "passed": true,
+      "value": "<Struct 'Vector2D' (0x00000251E6221F60) {x: 1162.000000, y: 140.500000}>"
+    },
+    "강습선 실제 진입층 A": {
+      "passed": true,
+      "value": "{3}"
+    },
+    "강습선 지도 버튼 B": {
+      "passed": true,
+      "value": "<Struct 'Vector2D' (0x00000251E6221F20) {x: 1246.000000, y: 140.500000}>"
+    },
+    "강습선 실제 진입층 B": {
+      "passed": true,
+      "value": "{3}"
+    },
+    "강습선 생존자 원함 귀환": {
+      "passed": true,
+      "value": "{'진입 인원': 24, '진입 완료 시 생존': 15, '포드': 0, '격납고 대기': 0, '강습선 상태': ['<OVShuttleState.DELIVERED: 3>', '<OVShuttleState.DELIVERED: 3>'], '복귀 결과': '<OVPlaySceneResult.PARTIAL_VICTORY: 7>', '귀환 강습선': 2, '실제 귀환 인원': 15, '사망': 9}"
+    },
+    "강습선 철수 전후 손실 대조": {
+      "passed": true,
+      "value": "[9, [[0, 0], [9, 0], [0, 0]]]"
+    },
+    "강습선 결산 진입 전": {
+      "passed": true,
+      "value": "진입 전    A팀  전사 0 · 구조 대기 0      B팀  전사 0 · 구조 대기 0"
+    },
+    "강습선 결산 선내 교전": {
+      "passed": true,
+      "value": "선내 교전    A팀  전사 9 · 구조 대기 0      B팀  전사 0 · 구조 대기 0"
+    },
+    "강습선 결산 철수 중": {
+      "passed": true,
+      "value": "철수 중    A팀  전사 0 · 구조 대기 0      B팀  전사 0 · 구조 대기 0"
+    },
+    "강습선 전사 개인 단위 기록": {
+      "passed": true,
+      "value": "[67, 68, 69, 70, 71, 72, 73, 74, 103]"
+    },
+    "혼합 패널 입력 ArenaFight": {
+      "passed": true,
+      "value": "<Struct 'Vector2D' (0x00000251E6222060) {x: 387.000000, y: 201.500000}>"
+    },
+    "혼합 패널 입력 ArenaWaveB": {
+      "passed": true,
+      "value": "<Struct 'Vector2D' (0x00000251E6222360) {x: 387.000000, y: 236.500000}>"
+    },
+    "혼합 실제 모함 격납고": {
+      "passed": true,
+      "value": "2"
+    },
+    "혼합 조기 후속 출발 차단": {
+      "passed": true,
+      "value": "30.0"
+    },
+    "혼합 동일 목표 두 팀": {
+      "passed": true,
+      "value": "{'활동팀': 2, '명령': '격납고에서 강습선 출발', '강습선': [('<OVShuttleState.APPROACHING: 1>', '', \"<Struct 'Vector' (0x00000251E60FF850) {x: -7129.400444, y: -907.291678, z: 3788.196386}>\")], '승객': {'<OVPassengerState.ABOARD: 0>': 32, '<OVPassengerState.INSIDE_TARGET: 2>': 12, '<OVPassengerState.IN_SHUTTLE: 3>': 12}}"
+    },
+    "혼합 팀별 진입 알림": {
+      "passed": true,
+      "value": "[('A팀', 12), ('B팀', 12)]"
+    },
+    "혼합 실제 24명 진입": {
+      "passed": true,
+      "value": "{'진입 인원': 24, '진입 완료 시 생존': 23, '포드': 12, '격납고 대기': 1, '강습선 상태': ['<OVShuttleState.DELIVERED: 3>']}"
+    },
+    "혼합 영웅·일반병 구성": {
+      "passed": true,
+      "value": "8"
+    },
+    "혼합 원 수송수단 사용": {
+      "passed": true,
+      "value": "{'진입 인원': 24, '진입 완료 시 생존': 23, '포드': 12, '격납고 대기': 1, '강습선 상태': ['<OVShuttleState.DELIVERED: 3>']}"
+    },
+    "혼합 선내 지휘 지도": {
+      "passed": true,
+      "value": "<Object '/Game/Maps/UEDPIE_0_ControlRange.ControlRange:PersistentLevel.OVShip_12' (0x00000252287B2300) Class 'OVShip'>"
+    },
+    "혼합 지도 버튼 A": {
+      "passed": true,
+      "value": "<Struct 'Vector2D' (0x00000251E62227A0) {x: 1162.000000, y: 140.500000}>"
+    },
+    "혼합 실제 진입층 A": {
+      "passed": true,
+      "value": "{2}"
+    },
+    "혼합 지도 버튼 B": {
+      "passed": true,
+      "value": "<Struct 'Vector2D' (0x00000251E6222760) {x: 1246.000000, y: 140.500000}>"
+    },
+    "혼합 실제 진입층 B": {
+      "passed": true,
+      "value": "{3}"
+    },
+    "혼합 생존자 원함 귀환": {
+      "passed": true,
+      "value": "{'진입 인원': 24, '진입 완료 시 생존': 23, '포드': 12, '격납고 대기': 1, '강습선 상태': ['<OVShuttleState.DELIVERED: 3>'], '복귀 결과': '<OVPlaySceneResult.PARTIAL_VICTORY: 7>', '귀환 강습선': 2, '실제 귀환 인원': 15, '사망': 9}"
+    },
+    "혼합 철수 전후 손실 대조": {
+      "passed": true,
+      "value": "[1, [[0, 0], [0, 1], [0, 8]]]"
+    },
+    "혼합 결산 진입 전": {
+      "passed": true,
+      "value": "진입 전    A팀  전사 0 · 구조 대기 0      B팀  전사 0 · 구조 대기 0"
+    },
+    "혼합 결산 선내 교전": {
+      "passed": true,
+      "value": "선내 교전    A팀  전사 0 · 구조 대기 0      B팀  전사 1 · 구조 대기 0"
+    },
+    "혼합 결산 철수 중": {
+      "passed": true,
+      "value": "철수 중    A팀  전사 0 · 구조 대기 0      B팀  전사 8 · 구조 대기 0"
+    },
+    "혼합 전사 개인 단위 기록": {
+      "passed": true,
+      "value": "[131, 132, 133, 134, 135, 136, 137, 138, 163]"
+    },
+    "영웅 없는 일반병 강습선 출발": {
+      "passed": true,
+      "value": "12"
+    }
+  },
+  "routes": {
+    "포드": {
+      "진입 인원": 24,
+      "진입 완료 시 생존": 24,
+      "포드": 24,
+      "격납고 대기": 2,
+      "강습선 상태": [],
+      "복귀 결과": "<OVPlaySceneResult.PARTIAL_VICTORY: 7>",
+      "귀환 강습선": 2,
+      "실제 귀환 인원": 24,
+      "사망": 0,
+      "단계별 전사 A팀·B팀": [
+        [
+          0,
+          0
+        ],
+        [
+          0,
+          0
+        ],
+        [
+          0,
+          0
+        ]
+      ]
+    },
+    "강습선": {
+      "진입 인원": 24,
+      "진입 완료 시 생존": 15,
+      "포드": 0,
+      "격납고 대기": 0,
+      "강습선 상태": [
+        "<OVShuttleState.DELIVERED: 3>",
+        "<OVShuttleState.DELIVERED: 3>"
+      ],
+      "복귀 결과": "<OVPlaySceneResult.PARTIAL_VICTORY: 7>",
+      "귀환 강습선": 2,
+      "실제 귀환 인원": 15,
+      "사망": 9,
+      "단계별 전사 A팀·B팀": [
+        [
+          0,
+          0
+        ],
+        [
+          9,
+          0
+        ],
+        [
+          0,
+          0
+        ]
+      ]
+    },
+    "혼합": {
+      "진입 인원": 24,
+      "진입 완료 시 생존": 23,
+      "포드": 12,
+      "격납고 대기": 1,
+      "강습선 상태": [
+        "<OVShuttleState.DELIVERED: 3>"
+      ],
+      "복귀 결과": "<OVPlaySceneResult.PARTIAL_VICTORY: 7>",
+      "귀환 강습선": 2,
+      "실제 귀환 인원": 15,
+      "사망": 9,
+      "단계별 전사 A팀·B팀": [
+        [
+          0,
+          0
+        ],
+        [
+          0,
+          1
+        ],
+        [
+          0,
+          8
+        ]
+      ]
+    }
+  },
+  "passed": true
+}

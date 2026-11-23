@@ -1,0 +1,449 @@
+{
+  "checks": {
+    "34종 고유 정의": {
+      "passed": true,
+      "value": "['G01', 'G02', 'G03', 'G04', 'M01', 'M02', 'M03', 'M04', 'M05', 'M06', 'M07', 'M08', 'M09', 'M10', 'R01', 'R02', 'R03', 'R04', 'R05', 'R06', 'R07', 'R08', 'R09', 'R10', 'S01', 'S02', 'S03', 'S04', 'S05', 'C01', 'C02', 'C03', 'C04', 'C05']"
+    },
+    "구축전함 두 척": {
+      "passed": true,
+      "value": "2"
+    },
+    "OVShip_3 무장·쉴드 해제": {
+      "passed": true,
+      "value": "0.0"
+    },
+    "OVShip_4 무장·쉴드 해제": {
+      "passed": true,
+      "value": "0.0"
+    },
+    "편성 전 적 수호대": {
+      "passed": true,
+      "value": "22"
+    },
+    "적 AI 일반 영웅만 배치": {
+      "passed": true,
+      "value": "['표준 근거리 장교', '표준 원거리 사수', '표준 지원 정비관', '표준 함교 지휘관', '표준 근거리 장교', '표준 원거리 사수', '표준 지원 정비관', '표준 함교 지휘관', '표준 근거리 장교', '표준 원거리 사수']"
+    },
+    "핵심 세 시설의 방어 분대": {
+      "passed": true,
+      "value": "12"
+    },
+    "양측 10명과 고유 개인 ID": {
+      "passed": true,
+      "value": "56"
+    },
+    "이리스 정의와 런타임 연결": {
+      "passed": true,
+      "value": "이리스 베인"
+    },
+    "이리스 standing 텍스처": {
+      "passed": true,
+      "value": "T_standing"
+    },
+    "이리스 portrait 텍스처": {
+      "passed": true,
+      "value": "T_portrait"
+    },
+    "이리스 sd 텍스처": {
+      "passed": true,
+      "value": "T_sd"
+    },
+    "명단 카드에서 이리스 선택": {
+      "passed": true,
+      "value": "10"
+    },
+    "선내 몸통 선택과 영웅 개인 ID": {
+      "passed": true,
+      "value": "47"
+    },
+    "확대 창과 UI 125%에서 영웅 표시": {
+      "passed": true,
+      "value": "<Struct 'Vector2D' (0x000001D1A4E8D4A0) {x: 587.000000, y: 444.000000}>"
+    },
+    "다른 층 영웅 클릭 영역 제거": {
+      "passed": true,
+      "value": "<Struct 'Vector2D' (0x000001D1A4E8D5A0) {x: -1.000000, y: -1.000000}>"
+    },
+    "선내 창 원래 크기·표시 복원": {
+      "passed": true,
+      "value": "<Struct 'Vector2D' (0x000001D1A4E8D5E0) {x: 780.000000, y: 550.000000}>"
+    },
+    "혼성 강습팀 개인 포드 12기": {
+      "passed": true,
+      "value": "12"
+    },
+    "혼성 팀 12명 실제 진입 및 이동 명령": {
+      "passed": true,
+      "value": "12"
+    },
+    "선내 실제 명중": {
+      "passed": true,
+      "value": "4"
+    },
+    "일반 함대 무장 복원": {
+      "passed": true,
+      "value": "20"
+    },
+    "원 명단 복원": {
+      "passed": true,
+      "value": "[]"
+    },
+    "정의별 실제 편성 0": {
+      "passed": true,
+      "value": "['G01', 'G02', 'G03', 'G04']"
+    },
+    "정의별 실제 포드 진입 0": {
+      "passed": true,
+      "value": "['None', 'None', 'None', 'None', 'None', 'None', 'None', 'None', 'G01', 'G02', 'G03', 'G04']"
+    },
+    "정의별 실제 편성 4": {
+      "passed": true,
+      "value": "['M01', 'M02', 'M03', 'M04']"
+    },
+    "정의별 실제 포드 진입 4": {
+      "passed": true,
+      "value": "['None', 'None', 'None', 'None', 'None', 'None', 'None', 'None', 'M01', 'M02', 'M03', 'M04']"
+    },
+    "정의별 실제 편성 8": {
+      "passed": true,
+      "value": "['M05', 'M06', 'M07', 'M08']"
+    },
+    "정의별 실제 포드 진입 8": {
+      "passed": true,
+      "value": "['None', 'None', 'None', 'None', 'None', 'None', 'None', 'None', 'M05', 'M06', 'M07', 'M08']"
+    },
+    "정의별 실제 편성 12": {
+      "passed": true,
+      "value": "['M09', 'M10', 'R01', 'R02']"
+    },
+    "정의별 실제 포드 진입 12": {
+      "passed": true,
+      "value": "['None', 'None', 'None', 'None', 'None', 'None', 'None', 'None', 'M09', 'M10', 'R01', 'R02']"
+    },
+    "정의별 실제 편성 16": {
+      "passed": true,
+      "value": "['R03', 'R04', 'R05', 'R06']"
+    },
+    "정의별 실제 포드 진입 16": {
+      "passed": true,
+      "value": "['None', 'None', 'None', 'None', 'None', 'None', 'None', 'None', 'R03', 'R04', 'R05', 'R06']"
+    },
+    "정의별 실제 편성 20": {
+      "passed": true,
+      "value": "['R07', 'R08', 'R09', 'R10']"
+    },
+    "정의별 실제 포드 진입 20": {
+      "passed": true,
+      "value": "['None', 'None', 'None', 'None', 'None', 'None', 'None', 'None', 'R07', 'R08', 'R09', 'R10']"
+    },
+    "정의별 실제 편성 24": {
+      "passed": true,
+      "value": "['S01', 'S02', 'S03', 'S04']"
+    },
+    "정의별 실제 포드 진입 24": {
+      "passed": true,
+      "value": "['None', 'None', 'None', 'None', 'None', 'None', 'None', 'None', 'S01', 'S02', 'S03', 'S04']"
+    },
+    "정의별 실제 편성 28": {
+      "passed": true,
+      "value": "['S05', 'C01', 'C02', 'C03']"
+    },
+    "정의별 실제 포드 진입 28": {
+      "passed": true,
+      "value": "['None', 'None', 'None', 'None', 'None', 'None', 'None', 'None', 'S05', 'C01', 'C02', 'C03']"
+    },
+    "정의별 실제 편성 32": {
+      "passed": true,
+      "value": "['C04', 'C05']"
+    },
+    "정의별 실제 포드 진입 32": {
+      "passed": true,
+      "value": "['None', 'None', 'None', 'None', 'None', 'None', 'None', 'None', 'C04', 'C05', 'G03', 'G04']"
+    },
+    "실제 철수 명령": {
+      "passed": true,
+      "value": "[521, 522, 523, 524, 525, 526, 527, 528, 557, 558, 559, 560]"
+    },
+    "개인 포드 전원 회수와 철수 결과": {
+      "passed": true,
+      "value": "12"
+    },
+    "실제 함교 장악과 승리 결산": {
+      "passed": true,
+      "value": "{'강습': 24, '게임초': 79.1, '결과': '<OVPlaySceneResult.VICTORY: 1>'}"
+    },
+    "일시정지 선내시계 1": {
+      "passed": true,
+      "value": "0.0"
+    },
+    "일시정지 선내시계 2": {
+      "passed": true,
+      "value": "0.0"
+    },
+    "일시정지 선내시계 3": {
+      "passed": true,
+      "value": "0.0"
+    },
+    "동일 시간 교전 1": {
+      "passed": true,
+      "value": "{'배속': 1, '시계': 30.000001564621925, '명중': 32, '생존': 34, '남은 HP': 4992.639999389648}"
+    },
+    "동일 시간 교전 2": {
+      "passed": true,
+      "value": "{'배속': 2, '시계': 30.000001564621925, '명중': 32, '생존': 34, '남은 HP': 4992.639999389648}"
+    },
+    "동일 시간 교전 3": {
+      "passed": true,
+      "value": "{'배속': 3, '시계': 30.000001564621925, '명중': 32, '생존': 34, '남은 HP': 4992.639999389648}"
+    },
+    "동일 세력 고유 중복 차단": {
+      "passed": true,
+      "value": "<Struct 'Guid' (0x000001D2EB4EF200) {}>"
+    },
+    "반대 세력 독립 명단": {
+      "passed": true,
+      "value": "1"
+    },
+    "시험 지휘 단계": {
+      "passed": true,
+      "value": "3"
+    },
+    "세력 배치 3명 경계": {
+      "passed": true,
+      "value": "3"
+    },
+    "개인 ID·정의·성장·지휘 한도 복원": {
+      "passed": true,
+      "value": "<Struct 'Guid' (0x000001D2EB4EF200) {}>"
+    }
+  },
+  "이리스 교전 관찰": {
+    "hp": "12.758377075195312",
+    "shots": "5",
+    "hits": "5",
+    "node_id": "D3_X3_H0",
+    "state": "<OVInteriorState.FIGHTING: 2>",
+    "reason": "관측된 적과 자동 교전",
+    "signature_uses": "1",
+    "passive_hits": "1"
+  },
+  "수호대 관찰": [
+    {
+      "node_id": "D3_X4_Y1",
+      "state": "<OVInteriorState.FIGHTING: 2>",
+      "shots": "2",
+      "hp": "189.910400390625"
+    },
+    {
+      "node_id": "D3_X4_Y1",
+      "state": "<OVInteriorState.FIGHTING: 2>",
+      "shots": "4",
+      "hp": "240.0"
+    },
+    {
+      "node_id": "D3_X4_Y1",
+      "state": "<OVInteriorState.FIGHTING: 2>",
+      "shots": "2",
+      "hp": "240.0"
+    },
+    {
+      "node_id": "D3_X4_Y1",
+      "state": "<OVInteriorState.FIGHTING: 2>",
+      "shots": "2",
+      "hp": "280.0"
+    },
+    {
+      "node_id": "D3_X4_Y1",
+      "state": "<OVInteriorState.FIGHTING: 2>",
+      "shots": "2",
+      "hp": "300.0"
+    },
+    {
+      "node_id": "D3_X4_Y1",
+      "state": "<OVInteriorState.FIGHTING: 2>",
+      "shots": "4",
+      "hp": "240.0"
+    },
+    {
+      "node_id": "D3_X4_Y1",
+      "state": "<OVInteriorState.FIGHTING: 2>",
+      "shots": "2",
+      "hp": "240.0"
+    },
+    {
+      "node_id": "D3_X4_Y1",
+      "state": "<OVInteriorState.FIGHTING: 2>",
+      "shots": "2",
+      "hp": "280.0"
+    },
+    {
+      "node_id": "D3_X4_Y1",
+      "state": "<OVInteriorState.FIGHTING: 2>",
+      "shots": "2",
+      "hp": "300.0"
+    },
+    {
+      "node_id": "D3_X4_Y1",
+      "state": "<OVInteriorState.FIGHTING: 2>",
+      "shots": "4",
+      "hp": "240.0"
+    },
+    {
+      "node_id": "D2_X2_Y1",
+      "state": "<OVInteriorState.DEAD: 9>",
+      "shots": "2",
+      "hp": "0.0"
+    },
+    {
+      "node_id": "D2_X2_Y1",
+      "state": "<OVInteriorState.DEAD: 9>",
+      "shots": "3",
+      "hp": "0.0"
+    },
+    {
+      "node_id": "D2_X2_Y1",
+      "state": "<OVInteriorState.DEAD: 9>",
+      "shots": "3",
+      "hp": "0.0"
+    },
+    {
+      "node_id": "D2_X2_Y1",
+      "state": "<OVInteriorState.DEAD: 9>",
+      "shots": "4",
+      "hp": "0.0"
+    },
+    {
+      "node_id": "D3_X4_Y1",
+      "state": "<OVInteriorState.FIGHTING: 2>",
+      "shots": "2",
+      "hp": "100.0"
+    },
+    {
+      "node_id": "D3_X4_Y1",
+      "state": "<OVInteriorState.FIGHTING: 2>",
+      "shots": "2",
+      "hp": "100.0"
+    },
+    {
+      "node_id": "D3_X4_Y1",
+      "state": "<OVInteriorState.FIGHTING: 2>",
+      "shots": "2",
+      "hp": "100.0"
+    },
+    {
+      "node_id": "D3_X4_Y1",
+      "state": "<OVInteriorState.FIGHTING: 2>",
+      "shots": "2",
+      "hp": "100.0"
+    },
+    {
+      "node_id": "D1_X0_Y0",
+      "state": "<OVInteriorState.DEFENDING: 4>",
+      "shots": "0",
+      "hp": "100.0"
+    },
+    {
+      "node_id": "D1_X0_Y0",
+      "state": "<OVInteriorState.DEFENDING: 4>",
+      "shots": "0",
+      "hp": "100.0"
+    },
+    {
+      "node_id": "D1_X0_Y0",
+      "state": "<OVInteriorState.DEFENDING: 4>",
+      "shots": "0",
+      "hp": "100.0"
+    },
+    {
+      "node_id": "D1_X0_Y0",
+      "state": "<OVInteriorState.DEFENDING: 4>",
+      "shots": "0",
+      "hp": "100.0"
+    }
+  ],
+  "이리스 고경감 적중": 1,
+  "PIE 프레임 간격(ms)": {
+    "조건": "마지막 시험장, 함선 2척·초기 영웅 20명, DX11, Slate 후처리 콜백 240프레임",
+    "평균": 12.610291666654424,
+    "p95": 10.402599989902228,
+    "최대": 483.0037000065204
+  },
+  "동일 게임 시간": [
+    {
+      "배속": 1,
+      "시계": 30.000001564621925,
+      "명중": 32,
+      "생존": 34,
+      "남은 HP": 4992.639999389648
+    },
+    {
+      "배속": 2,
+      "시계": 30.000001564621925,
+      "명중": 32,
+      "생존": 34,
+      "남은 HP": 4992.639999389648
+    },
+    {
+      "배속": 3,
+      "시계": 30.000001564621925,
+      "명중": 32,
+      "생존": 34,
+      "남은 HP": 4992.639999389648
+    }
+  ],
+  "편성·진입 검증": [
+    [
+      "G01",
+      "G02",
+      "G03",
+      "G04"
+    ],
+    [
+      "M01",
+      "M02",
+      "M03",
+      "M04"
+    ],
+    [
+      "M05",
+      "M06",
+      "M07",
+      "M08"
+    ],
+    [
+      "M09",
+      "M10",
+      "R01",
+      "R02"
+    ],
+    [
+      "R03",
+      "R04",
+      "R05",
+      "R06"
+    ],
+    [
+      "R07",
+      "R08",
+      "R09",
+      "R10"
+    ],
+    [
+      "S01",
+      "S02",
+      "S03",
+      "S04"
+    ],
+    [
+      "S05",
+      "C01",
+      "C02",
+      "C03"
+    ],
+    [
+      "C04",
+      "C05"
+    ]
+  ],
+  "passed": true
+}
