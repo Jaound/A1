@@ -508,6 +508,10 @@ bool FOVInteriorPodRescueNotice::RunTest(const FString&)
     R.Advance(.2f);
     TestEqual(TEXT("유닛은 실제 구조 대기"),R.Interior->GetUnit(Hero.UnitId).State,EOVInteriorState::RescueWaiting);
     TestEqual(TEXT("포드 및 유닛 처리에서도 구조 알림은 한 번"),Feed->Notices.FilterByPredicate([](const FOVBattleNotice& N){return N.Kind==EOVBattleNoticeKind::HeroRescue;}).Num(),1);
+    TestEqual(TEXT("도착 전 격추된 영웅의 구조 단계"),R.Transport->GetPerson(Hero.PersonId).BoardingPhase,EOVBoardingPhase::Approach);
+    TestTrue(TEXT("구조 알림이 개인 이름과 ID 보존"),Feed->Notices.ContainsByPredicate([&](const auto& N){
+        return N.Kind==EOVBattleNoticeKind::HeroRescue && N.UnitId==Hero.UnitId && !N.Subject.IsEmpty() && N.Count==1;
+    }));
     OVInteriorTest::FRange Stranded;
     const auto Survivor=Stranded.Interior->RegisterBoardingTeam(Stranded.Origin,0,1,0);
     Stranded.Transport->LaunchPods(Stranded.Origin,Stranded.Target);Stranded.Advance(.02f);

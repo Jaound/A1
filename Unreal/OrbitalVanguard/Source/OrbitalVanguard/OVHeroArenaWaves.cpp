@@ -38,6 +38,11 @@ bool UOVPlayScenarioSubsystem::PrepareArenaForces(AOVController& PC)
         Ship->SetActorTickEnabled(false);
         if(++Index==2)break;
     }
+    for(const auto& W:ArenaWaves)for(int32 Id:W.Troopers){
+        const int32 Squad=PC.Interior->GetUnit(Id).SquadId;
+        ArenaMembers.FindOrAdd(Squad).Add(Id);
+    }
+    PresetArenaFormation();
     return Index==2;
 }
 
@@ -48,17 +53,16 @@ bool UOVPlayScenarioSubsystem::SendArenaWave(AOVController& PC,int32 Index)
     auto* Transit=PC.Transport.Get(); AOVShip* Home=PC.Ships[0];AOVShip* Target=PC.Ships[1];
     if(Transit->NextTeamDelay(Target)>.0001f){PC.LastAction=FString::Printf(TEXT("동일 목표 출발까지 %d초"),FMath::CeilToInt(Transit->NextTeamDelay(Target)));return false;}
     TArray<int32> Team;
-    for(const auto& U:PC.Interior->Units){
-        if(Team.Num()>=ArenaHeroQuota)break;
-        if(U.FactionId==0 && U.Ship==Home && U.Role!=EOVInteriorRole::Trooper && !U.bDutyRequested && U.HP>0 &&
-            !ArenaWaves[1-Index].Units.Contains(U.UnitId))Team.Add(U.UnitId);
+    for(int32 Group:ArenaGroups[Index]){
+        for(int32 Id:ArenaMembers.FindChecked(Group)){
+            const auto U=PC.Interior->GetUnit(Id);
+            if(U.Ship!=Home || U.HP<=0 || U.bDutyRequested){
+                PC.LastAction=TEXT("편성 인원의 위치·보직을 확인하세요");return false;
+            }
+            Team.Add(Id);
+        }
     }
-    if(Team.Num()!=ArenaHeroQuota){PC.LastAction=TEXT("보직 없는 영웅을 더 배치하거나 팀 영웅 수를 줄이세요");return false;}
-    for(const auto& U:PC.Interior->Units){
-        if(Team.Num()==12)break;
-        if(U.FactionId==0 && U.Ship==Home && U.Role==EOVInteriorRole::Trooper && U.HP>0 && Wave.Troopers.Contains(U.UnitId))Team.Add(U.UnitId);
-    }
-    if(Team.Num()!=12){PC.LastAction=TEXT("가용 일반 병력이 부족합니다");return false;}
+    if(Team.IsEmpty()){PC.LastAction=TEXT("먼저 이 팀에 인원을 편성하세요");return false;}
     const bool ByShuttle=ArenaRoute==1 || (ArenaRoute==2 && Index==1);
     auto* Bay=PC.Carrier->Hangars.FindByPredicate([&](const auto& H){return H.Carrier==Home && H.SlotId==Wave.Bay;});
     AOVShip* Ship=Wave.Shuttle.Get();
@@ -69,8 +73,8 @@ bool UOVPlayScenarioSubsystem::SendArenaWave(AOVController& PC,int32 Index)
     if(People.Num()!=Team.Num()){PC.LastAction=TEXT("승객 등록이 누락되어 출발할 수 없습니다");return false;}
     TArray<int32> Assigned;
     auto Undo=[&](){for(int32 Unit:Assigned)PC.Interior->SetHeroBoardingAssignment(Unit,false);};
-    for(int32 I=0;I<ArenaHeroQuota;++I){
-        if(!Transit->GetPerson(People[I]).bBoardingAssigned){
+    for(int32 I=0;I<Team.Num();++I){
+        if(PC.Interior->GetUnit(Team[I]).Role!=EOVInteriorRole::Trooper && !Transit->GetPerson(People[I]).bBoardingAssigned){
             if(!PC.Interior->SetHeroBoardingAssignment(Team[I],true)){Undo();PC.LastAction=PC.Interior->LastMessage;return false;}
             Assigned.Add(Team[I]);
         }
@@ -83,7 +87,7 @@ bool UOVPlayScenarioSubsystem::SendArenaWave(AOVController& PC,int32 Index)
         PC.Ships.AddUnique(Ship);PC.Combat->RegisterShip(Ship,1,false,1);
         PC.PointDefense->RegisterShip(Ship,1);Transit->AddShip(Ship);PC.Interior->AddShip(Ship);
     }else if(Transit->LaunchPodTeam(Home,Target,People)!=People.Num()){Undo();PC.LastAction=Transit->LastMessage;return false;}
-    Wave.Units=MoveTemp(Team);Wave.Sent=true;
+    Wave.Units=MoveTemp(Team);Wave.Sent=true;bArenaFormationOpen=false;
     PC.LastAction=ByShuttle?TEXT("격납고에서 강습선 출발"):TEXT("개인 포드 발사 개시");
     return true;
 }
@@ -102,7 +106,11 @@ FString UOVPlayScenarioSubsystem::ArenaWaveStatus(int32 Index) const
     const auto& W=ArenaWaves[Index];
     const bool Shuttle=ArenaRoute==1 || (ArenaRoute==2 && Index==1);
     const TCHAR* Route=Shuttle?TEXT("강습선"):TEXT("포드");
-    if(!W.Sent)return FString::Printf(TEXT("%s · 영웅 %d / 병력 %d"),Route,ArenaHeroQuota,12-ArenaHeroQuota);
+    if(!W.Sent){
+        int32 Heroes=0;
+        for(int32 Group:ArenaGroups[Index])Heroes+=ArenaMembers.FindChecked(Group).Num()==1;
+        return FString::Printf(TEXT("%s · 영웅 %d / 병력 %d"),Route,Heroes,ArenaGroupHeadcount(Index)-Heroes);
+    }
     int32 Inside=0,Transit=0,Aboard=0,Loss=0;
     for(int32 Id:W.Units){
         const auto U=Owner->Interior->GetUnit(Id);
@@ -149,4 +157,84 @@ void UOVPlayScenarioSubsystem::StepArena(AOVController& PC,float Delta)
     }
     if(!Living && ArenaWaves[0].Sent && ArenaWaves[1].Sent)Finish(PC,EOVPlaySceneResult::Defeat,TEXT("출발한 강습대 전원 작전 불능"));
     else if(Living>0 && Recovered==Living)Finish(PC,EOVPlaySceneResult::PartialVictory,TEXT("출발한 생존 영웅·일반 병력 전원 철수"));
+}
+
+int32 UOVPlayScenarioSubsystem::ArenaGroupHeadcount(int32 Column) const
+{
+    int32 Count=0;
+    for(int32 Group:ArenaGroups[Column])Count+=ArenaMembers.FindChecked(Group).Num();
+    return Count;
+}
+
+int32 UOVPlayScenarioSubsystem::ArenaTeamForUnit(int32 Id) const
+{
+    if(ActiveId==TEXT("HeroArena"))
+        for(int32 I=0;I<2;++I)if(ArenaWaves[I].Sent && ArenaWaves[I].Units.Contains(Id))return I;
+    return INDEX_NONE;
+}
+
+FString UOVPlayScenarioSubsystem::ArenaGroupLabel(int32 Group) const
+{
+    if(ArenaMembers.FindChecked(Group).Num()==1){
+        const auto U=Owner->Interior->GetUnit(Group);
+        return FString::Printf(TEXT("%s #%d"),*U.Name,Group);
+    }
+    for(int32 I=0;I<2;++I){
+        const int32 Offset=ArenaWaves[I].Troopers.IndexOfByKey(Group);
+        if(Offset!=INDEX_NONE)return FString::Printf(TEXT("보병 %d분대 · 4명"),1+I*3+Offset/4);
+    }
+    return {};
+}
+
+void UOVPlayScenarioSubsystem::PresetArenaFormation()
+{
+    for(auto& Column:ArenaGroups)Column.Reset();
+    TArray<int32> Keys;
+    ArenaMembers.GetKeys(Keys);
+    Keys.Sort();
+    int32 Heroes=0,Squads=0;
+    const int32 SquadsPerTeam=(12-ArenaHeroQuota)/4;
+    for(int32 Key:Keys){
+        const bool Hero=ArenaMembers.FindChecked(Key).Num()==1;
+        const int32 Position=Hero?Heroes++:Squads++;
+        const int32 PerTeam=Hero?ArenaHeroQuota:SquadsPerTeam;
+        const int32 Column=PerTeam>0?FMath::Min(2,Position/PerTeam):2;
+        ArenaGroups[Column].Add(Key);
+    }
+    ArenaSelectedGroup=0;ArenaFormationPage=0;
+}
+
+bool UOVPlayScenarioSubsystem::HandleArenaFormation(FName Action,AOVController& PC)
+{
+    if(Action==TEXT("ArenaFormation")){bArenaFormationOpen=!bArenaFormationOpen;return true;}
+    if(!bArenaFormationOpen)return false;
+    constexpr int32 Rows=4;
+    if(Action==TEXT("ArenaPageNext") || Action==TEXT("ArenaPagePrev")){
+        const int32 Largest=FMath::Max3(ArenaGroups[0].Num(),ArenaGroups[1].Num(),ArenaGroups[2].Num());
+        ArenaFormationPage=FMath::Clamp(ArenaFormationPage+(Action==TEXT("ArenaPageNext")?1:-1),0,FMath::Max(0,(Largest-1)/Rows));
+        return true;
+    }
+    const FString Name=Action.ToString();
+    if(Name.StartsWith(TEXT("ArenaPick_"))){
+        const int32 Id=FCString::Atoi(*Name.Mid(10));
+        if(ArenaMembers.Contains(Id))ArenaSelectedGroup=Id;
+        return true;
+    }
+    if(!Name.StartsWith(TEXT("ArenaAssign_")))return false;
+    const int32 To=FCString::Atoi(*Name.Mid(12));
+    const auto* People=ArenaMembers.Find(ArenaSelectedGroup);
+    if(!People || To<0 || To>2)return true;
+    if(!ArenaGroups[To].Contains(ArenaSelectedGroup)){
+        int32 Heroes=0;
+        for(int32 Group:ArenaGroups[To])Heroes+=ArenaMembers.FindChecked(Group).Num()==1;
+        if(To<2 && (ArenaGroupHeadcount(To)+People->Num()>12 || (People->Num()==1 && Heroes>=4))){
+            PC.LastAction=TEXT("자리가 부족합니다 · 먼저 예비로 이동하세요");return true;
+        }
+        for(auto& Column:ArenaGroups)Column.Remove(ArenaSelectedGroup);
+        ArenaGroups[To].Add(ArenaSelectedGroup);
+        bArenaCustomFormation=true;
+        ArenaFormationPage=(ArenaGroups[To].Num()-1)/Rows;
+    }
+    ArenaSelectedGroup=0;
+    return true;
 }

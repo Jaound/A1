@@ -59,6 +59,18 @@ public:
     bool bArenaStarted=false;
     int32 ArenaRoute=0;
     int32 ArenaHeroQuota=4;
+    bool bArenaFormationOpen=false;
+    bool bArenaCustomFormation=false;
+    int32 ArenaFormationPage=0;
+    int32 ArenaSelectedGroup=0;
+    // Each column contains hero IDs and the first soldier ID of each intact squad.
+    TArray<int32> ArenaGroups[3];
+    TMap<int32,TArray<int32>> ArenaMembers;
+    void PresetArenaFormation();
+    bool HandleArenaFormation(FName Action,AOVController& PC);
+    FString ArenaGroupLabel(int32 Group) const;
+    int32 ArenaGroupHeadcount(int32 Column) const;
+    int32 ArenaTeamForUnit(int32 Id) const;
     struct FArenaWave { TArray<int32> Troopers; TArray<int32> Units; TWeakObjectPtr<AOVShip> Shuttle; FName Bay; bool Sent=false; bool Recalled=false; };
     FArenaWave ArenaWaves[2];
     bool PrepareArenaForces(AOVController& PC);

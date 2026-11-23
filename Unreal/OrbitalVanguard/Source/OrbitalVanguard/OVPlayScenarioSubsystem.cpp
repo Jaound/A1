@@ -242,7 +242,9 @@ void UOVPlayScenarioSubsystem::Clear()
         if(Wave.Shuttle.IsValid() && (!Owner.IsValid() || !Owner->Ships.Contains(Wave.Shuttle.Get())))Wave.Shuttle->Destroy();
         Wave=FArenaWave{};
     }
-    ArenaRoute=0;ArenaHeroQuota=4;
+    ArenaRoute=0;ArenaHeroQuota=4;bArenaFormationOpen=false;bArenaCustomFormation=false;
+    ArenaFormationPage=0;ArenaSelectedGroup=0;ArenaMembers.Reset();
+    for(auto& Column:ArenaGroups)Column.Reset();
     ArenaPicked.Reset(); ArenaCandidate=0;ArenaLevel=1; bArenaStarted=false;
     EndSandboxPlacement();
     bSandboxHullMenu = false;
@@ -429,13 +431,19 @@ bool UOVPlayScenarioSubsystem::AddArenaHero(AOVController& PC,int32 Side,int32 C
         PC.LastAction=PC.Interior->LastMessage;return false;
     }
     if(Source) {ArenaPicked.Add(Source->HeroId);ArenaCandidate=0;}
+    if(Side==0){
+        const int32 Unit=Roster->FindHero(Id)->RuntimeUnitId;
+        ArenaMembers.Add(Unit,{Unit});
+        ArenaGroups[2].Add(Unit);
+        if(!bArenaCustomFormation)PresetArenaFormation();
+    }
     ScenarioHeroes.Add(Id); ++IssuedHeroes[Side]; return true;
 }
 
 float UOVPlayScenarioSubsystem::MissionPanelHeight() const
 {
     if(ActiveId==TEXT("Sandbox"))return bSandboxHullMenu?333.f:150.f;
-    if(ActiveId==TEXT("HeroArena"))return 203.f;
+    if(ActiveId==TEXT("HeroArena"))return bArenaFormationOpen && !bArenaStarted?436.f:203.f;
     if(ActiveId==TEXT("Evacuation"))return 156.f;
     return 126.f;
 }
@@ -537,7 +545,11 @@ bool UOVPlayScenarioSubsystem::HandleAction(AOVController& Controller, FName Act
         if(Action==TEXT("ArenaReturnA") || Action==TEXT("ArenaReturnB")){RecallArenaWave(Controller,Action==TEXT("ArenaReturnA")?0:1);return true;}
         if(bArenaStarted)return true;
         if(Action==TEXT("ArenaRoute"))ArenaRoute=(ArenaRoute+1)%3;
-        if(Action==TEXT("ArenaQuota"))ArenaHeroQuota=(ArenaHeroQuota+1)%5;
+        if(HandleArenaFormation(Action,Controller))return true;
+        if(Action==TEXT("ArenaQuota")){
+            ArenaHeroQuota=ArenaHeroQuota==4?0:4;
+            bArenaCustomFormation=false;PresetArenaFormation();
+        }
         const int32 Choices=Controller.GetGameInstance()->GetSubsystem<UOVHeroSubsystem>()->Definitions.Num()+ArenaOwnedCandidates().Num();
         if(Choices>0 && (Action==TEXT("ArenaNext") || Action==TEXT("ArenaPrev")))
             ArenaCandidate=(ArenaCandidate+Choices+(Action==TEXT("ArenaNext")?1:-1))%Choices;
@@ -748,6 +760,20 @@ void UOVPlayScenarioSubsystem::Finish(AOVController& Controller, EOVPlaySceneRes
             Dead += Person.State == EOVPassengerState::Dead;
             Stranded += Person.State == EOVPassengerState::RescueWaiting;
         }
+    if(ActiveId==TEXT("HeroArena")){
+        const TCHAR* Stages[]={TEXT("진입 전"),TEXT("선내 교전"),TEXT("철수 중")};
+        for(int32 I=0;I<3;++I){
+            int32 Deaths[2]={},Rescues[2]={};
+            for(const auto& P:Controller.Transport->Persons){
+                if(int32(P.BoardingPhase)!=I || P.FactionId!=0)continue;
+                const int32 Team=ArenaTeamForUnit(P.RuntimeUnitId);
+                if(Team==INDEX_NONE)continue;
+                Deaths[Team]+=P.State==EOVPassengerState::Dead;
+                Rescues[Team]+=P.State==EOVPassengerState::RescueWaiting;
+            }
+            DebriefLines.Add(FString::Printf(TEXT("%s    A팀  전사 %d · 구조 대기 %d      B팀  전사 %d · 구조 대기 %d"),Stages[I],Deaths[0],Rescues[0],Deaths[1],Rescues[1]));
+        }
+    }
     if (Heroes) DebriefLines.Add(FString::Printf(TEXT("탑승 영웅    사망 %d명    ·    구조 대기 %d명"), Dead, Stranded));
     int32 Pods = 0, Destroyed = 0, Missing = 0;
     for (const auto& Pod : Controller.Transport->Pods)

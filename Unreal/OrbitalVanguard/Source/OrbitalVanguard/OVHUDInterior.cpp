@@ -1,5 +1,7 @@
 #include "OVHUD.h"
 #include "OVController.h"
+#include "OVPlayScenarioSubsystem.h"
+#include "OVTransportSubsystem.h"
 #include "OVInteriorSubsystem.h"
 #include "OVShip.h"
 #include "OVShipSystemsComponent.h"
@@ -53,6 +55,22 @@ bool AOVHUD::HandleInteriorAction(FName Action)
  if(!PC||!PC->Interior||!PC->Interior->bEnabled) { bInteriorOpen=false;return true; }
  auto* Interior=PC->Interior.Get();
  auto ViewShip=[&](AOVShip* Ship) { InteriorShip=Ship;InteriorDeck=1;InteriorTargetSlot=NAME_None;InteriorUnitPage=0;InteriorSelectedUnits.Reset(); };
+ if(Action==TEXT("InteriorEntryA") || Action==TEXT("InteriorEntryB")){
+  const auto* Play=PC->GetPlayScenario();
+  if(!bInteriorOpen || !Play || Play->ActiveId!=TEXT("HeroArena"))return true;
+  TArray<int32> Decks;
+  for(const auto& E:PC->Transport->EntryEvents){
+   if(E.Target!=InteriorShip || E.FactionId!=0)continue;
+   const auto Person=PC->Transport->GetPerson(E.PersonId);
+   if(Play->ArenaTeamForUnit(Person.RuntimeUnitId)==(Action==TEXT("InteriorEntryA")?0:1))Decks.AddUnique(E.Deck);
+  }
+  if(!Decks.IsEmpty()){
+   Decks.Sort();
+   InteriorDeck=Decks[(Decks.IndexOfByKey(InteriorDeck)+1)%Decks.Num()];
+   InteriorTargetSlot=NAME_None;
+  }
+  return true;
+ }
  if(Action==TEXT("InteriorToggle")||Action==TEXT("InteriorMissionToggle")) { bInteriorOpen=!bInteriorOpen;if(bInteriorOpen)ViewShip(PC->Selected);else CancelPointerDrag();return true; }
  if(Action==TEXT("InteriorZoomIn") || Action==TEXT("InteriorZoomOut")){InteriorMapScale=FMath::Clamp(InteriorMapScale+(Action==TEXT("InteriorZoomIn")?.2f:-.2f),.6f,1.f);return true;}
  if(Action==TEXT("InteriorClose")) { bInteriorOpen=false;CancelPointerDrag();return true; }
@@ -321,6 +339,30 @@ void AOVHUD::DrawInterior()
    const FName Marker(*FString::Printf(TEXT("InteriorMarker_%d"),U.UnitId));
    AddHitBox(FVector2D(P.X-11,P.Y-16)*UIScale,FVector2D(24,34)*UIScale,Marker,true,215);
    ActionCenters.Add(Marker,P);
+  }
+ }
+ if(const auto* Play=PC->GetPlayScenario();Play && Play->ActiveId==TEXT("HeroArena")){
+  for(int32 I=0;I<2;++I){
+   bool HasEntry=false;
+   TSet<FName> Labelled;
+   const FLinearColor Color=I==0?FLinearColor(.15f,1.f,.85f):FLinearColor(1.f,.7f,.18f);
+   for(const auto& Entry:PC->Transport->EntryEvents){
+    if(Entry.Target!=Ship || Entry.FactionId!=0)continue;
+    const auto Person=PC->Transport->GetPerson(Entry.PersonId);
+    if(Play->ArenaTeamForUnit(Person.RuntimeUnitId)!=I)continue;
+    HasEntry=true;
+    if(Entry.Deck!=InteriorDeck)continue;
+    const FVector2D Point=Project(Entry.LocalPoint);
+    const FVector2D Label(FMath::Clamp(Point.X+9.,X+240.,X+W-66.),Point.Y+(I==0?-29:17));
+    DrawLine(Point.X-4,Point.Y,Point.X+4,Point.Y,Color,2);
+    DrawLine(Point.X,Point.Y-4,Point.X,Point.Y+4,Color,2);
+    if(Labelled.Contains(Entry.SlotId))continue;
+    Labelled.Add(Entry.SlotId);
+    DrawLine(Point.X,Point.Y,Label.X,Label.Y+7,Color,1);
+    DrawRect(Panel,Label.X,Label.Y,61,17);
+    DrawText(I==0?TEXT("A팀 진입점"):TEXT("B팀 진입점"),Color,Label.X+2,Label.Y,GEngine->GetSmallFont());
+   }
+   if(HasEntry)Button(I==0?TEXT("InteriorEntryA"):TEXT("InteriorEntryB"),I==0?TEXT("A 진입층"):TEXT("B 진입층"),X+318+I*84,Y+37,80);
   }
  }
  const int32 SlotIndex=L->GetSlotIndex(InteriorTargetSlot);

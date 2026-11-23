@@ -1,5 +1,7 @@
 #include "OVBattleNotices.h"
 #include "OVCombatSubsystem.h"
+#include "OVTransportSubsystem.h"
+#include "OVPlayScenarioSubsystem.h"
 #include "OVShip.h"
 #include "OVShipSystemsComponent.h"
 #include "OVInteriorSubsystem.h"
@@ -51,18 +53,44 @@ void UOVBattleNotices::RecordShieldRestored(AOVShip* Ship,double GameTime)
 void UOVBattleNotices::RecordInteriorEvent(FName EventKind,const FOVInteriorUnitRecord& Unit,double GameTime)
 {
     AOVShip* Ship=Unit.Ship.Get();
-    if(!IsValid(Ship)||!Ship->Systems)return;
+    const bool Death=EventKind==TEXT("Death");
+    if((!IsValid(Ship)||!Ship->Systems) && (!Death || Unit.FactionId!=0))return;
     EOVBattleNoticeKind Kind;
     if(EventKind==TEXT("Entry")&&Unit.FactionId!=0&&Ship->Systems->FactionId==0)Kind=EOVBattleNoticeKind::HostileBoarding;
     else if(Unit.FactionId!=0)return;
-    else if(EventKind==TEXT("Death")&&Unit.Role!=EOVInteriorRole::Trooper)Kind=EOVBattleNoticeKind::HeroDeath;
+    else if(Death)Kind=Unit.Role==EOVInteriorRole::Trooper?EOVBattleNoticeKind::TrooperDeath:EOVBattleNoticeKind::HeroDeath;
     else if(EventKind==TEXT("Damage")&&Unit.Role!=EOVInteriorRole::Trooper)Kind=EOVBattleNoticeKind::HeroHit;
     else if(EventKind==TEXT("Entry"))Kind=EOVBattleNoticeKind::BoardingEntry;
     else if(EventKind==TEXT("Return"))Kind=EOVBattleNoticeKind::BoardingReturn;
     else if(EventKind==TEXT("Capture"))Kind=EOVBattleNoticeKind::FacilityCaptured;
     else return;
-    FOVAttackState Event;Event.HitShipId=Ship->GetFName();Event.Position=Ship->GetActorTransform().TransformPosition(Unit.LocalPosition);Event.ResolvedAt=GameTime;
+    const auto* Transport=GetWorld()->GetSubsystem<UOVTransportSubsystem>();
+    const bool Entry=EventKind==TEXT("Entry");
+    const int32 Group=Entry?Transport->GetPerson(Unit.PersonId).BoardingTeamId:0;
+    if(Group>0){
+        if(auto* Existing=Notices.FindByPredicate([&](const auto& N){return N.BoardingTeamId==Group && N.Kind==Kind && N.ShipId==Ship->GetFName();})){
+            ++Existing->Count;
+            Existing->DisplayTime=FPlatformTime::Seconds();
+            Existing->GameTime=GameTime;
+            return;
+        }
+    }
+    FOVAttackState Event;
+    Event.ResolvedAt=GameTime;
+    if(IsValid(Ship)){
+        Event.HitShipId=Ship->GetFName();
+        Event.Position=Ship->GetActorTransform().TransformPosition(Unit.LocalPosition);
+    }else if(const auto* Pod=Transport->Pods.FindByPredicate([&](const auto& P){return P.PersonId==Unit.PersonId;})){
+        Event.Position=Pod->Position;
+    }
     Append(Event,Ship,Kind,1,Unit.UnitId,Unit.FactionId==0 && Unit.Role!=EOVInteriorRole::Trooper ? Unit.DefinitionId : NAME_None);
+    auto& Notice=Notices.Last();
+    Notice.BoardingTeamId=Group;
+    if(Group>0){
+        const int32 Team=GetWorld()->GetSubsystem<UOVPlayScenarioSubsystem>()->ArenaTeamForUnit(Unit.UnitId);
+        Notice.Subject=Team==0?TEXT("A팀"):Team==1?TEXT("B팀"):FString::Printf(TEXT("강습 %d팀"),Group);
+        Notice.UnitId=0;Notice.FriendlyHeroDefinition=NAME_None;
+    }else if(Death)Notice.Subject=FString::Printf(TEXT("%s #%d"),Unit.Role==EOVInteriorRole::Trooper?TEXT("일반병"):*Unit.Name,Unit.UnitId);
 }
 
 void UOVBattleNotices::RecordHeroRescue(int32 Faction,int32 UnitId,FVector Position,double GameTime)
@@ -72,6 +100,7 @@ void UOVBattleNotices::RecordHeroRescue(int32 Faction,int32 UnitId,FVector Posit
     const auto* Interior=GetWorld()->GetSubsystem<UOVInteriorSubsystem>();
     const auto Unit=Interior?Interior->GetUnit(UnitId):FOVInteriorUnitRecord();
     Append(Event,nullptr,EOVBattleNoticeKind::HeroRescue,1,UnitId,Unit.FactionId==Faction?Unit.DefinitionId:NAME_None);
+    Notices.Last().Subject=FString::Printf(TEXT("%s #%d"),Unit.Role==EOVInteriorRole::Trooper?TEXT("일반병"):*Unit.Name,UnitId);
 }
 
 void UOVBattleNotices::RecordAircraftThreshold(AOVShip* Carrier,bool bFleet,int32 PreviousSeverity,int32 Severity,int32 Remaining,int32 Baseline,FVector Position,double GameTime)

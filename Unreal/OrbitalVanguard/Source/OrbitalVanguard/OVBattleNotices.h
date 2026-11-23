@@ -9,7 +9,7 @@ struct FOVAttackState;
 struct FOVInteriorUnitRecord;
 
 UENUM(BlueprintType)
-enum class EOVBattleNoticeKind : uint8 { Hit, ShipWrecked, ShieldDepleted, ArmorDestroyed, FacilityDestroyed, ShieldRestored, HeroDeath, BoardingEntry, BoardingReturn, FacilityCaptured, HostileBoarding, HeroHit, HeroRescue, AircraftHalf, AircraftCritical, AircraftEliminated, AircraftAdjusted };
+enum class EOVBattleNoticeKind : uint8 { Hit, ShipWrecked, ShieldDepleted, ArmorDestroyed, FacilityDestroyed, ShieldRestored, HeroDeath, BoardingEntry, BoardingReturn, FacilityCaptured, HostileBoarding, HeroHit, HeroRescue, AircraftHalf, AircraftCritical, AircraftEliminated, AircraftAdjusted, TrooperDeath };
 
 USTRUCT(BlueprintType)
 struct ORBITALVANGUARD_API FOVBattleNotice
@@ -23,6 +23,8 @@ struct ORBITALVANGUARD_API FOVBattleNotice
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly) int32 Count=0;
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly) int32 UnitId=0;
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly) FName FriendlyHeroDefinition;
+    UPROPERTY(VisibleAnywhere, BlueprintReadOnly) int32 BoardingTeamId=0;
+    UPROPERTY(VisibleAnywhere, BlueprintReadOnly) FString Subject;
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly) int32 Remaining=0;
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly) int32 Baseline=0;
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly) bool bFleetScope=false;

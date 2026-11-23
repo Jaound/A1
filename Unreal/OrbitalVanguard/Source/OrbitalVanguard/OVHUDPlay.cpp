@@ -275,13 +275,14 @@ void AOVHUD::DrawPlayHUD()
    Button(TEXT("ArenaNext"),TEXT("다음 ▶"),45,122,60);
    Button(TEXT("ArenaAdd"),TEXT("1명 배치"),108,122,92);
    Button(TEXT("ArenaFill"),TEXT("빈자리 채우기"),204,122,116);
-   Button(TEXT("ArenaQuota"),FString::Printf(TEXT("팀 영웅 %d"),Play->ArenaHeroQuota),324,122,95);
+   Button(TEXT("ArenaQuota"),FString(Play->ArenaHeroQuota==4?TEXT("보병 기본안"):TEXT("혼성 기본안")),324,122,95);
    Button(TEXT("ArenaLevel"),TEXT("생성 레벨"),423,122,76);
   }
   if(Play->ActiveId==TEXT("HeroArena") && Play->Result==EOVPlaySceneResult::Running){
    const TCHAR* Modes[]={TEXT("개인 포드만"),TEXT("강습선만"),TEXT("혼합 · A 포드 / B 강습선")};
    if(!Play->bArenaStarted)Button(TEXT("ArenaRoute"),Modes[Play->ArenaRoute],12,154,186);
    else DrawText(Modes[Play->ArenaRoute],PlayAccent,12,156,GEngine->GetSmallFont());
+   if(!Play->bArenaStarted)Button(TEXT("ArenaFormation"),Play->bArenaFormationOpen?TEXT("편성 닫기"):TEXT("팀 편성"),408,154,90,Play->bArenaFormationOpen);
    const float Wait=PC->Ships.Num()>=2?PC->Transport->NextTeamDelay(PC->Ships[1]):0;
    DrawText(Play->ArenaWaves[0].Sent && Play->ArenaWaves[1].Sent?FString(TEXT("두 팀 출발 완료")):Wait>.001f?FString::Printf(TEXT("다음 팀까지 %d초"),FMath::CeilToInt(Wait)):TEXT("목표당 두 팀 · 출발 간격 30초"),PlayInk,210,161,GEngine->GetSmallFont());
    for(int32 I=0;I<2;++I){
@@ -294,6 +295,26 @@ void AOVHUD::DrawPlayHUD()
      Button(I?TEXT("ArenaReturnB"):TEXT("ArenaReturnA"),TEXT("철수"),426,Row,66);
     }
    }
+  }
+  if(Play->bArenaFormationOpen && Play->ActiveId==TEXT("HeroArena") && !Play->bArenaStarted){
+   const int32 Page=Play->ArenaFormationPage;
+   DrawText(Play->ArenaSelectedGroup?Play->ArenaGroupLabel(Play->ArenaSelectedGroup)+TEXT(" → 목적지 선택"):TEXT("영웅 또는 분대 선택 → 배치할 열 선택"),PlayAccent,12,267,GEngine->GetSmallFont());
+   const TCHAR* Titles[]={TEXT("A팀"),TEXT("B팀"),TEXT("예비")};
+   for(int32 Column=0;Column<3;++Column){
+    const float X=12+Column*164;
+    const auto& Groups=Play->ArenaGroups[Column];
+    const FString Header=FString::Printf(TEXT("%s · %d명 %s"),Titles[Column],Play->ArenaGroupHeadcount(Column),
+       Play->ArenaSelectedGroup?TEXT("← 배치"):TEXT(""));
+    Button(FName(*FString::Printf(TEXT("ArenaAssign_%d"),Column)),Header,X,292,155,Play->ArenaSelectedGroup!=0);
+    for(int32 Row=0;Row<4 && Groups.IsValidIndex(Page*4+Row);++Row){
+     const int32 Key=Groups[Page*4+Row];
+     Button(FName(*FString::Printf(TEXT("ArenaPick_%d"),Key)),FitCommandLabel(this,GEngine->GetSmallFont(),Play->ArenaGroupLabel(Key),143),
+            X,325+Row*30,155,Key==Play->ArenaSelectedGroup);
+    }
+   }
+   Button(TEXT("ArenaPagePrev"),TEXT("이전"),12,451,64);
+   DrawText(FString::Printf(TEXT("%d쪽"),Page+1),PlayInk,84,455,GEngine->GetSmallFont());
+   Button(TEXT("ArenaPageNext"),TEXT("다음"),128,451,64);
   }
   if (Play->ActiveId == TEXT("Logistics")) {
    DrawText(Play->GetConvoyStatus(), PlayInk, 10, 127, GEngine->GetSmallFont());
@@ -560,7 +581,7 @@ TArray<int32,TInlineAllocator<64>> AOVHUD::BattleNoticeIndices() const
   if(bBattleFeedOpen)switch(BattleFeedFilter) {
    case 1:Match=N.bCritical;break;
    case 2:Match=K==EOVBattleNoticeKind::Hit||K==EOVBattleNoticeKind::ShieldDepleted||K==EOVBattleNoticeKind::ArmorDestroyed||K==EOVBattleNoticeKind::FacilityDestroyed||K==EOVBattleNoticeKind::HeroHit;break;
-   case 3:Match=K==EOVBattleNoticeKind::BoardingEntry||K==EOVBattleNoticeKind::BoardingReturn||K==EOVBattleNoticeKind::FacilityCaptured||K==EOVBattleNoticeKind::HostileBoarding||K==EOVBattleNoticeKind::HeroDeath||K==EOVBattleNoticeKind::HeroRescue;break;
+   case 3:Match=K==EOVBattleNoticeKind::BoardingEntry||K==EOVBattleNoticeKind::BoardingReturn||K==EOVBattleNoticeKind::TrooperDeath||K==EOVBattleNoticeKind::FacilityCaptured||K==EOVBattleNoticeKind::HostileBoarding||K==EOVBattleNoticeKind::HeroDeath||K==EOVBattleNoticeKind::HeroRescue;break;
    case 4:Match=K==EOVBattleNoticeKind::AircraftHalf||K==EOVBattleNoticeKind::AircraftCritical||K==EOVBattleNoticeKind::AircraftEliminated||K==EOVBattleNoticeKind::AircraftAdjusted;break;
    case 5:Match=IsValid(PC->Selected)&&!N.ShipId.IsNone()&&N.ShipId==PC->Selected->GetFName();break;
    default:break;
@@ -612,10 +633,10 @@ void AOVHUD::DrawBattleNotices()
  }
  for(int32 I=0;I<Count;++I) {
   const int32 Index=Indices[Page*3+I];const auto& N=Feed->Notices[Index];
-  const TCHAR* Names[]={TEXT("피격"),TEXT("완파"),TEXT("쉴드 고갈"),TEXT("장갑 파괴"),TEXT("시설 파괴"),TEXT("쉴드 재가동"),TEXT("영웅 전사"),TEXT("강습 진입"),TEXT("강습 귀환"),TEXT("시설 장악"),TEXT("적 침입"),TEXT("영웅 피격"),TEXT("구조 대기"),TEXT("함재기 절반 미만"),TEXT("함재기 10% 이하"),TEXT("함재기 전멸"),TEXT("항공대 편제 변경")};
+  const TCHAR* Names[]={TEXT("피격"),TEXT("완파"),TEXT("쉴드 고갈"),TEXT("장갑 파괴"),TEXT("시설 파괴"),TEXT("쉴드 재가동"),TEXT("영웅 전사"),TEXT("강습 진입"),TEXT("강습 귀환"),TEXT("시설 장악"),TEXT("적 침입"),TEXT("영웅 피격"),TEXT("구조 대기"),TEXT("함재기 절반 미만"),TEXT("함재기 10% 이하"),TEXT("함재기 전멸"),TEXT("항공대 편제 변경"),TEXT("전사")};
   const FString Suffix=N.Baseline>0?FString::Printf(TEXT(" %d/%d"),N.Remaining,N.Baseline):N.Count>1?FString::Printf(TEXT(" ×%d"),N.Count):FString();
   const int32 Seconds=FMath::Max(0,FMath::FloorToInt(N.GameTime));
-  const FString Label=FString::Printf(TEXT("%02d:%02d %s · %s%s"),Seconds/60,Seconds%60,*N.ShipName.Left(6),Names[FMath::Clamp(int32(N.Kind),0,16)],*Suffix);
+  const FString Label=FString::Printf(TEXT("%02d:%02d %s · %s%s"),Seconds/60,Seconds%60,*(N.Subject.IsEmpty()?N.ShipName.Left(6):N.Subject),Names[FMath::Clamp(int32(N.Kind),0,int32(UE_ARRAY_COUNT(Names))-1)],*Suffix);
   const float RowY=BattleNoticeTop()+I*36;
   Button(FName(*FString::Printf(TEXT("BattleNotice_%lld"),N.Serial)),Label,X,RowY,340,N.bCritical);
   if(!N.FriendlyHeroDefinition.IsNone()){
@@ -634,7 +655,7 @@ void AOVHUD::DrawBattleNotices()
   Button(TEXT("BattleWarningLevel"),FString::Printf(TEXT("화면 경고: %s"),Levels[FMath::Clamp(WarningLevel,0,2)]),X,Y+32,150);
   Button(TEXT("NoticeSettings"),TEXT("표시할 알림 선택"),X+156,Y+32,178,bNoticeSettings);
   if(bNoticeSettings){
-   static const TCHAR* Names[]={TEXT("일반 피격"),TEXT("함선 완파"),TEXT("쉴드 붕괴"),TEXT("장갑 파괴"),TEXT("시설 파괴"),TEXT("쉴드 복구"),TEXT("영웅 전사"),TEXT("강습 진입"),TEXT("철수 복귀"),TEXT("시설 장악"),TEXT("적 침입"),TEXT("영웅 피격"),TEXT("구조 대기"),TEXT("기체 절반"),TEXT("기체 위기"),TEXT("기체 전멸"),TEXT("편제 변경")};
+   static const TCHAR* Names[]={TEXT("일반 피격"),TEXT("함선 완파"),TEXT("쉴드 붕괴"),TEXT("장갑 파괴"),TEXT("시설 파괴"),TEXT("쉴드 복구"),TEXT("영웅 전사"),TEXT("강습 진입"),TEXT("철수 복귀"),TEXT("시설 장악"),TEXT("적 침입"),TEXT("영웅 피격"),TEXT("구조 대기"),TEXT("기체 절반"),TEXT("기체 위기"),TEXT("기체 전멸"),TEXT("편제 변경"),TEXT("일반병 전사")};
    for(int32 K=0;K<UE_ARRAY_COUNT(Names);++K){
     const bool Enabled=(NoticeMask&(1<<K))!=0;
     Button(FName(*FString::Printf(TEXT("ToastKind%d"),K)),(Enabled?FString(TEXT("✓ ")):FString(TEXT("□ ")))+Names[K],X+(K%3)*112,Y+66+(K/3)*29,108,Enabled);

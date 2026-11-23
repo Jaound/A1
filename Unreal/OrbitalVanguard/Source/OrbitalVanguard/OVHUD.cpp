@@ -264,7 +264,7 @@ void AOVHUD::NotifyHitBoxClick(FName N)
  if(N==TEXT("NoticeSettings") && bBattleFeedOpen){bNoticeSettings=!bNoticeSettings;return;}
  if(N.ToString().StartsWith(TEXT("ToastKind")) && bBattleFeedOpen && bNoticeSettings){
   const int32 Kind=FCString::Atoi(*N.ToString().Mid(9));
-  if(Kind>=0 && Kind<=int32(EOVBattleNoticeKind::AircraftAdjusted)){
+  if(Kind>=0 && Kind<=int32(EOVBattleNoticeKind::TrooperDeath)){
    NoticeMask^=(1<<Kind);
    GConfig->SetInt(TEXT("OrbitalVanguard.UI"),TEXT("NoticeMask"),NoticeMask,GGameUserSettingsIni);
    GConfig->Flush(false,GGameUserSettingsIni);

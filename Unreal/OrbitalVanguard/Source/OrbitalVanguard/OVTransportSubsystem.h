@@ -33,6 +33,9 @@ struct ORBITALVANGUARD_API FOVTransportProfile
     UPROPERTY(EditAnywhere, BlueprintReadWrite) float ShieldContactDamage = 40;
 };
 
+UENUM(BlueprintType)
+enum class EOVBoardingPhase : uint8 { Approach, Interior, Withdrawal };
+
 USTRUCT(BlueprintType)
 struct ORBITALVANGUARD_API FOVPassengerToken
 {
@@ -42,6 +45,8 @@ struct ORBITALVANGUARD_API FOVPassengerToken
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly) bool bHeroTypeDEV = false;
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly) int32 RuntimeUnitId = 0;
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly) bool bRuntimeHero = false;
+    UPROPERTY(VisibleAnywhere, BlueprintReadOnly) int32 BoardingTeamId=0;
+    UPROPERTY(VisibleAnywhere, BlueprintReadOnly) EOVBoardingPhase BoardingPhase=EOVBoardingPhase::Approach;
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly) bool bBoardingAssigned = false;
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly) EOVPassengerState State = EOVPassengerState::Aboard;
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly) TWeakObjectPtr<AOVShip> CurrentShip;
@@ -134,6 +139,7 @@ public:
     UFUNCTION(BlueprintCallable) bool CancelRuntimeRecovery(int32 PersonId, int32 UnitId, AOVShip* InteriorShip);
     UFUNCTION(BlueprintCallable) int32 LaunchPods(AOVShip* Origin, AOVShip* Target);
     UFUNCTION(BlueprintCallable) int32 LaunchPodTeam(AOVShip* Origin,AOVShip* Target,const TArray<int32>& People);
+    void SetInteriorWithdrawal(int32 PersonId,bool bWithdrawing);
     UFUNCTION(BlueprintPure) int32 ActiveTeamsAt(AOVShip* Target) const;
     UFUNCTION(BlueprintPure) float NextTeamDelay(AOVShip* Target) const;
     void RecallTeamPods(const TArray<int32>& People);
@@ -157,6 +163,7 @@ private:
     TArray<FTeamFlight> TeamFlights;
     TMap<TWeakObjectPtr<AOVShip>,double> LastTeamLaunch;
     bool CanSendTeam(AOVShip* Target,const TArray<int32>& People);
+    int32 NextBoardingTeamId=1;
     void RecordTeam(AOVShip* Target,const TArray<int32>& People);
     int32 NextPersonId = 1;
     int32 NextPodId = 1;

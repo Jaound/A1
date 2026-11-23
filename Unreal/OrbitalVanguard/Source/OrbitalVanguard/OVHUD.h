@@ -137,7 +137,7 @@ private:
  bool bChoosingJump=false;
  bool bNoticeSettings=false;
  bool PausedBeforeMenu=false;
- int32 NoticeMask=0x1fffe & ~(1<<11);
+ int32 NoticeMask=0x3fffe & ~(1<<11);
  UPROPERTY(Transient) TMap<FName,TObjectPtr<UTextureRenderTarget2D>> SelectionPortraits;
  bool bHangarView=false;
  int32 DetailsSlotPage=0,DetailsPageDeck=INDEX_NONE;

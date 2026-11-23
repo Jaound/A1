@@ -132,6 +132,12 @@ bool UOVTransportSubsystem::CanSendTeam(AOVShip* Target,const TArray<int32>& Peo
 
 void UOVTransportSubsystem::RecordTeam(AOVShip* Target,const TArray<int32>& People)
 {
+    const int32 Serial=NextBoardingTeamId++;
+    for(int32 Id:People){
+        auto* Person=FindPerson(Id);
+        Person->BoardingTeamId=Serial;
+        Person->BoardingPhase=EOVBoardingPhase::Approach;
+    }
     auto& Team=TeamFlights.AddDefaulted_GetRef();Team.Target=Target;Team.People=People;LastTeamLaunch.Add(Target,GameTime);
 }
 
@@ -214,10 +220,11 @@ void UOVTransportSubsystem::BeginReturn(FOVPodState& Pod)
     Pod.State = Pod.ReturnDestination.IsValid() ? EOVPodFlightState::Returning : EOVPodFlightState::Stranded;
     if (FOVPassengerToken* Person = FindPerson(Pod.PersonId))
     {
+        Person->BoardingPhase=EOVBoardingPhase::Withdrawal;
         const bool bNewRescue=Pod.State==EOVPodFlightState::Stranded&&Person->State!=EOVPassengerState::RescueWaiting;
         Person->CurrentShip = nullptr;
         Person->State = Pod.State == EOVPodFlightState::Returning ? EOVPassengerState::InPod : EOVPassengerState::RescueWaiting;
-        if(bNewRescue&&Person->bRuntimeHero)if(auto* Feed=GetWorld()->GetSubsystem<UOVBattleNotices>())Feed->RecordHeroRescue(Person->FactionId,Person->RuntimeUnitId,Pod.Position,GameTime);
+        if(bNewRescue&&Person->RuntimeUnitId>0)if(auto* Feed=GetWorld()->GetSubsystem<UOVBattleNotices>())Feed->RecordHeroRescue(Person->FactionId,Person->RuntimeUnitId,Pod.Position,GameTime);
     }
 }
 
@@ -273,12 +280,18 @@ bool UOVTransportSubsystem::SetRuntimeBoardingAssignment(int32 PersonId,int32 Un
     P->bBoardingAssigned=bAssigned;return true;
 }
 
+void UOVTransportSubsystem::SetInteriorWithdrawal(int32 PersonId,bool bWithdrawing)
+{
+    if(auto* P=FindPerson(PersonId);P && P->State==EOVPassengerState::InsideTarget)
+        P->BoardingPhase=bWithdrawing?EOVBoardingPhase::Withdrawal:EOVBoardingPhase::Interior;
+}
+
 bool UOVTransportSubsystem::CancelRuntimeRecovery(int32 PersonId,int32 UnitId,AOVShip* InteriorShip)
 {
     auto* P=FindPerson(PersonId);
     if(!P || UnitId<=0 || P->RuntimeUnitId!=UnitId || P->State!=EOVPassengerState::AwaitingRecovery ||
         P->CurrentShip!=InteriorShip || !Usable(InteriorShip))return false;
-    P->State=EOVPassengerState::InsideTarget;return true;
+    P->State=EOVPassengerState::InsideTarget;P->BoardingPhase=EOVBoardingPhase::Interior;return true;
 }
 
 bool UOVTransportSubsystem::ReturnRuntimePersonToEntry(int32 PersonId, int32 UnitId, AOVShip* Ship, FVector ActualLocalPoint, FName LayoutVersion)
@@ -341,6 +354,7 @@ bool UOVTransportSubsystem::InterceptPod(int32 Id, float Damage)
 void UOVTransportSubsystem::Enter(FOVPassengerToken& Person, AOVShip* Target, FVector WorldPoint, FVector WorldNormal)
 {
     if (!Usable(Target) || Person.State == EOVPassengerState::InsideTarget || Person.State == EOVPassengerState::Dead) return;
+    Person.BoardingPhase=EOVBoardingPhase::Interior;
     Person.CurrentShip = Target; Person.State = EOVPassengerState::InsideTarget;
     // Entry protection is immediate even when the interior logic uses a coarser fixed step.
     if (Person.RuntimeUnitId > 0) Target->Systems->SetRuntimeInteriorPresence(Person.FactionId, true, false);
@@ -497,6 +511,10 @@ bool UOVTransportSubsystem::RecallShuttle(AOVShip* Ship)
     { Shuttle->State = EOVShuttleState::Recovering; Shuttle->Progress = 0; }
     else if (Shuttle->State == EOVShuttleState::Approaching || Shuttle->State == EOVShuttleState::Docking)
         Shuttle->State = EOVShuttleState::Returning;
+    for(int32 Id:Shuttle->PassengerIds){
+        auto* Person=FindPerson(Id);
+        if(Person && Person->State==EOVPassengerState::InShuttle)Person->BoardingPhase=EOVBoardingPhase::Withdrawal;
+    }
     LastMessage = TEXT("강습선 회수 요청: 원 진입점 승객 대기");
     return true;
 }
@@ -530,6 +548,8 @@ void UOVTransportSubsystem::AdvanceShuttle(FOVShuttleRecord& Shuttle, float Delt
     if (Shuttle.State != EOVShuttleState::Returning && !Usable(Target)) Shuttle.State = EOVShuttleState::Returning;
     if (Shuttle.State == EOVShuttleState::Returning)
     {
+        for(int32 Id:Shuttle.PassengerIds)
+            if(auto* P=FindPerson(Id);P && P->State==EOVPassengerState::InShuttle)P->BoardingPhase=EOVBoardingPhase::Withdrawal;
         AOVShip* Home = FindReturn(Shuttle.Home.Get(), Shuttle.FactionId, Ship->GetActorLocation(), Ship);
         const FVector Goal = Home && Home != Ship ? Home->GetActorLocation() : Shuttle.HomePosition;
         const float Radius = Home && Home != Ship ?

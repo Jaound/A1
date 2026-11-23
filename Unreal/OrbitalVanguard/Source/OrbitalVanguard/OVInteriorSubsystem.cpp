@@ -460,11 +460,12 @@ bool UOVInteriorSubsystem::IssueOrder(const TArray<int32>& Ids,EOVInteriorOrder 
             if(auto* G=FindGraph(U->Ship.Get()))G->CompletedBy.Remove(U->FactionId);
         if(Order!=EOVInteriorOrder::Retreat && U->State==EOVInteriorState::AwaitingRecovery && U->bWasInsideTarget && U->EntryShip==U->Ship)
             if(GetWorld()->GetSubsystem<UOVTransportSubsystem>()->CancelRuntimeRecovery(U->PersonId,U->UnitId,U->Ship.Get()))U->State=EOVInteriorState::Defending;
+        GetWorld()->GetSubsystem<UOVTransportSubsystem>()->SetInteriorWithdrawal(U->PersonId,Order==EOVInteriorOrder::Retreat);
         U->Reason=Order==EOVInteriorOrder::Retreat?TEXT("원 진입점으로 실제 철수"):TEXT("선내 명령 접수");Accepted=true;
         if(Order==EOVInteriorOrder::Retreat)
         {
             auto* T=GetWorld()->GetSubsystem<UOVTransportSubsystem>();const auto P=T->GetPerson(U->PersonId);
-            if(P.State==EOVPassengerState::InPod)if(const auto* Pod=T->Pods.FindByPredicate([&](const auto& Flight){return Flight.PersonId==P.PersonId;}))T->RecallPods(Pod->Origin.Get());
+            if(P.State==EOVPassengerState::InPod)T->RecallTeamPods({P.PersonId});
             if(P.Shuttle.IsValid())T->RecallShuttle(P.Shuttle.Get());
         }
     }
