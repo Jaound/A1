@@ -1,0 +1,101 @@
+{
+  "seed": 260112,
+  "seconds_per_case": 20,
+  "cases": [
+    {
+      "difficulty": "EASY",
+      "range_m": 260.0,
+      "tracked_missiles": 54,
+      "hits": 11,
+      "enemy_target_missiles": 27,
+      "enemy_target_hits": 11,
+      "target_start_hp_shield": 6808.0,
+      "target_end_hp_shield": 4859.1,
+      "enemy_evades": 0,
+      "ally_evades": 1,
+      "enemy_heroes": 15,
+      "active_duties": 11,
+      "defend_orders": 4
+    },
+    {
+      "difficulty": "NORMAL",
+      "range_m": 260.0,
+      "tracked_missiles": 54,
+      "hits": 23,
+      "enemy_target_missiles": 27,
+      "enemy_target_hits": 23,
+      "target_start_hp_shield": 6808.0,
+      "target_end_hp_shield": 1935.6,
+      "enemy_evades": 1,
+      "ally_evades": 1,
+      "enemy_heroes": 15,
+      "active_duties": 11,
+      "defend_orders": 4
+    },
+    {
+      "difficulty": "HARD",
+      "range_m": 260.0,
+      "tracked_missiles": 54,
+      "hits": 0,
+      "enemy_target_missiles": 27,
+      "enemy_target_hits": 0,
+      "target_start_hp_shield": 6808.0,
+      "target_end_hp_shield": 6808.0,
+      "enemy_evades": 1,
+      "ally_evades": 1,
+      "enemy_heroes": 15,
+      "active_duties": 11,
+      "defend_orders": 4
+    },
+    {
+      "difficulty": "EASY",
+      "range_m": 440.0,
+      "tracked_missiles": 54,
+      "hits": 26,
+      "enemy_target_missiles": 27,
+      "enemy_target_hits": 21,
+      "target_start_hp_shield": 6808.0,
+      "target_end_hp_shield": 3073.7,
+      "enemy_evades": 0,
+      "ally_evades": 2,
+      "enemy_heroes": 15,
+      "active_duties": 11,
+      "defend_orders": 4
+    },
+    {
+      "difficulty": "NORMAL",
+      "range_m": 440.0,
+      "tracked_missiles": 54,
+      "hits": 23,
+      "enemy_target_missiles": 27,
+      "enemy_target_hits": 18,
+      "target_start_hp_shield": 6808.0,
+      "target_end_hp_shield": 3179.4,
+      "enemy_evades": 1,
+      "ally_evades": 2,
+      "enemy_heroes": 15,
+      "active_duties": 11,
+      "defend_orders": 4
+    },
+    {
+      "difficulty": "HARD",
+      "range_m": 440.0,
+      "tracked_missiles": 54,
+      "hits": 5,
+      "enemy_target_missiles": 27,
+      "enemy_target_hits": 0,
+      "target_start_hp_shield": 6808.0,
+      "target_end_hp_shield": 6808.0,
+      "enemy_evades": 2,
+      "ally_evades": 2,
+      "enemy_heroes": 15,
+      "active_duties": 11,
+      "defend_orders": 4
+    }
+  ],
+  "assets_seen": [
+    "/Game/Presentation/Missiles/StandardMissile/SM_Source.SM_Source",
+    "/Game/Presentation/Missiles/AntiShipMissile/SM_Source.SM_Source"
+  ],
+  "passed": true
+}

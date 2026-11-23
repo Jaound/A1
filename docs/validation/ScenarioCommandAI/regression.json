@@ -1,0 +1,14 @@
+{
+  "code": "55d540f",
+  "automation": {
+    "succeeded": 104,
+    "succeededWithWarnings": 49,
+    "failed": 0,
+    "notRun": 0
+  },
+  "fleet_api": {
+    "passed": true,
+    "checks": 97
+  },
+  "physical_input": false
+}
