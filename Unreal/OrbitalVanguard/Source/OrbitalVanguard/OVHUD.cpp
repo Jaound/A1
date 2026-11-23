@@ -525,7 +525,7 @@ FString AOVHUD::GetWeaponSummary(AOVShip* Ship,int32 Weapon) const
   const auto ShipState=PC->Combat->GetShipState(Ship);
   if(const auto* Mount=ShipState.Mounts.FindByPredicate([&](const FOVCombatMountState& M){return M.MountId==HealthState.WeaponMountId;}))
   {
-   Kind=Mount->Profile.Kind==EOVAttackKind::Beam?TEXT("빔"):Mount->Profile.Kind==EOVAttackKind::Cannon?TEXT("함포"):Mount->Profile.Kind==EOVAttackKind::GuidedMissile?TEXT("유도 미사일"):TEXT("일반 미사일");
+   Kind=AttackWeaponName(*Mount,&Def);
    Range=Mount->Profile.Range;bRangeKnown=true;
    const auto Ready=PC->Combat->GetReadiness(Ship,HealthState.WeaponMountId);
    Status=Ready.Reason==TEXT("COOLDOWN")?FString::Printf(TEXT("재사용 %.1f초"),Ready.Cooldown):ReadinessKorean(Ready.Reason);

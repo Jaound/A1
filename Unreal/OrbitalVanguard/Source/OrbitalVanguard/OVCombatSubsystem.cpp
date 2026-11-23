@@ -644,8 +644,7 @@ void UOVCombatSubsystem::Launch(FOVCombatShipState& State, FOVCombatMountState& 
     Attack.FactionId = State.Ship->Systems->FactionId;
     Attack.LaunchTime = GameTime; Attack.TrackingLifetime = Settings->GuidedTrackingSeconds;
     Attack.WeaponId = Mount.MountId; Attack.Weapon = Mount.Profile;
-    Attack.bAntiShipMissile = (Def->PresentationProfile == TEXT("AntiShipMissileModule")
-        || (Def->Type == EOVWeaponType::Missile && Def->AuthoredSlotPurpose == TEXT("Dedicated")));
+    Attack.bAntiShipMissile = Def->IsAntiShipMissile();
     Attack.InterceptHP = (Attack.Weapon.Kind == EOVAttackKind::Missile || Attack.Weapon.Kind == EOVAttackKind::GuidedMissile)
         ? FMath::Max(0.f, Attack.Weapon.ProjectileHP) : 0;
     Attack.Target = State.Ship->AttackTarget;

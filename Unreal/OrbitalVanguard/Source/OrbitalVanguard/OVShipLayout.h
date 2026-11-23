@@ -76,6 +76,11 @@ struct ORBITALVANGUARD_API FOVWeaponMountDefinition
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Weapon") float ExplosionTierCoefficient = 0;
     // Optional presentation/geometry profile. NAME_None preserves the existing muzzle path.
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Weapon") FName PresentationProfile = NAME_None;
+    bool IsAntiShipMissile() const
+    {
+        return PresentationProfile==TEXT("AntiShipMissileModule") ||
+            (Type==EOVWeaponType::Missile && AuthoredSlotPurpose==TEXT("Dedicated"));
+    }
     UPROPERTY(VisibleAnywhere, Category="Weapon") float GeometryScale = 1.f;
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Weapon") FVector LocalPosition = FVector::ZeroVector;
     // Zero retains the legacy top/bottom rule; a nonzero normal specifies the mounting face.

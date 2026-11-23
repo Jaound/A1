@@ -3,6 +3,8 @@
 #include "GameFramework/HUD.h"
 #include "OVHUD.generated.h"
 class AOVShip;
+struct FOVCombatMountState;
+struct FOVWeaponMountDefinition;
 class UOVDevelopmentWidget;
 class UOVHeroWidget;
 class UOVTitleScreenWidget;
@@ -156,6 +158,7 @@ private:
  void DrawPinned();
  void DrawBattleNotices();
  int32 VisibleBattleNoticeCount() const;
+ static const TCHAR* AttackWeaponName(const FOVCombatMountState& Mount,const FOVWeaponMountDefinition* Def);
  static FString ReadinessKorean(const FString& Key);
  TMap<FName,FVector2D> ActionCenters;
  float UIScale=1.f;

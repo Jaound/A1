@@ -31,6 +31,17 @@ FString FitCommandLabel(const AOVHUD* Hud,UFont* Font,const FString& Text,float 
  return Text.Left(Low)+TEXT("…");
 }
 }
+const TCHAR* AOVHUD::AttackWeaponName(const FOVCombatMountState& Mount,const FOVWeaponMountDefinition* Def)
+{
+ if(Def && Def->IsAntiShipMissile())return TEXT("대함 미사일");
+ switch(Mount.Profile.Kind){
+  case EOVAttackKind::Cannon:return TEXT("함포");
+  case EOVAttackKind::Beam:return TEXT("빔");
+  case EOVAttackKind::GuidedMissile:return TEXT("유도 미사일");
+  default:return TEXT("일반 미사일");
+ }
+}
+
 FString AOVHUD::ReadinessKorean(const FString& Key)
 {
  static const TMap<FString,FString> Labels={
@@ -352,6 +363,17 @@ void AOVHUD::DrawPlayHUD()
    DrawRect(FLinearColor(.012f,.026f,.042f),X+1,CY+1,CardWidth-2,51);
    const float PictureWidth=FMath::Min(CardWidth-4,30.f*2.8f);
    if(Art)DrawTexture(Art,X+(CardWidth-PictureWidth)*.5f,CY+1,PictureWidth,30,0,0,1,1,FLinearColor::White,BLEND_Opaque);
+   if(PC->Interior){
+    const int32 Count=PC->Interior->CountEmbarkedHeroes(S,S->Systems->FactionId);
+    const bool Limited=Play && Play->GetActiveDefinition();
+    const FString Berths=Limited?FString::Printf(TEXT("%d/%d"),Count,UOVPlayScenarioSubsystem::HeroBerthsPerShip):FString::FromInt(Count);
+    const FLinearColor Gold=Count?FLinearColor(1,.83f,.40f):FLinearColor(.64f,.69f,.73f);
+    float TW,TH; GetTextSize(Berths,TW,TH,GEngine->GetSmallFont());
+    const float BX=X+CardWidth-TW-20;
+    DrawRect(FLinearColor(.035f,.055f,.078f,.95f),BX,CY+1,TW+18,16);
+    DrawText(TEXT("★"),Gold,BX+2,CY+1,GEngine->GetSmallFont(),.87f);
+    DrawText(Berths,Gold,BX+15,CY+1,GEngine->GetSmallFont());
+   }
    if(S->bFTLCharging&&Play){
     DrawRect(FLinearColor(.19f,.11f,.35f),X+2,CY+17,CardWidth-4,13);
     DrawRect(FLinearColor(.57f,.38f,1.f),X+2,CY+17,(CardWidth-4)*Play->ChargeFraction(S),13);
@@ -443,8 +465,10 @@ void AOVHUD::DrawPlayHUD()
    Button(TEXT("ForceGun"),TEXT("선택 강제 · 아군 위험"),195,Y+128,178,!State.ForcedMount.IsNone());
   if(State.Mounts.IsValidIndex(PC->SelectedWeapon)) {
    const auto& M=State.Mounts[PC->SelectedWeapon];const auto R=PC->Combat->GetReadiness(Ship,M.MountId);
-   const TCHAR* Kind=M.Profile.Kind==EOVAttackKind::Beam?TEXT("빔"):M.Profile.Kind==EOVAttackKind::Cannon?TEXT("함포"):M.Profile.Kind==EOVAttackKind::GuidedMissile?TEXT("유도 미사일"):TEXT("일반 미사일");
-   DrawText(FString::Printf(TEXT("%s %d  ·  %s%s"),Kind,PC->SelectedWeapon+1,*ReadinessKorean(R.Reason),M.bFireRequested?TEXT(" · 발사 접수"):TEXT("")),R.bReady?PlayAccent:FLinearColor(1,.8f,.25f),24,Y+166,GEngine->GetSmallFont());
+   const auto* Def=Ship->Systems->Layout->WeaponMounts.FindByPredicate([&M](const auto& Slot){return Slot.WeaponId==M.MountId;});
+   const TCHAR* Kind=AttackWeaponName(M,Def);
+   const FString Status=R.Reason==TEXT("COOLDOWN")?FString::Printf(TEXT("재사용 %.1f초"),R.Cooldown):ReadinessKorean(R.Reason);
+   DrawText(FString::Printf(TEXT("%s %d  ·  %s%s"),Kind,PC->SelectedWeapon+1,*Status,M.bFireRequested?TEXT(" · 발사 접수"):TEXT("")),R.bReady?PlayAccent:FLinearColor(1,.8f,.25f),24,Y+166,GEngine->GetSmallFont());
   }
  }
  if(auto* Carrier=GetWorld()->GetSubsystem<UOVCarrierSubsystem>();Carrier&&Carrier->Carriers.ContainsByPredicate([&](const auto& C){return C.Carrier.IsValid() && PC->Selection.Contains(C.Carrier.Get());})) {
