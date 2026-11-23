@@ -103,15 +103,16 @@ FString UOVPlayScenarioSubsystem::ArenaWaveStatus(int32 Index) const
     const bool Shuttle=ArenaRoute==1 || (ArenaRoute==2 && Index==1);
     const TCHAR* Route=Shuttle?TEXT("강습선"):TEXT("포드");
     if(!W.Sent)return FString::Printf(TEXT("%s · 영웅 %d / 병력 %d"),Route,ArenaHeroQuota,12-ArenaHeroQuota);
-    int32 Inside=0,Home=0,Loss=0;
+    int32 Inside=0,Transit=0,Aboard=0,Loss=0;
     for(int32 Id:W.Units){
         const auto U=Owner->Interior->GetUnit(Id);
         const auto P=Owner->Transport->GetPerson(U.PersonId);
         if(P.State==EOVPassengerState::InsideTarget || P.State==EOVPassengerState::AwaitingRecovery)++Inside;
-        if(P.State==EOVPassengerState::Aboard)++Home;
+        if(P.State==EOVPassengerState::InShuttle || P.State==EOVPassengerState::InPod)++Transit;
+        if(P.State==EOVPassengerState::Aboard)++Aboard;
         if(P.State==EOVPassengerState::Dead || P.State==EOVPassengerState::RescueWaiting)++Loss;
     }
-    return FString::Printf(TEXT("%s · 내부 %d / 탑승 %d / 손실 %d"),Route,Inside,Home,Loss);
+    return FString::Printf(TEXT("%s · 이동 %d / 내부 %d / 탑승 %d / 손실 %d"),Route,Transit,Inside,Aboard,Loss);
 }
 
 void UOVPlayScenarioSubsystem::StepArena(AOVController& PC,float Delta)

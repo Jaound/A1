@@ -283,7 +283,7 @@ void AOVHUD::DrawPlayHUD()
    if(!Play->bArenaStarted)Button(TEXT("ArenaRoute"),Modes[Play->ArenaRoute],12,154,186);
    else DrawText(Modes[Play->ArenaRoute],PlayAccent,12,156,GEngine->GetSmallFont());
    const float Wait=PC->Ships.Num()>=2?PC->Transport->NextTeamDelay(PC->Ships[1]):0;
-   DrawText(Wait>.001f?FString::Printf(TEXT("다음 팀까지 %d초"),FMath::CeilToInt(Wait)):TEXT("목표당 두 팀 · 출발 간격 30초"),PlayInk,210,161,GEngine->GetSmallFont());
+   DrawText(Play->ArenaWaves[0].Sent && Play->ArenaWaves[1].Sent?FString(TEXT("두 팀 출발 완료")):Wait>.001f?FString::Printf(TEXT("다음 팀까지 %d초"),FMath::CeilToInt(Wait)):TEXT("목표당 두 팀 · 출발 간격 30초"),PlayInk,210,161,GEngine->GetSmallFont());
    for(int32 I=0;I<2;++I){
     const auto& Team=Play->ArenaWaves[I];
     const float Row=188+I*35;
