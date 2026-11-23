@@ -153,6 +153,24 @@ def run():
         if p(scenario,"result")!=u.OVPlaySceneResult.RUNNING:break
     returned=[x for x in p(p(pc,"transport"),"pods") if p(x,"state")==u.OVPodFlightState.RECOVERED]
     check("개인 포드 전원 회수와 철수 결과",len(returned)==10 and p(scenario,"result")==u.OVPlaySceneResult.PARTIAL_VICTORY,len(returned))
+    assert pc.start_play_scenario("HeroArena")
+    for _ in range(4):pc.action("ArenaLevel")
+    pc.action("ArenaAdd")
+    pc.action("ArenaFill")
+    pc.action("ArenaFight")
+    enemy_ship=list(p(pc,"ships"))[1]
+    objective=next(p(x,"slot_id") for x in p(p(p(enemy_ship,"systems"),"layout"),"slots") if p(x,"facility")==u.OVFacilityType.BRIDGE)
+    landing_orders=set()
+    for step in range(7200):
+        pc.step_simulation(.05)
+        if step%10==0:
+            for x in units():
+                uid=p(x,"unit_id")
+                if p(x,"faction_id")==0 and p(x,"ship")==enemy_ship and uid not in landing_orders:
+                    if interior.issue_order([uid],u.OVInteriorOrder.CAPTURE,objective):landing_orders.add(uid)
+        if p(scenario,"result")!=u.OVPlaySceneResult.RUNNING:break
+    check("실제 함교 장악과 승리 결산",len(landing_orders)==10 and p(p(enemy_ship,"systems"),"faction_id")==0 and p(scenario,"result")==u.OVPlaySceneResult.VICTORY,
+          {"강습":len(landing_orders),"게임초":round(step*.05,2),"결과":str(p(scenario,"result"))})
     clocks=[]
     for speed in [1,2,3]:
         assert pc.start_play_scenario("HeroArena")
