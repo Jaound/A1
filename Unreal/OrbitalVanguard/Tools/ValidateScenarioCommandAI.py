@@ -79,6 +79,8 @@ def run():
                  "defend_orders":sum(prop(h,"order")==u.OVInteriorOrder.DEFEND for h in heroes)}
             report["cases"].append(row)
             out.write_text(json.dumps(report,indent=2),encoding="utf-8")
+            row["enemy_definitions"]=sorted({str(prop(h,"definition_id")) for h in heroes})
+            assert set(row["enemy_definitions"])=={"G01","G02","G03","G04"},row
             assert len(heroes)==15 and row["defend_orders"] and row["active_duties"] and seen, row
             yield
     assert any(row["enemy_evades"] for row in report["cases"] if row["difficulty"]=="HARD")

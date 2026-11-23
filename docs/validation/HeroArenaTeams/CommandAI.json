@@ -1,0 +1,142 @@
+{
+  "seed": 260112,
+  "seconds_per_case": 20,
+  "cases": [
+    {
+      "difficulty": "EASY",
+      "range_m": 260.0,
+      "tracked_missiles": 54,
+      "hits": 11,
+      "enemy_target_missiles": 27,
+      "enemy_target_hits": 11,
+      "target_start_hp_shield": 6808.0,
+      "target_end_hp_shield": 4859.1,
+      "enemy_evades": 0,
+      "ally_evades": 1,
+      "enemy_heroes": 15,
+      "active_duties": 10,
+      "defend_orders": 5,
+      "enemy_definitions": [
+        "G01",
+        "G02",
+        "G03",
+        "G04"
+      ]
+    },
+    {
+      "difficulty": "NORMAL",
+      "range_m": 260.0,
+      "tracked_missiles": 54,
+      "hits": 0,
+      "enemy_target_missiles": 27,
+      "enemy_target_hits": 0,
+      "target_start_hp_shield": 6808.0,
+      "target_end_hp_shield": 6808.0,
+      "enemy_evades": 1,
+      "ally_evades": 1,
+      "enemy_heroes": 15,
+      "active_duties": 10,
+      "defend_orders": 5,
+      "enemy_definitions": [
+        "G01",
+        "G02",
+        "G03",
+        "G04"
+      ]
+    },
+    {
+      "difficulty": "HARD",
+      "range_m": 260.0,
+      "tracked_missiles": 54,
+      "hits": 0,
+      "enemy_target_missiles": 27,
+      "enemy_target_hits": 0,
+      "target_start_hp_shield": 6808.0,
+      "target_end_hp_shield": 6808.0,
+      "enemy_evades": 1,
+      "ally_evades": 1,
+      "enemy_heroes": 15,
+      "active_duties": 10,
+      "defend_orders": 5,
+      "enemy_definitions": [
+        "G01",
+        "G02",
+        "G03",
+        "G04"
+      ]
+    },
+    {
+      "difficulty": "EASY",
+      "range_m": 440.0,
+      "tracked_missiles": 54,
+      "hits": 33,
+      "enemy_target_missiles": 27,
+      "enemy_target_hits": 21,
+      "target_start_hp_shield": 6808.0,
+      "target_end_hp_shield": 3073.7,
+      "enemy_evades": 0,
+      "ally_evades": 3,
+      "enemy_heroes": 15,
+      "active_duties": 10,
+      "defend_orders": 5,
+      "enemy_definitions": [
+        "G01",
+        "G02",
+        "G03",
+        "G04"
+      ]
+    },
+    {
+      "difficulty": "NORMAL",
+      "range_m": 440.0,
+      "tracked_missiles": 54,
+      "hits": 25,
+      "enemy_target_missiles": 27,
+      "enemy_target_hits": 13,
+      "target_start_hp_shield": 6808.0,
+      "target_end_hp_shield": 3977.8,
+      "enemy_evades": 3,
+      "ally_evades": 3,
+      "enemy_heroes": 15,
+      "active_duties": 10,
+      "defend_orders": 5,
+      "enemy_definitions": [
+        "G01",
+        "G02",
+        "G03",
+        "G04"
+      ]
+    },
+    {
+      "difficulty": "HARD",
+      "range_m": 440.0,
+      "tracked_missiles": 54,
+      "hits": 24,
+      "enemy_target_missiles": 27,
+      "enemy_target_hits": 12,
+      "target_start_hp_shield": 6808.0,
+      "target_end_hp_shield": 3989.8,
+      "enemy_evades": 3,
+      "ally_evades": 3,
+      "enemy_heroes": 15,
+      "active_duties": 10,
+      "defend_orders": 5,
+      "enemy_definitions": [
+        "G01",
+        "G02",
+        "G03",
+        "G04"
+      ]
+    }
+  ],
+  "assets_seen": [
+    "/Game/Presentation/Missiles/StandardMissile/SM_Source.SM_Source",
+    "/Game/Presentation/Missiles/AntiShipMissile/SM_Source.SM_Source"
+  ],
+  "enemy_boarding": {
+    "shield_held": true,
+    "pods": 1,
+    "arrival_and_capture_order": true
+  },
+  "passed": true
+}

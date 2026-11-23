@@ -1,0 +1,157 @@
+{
+  "checks": {
+    "포드 패널 입력 ArenaFight": {
+      "passed": true,
+      "value": "<Struct 'Vector2D' (0x000001A2B1737520) {x: 387.000000, y: 201.500000}>"
+    },
+    "포드 패널 입력 ArenaWaveB": {
+      "passed": true,
+      "value": "<Struct 'Vector2D' (0x000001A2B17374E0) {x: 387.000000, y: 236.500000}>"
+    },
+    "포드 실제 모함 격납고": {
+      "passed": true,
+      "value": "2"
+    },
+    "포드 조기 후속 출발 차단": {
+      "passed": true,
+      "value": "30.0"
+    },
+    "포드 동일 목표 두 팀": {
+      "passed": true,
+      "value": "{'활동팀': 2, '명령': '개인 포드 발사 개시', '강습선': [], '승객': {'<OVPassengerState.ABOARD: 0>': 44, '<OVPassengerState.INSIDE_TARGET: 2>': 12}}"
+    },
+    "포드 실제 24명 진입": {
+      "passed": true,
+      "value": "{'진입 인원': 24, '진입 완료 시 생존': 24, '포드': 24, '격납고 대기': 2, '강습선 상태': []}"
+    },
+    "포드 영웅·일반병 구성": {
+      "passed": true,
+      "value": "8"
+    },
+    "포드 원 수송수단 사용": {
+      "passed": true,
+      "value": "{'진입 인원': 24, '진입 완료 시 생존': 24, '포드': 24, '격납고 대기': 2, '강습선 상태': []}"
+    },
+    "포드 생존자 원함 귀환": {
+      "passed": true,
+      "value": "{'진입 인원': 24, '진입 완료 시 생존': 24, '포드': 24, '격납고 대기': 2, '강습선 상태': [], '복귀 결과': '<OVPlaySceneResult.PARTIAL_VICTORY: 7>', '귀환 강습선': 2, '실제 귀환 인원': 24, '사망': 0}"
+    },
+    "강습선 패널 입력 ArenaFight": {
+      "passed": true,
+      "value": "<Struct 'Vector2D' (0x000001A2B97277E0) {x: 387.000000, y: 201.500000}>"
+    },
+    "강습선 패널 입력 ArenaWaveB": {
+      "passed": true,
+      "value": "<Struct 'Vector2D' (0x000001A2B176EDE0) {x: 387.000000, y: 236.500000}>"
+    },
+    "강습선 실제 모함 격납고": {
+      "passed": true,
+      "value": "2"
+    },
+    "강습선 조기 후속 출발 차단": {
+      "passed": true,
+      "value": "30.0"
+    },
+    "강습선 동일 목표 두 팀": {
+      "passed": true,
+      "value": "{'활동팀': 2, '명령': '격납고에서 강습선 출발', '강습선': [('<OVShuttleState.DELIVERED: 3>', '실제 선내 이송 완료 · 내부 아군 보호 활성', \"<Struct 'Vector' (0x000001A2B176B2B0) {x: 3211.120516, y: 291.789010, z: 2575.091854}>\"), ('<OVShuttleState.APPROACHING: 1>', '', \"<Struct 'Vector' (0x000001A2B176B080) {x: -7129.400444, y: -907.291678, z: 3788.196386}>\")], '승객': {'<OVPassengerState.DEAD: 6>': 18, '<OVPassengerState.ABOARD: 0>': 23, '<OVPassengerState.IN_SHUTTLE: 3>': 12, '<OVPassengerState.INSIDE_TARGET: 2>': 3}}"
+    },
+    "강습선 실제 24명 진입": {
+      "passed": true,
+      "value": "{'진입 인원': 24, '진입 완료 시 생존': 15, '포드': 0, '격납고 대기': 0, '강습선 상태': ['<OVShuttleState.DELIVERED: 3>', '<OVShuttleState.DELIVERED: 3>']}"
+    },
+    "강습선 영웅·일반병 구성": {
+      "passed": true,
+      "value": "8"
+    },
+    "강습선 원 수송수단 사용": {
+      "passed": true,
+      "value": "{'진입 인원': 24, '진입 완료 시 생존': 15, '포드': 0, '격납고 대기': 0, '강습선 상태': ['<OVShuttleState.DELIVERED: 3>', '<OVShuttleState.DELIVERED: 3>']}"
+    },
+    "강습선 생존자 원함 귀환": {
+      "passed": true,
+      "value": "{'진입 인원': 24, '진입 완료 시 생존': 15, '포드': 0, '격납고 대기': 0, '강습선 상태': ['<OVShuttleState.DELIVERED: 3>', '<OVShuttleState.DELIVERED: 3>'], '복귀 결과': '<OVPlaySceneResult.PARTIAL_VICTORY: 7>', '귀환 강습선': 2, '실제 귀환 인원': 15, '사망': 9}"
+    },
+    "혼합 패널 입력 ArenaFight": {
+      "passed": true,
+      "value": "<Struct 'Vector2D' (0x000001A2B9734C60) {x: 387.000000, y: 201.500000}>"
+    },
+    "혼합 패널 입력 ArenaWaveB": {
+      "passed": true,
+      "value": "<Struct 'Vector2D' (0x000001A2B97343E0) {x: 387.000000, y: 236.500000}>"
+    },
+    "혼합 실제 모함 격납고": {
+      "passed": true,
+      "value": "2"
+    },
+    "혼합 조기 후속 출발 차단": {
+      "passed": true,
+      "value": "30.0"
+    },
+    "혼합 동일 목표 두 팀": {
+      "passed": true,
+      "value": "{'활동팀': 2, '명령': '격납고에서 강습선 출발', '강습선': [('<OVShuttleState.APPROACHING: 1>', '', \"<Struct 'Vector' (0x000001A2B176AE00) {x: -7129.400444, y: -907.291678, z: 3788.196386}>\")], '승객': {'<OVPassengerState.ABOARD: 0>': 32, '<OVPassengerState.INSIDE_TARGET: 2>': 12, '<OVPassengerState.IN_SHUTTLE: 3>': 12}}"
+    },
+    "혼합 실제 24명 진입": {
+      "passed": true,
+      "value": "{'진입 인원': 24, '진입 완료 시 생존': 23, '포드': 12, '격납고 대기': 1, '강습선 상태': ['<OVShuttleState.DELIVERED: 3>']}"
+    },
+    "혼합 영웅·일반병 구성": {
+      "passed": true,
+      "value": "8"
+    },
+    "혼합 원 수송수단 사용": {
+      "passed": true,
+      "value": "{'진입 인원': 24, '진입 완료 시 생존': 23, '포드': 12, '격납고 대기': 1, '강습선 상태': ['<OVShuttleState.DELIVERED: 3>']}"
+    },
+    "혼합 생존자 원함 귀환": {
+      "passed": true,
+      "value": "{'진입 인원': 24, '진입 완료 시 생존': 23, '포드': 12, '격납고 대기': 1, '강습선 상태': ['<OVShuttleState.DELIVERED: 3>'], '복귀 결과': '<OVPlaySceneResult.PARTIAL_VICTORY: 7>', '귀환 강습선': 2, '실제 귀환 인원': 15, '사망': 9}"
+    },
+    "영웅 없는 일반병 강습선 출발": {
+      "passed": true,
+      "value": "12"
+    }
+  },
+  "routes": {
+    "포드": {
+      "진입 인원": 24,
+      "진입 완료 시 생존": 24,
+      "포드": 24,
+      "격납고 대기": 2,
+      "강습선 상태": [],
+      "복귀 결과": "<OVPlaySceneResult.PARTIAL_VICTORY: 7>",
+      "귀환 강습선": 2,
+      "실제 귀환 인원": 24,
+      "사망": 0
+    },
+    "강습선": {
+      "진입 인원": 24,
+      "진입 완료 시 생존": 15,
+      "포드": 0,
+      "격납고 대기": 0,
+      "강습선 상태": [
+        "<OVShuttleState.DELIVERED: 3>",
+        "<OVShuttleState.DELIVERED: 3>"
+      ],
+      "복귀 결과": "<OVPlaySceneResult.PARTIAL_VICTORY: 7>",
+      "귀환 강습선": 2,
+      "실제 귀환 인원": 15,
+      "사망": 9
+    },
+    "혼합": {
+      "진입 인원": 24,
+      "진입 완료 시 생존": 23,
+      "포드": 12,
+      "격납고 대기": 1,
+      "강습선 상태": [
+        "<OVShuttleState.DELIVERED: 3>"
+      ],
+      "복귀 결과": "<OVPlaySceneResult.PARTIAL_VICTORY: 7>",
+      "귀환 강습선": 2,
+      "실제 귀환 인원": 15,
+      "사망": 9
+    }
+  },
+  "passed": true
+}
