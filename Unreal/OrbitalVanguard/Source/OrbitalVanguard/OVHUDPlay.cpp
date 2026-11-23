@@ -5,6 +5,7 @@
 #include "OVCalibration.h"
 #include "OVController.h"
 #include "OVPlayScenarioSubsystem.h"
+#include "OVTransportSubsystem.h"
 #include "OVLogisticsSubsystem.h"
 #include "OVShip.h"
 #include "OVShipSystemsComponent.h"
@@ -223,7 +224,7 @@ void AOVHUD::DrawPlayHUD()
  if(!bSceneMenuOpen && Play && Play->GetActiveDefinition()) {
   const bool Evac = Play->ActiveId == TEXT("Evacuation");
   const bool Sandbox=Play->ActiveId==TEXT("Sandbox");
-  DrawRect(PlayPanel,0,63,Sandbox?426:508,Sandbox ? (Play->bSandboxHullMenu ? 333 : 150) : Evac ? 156 : 126);
+  DrawRect(PlayPanel,0,63,Sandbox?426:508,Play->MissionPanelHeight());
   DrawRect(PlayAccent,0,63,4,Sandbox?140:110);
   if(!Sandbox){
    const FLinearColor Sig=Evac?FLinearColor(1,.70f,.32f):PlayAccent;
@@ -266,16 +267,33 @@ void AOVHUD::DrawPlayHUD()
    }
   } else {
    DrawText(Play->GetStatus(),PlayInk,14,100,GEngine->GetMediumFont());
-   DrawRect(FLinearColor(.12f,.21f,.29f),14,Evac?180:151,475,1);
-   DrawText(FitCommandLabel(this,GEngine->GetSmallFont(),Play->GetActiveDefinition()->Objective,470),PlayAccent,14,Evac?190:160,GEngine->GetSmallFont());
+   if(Play->ActiveId!=TEXT("HeroArena"))DrawRect(FLinearColor(.12f,.21f,.29f),14,Evac?180:151,475,1);
+   if(Play->ActiveId!=TEXT("HeroArena"))DrawText(FitCommandLabel(this,GEngine->GetSmallFont(),Play->GetActiveDefinition()->Objective,470),PlayAccent,14,Evac?190:160,GEngine->GetSmallFont());
   }
   if(Play->ActiveId==TEXT("HeroArena") && !Play->bArenaStarted) {
    Button(TEXT("ArenaPrev"),TEXT("◀"),12,122,30);
    Button(TEXT("ArenaNext"),TEXT("다음 ▶"),45,122,60);
    Button(TEXT("ArenaAdd"),TEXT("1명 배치"),108,122,92);
    Button(TEXT("ArenaFill"),TEXT("빈자리 채우기"),204,122,116);
-   Button(TEXT("ArenaFight"),TEXT("강습 시작"),324,122,95,true);
+   Button(TEXT("ArenaQuota"),FString::Printf(TEXT("팀 영웅 %d"),Play->ArenaHeroQuota),324,122,95);
    Button(TEXT("ArenaLevel"),TEXT("생성 레벨"),423,122,76);
+  }
+  if(Play->ActiveId==TEXT("HeroArena") && Play->Result==EOVPlaySceneResult::Running){
+   const TCHAR* Modes[]={TEXT("개인 포드만"),TEXT("강습선만"),TEXT("혼합 · A 포드 / B 강습선")};
+   if(!Play->bArenaStarted)Button(TEXT("ArenaRoute"),Modes[Play->ArenaRoute],12,154,186);
+   else DrawText(Modes[Play->ArenaRoute],PlayAccent,12,156,GEngine->GetSmallFont());
+   const float Wait=PC->Ships.Num()>=2?PC->Transport->NextTeamDelay(PC->Ships[1]):0;
+   DrawText(Wait>.001f?FString::Printf(TEXT("다음 팀까지 %d초"),FMath::CeilToInt(Wait)):TEXT("목표당 두 팀 · 출발 간격 30초"),PlayInk,210,161,GEngine->GetSmallFont());
+   for(int32 I=0;I<2;++I){
+    const auto& Team=Play->ArenaWaves[I];
+    const float Row=188+I*35;
+    DrawText(FString(I?TEXT("B팀  "):TEXT("A팀  "))+Play->ArenaWaveStatus(I),PlayInk,12,Row+5,GEngine->GetSmallFont());
+    if(!Team.Sent)Button(I?TEXT("ArenaWaveB"):TEXT("ArenaFight"),TEXT("출발"),354,Row,66,Wait<=.001f);
+    else{
+     Button(I?TEXT("ArenaViewB"):TEXT("ArenaViewA"),TEXT("지휘"),354,Row,66);
+     Button(I?TEXT("ArenaReturnB"):TEXT("ArenaReturnA"),TEXT("철수"),426,Row,66);
+    }
+   }
   }
   if (Play->ActiveId == TEXT("Logistics")) {
    DrawText(Play->GetConvoyStatus(), PlayInk, 10, 127, GEngine->GetSmallFont());
@@ -376,7 +394,7 @@ void AOVHUD::DrawPlayHUD()
    if(PC->Interior){
     const int32 Count=PC->Interior->CountEmbarkedHeroes(S,S->Systems->FactionId);
     const bool Limited=Play && Play->GetActiveDefinition();
-    const FString Berths=Limited?FString::Printf(TEXT("%d/%d"),Count,Play->CurrentHeroBerths()):FString::FromInt(Count);
+    const FString Berths=Limited?FString::Printf(TEXT("%d/%d"),Count,Play->CurrentHeroBerths(S)):FString::FromInt(Count);
     const FLinearColor Gold=Count?FLinearColor(1,.83f,.40f):FLinearColor(.64f,.69f,.73f);
     float TW,TH; GetTextSize(Berths,TW,TH,GEngine->GetSmallFont());
     const float BX=X+CardWidth-TW-20;

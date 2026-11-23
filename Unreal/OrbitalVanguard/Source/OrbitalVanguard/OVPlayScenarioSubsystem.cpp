@@ -46,7 +46,7 @@ const FOVPlaySceneDefinition Scenes[] = {
     {TEXT("Evacuation"), TEXT("공습 생존·퇴각"), TEXT("공습을 버티고 함선을 초광속으로 이탈시키세요."),
      EOVPlaySceneKind::Evacuation, 0, {{TEXT("corvette"),3},{TEXT("air_defense"),2},{TEXT("battleship"),1},
      {TEXT("carrier"),1,20},{TEXT("dreadnought"),1}}, true, 120.f, 0.f, EOVSpaceHazardKind::None},
-    {TEXT("HeroArena"), TEXT("영웅 전투 시험장"), TEXT("10명을 편성하고 개인 포드로 적 함교를 점령하세요."),
+    {TEXT("HeroArena"), TEXT("영웅 전투 시험장"), TEXT("영웅과 일반 병력을 편성해 두 팀으로 적 함교를 점령하세요."),
      EOVPlaySceneKind::HeroArena, 0, {{TEXT("dreadnought"),1}}, true, 0.f, 0.f, EOVSpaceHazardKind::None},
     {TEXT("Sandbox"), TEXT("자유 전투 시험장"), TEXT("양측 함선을 원하는 위치에 배치하고 교전하세요."),
      EOVPlaySceneKind::Sandbox, 0, {}, true, 120.f, 0.f, EOVSpaceHazardKind::None}
@@ -238,6 +238,11 @@ void UOVPlayScenarioSubsystem::Deinitialize()
 }
 void UOVPlayScenarioSubsystem::Clear()
 {
+    for(auto& Wave:ArenaWaves){
+        if(Wave.Shuttle.IsValid() && (!Owner.IsValid() || !Owner->Ships.Contains(Wave.Shuttle.Get())))Wave.Shuttle->Destroy();
+        Wave=FArenaWave{};
+    }
+    ArenaRoute=0;ArenaHeroQuota=4;
     ArenaPicked.Reset(); ArenaCandidate=0;ArenaLevel=1; bArenaStarted=false;
     EndSandboxPlacement();
     bSandboxHullMenu = false;
@@ -335,13 +340,14 @@ bool UOVPlayScenarioSubsystem::Start(AOVController& Controller, FName Id)
         bArenaOwnsRoster=true;
         const auto& Definitions=Controller.GetGameInstance()->GetSubsystem<UOVHeroSubsystem>()->Definitions;
         ArenaCandidate=FMath::Max(0,Definitions.IndexOfByPredicate([](const auto& D){return D.Id==TEXT("M02");}));
-        for(int32 I=0; I<ArenaTeamSize; ++I)
-            if(!AddArenaHero(Controller,1,I%4))
+        for(int32 I=0; I<ArenaHeroBerths; ++I)
+            if(!AddArenaHero(Controller,1,Definitions.IndexOfByPredicate([I](const auto& D){return D.Id==FName(*FString::Printf(TEXT("G%02d"),1+I%4));})))
             {
                 Controller.ResetPlayScenarioSession(false);
                 Controller.LastAction=TEXT("상대 시험 편성 실패 · 로스터 정원과 강습 시설을 확인하세요");
                 return false;
             }
+        if(!PrepareArenaForces(Controller)){Controller.ResetPlayScenarioSession(false);Controller.LastAction=TEXT("강습 시험 편성 또는 격납고 준비 실패");return false;}
     }
     else for(int32 Side=0;Side<FactionCount;++Side) AssignScenarioHeroes(Controller,Side);
     if (bEvacuation)
@@ -373,7 +379,7 @@ void UOVPlayScenarioSubsystem::SelectArenaHero(AOVController& PC,FName Definitio
     const int32 Index=Roster->Definitions.IndexOfByPredicate([&](const auto& D){return D.Id==DefinitionId;});
     if(Index==INDEX_NONE)return;
     ArenaCandidate=Index;
-    if(IssuedHeroes[0]>=ArenaTeamSize){PC.LastAction=TEXT("시험 편성 10명이 모두 배치되었습니다");return;}
+    if(IssuedHeroes[0]>=ArenaHeroBerths){PC.LastAction=TEXT("시험 편성 10명이 모두 배치되었습니다");return;}
     if(AddArenaHero(PC,0,Index))PC.LastAction=Roster->Definitions[Index].Name+TEXT(" 배치");
 }
 
@@ -390,7 +396,7 @@ FString UOVPlayScenarioSubsystem::ArenaCandidateLabel() const
 
 bool UOVPlayScenarioSubsystem::AddArenaHero(AOVController& PC,int32 Side,int32 Choice)
 {
-    if(!PC.Ships.IsValidIndex(Side) || IssuedHeroes[Side]>=ArenaTeamSize) return false;
+    if(!PC.Ships.IsValidIndex(Side) || IssuedHeroes[Side]>=ArenaHeroBerths) return false;
     auto* Roster=PC.GetGameInstance()->GetSubsystem<UOVHeroSubsystem>();
     const auto Pool=ArenaOwnedCandidates();
     const FOVHeroRecord* Source=nullptr;
@@ -399,7 +405,7 @@ bool UOVPlayScenarioSubsystem::AddArenaHero(AOVController& PC,int32 Side,int32 C
         Source=ArenaSavedRoster.FindByPredicate([&](const auto& H){return H.HeroId==Pool[OwnedIndex];});
     const auto* D=Source?Roster->Definition(Source->DefinitionId):
         Roster->Definitions.IsValidIndex(Choice)?&Roster->Definitions[Choice]:nullptr;
-    if(!D) return false;
+    if(!D || (Side!=0 && !D->Id.ToString().StartsWith(TEXT("G0")))) return false;
     if(!D->Passive.IsEmpty() && Roster->Heroes.ContainsByPredicate([&](const auto& H){return H.DefinitionId==D->Id && H.FactionId==Side;}))
     {PC.LastAction=TEXT("같은 고유 영웅은 한 번만 배치할 수 있습니다");return false;}
     const FGuid Id=Roster->CreateRosterEntry(Side,D->Role,Source?Source->Name:D->Name,true);
@@ -426,6 +432,28 @@ bool UOVPlayScenarioSubsystem::AddArenaHero(AOVController& PC,int32 Side,int32 C
     ScenarioHeroes.Add(Id); ++IssuedHeroes[Side]; return true;
 }
 
+float UOVPlayScenarioSubsystem::MissionPanelHeight() const
+{
+    if(ActiveId==TEXT("Sandbox"))return bSandboxHullMenu?333.f:150.f;
+    if(ActiveId==TEXT("HeroArena"))return 203.f;
+    if(ActiveId==TEXT("Evacuation"))return 156.f;
+    return 126.f;
+}
+
+int32 UOVPlayScenarioSubsystem::CurrentHeroBerths(const AOVShip* Ship) const
+{
+    if(!Ship || !Ship->Systems || !Ship->Systems->Layout)return 0;
+    if(ActiveId==TEXT("HeroArena") && Ship->HullDefinitionId==TEXT("dreadnought"))return ArenaHeroBerths;
+    if(Ship->HullDefinitionId==TEXT("assault"))return 4;
+    switch(Ship->Systems->Layout->HullSizeClass){
+        case EOVHullSizeClass::Small:return 1;
+        case EOVHullSizeClass::Medium:return 2;
+        case EOVHullSizeClass::Large:return 4;
+        case EOVHullSizeClass::ExtraLarge:return 6;
+        default:return Ship->Systems->Layout->bSmallHull?1:2;
+    }
+}
+
 void UOVPlayScenarioSubsystem::AssignScenarioHeroes(AOVController& PC,int32 Side)
 {
     auto* Roster=PC.GetGameInstance()?PC.GetGameInstance()->GetSubsystem<UOVHeroSubsystem>():nullptr;
@@ -449,7 +477,7 @@ void UOVPlayScenarioSubsystem::AssignScenarioHeroes(AOVController& PC,int32 Side
         return A.Systems->Layout->HullSizeClass>B.Systems->Layout->HullSizeClass;
     });
     for(AOVShip* Ship:Hosts){
-        int32 Berths=HeroBerthsPerShip-Interior->CountEmbarkedHeroes(Ship,Side);
+        int32 Berths=CurrentHeroBerths(Ship)-Interior->CountEmbarkedHeroes(Ship,Side);
         while(Berths>0 && IssuedHeroes[Side]<Quota && Roster->CountDeployed(Side)<15){
             const int32 Index=IssuedHeroes[Side];
             static const TCHAR* Roles[]={TEXT("돌격"),TEXT("사수"),TEXT("지원"),TEXT("지휘")};
@@ -501,22 +529,22 @@ bool UOVPlayScenarioSubsystem::HandleAction(AOVController& Controller, FName Act
 {
     if(ActiveId==TEXT("HeroArena") && Action.ToString().StartsWith(TEXT("Arena")))
     {
-        if(bArenaStarted || Controller.Ships.Num()!=2) return true;
+        if(Controller.Ships.Num()<2 || Result!=EOVPlaySceneResult::Running)return true;
+        if(Action==TEXT("ArenaFight") || Action==TEXT("ArenaWaveB")){
+            if(SendArenaWave(Controller,Action==TEXT("ArenaFight")?0:1)){bArenaStarted=true;Controller.bSimulationPaused=false;}
+            return true;
+        }
+        if(Action==TEXT("ArenaReturnA") || Action==TEXT("ArenaReturnB")){RecallArenaWave(Controller,Action==TEXT("ArenaReturnA")?0:1);return true;}
+        if(bArenaStarted)return true;
+        if(Action==TEXT("ArenaRoute"))ArenaRoute=(ArenaRoute+1)%3;
+        if(Action==TEXT("ArenaQuota"))ArenaHeroQuota=(ArenaHeroQuota+1)%5;
         const int32 Choices=Controller.GetGameInstance()->GetSubsystem<UOVHeroSubsystem>()->Definitions.Num()+ArenaOwnedCandidates().Num();
         if(Choices>0 && (Action==TEXT("ArenaNext") || Action==TEXT("ArenaPrev")))
             ArenaCandidate=(ArenaCandidate+Choices+(Action==TEXT("ArenaNext")?1:-1))%Choices;
         if(Action==TEXT("ArenaLevel"))ArenaLevel=ArenaLevel==1?5:ArenaLevel==5?10:ArenaLevel==10?15:ArenaLevel==15?20:1;
         if(Action==TEXT("ArenaAdd")) AddArenaHero(Controller,0,ArenaCandidate);
         if(Action==TEXT("ArenaFill"))
-            while(IssuedHeroes[0]<ArenaTeamSize && AddArenaHero(Controller,0,IssuedHeroes[0]%4)) {}
-        if(Action==TEXT("ArenaFight") && IssuedHeroes[0]==ArenaTeamSize)
-        {
-            AOVShip* Home=Controller.Ships[0]; AOVShip* Target=Controller.Ships[1];
-            for(const auto& Unit:Controller.Interior->Units)
-                if(Unit.FactionId==0) Controller.Interior->SetHeroBoardingAssignment(Unit.UnitId,true);
-            if(Controller.Transport->LaunchPods(Home,Target)==ArenaTeamSize) { bArenaStarted=true; Controller.bSimulationPaused=false; }
-            else Controller.LastAction=Controller.Transport->LastMessage;
-        }
+            while(IssuedHeroes[0]<ArenaHeroBerths && AddArenaHero(Controller,0,IssuedHeroes[0]%4)) {}
         return true;
     }
     if (Action == TEXT("PlaySceneExit"))
@@ -595,23 +623,7 @@ void UOVPlayScenarioSubsystem::Step(float Delta)
 
     if(Definition->Kind==EOVPlaySceneKind::HeroArena)
     {
-        if(!bArenaStarted || Controller->Ships.Num()!=2) return;
-        ElapsedSeconds+=Delta;
-        AOVShip* Target=Controller->Ships[1];
-        if(Target->Systems->FactionId==0) Finish(*Controller,EOVPlaySceneResult::Victory,TEXT("적 함교 점령"));
-        else {
-            int32 Survivors=0, Returned=0;
-            for(const auto& Unit:Controller->Interior->Units){
-                if(Unit.FactionId!=0 || Unit.State==EOVInteriorState::Dead || Unit.State==EOVInteriorState::RescueWaiting)continue;
-                ++Survivors;
-                if(Unit.Ship==Controller->Ships[0] && Unit.State!=EOVInteriorState::InTransit &&
-                    Controller->Transport->Pods.ContainsByPredicate([&](const auto& Pod){
-                        return Pod.PersonId==Unit.PersonId && Pod.State==EOVPodFlightState::Recovered;
-                    }))++Returned;
-            }
-            if(!Survivors)Finish(*Controller,EOVPlaySceneResult::Defeat,TEXT("작전 가능한 강습대 없음"));
-            else if(Returned==Survivors)Finish(*Controller,EOVPlaySceneResult::PartialVictory,TEXT("생존 영웅 원 포드 철수 완료"));
-        }
+        StepArena(*Controller,Delta);
         return;
     }
     ElapsedSeconds += Delta;
@@ -774,8 +786,8 @@ FString UOVPlayScenarioSubsystem::GetStatus() const
         return Resolution;
     }
     if(ActiveId==TEXT("HeroArena"))
-        return bArenaStarted ? TEXT("강습 진행 · 선내 지도에서 적 함교를 목표로 지정하세요") :
-            FString::Printf(TEXT("아군 %d / %d   ·   %s   ·   시험 생성 Lv.%d"),IssuedHeroes[0],ArenaTeamSize,*ArenaCandidateLabel(),ArenaLevel);
+        return bArenaStarted ? TEXT("강습 진행 · 팀 지휘로 시설을 선택하세요") :
+            FString::Printf(TEXT("시험함 상주 영웅 %d / %d   ·   %s   ·   Lv.%d"),IssuedHeroes[0],ArenaHeroBerths,*ArenaCandidateLabel(),ArenaLevel);
     if (ActiveId == TEXT("Evacuation")) return GetEvacuationStatus(nullptr);
     if (ActiveId == TEXT("Logistics"))
         return FString::Printf(TEXT("납품 %d / %.0f   ·   %s"), FMath::FloorToInt(DeliveredCargo), EscortQuota(),

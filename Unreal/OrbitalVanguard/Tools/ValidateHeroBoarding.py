@@ -40,7 +40,8 @@ def run(pc):
         pc.action("Developer")
     original_ships = list(p(pc, "ships")); target = original_ships[2]
     target_pos = target.get_actor_location()
-    spawned = list(dev.spawn_ships("assault", 0, 1, target_pos + unreal.Vector(-15000, 0, 0), 0, 0, 0, False, False))
+    # 지휘 보직과 포드 발사 시설이 공존하는 항모를 사용한다. 강습선은 수송 영웅 보직 금지.
+    spawned = list(dev.spawn_ships("carrier", 0, 1, target_pos + unreal.Vector(-15000, 0, 0), 0, 0, 0, False, False))
     check("HB-EXPLICIT-TEST-ORIGIN", len(spawned) == 1, p(dev, "last_message"))
     origin = spawned[0]; interior = p(pc, "interior"); transport = p(pc, "transport")
     check("HB-TARGET-NOT-KNOWN-BEFORE-ENTRY", not interior.is_structure_known(0, target))
@@ -71,6 +72,8 @@ def run(pc):
     check("HB-QUEUED-CANCELLED-PERSON-ABOARD", p(cancelled, "state") == unreal.OVPodFlightState.CANCELLED
           and p(transport.get_person(person_id), "state") == unreal.OVPassengerState.ABOARD)
     check("HB-REASSIGN", interior.set_hero_boarding_assignment(unit, True))
+    check("HB-SAME-TARGET-INTERVAL", transport.launch_pods(origin, target) == 0)
+    advance(interior, transport, 30.0)
     check("HB-REUSE-CANCELLED-POD", transport.launch_pods(origin, target) == 1 and len(p(transport, "pods")) == 1
           and p(list(p(transport, "pods"))[0], "pod_id") == original_pod_id)
     advance(interior, transport, .1)

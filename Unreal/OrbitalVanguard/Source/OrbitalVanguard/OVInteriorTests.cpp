@@ -300,7 +300,10 @@ bool FOVInteriorPresenceSources::RunTest(const FString&)
     R.Interior->Simulate(.32f);
     TestTrue(TEXT("진입 후 구조 공개"),R.Interior->IsStructureKnown(0,R.Target));
     TestFalse(TEXT("구조 공개가 시야 밖 적 영웅 공개를 뜻하지 않음"),R.Interior->CanObserve(0,Hidden));
-    const auto Dev=R.Transport->AddDevPassengers(R.Origin,0,1);R.Transport->LaunchPods(R.Origin,R.Target);R.Advance(.5f);
+    const auto Dev=R.Transport->AddDevPassengers(R.Origin,0,1);
+    TestEqual(TEXT("두 번째 팀의 조기 출발 차단"),R.Transport->LaunchPods(R.Origin,R.Target),0);
+    R.Transport->Simulate(30);
+    TestEqual(TEXT("간격 경과 후 DEV 팀 출발"),R.Transport->LaunchPods(R.Origin,R.Target),1);R.Advance(.5f);
     R.Transport->MarkRuntimePersonDead(R.Interior->GetUnit(Ids[0]).PersonId,Ids[0]);R.Advance(.1f);
     TestTrue(TEXT("실제 인원 사망 뒤 명시 DEV 잔류만 보호 유지"),R.Target->Systems->HasInteriorPresence(0));
     TestTrue(TEXT("실제 인원이 없으면 DEV 출처 표시 복귀"),R.Target->Systems->IsInteriorDeveloperInput(0));
@@ -881,4 +884,22 @@ bool FOVHeroTacticalEffectsTest::RunTest(const FString&)
     return true;
 }
 
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(FOVHeroGarrisonLimits,"OrbitalVanguard.Interior.HeroGarrisonSeparateFromTroopCapacity",EAutomationTestFlags::EditorContext|EAutomationTestFlags::EngineFilter)
+bool FOVHeroGarrisonLimits::RunTest(const FString&)
+{
+    struct FCase { EOVHullSizeClass Size; const TCHAR* Id; int32 Heroes; };
+    const FCase Cases[]={{EOVHullSizeClass::Small,TEXT("corvette"),1},{EOVHullSizeClass::Medium,TEXT("vector"),2},
+        {EOVHullSizeClass::Large,TEXT("carrier"),4},{EOVHullSizeClass::ExtraLarge,TEXT("dreadnought"),6},
+        {EOVHullSizeClass::Small,TEXT("assault"),4}};
+    for(const FCase& Case:Cases){
+        OVInteriorTest::FRange R;
+        R.Origin->HullDefinitionId=Case.Id;
+        R.Origin->Systems->Layout->HullSizeClass=Case.Size;
+        for(int32 I=0;I<Case.Heroes;++I)
+            TestTrue(Case.Id,R.Interior->RegisterUnit(R.Origin,0,EOVInteriorRole::Melee,NAME_None)>0);
+        TestEqual(TEXT("상주 정원 다음 영웅은 배치할 수 없음"),R.Interior->RegisterUnit(R.Origin,0,EOVInteriorRole::Support,NAME_None),0);
+        TestTrue(TEXT("일반병은 상주 영웅 자리를 쓰지 않음"),R.Interior->RegisterUnit(R.Origin,0,EOVInteriorRole::Trooper,NAME_None)>0);
+    }
+    return true;
+}
 #endif

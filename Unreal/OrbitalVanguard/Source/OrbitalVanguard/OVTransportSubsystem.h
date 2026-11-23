@@ -133,6 +133,10 @@ public:
     UFUNCTION(BlueprintCallable) bool SetRuntimeBoardingAssignment(int32 PersonId, int32 UnitId, bool bAssigned);
     UFUNCTION(BlueprintCallable) bool CancelRuntimeRecovery(int32 PersonId, int32 UnitId, AOVShip* InteriorShip);
     UFUNCTION(BlueprintCallable) int32 LaunchPods(AOVShip* Origin, AOVShip* Target);
+    UFUNCTION(BlueprintCallable) int32 LaunchPodTeam(AOVShip* Origin,AOVShip* Target,const TArray<int32>& People);
+    UFUNCTION(BlueprintPure) int32 ActiveTeamsAt(AOVShip* Target) const;
+    UFUNCTION(BlueprintPure) float NextTeamDelay(AOVShip* Target) const;
+    void RecallTeamPods(const TArray<int32>& People);
     UFUNCTION(BlueprintCallable) void RecallPods(AOVShip* Origin);
     // DEV supplied confirmation of reaching original entry point. Interior pathfinding is not implemented.
     UFUNCTION(BlueprintCallable) bool DevReturnPersonToEntry(int32 PersonId);
@@ -149,6 +153,11 @@ private:
     UPROPERTY() TArray<TObjectPtr<AOVShip>> ScenarioShips;
     struct FPresence { TWeakObjectPtr<AOVShip> Ship; int32 Faction; bool Baseline; bool BaselineObjective; bool BaselineDev; };
     TArray<FPresence> OwnedPresence;
+    struct FTeamFlight { TWeakObjectPtr<AOVShip> Target; TArray<int32> People; };
+    TArray<FTeamFlight> TeamFlights;
+    TMap<TWeakObjectPtr<AOVShip>,double> LastTeamLaunch;
+    bool CanSendTeam(AOVShip* Target,const TArray<int32>& People);
+    void RecordTeam(AOVShip* Target,const TArray<int32>& People);
     int32 NextPersonId = 1;
     int32 NextPodId = 1;
     double Accumulator = 0;

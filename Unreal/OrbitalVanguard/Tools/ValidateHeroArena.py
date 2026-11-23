@@ -35,13 +35,17 @@ def run():
     for x in ships:
         systems=p(x,"systems")
         check(str(x.get_name())+" 무장·쉴드 해제",len(p(p(systems,"layout"),"weapon_mounts"))==0 and p(systems,"max_shield")==0, p(systems,"max_shield"))
-    check("편성 전 적 수호대",len(units())==10,len(units()))
+    def hero(x): return p(x,"role")!=u.OVInteriorRole.TROOPER
+    defenders=[x for x in units() if p(x,"faction_id")==1]
+    check("편성 전 적 수호대",len(defenders)==22 and sum(hero(x) for x in defenders)==10,len(defenders))
+    check("적 AI 일반 영웅만 배치",{str(p(x,"definition_id")) for x in defenders if hero(x)}=={"G01","G02","G03","G04"},[p(x,"name") for x in defenders if hero(x)])
+    check("핵심 세 시설의 방어 분대",sorted(sum(p(x,"node_id")==node for x in defenders if not hero(x)) for node in {p(x,"node_id") for x in defenders if not hero(x)})==[4,4,4],12)
     pc.action("ArenaNext")
     pc.action("ArenaPrev")
     pc.action("ArenaAdd")
     pc.action("ArenaFill")
     pc.action("ArenaFill")
-    check("양측 10명과 고유 개인 ID",len(units())==20 and len({str(p(x,"hero_id")) for x in units()})==20,len(units()))
+    check("양측 10명과 고유 개인 ID",sum(hero(x) for x in units())==20 and len({str(p(x,"hero_id")) for x in units() if hero(x)})==20,len(units()))
     iris=next(x for x in units() if str(p(x,"definition_id"))=="M02")
     check("이리스 정의와 런타임 연결",p(iris,"name")=="이리스 베인",p(iris,"name"))
     for name in ["standing","portrait","sd"]:
@@ -89,7 +93,7 @@ def run():
     yield from capture("HeroArenaDeck")
     hud.handle_interior_action("InteriorClose")
     pc.action("ArenaFight")
-    check("원 포드 10기",len(p(p(pc,"transport"),"pods"))==10,len(p(p(pc,"transport"),"pods")))
+    check("혼성 강습팀 개인 포드 12기",len(p(p(pc,"transport"),"pods"))==12,len(p(p(pc,"transport"),"pods")))
     bridge=next(p(x,"slot_id") for x in p(p(p(ships[1],"systems"),"layout"),"slots") if p(x,"facility")==u.OVFacilityType.BRIDGE)
     ordered=set()
     for i in range(2400):
@@ -99,8 +103,8 @@ def run():
             uid=p(x,"unit_id")
             if uid not in ordered and p(x,"faction_id")==0 and p(x,"ship")==ships[1]:
                 if interior.issue_order([uid],u.OVInteriorOrder.CAPTURE,bridge): ordered.add(uid)
-        if len(ordered)==10 and sum(p(x,"hits") for x in units())>0:break
-    check("열 명 실제 진입 및 이동 명령",len(ordered)==10,len(ordered))
+        if len(ordered)==12 and sum(p(x,"hits") for x in units())>0:break
+    check("혼성 팀 12명 실제 진입 및 이동 명령",len(ordered)==12,len(ordered))
     hits=sum(p(x,"hits") for x in units())
     check("선내 실제 명중",hits>0,hits)
     for i in range(1200):
@@ -116,18 +120,18 @@ def run():
     pc.leave_play_scenario()
     check("원 명단 복원",[str(p(h,"hero_id")) for h in heroes.get_heroes(0)]==owned_before,owned_before)
     batches=[]
-    for offset in range(0,len(ids),10):
+    for offset in range(0,len(ids),4):
         assert pc.start_play_scenario("HeroArena")
         position=ids.index("M02")
         pc.action("ArenaLevel")
         pc.action("ArenaLevel")
-        for index in range(offset,min(offset+10,len(ids))):
+        for index in range(offset,min(offset+4,len(ids))):
             while position!=index:
                 pc.action("ArenaNext")
                 position=(position+1)%len(ids)
             pc.action("ArenaAdd")
-        us=[x for x in units() if p(x,"faction_id")==0]
-        expected=ids[offset:offset+10]
+        us=[x for x in units() if hero(x) and p(x,"faction_id")==0]
+        expected=ids[offset:offset+4]
         check("정의별 실제 편성 "+str(offset),[str(p(x,"definition_id")) for x in us]==expected and all(p(x,"hero_level")==10 for x in us),expected)
         if len(expected)<10:pc.action("ArenaFill")
         pc.action("ArenaFight")
@@ -146,13 +150,13 @@ def run():
         "평균":statistics.mean(frames),"p95":sorted(frames)[227],"최대":max(frames)}
     ship_pair=list(p(pc,"ships"))
     all_friendly=[p(x,"unit_id") for x in units() if p(x,"faction_id")==0 and p(x,"ship")==ship_pair[1]]
-    check("실제 철수 명령",len(all_friendly)==10 and interior.issue_order(all_friendly,u.OVInteriorOrder.RETREAT,""),all_friendly)
+    check("실제 철수 명령",len(all_friendly)==12 and interior.issue_order(all_friendly,u.OVInteriorOrder.RETREAT,""),all_friendly)
     scenario=pc.get_play_scenario()
     for _ in range(1800):
         pc.step_simulation(.05)
         if p(scenario,"result")!=u.OVPlaySceneResult.RUNNING:break
     returned=[x for x in p(p(pc,"transport"),"pods") if p(x,"state")==u.OVPodFlightState.RECOVERED]
-    check("개인 포드 전원 회수와 철수 결과",len(returned)==10 and p(scenario,"result")==u.OVPlaySceneResult.PARTIAL_VICTORY,len(returned))
+    check("개인 포드 전원 회수와 철수 결과",len(returned)==12 and p(scenario,"result")==u.OVPlaySceneResult.PARTIAL_VICTORY,len(returned))
     assert pc.start_play_scenario("HeroArena")
     for _ in range(4):pc.action("ArenaLevel")
     pc.action("ArenaAdd")
@@ -163,13 +167,14 @@ def run():
     landing_orders=set()
     for step in range(7200):
         pc.step_simulation(.05)
+        if step==620:pc.action("ArenaWaveB")
         if step%10==0:
             for x in units():
                 uid=p(x,"unit_id")
                 if p(x,"faction_id")==0 and p(x,"ship")==enemy_ship and uid not in landing_orders:
                     if interior.issue_order([uid],u.OVInteriorOrder.CAPTURE,objective):landing_orders.add(uid)
         if p(scenario,"result")!=u.OVPlaySceneResult.RUNNING:break
-    check("실제 함교 장악과 승리 결산",len(landing_orders)==10 and p(p(enemy_ship,"systems"),"faction_id")==0 and p(scenario,"result")==u.OVPlaySceneResult.VICTORY,
+    check("실제 함교 장악과 승리 결산",len(landing_orders)>=12 and p(p(enemy_ship,"systems"),"faction_id")==0 and p(scenario,"result")==u.OVPlaySceneResult.VICTORY,
           {"강습":len(landing_orders),"게임초":round(step*.05,2),"결과":str(p(scenario,"result"))})
     clocks=[]
     for speed in [1,2,3]:
@@ -187,7 +192,7 @@ def run():
         ship_pair=list(p(pc,"ships"))
         inside=[p(x,"unit_id") for x in units() if p(x,"faction_id")==0 and p(x,"ship")==ship_pair[1]]
         target_bridge=next(p(x,"slot_id") for x in p(p(p(ship_pair[1],"systems"),"layout"),"slots") if p(x,"facility")==u.OVFacilityType.BRIDGE)
-        assert len(inside)==10 and interior.issue_order(inside,u.OVInteriorOrder.CAPTURE,target_bridge)
+        assert len(inside)==12 and interior.issue_order(inside,u.OVInteriorOrder.CAPTURE,target_bridge)
         for _ in range(1200//speed):pc.step_simulation(1/60)
         friendly=[x for x in units() if p(x,"faction_id")==0]
         clocks.append({"배속":speed,"시계":p(interior,"game_time")-clock0,"명중":sum(p(x,"hits") for x in friendly),

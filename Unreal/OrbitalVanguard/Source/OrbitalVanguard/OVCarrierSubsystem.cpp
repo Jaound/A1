@@ -299,6 +299,21 @@ void UOVCarrierSubsystem::SetCapacityBonus(AOVShip* Ship, int32 ExtraPerHangar)
     // No aircraft creation, healing, cooldown reset, or deletion when capacity changes.
 }
 
+bool UOVCarrierSubsystem::StoreShuttle(AOVShip* Home,FName Slot,AOVShip* Shuttle)
+{
+    if(!LivingShip(Home) || !LivingShip(Shuttle) || Shuttle->HullDefinitionId!=TEXT("assault") ||
+        Home->Systems->FactionId!=Shuttle->Systems->FactionId)return false;
+    auto* Bay=Hangars.FindByPredicate([&](const auto& H){return H.Carrier==Home && H.SlotId==Slot;});
+    if(Hangars.ContainsByPredicate([&](const auto& H){return H.StoredSmallShip==Shuttle;}))return false;
+    if(!Bay){
+        FOVHangarState NewBay;NewBay.Carrier=Home;NewBay.SlotId=Slot;NewBay.Mode=EOVHangarMode::SmallShip;
+        if(!IsHangarOperational(NewBay))return false;
+        NewBay.HangarId=NextHangarId++;Bay=&Hangars.Add_GetRef(NewBay);
+    }
+    if(!IsHangarOperational(*Bay) || Bay->Mode!=EOVHangarMode::SmallShip || Bay->StoredSmallShip.IsValid())return false;
+    Bay->StoredSmallShip=Shuttle;return true;
+}
+
 bool UOVCarrierSubsystem::SetHangarMode(int32 HangarId, EOVHangarMode Mode)
 {
     auto* H = Hangars.FindByPredicate([HangarId](const FOVHangarState& V) { return V.HangarId == HangarId; });

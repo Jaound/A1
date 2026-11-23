@@ -126,6 +126,7 @@ bool FOVTransportLocalEntryReturnTest::RunTest(const FString&)
     TestEqual(TEXT("Return preserves individual pod ID"), R.Transport->GetPerson(Id).PodId, OriginalPod);
     TestEqual(TEXT("Return creates no additional pods"), R.Transport->Pods.Num(), 1);
     TestEqual(TEXT("Return does not duplicate entry events"), R.Transport->EntryEvents.Num(), 1);
+    R.Transport->Simulate(30); // Isolate pod ownership from the per-target launch interval.
     // Fixture for a future passenger-only transfer; physical pod is still stored at original return host.
     R.Transport->Persons[0].CurrentShip = R.Friend;
     TestEqual(TEXT("Passenger transfer cannot teleport or mint replacement pod hardware"), R.Transport->LaunchPods(R.Friend, R.Target), 0);
@@ -182,6 +183,7 @@ bool FOVTransportShuttleTest::RunTest(const FString&)
     TestTrue(TEXT("Explicit recall resumes suspended transport"), R.Transport->RecallShuttle(Shuttle));
     TestFalse(TEXT("Recall clears manual suspension"), R.Transport->Shuttles[0].bManualSuspended);
     R.Drive(Shuttle, 20);
+    R.Transport->Simulate(30);
     TestTrue(TEXT("Returned passengers can explicitly restart the mission"), R.Transport->DispatchShuttle(Shuttle, R.Target, Ids));
     R.Drive(Shuttle, 12);
     TestEqual(TEXT("Shuttle delivers all ten without creating pods"), R.Transport->EntryEvents.Num(), 10);
@@ -221,6 +223,36 @@ bool FOVTransportTimingTest::RunTest(const FString&)
         TestTrue(TEXT("Fixed step sweep preserves arrival time under low FPS"), FMath::IsNearlyEqual(R.Transport->EntryEvents.Last().Time, ReferenceLast, .00001));
         TestEqual(TEXT("All ten fast pods sweep into target, not through it"), R.Transport->EntryEvents.Num(), 10);
     }
+    return true;
+}
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(FOVBoardingTeamLimitsTest, "OrbitalVanguard.Transport.TeamsPerTargetAndPersonnel", EAutomationTestFlags::EditorContext | EAutomationTestFlags::EngineFilter)
+bool FOVBoardingTeamLimitsTest::RunTest(const FString&)
+{
+    OVTransportTest::FRange R;
+    auto* T=R.Transport;
+    auto* Other=R.Make(TEXT("OtherTarget"),1,FVector(0,2500,0));
+    Other->Systems->Shield=0;
+    Other->Systems->bShieldActive=false;
+    R.Combat->RegisterShip(Other);
+    T->AddShip(Other);
+    const auto FiveHeroes=T->AddDevPassengers(R.Origin,5,0);
+    const auto TooMany=T->AddDevPassengers(R.Origin,0,13);
+    TestEqual(TEXT("Five heroes exceed team limit"),T->LaunchPodTeam(R.Origin,R.Target,FiveHeroes),0);
+    TestEqual(TEXT("Thirteen troops exceed team limit"),T->LaunchPodTeam(R.Origin,R.Target,TooMany),0);
+    auto First=T->AddDevPassengers(R.Origin,4,8);
+    auto Second=T->AddDevPassengers(R.Origin,0,12);
+    auto Third=T->AddDevPassengers(R.Origin,2,6);
+    TestEqual(TEXT("Full mixed team"),T->LaunchPodTeam(R.Origin,R.Target,First),12);
+    TestEqual(TEXT("Same people cannot board twice"),T->LaunchPodTeam(R.Origin,Other,First),0);
+    TestEqual(TEXT("Other target has its own clock"),T->LaunchPodTeam(R.Origin,Other,Third),8);
+    T->Simulate(29.9f);
+    TestEqual(TEXT("Spacing measured in game seconds"),T->LaunchPodTeam(R.Origin,R.Target,Second),0);
+    T->Simulate(.2f);
+    TestEqual(TEXT("Second wave allowed"),T->LaunchPodTeam(R.Origin,R.Target,Second),12);
+    T->Simulate(30.1f);
+    TestEqual(TEXT("Target has two teams"),T->ActiveTeamsAt(R.Target),2);
+    TestEqual(TEXT("Third concurrent team on different target"),T->ActiveTeamsAt(Other),1);
+    TestEqual(TEXT("Third team on same target blocked"),T->LaunchPodTeam(R.Origin,R.Target,{FiveHeroes[0]}),0);
     return true;
 }
 #endif

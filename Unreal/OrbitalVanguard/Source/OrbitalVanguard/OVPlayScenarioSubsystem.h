@@ -52,10 +52,20 @@ class ORBITALVANGUARD_API UOVPlayScenarioSubsystem : public UWorldSubsystem
 {
     GENERATED_BODY()
 public:
-    static constexpr int32 HeroBerthsPerShip=4;
-    static constexpr int32 ArenaTeamSize=10;
-    int32 CurrentHeroBerths() const { return ActiveId==TEXT("HeroArena") ? ArenaTeamSize : HeroBerthsPerShip; }
+
+    static constexpr int32 ArenaHeroBerths=10;
+    float MissionPanelHeight() const;
+    int32 CurrentHeroBerths(const AOVShip* Ship) const;
     bool bArenaStarted=false;
+    int32 ArenaRoute=0;
+    int32 ArenaHeroQuota=4;
+    struct FArenaWave { TArray<int32> Troopers; TArray<int32> Units; TWeakObjectPtr<AOVShip> Shuttle; FName Bay; bool Sent=false; bool Recalled=false; };
+    FArenaWave ArenaWaves[2];
+    bool PrepareArenaForces(AOVController& PC);
+    bool SendArenaWave(AOVController& PC,int32 Index);
+    FString ArenaWaveStatus(int32 Index) const;
+    void RecallArenaWave(AOVController& PC,int32 Index);
+    void StepArena(AOVController& PC,float Delta);
     FString ArenaCandidateLabel() const;
     static TConstArrayView<FOVPlaySceneDefinition> Definitions();
     const FOVPlaySceneDefinition* GetActiveDefinition() const;

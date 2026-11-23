@@ -38,6 +38,7 @@ void UOVTransportSubsystem::ResetScenario(const TArray<AOVShip*>& Ships)
     Disable();
     ScenarioShips.Reset();
     for (AOVShip* Ship : Ships) if (IsValid(Ship)) ScenarioShips.Add(Ship);
+    TeamFlights.Reset();LastTeamLaunch.Reset();
     Persons.Reset(); Pods.Reset(); Shuttles.Reset(); EntryEvents.Reset();
     GameTime = Accumulator = 0;
     bEnabled = true;
@@ -97,21 +98,78 @@ TArray<int32> UOVTransportSubsystem::AddDevPassengers(AOVShip* Origin, int32 Her
     return Ids;
 }
 
-int32 UOVTransportSubsystem::LaunchPods(AOVShip* Origin, AOVShip* Target)
+int32 UOVTransportSubsystem::ActiveTeamsAt(AOVShip* Target) const
+{
+    int32 Count=0;
+    for(const auto& Team:TeamFlights)if(Team.Target==Target)++Count;
+    return Count;
+}
+
+float UOVTransportSubsystem::NextTeamDelay(AOVShip* Target) const
+{
+    const double* Last=LastTeamLaunch.Find(Target);
+    return Last?FMath::Max(0.,30.-(GameTime-*Last)):0.f;
+}
+
+bool UOVTransportSubsystem::CanSendTeam(AOVShip* Target,const TArray<int32>& People)
+{
+    if(People.IsEmpty() || People.Num()>12){LastMessage=TEXT("강습팀 정원은 1~12명입니다");return false;}
+    if(ActiveTeamsAt(Target)>=2){LastMessage=TEXT("이 목표에 두 팀이 작전 중입니다");return false;}
+    if(NextTeamDelay(Target)>.0001f){LastMessage=FString::Printf(TEXT("다음 팀 출발까지 %d초"),FMath::CeilToInt(NextTeamDelay(Target)));return false;}
+    TSet<int32> Seen;int32 Heroes=0;
+    for(int32 Id:People){
+        const auto* P=FindPerson(Id);
+        if(!P || Seen.Contains(Id) || P->State!=EOVPassengerState::Aboard ||
+            (P->RuntimeUnitId>0 && !P->bBoardingAssigned) ||
+            TeamFlights.ContainsByPredicate([Id](const FTeamFlight& T){return T.People.Contains(Id);}))
+        {LastMessage=TEXT("중복 배치 또는 강습 미편성 인원");return false;}
+        Seen.Add(Id);
+        if(P->bRuntimeHero || P->bHeroTypeDEV)++Heroes;
+    }
+    if(Heroes>4){LastMessage=TEXT("강습팀의 영웅 정원은 4명입니다");return false;}
+    return true;
+}
+
+void UOVTransportSubsystem::RecordTeam(AOVShip* Target,const TArray<int32>& People)
+{
+    auto& Team=TeamFlights.AddDefaulted_GetRef();Team.Target=Target;Team.People=People;LastTeamLaunch.Add(Target,GameTime);
+}
+
+int32 UOVTransportSubsystem::LaunchPods(AOVShip* Origin,AOVShip* Target)
+{
+    TArray<int32> People;int32 Heroes=0;
+    for(const auto& P:Persons){
+        if(P.CurrentShip!=Origin || P.State!=EOVPassengerState::Aboard || (P.RuntimeUnitId>0 && !P.bBoardingAssigned))continue;
+        if(TeamFlights.ContainsByPredicate([&](const auto& T){return T.People.Contains(P.PersonId);}))continue;
+        const bool Hero=P.bHeroTypeDEV || P.bRuntimeHero;
+        if(Hero && Heroes>=4)continue;
+        Heroes+=Hero;People.Add(P.PersonId);if(People.Num()==12)break;
+    }
+    return LaunchPodTeam(Origin,Target,People);
+}
+
+int32 UOVTransportSubsystem::LaunchPodTeam(AOVShip* Origin, AOVShip* Target,const TArray<int32>& People)
 {
     if (!bEnabled || !Usable(Origin) || !Usable(Target) || Origin == Target ||
         Origin->Systems->FactionId == Target->Systems->FactionId || Origin->Systems->GetEfficiency(EOVFacilityType::Boarding) <= 0 ||
         FVector::Distance(Origin->GetActorLocation(), Target->GetActorLocation()) > Settings.PodLaunchRange)
     { LastMessage = TEXT("발사 불가: 강습 시설·거리·표적 확인"); return 0; }
-    int32 Count = 0, RemotePodCount = 0;
+    if(!CanSendTeam(Target,People))return 0;
+    for(int32 Id:People){
+        const auto* P=FindPerson(Id);
+        if(P->CurrentShip!=Origin || P->FactionId!=Origin->Systems->FactionId ||
+            Pods.ContainsByPredicate([&](const auto& Pod){return Pod.PersonId==Id && (Pod.State==EOVPodFlightState::Queued ||
+                (Pod.HP>0 && ((Pod.State==EOVPodFlightState::Recovered && Pod.ReturnDestination!=Origin) ||
+                    (Pod.State==EOVPodFlightState::Cancelled && Pod.Origin!=Origin))));}))
+        {LastMessage=TEXT("인원과 원 포드가 출발함에 함께 있어야 합니다");return 0;}
+    }
+    int32 Count = 0;
     double NextTime = GameTime;
     for (const FOVPodState& Pod : Pods)
         if (Pod.Origin == Origin && Pod.State == EOVPodFlightState::Queued) NextTime = FMath::Max(NextTime, Pod.ScheduledTime + Settings.LaunchInterval);
-    for (const FOVPassengerToken& Person : Persons)
+    for (int32 Id : People)
     {
-        if (Person.RuntimeUnitId > 0 && !Person.bBoardingAssigned) continue;
-        if (Person.State != EOVPassengerState::Aboard || Person.CurrentShip != Origin || Person.FactionId != Origin->Systems->FactionId) continue;
-        if (Pods.ContainsByPredicate([&](const FOVPodState& Pod) { return Pod.PersonId == Person.PersonId && Pod.State == EOVPodFlightState::Queued; })) continue;
+        const auto& Person=*FindPerson(Id);
         FOVPodState* Reusable = Pods.FindByPredicate([&](const FOVPodState& Pod) {
             return Pod.PersonId == Person.PersonId && Pod.HP > 0 &&
                 ((Pod.State == EOVPodFlightState::Recovered && Pod.ReturnDestination == Origin) ||
@@ -124,18 +182,14 @@ int32 UOVTransportSubsystem::LaunchPods(AOVShip* Origin, AOVShip* Target)
             // Recovered pod identity and damage persist: a new sortie is not free replacement/repair.
             NextTime += FMath::Max(.001f, Settings.LaunchInterval); ++Count; continue;
         }
-        if (Pods.ContainsByPredicate([&](const FOVPodState& Pod) {
-            return Pod.PersonId == Person.PersonId && Pod.HP > 0 &&
-                (Pod.State == EOVPodFlightState::Recovered || Pod.State == EOVPodFlightState::Cancelled); }))
-        { ++RemotePodCount; continue; } // A person transfer is not a physical pod inventory transfer.
         FOVPodState Pod;
         Pod.PodId = NextPodId++; Pod.PersonId = Person.PersonId; Pod.FactionId = Person.FactionId;
         Pod.Origin = Origin; Pod.Target = Target; Pod.Position = Origin->GetActorLocation();
         Pod.HP = Settings.PodHP; Pod.Evasion = Settings.PodEvasion; Pod.ScheduledTime = NextTime;
         Pods.Add(Pod); NextTime += FMath::Max(.001f, Settings.LaunchInterval); ++Count;
     }
-    LastMessage = RemotePodCount > 0 ? FString::Printf(TEXT("포드 %d기 예약 · %d명은 타 함선 보관 포드 이송 필요(미지원)"), Count, RemotePodCount) :
-        FString::Printf(TEXT("개인 포드 %d기 발사 예약"), Count);
+    RecordTeam(Target,People);
+    LastMessage=FString::Printf(TEXT("개인 포드 %d기 발사 예약"),Count);
     return Count;
 }
 
@@ -146,7 +200,7 @@ AOVShip* UOVTransportSubsystem::FindReturn(AOVShip* Preferred, int32 Faction, FV
     double Distance = TNumericLimits<double>::Max();
     for (AOVShip* Ship : ScenarioShips)
     {
-        if (Ship == Exclude || !Usable(Ship) || Ship->Systems->FactionId != Faction || Ship->Systems->bNeutral) continue;
+        if (Ship == Exclude || !Usable(Ship) || Ship->IsHidden() || Ship->Systems->FactionId != Faction || Ship->Systems->bNeutral) continue;
         const double Candidate = FVector::DistSquared(Ship->GetActorLocation(), Position);
         if (Candidate < Distance) { Best = Ship; Distance = Candidate; }
     }
@@ -164,6 +218,14 @@ void UOVTransportSubsystem::BeginReturn(FOVPodState& Pod)
         Person->CurrentShip = nullptr;
         Person->State = Pod.State == EOVPodFlightState::Returning ? EOVPassengerState::InPod : EOVPassengerState::RescueWaiting;
         if(bNewRescue&&Person->bRuntimeHero)if(auto* Feed=GetWorld()->GetSubsystem<UOVBattleNotices>())Feed->RecordHeroRescue(Person->FactionId,Person->RuntimeUnitId,Pod.Position,GameTime);
+    }
+}
+
+void UOVTransportSubsystem::RecallTeamPods(const TArray<int32>& People)
+{
+    for(auto& Pod:Pods)if(People.Contains(Pod.PersonId)){
+        if(Pod.State==EOVPodFlightState::Queued)Pod.State=EOVPodFlightState::Cancelled;
+        else if(Pod.State==EOVPodFlightState::Outbound)BeginReturn(Pod);
     }
 }
 
@@ -392,6 +454,7 @@ bool UOVTransportSubsystem::DispatchShuttle(AOVShip* Ship, AOVShip* Target, cons
     if (!bEnabled || !Shuttle || Shuttle->State != EOVShuttleState::Ready || !Usable(Ship) || !Usable(Target) ||
         Ship->Systems->FactionId == Target->Systems->FactionId || Ids.IsEmpty() || Ids.Num() > Settings.ShuttleCapacity)
     { LastMessage = TEXT("강습선 출발 불가 · 준비 상태/표적/정원 확인"); return false; }
+    if(!CanSendTeam(Target,Ids))return false;
     int32 Heroes = 0; TSet<int32> Seen;
     for (int32 Id : Ids)
     {
@@ -404,6 +467,7 @@ bool UOVTransportSubsystem::DispatchShuttle(AOVShip* Ship, AOVShip* Target, cons
         Seen.Add(Id); Heroes += (Person->bHeroTypeDEV || Person->bRuntimeHero) ? 1 : 0;
     }
     if (Heroes > Settings.ShuttleHeroCapacity) { LastMessage = TEXT("출발 불가 · 영웅 탑승 정원 초과"); return false; }
+    RecordTeam(Target,Ids);
     Shuttle->PassengerIds = Ids; Shuttle->Target = Target; Shuttle->FactionId = Ship->Systems->FactionId;
     Shuttle->State = EOVShuttleState::Approaching; Shuttle->Progress = 0; Shuttle->HomePosition = Ship->GetActorLocation();
     Shuttle->bManualSuspended = false;
@@ -564,6 +628,16 @@ void UOVTransportSubsystem::Step(float Delta)
     }
     for (FOVPodState& Pod : Pods) AdvancePod(Pod, Delta);
     for (FOVShuttleRecord& Shuttle : Shuttles) AdvanceShuttle(Shuttle, Delta);
+    for(auto& Team:TeamFlights){
+        Team.People.RemoveAll([&](int32 Id){
+            const auto* P=FindPerson(Id);
+            if(!P || P->State==EOVPassengerState::Dead || P->State==EOVPassengerState::RescueWaiting)return true;
+            return P->State==EOVPassengerState::Aboard && !Pods.ContainsByPredicate([Id](const auto& Pod){
+                return Pod.PersonId==Id && Pod.State==EOVPodFlightState::Queued;});
+        });
+    }
+    TeamFlights.RemoveAll([](const auto& Team){return Team.People.IsEmpty();});
+    for(auto It=LastTeamLaunch.CreateIterator();It;++It)if(!It.Key().IsValid() || GameTime-It.Value()>=30.)It.RemoveCurrent();
     RefreshPresence();
 }
 

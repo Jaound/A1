@@ -73,7 +73,7 @@ bool AOVHUD::IsOverPanel(float X,float Y) const
  const FVector2D P(X/UIScale,Y/UIScale);
  if(GetHitActionAtCanvasPoint(P).ToString().StartsWith(TEXT("FacilityAlert_")))return true;
  if (const auto* Play = PC->GetPlayScenario(); Play && Play->GetActiveDefinition() && !bSceneMenuOpen &&
-     P.X >= 0 && P.X <= (Play->ActiveId==TEXT("Sandbox")?426:508) && P.Y >= 63 && P.Y <= (Play->ActiveId==TEXT("Sandbox") ? (Play->bSandboxHullMenu?396:213) : Play->ActiveId == TEXT("Evacuation") ? 219 : 189)) return true;
+     P.X >= 0 && P.X <= (Play->ActiveId==TEXT("Sandbox")?426:508) && P.Y >= 63 && P.Y <= 63+Play->MissionPanelHeight()) return true;
 
 
  if(IsOverInteriorPanel(X,Y)) return true;
@@ -210,6 +210,26 @@ void AOVHUD::NotifyHitBoxClick(FName N)
    TogglePauseMenu();if(N==TEXT("PauseTitle")){OpenTitleScreen();return;}
    if(N==TEXT("PauseList"))NotifyHitBoxClick(TEXT("PlaySceneExit"));
    else if(auto* PC=Cast<AOVController>(PlayerOwner))PC->Action(TEXT("RestartScene"));
+  }
+  return;
+ }
+ if(N==TEXT("ArenaViewA") || N==TEXT("ArenaViewB")){
+  auto* PC=Cast<AOVController>(PlayerOwner);
+  auto* Play=GetWorld()->GetSubsystem<UOVPlayScenarioSubsystem>();
+  if(PC && Play->ActiveId==TEXT("HeroArena") && PC->Ships.Num()>=2){
+   InteriorSelectedUnits.Reset();
+   const auto Present=PC->Interior->GetUnitsOnShip(PC->Ships[1],0);
+   for(int32 Id:Play->ArenaWaves[N==TEXT("ArenaViewB")?1:0].Units){
+    const auto U=PC->Interior->GetUnit(Id);
+    if(!Present.Contains(Id))continue;
+    if(InteriorSelectedUnits.IsEmpty()){
+     InteriorShip=U.Ship;bInteriorOpen=true;bInteriorMinimized=false;InteriorTargetSlot=NAME_None;
+     const auto* L=U.Ship->Systems->Layout.Get();const int32 Slot=L->GetSlotIndex(U.NodeId);
+     if(L->Slots.IsValidIndex(Slot))InteriorDeck=L->Slots[Slot].DeckId;
+    }
+    InteriorSelectedUnits.Add(Id);
+   }
+   if(InteriorSelectedUnits.IsEmpty())PC->LastAction=TEXT("해당 팀이 아직 적함에 진입하지 않았습니다");
   }
   return;
  }

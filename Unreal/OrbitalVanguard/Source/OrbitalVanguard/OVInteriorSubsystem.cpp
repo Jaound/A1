@@ -93,6 +93,8 @@ int32 UOVInteriorSubsystem::SpawnRosterHero(AOVShip* Ship,FGuid HeroId,FName Slo
        GetWorld()->GetSubsystem<UOVCombatSubsystem>()->IsDeparted(Ship) ||
        !H->bDeploymentReserved || H->Status!=EOVHeroStatus::Deployed || H->RuntimeUnitId!=0 || H->RuntimePersonId!=0)
     {LastMessage=TEXT("영웅 배치 불가: 편제, 상태 또는 기존 실행 연결 확인");return 0;}
+    if(CountEmbarkedHeroes(Ship,H->FactionId)>=GetWorld()->GetSubsystem<UOVPlayScenarioSubsystem>()->CurrentHeroBerths(Ship))
+    {LastMessage=TEXT("출격 상주 영웅 정원 초과");return 0;}
     // F6/F5의 기존 함선은 선내·수송 장면 초기화에 포함되지 않을 수 있다.
     // 기존 장면이나 다른 승객을 재설정하지 않고 필요한 함선만 등록한다.
     if(!AddShip(Ship))return 0;
@@ -154,7 +156,8 @@ bool UOVInteriorSubsystem::SetHeroDuty(int32 UnitId,bool bEnable,FName SlotId)
     const auto* ShipState=Combat?Combat->Ships.FindByPredicate([&](const FOVCombatShipState& S){return S.Ship.Get()==U->Ship.Get();}):nullptr;
     const int32 Limit=ShipState?FMath::Clamp(ShipState->WeaponTierCap,1,4):(Layout->bSmallHull?1:Layout->DeckCount<3?2:3);
     int32 Count=0;for(const auto& Other:Units)if(Other.UnitId!=UnitId && Other.Ship==U->Ship && Other.bDutyRequested && OVInterior::Living(Other))++Count;
-    if(Count>=Limit){LastMessage=TEXT("함선 체급별 동시 보직 한도 초과");return false;}
+    const int32 HullLimit=int32(Layout->HullSizeClass);
+    if(U->Ship->HullDefinitionId==TEXT("assault") || Count>=(HullLimit>0?HullLimit:Limit)){LastMessage=TEXT("함선 체급별 동시 보직 한도 초과");return false;}
     U->Skill3ActiveUntil=0;U->bRushAttack=false;U->BurstRemaining=0;
     U->bDutyRequested=true;U->bDutyActive=false;U->DutySlot=SlotId;U->DutyReadyAt=0;
     U->Order=EOVInteriorOrder::None;U->Path.Reset();U->PlannedGoal=NAME_None;U->EnemyId=0;
@@ -308,8 +311,8 @@ int32 UOVInteriorSubsystem::RegisterUnit(AOVShip* Ship,int32 Faction,EOVInterior
     if(!bEnabled || !FindGraph(Ship) || Faction<0 || Ship->Systems->bWrecked ||
         (Role!=EOVInteriorRole::Trooper && CountActiveHeroes(Faction)>=FMath::Min(Limit,Settings.MaxActiveHeroesPerFaction)))
     { LastMessage=TEXT("인원 등록 불가: 배치·생존·세력 영웅 15명 한도 확인"); return 0; }
-    if(Role!=EOVInteriorRole::Trooper && GetWorld()->GetSubsystem<UOVPlayScenarioSubsystem>()->GetActiveDefinition() &&
-       CountEmbarkedHeroes(Ship,Faction)>=GetWorld()->GetSubsystem<UOVPlayScenarioSubsystem>()->CurrentHeroBerths()){
+    if(Role!=EOVInteriorRole::Trooper && Faction==Ship->Systems->FactionId && (!Ship->HullDefinitionId.IsNone() || GetWorld()->GetSubsystem<UOVPlayScenarioSubsystem>()->GetActiveDefinition()) &&
+       CountEmbarkedHeroes(Ship,Faction)>=GetWorld()->GetSubsystem<UOVPlayScenarioSubsystem>()->CurrentHeroBerths(Ship)){
         LastMessage=TEXT("이 함선의 시나리오 영웅 정원이 찼습니다");return 0;
     }
     auto* L=Ship->Systems->Layout.Get();
@@ -322,6 +325,7 @@ int32 UOVInteriorSubsystem::RegisterUnit(AOVShip* Ship,int32 Faction,EOVInterior
     {
         const auto* P=Settings.HeroRoles.FindByPredicate([Role](const auto& Row){return Row.Role==Role;});
         if(!P||P->HP<=0||P->Speed<=0||P->Period<=0||!FMath::IsFinite(P->HP)||!FMath::IsFinite(P->Speed))return 0;
+        U.DefinitionId=FName(*FString::Printf(TEXT("G%02d"),static_cast<int32>(Role)));
         U.MaxHP=P->HP;U.Damage=P->Damage;U.Period=P->Period;U.Range=P->Range;U.Speed=P->Speed;U.Armor=P->Armor;U.Evasion=P->Evasion;
         U.Name=Role==EOVInteriorRole::Melee?TEXT("역장 돌격 영웅"):Role==EOVInteriorRole::Ranged?TEXT("초감각 사격 영웅"):Role==EOVInteriorRole::Support?TEXT("생체 재구성 영웅"):TEXT("신경 공명 영웅");
         if(Role==EOVInteriorRole::Support)U.Medkits=FMath::Max(0,Settings.InitialSupportCatalysts);
@@ -338,13 +342,14 @@ TArray<int32> UOVInteriorSubsystem::RegisterBoardingTeam(AOVShip* Origin,int32 F
     TArray<int32> Ids;
     if(HeroCount<0 || HeroCount>4 || Troops<0 || HeroCount+Troops>12 || CountActiveHeroes(Faction)+HeroCount>15)
     { LastMessage=TEXT("강습 편제 초과: 총 12명·영웅 4명·세력 전체 15명"); return Ids; }
+    int32 SquadLeader=0;
     for(int32 I=0;I<HeroCount+Troops;++I)
     {
         const auto Role=I<HeroCount?static_cast<EOVInteriorRole>(1+I%4):EOVInteriorRole::Trooper;
         const int32 Id=RegisterUnit(Origin,Faction,Role); if(Id>0)
         {
             Ids.Add(Id);
-            if(Role==EOVInteriorRole::Trooper)FindUnit(Id)->SquadId=Ids[0];
+            if(Role==EOVInteriorRole::Trooper){if((I-HeroCount)%4==0)SquadLeader=Id;FindUnit(Id)->SquadId=SquadLeader;}
             GetWorld()->GetSubsystem<UOVTransportSubsystem>()->SetRuntimeBoardingAssignment(FindUnit(Id)->PersonId,Id,true); }
     }
     return Ids;

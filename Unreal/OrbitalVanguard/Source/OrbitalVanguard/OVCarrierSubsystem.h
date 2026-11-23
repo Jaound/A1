@@ -186,6 +186,9 @@ public:
     UFUNCTION(BlueprintCallable) void Reset(int32 Seed = 260112);
     // Idempotent. The DEV initial inventory is allocated only for a newly registered carrier.
     UFUNCTION(BlueprintCallable) bool RegisterCarrier(AOVShip* Ship, int32 InitialPerHangar = 20);
+    bool StoreShuttle(AOVShip* Home,FName Slot,AOVShip* Shuttle);
+    bool IsHangarOperational(const FOVHangarState& Hangar) const;
+    FVector HangarPosition(const FOVHangarState& Hangar) const;
     UFUNCTION(BlueprintCallable) int32 Launch(AOVShip* Ship);
     UFUNCTION(BlueprintCallable) void Recall(AOVShip* Ship);
     UFUNCTION(BlueprintCallable) void Simulate(float GameDelta);
@@ -231,10 +234,10 @@ private:
     // Rebuilt every fixed step; retained capacity avoids per-aircraft detection allocations.
     TArray<FStrikeCandidateCache> StrikeCandidateCache;
     void RebuildStrikeCandidates();
-    bool IsHangarOperational(const FOVHangarState& Hangar) const;
+
     bool IsHangarDestroyed(const FOVHangarState& Hangar) const;
     bool HasControl(AOVShip* Ship) const;
-    FVector HangarPosition(const FOVHangarState& Hangar) const;
+
     FOVHangarState* FindDock(FOVAircraftRecord& Craft);
     void Step(float Delta);
     static constexpr float ProductionPeriod = 7.f;
