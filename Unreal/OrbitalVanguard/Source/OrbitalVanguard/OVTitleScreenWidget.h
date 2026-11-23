@@ -128,6 +128,8 @@ private:
 
     UFUNCTION()
     void HandleBackToTitle();
+    UFUNCTION() void CycleScenarioDifficulty();
+    UPROPERTY() TObjectPtr<UTextBlock> DifficultyText;
 
     UFUNCTION()
     void HandleCloseTutorial();

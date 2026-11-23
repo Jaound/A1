@@ -229,6 +229,8 @@ public:
     int32 GetResolvedAttackIdCount() const { return ResolvedAttackIds.Num(); }
     // Reuses immutable damage metadata; resolved attacks cannot deliver damage twice.
     bool ResolveImpact(FOVAttackState& Attack, AOVShip* HitShip, FVector Point, FVector Normal, FName HitWeaponId = NAME_None);
+    using FMissilePath = TArray<FVector,TInlineAllocator<25>>;
+    static void PredictMissilePath(const FOVAttackState& Shot, FMissilePath& Points);
     static bool SegmentBox(FVector Start, FVector End, const FTransform& Transform,
         FVector HalfExtent, float& HitFraction, FVector& HitNormal);
 private:
@@ -247,5 +249,5 @@ private:
     void AdvanceAttacks(float Delta);
     bool SweepAttack(FOVAttackState& Attack, FVector End);
     void RecordEvent(const FOVAttackState& Attack);
-    AOVShip* FindBlockingFriend(AOVShip* Ship, AOVShip* Target, FVector Origin) const;
+    AOVShip* FindBlockingFriend(AOVShip* Ship, AOVShip* Target, FVector Origin, const FMissilePath* Path = nullptr) const;
 };

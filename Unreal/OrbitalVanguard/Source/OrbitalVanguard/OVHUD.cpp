@@ -234,6 +234,7 @@ void AOVHUD::NotifyHitBoxClick(FName N)
   if(auto* PC=Cast<AOVController>(PlayerOwner)) OpenMissionCards(PC->GetPlayScenario()->ActiveId,true);
   return;
  }
+ if(N==TEXT("CycleDifficulty")) { GetWorld()->GetSubsystem<UOVPlayScenarioSubsystem>()->CycleDifficulty();return; }
  if(N==TEXT("SceneMenuClose")){bSceneMenuOpen=false;return;}
  if(HandleInteriorAction(N)) return;
  if(N==TEXT("HeroPanel")) { SetHeroPanelOpen(!bHeroPanelOpen);return; }

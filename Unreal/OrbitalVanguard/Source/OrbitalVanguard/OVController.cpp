@@ -550,6 +550,11 @@ void AOVController::UpdateCombatPresentation()
     AddSegmentCylinder(CannonBolts,Shot.Position-Dir*(BoltLen*0.8f),Shot.Position+Dir*(BoltLen*0.2f),BoltRad);
    } else {
     const FQuat Rot=Dir.Rotation().Quaternion()*FRotator(0,180,0).Quaternion();
+    UOVCombatSubsystem::FMissilePath Path;
+    UOVCombatSubsystem::PredictMissilePath(Shot,Path);
+    auto& Guides=Shot.FactionId==0?FriendlyBeams:EnemyBeams;
+    for(int32 I=1;I<Path.Num();++I)
+     AddSegmentCylinder(Guides,Path[I-1],FMath::Lerp(Path[I-1],Path[I],.58),1.4f*FX);
     const float ScaleFactor=MissileScale;
     if(Shot.bAntiShipMissile) {
      const float S=AntiShipScale;

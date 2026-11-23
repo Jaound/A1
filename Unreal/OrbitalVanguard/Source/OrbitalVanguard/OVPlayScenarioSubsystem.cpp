@@ -260,6 +260,9 @@ void UOVPlayScenarioSubsystem::Clear()
     DecisionRemaining = 0;
     PreviousIntegrity = -1;
     LastProgressAt = 0;
+    NextCommandDecision[0]=NextCommandDecision[1]=0;
+    EnemyEvasions=AlliedEvasions=0;
+    Evasions.Reset();
     Resolution.Reset();
     DebriefLines.Reset();
 }
@@ -271,6 +274,7 @@ bool UOVPlayScenarioSubsystem::Start(AOVController& Controller, FName Id)
     Controller.ResetPlayScenarioSession(false);
     Owner = &Controller;
     ActiveId = Id;
+    ActiveDifficulty=NextDifficulty;
     InitialCosts.Init(0, FactionCount);
     InitialAircraft.Init(0, FactionCount);
     OVCalibration::BeginSession(*Controller.Combat, ScenarioSeed);
@@ -471,6 +475,7 @@ void UOVPlayScenarioSubsystem::Step(float Delta)
 
     ElapsedSeconds += Delta;
     AdvanceJumps(*Controller);
+    if (Definition->Kind!=EOVPlaySceneKind::Sandbox || bSandboxEngaged) StepCommandAI(*Controller,Delta);
     if (Definition->Kind == EOVPlaySceneKind::Evacuation)
     {
         StepEvacuation(*Controller, Delta);

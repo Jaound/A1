@@ -10,6 +10,9 @@ class AOVBlackHoleHazardActor;
 class AOVController;
 class AOVShip;
 
+UENUM(BlueprintType)
+enum class EOVCommandDifficulty : uint8 { Easy, Normal, Hard };
+
 enum class EOVPlaySceneKind : uint8 { Fleet, Logistics, Evacuation, Sandbox };
 
 struct FOVPlayFleetEntry
@@ -77,6 +80,12 @@ public:
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly) float DeliveredCargo = 0;
     bool HandleAction(AOVController& Controller, FName Action);
     void Step(float Delta);
+    UPROPERTY(BlueprintReadWrite, Category="Scenario") EOVCommandDifficulty NextDifficulty = EOVCommandDifficulty::Normal;
+    UPROPERTY(VisibleAnywhere, BlueprintReadOnly) EOVCommandDifficulty ActiveDifficulty = EOVCommandDifficulty::Normal;
+    UPROPERTY(VisibleAnywhere, BlueprintReadOnly) int32 EnemyEvasions = 0;
+    UPROPERTY(VisibleAnywhere, BlueprintReadOnly) int32 AlliedEvasions = 0;
+    void CycleDifficulty();
+    FString DifficultyLabel() const;
 
     /** Optional explicit time limit override in seconds (0 = disabled, default for D126 battles). */
     UFUNCTION(BlueprintCallable, Category = "Scenario")
@@ -106,6 +115,11 @@ public:
 private:
     UPROPERTY() TWeakObjectPtr<AOVController> Owner;
     UPROPERTY() TWeakObjectPtr<AOVBlackHoleHazardActor> ActiveBlackHoleActor;
+    void StepCommandAI(AOVController& PC, float Delta);
+    void CommandEnemyHeroes(AOVController& PC);
+    double NextCommandDecision[2] = {};
+    struct FEvasionOrder { FVector Sidestep, PreviousGoal; bool HadGoal; double Until; };
+    TMap<TWeakObjectPtr<AOVShip>,FEvasionOrder> Evasions;
     float DecisionRemaining = 0;
     double LastProgressAt = 0;
     double PreviousIntegrity = -1;

@@ -508,6 +508,40 @@ bool FOVCombatDamageTest::RunTest(const FString&)
     return true;
 }
 
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(FOVMissileGuideTest, "OrbitalVanguard.Combat.MissileGuideAndFriendlyClearance", EAutomationTestFlags::EditorContext | EAutomationTestFlags::EngineFilter)
+bool FOVMissileGuideTest::RunTest(const FString&)
+{
+    OVCombatTest::FRange R;
+    constexpr int32 Missile=2;
+    R.B->SetActorLocation(FVector(3000,0,0));
+    R.Combat->Settings->bDevelopmentOmniscient=true;
+    R.Exact(Missile);
+    auto& Gun=R.Gun(Missile);
+    Gun.Profile.Kind=EOVAttackKind::Missile;
+    Gun.Profile.Speed=400;
+    Gun.Profile.VLSHeight=4000;
+    Gun.Profile.Salvo=1;
+    Gun.Profile.AimSpreadDegrees=0;
+    R.Fire(Missile,.05f);
+    if (!TestEqual(TEXT("A live missile is launched"),R.Combat->Attacks.Num(),1)) return false;
+    const FOVAttackState Launch=R.Combat->Attacks[0];
+    UOVCombatSubsystem::FMissilePath First,Later;
+    UOVCombatSubsystem::PredictMissilePath(Launch,First);
+    if (!TestTrue(TEXT("Preview contains a curve"),First.Num()>2)) return false;
+    const FVector Mid=First[First.Num()/2];
+    R.Combat->Simulate(.4);
+    if (!TestEqual(TEXT("Missile survives to advance"),R.Combat->Attacks.Num(),1)) return false;
+    UOVCombatSubsystem::PredictMissilePath(R.Combat->Attacks[0],Later);
+    TestTrue(TEXT("Guide begins at missile and erases flown portion"),
+        Later.Num()>2 && Later[0].Equals(R.Combat->Attacks[0].Position) && !Later[0].Equals(First[0]) && Later.Last().Equals(First.Last()));
+    R.Scout->SetActorLocation(Mid);
+    R.Align(Missile);
+    TestEqual(TEXT("Friendly hull on curved segment blocks launch"),R.Combat->GetReadiness(R.A,Gun.MountId).Reason,FString(TEXT("FRIENDLY IN FLIGHT PATH")));
+    R.Scout->SetActorLocation(FMath::Lerp(Launch.Origin,Launch.FrozenAimPoint,.5));
+    TestTrue(TEXT("Same hull on direct line below arc permits launch"),R.Combat->GetReadiness(R.A,Gun.MountId).bReady);
+    return true;
+}
+
 IMPLEMENT_SIMPLE_AUTOMATION_TEST(FOVCombatFlightTest, "OrbitalVanguard.Combat.TrajectoryLifetimeAndLaunchOwnership", EAutomationTestFlags::EditorContext | EAutomationTestFlags::EngineFilter)
 bool FOVCombatFlightTest::RunTest(const FString&)
 {

@@ -434,6 +434,13 @@ void UOVTitleScreenWidget::BuildProgrammaticTree()
 
 
 
+    UButton* DifficultyButton=WidgetTree->ConstructWidget<UButton>();
+    DifficultyButton->SetStyle(OVStyle::MakeSecondaryButtonStyle(false));
+    DifficultyText=OVStyle::MakeLabel(WidgetTree,TEXT("난이도 · 보통"),14,OVStyle::TextWhite,true);
+    DifficultyButton->AddChild(DifficultyText);
+    DifficultyButton->OnClicked.AddDynamic(this,&UOVTitleScreenWidget::CycleScenarioDifficulty);
+    ModalHeader->AddChildToHorizontalBox(DifficultyButton)->SetVerticalAlignment(VAlign_Top);
+
     UButton* BackToTitleBtn = WidgetTree->ConstructWidget<UButton>();
     BackToTitleBtn->SetStyle(OVStyle::MakeSecondaryButtonStyle(false));
     CardReturnLabel = OVStyle::MakeLabel(WidgetTree, TEXT("타이틀로"), 14, OVStyle::TextWhite, true);
@@ -1001,6 +1008,8 @@ void UOVTitleScreenWidget::ReleaseBackdrop()
 void UOVTitleScreenWidget::ShowPanel(EOVTitleMenuPanel Panel)
 {
     CurrentPanel = Panel;
+    if(DifficultyText && GetWorld()) if(auto* Play=GetWorld()->GetSubsystem<UOVPlayScenarioSubsystem>())
+        DifficultyText->SetText(FText::FromString(Play->DifficultyLabel()));
     if (CardReturnLabel) CardReturnLabel->SetText(FText::FromString(bOpenedFromInGame ? TEXT("전장으로") : TEXT("타이틀로")));
     if (TitlePanelContainer)
     {
@@ -1187,6 +1196,13 @@ void UOVTitleScreenWidget::BackFromCurrentPanel()
 {
     if (CurrentPanel == EOVTitleMenuPanel::Tutorial) HandleCloseTutorial();
     else HandleBackToTitle();
+}
+
+void UOVTitleScreenWidget::CycleScenarioDifficulty()
+{
+    auto* Play=GetWorld()->GetSubsystem<UOVPlayScenarioSubsystem>();
+    Play->CycleDifficulty();
+    DifficultyText->SetText(FText::FromString(Play->DifficultyLabel()));
 }
 
 void UOVTitleScreenWidget::HandleBackToTitle()

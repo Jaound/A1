@@ -48,7 +48,7 @@ FString AOVHUD::ReadinessKorean(const FString& Key)
   {TEXT("READY"),TEXT("발사 가능")},{TEXT("NO VALID TARGET"),TEXT("표적을 지정하세요")},
   {TEXT("OUT OF RANGE"),TEXT("사거리 밖")},{TEXT("NO DETECTION"),TEXT("탐지 상실")},
   {TEXT("MOUNT BLIND ARC"),TEXT("장착면 사각")},{TEXT("TURRET ALIGNING"),TEXT("포탑 조준 중")},
-  {TEXT("FRIENDLY IN LINE"),TEXT("아군이 사선을 가림")},{TEXT("COOLDOWN"),TEXT("재사용 대기")},
+  {TEXT("FRIENDLY IN FLIGHT PATH"),TEXT("아군이 비행 경로에 있음")},{TEXT("FRIENDLY IN LINE"),TEXT("아군이 사선을 가림")},{TEXT("COOLDOWN"),TEXT("재사용 대기")},
   {TEXT("WEAPON CONTROL OFF"),TEXT("무기제어실 정지")},{TEXT("SUPPLY OFF"),TEXT("무장 공급 시설 정지")},
   {TEXT("MOUNT DESTROYED"),TEXT("무장 파괴")},{TEXT("FTL CHARGING"),TEXT("FTL 충전으로 빔 사용 불가")},
   {TEXT("INTERIOR ALLY HOLD"),TEXT("내부 아군 보호 · 사격 보류")},
@@ -288,6 +288,7 @@ void AOVHUD::DrawPlayHUD()
   const float ListWidth=FMath::Min(684.f,W-226);
   DrawRect(PlayPanel,216,63,ListWidth,47+UOVPlayScenarioSubsystem::Definitions().Num()*36);
   DrawText(TEXT("임무 선택"),PlayAccent,226,71,GEngine->GetSmallFont());
+  if(Play)Button(TEXT("CycleDifficulty"),Play->DifficultyLabel(),309,70,110);
   Button(TEXT("MissionCards"),TEXT("임무 카드 보기"),424,70,126);
   Button(TEXT("SceneMenuClose"),TEXT("닫기"),558,70,72,true);
   float Y=106;

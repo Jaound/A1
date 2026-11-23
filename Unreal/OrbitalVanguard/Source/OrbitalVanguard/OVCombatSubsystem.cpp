@@ -73,6 +73,36 @@ FVector FixedVLSPoint(const FOVAttackState& Attack, double Alpha)
         + Alpha * Alpha * Attack.FrozenAimPoint;
 }
 
+void PrepareMissileFlight(FOVAttackState& Shot, const FVector& Normal)
+{
+    const FVector Offset = Shot.FrozenAimPoint - Shot.Origin;
+    Shot.Direction = Offset.GetSafeNormal();
+    Shot.VLSControlPoint = Shot.Origin + Normal * FMath::Max<double>(Shot.Weapon.VLSHeight, Offset.Length() * .22);
+    if (Shot.Weapon.Kind == EOVAttackKind::GuidedMissile)
+    {
+        Shot.Direction = (Shot.Direction + Normal * .8).GetSafeNormal();
+        return;
+    }
+    FVector Last = Shot.Origin;
+    double Length = 0;
+    for (int32 I = 1; I <= 16; ++I)
+    {
+        const FVector Point = FixedVLSPoint(Shot, I / 16.);
+        Length += FVector::Dist(Last, Point);
+        Last = Point;
+    }
+    Shot.VLSDuration = FMath::Max(.01f, float(Length / Shot.Weapon.Speed));
+    Shot.Direction = Normal;
+}
+
+FVector GuidedDirection(FVector Direction, FVector Desired, float TurnRate, double Delta)
+{
+    const FQuat Before = Direction.ToOrientationQuat(), Wanted = Desired.ToOrientationQuat();
+    const double Angle = Before.AngularDistance(Wanted);
+    return FQuat::Slerp(Before, Wanted, Angle > UE_SMALL_NUMBER ?
+        FMath::Min(1., FMath::DegreesToRadians(double(TurnRate))*Delta/Angle) : 1.).GetForwardVector();
+}
+
 bool SegmentMount(FVector Start, FVector End, const FTransform& Transform, FVector LocalCenter,
     float Radius, float& Fraction, FVector& Normal)
 {
@@ -432,12 +462,57 @@ FOVFireReadiness UOVCombatSubsystem::Evaluate(const FOVCombatShipState& State, c
     R.AimError = FMath::RadiansToDegrees(FMath::Acos(FMath::Clamp(
         FVector::DotProduct(Mount.LocalAim.Vector(), LocalDirection), -1.0, 1.0)));
     if (R.AimError > Mount.Profile.FireTolerance) return Block(TEXT("TURRET ALIGNING"));
-    if (FindBlockingFriend(Ship, Target, Origin)) return Block(TEXT("FRIENDLY IN LINE"));
+    if (Mount.Profile.Family == EOVWeaponType::Missile)
+    {
+        FOVAttackState Planned;
+        Planned.Origin = Planned.Position = Origin;
+        Planned.FrozenAimPoint = AimPoint;
+        Planned.Weapon = Mount.Profile;
+        Planned.TrackingLifetime = Settings->GuidedTrackingSeconds;
+        PrepareMissileFlight(Planned, Ship->GetActorQuat().RotateVector(OVWeaponGeometry::SurfaceNormal(*Def)));
+        FMissilePath Path;
+        PredictMissilePath(Planned, Path);
+        if (FindBlockingFriend(Ship, Target, Origin, &Path)) return Block(TEXT("FRIENDLY IN FLIGHT PATH"));
+    }
+    else if (FindBlockingFriend(Ship, Target, Origin)) return Block(TEXT("FRIENDLY IN LINE"));
     if (!bIgnoreCooldown && R.Cooldown > UE_KINDA_SMALL_NUMBER) return Block(TEXT("COOLDOWN"));
     R.bReady = true; R.Reason = TEXT("READY"); return R;
 }
 
-AOVShip* UOVCombatSubsystem::FindBlockingFriend(AOVShip* Ship, AOVShip* Target, FVector Origin) const
+void UOVCombatSubsystem::PredictMissilePath(const FOVAttackState& Shot, FMissilePath& Points)
+{
+    Points.Reset();
+    Points.Add(Shot.Position);
+    constexpr int32 Samples = 20;
+    if (Shot.Weapon.Kind == EOVAttackKind::Missile && Shot.VLSDuration > 0)
+    {
+        const double Start = Shot.Age / Shot.VLSDuration;
+        const double End = FMath::Min(1., double(Shot.Weapon.Lifetime / Shot.VLSDuration));
+        if (Start < End)
+            for (int32 I=1; I<=Samples; ++I)
+                Points.Add(FixedVLSPoint(Shot, FMath::Lerp(Start, End, double(I)/Samples)));
+    }
+    else if (Shot.Weapon.Kind == EOVAttackKind::GuidedMissile)
+    {
+        const AOVShip* Target = Shot.Target.Get();
+        const FVector Aim = Target ? Target->GetActorTransform().TransformPosition(Shot.TargetLocalPoint)+Shot.AimOffset : Shot.FrozenAimPoint;
+        FVector Position = Shot.Position, Direction = Shot.Direction;
+        const double Horizon = FMath::Min<double>(FMath::Min(Shot.TrackingLifetime,Shot.Weapon.Lifetime)-Shot.Age,
+            FVector::Dist(Position,Aim)/Shot.Weapon.Speed + 1.);
+        if (Horizon <= 0) return;
+        const double Dt = Horizon/(Samples*4);
+        for (int32 I=1; I<=Samples*4; ++I)
+        {
+            const FVector Offset = Aim - Position;
+            if (Offset.SizeSquared() <= FMath::Square(Dt*Shot.Weapon.Speed)) { Points.Add(Aim); break; }
+            Direction = GuidedDirection(Direction,Offset.GetSafeNormal(),Shot.Weapon.GuidanceTurnRate,Dt);
+            Position += Direction*Shot.Weapon.Speed*Dt;
+            if (I%4 == 0) Points.Add(Position);
+        }
+    }
+}
+
+AOVShip* UOVCombatSubsystem::FindBlockingFriend(AOVShip* Ship, AOVShip* Target, FVector Origin, const FMissilePath* Path) const
 {
     FVector Endpoint; const int32 SI=FindShip(Ship);
     if(SI==INDEX_NONE || !ResolveAimPoint(Ships[SI],Target,Endpoint)) return nullptr;
@@ -447,6 +522,31 @@ AOVShip* UOVCombatSubsystem::FindBlockingFriend(AOVShip* Ship, AOVShip* Target, 
         if (!IsValid(Friend) || Friend == Ship || Friend == Target || !Friend->Systems || !Friend->Systems->Layout
             || Friend->Systems->bWrecked || Other.bDeparted || Friend->Systems->FactionId != Ship->Systems->FactionId) continue;
         float Fraction; FVector Normal;
+        if (Path)
+        {
+            const FTransform Transform = Friend->GetActorTransform();
+            const bool Shield = Friend->Systems->bShieldActive && Friend->Systems->Shield > 0;
+            const FVector Extent = Shield ? Friend->GetLocalShieldRadii() : Friend->Systems->Layout->LocalHalfExtent;
+            for (int32 I=1; I<Path->Num(); ++I)
+            {
+                const FVector Start=(*Path)[I-1], End=(*Path)[I];
+                if (Shield)
+                {
+                    if (SegmentEllipsoid(Start,End,Transform,Extent,Fraction,Normal)) return Friend;
+                    continue;
+                }
+                const auto* Layout=Friend->Systems->Layout.Get();
+                if (!SegmentBox(Start,End,Transform,Extent,Fraction,Normal)) continue;
+                if (Layout->CombatHullBoxes.IsEmpty()) return Friend;
+                for (const auto& Box:Layout->CombatHullBoxes)
+                {
+                    FTransform BoxTransform=Transform;
+                    BoxTransform.SetLocation(Transform.TransformPosition(Box.LocalCenter));
+                    if (SegmentBox(Start,End,BoxTransform,Box.HalfExtent,Fraction,Normal)) return Friend;
+                }
+            }
+            continue;
+        }
         if (SegmentBox(Origin, Endpoint, Friend->GetActorTransform(),
             Friend->Systems->Layout->LocalHalfExtent, Fraction, Normal)) return Friend;
         for (const FOVWeaponMountDefinition& Mount : Friend->Systems->Layout->WeaponMounts)
@@ -539,7 +639,18 @@ void UOVCombatSubsystem::Step(float Delta)
                 if (!IsValidTarget(Ship, Target) || !GetDetection(Ship, Target).bDetected) continue;
                 FVector CandidateAim;
                 if(IsTargetProtected(Ship,Target) || (Mission&&Mission->ShouldHoldAutoAssaultFire(Ship,Target)) || !ResolveAimPoint(State,Target,CandidateAim)) continue;
-                const double Distance = FVector::DistSquared(Ship->GetActorLocation(), Target->GetActorLocation());
+                double Distance = FVector::DistSquared(Ship->GetActorLocation(), Target->GetActorLocation());
+                const auto* Play=GetWorld()->GetSubsystem<UOVPlayScenarioSubsystem>();
+                if (Play && Play->GetActiveDefinition())
+                {
+                    const auto Skill=Ship->Systems->FactionId==0?EOVCommandDifficulty::Hard:Play->ActiveDifficulty;
+                    if (Skill!=EOVCommandDifficulty::Easy)
+                    {
+                        const float Integrity=FMath::Clamp(Target->Systems->HullHP/FMath::Max(1.f,Target->Systems->MaxHullHP),0.f,1.f);
+                        Distance *= .55+.45*Integrity;
+                        if (Skill==EOVCommandDifficulty::Hard && !Target->Systems->bShieldActive) Distance*=.72;
+                    }
+                }
                 if (Distance < BestDistance) { Best = Target; BestDistance = Distance; }
             }
             if (Ship->AttackTarget != Best)
@@ -556,7 +667,10 @@ void UOVCombatSubsystem::Step(float Delta)
             && !Ship->bManualAttitude && !Ship->bFTLCharging && Ship->Systems->CanMove())
         {
             if (Ship->Systems->Layout->DeckCount <= 2
-                && FindBlockingFriend(Ship, Ship->AttackTarget, Ship->GetActorLocation()))
+                && FindBlockingFriend(Ship, Ship->AttackTarget, Ship->GetActorLocation())
+                && !State.Mounts.ContainsByPredicate([&](const FOVCombatMountState& M){
+                    return M.Profile.Family==EOVWeaponType::Missile && Evaluate(State,M,true).bReady;
+                }))
                 Ship->SetDestination(Ship->GetActorLocation() + FVector(0, 0, Settings->AutoClearanceHeight));
             else
             {
@@ -582,6 +696,8 @@ void UOVCombatSubsystem::Step(float Delta)
             if (bAutomatic && !Mount.bFireRequested && Mount.SalvoRemaining<=0 && State.ForcedMount!=Mount.MountId && Mission
                 && Mission->ShouldHoldAutoAssaultFire(Ship,Ship->AttackTarget)) continue;
             if (!(bAutomatic || Mount.bFireRequested || Mount.SalvoRemaining > 0)) continue;
+            if (Mount.SalvoRemaining<=0 && Mount.Cooldown>UE_KINDA_SMALL_NUMBER &&
+                !IsTargetProtected(Ship,Ship->AttackTarget)) continue;
             const FOVFireReadiness Ready = Evaluate(State, Mount, false);
             if (!Ready.bReady)
             {
@@ -674,19 +790,8 @@ void UOVCombatSubsystem::Launch(FOVCombatShipState& State, FOVCombatMountState& 
     }
     Attack.FrozenAimPoint = AimPoint;
     Attack.Direction = (AimPoint - Attack.Position).GetSafeNormal();
-    if (Attack.Weapon.Kind == EOVAttackKind::Missile)
-    {
-        const FVector LaunchUp = State.Ship->GetActorQuat().RotateVector(OVWeaponGeometry::SurfaceNormal(*Def));
-        Attack.VLSControlPoint = Attack.Origin + LaunchUp * FMath::Max(1.f, Attack.Weapon.VLSHeight);
-        FVector Previous = Attack.Origin; double Length = 0;
-        for (int32 Sample = 1; Sample <= 16; ++Sample)
-        {
-            const FVector Point = FixedVLSPoint(Attack, Sample / 16.0);
-            Length += FVector::Dist(Previous, Point); Previous = Point;
-        }
-        Attack.VLSDuration = FMath::Max(.01f, float(Length / Attack.Weapon.Speed));
-        Attack.Direction = LaunchUp;
-    }
+    if (Attack.Weapon.Family == EOVWeaponType::Missile)
+        PrepareMissileFlight(Attack, State.Ship->GetActorQuat().RotateVector(OVWeaponGeometry::SurfaceNormal(*Def)));
     State.Ship->Systems->NotifyCombatParticipation();
     ++Mount.ShotsFired;
     Mount.LastShotId = Attack.AttackId;
@@ -909,11 +1014,7 @@ void UOVCombatSubsystem::AdvanceAttacks(float Delta)
             else
             {
                 const FVector Desired = (Target->GetActorTransform().TransformPosition(Attack.TargetLocalPoint) + Attack.AimOffset - Attack.Position).GetSafeNormal();
-                const FQuat Before = Attack.Direction.ToOrientationQuat();
-                const FQuat Wanted = Desired.ToOrientationQuat();
-                const double Angle = Before.AngularDistance(Wanted);
-                const double MaxTurn = FMath::DegreesToRadians(Attack.Weapon.GuidanceTurnRate) * Delta;
-                Attack.Direction = FQuat::Slerp(Before, Wanted, Angle > UE_SMALL_NUMBER ? FMath::Min(1.0, MaxTurn / Angle) : 1.0).GetForwardVector();
+                Attack.Direction = GuidedDirection(Attack.Direction, Desired, Attack.Weapon.GuidanceTurnRate, Delta);
             }
         }
         if (Attack.Result == EOVAttackResult::Flying)
