@@ -1,0 +1,18 @@
+Mesh: /Game/Presentation/Ships/DreadnoughtFull/SM_Hull.SM_Hull
+  LOD count: -1
+  Slot 0: Material_001 -> WorldGridMaterial
+Mesh: /Game/Presentation/Ships/CarrierFull/SM_Hull.SM_Hull
+  LOD count: -1
+  Slot 0: Material_001 -> WorldGridMaterial
+Mesh: /Game/Presentation/Ships/BattleshipFull/SM_Hull.SM_Hull
+  LOD count: -1
+  Slot 0: Material_001 -> WorldGridMaterial
+Mesh: /Game/SpaceshipVFXStarter/Demo/DemoMeshes/SM_SciFiShip.SM_SciFiShip
+  LOD count: -1
+  Slot 0: PE_Material -> MM_SciFiShip
+Mesh: /Game/StarfieldFree/Mesh/SM_Nebula_Sphere_Free.SM_Nebula_Sphere_Free
+  LOD count: -1
+  Slot 0: Nebula -> None
+Mesh: /Game/StarfieldFree/Mesh/SM_StarSphereFree.SM_StarSphereFree
+  LOD count: -1
+  Slot 0: RealStars -> MI_Starfield_Stars_Free

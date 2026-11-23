@@ -1,0 +1,17 @@
+Loaded MI_Planet, parent=M_Planet
+  Scalar: Emissive Strength = 1.3118749856948853
+  Scalar: Emissive Falloff = 10.0
+  Scalar: Trim Lights = 3.0
+  Scalar: City_Lights = 0.0
+  Scalar: Planet_Color_Blend_Intensity = 100.0
+  Scalar: Planet_Rotation_Speed = 9.999999747378752e-05
+  Scalar: Specular_Switch = 0.0
+  Scalar: Metallic Amount = 0.0
+  Scalar: Normal_Intensity = 5.0
+  Scalar: Specular Weight = -1.0
+  Scalar: RefractionDepthBias = 0.0
+  Vector: Planet_Color_Blend = <Struct 'LinearColor' (0x0000022BA5CBE760) {r: 0.024942, g: 0.339111, b: 1.000000, a: 1.000000}>
+  Texture: Diffuse Texture = T_8k_earth_daymap
+  Texture: Emissive_Texture = T_8k_earth_nightmap
+  Texture: Normal_Texture = T_8k_earth_normal_map
+  Texture: Specular Texture = T_8k_earth_specular_map

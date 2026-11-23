@@ -7,7 +7,6 @@
 
 class AOVShip;
 class UStaticMeshComponent;
-class UMaterialInstanceDynamic;
 
 /**
  * Environmental Space Hazard: E1-calibrated Black Hole with gravitational lensing accretion disk,
@@ -22,6 +21,7 @@ class ORBITALVANGUARD_API AOVBlackHoleHazardActor : public AActor
 public:
     AOVBlackHoleHazardActor();
 
+    static void ConfigureVisualMesh(UStaticMeshComponent& Visual, float CoreRadius);
     virtual void BeginPlay() override;
     virtual void Tick(float DeltaSeconds) override;
 
@@ -59,7 +59,7 @@ public:
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "BlackHole")
     float GravitationalStrength = 80.0f;
 
-    /** Rotational speed of the glowing accretion disk (deg/s). */
+    /** Legacy Blueprint setting; the original material now animates its own disk. */
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "BlackHole")
     float DiskSpinRate = 8.0f;
 
@@ -72,12 +72,9 @@ public:
     int32 CoreInstantWreckCount = 0;
 
 private:
-    void EnsureVisualMeshes();
 
-    UPROPERTY(Transient)
-    TObjectPtr<UMaterialInstanceDynamic> AccretionDiskMID;
+
 
     TMap<TWeakObjectPtr<AOVShip>, FVector> ShipGravityVelocities;
-    float AccretionYaw = 0.0f;
-    bool bVisualsInitialized = false;
+
 };

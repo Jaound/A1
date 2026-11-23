@@ -1,0 +1,750 @@
+{
+  "프로젝트": "Orbital Vanguard",
+  "기획": "6d32a1f9dd96349563e30a51eb4d457a7397a836",
+  "코드": "codex/phase1-playground / fc9e4f3 위 로컬 변경",
+  "빌드": "Saved/Logs/HUDDeliveryFinalBuild.log",
+  "자동 검사": {
+    "로그": "Saved/Logs/HUDDeliveryFinalAuto.log",
+    "통과": 143,
+    "실패": 0
+  },
+  "PIE 검사": {
+    "FleetCommands_20261123_183001/result.json": {
+      "checks": [
+        "50코스트 출격",
+        "Fleet50 렌더",
+        "초계함_기존 렌더",
+        "초계함_보정 렌더",
+        "세력 0 실인원 15명",
+        "세력 1 실인원 15명",
+        "재시작",
+        "스타팅 영웅 명단 중복 없음",
+        "재시작",
+        "스타팅 영웅 명단 중복 없음",
+        "비전용 일반·유도 모듈 장착",
+        "17종 사건별 표시 설정",
+        "8개 임무 마지막 행 표시",
+        "수리함 초도 보급",
+        "적 수리 거절",
+        "실제 손상 표적",
+        "원거리 접근 후 유상 수리",
+        "정지 명령이 수리 취소",
+        "수리함_화물 렌더",
+        "목적지 전에는 충전 없음",
+        "목적지 선택 후 충전",
+        "지도 명령 후 선택 유지",
+        "정지 중 도약 보류",
+        "충전 후 선택함 이탈"
+      ],
+      "physical_input": false,
+      "passed": true
+    },
+    "MissionDebrief_20261123_182148/result.json": {
+      "checks": [
+        "Fleet50 카드 선택·이미지",
+        "Fleet100 카드 선택·이미지",
+        "Fleet200 카드 선택·이미지",
+        "BlackHoleTrial 카드 선택·이미지",
+        "Logistics 카드 선택·이미지",
+        "Evacuation 카드 선택·이미지",
+        "Sandbox 카드 선택·이미지",
+        "Fleet300 카드 선택·이미지",
+        "cards 플레이 창 렌더 저장",
+        "실제 임무 진입",
+        "카드 열람 일시정지 True",
+        "원래 함대·시간 상태 복귀 True",
+        "카드 열람 일시정지 False",
+        "원래 함대·시간 상태 복귀 False",
+        "이탈·완파 분리",
+        "승리 판정",
+        "result 플레이 창 렌더 저장",
+        "결과 버튼만 활성",
+        "전장 재열람",
+        "재열람 중 집계 불변",
+        "재도전 클릭이 새 전장에 전달되지 않음",
+        "버튼 해제까지 결과창이 소비",
+        "다음 전장 입력 허용",
+        "재도전 집계 초기화",
+        "목록 복귀·직전 카드 유지",
+        "종료 뒤 이전 임무 해제"
+      ],
+      "physical_input": false,
+      "passed": true
+    },
+    "PlayScenarioFleets_local_20261123_181549.json": {
+      "checks": [
+        {
+          "id": "FLEET-50-START",
+          "passed": true,
+          "detail": "50코스트 함대전 · 준비 완료"
+        },
+        {
+          "id": "FLEET-50-COST",
+          "passed": true,
+          "detail": "[50, 50]"
+        },
+        {
+          "id": "FLEET-50-REGISTERED",
+          "passed": true,
+          "detail": ""
+        },
+        {
+          "id": "FLEET-50-SPAWNED-COST",
+          "passed": true,
+          "detail": "[50, 50]"
+        },
+        {
+          "id": "FLEET-50-CAPITALS",
+          "passed": true,
+          "detail": "[0, 0]"
+        },
+        {
+          "id": "FLEET-50-AIRCRAFT",
+          "passed": true,
+          "detail": "80"
+        },
+        {
+          "id": "FLEET-50-AIRCRAFT-IDS",
+          "passed": true,
+          "detail": ""
+        },
+        {
+          "id": "FLEET-50-PAUSED",
+          "passed": true,
+          "detail": ""
+        },
+        {
+          "id": "FLEET-50-ENEMY-MOVEMENT",
+          "passed": true,
+          "detail": "17000.0"
+        },
+        {
+          "id": "FLEET-50-REAL-HITS",
+          "passed": true,
+          "detail": "1218"
+        },
+        {
+          "id": "FLEET-50-BOTH-SIDES-FIRE",
+          "passed": true,
+          "detail": "[690, 684]"
+        },
+        {
+          "id": "FLEET-50-BOTH-SIDES-LAUNCH",
+          "passed": true,
+          "detail": ""
+        },
+        {
+          "id": "FLEET-100-START",
+          "passed": true,
+          "detail": "100코스트 함대전 · 준비 완료"
+        },
+        {
+          "id": "FLEET-100-OLD-ACTOR-CLEARED",
+          "passed": true,
+          "detail": ""
+        },
+        {
+          "id": "FLEET-100-COST",
+          "passed": true,
+          "detail": "[100, 100]"
+        },
+        {
+          "id": "FLEET-100-REGISTERED",
+          "passed": true,
+          "detail": ""
+        },
+        {
+          "id": "FLEET-100-SPAWNED-COST",
+          "passed": true,
+          "detail": "[100, 100]"
+        },
+        {
+          "id": "FLEET-100-CAPITALS",
+          "passed": true,
+          "detail": "[0, 0]"
+        },
+        {
+          "id": "FLEET-100-AIRCRAFT",
+          "passed": true,
+          "detail": "80"
+        },
+        {
+          "id": "FLEET-100-AIRCRAFT-IDS",
+          "passed": true,
+          "detail": ""
+        },
+        {
+          "id": "FLEET-100-PAUSED",
+          "passed": true,
+          "detail": ""
+        },
+        {
+          "id": "FLEET-100-ENEMY-MOVEMENT",
+          "passed": true,
+          "detail": "17000.000000000007"
+        },
+        {
+          "id": "FLEET-100-REAL-HITS",
+          "passed": true,
+          "detail": "1282"
+        },
+        {
+          "id": "FLEET-100-BOTH-SIDES-FIRE",
+          "passed": true,
+          "detail": "[734, 731]"
+        },
+        {
+          "id": "FLEET-100-BOTH-SIDES-LAUNCH",
+          "passed": true,
+          "detail": ""
+        },
+        {
+          "id": "FLEET-200-START",
+          "passed": true,
+          "detail": "200코스트 함대전 · 준비 완료"
+        },
+        {
+          "id": "FLEET-200-OLD-ACTOR-CLEARED",
+          "passed": true,
+          "detail": ""
+        },
+        {
+          "id": "FLEET-200-COST",
+          "passed": true,
+          "detail": "[200, 200]"
+        },
+        {
+          "id": "FLEET-200-REGISTERED",
+          "passed": true,
+          "detail": ""
+        },
+        {
+          "id": "FLEET-200-SPAWNED-COST",
+          "passed": true,
+          "detail": "[200, 200]"
+        },
+        {
+          "id": "FLEET-200-CAPITALS",
+          "passed": true,
+          "detail": "[1, 1]"
+        },
+        {
+          "id": "FLEET-200-AIRCRAFT",
+          "passed": true,
+          "detail": "80"
+        },
+        {
+          "id": "FLEET-200-AIRCRAFT-IDS",
+          "passed": true,
+          "detail": ""
+        },
+        {
+          "id": "FLEET-200-PAUSED",
+          "passed": true,
+          "detail": ""
+        },
+        {
+          "id": "FLEET-200-ENEMY-MOVEMENT",
+          "passed": true,
+          "detail": "17000.000000000007"
+        },
+        {
+          "id": "FLEET-200-REAL-HITS",
+          "passed": true,
+          "detail": "1364"
+        },
+        {
+          "id": "FLEET-200-BOTH-SIDES-FIRE",
+          "passed": true,
+          "detail": "[727, 757]"
+        },
+        {
+          "id": "FLEET-200-BOTH-SIDES-LAUNCH",
+          "passed": true,
+          "detail": ""
+        },
+        {
+          "id": "FLEET-300-START",
+          "passed": true,
+          "detail": "300코스트 함대전 · 준비 완료"
+        },
+        {
+          "id": "FLEET-300-OLD-ACTOR-CLEARED",
+          "passed": true,
+          "detail": ""
+        },
+        {
+          "id": "FLEET-300-COST",
+          "passed": true,
+          "detail": "[300, 300]"
+        },
+        {
+          "id": "FLEET-300-REGISTERED",
+          "passed": true,
+          "detail": ""
+        },
+        {
+          "id": "FLEET-300-SPAWNED-COST",
+          "passed": true,
+          "detail": "[300, 300]"
+        },
+        {
+          "id": "FLEET-300-CAPITALS",
+          "passed": true,
+          "detail": "[2, 2]"
+        },
+        {
+          "id": "FLEET-300-AIRCRAFT",
+          "passed": true,
+          "detail": "160"
+        },
+        {
+          "id": "FLEET-300-AIRCRAFT-IDS",
+          "passed": true,
+          "detail": ""
+        },
+        {
+          "id": "FLEET-300-PAUSED",
+          "passed": true,
+          "detail": ""
+        },
+        {
+          "id": "FLEET-300-ENEMY-MOVEMENT",
+          "passed": true,
+          "detail": "17000.0"
+        },
+        {
+          "id": "FLEET-300-REAL-HITS",
+          "passed": true,
+          "detail": "1335"
+        },
+        {
+          "id": "FLEET-300-BOTH-SIDES-FIRE",
+          "passed": true,
+          "detail": "[708, 700]"
+        },
+        {
+          "id": "FLEET-300-BOTH-SIDES-LAUNCH",
+          "passed": true,
+          "detail": ""
+        },
+        {
+          "id": "FLEET-DEPARTURE-VICTORY",
+          "passed": true,
+          "detail": ""
+        },
+        {
+          "id": "FLEET-RESTART-RESET",
+          "passed": true,
+          "detail": ""
+        },
+        {
+          "id": "FLEET-DEPARTURE-DEFEAT",
+          "passed": true,
+          "detail": ""
+        },
+        {
+          "id": "FLEET-CLOCK-1-START",
+          "passed": true,
+          "detail": ""
+        },
+        {
+          "id": "FLEET-CLOCK-2-START",
+          "passed": true,
+          "detail": ""
+        },
+        {
+          "id": "FLEET-CLOCK-3-START",
+          "passed": true,
+          "detail": ""
+        },
+        {
+          "id": "FLEET-CLOCK-123",
+          "passed": true,
+          "detail": "[4.0, 4.0, 4.0]"
+        },
+        {
+          "id": "FLEET-STALEMATE",
+          "passed": true,
+          "detail": "교착 · 전력 변화 없음"
+        },
+        {
+          "id": "FLEET-SANDBOX-START",
+          "passed": true,
+          "detail": ""
+        },
+        {
+          "id": "FLEET-SANDBOX-EMPTY",
+          "passed": true,
+          "detail": ""
+        },
+        {
+          "id": "FLEET-SANDBOX-NO-RESULT",
+          "passed": true,
+          "detail": ""
+        },
+        {
+          "id": "FLEET-LEAVE-RESET",
+          "passed": true,
+          "detail": ""
+        },
+        {
+          "id": "FLEET-LEGACY-API-RESTORE",
+          "passed": true,
+          "detail": ""
+        }
+      ],
+      "errors": [],
+      "physical_input": false,
+      "passed": true
+    },
+    "MiningEscort_20261123_181443/result.json": {
+      "checks": [
+        "임무 시작",
+        "선택 채굴선의 가득 찬 창고",
+        "선택 수송선의 가득 찬 창고",
+        "채굴선과 R37 두 척씩",
+        "실제 등록·비용",
+        "정지 시 재고 불변",
+        "12초 선택 함선 실제 화물량",
+        "36초 선택 함선 실제 화물량",
+        "85초 선택 함선 실제 화물량",
+        "채굴 후 인계 후 납품",
+        "고정 시드 습격과 실제 교전",
+        "전 과정 자원 보존",
+        "정상 항행으로 목표 달성",
+        "임무 시작",
+        "임무 시작",
+        "임무 시작",
+        "1·2·3배속 동일 시간 재고와 발사",
+        "임무 시작",
+        "마지막 화물 수송 중",
+        "채굴선 전멸 후 적재분으로 진행",
+        "잔여 화물로 최종 승리",
+        "임무 시작",
+        "장거리 인계 금지",
+        "항로 복귀로 복항",
+        "수송선 한 척 상실 후 지속",
+        "수송선 전멸 시 패배",
+        "임무 시작",
+        "채굴 불능·잔량 부족 패배",
+        "보급수리함 실제 화물 가득 표시",
+        "다른 함종의 자원 세 종류와 공간",
+        "적 창고 정보 비공개",
+        "전환 시 임무 화물·자원 정리"
+      ],
+      "physical_input": false,
+      "first_game_seconds": {
+        "습격": 18,
+        "채굴": 35,
+        "인계": 39,
+        "납품": 75
+      },
+      "elapsed": 218.000011369586,
+      "delivered": 500.0,
+      "status": "승리 · 목표 화물 납품 완료",
+      "cargo": 120.0,
+      "stock": 0.0,
+      "shots": 1240,
+      "max_drift": 0,
+      "clock36": [
+        [
+          36.0,
+          112.0,
+          63.0,
+          132
+        ],
+        [
+          36.0,
+          112.0,
+          63.0,
+          132
+        ],
+        [
+          36.0,
+          112.0,
+          63.0,
+          132
+        ]
+      ],
+      "passed": true
+    },
+    "AirRaid_20261123_182223/result.json": {
+      "checks": [
+        "공습 전 아군 8척과 항모 재고 40기",
+        "방향 예고",
+        "중심 구축전함과 근접 호위",
+        "화면 사각형으로 8척 선택",
+        "모든 선택함 동일 이동 벡터",
+        "일괄 정지",
+        "퇴로 개방 전 충전 차단·정지 시간",
+        "공습예고_다중선택 렌더",
+        "첫 파동 실제 적 항모와 호위",
+        "적 함재기 실제 출격",
+        "적이 있어도 사각형은 아군만 선택",
+        "그룹의 같은 표적",
+        "두 번째 파동과 실제 발사",
+        "아군 외부 기체 존재",
+        "명령·엔진이 가동되는 선택함 충전",
+        "16초 이전 이탈 금지",
+        "호위함 이탈 후 항모는 회수 대기",
+        "승리와 실제 충전함 이탈",
+        "포기는 영구 격추와 구분",
+        "퇴각결과 렌더",
+        "회수 전 실제 출격",
+        "정상 도킹으로 회수 완료",
+        "일반 명령만으로 함대 승리·항모 이탈",
+        "1배속 충전 유지",
+        "1배속 개별 이탈",
+        "1배속 부분 승리",
+        "2배속 충전 유지",
+        "2배속 개별 이탈",
+        "2배속 부분 승리",
+        "3배속 충전 유지",
+        "3배속 개별 이탈",
+        "3배속 부분 승리",
+        "정확히 4척 이탈의 승패 경계",
+        "정확히 5척 이탈의 승패 경계",
+        "3개 공습 후 퇴로 폐쇄·무이탈 패배",
+        "엔진 인원 감소로 충전 취소되지 않음",
+        "엔진 전부 파괴 시 도약 취소",
+        "전멸 즉시 패배",
+        "재시작 시 파동·이탈·포기 초기화",
+        "원본 블랙홀 표시 배율 80%",
+        "블랙홀 실제 중력권·중심부"
+      ],
+      "physical_input": false,
+      "charge_at_41": [
+        [
+          "초계함 01",
+          false,
+          false,
+          false,
+          false
+        ],
+        [
+          "초계함 02",
+          true,
+          false,
+          false,
+          false
+        ],
+        [
+          "초계함 03",
+          true,
+          true,
+          true,
+          true
+        ],
+        [
+          "방공함 04",
+          true,
+          true,
+          true,
+          true
+        ],
+        [
+          "방공함 05",
+          true,
+          true,
+          true,
+          true
+        ],
+        [
+          "전함 06",
+          true,
+          true,
+          true,
+          true
+        ],
+        [
+          "항공모함 07",
+          true,
+          true,
+          true,
+          true
+        ],
+        [
+          "구축전함 08",
+          true,
+          true,
+          true,
+          true
+        ]
+      ],
+      "charge_at_58": [
+        [
+          "초계함 01",
+          false,
+          false,
+          true
+        ],
+        [
+          "초계함 02",
+          false,
+          false,
+          true
+        ],
+        [
+          "초계함 03",
+          true,
+          false,
+          false
+        ],
+        [
+          "방공함 04",
+          true,
+          false,
+          false
+        ],
+        [
+          "방공함 05",
+          true,
+          false,
+          false
+        ],
+        [
+          "전함 06",
+          true,
+          false,
+          false
+        ],
+        [
+          "항공모함 07",
+          false,
+          true,
+          false
+        ],
+        [
+          "구축전함 08",
+          true,
+          false,
+          false
+        ]
+      ],
+      "air_at_58": [
+        "<OVAircraftState.DOCK_WAITING: 3>",
+        "<OVAircraftState.DOCK_WAITING: 3>",
+        "<OVAircraftState.DOCK_WAITING: 3>",
+        "<OVAircraftState.DOCK_WAITING: 3>",
+        "<OVAircraftState.DOCK_WAITING: 3>",
+        "<OVAircraftState.DOCK_WAITING: 3>",
+        "<OVAircraftState.DOCK_WAITING: 3>",
+        "<OVAircraftState.DOCK_WAITING: 3>",
+        "<OVAircraftState.DOCK_WAITING: 3>",
+        "<OVAircraftState.DOCK_WAITING: 3>",
+        "<OVAircraftState.DOCK_WAITING: 3>",
+        "<OVAircraftState.DOCK_WAITING: 3>",
+        "<OVAircraftState.DOCK_WAITING: 3>",
+        "<OVAircraftState.DOCK_WAITING: 3>",
+        "<OVAircraftState.DOCK_WAITING: 3>",
+        "<OVAircraftState.DOCK_WAITING: 3>",
+        "<OVAircraftState.DOCK_WAITING: 3>",
+        "<OVAircraftState.DOCK_WAITING: 3>",
+        "<OVAircraftState.DOCK_WAITING: 3>",
+        "<OVAircraftState.DOCK_WAITING: 3>",
+        "<OVAircraftState.DOCK_WAITING: 3>",
+        "<OVAircraftState.DOCK_WAITING: 3>",
+        "<OVAircraftState.DOCK_WAITING: 3>",
+        "<OVAircraftState.DOCK_WAITING: 3>",
+        "<OVAircraftState.DOCK_WAITING: 3>",
+        "<OVAircraftState.DOCK_WAITING: 3>",
+        "<OVAircraftState.DOCK_WAITING: 3>",
+        "<OVAircraftState.DOCK_WAITING: 3>",
+        "<OVAircraftState.DOCK_WAITING: 3>",
+        "<OVAircraftState.DOCK_WAITING: 3>",
+        "<OVAircraftState.DOCK_WAITING: 3>",
+        "<OVAircraftState.DOCK_WAITING: 3>",
+        "<OVAircraftState.DOCK_WAITING: 3>",
+        "<OVAircraftState.DOCK_WAITING: 3>",
+        "<OVAircraftState.DOCK_WAITING: 3>",
+        "<OVAircraftState.DOCK_WAITING: 3>",
+        "<OVAircraftState.DOCK_WAITING: 3>",
+        "<OVAircraftState.DOCK_WAITING: 3>",
+        "<OVAircraftState.DOCK_WAITING: 3>",
+        "<OVAircraftState.DOCK_WAITING: 3>"
+      ],
+      "victory": "승리 · 이탈 6척 · 완파 2척(2코스트) · 잔류 0척 · 포기 40기",
+      "recovery_victory": "승리 · 이탈 5척 · 완파 3척(7코스트) · 잔류 0척 · 포기 0기",
+      "defeat": "패배 · 이탈 0척 · 완파 5척(33코스트) · 잔류 3척 · 포기 0기",
+      "passed": true
+    },
+    "SandboxFleet_20261123_181722/result.json": {
+      "checks": [
+        "빈 전장·일시정지",
+        "빈 전장 교전 시작 차단",
+        "미리보기만으로 전력 증가 없음",
+        "세 척 편대 미리보기",
+        "편대 끝이 경계를 넘으면 전체 배치 차단",
+        "아군 3척 동시 배치",
+        "아군 위치·간격·방향",
+        "겹친 재배치 차단",
+        "한쪽만 배치하면 준비 유지",
+        "실제 항모 메시 미리보기",
+        "적군 항모 실제 등록",
+        "진영과 높이·방향 적용",
+        "교전·PD·실제 격납 재고 등록",
+        "미리보기 취소 후 배치 차단",
+        "교전 시작 시 미리보기 해제",
+        "교전 중 생성 금지",
+        "양측 접근 목적지 간격 유지",
+        "실제 발사와 명중",
+        "교전 중단 1배속 전력·피해·위치·시간 보존",
+        "교전 중단 2배속 전력·피해·위치·시간 보존",
+        "교전 중단 3배속 전력·피해·위치·시간 보존",
+        "기존 개체 그대로 교전 재개",
+        "단순 일시정지는 전투 모드 유지",
+        "선택 함선과 전투 등록 제거",
+        "전체 초기화·재고 정리",
+        "corvette 미리보기·생성",
+        "corvette 제거·전력 정리",
+        "frigate 미리보기·생성",
+        "frigate 제거·전력 정리",
+        "vector 미리보기·생성",
+        "vector 제거·전력 정리",
+        "bastion 미리보기·생성",
+        "bastion 제거·전력 정리",
+        "cruiser 미리보기·생성",
+        "cruiser 제거·전력 정리",
+        "air_defense 미리보기·생성",
+        "air_defense 제거·전력 정리",
+        "radar 미리보기·생성",
+        "radar 제거·전력 정리",
+        "battleship 미리보기·생성",
+        "battleship 제거·전력 정리",
+        "carrier 미리보기·생성",
+        "carrier 제거·전력 정리",
+        "missile_ship 미리보기·생성",
+        "missile_ship 제거·전력 정리",
+        "dreadnought 미리보기·생성",
+        "dreadnought 제거·전력 정리",
+        "battlecarrier 미리보기·생성",
+        "battlecarrier 제거·전력 정리",
+        "repair 미리보기·생성",
+        "repair 제거·전력 정리",
+        "mining 미리보기·생성",
+        "mining 제거·전력 정리",
+        "transport 미리보기·생성",
+        "transport 제거·전력 정리",
+        "assault 미리보기·생성",
+        "assault 제거·전력 정리",
+        "장면 전환 시 미리보기와 편집 권한 정리"
+      ],
+      "physical_input": false,
+      "shots_at_stop": 62,
+      "hits_at_stop": 61,
+      "game_time_at_stop": 9.000000469386578,
+      "passed": true
+    }
+  },
+  "직접 조작": {
+    "환경": "1280×740 DX11 별도 플레이 창",
+    "확인": [
+      "ESC 일시정지 및 마우스 재개",
+      "아군 7척 드래그 후 오른쪽 카드 7개",
+      "도약 지도 목적지 확정 후 7척 선택 유지 및 충전 표시",
+      "결과 화면 6척 이탈·3척 완파·1척 잔류와 재도전"
+    ],
+    "수리": "PIE 명령 경로로 확인, 수리 전체 마우스 흐름 미검증"
+  }
+}

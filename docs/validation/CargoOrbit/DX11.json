@@ -1,0 +1,99 @@
+{
+  "captures": [
+    "일반_전장0.png",
+    "일반_회전0.png",
+    "같은방향_일반행성0.png",
+    "E1_시작0.png",
+    "E1_강착원반0.png",
+    "같은방향_E1중심0.png",
+    "전장_아래쪽0.png",
+    "E1_원경0.png"
+  ],
+  "physical_input": false,
+  "background_depth_gap_cm": 60599.97400477645,
+  "orbits": [
+    {
+      "playgame3": true,
+      "angle": 45,
+      "height_cm": -67175.1
+    },
+    {
+      "playgame3": true,
+      "angle": 89,
+      "height_cm": -94985.5
+    },
+    {
+      "playgame3": true,
+      "angle": 91,
+      "height_cm": -94985.5
+    },
+    {
+      "playgame3": true,
+      "angle": 179,
+      "height_cm": -1658.0
+    },
+    {
+      "playgame3": true,
+      "angle": 181,
+      "height_cm": 1658.0
+    },
+    {
+      "playgame3": true,
+      "angle": 269,
+      "height_cm": 94985.5
+    },
+    {
+      "playgame3": true,
+      "angle": 271,
+      "height_cm": 94985.5
+    },
+    {
+      "playgame3": true,
+      "angle": 360,
+      "height_cm": 0.0
+    },
+    {
+      "playgame3": false,
+      "angle": 45,
+      "height_cm": -67175.1
+    },
+    {
+      "playgame3": false,
+      "angle": 89,
+      "height_cm": -94985.5
+    },
+    {
+      "playgame3": false,
+      "angle": 91,
+      "height_cm": -94985.5
+    },
+    {
+      "playgame3": false,
+      "angle": 179,
+      "height_cm": -1658.0
+    },
+    {
+      "playgame3": false,
+      "angle": 181,
+      "height_cm": 1658.0
+    },
+    {
+      "playgame3": false,
+      "angle": 269,
+      "height_cm": 94985.5
+    },
+    {
+      "playgame3": false,
+      "angle": 271,
+      "height_cm": 94985.5
+    },
+    {
+      "playgame3": false,
+      "angle": 360,
+      "height_cm": 0.0
+    }
+  ],
+  "returned_to_normal": true,
+  "manual_environment_toggle": true,
+  "passed": true
+}

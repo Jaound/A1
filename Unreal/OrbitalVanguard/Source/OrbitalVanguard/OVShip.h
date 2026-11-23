@@ -21,6 +21,7 @@ public:
 
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Ship")
     TObjectPtr<UStaticMeshComponent> Hull;
+    UPROPERTY(VisibleAnywhere, Category="Presentation") TObjectPtr<USceneComponent> VisualRoot;
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Ship")
     TObjectPtr<UOVShipSystemsComponent> Systems;
     UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Ship")
@@ -47,6 +48,9 @@ public:
     float Acceleration = 1700.0f;
     UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Motion", meta=(ClampMin="1"))
     float Braking = 2200.0f;
+    UPROPERTY(EditAnywhere, Category="Motion") float LateralAcceleration = 1700.f;
+    FVector EnvironmentPullVelocity = FVector::ZeroVector;
+    void ConfigureClassMotion(int32 Size);
     UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Motion", meta=(ClampMin="0.1"))
     float ArrivalRadius = 5.0f;
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Orders")
@@ -73,8 +77,10 @@ public:
     UFUNCTION(BlueprintCallable, Category="Debug") void DebugResetMotion();
     UFUNCTION(BlueprintCallable, Category="Debug") void DebugSetFTLCharging(bool bCharging);
     void Simulate(float SimDelta);
+    FVector GetLocalShieldRadii() const;
     void SetCalibrationHull(const FVector* LocalHalfExtent);
     /** Optional imported presentation mesh; never changes combat or selection bounds. */
+    FName HullDefinitionId;
     void ApplyPresentationHull(FName DefinitionId);
     void Configure(const FString& Name, bool Friendly, float Speed, float RotationRate,
         const FVector& Scale, const FLinearColor& Color);

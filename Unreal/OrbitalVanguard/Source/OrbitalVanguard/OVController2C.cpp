@@ -27,7 +27,7 @@ void AOVController::ResetPhase2C()
  GetWorld()->GetSubsystem<UOVPointDefenseSubsystem>()->Disable();
  GetWorld()->GetSubsystem<UOVDevelopmentSubsystem>()->SpawnedShips.Reset();
  auto* Logistics=GetWorld()->GetSubsystem<UOVLogisticsSubsystem>();
- Logistics->Cargo.Reset(); Logistics->Nodes.Reset(); Logistics->RepairLinks.Reset();
+ Logistics->ResetFieldOrders(); Logistics->Cargo.Reset(); Logistics->Nodes.Reset(); Logistics->RepairLinks.Reset();
  // Only explicitly created transient benchmark actors are removed; original three survive.
  const int32 RetainedShips=bPlayScenarioSession?0:3;
  while(Ships.Num()>RetainedShips) { AOVShip* Extra=Ships.Last(); Ships.Pop(); if(IsValid(Extra))Extra->Destroy(); }

@@ -190,7 +190,7 @@ void UOVPointDefenseSubsystem::Step(float GameDelta)
                     FVector::DotProduct(MountDef->LocalSurfaceNormal.GetSafeNormal(), LocalDirection) < -FMath::Sin(FMath::DegreesToRadians(15.0))) continue;
                 const FRotator CandidateAim = LocalDirection.Rotation();
                 FVector LocalMuzzle=OVWeaponGeometry::MuzzleLocal(Mount.LocalPosition, CandidateAim,
-                    OVWeaponGeometry::BarrelLength(Ship->Systems->Layout->LocalHalfExtent,Ship->Systems->Layout->WeaponTier,true),false);
+                    (MountDef ? MountDef->GeometryScale : 1.f) * OVWeaponGeometry::BarrelLength(Ship->Systems->Layout->LocalHalfExtent,Ship->Systems->Layout->WeaponTier,true),false);
                 if (OVWeaponGeometry::CIWSBTrialEnabled())
                 {
                     FOVWeaponMountDefinition Def;

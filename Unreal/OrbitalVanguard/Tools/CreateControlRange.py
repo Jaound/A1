@@ -20,15 +20,6 @@ else:
     fill.set_actor_label('Range fill light')
     fill.light_component.set_mobility(unreal.ComponentMobility.MOVABLE)
     fill.light_component.set_intensity(1.5)
-    # No floor/collision: the grid is a reference plane, not a restriction on Z.
-    cube = unreal.load_asset('/Engine/BasicShapes/Cube')
-    mat = unreal.load_asset('/Engine/BasicShapes/BasicShapeMaterial')
-    for x,y in [(-6000,-6000),(-6000,6000),(6000,-6000),(6000,6000)]:
-        beacon = actors.spawn_actor_from_class(unreal.StaticMeshActor,unreal.Vector(x,y,0))
-        beacon.set_actor_label('Boundary beacon')
-        beacon.static_mesh_component.set_static_mesh(cube)
-        beacon.static_mesh_component.set_material(0,mat)
-        beacon.set_actor_scale3d(unreal.Vector(1,1,12))
     levels.set_level_viewport_camera_info(unreal.Vector(-3000,-3000,5000),unreal.Rotator(-45,45,0), "")
     if not levels.save_current_level():
         raise RuntimeError('ControlRange save failed')

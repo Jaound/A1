@@ -113,6 +113,7 @@ public:
     UFUNCTION(BlueprintCallable, Category="Systems") void ResetState();
     UFUNCTION(BlueprintCallable, Category="Systems") void Simulate(float SimDelta);
     UFUNCTION(BlueprintPure, Category="Systems") float GetEfficiency(EOVFacilityType Type) const;
+    bool HasPhysicalFacility(EOVFacilityType Type) const;
     UFUNCTION(BlueprintPure, Category="Systems") bool CanMove() const;
     UFUNCTION(BlueprintPure, Category="Systems") bool CanCommand() const;
     UFUNCTION(BlueprintPure, Category="Systems") bool CanFireCannons() const;

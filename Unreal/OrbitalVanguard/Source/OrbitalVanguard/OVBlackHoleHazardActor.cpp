@@ -21,68 +21,48 @@ AOVBlackHoleHazardActor::AOVBlackHoleHazardActor()
     USceneComponent* Root = CreateDefaultSubobject<USceneComponent>(TEXT("Root"));
     SetRootComponent(Root);
 
-    // 1. Central Event Horizon Sphere (45 m = 4,500 cm radius; Engine/Fab unit sphere radius = 50 cm -> scale ~90)
     EventHorizonSphere = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("EventHorizon"));
     EventHorizonSphere->SetupAttachment(Root);
     EventHorizonSphere->SetCollisionEnabled(ECollisionEnabled::NoCollision);
     EventHorizonSphere->SetCastShadow(false);
-    EventHorizonSphere->SetRelativeScale3D(FVector(90.0f));
-
-    // 2. Accretion Disk / Gravitational Lensing Inverted Mesh
+    // Preserve the named component for existing Blueprint references.
+    // The original material draws the accretion disk and horizon in one pass.
     AccretionDiskMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("AccretionDisk"));
     AccretionDiskMesh->SetupAttachment(Root);
     AccretionDiskMesh->SetCollisionEnabled(ECollisionEnabled::NoCollision);
-    AccretionDiskMesh->SetCastShadow(false);
-    AccretionDiskMesh->SetRelativeScale3D(FVector(180.0f));
+    AccretionDiskMesh->SetVisibility(false);
 }
 
 void AOVBlackHoleHazardActor::BeginPlay()
 {
     Super::BeginPlay();
-    EnsureVisualMeshes();
+    if (!bExternallyStepped)
+        ConfigureVisualMesh(*EventHorizonSphere, SingularityRadius);
 }
 
-void AOVBlackHoleHazardActor::EnsureVisualMeshes()
+void AOVBlackHoleHazardActor::ConfigureVisualMesh(UStaticMeshComponent& Visual, float CoreRadius)
 {
-    if (bVisualsInitialized) return;
-    bVisualsInitialized = true;
-
-    // Safe null/fallback loading: works seamlessly even in clean clones where .gitignore'd /Game/BlackHole is absent.
-    UStaticMesh* SphereMesh = LoadObject<UStaticMesh>(
-        nullptr, TEXT("/Game/BlackHole/Mesh/SM_BlackHole_Sphere.SM_BlackHole_Sphere"), nullptr, LOAD_NoWarn | LOAD_Quiet);
-    if (!SphereMesh)
+    UStaticMesh* Mesh = LoadObject<UStaticMesh>(nullptr,TEXT("/Game/BlackHole/Mesh/SM_BlackHole_Sphere.SM_BlackHole_Sphere"),nullptr,LOAD_NoWarn);
+    UMaterialInterface* Material = LoadObject<UMaterialInterface>(nullptr,TEXT("/Game/BlackHole/Materials/MI_Blackhole_Physical.MI_Blackhole_Physical"),nullptr,LOAD_NoWarn);
+    double Scale;
+    if (Mesh && Material)
     {
-        SphereMesh = LoadObject<UStaticMesh>(
-            nullptr, TEXT("/Engine/BasicShapes/Sphere.Sphere"), nullptr, LOAD_NoWarn | LOAD_Quiet);
+        // The source uses a single inward-facing sphere. Its
+        // shader traces a local event horizon of 2 * Mass (default mass = 1).
+        Scale = CoreRadius / 2.0;
     }
-    if (SphereMesh && EventHorizonSphere)
+    else
     {
-        EventHorizonSphere->SetStaticMesh(SphereMesh);
+        Mesh = LoadObject<UStaticMesh>(nullptr,TEXT("/Game/Presentation/Environment/BlackHole/SM_Source.SM_Source"));
+        Material = LoadObject<UMaterialInterface>(nullptr,TEXT("/Game/Presentation/Environment/BlackHole/M_Source.M_Source"));
+        Scale = Mesh ? CoreRadius / FMath::Max(1.0,Mesh->GetBounds().BoxExtent.GetMax()) : 1.0;
     }
-
-    UStaticMesh* DiskMesh = LoadObject<UStaticMesh>(
-        nullptr, TEXT("/Game/BlackHole/Mesh/SM_InvertedSphereHQ.SM_InvertedSphereHQ"), nullptr, LOAD_NoWarn | LOAD_Quiet);
-    if (DiskMesh && AccretionDiskMesh)
-    {
-        AccretionDiskMesh->SetStaticMesh(DiskMesh);
-    }
-    else if (AccretionDiskMesh)
-    {
-        AccretionDiskMesh->SetVisibility(false);
-    }
-
-    UMaterialInterface* DiskMat = LoadObject<UMaterialInterface>(
-        nullptr, TEXT("/Game/BlackHole/Materials/MI_Blackhole_Physical.MI_Blackhole_Physical"), nullptr, LOAD_NoWarn | LOAD_Quiet);
-    if (!DiskMat)
-    {
-        DiskMat = LoadObject<UMaterialInterface>(
-            nullptr, TEXT("/Game/Presentation/Environment/BlackHole/M_Source.M_Source"), nullptr, LOAD_NoWarn | LOAD_Quiet);
-    }
-    if (DiskMat)
-    {
-        if (EventHorizonSphere) EventHorizonSphere->SetMaterial(0, DiskMat);
-        if (AccretionDiskMesh && DiskMesh) AccretionDiskMesh->SetMaterial(0, DiskMat);
-    }
+    Visual.SetStaticMesh(Mesh);
+    Visual.SetMaterial(0,Material);
+    // A fixed world inclination presents the disk obliquely in the fleet overview.
+    Visual.SetRelativeRotation(FRotator(0,40,-66));
+    Visual.SetRelativeScale3D(FVector(Scale * .8)); // Presentation size, independent of the E1 hazard radii.
+    Visual.SetVisibleInRayTracing(false);
 }
 
 void AOVBlackHoleHazardActor::ApplyEnvironmentProfile(const FOVSpaceEnvironmentProfile& InProfile)
@@ -130,14 +110,6 @@ void AOVBlackHoleHazardActor::SimulateHazard(float SimDelta)
 
     UWorld* World = GetWorld();
     if (!World) return;
-
-    // Spin the accretion disk
-    AccretionYaw += DiskSpinRate * SimDelta;
-    if (AccretionYaw >= 360.0f) AccretionYaw -= 360.0f;
-    if (AccretionDiskMesh)
-    {
-        AccretionDiskMesh->SetRelativeRotation(FRotator(0.0f, AccretionYaw, 0.0f));
-    }
 
     const FVector BlackHolePos = GetActorLocation();
 

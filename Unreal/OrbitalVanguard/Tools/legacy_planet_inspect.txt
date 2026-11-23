@@ -1,0 +1,3 @@
+Legacy M_Planet: M_Planet, Class: Material
+  Blend Mode: <BlendMode.BLEND_OPAQUE: 0>
+  Shading Model: <MaterialShadingModel.MSM_UNLIT: 0>

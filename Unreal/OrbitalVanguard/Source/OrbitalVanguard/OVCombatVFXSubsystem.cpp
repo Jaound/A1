@@ -29,16 +29,14 @@ void UOVCombatVFXSubsystem::Deinitialize()
 
 void UOVCombatVFXSubsystem::EnsureAssetsLoaded()
 {
-    if (CannonShellMesh) return;
+    if (LaserBeamMesh) return;
 
-    CannonShellMesh = LoadObject<UStaticMesh>(nullptr, TEXT("/Game/Presentation/Effects/CannonShell/SM_Source.SM_Source"), nullptr, LOAD_NoWarn);
     LaserBeamMesh = LoadObject<UStaticMesh>(nullptr, TEXT("/Game/Presentation/Effects/LaserBeam/SM_Source.SM_Source"), nullptr, LOAD_NoWarn);
     ImpactBurstMesh = LoadObject<UStaticMesh>(nullptr, TEXT("/Game/Presentation/Effects/ImpactBurst/SM_Source.SM_Source"), nullptr, LOAD_NoWarn);
     ShockwaveSphereMesh = LoadObject<UStaticMesh>(nullptr, TEXT("/Engine/BasicShapes/Sphere.Sphere"), nullptr, LOAD_NoWarn);
 
     FriendlyBeamMat = LoadObject<UMaterialInterface>(nullptr, TEXT("/Game/Presentation/Effects/LaserBeam/M_Friendly.M_Friendly"), nullptr, LOAD_NoWarn);
     EnemyBeamMat = LoadObject<UMaterialInterface>(nullptr, TEXT("/Game/Presentation/Effects/LaserBeam/M_Enemy.M_Enemy"), nullptr, LOAD_NoWarn);
-    CannonShellMat = LoadObject<UMaterialInterface>(nullptr, TEXT("/Game/Presentation/Effects/CannonShell/M_Source.M_Source"), nullptr, LOAD_NoWarn);
     EffectGlowMat = LoadObject<UMaterialInterface>(nullptr, TEXT("/Game/Presentation/Effects/M_EffectGlow.M_EffectGlow"), nullptr, LOAD_NoWarn);
 
     // Translucent refractive distortion material (never use opaque M_SceneMaterialMaster)
@@ -121,16 +119,14 @@ void UOVCombatVFXSubsystem::SynchronizeVFX(float DeltaSeconds)
             NewItem.AttackId = Attack.AttackId;
             NewItem.Kind = Attack.Weapon.Kind;
 
-            UStaticMesh* MeshToUse = (Attack.Weapon.Kind == EOVAttackKind::Beam) ? LaserBeamMesh : CannonShellMesh;
-            UMaterialInterface* MatToUse = (Attack.Weapon.Kind == EOVAttackKind::Beam)
-                ? (Attack.FactionId == 0 ? FriendlyBeamMat : EnemyBeamMat)
-                : CannonShellMat;
-
-            if (MeshToUse)
+            // Flight meshes for cannon rounds are batched by the controller. Keep the
+            // shot ID here for one-shot audio without submitting the geometry twice.
+            if (Attack.Weapon.Kind == EOVAttackKind::Beam && LaserBeamMesh)
             {
+                UMaterialInterface* MatToUse = Attack.FactionId == 0 ? FriendlyBeamMat : EnemyBeamMat;
                 UStaticMeshComponent* Comp = NewObject<UStaticMeshComponent>(VFXRootActor);
                 Comp->SetupAttachment(VFXRootActor->GetRootComponent());
-                Comp->SetStaticMesh(MeshToUse);
+                Comp->SetStaticMesh(LaserBeamMesh);
                 Comp->SetCollisionEnabled(ECollisionEnabled::NoCollision);
                 Comp->SetCastShadow(false);
                 if (MatToUse)
@@ -167,17 +163,7 @@ void UOVCombatVFXSubsystem::SynchronizeVFX(float DeltaSeconds)
                 Found->MeshComponent->SetWorldRotation(ZRot);
                 Found->MeshComponent->SetWorldScale3D(FVector(0.11f, 0.11f, FMath::Max(0.20f, Length / 100.0f)));
             }
-            else if (Attack.Weapon.Kind == EOVAttackKind::Cannon)
-            {
-                // CannonShell/SM_Source has its nose along +Z (BoxExtent Z = 50cm).
-                // Align +Z along flight direction so the shell flies horizontally nose-first.
-                const FVector Dir = Attack.Direction.GetSafeNormal(UE_SMALL_NUMBER, FVector::ForwardVector);
-                const FRotator ZRot = FRotationMatrix::MakeFromZ(Dir).Rotator();
 
-                Found->MeshComponent->SetWorldLocation(Attack.Position);
-                Found->MeshComponent->SetWorldRotation(ZRot);
-                Found->MeshComponent->SetWorldScale3D(FVector(0.14f, 0.14f, 0.88f));
-            }
         }
     }
 

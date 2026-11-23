@@ -1,0 +1,13 @@
+{
+  "captures": [
+    "일반_전장0.png",
+    "일반_회전0.png",
+    "E1_시작0.png",
+    "E1_강착원반0.png",
+    "E1_원경0.png"
+  ],
+  "physical_input": false,
+  "returned_to_normal": true,
+  "manual_environment_toggle": true,
+  "passed": true
+}

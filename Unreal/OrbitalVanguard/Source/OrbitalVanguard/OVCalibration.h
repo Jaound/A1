@@ -3,6 +3,7 @@
 #include "CoreMinimal.h"
 
 class AOVShip;
+class UStaticMesh;
 class UOVCombatSubsystem;
 
 // Read-only candidate metadata. Zero size/cost means no hull definition.
@@ -36,6 +37,8 @@ inline constexpr double RayLength = 1500000;
 inline constexpr double AltitudeScale = 20;
 
 TArray<FName> GetHullIds();
+UStaticMesh* LoadHullMesh(FName HullId);
+FVector GetHullWorldHalfExtent(FName HullId);
 bool GetHullMetadata(FName HullId, FOVHullMetadata& OutMetadata);
 FString GetHullName(FName HullId);
 double GetHullGeometryScale(FName HullId);

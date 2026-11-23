@@ -450,7 +450,7 @@ AOVShip* UOVCombatSubsystem::FindBlockingFriend(AOVShip* Ship, AOVShip* Target, 
             const FOVWeaponMountState* Health = Friend->Systems->WeaponMountStates.FindByPredicate(
                 [&](const FOVWeaponMountState& H) { return H.WeaponMountId == Mount.WeaponId; });
             if (Health && Health->HP > 0 && SegmentMount(Origin, Endpoint, Friend->GetActorTransform(),
-                Mount.LocalPosition, Settings->MountCollisionRadius, Fraction, Normal)) return Friend;
+                Mount.LocalPosition, Mount.GeometryScale * Settings->MountCollisionRadius, Fraction, Normal)) return Friend;
         }
     }
     return nullptr;
@@ -502,7 +502,7 @@ void UOVCombatSubsystem::Step(float Delta)
         if(Ship->Systems->bWrecked || (Ship->AttackTarget && !IsValidTarget(Ship,Ship->AttackTarget))) { ClearPending(State); Ship->AttackTarget=nullptr; }
         Ship->Systems->Simulate(Delta);
         Ship->bFriendly = Ship->Systems->FactionId == 0;
-        if (Ship->Systems->GetEfficiency(EOVFacilityType::Engine) <= 0) Ship->bFTLCharging = false;
+        if (Ship->bFTLCharging && !Ship->Systems->HasPhysicalFacility(EOVFacilityType::Engine)) Ship->bFTLCharging = false;
         // Bridge loss preserves the existing 2A stop rule and hands only combat to the fallback AI.
         if (!Ship->Systems->CanCommand()) { Ship->SetAutomation(true, true); Ship->StopMovement(); }
         Ship->Simulate(Delta);
@@ -743,9 +743,9 @@ bool UOVCombatSubsystem::SweepAttack(FOVAttackState& Attack, FVector End)
             || Ship->Systems->bWrecked || State.bDeparted) continue;
         float Fraction; FVector Normal;
         const auto& Boxes=Ship->Systems->Layout->CombatHullBoxes;
-        if (Ship->Systems->bShieldActive && Ship->Systems->Shield > 0 && !Boxes.IsEmpty())
+        if (Ship->Systems->bShieldActive && Ship->Systems->Shield > 0 && (!Boxes.IsEmpty() || Ship->Systems->Layout->FittedShieldRadii.GetMin()>0))
         {
-            const FVector ShieldRadii = Ship->Systems->Layout->LocalHalfExtent * FVector(1.22f, 1.32f, 1.42f);
+            const FVector ShieldRadii = Ship->GetLocalShieldRadii();
             if (SegmentEllipsoid(Attack.Position, End, Ship->GetActorTransform(), ShieldRadii, Fraction, Normal)
                 && Fraction <= BestFraction)
             {
@@ -760,7 +760,7 @@ bool UOVCombatSubsystem::SweepAttack(FOVAttackState& Attack, FVector End)
                     if (!Health || Health->HP <= 0) continue;
                     float MountFrac; FVector MountNorm;
                     if (SegmentMount(Attack.Position, LookAheadEnd, Ship->GetActorTransform(), Mount.LocalPosition,
-                        Settings->MountCollisionRadius, MountFrac, MountNorm) && MountFrac <= BestMountFrac)
+                        Mount.GeometryScale * Settings->MountCollisionRadius, MountFrac, MountNorm) && MountFrac <= BestMountFrac)
                     { BestMountFrac = MountFrac; HitWeaponId = Mount.WeaponId; }
                 }
             }
@@ -786,7 +786,7 @@ bool UOVCombatSubsystem::SweepAttack(FOVAttackState& Attack, FVector End)
                 [&](const FOVWeaponMountState& H) { return H.WeaponMountId == Mount.WeaponId; });
             if (!Health || Health->HP <= 0) continue;
             if (SegmentMount(Attack.Position, End, Ship->GetActorTransform(), Mount.LocalPosition,
-                Settings->MountCollisionRadius, Fraction, Normal) && Fraction <= BestFraction)
+                Mount.GeometryScale * Settings->MountCollisionRadius, Fraction, Normal) && Fraction <= BestFraction)
             { Closest = Ship; BestFraction = Fraction; BestNormal = Normal; HitWeaponId = Mount.WeaponId; }
         }
     }
@@ -992,7 +992,7 @@ bool UOVCombatSubsystem::ResolveAimPoint(const FOVCombatShipState& State,AOVShip
   const auto& Boxes=Target->Systems->Layout->CombatHullBoxes;
   if(!Boxes.IsEmpty()) {
    const FVector Origin=State.Ship->GetActorLocation();float MountFraction=1.f;FVector Normal;
-   if(!SegmentMount(Origin,Candidate,Target->GetActorTransform(),Def.LocalPosition,Settings->MountCollisionRadius,MountFraction,Normal))continue;
+   if(!SegmentMount(Origin,Candidate,Target->GetActorTransform(),Def.LocalPosition,Def.GeometryScale * Settings->MountCollisionRadius,MountFraction,Normal))continue;
    bool bOccluded=false;
    for(const FOVCombatHullBox& Box:Boxes) {
     FTransform Transform=Target->GetActorTransform();Transform.SetLocation(Transform.TransformPosition(Box.LocalCenter));

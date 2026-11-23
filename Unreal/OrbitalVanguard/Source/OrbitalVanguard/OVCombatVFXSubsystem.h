@@ -32,7 +32,7 @@ struct FOVTransientEffect
 };
 
 /**
- * World subsystem responsible for rendering laser beams, cannon shells,
+ * World subsystem responsible for rendering laser beams, tracking gunfire audio,
  * expanding refractive distortion shockwaves, and sci-fi plasma impact bursts.
  * Strictly leaves EOVAttackKind::Missile untouched so existing missile assets render cleanly.
  */
@@ -62,14 +62,12 @@ private:
     TSet<int32> ProcessedHitEvents;
     double LastCombatGameTime = -1.0;
 
-    UPROPERTY() TObjectPtr<UStaticMesh> CannonShellMesh;
     UPROPERTY() TObjectPtr<UStaticMesh> LaserBeamMesh;
     UPROPERTY() TObjectPtr<UStaticMesh> ImpactBurstMesh;
     UPROPERTY() TObjectPtr<UStaticMesh> ShockwaveSphereMesh;
 
     UPROPERTY() TObjectPtr<UMaterialInterface> FriendlyBeamMat;
     UPROPERTY() TObjectPtr<UMaterialInterface> EnemyBeamMat;
-    UPROPERTY() TObjectPtr<UMaterialInterface> CannonShellMat;
     UPROPERTY() TObjectPtr<UMaterialInterface> EffectGlowMat;
     UPROPERTY() TObjectPtr<UMaterialInterface> DistortionMat;
     UPROPERTY() TObjectPtr<UMaterialInterface> ShieldImpactMat;

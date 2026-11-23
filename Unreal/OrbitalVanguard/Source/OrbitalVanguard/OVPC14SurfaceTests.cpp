@@ -330,6 +330,10 @@ bool FOVPC14MountAdapter::RunTest(const FString&)
     if(!TestNotNull(TEXT("Source inspection flag exists"),CVar))return false;
     auto* MaterialCVar=IConsoleManager::Get().FindConsoleVariable(TEXT("ov.Presentation.PC14SourceMaterial"));
     if(!TestNotNull(TEXT("Source material inspection flag exists"),MaterialCVar))return false;
+    auto* FieldMaterial=IConsoleManager::Get().FindConsoleVariable(TEXT("ov.Presentation.PC14FieldMaterial"));
+    if(!TestNotNull(TEXT("Field lighting switch exists"),FieldMaterial))return false;
+    const int32 PreviousField=FieldMaterial->GetInt();
+    FieldMaterial->Set(0,ECVF_SetByConsole);
     const int32 PreviousMaterial=MaterialCVar->GetInt();MaterialCVar->Set(1,ECVF_SetByConsole);
     const int32 Previous=CVar->GetInt();CVar->Set(0,ECVF_SetByConsole);
     UWorld* World=UWorld::CreateWorld(EWorldType::Game,false);
@@ -354,6 +358,10 @@ bool FOVPC14MountAdapter::RunTest(const FString&)
         CVar->Set(1,ECVF_SetByConsole);Ship->ApplyPresentationHull(TEXT("corvette"));
         auto* SourceMaterial=LoadObject<UMaterialInterface>(nullptr,TEXT("/Game/Presentation/PC14Full/M_PC14_FullReadable.M_PC14_FullReadable"));
         TestTrue(TEXT("Source-resolution material applied"),SourceMaterial&&Ship->Hull->GetMaterial(0)&&Ship->Hull->GetMaterial(0)->GetMaterial()==SourceMaterial->GetMaterial());
+        FieldMaterial->Set(1,ECVF_SetByConsole);
+        Ship->ApplyPresentationHull(TEXT("corvette"));
+        auto* ReadableMaterial=LoadObject<UMaterialInterface>(nullptr,TEXT("/Game/Presentation/PC14Full/M_PC14_FieldReadable.M_PC14_FieldReadable"));
+        TestTrue(TEXT("Field lighting material applied"),ReadableMaterial && Ship->Hull->GetMaterial(0) && Ship->Hull->GetMaterial(0)->GetMaterial()==ReadableMaterial->GetMaterial());
         TArray<UStaticMeshComponent*> Components;Ship->GetComponents<UStaticMeshComponent>(Components);
         int32 Supports=0;
         for(const auto* Component:Components)if(Component->GetName().StartsWith(TEXT("PC14MountSupport_")))
@@ -378,6 +386,7 @@ bool FOVPC14MountAdapter::RunTest(const FString&)
         MaterialCVar->Set(0,ECVF_SetByConsole);Ship->ApplyPresentationHull(TEXT("corvette"));
         TestTrue(TEXT("Source material switch off retains original faction material"),Ship->Hull->GetMaterial(0)==OriginalMaterial);
     }
+    FieldMaterial->Set(PreviousField,ECVF_SetByConsole);
     CVar->Set(Previous,ECVF_SetByConsole);MaterialCVar->Set(PreviousMaterial,ECVF_SetByConsole);World->DestroyWorld(false);
     return true;
 }

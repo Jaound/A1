@@ -1,0 +1,11 @@
+World: Lv_Planet_Project
+Actor: SkyLight_0 (SkyLight) at <Struct 'Vector' (0x00000285306FE0E0) {x: 0.000000, y: 0.000000, z: 0.000000}>, Rot=<Struct 'Rotator' (0x00000285306FE0E0) {pitch: 0.000000, yaw: 0.000000, roll: 0.000000}>
+  SkyLight: Intensity=1.0, Color=<Struct 'Color' (0x000002857FF5ACB8) {b: 255, g: 255, r: 255, a: 255}>
+Actor: DirectionalLight_0 (DirectionalLight) at <Struct 'Vector' (0x000002853062A090) {x: 0.000000, y: 0.000000, z: 0.000000}>, Rot=<Struct 'Rotator' (0x000002853062A090) {pitch: -35.644693, yaw: -42.955866, roll: -43.968920}>
+  Light: Intensity=3.0, Color=<Struct 'Color' (0x000002851CA4AAB8) {b: 255, g: 255, r: 255, a: 255}>, Rot=<Struct 'Rotator' (0x00000285306FE0E0) {pitch: -35.644693, yaw: -42.955866, roll: -43.968920}>
+Actor: PostProcessVolume_1 (PostProcessVolume) at <Struct 'Vector' (0x000002853062A090) {x: 0.000000, y: 0.000000, z: 0.000000}>, Rot=<Struct 'Rotator' (0x000002853062A090) {pitch: 0.000000, yaw: 0.000000, roll: 0.000000}>
+Actor: StaticMeshActor_1 (StaticMeshActor) at <Struct 'Vector' (0x00000285306034E0) {x: 0.000000, y: -128505790.000000, z: 0.000000}>, Rot=<Struct 'Rotator' (0x00000285306034E0) {pitch: 0.000000, yaw: 0.000000, roll: 0.000000}>
+  StaticMesh: Cube, Mat=BasicShapeMaterial
+Actor: BP_Planet_C_0 (BP_Planet_C) at <Struct 'Vector' (0x00000285306FE0E0) {x: -18634840.000000, y: 64622900.000000, z: 0.000000}>, Rot=<Struct 'Rotator' (0x00000285306FE0E0) {pitch: 0.000000, yaw: 90.000000, roll: -0.000000}>
+Actor: BP_Planet_C_1 (BP_Planet_C) at <Struct 'Vector' (0x00000285306FE0E0) {x: 0.000000, y: 0.000000, z: 0.000000}>, Rot=<Struct 'Rotator' (0x00000285306FE0E0) {pitch: 0.000000, yaw: 90.000000, roll: -0.000000}>
+Actor: BP_Planet_C_2 (BP_Planet_C) at <Struct 'Vector' (0x00000285306FE0E0) {x: -13589010.000000, y: 75292750.000000, z: 0.000000}>, Rot=<Struct 'Rotator' (0x00000285306FE0E0) {pitch: 0.000000, yaw: 90.000000, roll: -0.000000}>

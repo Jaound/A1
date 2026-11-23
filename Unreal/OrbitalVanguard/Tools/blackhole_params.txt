@@ -1,0 +1,58 @@
+=== /Game/BlackHole/Materials/M_Blackhole.M_Blackhole ===
+  Scalar: Mass
+  Scalar: Disk Density
+  Scalar: Disk Density Bias
+  Scalar: Disk Density Outer Radius
+  Scalar: Disk Density Inner Radius
+  Scalar: Fog Density
+  Scalar: Fog Exponent
+  Scalar: Fog Height
+  Scalar: Jitter Amount
+  Scalar: Light Intensity
+  Scalar: Light Bias
+  Scalar: Shadow Density
+  Scalar: Shadow Step Size
+  Scalar: Orbital Band Size
+  Scalar: Animation Scale
+  Scalar: Anim Exponent
+  Scalar: Celestial Disk Exponent
+  Scalar: Celestial Disk Brightness
+  Scalar: Shadow Spread
+  Scalar: Doppler Intensity
+  Scalar: Doppler Exponent
+  Scalar: Step Scale
+  Scalar: Volume Step
+  Scalar: Max Steps
+  Scalar: Physical Color
+  Scalar: Inner Temperature
+  Vector: Light Color
+  Vector: Shadow Absorption Color
+=== /Game/BlackHole/Materials/MI_Blackhole_Physical.MI_Blackhole_Physical ===
+  Scalar: Mass
+  Scalar: Disk Density
+  Scalar: Disk Density Bias
+  Scalar: Disk Density Outer Radius
+  Scalar: Disk Density Inner Radius
+  Scalar: Fog Density
+  Scalar: Fog Exponent
+  Scalar: Fog Height
+  Scalar: Jitter Amount
+  Scalar: Light Intensity
+  Scalar: Light Bias
+  Scalar: Shadow Density
+  Scalar: Shadow Step Size
+  Scalar: Orbital Band Size
+  Scalar: Animation Scale
+  Scalar: Anim Exponent
+  Scalar: Celestial Disk Exponent
+  Scalar: Celestial Disk Brightness
+  Scalar: Shadow Spread
+  Scalar: Doppler Intensity
+  Scalar: Doppler Exponent
+  Scalar: Step Scale
+  Scalar: Volume Step
+  Scalar: Max Steps
+  Scalar: Physical Color
+  Scalar: Inner Temperature
+  Vector: Light Color
+  Vector: Shadow Absorption Color

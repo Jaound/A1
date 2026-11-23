@@ -21,7 +21,7 @@ void UOVShipPreview::Release()
     Mirrors.Reset(); Sources.Reset(); Subject.Reset(); LastCapture=-1; LastFocusMount=INDEX_NONE;
 }
 
-void UOVShipPreview::Update(AOVShip* Ship, FRotator Rotation, float Zoom, float Aspect, int32 FocusMount)
+void UOVShipPreview::Update(AOVShip* Ship, FRotator Rotation, float Zoom, float Aspect, int32 FocusMount, int32 PixelWidth)
 {
     TRACE_CPUPROFILER_EVENT_SCOPE(OV_ShipPreview);
     CSV_SCOPED_TIMING_STAT_EXCLUSIVE(OV_Preview);
@@ -38,7 +38,7 @@ void UOVShipPreview::Update(AOVShip* Ship, FRotator Rotation, float Zoom, float 
         Proxy->SetActorLocation(FVector(0,0,-10000000));
         Proxy->SetActorEnableCollision(false); Proxy->SetActorTickEnabled(false);
         Texture=NewObject<UTextureRenderTarget2D>(this);
-        Texture->ClearColor=FLinearColor(.009f,.02f,.035f); Texture->InitAutoFormat(800,400);
+        Texture->ClearColor=FLinearColor(.009f,.02f,.035f); Texture->InitAutoFormat(PixelWidth,FMath::Max(1,FMath::RoundToInt(PixelWidth/FMath::Max(.5f,Aspect))));
         Capture=NewObject<USceneCaptureComponent2D>(Proxy);
         Capture->SetupAttachment(Root); Capture->RegisterComponent();
         Capture->TextureTarget=Texture; Capture->ProjectionType=ECameraProjectionMode::Orthographic;
@@ -78,9 +78,9 @@ void UOVShipPreview::Update(AOVShip* Ship, FRotator Rotation, float Zoom, float 
     if(Ship->Systems->Layout->WeaponMounts.IsValidIndex(FocusMount)) {
         const auto& Mount=Ship->Systems->Layout->WeaponMounts[FocusMount];
         Focus=Rotation.RotateVector(Mount.LocalPosition);
-        OrthoWidth=FMath::Max(16.f,OVWeaponGeometry::BarrelLength(Extent,Mount.Tier,Mount.Type==EOVWeaponType::Interception)*4.f);
+        OrthoWidth=FMath::Max(16.f,Mount.GeometryScale*OVWeaponGeometry::BarrelLength(Extent,Mount.Tier,Mount.Type==EOVWeaponType::Interception)*4.f);
     }
-    if (Texture->SizeY!=FMath::RoundToInt(800/ViewAspect)) Texture->ResizeTarget(800,FMath::RoundToInt(800/ViewAspect));
+    if (Texture->SizeY!=FMath::RoundToInt(PixelWidth/ViewAspect)) Texture->ResizeTarget(PixelWidth,FMath::RoundToInt(PixelWidth/ViewAspect));
     Capture->OrthoWidth=OrthoWidth;
     Capture->SetRelativeLocation(FVector(-FMath::Max(5000.,Extent.Size()*4),Focus.Y,Focus.Z));
     Capture->SetRelativeRotation(FRotator::ZeroRotator);

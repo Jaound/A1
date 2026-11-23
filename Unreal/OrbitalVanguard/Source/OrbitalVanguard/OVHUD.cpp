@@ -12,6 +12,7 @@
 #include "ProfilingDebugging/CsvProfiler.h"
 #include "ProfilingDebugging/CpuProfilerTrace.h"
 #include "OVController.h"
+#include "OVPlayScenarioSubsystem.h"
 #include "OVShip.h"
 #include "OVShipSystemsComponent.h"
 #include "OVCombatSubsystem.h"
@@ -37,7 +38,7 @@ void AOVHUD::Button(FName N,const FString& L,float X,float Y,float W,bool Active
  ActionCenters.Add(N,FVector2D(X+W*.5f,Y+13.5f));
  DrawRect(Active?FLinearColor(.03f,.4f,.55f,.95f):FLinearColor(.04f,.08f,.13f,.98f),X,Y,W,27);
  DrawText(L,Active?FLinearColor::White:Ink,X+6,Y+5,GEngine->GetSmallFont());
- AddHitBox(FVector2D(X,Y)*UIScale,FVector2D(W,27)*UIScale,N,true,bDrawingInterior?210:bDrawingDetails?110:10);
+ AddHitBox(FVector2D(X,Y)*UIScale,FVector2D(W,27)*UIScale,N,true,(bDrawingStarMap || (bStarMapOpen && (N==TEXT("StarMapToggle") || N==TEXT("TitleScreen") || N==TEXT("OpenTutorialGuide"))))?310:bDrawingInterior?210:bDrawingDetails?110:10);
 }
 FName AOVHUD::GetHitActionAtCanvasPoint(FVector2D Point) const
 {
@@ -47,9 +48,13 @@ FName AOVHUD::GetHitActionAtCanvasPoint(FVector2D Point) const
 }
 bool AOVHUD::IsOverPanel(float X,float Y) const
 {
- if(IsOverAddedUI(X,Y)) return true;
+ if(bPauseMenu || bConsumeDebriefClick || IsDebriefOpen() || LastMapCloseFrame==GFrameCounter || bStarMapOpen || bTitleScreenOpen || IsOverAddedUI(X,Y)) return true;
  const auto* PC=Cast<AOVController>(PlayerOwner); if(!PC) return false;
  const FVector2D P(X/UIScale,Y/UIScale);
+ if (const auto* Play = PC->GetPlayScenario(); Play && Play->GetActiveDefinition() && !bSceneMenuOpen &&
+     P.X >= 216 && P.X <= (Play->ActiveId==TEXT("Sandbox")?642:724) && P.Y >= 63 && P.Y <= (Play->ActiveId==TEXT("Sandbox") ? (Play->bSandboxHullMenu?396:213) : Play->ActiveId == TEXT("Evacuation") ? 219 : 189)) return true;
+
+
  if(IsOverInteriorPanel(X,Y)) return true;
  if(IsOverMissionPanel(X,Y)) return true;
  if(IsOverStarMapPanel(X,Y)) return true;
@@ -60,11 +65,11 @@ bool AOVHUD::IsOverPanel(float X,float Y) const
   const FVector2D Size=GetPinnedSize(I);
   if(P.X>=Pos.X&&P.X<=Pos.X+Size.X&&P.Y>=Pos.Y&&P.Y<=Pos.Y+Size.Y)return true;
  }
- const int32 Notices=BattleNoticeRows();const float NoticeX=ViewportPixels.X/UIScale*.5f-120;
- const auto* Feed=GetBattleNoticeFeed();const int32 Footer=bBattleFeedOpen?66+(Feed&&Feed->DroppedCount>0?20:0):0;
- if(Notices>0&&P.X>=NoticeX&&P.X<=NoticeX+240&&P.Y>=66&&P.Y<=66+Notices*32+Footer)return true;
+ const int32 Notices=BattleNoticeRows();const float NoticeX=ViewportPixels.X/UIScale-354;
+ const auto* Feed=GetBattleNoticeFeed();const int32 Footer=bBattleFeedOpen?(bNoticeSettings?242:66)+(Feed&&Feed->DroppedCount>0?20:0):0;
+ if(Notices>0&&P.X>=NoticeX&&P.X<=NoticeX+340&&P.Y>=BattleNoticeTop()&&P.Y<=BattleNoticeTop()+Notices*36+Footer)return true;
  // The basic HUD remains visible under the separate developer window.
- if(P.Y<62 || (P.X<620 && P.Y>ViewportPixels.Y/UIScale-220) || (P.X<204 && P.Y<ViewportPixels.Y/UIScale-230) || (bSceneMenuOpen && P.X>=210 && P.X<=650 && P.Y<=380)) return true;
+ if(P.Y<62 || (P.X<620 && P.Y>ViewportPixels.Y/UIScale-220) || (!PC->Selection.IsEmpty() && P.X>=ViewportPixels.X/UIScale-FMath::Clamp(ViewportPixels.X/UIScale-640.,210.,390.)-10 && P.Y>=ViewportPixels.Y/UIScale-218) || (bSceneMenuOpen && P.X>=216 && P.X<=FMath::Min(900.,ViewportPixels.X/UIScale-10) && P.Y<=110+UOVPlayScenarioSubsystem::Definitions().Num()*36)) return true;
  return !PC->bDeveloperMode&&PC->Selected&&bDetailsOpen&&P.X>=WindowPosition.X&&P.X<=WindowPosition.X+WindowSize.X&&P.Y>=WindowPosition.Y&&P.Y<=WindowPosition.Y+(bMinimized?32:WindowSize.Y);
 }
 bool AOVHUD::HasOrbitPreview() const
@@ -77,7 +82,7 @@ bool AOVHUD::IsOverOrbitPreview(FVector2D Cursor) const
 {
  const FVector2D P=Cursor/UIScale-WindowPosition;
  if(IsOverInteriorPanel(Cursor.X,Cursor.Y)) return false;
- return HasOrbitPreview() && P.X>=10 && P.X<=WindowSize.X-10 && P.Y>=72 && P.Y<=264;
+ return !bStarMapOpen && !bTitleScreenOpen && HasOrbitPreview() && P.X>=10 && P.X<=WindowSize.X-10 && P.Y>=72 && P.Y<=72+WindowSize.Y*.5;
 }
 
 void AOVHUD::OrbitPreview(FVector2D Delta)
@@ -89,11 +94,17 @@ void AOVHUD::OrbitPreview(FVector2D Delta)
 
 bool AOVHUD::HandlePointer(float X,float Y,bool Pressed,bool Down,float Wheel,bool Orbit,float DX,float DY)
 {
+ // Canvas buttons dispatch on press. The next field can already be visible
+ // when the controller polls that same press later in the frame.
+ if(bConsumeDebriefClick) { bConsumeDebriefClick=Down; return true; }
+ if(bPauseMenu || IsDebriefOpen()) return true;
  const auto* PC=Cast<AOVController>(PlayerOwner);
  if(PC) { int32 Width=0,Height=0; PC->GetViewportSize(Width,Height); if(Width>0&&Height>0) ViewportPixels=FVector2D(Width,Height); }
- const float BaseScale=FMath::Max(.25f,FMath::Min(1.f,FMath::Min(ViewportPixels.X/1280.f,ViewportPixels.Y/740.f)));
- UIScale=FMath::Clamp(BaseScale*UserUIScaleMultiplier,.25f,1.5f);
+ const float BaseScale=FMath::Max(.25f,FMath::Min(ViewportPixels.X/1280.f,ViewportPixels.Y/740.f));
+ UIScale=FMath::Clamp(BaseScale*UserUIScaleMultiplier,.25f,4.f);
+ if (bStarMapOpen) UIScale=FMath::Min(UIScale,float(FMath::Min(ViewportPixels.X/1210.,ViewportPixels.Y/488.)));
  // AHUD::Canvas is cleared by the viewport after rendering. Input runs outside DrawHUD.
+ if (bStarMapOpen || bTitleScreenOpen) return true;
  const bool Over=IsOverPanel(X,Y);
  if(PC&&PC->bDeveloperMode){
   bDragging=false;bResizing=false;bInteriorDragging=false;bInteriorResizing=false;DraggedPin=INDEX_NONE;bPinResizing=false;
@@ -159,9 +170,9 @@ bool AOVHUD::HandlePointer(float X,float Y,bool Pressed,bool Down,float Wheel,bo
  if(bDragging) {
   WindowPosition=P-DragOffset;
   WindowPosition.X=FMath::Clamp(WindowPosition.X,0.0,FMath::Max(0.0,ViewportPixels.X/UIScale-WindowSize.X));
-  WindowPosition.Y=FMath::Clamp(WindowPosition.Y,56.0,FMath::Max(56.0,ViewportPixels.Y/UIScale-WindowSize.Y-90));
+  WindowPosition.Y=FMath::Clamp(WindowPosition.Y,56.0,FMath::Max(56.0,ViewportPixels.Y/UIScale-WindowSize.Y));
  }
- if(bResizing) { WindowSize.X=FMath::Clamp(P.X-WindowPosition.X,400.0,700.0);WindowSize.Y=FMath::Clamp(P.Y-WindowPosition.Y,420.0,750.0); }
+ if(bResizing) { WindowSize.X=FMath::Clamp(P.X-WindowPosition.X,400.0,FMath::Max(400.,ViewportPixels.X/UIScale-WindowPosition.X));WindowSize.Y=FMath::Clamp(P.Y-WindowPosition.Y,420.0,FMath::Max(420.,ViewportPixels.Y/UIScale-WindowPosition.Y)); }
  if(IsOverOrbitPreview(FVector2D(X,Y))) {
   if(Orbit) OrbitPreview(FVector2D(DX,DY));
   if(Wheel) PreviewZoom=FMath::Clamp(PreviewZoom+Wheel*.1f,.5f,1.6f);
@@ -170,18 +181,46 @@ bool AOVHUD::HandlePointer(float X,float Y,bool Pressed,bool Down,float Wheel,bo
 }
 void AOVHUD::NotifyHitBoxClick(FName N)
 {
+ if(N==TEXT("SystemMenu")){TogglePauseMenu();return;}
+ if(bPauseMenu){
+  if(N==TEXT("PauseSettings") && TitleScreenWidget){bTitleScreenOpen=true;TitleScreenWidget->ActivateFieldPanel(EOVTitleMenuPanel::Settings);SyncAddedUI();return;}
+  if(N==TEXT("PauseResume")){TogglePauseMenu();return;}
+  if(N==TEXT("PauseRestart")||N==TEXT("PauseList")||N==TEXT("PauseTitle")){
+   TogglePauseMenu();if(N==TEXT("PauseTitle")){OpenTitleScreen();return;}
+   if(N==TEXT("PauseList"))NotifyHitBoxClick(TEXT("PlaySceneExit"));
+   else if(auto* PC=Cast<AOVController>(PlayerOwner))PC->Action(TEXT("RestartScene"));
+  }
+  return;
+ }
  // Different rendered buttons need unique hitboxes even when they share a game command.
  if(N==TEXT("MissionHeroPanel"))N=TEXT("HeroPanel");
  if(N==TEXT("CommandHeroPanel")||N==TEXT("InteriorHeroPanel"))N=TEXT("HeroPanel");
  if(N==TEXT("HangarLaunchAircraft"))N=TEXT("LaunchAircraft");
  if(N==TEXT("HangarRecallAircraft"))N=TEXT("RecallAircraft");
  if(N==TEXT("DetailsInteriorToggle"))N=TEXT("InteriorToggle");
+ if(IsDebriefOpen() && (N==TEXT("ResultField") || N==TEXT("RestartScene"))) bConsumeDebriefClick=true;
+ if(N==TEXT("ResultField")) { bDebriefDismissed=true; return; }
+ if(N==TEXT("ShowResult")) { bDebriefDismissed=false; return; }
+ if(N==TEXT("MissionCards")) {
+  if(auto* PC=Cast<AOVController>(PlayerOwner)) OpenMissionCards(PC->GetPlayScenario()->ActiveId,true);
+  return;
+ }
  if(N==TEXT("SceneMenuClose")){bSceneMenuOpen=false;return;}
  if(HandleInteriorAction(N)) return;
  if(N==TEXT("HeroPanel")) { SetHeroPanelOpen(!bHeroPanelOpen);return; }
  if(N==TEXT("TitleScreen")) { OpenTitleScreen(); return; }
  if(N==TEXT("OpenTutorialGuide")) { OpenTutorialGuide(); return; }
  if(N==TEXT("BattleFeedToggle")) { bBattleFeedOpen=!bBattleFeedOpen;BattleFeedPage=0;BattleFeedFilter=0;return; }
+ if(N==TEXT("NoticeSettings") && bBattleFeedOpen){bNoticeSettings=!bNoticeSettings;return;}
+ if(N.ToString().StartsWith(TEXT("ToastKind")) && bBattleFeedOpen && bNoticeSettings){
+  const int32 Kind=FCString::Atoi(*N.ToString().Mid(9));
+  if(Kind>=0 && Kind<=int32(EOVBattleNoticeKind::AircraftAdjusted)){
+   NoticeMask^=(1<<Kind);
+   GConfig->SetInt(TEXT("OrbitalVanguard.UI"),TEXT("NoticeMask"),NoticeMask,GGameUserSettingsIni);
+   GConfig->Flush(false,GGameUserSettingsIni);
+  }
+  return;
+ }
  if(N==TEXT("BattleWarningLevel")) {if(bBattleFeedOpen)WarningLevel=(WarningLevel+2)%3;return;}
  if(N==TEXT("BattleFeedFilter")) {if(bBattleFeedOpen){BattleFeedFilter=(BattleFeedFilter+1)%6;BattleFeedPage=0;}return;}
  if(N==TEXT("BattleFeedOlder")||N==TEXT("BattleFeedNewer")) {
@@ -202,8 +241,20 @@ void AOVHUD::NotifyHitBoxClick(FName N)
   return;
  }
  if(N==TEXT("MissionBackground")||N==TEXT("StarMapBackground")) return;
- if(N==TEXT("StarMapClose")) { bStarMapOpen=false; return; }
+ if(N==TEXT("StarMapClose")) { LastMapCloseFrame=GFrameCounter; bStarMapOpen=false; return; }
+ if(N==TEXT("PlotJump")) {
+  if(auto* PC=Cast<AOVController>(PlayerOwner))SelectedStarSystemId=PC->CurrentStarSystemId;
+  bChoosingJump=true;bStarMapOpen=true;bSceneMenuOpen=false;return;
+ }
+ if(N.ToString().StartsWith(TEXT("StarSystem_FTL_")) && bStarMapOpen){
+  if(auto* PC=Cast<AOVController>(PlayerOwner);PC && PC->DispatchFleetFTL(FName(*N.ToString().Mid(15)))){
+   bStarMapOpen=false;bChoosingJump=false;bConsumeDebriefClick=true;LastMapCloseFrame=GFrameCounter;
+  }
+  return;
+ }
  if(N==TEXT("StarMapToggle")) {
+  bChoosingJump=false;
+  if(bStarMapOpen) LastMapCloseFrame=GFrameCounter;
   bStarMapOpen=!bStarMapOpen;
   if(bStarMapOpen) {
    bSceneMenuOpen=false;
@@ -220,8 +271,15 @@ void AOVHUD::NotifyHitBoxClick(FName N)
  if(N==TEXT("DetailsTitle"))return;
  if(N==TEXT("CommandShipLabel")||N==TEXT("CommandTargetLabel"))return;
  if(N==TEXT("SceneMenu")) { bSceneMenuOpen=!bSceneMenuOpen; if(bSceneMenuOpen) bStarMapOpen=false; return; }
- if(N==TEXT("PlaySceneExit")) { if(auto* PC=Cast<AOVController>(PlayerOwner)) PC->LeavePlayScenario(); bSceneMenuOpen=true; return; }
- if(N==TEXT("Fleet100")||N==TEXT("Fleet200")||N==TEXT("Fleet300")||N==TEXT("BlackHoleTrial")||N==TEXT("Sandbox"))
+ if(N==TEXT("PlaySceneExit")) {
+  if(auto* PC=Cast<AOVController>(PlayerOwner)) {
+   const FName Completed=PC->GetPlayScenario()->ActiveId;
+   PC->LeavePlayScenario();
+   OpenMissionCards(Completed);
+  }
+  return;
+ }
+ if(UOVPlayScenarioSubsystem::Definitions().ContainsByPredicate([N](const auto& Scene){return Scene.Id==N;}))
  {
   if(auto* PC=Cast<AOVController>(PlayerOwner);PC&&PC->StartPlayScenario(N)) bSceneMenuOpen=false;
   return;
@@ -351,22 +409,22 @@ void AOVHUD::NotifyHitBoxClick(FName N)
  }
  if(N==TEXT("WindowClose")) { bDetailsOpen=false;return; }
  if(N==TEXT("WindowMin")) { bMinimized=!bMinimized;return; }
- if(N==TEXT("WindowMax")) { WindowPosition=FVector2D(210,60);WindowSize=WindowSize.X>500?FVector2D(424,550):FVector2D(650,620);return; }
+ if(N==TEXT("WindowMax")) { const bool Full=WindowSize.X>=ViewportPixels.X/UIScale-28;WindowPosition=FVector2D(8,68);WindowSize=Full?FVector2D(520,560):ViewportPixels/UIScale-FVector2D(20,76);return; }
  if(auto* PC=Cast<AOVController>(PlayerOwner)) PC->Action(N);
 }
 void AOVHUD::DrawExternal(float X,float Y,float W)
 {
  auto* PC=Cast<AOVController>(PlayerOwner); if(!PC||!PC->Selected)return;
  if(!ShipPreview)ShipPreview=NewObject<UOVShipPreview>(this);
- ShipPreview->Update(PC->Selected,PreviewRotation,PreviewZoom,W/192.f);
- DrawRect(FLinearColor(.009f,.02f,.035f),X,Y,W,192);
- if(auto* Texture=ShipPreview->GetTexture())DrawTexture(Texture,X,Y,W,192,0,0,1,1,FLinearColor::White,BLEND_Opaque);
+ ShipPreview->Update(PC->Selected,PreviewRotation,PreviewZoom,W/(WindowSize.Y*.5f));
+ DrawRect(FLinearColor(.009f,.02f,.035f),X,Y,W,WindowSize.Y*.5f);
+ if(auto* Texture=ShipPreview->GetTexture())DrawTexture(Texture,X,Y,W,WindowSize.Y*.5f,0,0,1,1,FLinearColor::White,BLEND_Opaque);
  const auto* Systems=PC->Selected->Systems.Get(); const auto* Layout=Systems->Layout.Get();
  for(int32 I=0;I<Layout->WeaponMounts.Num();++I)
  {
   const FVector2D UV=ShipPreview->Project(Layout->WeaponMounts[I].LocalPosition);
   if(UV.X<.03||UV.X>.97||UV.Y<.04||UV.Y>.9)continue;
-  const FVector2D P(X+UV.X*W,Y+UV.Y*192);
+  const FVector2D P(X+UV.X*W,Y+UV.Y*WindowSize.Y*.5f);
   const bool Selected=I==PC->SelectedWeapon;
   const FLinearColor Color=Selected?Accent:Health(Systems->WeaponMountStates[I].HP/Layout->WeaponMounts[I].MaxHP);
   DrawLine(P.X-9,P.Y-9,P.X+9,P.Y-9,Color,Selected?2:1);
@@ -390,7 +448,7 @@ void AOVHUD::DrawExternal(float X,float Y,float W)
   }
   AddHitBox(FVector2D(PX,PY)*UIScale,FVector2D(PW,PH)*UIScale,TEXT("WeaponPreviewBackground"),true,140);
  }
- DrawText(TEXT("중클릭 회전 · 휠 확대 · 무장 선택"),Ink,X+8,Y+174,GEngine->GetSmallFont());
+ DrawText(TEXT("중클릭 회전 · 휠 확대 · 무장 선택"),Ink,X+8,Y+WindowSize.Y*.5f-18,GEngine->GetSmallFont());
 }
 FString AOVHUD::GetSelectedWeaponSummary() const
 {
@@ -452,9 +510,10 @@ void AOVHUD::DrawDetails()
 {
  auto* PC=Cast<AOVController>(PlayerOwner);if(!PC->Selected||!bDetailsOpen)return;
  if(!bDetailsPositioned){WindowPosition.X=ViewportPixels.X/UIScale-WindowSize.X-16;bDetailsPositioned=true;}
- WindowSize.Y=FMath::Clamp(WindowSize.Y,420.0,FMath::Max(420.0,ViewportPixels.Y/UIScale-230));
+ WindowSize.X=FMath::Min(WindowSize.X,ViewportPixels.X/UIScale);
+ WindowSize.Y=FMath::Clamp(WindowSize.Y,420.0,FMath::Max(420.0,ViewportPixels.Y/UIScale-68));
  WindowPosition.X=FMath::Clamp(WindowPosition.X,0.0,FMath::Max(0.0,ViewportPixels.X/UIScale-WindowSize.X-12));
- WindowPosition.Y=FMath::Clamp(WindowPosition.Y,68.0,FMath::Max(68.0,ViewportPixels.Y/UIScale-WindowSize.Y-168));
+ WindowPosition.Y=FMath::Clamp(WindowPosition.Y,68.0,FMath::Max(68.0,ViewportPixels.Y/UIScale-WindowSize.Y));
  const auto* S=PC->Selected->Systems.Get();const auto* L=S->Layout.Get();if(!L)return;
  if(DetailsPageShip!=PC->Selected||DetailsPageDeck!=PC->ViewedDeck){DetailsPageShip=PC->Selected;DetailsPageDeck=PC->ViewedDeck;DetailsSlotPage=0;}
  TGuardValue<bool> DetailLayer(bDrawingDetails,true);
@@ -558,48 +617,96 @@ void AOVHUD::DrawDetails()
    Button(TEXT("DetailsPageNext"),TEXT("다음"),X+135,Y+246,60);
   }
  }
- DrawText(FString::Printf(TEXT("선체 %.0f/%.0f | 쉴드 %.0f/%.0f %s"),S->HullHP,S->MaxHullHP,S->Shield,S->MaxShield,S->bShieldActive?TEXT("활성"):TEXT("비활성")),Ink,X+10,Y+280,GEngine->GetSmallFont());
+ const float InfoY=Y+(!bHangarView&&PC->ViewedDeck==0 ? WindowSize.Y*.5f-192.f : 0.f);
+ DrawText(FString::Printf(TEXT("선체 %.0f/%.0f | 쉴드 %.0f/%.0f %s"),S->HullHP,S->MaxHullHP,S->Shield,S->MaxShield,S->bShieldActive?TEXT("활성"):TEXT("비활성")),Ink,X+10,InfoY+280,GEngine->GetSmallFont());
  if(S->ArmorSections.IsValidIndex(PC->SelectedArmor)) {
   const auto& A=S->ArmorSections[PC->SelectedArmor];
-  DrawText(FString::Printf(TEXT("장갑 %s %.0f/%.0f"),*(PC->bDeveloperMode?A.ArmorSectionId.ToString():FString(TEXT("선택 구역"))),A.HP,L->ArmorSections[PC->SelectedArmor].MaxArmor),Accent,X+10,Y+301,GEngine->GetSmallFont());
+  DrawText(FString::Printf(TEXT("장갑 %s %.0f/%.0f"),*(PC->bDeveloperMode?A.ArmorSectionId.ToString():FString(TEXT("선택 구역"))),A.HP,L->ArmorSections[PC->SelectedArmor].MaxArmor),Accent,X+10,InfoY+301,GEngine->GetSmallFont());
  }
  if(!bHangarView&&PC->ViewedDeck==0&&S->WeaponMountStates.IsValidIndex(PC->SelectedWeapon)) {
   TArray<FString> Lines;GetSelectedWeaponSummary().ParseIntoArrayLines(Lines);
   for(int32 I=0;I<FMath::Min(2,Lines.Num());++I) {
    float TextWidth=0,TextHeight=0;GetTextSize(Lines[I],TextWidth,TextHeight,GEngine->GetSmallFont());
    const float TextScale=FMath::Min(1.f,(W-20)/FMath::Max(1.f,TextWidth));
-   DrawText(Lines[I],Ink,X+10,Y+322+I*19,GEngine->GetSmallFont(),TextScale);
+   DrawText(Lines[I],Ink,X+10,InfoY+322+I*19,GEngine->GetSmallFont(),TextScale);
   }
  }else if(Reveal&&L->Slots.IsValidIndex(PC->SelectedSlot)) {
   const auto& F=S->Slots[PC->SelectedSlot];const auto& D=L->Slots[PC->SelectedSlot];
-  DrawText(FString::Printf(TEXT("%s %s 내구 %.0f/%.0f 인원 %.0f/%.0f"),*(PC->bDeveloperMode?F.SlotId.ToString():FString(TEXT("시설"))),*Facility(D.Facility),F.HP,D.MaxFacilityHP,F.Crew,D.RequiredCrew),Ink,X+10,Y+322,GEngine->GetSmallFont());
-  if(PC->bDeveloperMode)DrawText(S->GetSlotStatus(F.SlotId).Left(45),Accent,X+10,Y+341,GEngine->GetSmallFont());
-  else Button(TEXT("DetailsInteriorToggle"),TEXT("선내 작전 열기"),X+10,Y+390,150);
+  DrawText(FString::Printf(TEXT("%s %s 내구 %.0f/%.0f 인원 %.0f/%.0f"),*(PC->bDeveloperMode?F.SlotId.ToString():FString(TEXT("시설"))),*Facility(D.Facility),F.HP,D.MaxFacilityHP,F.Crew,D.RequiredCrew),Ink,X+10,InfoY+322,GEngine->GetSmallFont());
+  if(PC->bDeveloperMode)DrawText(S->GetSlotStatus(F.SlotId).Left(45),Accent,X+10,InfoY+341,GEngine->GetSmallFont());
+  else Button(TEXT("DetailsInteriorToggle"),TEXT("선내 작전 열기"),X+10,InfoY+390,150);
  }
- if(Reveal)DrawText(FString::Printf(TEXT("엔진 %.0f%% 쉴드 %.0f%% 레이더 %.0f%%"),100*S->GetEfficiency(EOVFacilityType::Engine),100*S->GetEfficiency(EOVFacilityType::ShieldControl),100*S->GetEfficiency(EOVFacilityType::Radar)),Ink,X+10,Y+362,GEngine->GetSmallFont());
- else DrawText(TEXT("적 내부 정보 숨김 · 관측된 외장만 표시"),Ink,X+10,Y+362,GEngine->GetSmallFont());
+ if(PC->Selected->bFTLCharging && PC->GetPlayScenario()){
+  const float Frac=PC->GetPlayScenario()->ChargeFraction(PC->Selected);
+  DrawRect(FLinearColor(.12f,.12f,.18f),X+12,InfoY+383,W-24,12);
+  DrawRect(Accent,X+12,InfoY+383,(W-24)*Frac,12);DrawText(TEXT("도약 충전"),Ink,X+16,InfoY+397,GEngine->GetSmallFont());
+ }
+ if(Reveal)DrawText(FString::Printf(TEXT("엔진 %.0f%% 쉴드 %.0f%% 레이더 %.0f%%"),100*S->GetEfficiency(EOVFacilityType::Engine),100*S->GetEfficiency(EOVFacilityType::ShieldControl),100*S->GetEfficiency(EOVFacilityType::Radar)),Ink,X+10,InfoY+362,GEngine->GetSmallFont());
+ else DrawText(TEXT("적 내부 정보 숨김 · 관측된 외장만 표시"),Ink,X+10,InfoY+362,GEngine->GetSmallFont());
  if(PC->bDeveloperMode) {
-  DrawText(TEXT("DEV ONLY: direct tools, not supply repair"),FLinearColor::Yellow,X+10,Y+384,GEngine->GetSmallFont());
+  DrawText(TEXT("DEV ONLY: direct tools, not supply repair"),FLinearColor::Yellow,X+10,InfoY+384,GEngine->GetSmallFont());
   const FName Names[]={TEXT("TestHit"),TEXT("ArmorZero"),TEXT("RepairArmor"),TEXT("Reset"),TEXT("DestroyExt"),TEXT("Sabotage"),TEXT("RepairSlot"),TEXT("Occupy"),TEXT("CrewDown"),TEXT("CrewUp"),TEXT("WeaponHit"),TEXT("RepairWeapon")};
   const TCHAR* Labels[]={TEXT("HIT 150"),TEXT("ARMOR 0"),TEXT("FIX ARMOR"),TEXT("RESET"),TEXT("DESTROY"),TEXT("SABOTAGE"),TEXT("FIX ROOM"),TEXT("OCCUPY"),TEXT("CREW -2"),TEXT("CREW +2"),TEXT("HIT GUN"),TEXT("FIX GUN")};
-  for(int32 I=0;I<12;++I)Button(Names[I],I==0?FString::Printf(TEXT("HIT %.0f"),PC->TestDamage):FString(Labels[I]),X+10+(I%4)*(W-20)/4,Y+405+(I/4)*33,(W-32)/4);
-  DrawText(FString::Printf(TEXT("Event %d: %s -> %s / HP -%.1f"),S->HitEventId,*S->LastArmorSection.ToString(),*S->LastDamageSlot.ToString(),S->LastHullDamage),Accent,X+10,Y+510,GEngine->GetSmallFont());
+  for(int32 I=0;I<12;++I)Button(Names[I],I==0?FString::Printf(TEXT("HIT %.0f"),PC->TestDamage):FString(Labels[I]),X+10+(I%4)*(W-20)/4,InfoY+405+(I/4)*33,(W-32)/4);
+  DrawText(FString::Printf(TEXT("Event %d: %s -> %s / HP -%.1f"),S->HitEventId,*S->LastArmorSection.ToString(),*S->LastDamageSlot.ToString(),S->LastHullDamage),Accent,X+10,InfoY+510,GEngine->GetSmallFont());
  }
  DrawLine(X+W-16,Y+WindowSize.Y-2,X+W-2,Y+WindowSize.Y-16,Ink,2);
 }
+bool AOVHUD::IsDebriefOpen() const
+{
+ const auto* PC=Cast<AOVController>(PlayerOwner);
+ const auto* Play=PC ? PC->GetPlayScenario() : nullptr;
+ return Play && Play->Result!=EOVPlaySceneResult::Running && !bDebriefDismissed && !bTitleScreenOpen;
+}
+
+void AOVHUD::OpenMissionCards(FName Selected, bool bBrowse)
+{
+ auto* PC=Cast<AOVController>(PlayerOwner);
+ if(bBrowse && PC && TitleScreenWidget)
+ {
+  PauseBeforeCards=PC->bSimulationPaused;
+  PC->bSimulationPaused=true;
+  bTitleScreenOpen=true;
+  bSceneMenuOpen=false;
+  TitleScreenWidget->ActivateFieldPanel(EOVTitleMenuPanel::ScenarioSelect);
+  SyncAddedUI();
+ }
+ else OpenTitleScreen();
+ if(TitleScreenWidget)
+ {
+  if(!Selected.IsNone()) TitleScreenWidget->SelectScenario(Selected);
+  TitleScreenWidget->ShowPanel(EOVTitleMenuPanel::ScenarioSelect);
+ }
+}
+
 void AOVHUD::DrawHUD()
 {
     CSV_SCOPED_TIMING_STAT_EXCLUSIVE(OV_HUD);
     TRACE_CPUPROFILER_EVENT_SCOPE(OV_HUD);
  SyncAddedUI();
- if(bTitleScreenOpen){ Super::DrawHUD(); return; }
  ActionCenters.Reset();
- Super::DrawHUD();auto* PC=Cast<AOVController>(PlayerOwner);if(!PC||!Canvas||PC->Ships.Num()<3)return;
+ if(bTitleScreenOpen){ Super::DrawHUD(); return; }
+ Super::DrawHUD();auto* PC=Cast<AOVController>(PlayerOwner);if(!PC||!Canvas)return;
  if(WeaponPreview&&(!HasOrbitPreview()||!IsValid(PC->Selected)||PC->Selected->IsHidden()||PC->Selected->Systems->bWrecked||(PC->Combat&&PC->Combat->IsDeparted(PC->Selected))))WeaponPreview->Release();
  ViewportPixels=FVector2D(Canvas->SizeX,Canvas->SizeY);
- const float BaseDrawScale=FMath::Max(.25f,FMath::Min(1.f,FMath::Min(Canvas->SizeX/1280.f,Canvas->SizeY/740.f)));
- UIScale=FMath::Clamp(BaseDrawScale*UserUIScaleMultiplier,.25f,1.5f);
+ const float BaseDrawScale=FMath::Max(.25f,FMath::Min(Canvas->SizeX/1280.f,Canvas->SizeY/740.f));
+ UIScale=FMath::Clamp(BaseDrawScale*UserUIScaleMultiplier,.25f,4.f);
+ if (bStarMapOpen) UIScale=FMath::Min(UIScale,float(FMath::Min(ViewportPixels.X/1210.,ViewportPixels.Y/488.)));
  Canvas->Canvas->PushRelativeTransform(FScaleMatrix(FVector(UIScale,UIScale,1)));
+ if(bPauseMenu) {
+  const float W=ViewportPixels.X/UIScale,H=ViewportPixels.Y/UIScale;
+  const float X=(W-390)*.5f,Y=(H-300)*.5f;
+  DrawRect(FLinearColor(.005f,.012f,.025f,.76f),0,0,W,H);DrawRect(Panel,X,Y,390,300);
+  DrawRect(Accent,X,Y,390,3);
+  DrawText(TEXT("작전 일시정지"),FLinearColor::White,X+28,Y+20,GEngine->GetLargeFont(),1.85f);
+  Button(TEXT("PauseResume"),TEXT("전투 재개"),X+28,Y+78,334,true);
+  Button(TEXT("PauseRestart"),TEXT("현재 임무 재시작"),X+28,Y+120,334);
+  Button(TEXT("PauseSettings"),TEXT("환경 설정 · 화면 배율"),X+28,Y+162,334);
+  Button(TEXT("PauseList"),TEXT("임무 목록"),X+28,Y+204,334);
+  Button(TEXT("PauseTitle"),TEXT("타이틀 화면"),X+28,Y+246,334);
+  Canvas->Canvas->PopTransform();return;
+ }
+ if(IsDebriefOpen()) { DrawDebrief(); Canvas->Canvas->PopTransform(); return; }
  DrawPlayHUD(); DrawWorldIndicators(); DrawPhase2C(); DrawMission();
  DrawBattleNotices();
  DrawPinned();
@@ -694,6 +801,7 @@ void AOVHUD::BeginPlay()
  if(HeroWidget)HeroWidget->AddToViewport(10);
  if(GConfig)
  {
+  GConfig->GetInt(TEXT("OrbitalVanguard.UI"),TEXT("NoticeMask"),NoticeMask,GGameUserSettingsIni);
   float SavedScale=1.f;
   if(GConfig->GetFloat(TEXT("OrbitalVanguard.UI"),TEXT("UIScaleMultiplier"),SavedScale,GGameUserSettingsIni))
   {
@@ -839,11 +947,11 @@ float AOVHUD::PinnedPanelX() const
 float AOVHUD::PinnedPanelY() const
 {
  const int32 Count=BattleNoticeRows();
- const float NoticeX=ViewportPixels.X/UIScale*.5f-120;
- if(Count<=0||PinnedPanelX()+266<=NoticeX||PinnedPanelX()>=NoticeX+240)return 76;
+ const float NoticeX=ViewportPixels.X/UIScale-354;
+ if(Count<=0||PinnedPanelX()+266<=NoticeX||PinnedPanelX()>=NoticeX+340)return 76;
  const auto* Feed=GetBattleNoticeFeed();
- const int32 Footer=bBattleFeedOpen?66+(Feed&&Feed->DroppedCount>0?20:0):0;
- return FMath::Max(76.f,66.f+Count*32+Footer+4.f);
+ const int32 Footer=bBattleFeedOpen?(bNoticeSettings?242:66)+(Feed&&Feed->DroppedCount>0?20:0):0;
+ return FMath::Max(76.f,BattleNoticeTop()+Count*32+Footer+4.f);
 }
 FVector2D AOVHUD::GetPinnedPosition(int32 Index) const
 {
@@ -1006,6 +1114,7 @@ void AOVHUD::ResetDevelopmentWindow(){DevelopmentPosition=FVector2D(-1,-1);Devel
 
 void AOVHUD::ResetPlaySessionUI()
 {
+ bChoosingJump=false;bPauseMenu=false;bDebriefDismissed=false;
  CloseTitleScreen();
  CancelPointerDrag();
  SetDetailsOpen(false);
@@ -1051,7 +1160,7 @@ void AOVHUD::SyncAddedUI()
   TitleScreenWidget->SetDesiredSizeInViewport(FVector2D(W/Dpi,H/Dpi));
   TitleScreenWidget->SetVisibility(bTitleScreenOpen?ESlateVisibility::Visible:ESlateVisibility::Collapsed);
  }
- if(bTitleScreenOpen){
+ if(bTitleScreenOpen || bPauseMenu || IsDebriefOpen()){
   if(DevelopmentWidget)DevelopmentWidget->SetVisibility(ESlateVisibility::Collapsed);
   if(HeroWidget)HeroWidget->SetVisibility(ESlateVisibility::Collapsed);
   return;
@@ -1070,7 +1179,6 @@ void AOVHUD::OpenTutorialGuide()
 {
  bTitleScreenOpen=true;
  bSceneMenuOpen=false;
- bStarMapOpen=false;
  if(auto* PC=Cast<AOVController>(PlayerOwner)) { PC->bSimulationPaused=true; }
  if(TitleScreenWidget) { TitleScreenWidget->ActivateInGameTutorial(); }
  SyncAddedUI();
@@ -1089,7 +1197,11 @@ void AOVHUD::CloseTitleScreen()
  if(!bTitleScreenOpen) return;
  bTitleScreenOpen=false;
  if(TitleScreenWidget) { TitleScreenWidget->DeactivateTitleScreen(); }
- if(auto* PC=Cast<AOVController>(PlayerOwner)) { if(PC->RangeCamera) PC->SetViewTarget(PC->RangeCamera); }
+ if(auto* PC=Cast<AOVController>(PlayerOwner)) {
+  if(PC->RangeCamera) PC->SetViewTarget(PC->RangeCamera);
+  if(PauseBeforeCards.IsSet()) PC->bSimulationPaused=PauseBeforeCards.GetValue();
+ }
+ PauseBeforeCards.Reset();
  SyncAddedUI();
 }
 bool AOVHUD::IsOverAddedUI(float X,float Y) const
@@ -1097,6 +1209,31 @@ bool AOVHUD::IsOverAddedUI(float X,float Y) const
  if(bTitleScreenOpen) return true;
  const auto* PC=Cast<AOVController>(PlayerOwner);if(!PC)return false;const FVector2D P(X,Y);
  return PC->bDeveloperMode?DevelopmentWidget&&DevelopmentRect.IsInsideOrOn(P):bHeroPanelOpen&&HeroWidget&&HeroRect.IsInsideOrOn(P);
+}
+void AOVHUD::TogglePauseMenu()
+{
+ auto* PC=Cast<AOVController>(PlayerOwner); if(!PC)return;
+ if(bPauseMenu) { PC->bSimulationPaused=PausedBeforeMenu; bPauseMenu=false;bConsumeDebriefClick=true; }
+ else { PausedBeforeMenu=PC->bSimulationPaused;PC->bSimulationPaused=true;bPauseMenu=true;bSceneMenuOpen=false;PC->Action(TEXT("Cancel")); }
+}
+bool AOVHUD::CloseTopModal()
+{
+ if(IsDebriefOpen()) { bDebriefDismissed=true; return true; }
+ if (bTitleScreenOpen)
+ {
+  if (TitleScreenWidget && TitleScreenWidget->GetCurrentPanel()!=EOVTitleMenuPanel::Title)
+   TitleScreenWidget->BackFromCurrentPanel();
+  else CloseTitleScreen();
+  return true;
+ }
+ if (bStarMapOpen) { bStarMapOpen=false; return true; }
+ if(bPauseMenu){TogglePauseMenu();return true;}
+ if(bSceneMenuOpen){bSceneMenuOpen=false;return true;}
+ if(bHeroPanelOpen){SetHeroPanelOpen(false);return true;}
+ if(bInteriorOpen){bInteriorOpen=false;return true;}
+ if(bDetailsOpen){SetDetailsOpen(false);return true;}
+ if(bBattleFeedOpen){bBattleFeedOpen=false;return true;}
+ return false;
 }
 bool AOVHUD::IsAddedUIEditing() const
 {

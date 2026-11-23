@@ -132,6 +132,14 @@ public:
     UFUNCTION(BlueprintCallable) int32 AddDevNode(FVector Position, float Amount);
     UFUNCTION(BlueprintCallable) float DevMine(AOVShip* Ship, int32 NodeId, float Requested, float MaxRange);
     UFUNCTION(BlueprintCallable) float DevTransfer(AOVShip* From, AOVShip* To, float Requested, float MaxRange);
+    // Withdraws only cargo physically delivered to the specified friendly mission depot.
+    float UnloadTransport(AOVShip* Ship, int32 DepotFaction, FVector Depot, float Range, float Requested);
+    static float FieldCapacity(FName Hull);
+    bool StockFieldShip(AOVShip* Ship);
+    bool OrderRepair(AOVShip* Source, AOVShip* Target);
+    void CancelFieldOrder(AOVShip* Source);
+    void ResetFieldOrders(){Approaches.Reset();}
+    const FOVDevCargo* FindCargo(const AOVShip* Ship) const;
     UFUNCTION(BlueprintCallable) bool SetDevMaterials(AOVShip* Ship, FVector Materials);
     // Explicit DEV base quote per HP. Field cost is 1.5 times this quote.
     UFUNCTION(BlueprintCallable) bool StartDevRepair(AOVShip* Source, AOVShip* Target, bool bHero, FGuid HeroId, FVector BaseCostPerHP, float Range, float HeroRate, float HeroDuration, float HeroTotalHP);
@@ -170,6 +178,7 @@ public:
     bool DiagnoseOutpostBottleneck(int32 OutpostId, FString& OutDiagnosis) const;
 
 private:
+    TMap<TWeakObjectPtr<AOVShip>, TWeakObjectPtr<AOVShip>> Approaches;
     int32 NextNodeId = 1;
     int32 NextOutpostId = 1;
     int32 NextMinerAssignmentId = 1;

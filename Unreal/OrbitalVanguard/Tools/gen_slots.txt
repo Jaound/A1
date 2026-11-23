@@ -1,0 +1,14 @@
+            AddSlot(TEXT("Flagship"), TEXT("구축전함 (Dreadnought)"), TEXT("/Game/Presentation/Ships/DreadnoughtFull/SM_Hull.SM_Hull"), FVector(-550.9f, 292.7f, -91.5f), FRotator(12.0f, 65.0f, -10.0f), 1.71f);
+            AddSlot(TEXT("Battlecarrier"), TEXT("전투항공모함 (Battlecarrier)"), TEXT("/Game/Presentation/Ships/BattlecarrierFull/SM_Hull.SM_Hull"), FVector(61.0f, -73.8f, 100.1f), FRotator(12.0f, 65.0f, -10.0f), 1.49f);
+            AddSlot(TEXT("Battleship"), TEXT("전함 (Battleship)"), TEXT("/Game/Presentation/Ships/BattleshipFull/SM_Hull.SM_Hull"), FVector(-224.3f, 921.7f, 36.7f), FRotator(12.0f, 65.0f, -10.0f), 1.40f);
+            AddSlot(TEXT("Cruiser1"), TEXT("순양함 1 (Cruiser)"), TEXT("/Game/Presentation/Ships/CruiserFull/SM_Hull.SM_Hull"), FVector(834.7f, -47.9f, 217.8f), FRotator(12.0f, 65.0f, -10.0f), 1.13f);
+            AddSlot(TEXT("Carrier"), TEXT("항공모함 (Carrier)"), TEXT("/Game/Presentation/Ships/CarrierFull/SM_Hull.SM_Hull"), FVector(873.1f, 726.2f, 266.7f), FRotator(12.0f, 65.0f, -10.0f), 1.47f);
+            AddSlot(TEXT("Cruiser2"), TEXT("순양함 2 (Cruiser)"), TEXT("/Game/Presentation/Ships/CruiserFull/SM_Hull.SM_Hull"), FVector(830.3f, 1408.8f, 275.7f), FRotator(12.0f, 65.0f, -10.0f), 1.15f);
+            AddSlot(TEXT("Bastion"), TEXT("바스티온급 구축함 (Bastion)"), TEXT("/Game/Presentation/Ships/BastionFull/SM_Hull.SM_Hull"), FVector(1664.8f, 691.6f, 357.2f), FRotator(12.0f, 65.0f, -10.0f), 0.96f);
+            AddSlot(TEXT("Vector"), TEXT("벡터급 구축함 (Vector)"), TEXT("/Game/Presentation/Ships/VectorFull/SM_Hull.SM_Hull"), FVector(1700.2f, 1463.9f, 386.6f), FRotator(12.0f, 65.0f, -10.0f), 0.95f);
+            AddSlot(TEXT("AirDefense"), TEXT("방공함 (Air Defense)"), TEXT("/Game/Presentation/Ships/Air_DefenseFull/SM_Hull.SM_Hull"), FVector(331.1f, 1528.1f, 178.6f), FRotator(12.0f, 65.0f, -10.0f), 0.90f);
+            AddSlot(TEXT("Frigate1"), TEXT("호위함 1 (Frigate)"), TEXT("/Game/Presentation/Ships/FrigateFull/SM_Hull.SM_Hull"), FVector(-540.1f, 754.2f, -247.9f), FRotator(12.0f, 65.0f, -10.0f), 0.75f);
+            AddSlot(TEXT("Frigate2"), TEXT("호위함 2 (Frigate)"), TEXT("/Game/Presentation/Ships/FrigateFull/SM_Hull.SM_Hull"), FVector(168.7f, 291.4f, -315.2f), FRotator(12.0f, 65.0f, -10.0f), 0.67f);
+            AddSlot(TEXT("Fighter1"), TEXT("함재기 1 (Lead)"), TEXT("/Game/Presentation/Ships/FighterFull/SM_Hull.SM_Hull"), FVector(-697.6f, -84.2f, 93.5f), FRotator(14.0f, 68.0f, -14.0f), 0.32f);
+            AddSlot(TEXT("Fighter2"), TEXT("함재기 2 (Wing L)"), TEXT("/Game/Presentation/Ships/FighterFull/SM_Hull.SM_Hull"), FVector(-624.8f, 17.6f, 109.8f), FRotator(14.0f, 68.0f, -14.0f), 0.30f);
+            AddSlot(TEXT("Fighter3"), TEXT("함재기 3 (Wing R)"), TEXT("/Game/Presentation/Ships/FighterFull/SM_Hull.SM_Hull"), FVector(-630.4f, -5.1f, 34.2f), FRotator(14.0f, 68.0f, -14.0f), 0.30f);

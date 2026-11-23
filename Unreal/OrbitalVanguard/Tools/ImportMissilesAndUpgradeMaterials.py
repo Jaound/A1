@@ -186,7 +186,7 @@ try:
             textures[kind] = tex
 
         mat = load_or_create_mat(dest, 'M_Source')
-        build_readable_material(lib, mat, textures, fill_strength=1.40, use_instanced=True)
+        build_readable_material(lib, mat, textures, fill_strength=0.025 if ident == "AntiShipModule" else 1.40, use_instanced=True)
         mesh.set_material(0, mat)
         unreal.EditorAssetLibrary.save_loaded_asset(mesh, only_if_is_dirty=False)
         report['imported'].append(dest + '/SM_Source')
@@ -207,7 +207,7 @@ try:
             'metallic': unreal.EditorAssetLibrary.load_asset(wdest + '/T_Metallic'),
         }
         check('WEAPON-MAT-' + wid, isinstance(mat, unreal.Material) and all(isinstance(t, unreal.Texture2D) for t in textures.values()))
-        build_readable_material(lib, mat, textures, fill_strength=1.45, use_instanced=True)
+        build_readable_material(lib, mat, textures, fill_strength=0.025, use_instanced=True)
         report['upgraded_materials'].append(wdest + '/M_Source')
 
     # 3. Restore and upgrade BF120Trial materials
@@ -221,7 +221,7 @@ try:
             'metallic': unreal.EditorAssetLibrary.load_asset(f'{bdest}/T_BF120_{part}_Metallic_Trial'),
         }
         if mat and all(textures.values()):
-            build_readable_material(lib, mat, textures, fill_strength=1.45, use_instanced=True)
+            build_readable_material(lib, mat, textures, fill_strength=0.025, use_instanced=True)
             report['upgraded_materials'].append(f'{bdest}/M_BF120_{part}_Trial')
 
     # 4. Also enable InstancedStaticMeshes usage flag on FighterFull/M_Readable so fighters never lose their material in game

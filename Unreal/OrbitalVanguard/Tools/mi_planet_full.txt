@@ -1,0 +1,9 @@
+Vector params: ["Specular Color", "Planet_Color_Blend"]
+Texture params: ["Diffuse Texture", "Roughness Texture", "Emissive_Texture", "Specular Texture", "Normal_Texture"]
+  Vec Specular Color: <Struct 'LinearColor' (0x0000029A32C77FE0) {r: 0.500000, g: 0.500000, b: 0.500000, a: 1.000000}>
+  Vec Planet_Color_Blend: <Struct 'LinearColor' (0x0000029A32C800A0) {r: 0.024942, g: 0.339111, b: 1.000000, a: 1.000000}>
+  Tex Diffuse Texture: T_8k_earth_daymap
+  Tex Roughness Texture: DefaultTexture
+  Tex Emissive_Texture: T_8k_earth_nightmap
+  Tex Specular Texture: T_8k_earth_specular_map
+  Tex Normal_Texture: T_8k_earth_normal_map

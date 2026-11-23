@@ -1,6 +1,7 @@
 #include "OVTitleScreenWidget.h"
 
 #include "OVAudioSubsystem.h"
+#include "OVCalibration.h"
 #include "OVController.h"
 #include "OVHUD.h"
 #include "OVPlayScenarioSubsystem.h"
@@ -11,12 +12,14 @@
 #include "Components/Border.h"
 #include "Components/BorderSlot.h"
 #include "Components/Button.h"
+#include "Components/ButtonSlot.h"
 #include "Components/HorizontalBox.h"
 #include "Components/HorizontalBoxSlot.h"
 #include "Components/Image.h"
 #include "Components/Overlay.h"
 #include "Components/OverlaySlot.h"
 #include "Components/SizeBox.h"
+#include "Components/ScaleBox.h"
 #include "Components/Slider.h"
 #include "Components/Spacer.h"
 #include "Components/TextBlock.h"
@@ -339,14 +342,6 @@ void UOVTitleScreenWidget::BuildProgrammaticTree()
         ContentSlot->SetVerticalAlignment(VAlign_Fill);
     }
 
-    UHorizontalBox* TopMeta = WidgetTree->ConstructWidget<UHorizontalBox>();
-    LeftMenuVBox->AddChildToVerticalBox(TopMeta)->SetPadding(FMargin(0.f, 0.f, 0.f, 26.f));
-    TopMeta->AddChildToHorizontalBox(OVStyle::MakeLabel(
-        WidgetTree, TEXT("MAP: /Game/Maps/ControlRange · MODE: AOVGameMode"), 11, OVStyle::TextDim, false));
-
-    LeftMenuVBox->AddChildToVerticalBox(OVStyle::MakeLabel(
-        WidgetTree, TEXT("3D FLEET COMMAND & BOARDING TACTICS"), 11, OVStyle::CyanAccent, true));
-
     UTextBlock* TitleLabel = OVStyle::MakeLabel(
         WidgetTree, TEXT("ORBITAL VANGUARD"), 40, OVStyle::TextWhite, true);
     LeftMenuVBox->AddChildToVerticalBox(TitleLabel)->SetPadding(FMargin(0.f, 6.f, 0.f, 10.f));
@@ -358,9 +353,9 @@ void UOVTitleScreenWidget::BuildProgrammaticTree()
     UButton* StartBtn = OVStyle::MakeMenuButton(WidgetTree, LeftMenuVBox, TEXT("작전 개시 · 임무 선택"), TEXT(">"), true);
     StartBtn->OnClicked.AddDynamic(this, &UOVTitleScreenWidget::HandleOpenScenarios);
 
-    OVStyle::MakeMenuButton(WidgetTree, LeftMenuVBox, TEXT("[잠김] 캠페인"), TEXT("4단계 예정"), false, true);
+    OVStyle::MakeMenuButton(WidgetTree, LeftMenuVBox, TEXT("캠페인"), TEXT("준비 중"), false, true);
 
-    UButton* SandboxBtn = OVStyle::MakeMenuButton(WidgetTree, LeftMenuVBox, TEXT("자유 전투 시험장"), TEXT("Sandbox"), false);
+    UButton* SandboxBtn = OVStyle::MakeMenuButton(WidgetTree, LeftMenuVBox, TEXT("자유 전투 시험장"), TEXT("자유 배치"), false);
     SandboxBtn->OnClicked.AddDynamic(this, &UOVTitleScreenWidget::HandleOpenSandbox);
 
     UButton* TutorialBtn = OVStyle::MakeMenuButton(WidgetTree, LeftMenuVBox, TEXT("게임 가이드 / 튜토리얼"), TEXT("5단계 요약"), false);
@@ -381,7 +376,7 @@ void UOVTitleScreenWidget::BuildProgrammaticTree()
     UHorizontalBox* LeftFooter = WidgetTree->ConstructWidget<UHorizontalBox>();
     LeftMenuVBox->AddChildToVerticalBox(LeftFooter)->SetPadding(FMargin(0.f, 14.f, 0.f, 0.f));
     LeftFooter->AddChildToHorizontalBox(OVStyle::MakeLabel(
-        WidgetTree, TEXT("조작 프로필: PlayGame3 · F5/F6/F7 빠른 함대전"), 11, OVStyle::TextDim, false));
+        WidgetTree, TEXT("F5 · F6 · F7  빠른 함대전"), 11, OVStyle::TextDim, false));
     USpacer* FootSpacer = WidgetTree->ConstructWidget<USpacer>();
     LeftFooter->AddChildToHorizontalBox(FootSpacer)->SetSize(FSlateChildSize(ESlateSizeRule::Fill));
     FooterUIScaleText = OVStyle::MakeLabel(WidgetTree, TEXT("UI 배율: 100%"), 11, OVStyle::TextDim, false);
@@ -406,15 +401,20 @@ void UOVTitleScreenWidget::BuildProgrammaticTree()
     ScenarioPanelContainer->SetPadding(FMargin(28.f, 22.f, 28.f, 24.f));
     ScenarioPanelContainer->SetVisibility(ESlateVisibility::Collapsed);
 
-    if (UOverlaySlot* ModalSlot = RootOverlay->AddChildToOverlay(ScenarioPanelContainer))
-    {
-        ModalSlot->SetHorizontalAlignment(HAlign_Center);
-        ModalSlot->SetVerticalAlignment(VAlign_Center);
-    }
+    UScaleBox* FitBriefing = WidgetTree->ConstructWidget<UScaleBox>();
+    FitBriefing->SetStretch(EStretch::ScaleToFit);
+    FitBriefing->SetStretchDirection(EStretchDirection::DownOnly);
+    FitBriefing->SetContent(ScenarioPanelContainer);
+    // The empty wrapper must never consume input from another title panel.
+    FitBriefing->SetVisibility(ESlateVisibility::SelfHitTestInvisible);
+    UOverlaySlot* FitSlot = RootOverlay->AddChildToOverlay(FitBriefing);
+    FitSlot->SetPadding(FMargin(16));
+    FitSlot->SetHorizontalAlignment(HAlign_Fill);
+    FitSlot->SetVerticalAlignment(VAlign_Fill);
 
     USizeBox* ModalCardBox = WidgetTree->ConstructWidget<USizeBox>();
-    ModalCardBox->SetWidthOverride(980.f);
-    ModalCardBox->SetHeightOverride(610.f);
+    ModalCardBox->SetWidthOverride(1130.f);
+    ModalCardBox->SetHeightOverride(710.f);
     ScenarioPanelContainer->SetContent(ModalCardBox);
 
     UVerticalBox* ModalVBox = WidgetTree->ConstructWidget<UVerticalBox>();
@@ -424,20 +424,20 @@ void UOVTitleScreenWidget::BuildProgrammaticTree()
     ModalVBox->AddChildToVerticalBox(ModalHeader)->SetPadding(FMargin(0.f, 0.f, 0.f, 16.f));
 
     UVerticalBox* HeaderTitles = WidgetTree->ConstructWidget<UVerticalBox>();
-    ModalHeader->AddChildToHorizontalBox(HeaderTitles);
+    ModalHeader->AddChildToHorizontalBox(HeaderTitles)->SetSize(FSlateChildSize(ESlateSizeRule::Fill));
     HeaderTitles->AddChildToVerticalBox(OVStyle::MakeLabel(
-        WidgetTree, FString::Printf(TEXT("플레이 임무 선택 (%d종)"), UOVPlayScenarioSubsystem::Definitions().Num()),
+        WidgetTree, FString::Printf(TEXT("임무 선택  ·  %d종"), UOVPlayScenarioSubsystem::Definitions().Num()),
         20, OVStyle::TextWhite, true));
     HeaderTitles->AddChildToVerticalBox(OVStyle::MakeLabel(
-        WidgetTree, TEXT("UOVPlayScenarioSubsystem::Definitions() 실데이터 기준 · D126/E1 동기화"), 11, OVStyle::TextDim, false))
+        WidgetTree, TEXT("임무를 선택하고 아군 편성과 목표를 확인하세요."), 11, OVStyle::TextDim, false))
         ->SetPadding(FMargin(0.f, 3.f, 0.f, 0.f));
 
-    USpacer* HeaderSpacer = WidgetTree->ConstructWidget<USpacer>();
-    ModalHeader->AddChildToHorizontalBox(HeaderSpacer)->SetSize(FSlateChildSize(ESlateSizeRule::Fill));
+
 
     UButton* BackToTitleBtn = WidgetTree->ConstructWidget<UButton>();
     BackToTitleBtn->SetStyle(OVStyle::MakeSecondaryButtonStyle(false));
-    BackToTitleBtn->AddChild(OVStyle::MakeLabel(WidgetTree, TEXT("타이틀로"), 12, OVStyle::TextWhite, true));
+    CardReturnLabel = OVStyle::MakeLabel(WidgetTree, TEXT("타이틀로"), 14, OVStyle::TextWhite, true);
+    BackToTitleBtn->AddChild(CardReturnLabel);
     BackToTitleBtn->OnClicked.AddDynamic(this, &UOVTitleScreenWidget::HandleBackToTitle);
     if (UHorizontalBoxSlot* BackSlot = ModalHeader->AddChildToHorizontalBox(BackToTitleBtn))
     {
@@ -467,6 +467,19 @@ void UOVTitleScreenWidget::BuildProgrammaticTree()
         UHorizontalBox* BtnContent = WidgetTree->ConstructWidget<UHorizontalBox>();
         PickBtn->AddChild(BtnContent);
 
+        const FString PhotoId=Def.Id.ToString();
+        const FString AssetPath = FString::Printf(TEXT("/Game/UI/MissionCards/%s.%s"), *PhotoId, *PhotoId);
+        UTexture2D* Photo = LoadObject<UTexture2D>(nullptr, *AssetPath);
+        ScenarioPhotos.Add(Def.Id, Photo);
+        UImage* Thumbnail = WidgetTree->ConstructWidget<UImage>();
+        Thumbnail->SetBrushFromTexture(Photo);
+        USizeBox* Tile = WidgetTree->ConstructWidget<USizeBox>();
+        Tile->SetWidthOverride(104);
+        Tile->SetHeightOverride(52);
+        Tile->SetContent(Thumbnail);
+        CastChecked<UButtonSlot>(BtnContent->Slot)->SetHorizontalAlignment(HAlign_Fill);
+        BtnContent->AddChildToHorizontalBox(Tile)->SetVerticalAlignment(VAlign_Center);
+
         UVerticalBox* TextCol = WidgetTree->ConstructWidget<UVerticalBox>();
         if (UHorizontalBoxSlot* TextSlot = BtnContent->AddChildToHorizontalBox(TextCol))
         {
@@ -474,33 +487,9 @@ void UOVTitleScreenWidget::BuildProgrammaticTree()
             TextSlot->SetVerticalAlignment(VAlign_Center);
         }
 
-        PickBtn->TitleText = OVStyle::MakeLabel(WidgetTree, Def.Title, 13, OVStyle::TextWhite, true);
+        PickBtn->TitleText = OVStyle::MakeLabel(WidgetTree, Def.Title, 15, OVStyle::TextWhite, true);
+        PickBtn->TitleText->SetAutoWrapText(false);
         TextCol->AddChildToVerticalBox(PickBtn->TitleText);
-
-        const FString SubStr = (Def.FleetBudget > 0)
-            ? FString::Printf(TEXT("%s · %d Cost"), *Def.Id.ToString(), Def.FleetBudget)
-            : Def.Id.ToString();
-        PickBtn->SubText = OVStyle::MakeLabel(WidgetTree, SubStr, 10, OVStyle::TextDim, false);
-        TextCol->AddChildToVerticalBox(PickBtn->SubText);
-
-        USpacer* BtnSpacer = WidgetTree->ConstructWidget<USpacer>();
-        BtnContent->AddChildToHorizontalBox(BtnSpacer)->SetSize(FSlateChildSize(ESlateSizeRule::Fill));
-
-        FString BadgeStr;
-        FLinearColor BadgeCol = OVStyle::CyanAccent;
-        if (Def.Id == TEXT("Fleet100")) { BadgeStr = TEXT("F5"); }
-        else if (Def.Id == TEXT("Fleet200")) { BadgeStr = TEXT("F6"); }
-        else if (Def.Id == TEXT("Fleet300")) { BadgeStr = TEXT("F7"); }
-        else if (Def.Id == TEXT("BlackHoleTrial")) { BadgeStr = TEXT("E1"); BadgeCol = OVStyle::PurpleBadge; }
-        else if (!Def.bAvailable) { BadgeStr = TEXT("준비 중"); BadgeCol = OVStyle::AmberBadge; }
-        else if (Def.Id == TEXT("Sandbox")) { BadgeStr = TEXT("Sandbox"); BadgeCol = OVStyle::TextDim; }
-
-        PickBtn->BadgeText = OVStyle::MakeLabel(WidgetTree, BadgeStr, 11, BadgeCol, true);
-        if (UHorizontalBoxSlot* BadgeSlot = BtnContent->AddChildToHorizontalBox(PickBtn->BadgeText))
-        {
-            BadgeSlot->SetPadding(FMargin(8.f, 6.f, 12.f, 6.f));
-            BadgeSlot->SetVerticalAlignment(VAlign_Center);
-        }
 
         PickBtn->SetSelectedState(Def.Id == SelectedScenarioId);
         PickBtn->OnClicked.AddDynamic(PickBtn, &UOVScenarioPickButton::HandleClicked);
@@ -525,6 +514,16 @@ void UOVTitleScreenWidget::BuildProgrammaticTree()
 
     UVerticalBox* BriefingBox = WidgetTree->ConstructWidget<UVerticalBox>();
     BriefingBorder->SetContent(BriefingBox);
+
+    ScenarioPhoto = WidgetTree->ConstructWidget<UImage>();
+    USizeBox* PhotoFrame = WidgetTree->ConstructWidget<USizeBox>();
+    PhotoFrame->SetHeightOverride(155);
+    UScaleBox* Crop = WidgetTree->ConstructWidget<UScaleBox>();
+    Crop->SetStretch(EStretch::ScaleToFill);
+    Crop->SetClipping(EWidgetClipping::ClipToBoundsAlways);
+    Crop->SetContent(ScenarioPhoto);
+    PhotoFrame->SetContent(Crop);
+    BriefingBox->AddChildToVerticalBox(PhotoFrame)->SetPadding(FMargin(0,0,0,10));
 
     UHorizontalBox* BriefHeader = WidgetTree->ConstructWidget<UHorizontalBox>();
     BriefingBox->AddChildToVerticalBox(BriefHeader)->SetPadding(FMargin(0.f, 0.f, 0.f, 8.f));
@@ -562,12 +561,12 @@ void UOVTitleScreenWidget::BuildProgrammaticTree()
             ColSlot->SetSize(FSlateChildSize(ESlateSizeRule::Fill));
         }
     };
-    AddMetricCol(TEXT("한 쪽 코스트"), MetricBudgetVal);
-    AddMetricCol(TEXT("격납고 / 함재기"), MetricHangarVal);
-    AddMetricCol(TEXT("교착 / 제한 시간"), MetricTimeVal);
+    AddMetricCol(TEXT("편성 비용"), MetricBudgetVal);
+    AddMetricCol(TEXT("아군 함선"), MetricHangarVal);
+    AddMetricCol(TEXT("임무 유형"), MetricTimeVal);
 
     BriefingBox->AddChildToVerticalBox(OVStyle::MakeLabel(
-        WidgetTree, TEXT("양측 기본 편성 (D126 규칙 기준)"), 12, OVStyle::CyanAccent, true))
+        WidgetTree, TEXT("아군 출격 편성"), 12, OVStyle::CyanAccent, true))
         ->SetPadding(FMargin(0.f, 0.f, 0.f, 8.f));
 
     UHorizontalBox* RosterSplit = WidgetTree->ConstructWidget<UHorizontalBox>();
@@ -593,17 +592,12 @@ void UOVTitleScreenWidget::BuildProgrammaticTree()
     UHorizontalBox* BottomActionRow = WidgetTree->ConstructWidget<UHorizontalBox>();
     BriefingBox->AddChildToVerticalBox(BottomActionRow);
 
-    ScenarioCliSnippet = OVStyle::MakeLabel(
-        WidgetTree, TEXT("Start(Controller, \"Fleet200\") · -OVPlayScene=Fleet200"), 11, OVStyle::TextDim, false);
-    if (UHorizontalBoxSlot* CliSlot = BottomActionRow->AddChildToHorizontalBox(ScenarioCliSnippet))
-    {
-        CliSlot->SetVerticalAlignment(VAlign_Center);
-        CliSlot->SetSize(FSlateChildSize(ESlateSizeRule::Fill));
-    }
+    BottomActionRow->AddChildToHorizontalBox(WidgetTree->ConstructWidget<USpacer>())
+        ->SetSize(FSlateChildSize(ESlateSizeRule::Fill));
 
     LaunchScenarioButton = WidgetTree->ConstructWidget<UButton>();
     LaunchScenarioButton->SetStyle(OVStyle::MakePrimaryButtonStyle());
-    UTextBlock* LaunchText = OVStyle::MakeLabel(WidgetTree, TEXT("▷ 작전 출격"), 15, OVStyle::DarkText, true);
+    UTextBlock* LaunchText = OVStyle::MakeLabel(WidgetTree, TEXT("작전 출격  ▷"), 17, OVStyle::DarkText, true);
     LaunchText->SetAutoWrapText(false);
     LaunchScenarioButton->AddChild(LaunchText);
     LaunchScenarioButton->OnClicked.AddDynamic(this, &UOVTitleScreenWidget::HandleLaunchSelectedScenario);
@@ -964,6 +958,11 @@ void UOVTitleScreenWidget::ActivateTitleScreen()
 
 void UOVTitleScreenWidget::ActivateInGameTutorial()
 {
+    ActivateFieldPanel(EOVTitleMenuPanel::Tutorial);
+}
+
+void UOVTitleScreenWidget::ActivateFieldPanel(EOVTitleMenuPanel Panel)
+{
     bOpenedFromInGame = true;
     bBackdropActive = false;
     if (BackdropImage)
@@ -971,7 +970,7 @@ void UOVTitleScreenWidget::ActivateInGameTutorial()
         BackdropImage->SetVisibility(ESlateVisibility::Collapsed);
     }
     RefreshTutorialReturnLabel();
-    ShowPanel(EOVTitleMenuPanel::Tutorial);
+    ShowPanel(Panel);
     SetVisibility(ESlateVisibility::Visible);
 }
 
@@ -1002,6 +1001,7 @@ void UOVTitleScreenWidget::ReleaseBackdrop()
 void UOVTitleScreenWidget::ShowPanel(EOVTitleMenuPanel Panel)
 {
     CurrentPanel = Panel;
+    if (CardReturnLabel) CardReturnLabel->SetText(FText::FromString(bOpenedFromInGame ? TEXT("전장으로") : TEXT("타이틀로")));
     if (TitlePanelContainer)
     {
         TitlePanelContainer->SetVisibility(Panel == EOVTitleMenuPanel::Title ? ESlateVisibility::Visible : ESlateVisibility::Collapsed);
@@ -1090,11 +1090,7 @@ void UOVTitleScreenWidget::RefreshScenarioBriefing()
     }
     if (ScenarioBadgeText)
     {
-        const FString StatusStr = TargetDef->bAvailable
-            ? (TargetDef->EnvironmentHazard == EOVSpaceHazardKind::BlackHole
-                ? TEXT("E1 블랙홀 중력전 · 즉시 출격 가능")
-                : TEXT("D126 규칙 동기화 · 즉시 출격 가능"))
-            : TEXT("준비 중 · 프로토타입 단계");
+        const FString StatusStr = TargetDef->bAvailable ? TEXT("출격 가능") : TEXT("준비 중");
         ScenarioBadgeText->SetText(FText::FromString(StatusStr));
         ScenarioBadgeText->SetColorAndOpacity(FSlateColor(TargetDef->bAvailable ? OVStyle::CyanAccent : OVStyle::AmberBadge));
     }
@@ -1103,120 +1099,44 @@ void UOVTitleScreenWidget::RefreshScenarioBriefing()
         ScenarioObjectiveText->SetText(FText::FromString(TargetDef->Objective));
     }
 
-    if (MetricBudgetVal)
+    if (ScenarioPhoto) ScenarioPhoto->SetBrushFromTexture(ScenarioPhotos.FindRef(SelectedScenarioId), true);
+    LaunchScenarioButton->SetIsEnabled(TargetDef->bAvailable);
+    int32 Ships = 0, Cost = 0;
+    for (const auto& Entry : TargetDef->Fleet)
     {
-        const FString BudgetStr = TargetDef->FleetBudget > 0
-            ? FString::Printf(TEXT("%d"), TargetDef->FleetBudget)
-            : (TargetDef->Id == TEXT("Sandbox") ? TEXT("무제한") : TEXT("500 자원"));
-        MetricBudgetVal->SetText(FText::FromString(BudgetStr));
+        FOVHullMetadata Meta;
+        if (OVCalibration::GetHullMetadata(Entry.Hull, Meta)) Cost += Entry.Count * Meta.FleetCost;
+        Ships += Entry.Count;
     }
-    if (MetricHangarVal)
-    {
-        FString HangarStr = TEXT("0 / 0기");
-        if (TargetDef->Id == TEXT("Fleet100") || TargetDef->Id == TEXT("BlackHoleTrial")) { HangarStr = TEXT("2 / 20기"); }
-        else if (TargetDef->Id == TEXT("Fleet200")) { HangarStr = TEXT("2 / 20기"); }
-        else if (TargetDef->Id == TEXT("Fleet300")) { HangarStr = TEXT("4 / 40기"); }
-        else if (TargetDef->Id == TEXT("Logistics")) { HangarStr = TEXT("4척"); }
-        else if (TargetDef->Id == TEXT("Evacuation")) { HangarStr = TEXT("60% 이탈"); }
-        else if (TargetDef->Id == TEXT("Sandbox")) { HangarStr = TEXT("자유"); }
-        MetricHangarVal->SetText(FText::FromString(HangarStr));
-    }
-    if (MetricTimeVal)
-    {
-        const FString TimeStr = TargetDef->LimitSeconds > 0
-            ? FString::Printf(TEXT("%.0fs / %.0fs"), TargetDef->StalemateSeconds, TargetDef->LimitSeconds)
-            : FString::Printf(TEXT("%.0fs / 무제한"), TargetDef->StalemateSeconds);
-        MetricTimeVal->SetText(FText::FromString(TimeStr));
-    }
-
-    if (ScenarioCliSnippet)
-    {
-        ScenarioCliSnippet->SetText(FText::FromString(
-            FString::Printf(TEXT("Start(Controller, \"%s\") · -OVPlayScene=%s"), *TargetDef->Id.ToString(), *TargetDef->Id.ToString())));
-    }
+    MetricBudgetVal->SetText(FText::FromString(Ships ? FString::Printf(TEXT("%d 코스트"), Cost) : TEXT("자유")));
+    MetricHangarVal->SetText(FText::FromString(Ships ? FString::Printf(TEXT("%d척"), Ships) : TEXT("직접 배치")));
+    const TCHAR* Kind = TEXT("함대전");
+    if (TargetDef->Kind == EOVPlaySceneKind::Logistics) Kind = TEXT("수송 엄호");
+    if (TargetDef->Kind == EOVPlaySceneKind::Evacuation) Kind = TEXT("생존 · 퇴각");
+    if (TargetDef->Kind == EOVPlaySceneKind::Sandbox) Kind = TEXT("자유 시험");
+    if (TargetDef->EnvironmentHazard == EOVSpaceHazardKind::BlackHole) Kind = TEXT("중력전");
+    MetricTimeVal->SetText(FText::FromString(Kind));
 
     if (RosterColLeft && RosterColRight)
     {
         RosterColLeft->ClearChildren();
         RosterColRight->ClearChildren();
 
-        auto AddRosterRow = [this](UVerticalBox* Col, const FString& HullName, int32 Count, int32 CostPt)
+        auto AddRosterRow = [this](UVerticalBox* Col, const FString& HullName, int32 Count)
         {
-            UHorizontalBox* Row = WidgetTree->ConstructWidget<UHorizontalBox>();
-            UTextBlock* NameLabel = OVStyle::MakeLabel(
-                WidgetTree, FString::Printf(TEXT("%s ×%d"), *HullName, Count), 12, OVStyle::TextWhite, false);
-            Row->AddChildToHorizontalBox(NameLabel);
-
-            USpacer* Spacer = WidgetTree->ConstructWidget<USpacer>();
-            Row->AddChildToHorizontalBox(Spacer)->SetSize(FSlateChildSize(ESlateSizeRule::Fill));
-
-            UTextBlock* CostLabel = OVStyle::MakeLabel(
-                WidgetTree, FString::Printf(TEXT("%dpt"), CostPt), 12, OVStyle::CyanAccent, true);
-            Row->AddChildToHorizontalBox(CostLabel);
-
-            Col->AddChildToVerticalBox(Row)->SetPadding(FMargin(0.f, 2.f));
+            auto* Row = OVStyle::MakeLabel(WidgetTree, FString::Printf(TEXT("%s   × %d"), *HullName, Count),
+                                           15, OVStyle::TextWhite, false);
+            Row->SetAutoWrapText(false);
+            Col->AddChildToVerticalBox(Row)->SetPadding(FMargin(0,2));
         };
-
-        if (TargetDef->Id == TEXT("Fleet100") || TargetDef->Id == TEXT("BlackHoleTrial"))
+        for (int32 Index = 0; Index < TargetDef->Fleet.Num(); ++Index)
         {
-            AddRosterRow(RosterColLeft, TEXT("초계함"), 3, 3);
-            AddRosterRow(RosterColLeft, TEXT("보급수리함"), 1, 1);
-            AddRosterRow(RosterColLeft, TEXT("바스티온급 구축함"), 1, 5);
-            AddRosterRow(RosterColLeft, TEXT("레이더함"), 1, 5);
-            AddRosterRow(RosterColLeft, TEXT("전함"), 2, 50);
-
-            AddRosterRow(RosterColRight, TEXT("호위함"), 1, 1);
-            AddRosterRow(RosterColRight, TEXT("벡터급 구축함"), 1, 5);
-            AddRosterRow(RosterColRight, TEXT("방공함"), 1, 5);
-            AddRosterRow(RosterColRight, TEXT("항공모함"), 1, 25);
+            const auto& Entry = TargetDef->Fleet[Index];
+            AddRosterRow(Index % 2 ? RosterColRight : RosterColLeft, OVCalibration::GetHullName(Entry.Hull),
+                         Entry.Count);
         }
-        else if (TargetDef->Id == TEXT("Fleet200"))
-        {
-            AddRosterRow(RosterColLeft, TEXT("초계함"), 3, 3);
-            AddRosterRow(RosterColLeft, TEXT("보급수리함"), 1, 1);
-            AddRosterRow(RosterColLeft, TEXT("바스티온급 구축함"), 1, 5);
-            AddRosterRow(RosterColLeft, TEXT("레이더함"), 1, 5);
-            AddRosterRow(RosterColLeft, TEXT("전함"), 1, 25);
-
-            AddRosterRow(RosterColRight, TEXT("호위함"), 1, 1);
-            AddRosterRow(RosterColRight, TEXT("벡터급 구축함"), 1, 5);
-            AddRosterRow(RosterColRight, TEXT("방공함"), 1, 5);
-            AddRosterRow(RosterColRight, TEXT("구축전함"), 1, 125);
-            AddRosterRow(RosterColRight, TEXT("항공모함"), 1, 25);
-        }
-        else if (TargetDef->Id == TEXT("Fleet300"))
-        {
-            AddRosterRow(RosterColLeft, TEXT("초계함"), 3, 3);
-            AddRosterRow(RosterColLeft, TEXT("보급수리함"), 1, 1);
-            AddRosterRow(RosterColLeft, TEXT("바스티온급 구축함"), 1, 5);
-            AddRosterRow(RosterColLeft, TEXT("레이더함"), 1, 5);
-            AddRosterRow(RosterColLeft, TEXT("항공순양함"), 1, 125);
-
-            AddRosterRow(RosterColRight, TEXT("호위함"), 1, 1);
-            AddRosterRow(RosterColRight, TEXT("벡터급 구축함"), 1, 5);
-            AddRosterRow(RosterColRight, TEXT("방공함"), 1, 5);
-            AddRosterRow(RosterColRight, TEXT("구축전함"), 1, 125);
-            AddRosterRow(RosterColRight, TEXT("항공모함"), 1, 25);
-        }
-        else if (TargetDef->Id == TEXT("Logistics"))
-        {
-            AddRosterRow(RosterColLeft, TEXT("중형 수송선 (R37)"), 2, 10);
-            AddRosterRow(RosterColLeft, TEXT("채굴선"), 2, 10);
-            AddRosterRow(RosterColRight, TEXT("순양함 (호위 주력)"), 1, 25);
-            AddRosterRow(RosterColRight, TEXT("호위함"), 2, 2);
-        }
-        else if (TargetDef->Id == TEXT("Evacuation"))
-        {
-            AddRosterRow(RosterColLeft, TEXT("전함 (탈출 대상)"), 1, 25);
-            AddRosterRow(RosterColLeft, TEXT("구축전함 (탈출 대상)"), 1, 125);
-            AddRosterRow(RosterColRight, TEXT("방공함 (방어 호위)"), 2, 10);
-            AddRosterRow(RosterColRight, TEXT("초계함"), 3, 3);
-        }
-        else
-        {
-            AddRosterRow(RosterColLeft, TEXT("자유 배치"), 1, 0);
-            AddRosterRow(RosterColRight, TEXT("시험 세션"), 1, 0);
-        }
+        if (TargetDef->Fleet.IsEmpty())
+            RosterColLeft->AddChildToVerticalBox(OVStyle::MakeLabel(WidgetTree, TEXT("빈 전장에서 시작합니다."), 13, OVStyle::TextSlate, false));
     }
 }
 
@@ -1263,8 +1183,19 @@ void UOVTitleScreenWidget::HandleOpenSettings()
     ShowPanel(EOVTitleMenuPanel::Settings);
 }
 
+void UOVTitleScreenWidget::BackFromCurrentPanel()
+{
+    if (CurrentPanel == EOVTitleMenuPanel::Tutorial) HandleCloseTutorial();
+    else HandleBackToTitle();
+}
+
 void UOVTitleScreenWidget::HandleBackToTitle()
 {
+    if (bOpenedFromInGame && (CurrentPanel == EOVTitleMenuPanel::ScenarioSelect || CurrentPanel == EOVTitleMenuPanel::Settings))
+    {
+        if (auto* HUD = Cast<AOVHUD>(GetOwningPlayer()->GetHUD())) HUD->CloseTitleScreen();
+        return;
+    }
     PlayClickAudio();
     ShowPanel(EOVTitleMenuPanel::Title);
 }
@@ -1300,15 +1231,13 @@ void UOVTitleScreenWidget::HandleLaunchSelectedScenario()
     AOVController* Controller = Cast<AOVController>(World->GetFirstPlayerController());
     if (!Controller) return;
 
-    if (AOVHUD* HUD = Cast<AOVHUD>(Controller->GetHUD()))
+    if (!Controller->StartPlayScenario(SelectedScenarioId))
     {
-        HUD->CloseTitleScreen();
+        if (AOVHUD* HUD = Cast<AOVHUD>(Controller->GetHUD())) HUD->OpenTitleScreen();
+        ShowPanel(EOVTitleMenuPanel::ScenarioSelect);
+        ScenarioBadgeText->SetText(FText::FromString(TEXT("출격 실패 · 편성을 확인하세요")));
     }
 
-    if (UOVPlayScenarioSubsystem* ScenarioSubsystem = World->GetSubsystem<UOVPlayScenarioSubsystem>())
-    {
-        ScenarioSubsystem->Start(*Controller, SelectedScenarioId);
-    }
 }
 
 void UOVTitleScreenWidget::HandleToggleBackdropMode()

@@ -1,0 +1,180 @@
+{
+  "checks": [
+    "공습 전 아군 8척과 항모 재고 20기",
+    "방향 예고",
+    "중심 구축전함과 근접 호위",
+    "화면 사각형으로 8척 선택",
+    "모든 선택함 동일 이동 벡터",
+    "일괄 정지",
+    "퇴로 개방 전 충전 차단·정지 시간",
+    "공습예고_다중선택 렌더",
+    "첫 파동 실제 적 항모와 호위",
+    "적 함재기 실제 출격",
+    "적이 있어도 사각형은 아군만 선택",
+    "그룹의 같은 표적",
+    "두 번째 파동과 실제 발사",
+    "아군 외부 기체 존재",
+    "명령·엔진이 가동되는 선택함 충전",
+    "16초 이전 이탈 금지",
+    "호위함 이탈 후 항모는 회수 대기",
+    "승리와 실제 충전함 이탈",
+    "포기는 영구 격추와 구분",
+    "퇴각결과 렌더",
+    "회수 전 실제 출격",
+    "정상 도킹으로 회수 완료",
+    "일반 명령만으로 함대 승리·항모 이탈",
+    "1배속 충전 유지",
+    "1배속 개별 이탈",
+    "1배속 부분 승리",
+    "2배속 충전 유지",
+    "2배속 개별 이탈",
+    "2배속 부분 승리",
+    "3배속 충전 유지",
+    "3배속 개별 이탈",
+    "3배속 부분 승리",
+    "정확히 4척 이탈의 승패 경계",
+    "정확히 5척 이탈의 승패 경계",
+    "3개 공습 후 퇴로 폐쇄·무이탈 패배",
+    "엔진 인원 감소로 충전 취소되지 않음",
+    "엔진 전부 파괴 시 도약 취소",
+    "전멸 즉시 패배",
+    "재시작 시 파동·이탈·포기 초기화",
+    "원본 블랙홀 표시 배율 80%",
+    "블랙홀 실제 중력권·중심부"
+  ],
+  "physical_input": false,
+  "charge_at_41": [
+    [
+      "초계함 01",
+      true,
+      false,
+      false,
+      false
+    ],
+    [
+      "초계함 02",
+      true,
+      true,
+      true,
+      true
+    ],
+    [
+      "초계함 03",
+      true,
+      true,
+      true,
+      true
+    ],
+    [
+      "방공함 04",
+      true,
+      true,
+      true,
+      true
+    ],
+    [
+      "방공함 05",
+      true,
+      true,
+      true,
+      true
+    ],
+    [
+      "전함 06",
+      true,
+      true,
+      true,
+      true
+    ],
+    [
+      "항공모함 07",
+      true,
+      true,
+      true,
+      true
+    ],
+    [
+      "구축전함 08",
+      true,
+      true,
+      true,
+      true
+    ]
+  ],
+  "charge_at_58": [
+    [
+      "초계함 01",
+      false,
+      false,
+      true
+    ],
+    [
+      "초계함 02",
+      false,
+      false,
+      false
+    ],
+    [
+      "초계함 03",
+      true,
+      false,
+      false
+    ],
+    [
+      "방공함 04",
+      true,
+      false,
+      false
+    ],
+    [
+      "방공함 05",
+      true,
+      false,
+      false
+    ],
+    [
+      "전함 06",
+      true,
+      false,
+      false
+    ],
+    [
+      "항공모함 07",
+      false,
+      true,
+      false
+    ],
+    [
+      "구축전함 08",
+      true,
+      false,
+      false
+    ]
+  ],
+  "air_at_58": [
+    "<OVAircraftState.DOCK_WAITING: 3>",
+    "<OVAircraftState.DOCK_WAITING: 3>",
+    "<OVAircraftState.DOCK_WAITING: 3>",
+    "<OVAircraftState.WRECKED: 5>",
+    "<OVAircraftState.DOCK_WAITING: 3>",
+    "<OVAircraftState.DOCK_WAITING: 3>",
+    "<OVAircraftState.DOCK_WAITING: 3>",
+    "<OVAircraftState.WRECKED: 5>",
+    "<OVAircraftState.DOCK_WAITING: 3>",
+    "<OVAircraftState.DOCK_WAITING: 3>",
+    "<OVAircraftState.DOCK_WAITING: 3>",
+    "<OVAircraftState.DOCK_WAITING: 3>",
+    "<OVAircraftState.DOCK_WAITING: 3>",
+    "<OVAircraftState.DOCK_WAITING: 3>",
+    "<OVAircraftState.DOCK_WAITING: 3>",
+    "<OVAircraftState.DOCK_WAITING: 3>",
+    "<OVAircraftState.WRECKED: 5>",
+    "<OVAircraftState.DOCK_WAITING: 3>",
+    "<OVAircraftState.DOCK_WAITING: 3>",
+    "<OVAircraftState.DOCK_WAITING: 3>"
+  ],
+  "victory": "승리 · 이탈 6척 · 완파 1척(1코스트) · 잔류 1척 · 포기 17기",
+  "recovery_victory": "승리 · 이탈 6척 · 완파 2척(2코스트) · 잔류 0척 · 포기 0기",
+  "defeat": "패배 · 이탈 0척 · 완파 5척(33코스트) · 잔류 3척 · 포기 0기",
+  "passed": true
+}

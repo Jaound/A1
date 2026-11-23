@@ -1,0 +1,262 @@
+{
+  "checks": [
+    {
+      "id": "FLEET-100-START",
+      "passed": true,
+      "detail": "100코스트 함대전 · 준비 완료"
+    },
+    {
+      "id": "FLEET-100-COST",
+      "passed": true,
+      "detail": "[100, 100]"
+    },
+    {
+      "id": "FLEET-100-REGISTERED",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "FLEET-100-SPAWNED-COST",
+      "passed": true,
+      "detail": "[100, 100]"
+    },
+    {
+      "id": "FLEET-100-CAPITALS",
+      "passed": true,
+      "detail": "[0, 0]"
+    },
+    {
+      "id": "FLEET-100-AIRCRAFT",
+      "passed": true,
+      "detail": "40"
+    },
+    {
+      "id": "FLEET-100-AIRCRAFT-IDS",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "FLEET-100-PAUSED",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "FLEET-100-ENEMY-MOVEMENT",
+      "passed": true,
+      "detail": "76424.2396102179"
+    },
+    {
+      "id": "FLEET-100-REAL-HITS",
+      "passed": true,
+      "detail": "905"
+    },
+    {
+      "id": "FLEET-100-BOTH-SIDES-FIRE",
+      "passed": true,
+      "detail": "[505, 486]"
+    },
+    {
+      "id": "FLEET-100-BOTH-SIDES-LAUNCH",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "FLEET-200-START",
+      "passed": true,
+      "detail": "200코스트 함대전 · 준비 완료"
+    },
+    {
+      "id": "FLEET-200-OLD-ACTOR-CLEARED",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "FLEET-200-COST",
+      "passed": true,
+      "detail": "[200, 200]"
+    },
+    {
+      "id": "FLEET-200-REGISTERED",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "FLEET-200-SPAWNED-COST",
+      "passed": true,
+      "detail": "[200, 200]"
+    },
+    {
+      "id": "FLEET-200-CAPITALS",
+      "passed": true,
+      "detail": "[1, 1]"
+    },
+    {
+      "id": "FLEET-200-AIRCRAFT",
+      "passed": true,
+      "detail": "40"
+    },
+    {
+      "id": "FLEET-200-AIRCRAFT-IDS",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "FLEET-200-PAUSED",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "FLEET-200-ENEMY-MOVEMENT",
+      "passed": true,
+      "detail": "73388.36147510039"
+    },
+    {
+      "id": "FLEET-200-REAL-HITS",
+      "passed": true,
+      "detail": "852"
+    },
+    {
+      "id": "FLEET-200-BOTH-SIDES-FIRE",
+      "passed": true,
+      "detail": "[443, 527]"
+    },
+    {
+      "id": "FLEET-200-BOTH-SIDES-LAUNCH",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "FLEET-300-START",
+      "passed": true,
+      "detail": "300코스트 함대전 · 준비 완료"
+    },
+    {
+      "id": "FLEET-300-OLD-ACTOR-CLEARED",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "FLEET-300-COST",
+      "passed": true,
+      "detail": "[300, 300]"
+    },
+    {
+      "id": "FLEET-300-REGISTERED",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "FLEET-300-SPAWNED-COST",
+      "passed": true,
+      "detail": "[300, 300]"
+    },
+    {
+      "id": "FLEET-300-CAPITALS",
+      "passed": true,
+      "detail": "[2, 2]"
+    },
+    {
+      "id": "FLEET-300-AIRCRAFT",
+      "passed": true,
+      "detail": "80"
+    },
+    {
+      "id": "FLEET-300-AIRCRAFT-IDS",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "FLEET-300-PAUSED",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "FLEET-300-ENEMY-MOVEMENT",
+      "passed": true,
+      "detail": "76424.2396102179"
+    },
+    {
+      "id": "FLEET-300-REAL-HITS",
+      "passed": true,
+      "detail": "928"
+    },
+    {
+      "id": "FLEET-300-BOTH-SIDES-FIRE",
+      "passed": true,
+      "detail": "[513, 577]"
+    },
+    {
+      "id": "FLEET-300-BOTH-SIDES-LAUNCH",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "FLEET-DEPARTURE-VICTORY",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "FLEET-RESTART-RESET",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "FLEET-DEPARTURE-DEFEAT",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "FLEET-CLOCK-1-START",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "FLEET-CLOCK-2-START",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "FLEET-CLOCK-3-START",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "FLEET-CLOCK-123",
+      "passed": true,
+      "detail": "[4.0, 4.0, 4.0]"
+    },
+    {
+      "id": "FLEET-STALEMATE",
+      "passed": true,
+      "detail": "교착 · 전력 변화 없음"
+    },
+    {
+      "id": "FLEET-SANDBOX-START",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "FLEET-SANDBOX-EMPTY",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "FLEET-SANDBOX-NO-RESULT",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "FLEET-LEAVE-RESET",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "FLEET-LEGACY-API-RESTORE",
+      "passed": true,
+      "detail": ""
+    }
+  ],
+  "errors": [],
+  "physical_input": false,
+  "passed": true
+}

@@ -88,7 +88,7 @@ public:
  UPROPERTY(Transient, VisibleAnywhere, BlueprintReadOnly, Category="Presentation") TObjectPtr<UStaticMeshComponent> DistantPlanetMesh;
  UPROPERTY(Transient, VisibleAnywhere, BlueprintReadOnly, Category="Presentation") TObjectPtr<UInstancedStaticMeshComponent> StarfieldMeshes;
  UPROPERTY(Transient, VisibleAnywhere, BlueprintReadOnly, Category="Presentation") TObjectPtr<UInstancedStaticMeshComponent> AsteroidMeshes;
- UPROPERTY(Transient, VisibleAnywhere, BlueprintReadOnly, Category="Presentation") TObjectPtr<UInstancedStaticMeshComponent> BlackHoleMeshes;
+ UPROPERTY(Transient, VisibleAnywhere, BlueprintReadOnly, Category="Presentation") TObjectPtr<UStaticMeshComponent> BlackHoleMeshes;
  UPROPERTY(Transient, VisibleAnywhere, BlueprintReadOnly, Category="Presentation") TObjectPtr<UInstancedStaticMeshComponent> RadiationZoneMeshes;
  UPROPERTY(Transient, VisibleAnywhere, BlueprintReadOnly, Category="Presentation") TObjectPtr<UInstancedStaticMeshComponent> SolarFlareMeshes;
  UPROPERTY(Transient) TMap<TWeakObjectPtr<AOVShip>, TObjectPtr<UStaticMeshComponent>> ShieldBubbleMeshes;
@@ -153,6 +153,10 @@ public:
  UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Control Range") FString LastAction=TEXT("Select a ship to begin");
  UFUNCTION(BlueprintCallable, Category="Control Range")
  void SelectShip(AOVShip* Ship);
+ UFUNCTION(BlueprintCallable) int32 SelectFleetRectangle(FVector2D Start, FVector2D End, bool bAdditive);
+ bool bFleetDrag = false;
+ FVector2D FleetDragStart, FleetDragEnd;
+ bool bFleetDragAdd = false;
  UFUNCTION(BlueprintCallable, Category="Control Range") void SelectShipFromUser(AOVShip* Ship, bool bAdditive);
  UFUNCTION(BlueprintCallable, Category="Control Range") void ClearSelection();
  UFUNCTION(BlueprintCallable, Category="Control Range") void SelectAdditional(AOVShip* Ship);
@@ -211,6 +215,7 @@ private:
  TWeakObjectPtr<AOVShip> RightCommander;
  bool bRightHeading=false;
  bool bConsumeAltLeft=false;
+ FKey SandboxConsumedButton;
  void ResetCameraProfile();
  void CancelRightMove();
  void UpdateOrbit(FVector2D Cursor);

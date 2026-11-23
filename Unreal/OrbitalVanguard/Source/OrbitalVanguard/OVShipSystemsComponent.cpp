@@ -102,6 +102,13 @@ float UOVShipSystemsComponent::GetEfficiency(EOVFacilityType Type) const
 }
 
 bool UOVShipSystemsComponent::CanAct() const { return Layout && !bWrecked && !bNeutral; }
+bool UOVShipSystemsComponent::HasPhysicalFacility(EOVFacilityType Type) const
+{
+    if (!Layout) return false;
+    for (int32 I = 0; I < Slots.Num(); ++I)
+        if (Layout->Slots.IsValidIndex(I) && Layout->Slots[I].Facility == Type && Slots[I].HP > 0) return true;
+    return false;
+}
 bool UOVShipSystemsComponent::CanMove() const { return CanAct() && GetEfficiency(EOVFacilityType::Engine) > 0; }
 bool UOVShipSystemsComponent::CanCommand() const { return CanAct() && GetEfficiency(EOVFacilityType::Bridge) > 0; }
 bool UOVShipSystemsComponent::CanFireCannons() const { return CanAct() && GetEfficiency(EOVFacilityType::WeaponControl) > 0 && GetEfficiency(EOVFacilityType::Ammo) > 0; }

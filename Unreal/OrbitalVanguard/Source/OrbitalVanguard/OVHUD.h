@@ -18,6 +18,7 @@ public:
  void SyncAddedUI();
  bool IsOverAddedUI(float X,float Y) const;
  bool IsAddedUIEditing() const;
+ bool CloseTopModal();
  UFUNCTION(BlueprintPure, Category="UI") UOVDevelopmentWidget* GetDevelopmentPanel() const { return DevelopmentWidget; }
  UFUNCTION(BlueprintPure, Category="UI") UOVHeroWidget* GetHeroPanel() const { return HeroWidget; }
  UFUNCTION(BlueprintPure, Category="UI") UOVTitleScreenWidget* GetTitleScreen() const { return TitleScreenWidget; }
@@ -42,6 +43,7 @@ public:
  UFUNCTION(BlueprintPure, Category="UI") FString GetPinnedTitleTooltip(FVector2D CanvasPoint) const;
  UFUNCTION(BlueprintPure, Category="UI") FString GetPinnedFacilityTooltip(FVector2D CanvasPoint) const;
  UFUNCTION(BlueprintPure, Category="UI") FString GetFleetTitleTooltip(FVector2D CanvasPoint) const;
+ UFUNCTION(BlueprintPure, Category="UI") FString GetSelectedCargoLabel() const;
  UFUNCTION(BlueprintPure, Category="UI") FString GetCommandTitleTooltip(FVector2D CanvasPoint) const;
  UFUNCTION(BlueprintPure, Category="UI") FString GetDetailsTitleTooltip(FVector2D CanvasPoint) const;
  UFUNCTION(BlueprintPure, Category="UI") FString GetPinnedCarrierSummary(int32 Index) const;
@@ -57,6 +59,9 @@ public:
  virtual void NotifyHitBoxClick(FName BoxName) override;
  UFUNCTION(BlueprintCallable, Category="UI") void ExecuteUIAction(FName Action) { NotifyHitBoxClick(Action); }
  UFUNCTION(BlueprintPure, Category="UI") bool IsOverPanel(float X,float Y) const;
+ bool bPauseMenu=false;
+ void TogglePauseMenu();
+ bool AllowsSandboxPlacement() const { return !bSceneMenuOpen && !bTitleScreenOpen && !bStarMapOpen && !IsAddedUIEditing(); }
  UFUNCTION(BlueprintPure, Category="UI") FName GetHitActionAtCanvasPoint(FVector2D Point) const;
  UFUNCTION(BlueprintPure, Category="UI") bool HasOrbitPreview() const;
  UFUNCTION(BlueprintPure, Category="UI") FRotator GetPreviewRotation() const { return PreviewRotation; }
@@ -75,6 +80,7 @@ public:
  UFUNCTION(BlueprintPure, Category="UI") int32 GetBattleFeedFilter() const { return BattleFeedFilter; }
  UFUNCTION(BlueprintPure, Category="UI") UOVBattleNotices* GetBattleNoticeFeed() const;
  UFUNCTION(BlueprintPure, Category="UI") bool IsOverWorldMarker(FVector2D Pixel) const;
+ FName WorldMarkerAt(FVector2D Pixel) const;
  UFUNCTION(BlueprintCallable, Category="UI") bool HandleInteriorAction(FName Action);
  UFUNCTION(BlueprintPure, Category="UI") bool IsOverInteriorPanel(float X,float Y) const;
  UFUNCTION(BlueprintPure, Category="UI") FVector2D GetInteriorWindowPosition() const { return InteriorBounds().Min; }
@@ -122,6 +128,11 @@ private:
  bool bHeroPanelOpen=false;
  bool bCommandShipClipped=false,bCommandTargetClipped=false;
  bool bSceneMenuOpen=false;
+ bool bChoosingJump=false;
+ bool bNoticeSettings=false;
+ bool PausedBeforeMenu=false;
+ int32 NoticeMask=0x1fffe & ~(1<<11);
+ UPROPERTY(Transient) TMap<FName,TObjectPtr<UTextureRenderTarget2D>> SelectionPortraits;
  bool bHangarView=false;
  int32 DetailsSlotPage=0,DetailsPageDeck=INDEX_NONE;
  TWeakObjectPtr<AOVShip> DetailsPageShip;
@@ -162,18 +173,27 @@ private:
  FBox2D InteriorBounds() const;
  void DrawInterior();
  void DrawMission();
+ uint64 LastMapCloseFrame=MAX_uint64;
+ bool bDrawingStarMap=false;
  void DrawStarMap();
  FVector2D DragOffset=FVector2D::ZeroVector;
  FRotator PreviewRotation=FRotator(-25,35,0);
  float PreviewZoom=1;
  void DrawDetails();
  TArray<int32,TInlineAllocator<64>> BattleNoticeIndices() const;
+ float BattleNoticeTop() const;
  int32 BattleNoticeRows() const;
  FString GetWeaponSummary(AOVShip* Ship,int32 Weapon) const;
  float PinnedPanelX() const;
  float PinnedPanelY() const;
  void DrawCombat();
  void DrawPlayHUD();
+ bool IsDebriefOpen() const;
+ void DrawDebrief();
+ bool bDebriefDismissed=false;
+ bool bConsumeDebriefClick=false;
+ void OpenMissionCards(FName Selected, bool bBrowse=false);
+ TOptional<bool> PauseBeforeCards;
  void DrawWorldIndicators();
  void DrawPhase2C();
  void DrawExternal(float X,float Y,float W);

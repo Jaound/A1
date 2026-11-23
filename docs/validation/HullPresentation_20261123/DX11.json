@@ -1,0 +1,98 @@
+{
+  "ships": {
+    "frigate": {
+      "shield_axes_cm": [
+        194.42768,
+        97.321341,
+        62.506564
+      ],
+      "hull_half_extent_cm": [
+        167.61006925051558,
+        46.709337578665256,
+        30.0
+      ],
+      "mount_count": 5,
+      "shield_active": true
+    },
+    "vector": {
+      "shield_axes_cm": [
+        181.675649,
+        114.90463378685554,
+        64.6543098992458
+      ],
+      "hull_half_extent_cm": [
+        156.61693865832018,
+        53.31646145242929,
+        30.0
+      ],
+      "mount_count": 7,
+      "shield_active": true
+    },
+    "battleship": {
+      "shield_axes_cm": [
+        203.0,
+        71.25470058486233,
+        46.89926757200087
+      ],
+      "hull_half_extent_cm": [
+        175.0,
+        43.54323196411133,
+        28.65980339050293
+      ],
+      "mount_count": 15,
+      "shield_active": true
+    },
+    "dreadnought": {
+      "shield_axes_cm": [
+        203.0,
+        73.30224441901012,
+        38.741682661728575
+      ],
+      "hull_half_extent_cm": [
+        175.0,
+        50.92785675824222,
+        26.916378021240234
+      ],
+      "mount_count": 24,
+      "shield_active": true
+    },
+    "repair": {
+      "shield_axes_cm": [
+        123.556292,
+        115.637635,
+        59.28272
+      ],
+      "hull_half_extent_cm": [
+        106.51404504969356,
+        58.51838499941993,
+        30.0
+      ],
+      "mount_count": 2,
+      "shield_active": true
+    },
+    "carrier": {
+      "shield_axes_cm": [
+        154.919378,
+        86.755589,
+        52.607706
+      ],
+      "hull_half_extent_cm": [
+        133.55118765673092,
+        49.47312597803686,
+        30.0
+      ],
+      "mount_count": 9,
+      "shield_active": true
+    }
+  },
+  "direct_input": false,
+  "weapon_materials_checked": 9,
+  "remaining_beacons": [],
+  "projectile_lengths_cm": {
+    "cannon_projectile_meshes": 228.40934753418014,
+    "standard_missile_meshes": 268.7168813178394,
+    "anti_ship_missile_meshes": 350.4631395365049
+  },
+  "combat_shots": 29,
+  "passed": true
+}

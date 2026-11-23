@@ -76,6 +76,7 @@ struct ORBITALVANGUARD_API FOVWeaponMountDefinition
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Weapon") float ExplosionTierCoefficient = 0;
     // Optional presentation/geometry profile. NAME_None preserves the existing muzzle path.
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Weapon") FName PresentationProfile = NAME_None;
+    UPROPERTY(VisibleAnywhere, Category="Weapon") float GeometryScale = 1.f;
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Weapon") FVector LocalPosition = FVector::ZeroVector;
     // Zero retains the legacy top/bottom rule; a nonzero normal specifies the mounting face.
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Weapon") FVector LocalSurfaceNormal = FVector::ZeroVector;
@@ -132,6 +133,11 @@ public:
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Layout") TArray<FOVConnectionDefinition> Connections;
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Layout") TArray<FOVArmorDefinition> ArmorSections;
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Layout") TArray<FOVWeaponMountDefinition> WeaponMounts;
+    UPROPERTY(VisibleAnywhere, Category="Layout") FVector FittedShieldRadii = FVector::ZeroVector;
+    FVector GetShieldRadii() const
+    {
+        return FittedShieldRadii.GetMin()>0 ? FittedShieldRadii : LocalHalfExtent * FVector(1.22,1.32,1.42);
+    }
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Layout") FVector LocalHalfExtent = FVector(175, 75, 30);
     // Optional authored combat-only boxes inside the original selection/clearance OBB.
     // Empty keeps the original single-OBB behavior and existing save data.

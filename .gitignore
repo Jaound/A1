@@ -2,6 +2,7 @@
 Unreal/**/Binaries/
 Unreal/**/Intermediate/
 Unreal/**/Saved/
+Unreal/OrbitalVanguard/*.log
 Unreal/**/DerivedDataCache/
 Unreal/**/.vs/
 Unreal/**/*.sln

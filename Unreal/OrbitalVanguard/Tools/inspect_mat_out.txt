@@ -1,0 +1,11 @@
+Loaded /Game/Presentation/Ships/DreadnoughtFull/M_Readable.M_Readable: <Object '/Game/Presentation/Ships/DreadnoughtFull/M_Readable.M_Readable' (0x000001E5B85A5400) Class 'Material'>
+Expression count: 8
+  Expr: MaterialExpressionTextureSample pos=(-700, 0)
+  Expr: MaterialExpressionTextureSample pos=(-700, 220)
+  Expr: MaterialExpressionTextureSample pos=(-700, 440)
+  Expr: MaterialExpressionTextureSample pos=(-700, 660)
+  Expr: MaterialExpressionVectorParameter pos=(-700, -220) param=FactionTint
+  Expr: MaterialExpressionMultiply pos=(-350, -80)
+  Expr: MaterialExpressionConstant pos=(-350, -300) val=1.2000000476837158
+  Expr: MaterialExpressionMultiply pos=(-100, -180)
+MP_EMISSIVE_COLOR input node: MaterialExpressionMultiply

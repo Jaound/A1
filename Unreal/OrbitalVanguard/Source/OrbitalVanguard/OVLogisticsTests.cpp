@@ -24,6 +24,10 @@ bool FOVDevLogisticsTest::RunTest(const FString&)
     TestEqual(TEXT("Empty repair cargo cannot repair"), Logistics->DevRepairHull(Repair, Target, 1, 2, 100), 0.f);
     Target->Systems->FactionId = 1;
     TestEqual(TEXT("Enemy transfer prohibited"), Logistics->DevTransfer(Transport, Target, 1, 100), 0.f);
+    TestEqual(TEXT("납품지 밖 화물 보존"), Logistics->UnloadTransport(Transport, 0, FVector(1000,0,0), 100, 20), 0.f);
+    TestEqual(TEXT("다른 세력 납품 거부"), Logistics->UnloadTransport(Transport, 1, FVector::ZeroVector, 100, 20), 0.f);
+    TestEqual(TEXT("남은 화물만 하역"), Logistics->UnloadTransport(Transport, 0, FVector::ZeroVector, 100, 20), 8.f);
+    TestEqual(TEXT("빈 화물 재납품 차단"), Logistics->UnloadTransport(Transport, 0, FVector::ZeroVector, 100, 20), 0.f);
     Logistics->RemoveDevShip(Miner);
     TestEqual(TEXT("Removed ship cannot mine"), Logistics->DevMine(Miner, Node, 1, 100), 0.f);
     World->DestroyWorld(false); return true;

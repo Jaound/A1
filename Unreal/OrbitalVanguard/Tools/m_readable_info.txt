@@ -1,0 +1,13 @@
+Material: /Game/Presentation/Ships/DreadnoughtFull/M_Readable.M_Readable, class=Material
+  Parent: None
+Material: /Game/Presentation/Ships/CarrierFull/M_Readable.M_Readable, class=Material
+  Parent: None
+Material: /Game/StarfieldFree/Materials/Material_Instance/MI_Starfield_Nebula_Free_01.MI_Starfield_Nebula_Free_01, class=MaterialInstanceConstant
+  Parent: M_Starfield_Nebula_Free_v02
+  Scalar: Nebula 1 De-Saturation = 0.0
+  Scalar: Nebula 1 Hue = 0.0
+  Scalar: Nebula 1 intensity = 0.06599999964237213
+  Scalar: RefractionDepthBias = 0.0
+  Texture: Nebula 1 = T_Nebula_Free_01_8k
+Material: /Game/SpaceshipVFXStarter/Demo/DemoMaterials/MM_SciFiShip.MM_SciFiShip, class=Material
+  Parent: None

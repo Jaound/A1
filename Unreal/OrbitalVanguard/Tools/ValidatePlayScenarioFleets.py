@@ -9,7 +9,7 @@ import unreal
 
 level = unreal.get_editor_subsystem(unreal.LevelEditorSubsystem)
 editor = unreal.get_editor_subsystem(unreal.UnrealEditorSubsystem)
-run = os.environ.get("OV_FLEET_RUN", "local")
+run = os.environ.get("OV_FLEET_RUN", time.strftime("local_%Y%m%d_%H%M%S"))
 if not run.replace("_", "").isalnum():
     raise ValueError("잘못된 실행 ID")
 out = Path(unreal.Paths.convert_relative_path_to_full(unreal.Paths.project_saved_dir())) / "Validation" / f"PlayScenarioFleets_{run}.json"
@@ -43,9 +43,9 @@ def verify(pc):
     combat = prop(pc, "combat")
     carrier = prop(pc, "carrier")
     play = pc.get_play_scenario()
-    expected_aircraft = {100: 20, 200: 20, 300: 40}
+    expected_aircraft = {50: 40, 100: 40, 200: 40, 300: 80}
     previous_ship = None
-    for budget in (100, 200, 300):
+    for budget in (50, 100, 200, 300):
         check(f"FLEET-{budget}-START", pc.start_play_scenario(f"Fleet{budget}"), prop(pc, "last_action"))
         ships = prop(pc, "ships")
         if previous_ship is not None:
@@ -60,7 +60,7 @@ def verify(pc):
             caps.append(classes.count(4))
             actual_costs.append(sum({1: 1, 2: 5, 3: 25, 4: 125}[size] for size in classes))
         check(f"FLEET-{budget}-SPAWNED-COST", actual_costs == [budget, budget], actual_costs)
-        check(f"FLEET-{budget}-CAPITALS", caps == [budget // 100 - 1] * 2, caps)
+        check(f"FLEET-{budget}-CAPITALS", caps == [max(0,budget // 100 - 1)] * 2, caps)
         aircraft = prop(carrier, "aircraft")
         check(f"FLEET-{budget}-AIRCRAFT", [sum(prop(a,"faction_id") == side for a in aircraft) for side in (0,1)]
               == [expected_aircraft[budget]] * 2, len(aircraft))

@@ -77,6 +77,7 @@ public:
     /** Opens the 5-step beginner guide modal as an overlay from in-game battle without replacing the combat camera. */
     UFUNCTION(BlueprintCallable, Category = "UI|TitleScreen")
     void ActivateInGameTutorial();
+    void ActivateFieldPanel(EOVTitleMenuPanel Panel);
 
     UFUNCTION(BlueprintCallable, Category = "UI|TitleScreen")
     void DeactivateTitleScreen();
@@ -93,6 +94,7 @@ public:
     UFUNCTION(BlueprintPure, Category = "UI|TitleScreen")
     FName GetSelectedScenarioId() const { return SelectedScenarioId; }
 
+    void BackFromCurrentPanel();
     UFUNCTION(BlueprintPure, Category = "UI|TitleScreen")
     EOVTitleMenuPanel GetCurrentPanel() const { return CurrentPanel; }
 
@@ -216,7 +218,13 @@ private:
     TObjectPtr<UVerticalBox> RosterColRight;
 
     UPROPERTY()
-    TObjectPtr<UTextBlock> ScenarioCliSnippet;
+    TObjectPtr<UImage> ScenarioPhoto;
+
+    UPROPERTY()
+    TObjectPtr<UTextBlock> CardReturnLabel;
+
+    UPROPERTY()
+    TMap<FName, TObjectPtr<UTexture2D>> ScenarioPhotos;
 
     UPROPERTY()
     TObjectPtr<UTextBlock> BackdropStatusText;

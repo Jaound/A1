@@ -1,0 +1,46 @@
+Nebula MI 1:
+  Nebula 1 De-Saturation = 0.0
+  Nebula 1 Hue = 0.0
+  Nebula 1 intensity = 0.06599999964237213
+  RefractionDepthBias = 0.0
+  Nebula 1 = T_Nebula_Free_01_8k
+Nebula MI 2:
+  Nebula 1 De-Saturation = 0.0
+  Nebula 1 Hue = 0.0
+  Nebula 1 intensity = 0.13946600258350372
+  RefractionDepthBias = 0.0
+  Nebula 1 = T_Nebula_Free_05_8k
+Nebula MI 3:
+  Nebula 1 De-Saturation = 0.0
+  Nebula 1 Hue = 0.0
+  Nebula 1 intensity = 0.07706700265407562
+  RefractionDepthBias = 0.0
+  Nebula 1 = T_Nebula_Free_03_8k
+Nebula MI 4:
+  Nebula 1 De-Saturation = 0.0
+  Nebula 1 Hue = 0.0
+  Nebula 1 intensity = 0.5
+  RefractionDepthBias = 0.0
+  Nebula 1 = T_Nebula_Free_04_8k
+Nebula MI 5:
+  Sun_Mask_Intensity = -0.5143229961395264
+  Color Blue 1 = 1.0
+  Color Green 1 = 1.0
+  Color Red 1 = 1.0
+  Nebula 1 De-Saturation = 0.0
+  Nebula 1 Hue = 0.0
+  Nebula 1 intensity = 0.35866600275039673
+  RefractionDepthBias = 0.0
+  T_Alpha = None
+  Nebula 1 = T_Nebula_Free_05_8k
+Nebula MI 11:
+  Sun_Mask_Intensity = -0.5143229961395264
+  Color Blue 1 = 1.0
+  Color Green 1 = 1.0
+  Color Red 1 = 1.0
+  Nebula 1 De-Saturation = 0.0
+  Nebula 1 Hue = 0.0
+  Nebula 1 intensity = 0.09893299639225006
+  RefractionDepthBias = 0.0
+  T_Alpha = None
+  Nebula 1 = None

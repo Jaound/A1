@@ -21,4 +21,10 @@ public:
     UFUNCTION(BlueprintCallable) bool SetShipTarget(AOVShip* Ship, AOVShip* Target);
     UFUNCTION(BlueprintCallable) bool FireWeapon(AOVShip* Ship, FName MountId);
     UFUNCTION(BlueprintPure) FString GetShipDetails(AOVShip* Ship) const;
+    static bool HasPlacementClearance(const class AOVController& PC, FVector Position, double Radius);
+private:
+    friend class UOVPlayScenarioSubsystem;
+    TArray<AOVShip*> SpawnTrialShips(FName Id, int32 Faction, int32 Count, FVector Location, float Spacing,
+        int32 AircraftPerHangar, int32 Troops, bool MoveAuto, bool FireAuto, bool bPlayerRange);
+    bool RemoveTrialShip(AOVShip* Ship);
 };

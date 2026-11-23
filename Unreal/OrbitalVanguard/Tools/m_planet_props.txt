@@ -1,0 +1,4 @@
+Name: M_Planet
+Blend Mode: <BlendMode.BLEND_OPAQUE: 0>
+Shading Model: <MaterialShadingModel.MSM_DEFAULT_LIT: 1>
+Two Sided: False

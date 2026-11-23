@@ -1,3 +1,111 @@
+## 2026-11-23 · 함대 명령·수리·화면 점검
+
+시작 HEAD는 fc9e4f3, 기획은 work의 6d32a1f9dd96349563e30a51eb4d457a7397a836이다. 기존 미커밋 변경 위에 이어서 작업했다. 변경 경로는 OVHUD·OVHUDPlay, OVController, OVShip·OVShipPreview, OVCalibration·OVWeaponVisualComponent, OVLogisticsSubsystem, OVPlayScenarioSubsystem·OVPlayScenarioEscort, OVTitleScreenWidget과 해당 검사 도구다.
+
+50코스트 편성, 수리 접근과 실제 자원 소비, 원본 외형 선택 카드, 출항 목적지, 개별 경보 설정, 시나리오 초기 편제·재고를 연결했다. 시험장 초기 재료를 채굴 실적으로 세지 않도록 별도 추적한다. 직전 별도 창에서 ESC, 재개, 아군 7척 드래그, 목적지 선택을 직접 확인했다. 지도 확인 클릭이 전장에 새어 선택을 해제하는 결함을 찾아 입력 해제까지 소비하도록 수정했다. 최종 검증 결과는 아래 이력보다 상단의 이번 실행 기록을 우선한다.
+
+### 최종 검증과 재현
+
+- Win64 Development Editor 빌드 성공. MSVC 14.51.36260 및 Windows SDK 10.0.26100.0. 최종 프로젝트 자동 검사 143/143. 초계함 재질 이름을 고정한 기존 검사에서 1건 실패해 원본 재질 선택과 새 전장 재질 선택을 각각 검사하도록 수정했다. 기존 피격·포구·장착 검사도 함께 재실행했다. 한국어 엔진 시작 자체 검사의 오류 출력은 별도로 남아 있다.
+- PIE에서 함대 명령·수리·화물·영웅·도약 24/24, 임무 카드·결과 26/26, 4개 규모 함대전 64/64, 채굴·수송 32/32, 공습·퇴각 41/41, 자유 시험장 58/58을 확인했다. 후자의 다섯 묶음은 초계함의 최종 색상 계수 조정 전 실행했다. 색상 조정 뒤에는 24개 검사와 두 재질의 동일 구도 렌더를 다시 실행했다.
+- 별도 DX11 창에서 ESC와 재개, 아군 7척 드래그와 카드 7개 표시, 지도 목적지 클릭 후 7척 선택 유지·충전, 이탈 결과와 재시작을 확인했다. 전체 수리 클릭 흐름과 모든 해상도·배율 조합, 배포본은 수동 미검증이다.
+- 빌드 로그는 프로젝트의 `Saved/Logs/HUDDeliveryFinalBuild.log`, 자동은 `HUDDeliveryFinalAuto.log`, 명령은 `HUDDeliveryCommands.log`에 있다. 재현은 ControlRange 에디터 출력 로그에서 `py <프로젝트>/Tools/VerifyFleetCommandHUD.py`를 실행한다. 검사용 에디터는 결과를 남기고 닫힌다. [항목별 실제 검사](validation/FleetCommandHUD/results.json) · [초계함 보정 전후](validation/FleetCommandHUD/corvette.jpg) · [화물과 수리 명령](validation/FleetCommandHUD/cargo.jpg) · [작전 결과](validation/FleetCommandHUD/debrief.jpg)
+- 다음 점검은 실제 주 사용 해상도에서 배율·알림 필터 선호를 맞추고 손상된 전함에 직접 수리 명령을 내려 보는 것이다. 이후 기지 작업은 중앙 코어의 성계 배치·저장·재진입부터 시작한다.
+
+## 2026-11-23 · 캠페인 전 임무 선택·종료 점검
+
+- 현재 개발 작업 공간은 `C:\Users\user\source\repos\A1`, 브랜치는 `codex/phase1-playground`, 기준 커밋은 `fc9e4f3`이다. 이 항목의 검증 대상은 로컬 미커밋 수정본이다.
+- 일곱 장면을 DX11 게임에서 촬영해 `Content/UI/MissionCards`에 등록하고 패키징 수집 경로에 포함했다. 선택과 출격은 분리된다. 타이틀과 전장 양쪽에서 같은 카드 화면을 연다. 사진·아군 편성·비용·목표를 표시하며, 채굴 편성과 브리핑은 같은 함체 정의를 읽는다.
+- 기존 문제를 세 곳에서 확인했다. 브리핑이 하드코딩된 편성과 진단 문자열을 보여 주고, 공습의 이탈 기준은 격납 수치 자리에 있었다. 1280×720에서는 긴 편성의 마지막 행이 출격 버튼과 겹쳤다. 결과창 재도전 입력은 새로 선택된 첫 함선까지 해제했다. 브리핑·크기 조정·버튼 해제까지의 입력 소유권을 수정했다.
+- 공통 결과는 임무가 끝나는 시점에 한 번 집계한다. 작전 시간·판정·이유와 아군 잔류/이탈/완파, 기록이 있는 항공대·운송 손실, 엄호 납품량을 표시한다. 재열람 시 집계는 고정되며 재도전 시 초기화한다. 캠페인 영속 기록이나 성계 이월은 후속이다.
+- 주요 파일은 `OVTitleScreenWidget`, `OVHUD`, `OVHUDPlay`, `OVPlayScenarioSubsystem`, `OVPlayScenarioEscort`, `Config/DefaultGame.ini` 및 `Tools/VerifyMissionDebrief.py`다. [조작 안내](PLAY_SCENARIOS_GUIDE.md) · [작은 창의 카드](validation/MissionReadiness/cards.png) · [직접 플레이 결과](validation/MissionReadiness/direct-retreat.jpg) · [카드·결과 검사](validation/MissionReadiness/result.json) · [임무 회귀 검사](validation/MissionReadiness/regression.json).
+- 최종 Win64 Development Editor 빌드 성공, 프로젝트 자동 143/143, 960×540 PIE 카드·결과 25/25. 같은 작업 중 입력 투과 보정 직전에 함대전 51/51, 채굴·수송 32/32(500 납품), 공습·퇴각 41/41, 자유 시험장 58/58을 재실행했다. 에디터 시작 때 한국어 엔진 자체 검사 오류가 별도로 출력된다.
+- 1280×720 DX11 별도 게임 창에서 실제 마우스로 출격·3배속·구축전함 선택·도약을 지시했다. 부분 성공 결과는 작전 2분 30초, 아군 전장 2척·이탈 1척·완파 5척이었다. 수정 후 무도약 패배를 다시 플레이하고 재도전했을 때 왼쪽 목록과 명령창에 초계함 01 선택이 유지됐다. 목록으로 돌아가 직전 카드 선택도 확인했다. [재도전 직접 화면](validation/MissionReadiness/retry-selection.jpg). 전 임무 수동 완주·배포본·성능 측정은 이번 검사 범위 밖이다.
+- 재현은 UE 5.8.4에서 `Build.bat OrbitalVanguardEditor Win64 Development -Project=<프로젝트>/OrbitalVanguard.uproject -WaitMutex`를 실행한 뒤, ControlRange를 연 에디터 출력 로그에서 `py <프로젝트>/Tools/VerifyMissionDebrief.py`를 실행한다. 검사용 에디터는 결과를 저장한 후 닫힌다. 자동 검사 필터는 `Automation RunTests OrbitalVanguard`다. 개별 로그는 프로젝트의 `Saved/Logs/MissionFinal{Cards,Auto,Mouse}.log`와 `MissionAudit{Fleet,Mining,Evac,Sandbox}.log`에 있다.
+- 후속 첫 단위는 본기지 중앙 코어와 연결면을 실제 성계에 배치해 저장·재진입하는 것이다. 다음에는 창고/접안 한 곳과 기존 수송 납품 경로를 연결해 같은 화물을 중복 반영하지 않는지 검사한다. 자유 시험장의 중립·영웅 직접 배치, 패키징 실행 검증은 별도 미완료다. [본기지 명세](01_design/strategy/BASE_SYSTEMS.md)
+
+---
+
+## 2026-11-23 · 자유 전투 시험장 배치·교전 도구
+
+- 현재 작업 공간은 `C:\Users\user\source\repos\A1`, 개발 브랜치는 `codex/phase1-playground`, 기준 HEAD는 `fc9e4f3`이다. 아래 과거 항목의 자유 시험장 예정 작업은 이번에 구현했다.
+- **장면 → 자유 전투 시험장**에서 아군·적군, 등록 함체 16종, 수량 1/3/5척과 고도를 선택한다. 전장 위의 실제 선체 미리보기, 클릭 확정, 우클릭 취소, 겹침·범위 차단, 선택 제거와 재시작이 동작한다. 교전 중단은 현재 위치·손상·재고·비행 중인 공격을 보존한다. 새 자동 함선은 먼 표적을 향해 서로 다른 지점까지 접근한다. 접근·고도 증분·배치 여백은 시험장 전용값이다.
+- `OVPlaySandbox.cpp`가 배치와 교전 상태를 소유한다. `OVCalibration`의 실제 메시·치수를 사용하고 `OVDevelopmentSubsystem`의 함선 등록·삭제를 공유한다. `OVPlayScenarioSubsystem`, `OVController`, `OVHUD`, `OVHUDPlay`, `OVTitleScreenWidget`에서 장면 수명과 입력·표시를 연결했다. 빈 편성에서 함선 번호키를 누르는 경우도 보호했다.
+- 최종 Win64 Development Editor 빌드 성공. 프로젝트 자동 검사 143/143, 기존 함대전 PIE 51/51, 전용 PIE 58/58. 16종 모두 미리보기·생성·제거를 검사했다. 아군 3척과 적 항모의 시험은 9게임초에 발사 62회·명중 61회였다. 중단 상태에서 1/2/3배속으로 진행을 요청해도 위치·피해·기체·발사체·시간이 보존됐고 재개 후 추가 발사가 발생했다. [전용 검사 결과](validation/SandboxFleet/result.json)
+- 별도 1280×720 DX11 게임 창에서 실제 마우스로 3척씩 양측 배치, 함대 목록 반영, 교전 시작, 피격 표시 및 중단 후 편집 화면 복귀를 확인했다. 16개 함종을 각각 마우스로 검사한 것은 아니며 대형 편대 성능과 패키징은 측정하지 않았다.
+- 재현은 UE 에디터의 `ControlRange`에서 `py <프로젝트>/Tools/VerifySandboxFleet.py`를 실행한다. 검사용 에디터는 결과 저장 후 닫힌다. 로그는 `Saved/Logs/SandboxFleetFinalPIE.log`, `SandboxFleetFinalRegression.log`, `SandboxFleetFinalAuto.log`, `SandboxFleetFinalManual.log`다. 로그 앞부분의 엔진 자체 한국어 검사 오류는 별도로 남는다.
+- 다음 공통 작업은 **임무 선택 이미지 카드와 결과 화면**이다. 중립·영웅 전용 배치 UI는 후속이다. [조작 안내](PLAY_SCENARIOS_GUIDE.md#자유-전투-시험장)
+
+---
+
+## 2026-11-23 · 공습 생존·FTL 퇴각과 함대 드래그 선택
+
+- 로컬 개발 브랜치 `codex/phase1-playground`의 `fc9e4f3` 이후 작업 공간에서 구현·빌드했다. 전장 **장면 → 공습 생존·퇴각 → 시작 ▷** 또는 `-OVPlayScene=Evacuation`으로 실행한다. [임무·조작 안내](PLAY_SCENARIOS_GUIDE.md#공습-생존ftl-퇴각)
+- 8척과 항모 재고 20기로 시작한다. 3개 방향 예고 뒤 측면에 실제 적 항모·호위가 출현한다. 도약 명령은 함선별 충전과 회수 대기를 거쳐 전투 시스템의 이탈 상태로 연결한다. 충전 시각, 공습 시각과 승리 비율은 이 임무의 시험값이다. 개별 도약은 성계 간 캠페인 여행으로 이어지지 않는다.
+- 왼쪽 드래그와 Shift 추가 선택, 함대 목록 강조, 편대 이동·정지·표적·전체 발사·운용 모드와 항모 명령을 연결했다. 100·200·300코스트전과 E1에서 체급 중심 호위 진형을 쓰고 채굴·수송 위치는 전용 항로를 따른다. E1은 원본 렌즈를 0.8배로 표시하며 물리 반경은 1,000m/45m다.
+- 수정 중심은 `OVPlayScenarioSubsystem`, `OVController`, `OVHUDPlay`, `OVHUD`, `OVTitleScreenWidget`, `OVCombatSubsystem`, `OVShipSystemsComponent`, `OVBlackHoleHazardActor`와 `Tools/VerifyEvacuation.py`다.
+- Win64 Development Editor 빌드 성공. 프로젝트 자동 검사 143/143, 함대전 PIE 51/51, 채굴·수송 PIE 32/32(500단위 납품). 공습 PIE 41/41(정확히 4척·5척 이탈 경계 포함)에서 실제 발사·회수·도약, 1/2/3배속, 회수 포기·엔진 파괴·재시작·승패를 확인했다. 정상 회수로 6척 이탈·2척 완파·포기 0기 승리. 격납고 인원 중단 시험에서는 6척 이탈·1척 완파·1척 잔류·17기 포기로 승리. 무이탈은 5척 완파·3척 잔류로 패배했다. [공습 검사](validation/AirRaidRetreat/mission_checks.json) · [선택 화면](validation/AirRaidRetreat/fleet_selection.png) · [결과 화면](validation/AirRaidRetreat/mission_result.png)
+- 별도 Windows 플레이 창에서 실제 마우스로 사각형 선택(5척, 역방향 7척), 왼쪽 목록 강조, 우클릭 이동, 편대 항모 20기 출격·귀환, 배속·도약·재시작을 확인했다. 직접 플레이 결과는 이탈 4척·완파 4척·포기 0기의 부분 성공이다. 잔여기 포기와 엔진 전부 파괴 경계는 PIE API로 검사했다.
+- 재실행은 UE 5.8.4 에디터에서 `ControlRange`를 열고 출력 로그에 `py <프로젝트>/Tools/VerifyEvacuation.py`를 입력한다. 검사용 에디터는 결과 저장 후 종료한다. 로그는 `Saved/Logs/AirRaidFinalAuto.log`, `AirRaidFinalFleet.log`, `AirRaidFinalMining.log`, `AirRaidFinalSky.log`, `AirRaidManual.log`와 `AirRaidBoundaryPIE.log`다. E1 전후 장면·회전 검사는 렌더 8장과 일반 장면 복귀를 확인했다. 엔진 시작 때 출력되는 한국어 자체 검사 오류는 프로젝트 자동 검사와 별도다.
+- **다음 작업**은 자유 시험장에 위치·편성 미리보기와 교전 시작/중단 도구를 연결하는 것이다. 이후 임무 선택 이미지 카드 및 공통 결과 화면이 남는다. 이번 검증은 로컬 개발 빌드이며 배포본과 대형 편대의 프레임 성능은 측정하지 않았다.
+
+---
+
+## 이전 작업 기록
+
+## 2026-11-23 · 블랙홀 가림, 선택 함선 화물, 전방위 카메라
+
+- `C:\Users\user\source\repos\A1`의 `codex/phase1-playground` 작업 공간에서 기존 채굴·수송 임무 위에 적용했다. E1 배경 행성의 카메라 방향과 겉보기 크기를 보존하면서, 행성 앞면을 원본 블랙홀 렌즈 메시의 뒷면보다 멀게 배치했다. 행성 표면 자체에 대한 중력 렌즈 계산은 포함하지 않는다.
+- 가운데 버튼 또는 Alt+왼쪽 드래그로 전장 카메라를 위아래로 한 바퀴 돌릴 수 있다. 기존/PlayGame3 두 프로필에서 극점을 지나도 궤도 거리·회전 자세가 연속된다. 함선 이동 명령의 고도 범위는 별도로 관리한다.
+- 아군 함선을 선택하면 자원 적재실이 있는 경우 하단 선택 창 위에 사용 공간/한도와 일반·고급·최고급 수량이 표시된다. 자원 배수는 1·3·8이다. 화물이 배정되지 않은 적재실은 0과 용량 미설정을 표시하며 선택만으로 재고를 생성하지 않는다. 적 함선의 재고는 비공개다.
+- Win64 Development Editor 빌드 및 프로젝트 자동 검사 143/143 성공. DX11/SM5와 DX12/SM6에서 같은 방향의 [일반 행성](validation/CargoOrbit/DX11_AlignedPlanet.png)과 [E1 중심](validation/CargoOrbit/DX11_AlignedBlackHole.png)을 촬영했다. 두 프로필별 8개 각도에서 카메라의 실제 위치·상향 벡터를 검사했다. [DX11](validation/CargoOrbit/DX11.json) · [DX12](validation/CargoOrbit/DX12.json).
+- 채굴 엄호 PIE 32개 확인 통과. 빈 창고, 채굴·인계·납품 중 개별 선택 표시, 수리함의 혼합 화물, 미배정 용량, 적 재고 비공개, 500/500 승리를 확인했다. 실제 36게임초의 선택 수송선은 119.5/125, 임무판의 수송선 전체 합계는 반올림 228이었다. [화면](validation/CargoOrbit/SelectedTransport.png) · [검사](validation/CargoOrbit/Cargo.json).
+- 독립 DX11 창의 함대 목록에서 마우스로 수송선과 채굴선을 차례로 클릭해 각 0/125, 0/80 표시를 확인하고 장면 메뉴에서 E1을 열었다. 360도 궤도는 카메라 입력 API 및 실제 PIE 렌더로 검증했다. 물리 마우스로 한 바퀴 돌리는 조작과 패키징은 미검증이다. DX12 상주 광선 추적 메모리 예산 경고는 기존 재현과 같다.
+- 주요 변경은 `OVController.cpp`, `OVHUD.h/.cpp`, `OVHUDPlay.cpp`, `Tools/VerifyBattleSky.py`, `Tools/VerifyMiningEscort.py`다. 검사용 UE 에디터에서 해당 Python 스크립트를 각각 실행한다. 빌드 명령은 [2A 가이드](PHASE2A_GUIDE.md)에 있다. 실행 로그는 `Saved/Logs/OcclusionOrbitDX11.log`, `OcclusionOrbitDX12.log`, `SelectedCargoPIE.log`, `CargoOrbitAuto.log`다.
+- 다음 작업은 **공습 생존·FTL 퇴각**의 습격 예고, 실제 충전·회수·포기·탈출 판정이다. 이후 자유 시험장의 배치·교전 도구, 임무 이미지 카드와 공통 결과 화면을 진행한다. 작은 화면에서 환경 설명·피격 알림이 임무판 버튼과 겹치는 문제도 남아 있다.
+
+---
+
+## 2026-11-23 · 채굴·수송 엄호 플레이 임무
+
+- 개발 브랜치 `codex/phase1-playground`. 시작 시 로컬·원격 HEAD `fc9e4f3`, 원격 기획 `work`는 `6d32a1f`. 기존 미커밋 R37 중형 설계와 전장 표시 수정을 포함한 로컬 빌드다.
+- 타이틀 또는 장면 목록에서 **채굴·수송 엄호**를 선택한다. 청록색 경로가 광맥과 납품지를 연결한다. 시작 시 백터 1·호위함 2·채굴선 2·중형 수송선 2를 등록한다. 18게임초에 초계함 2척이 접근한다. 두 물류 함종은 기존 실물 함체·실제 이동·시설·화물 재고를 사용한다. 광맥 650, 납품 목표 500, 채굴·적재·하역 속도는 임무 시험값이다.
+- 주요 파일은 `OVPlayScenarioEscort.cpp`(임무 프로필·항로·손실 판정), `OVPlayScenarioSubsystem.*`, `OVLogisticsSubsystem.*`(실제 거리와 남은 화물에 따른 하역), `OVHUD*.cpp`, `OVTitleScreenWidget.cpp`, `OVLogisticsTests.cpp`, `Tools/VerifyMiningEscort.py`다. [실행 및 시험값](PLAY_SCENARIOS_GUIDE.md) · [신규 검사와 시간별 결과](validation/MiningEscort/result.json) · [함대전 회귀](validation/MiningEscort/fleet-regression.json).
+- Win64 Development Editor 빌드 성공. 프로젝트 자동 검사 143/143, 기존 함대전 PIE 51/51. 신규 DX11 PIE 기본 편성은 채굴 4초, 인계 30초, 첫 납품 66초, 최종 납품 146.5게임초에 500/500 승리했다. 초 단위로 검사한 광맥+채굴선+수송선+납품량 합의 최대 오차 0. 1·2·3배속 각각 36게임초에 수송선 화물 227.5, 실제 발사 131회로 일치했다. 정지, 거리 밖 인계 거부, 수송선 일부/전체 손실, 마지막 적재 후 채굴선 전멸과 승리, 재시작·빈 시험장 복귀를 검사했다.
+- 재현은 UE 5.8.4 개발 에디터로 `ControlRange`에서 `py <프로젝트>/Tools/VerifyMiningEscort.py`를 실행한다. 원시 결과는 `Saved/Validation/MiningEscort_날짜_시각`, 로그는 `Saved/Logs/MiningEscortPIE.log`, `MiningEscortAuto.log`, `MiningEscortFleetRegression.log`다. 검사용 에디터는 종료된다. [출격](validation/MiningEscort/escort.png) 및 [승리](validation/MiningEscort/delivered.png) 캡처는 실제 PIE 렌더다.
+- 독립 플레이 창도 실행해 화면을 확인했다. 시작 버튼 클릭은 창에서 사용자 입력을 감지해 도구가 중단했으므로 직접 입력 성공으로 집계하지 않았다. 작은 창에서 피격 알림이 잠깐 결과판 버튼을 가리는 경우가 남는다. 배포본·성능·일반 캠페인 경제는 이번 검사 범위 밖이다.
+- **다음 작업은 공습 생존·FTL 퇴각**이다. 예고 파동과 실제 충전, 회수·포기·이탈 판정을 연결한 뒤 자유 시험장의 배치·교전 제어, 이미지 카드 및 공통 결과 화면을 진행한다.
+
+---
+
+# 2026-11-23 · 전장 전체 은하수와 E1 블랙홀 복원
+
+- 실제 프로젝트는 `C:\Users\user\source\repos\A1\Unreal\OrbitalVanguard`다. 개발 브랜치 `codex/phase1-playground`의 `fc9e4f3`와 기존 로컬 변경 위에서 작업했다.
+- 검은 원형 경계는 블랙홀 재질 내부와 전장 바깥이 서로 다른 별 배경을 사용해서 발생했다. 일반 전장과 E1의 전방위 하늘은 이제 원본 큐브 텍스처 `TC_MilkyWay`를 사용한다. 방향, 밝기 1.5, 지수 2를 원본 렌즈의 배경 샘플과 맞췄다. 은하수 띠는 카메라가 보는 방향에 따라 보인다.
+- 원본 렌즈와 강착원반을 하나의 일반 메시로 그린다. E1 위험 구역과 수동 블랙홀 양쪽에 적용했다. 중복 메시 및 분홍 대체 원반의 동시 표시를 없앴다. 기본 전장 카메라에서 기울어진 원반이 보이도록 표시 방향을 잡았다. 사건의 지평선 크기는 기존 중심부 위험 반경을 따른다.
+- 변경 위치는 `OVController`, `OVBlackHoleHazardActor`, `OVPlayScenarioSubsystem`, `DefaultGame.ini`, 신규 전장 재질 `M_MilkyWaySky`와 생성기 `Tools/BuildMilkyWaySky.py`다. 원본 Fab 콘텐츠는 로컬 `Content/BlackHole`에 있으며 Git 제외 대상이다. 다른 개발 PC에서 같은 화면을 재현하려면 해당 원본 팩도 프로젝트에 있어야 한다.
+- Win64 Development Editor 빌드 성공. 이번 빌드에서 `Automation RunTests OrbitalVanguard` 143/143 성공. DX11/SM5, DX12/SM6 각각 별도 1280×720 플레이 창에서 일반 전장·회전·E1 시작·사선·원경 5장씩 촬영했다. 일반 → E1 → 일반 및 시험장 환경 켜기/끄기 통과. [대표 캡처와 결과](validation/BattleSky_20261123/)에 보존했다.
+- 재현은 게임의 100코스트 함대전에서 카메라를 회전해 은하수 띠를 보고, E1 블랙홀 시험에서 원경으로 물러나 배경 경계를 확인한다. 검사용 에디터에서 `py <프로젝트 경로>/Tools/VerifyBattleSky.py`로 장면 전환 검사를 반복할 수 있다. 원시 기록은 `Saved/Logs/SkyMilkyWayAuto.log`, `SkyMilkyWaySM5.log`, `SkyMilkyWaySM6.log`에 있다.
+- 카메라와 장면은 PIE API로 조작했다. 물리 마우스 입력과 배포 빌드는 미검증이다. DX12 렌더에는 광선 추적용 지오메트리의 상주 메모리 경고가 남아 있다. 한국어 엔진 초기 자기검사의 기존 `Condition failed` 로그도 별도로 남는다.
+
+# 2026-11-23 · 전장 포탑·쉴드·투사체 표시 교정
+
+작업 경로는 `C:\Users\user\source\repos\A1`이며, `codex/phase1-playground`의 기존 D126 변경 위에 적용했다.
+
+- 도면에 정의한 슬롯은 그대로 사용한다. 추가 무장과 PD는 UE에 임포트된 16종 선체의 LOD0 삼각형 위에서 얻은 후보를 사용한다. 후보는 장착 방향과 기존 포탑 간 여유를 고려해 선택한다. 생성과 재현 도구는 `Tools/BakeHullPresentationSurface.py`이며 원본 FBX를 수정하지 않는다.
+- 쉴드는 선체 정점과 포탑 회전 여유를 포함한다. 기본 쉴드, 피격 파동, 쉴드 충돌이 같은 반경을 읽는다. 대형/초대형 장착물의 선형 표시 계수는 각각 0.45/0.32(종전 0.70)다. 소형/중형은 1. 전투 능력치는 원래 프로필을 사용한다.
+- 무장 9종, 대함미사일 모듈, 구형 BF120 분할 재질 3개에서 전체 도색의 자체 발광을 0.025로 낮추고 포탑 그림자를 활성화했다. 원본 도색·법선·금속성·거칠기 텍스처는 유지한다.
+- 미사일 두 종류의 모델과 추진 불꽃은 1.5배다. 포탄에는 0.70을 적용하고 짧은 쪽 미사일 실측 길이의 85%를 상한으로 둔다. 비행 중 포탄의 중복 메시를 제거하고 발사음 처리는 보존했다. ControlRange의 옛 경계 기둥 4개를 맵과 생성 도구 양쪽에서 제거했다.
+- DX12/SM6 시작 오류에서 `Ray tracing requires skin cache to be enabled`를 확인하고 프로젝트에서 스킨 캐시 셰이더 컴파일을 활성화했다.
+- Win64 Development Editor 빌드 성공. `Automation RunTests OrbitalVanguard` 143/143 성공. 신규 `Presentation.FittedHullAndWeapons`는 16종의 실제 선체·장착물 정점과 추가 슬롯 접촉을 검사한다. 쉴드 방정식 좌변의 가장 큰 측정값은 0.9760(경계 1)이다. 엔진의 한국어 초기 자기검사 메시지 `Condition failed`는 별도로 남는다.
+- DX11 실제 PIE에서 대표 6종을 캡처했다. 실제 공격 29회가 발생한 시험 편성에서 표시 길이는 포탄 228.4cm, 일반 미사일 268.7cm, 대함미사일 350.5cm였다. 입력은 PIE API로 수행했다. 기본 조작은 게임에서 100코스트 함대전을 열고, 함선을 선택한 뒤 추적과 휠로 확대해 확인한다.
+- 재실행은 `Unreal/OrbitalVanguard/Tools/VerifyHullPresentation.py`를 프로젝트 에디터의 Python 명령으로 실행한다. 스크립트가 자체 PIE를 열고 종료하므로 검사용 에디터에서 실행한다. 결과는 `Saved/Validation/HullPresentation_날짜_시각`에 기록한다. 로그는 `Saved/Logs/HullFitRegression.log`, `HullFitDX11.log`에 있다.
+
+- DX12/SM6(RTX 5070)에서 레이 트레이싱 활성 로그, 대표 6종의 쉴드 켠 화면, 호위함·전함·구축전함의 쉴드 끈 화면을 확인했다. DX11과 DX12에서 각각 무장 재질 9종의 조명 입력을 검사하고 실제 발사체 3종의 월드 표시 길이를 측정했다. DX12 최초 검사에서 에디터 창이 캡처된 사례가 있어 별도 PIE 창 크기 확인과 재시도를 추가한 뒤 다시 확인했다. [6종 화면](validation/HullPresentation_20261123/함선_6종.jpg) · [쉴드를 끈 전함 원본 화면](validation/HullPresentation_20261123/battleship_unshielded.png) · [DX11 결과](validation/HullPresentation_20261123/DX11.json) · [DX12 결과](validation/HullPresentation_20261123/DX12.json).
+- 추가 관찰. DX12의 혼성 함대에서는 레이 트레이싱 지오메트리 요청량이 400 MiB 예산을 초과했다(전함 화면에서 약 459 MiB 측정). 1280×720 전장 원경에서는 여러 함선 이름표가 겹친다. 두 항목은 후속 성능·가독성 과제로 남긴다. 직접 마우스·키보드, 패키징 빌드, 장시간 성능은 이번 검사 범위에서 미검증이다. 렌더 로그는 `Saved/Logs/HullLightingDX11Final.log`, `Saved/Logs/HullLightingDX12Proof.log`다.
+
+## 이전 작업 이력
+
 # 최신 진행: 원본 함재기 표시와 포탑 접합 작업
 
 ## 2026-11-19 · 플레이 임무 6종 개편 — 함대전 및 공통 세션

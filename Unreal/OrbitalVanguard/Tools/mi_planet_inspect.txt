@@ -1,0 +1,3 @@
+Material: MI_Planet, Class: MaterialInstanceConstant
+Parent: M_Planet
+Scalar params: ["Metallic Amount", "Emissive Strength", "Roughness", "Normal_Intensity", "Trim Lights", "Emissive Falloff", "Roughness_Weight", "Specular Weight", "Planet_Rotation_Speed", "City_Lights", "City_Lights_Shadow_Only", "Specular_Switch", "Roughness_Switch", "Planet_Color_Blend_Intensity"]

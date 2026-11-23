@@ -1,0 +1,3 @@
+Mesh: SM_Earth_Planet
+Num sections: 1
+Slot 0: name=MaterialSlot, mat=/Engine/EngineMaterials/WorldGridMaterial.WorldGridMaterial

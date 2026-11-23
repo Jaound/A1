@@ -1,0 +1,14 @@
+Metallic Amount = 0.0
+Emissive Strength = 1.3118749856948853
+Roughness = 0.5
+Normal_Intensity = 5.0
+Trim Lights = 3.0
+Emissive Falloff = 10.0
+Roughness_Weight = 1.0
+Specular Weight = -1.0
+Planet_Rotation_Speed = 9.999999747378752e-05
+City_Lights = 0.0
+City_Lights_Shadow_Only = 0.0
+Specular_Switch = 0.0
+Roughness_Switch = 1.0
+Planet_Color_Blend_Intensity = 100.0

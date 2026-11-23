@@ -1,0 +1,5 @@
+/Game/Planet_Project/Assets/Static_Meshes/SM_Earth_Planet: box_extent=<Struct 'Vector' (0x000001E6605A6D58) {x: 49.998131, y: 49.999065, z: 50.000000}>, sphere_radius=50.00186761184702
+/Game/Planet_Project/Assets/Static_Meshes/SM_Custom_Planet: box_extent=<Struct 'Vector' (0x000001E6605A6418) {x: 100.936695, y: 100.890858, z: 100.905987}>, sphere_radius=101.90681797165534
+/Engine/BasicShapes/Sphere: box_extent=<Struct 'Vector' (0x000001E6605A6698) {x: 50.000000, y: 50.000000, z: 50.000000}>, sphere_radius=50.000003814697266
+/Game/StarfieldFree/Mesh/SM_StarSphereFree: box_extent=<Struct 'Vector' (0x000001E6605A7518) {x: 2.607340, y: 2.607340, z: 2.612500}>, sphere_radius=2.612510919570923
+/Game/StarfieldFree/Mesh/SM_Nebula_Sphere_Free: box_extent=<Struct 'Vector' (0x000001E6605A7D18) {x: 1.000000, y: 1.000000, z: 1.000000}>, sphere_radius=1.0000005960464478

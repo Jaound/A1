@@ -1,0 +1,5 @@
+Mat: M_Readable
+Scalars: []
+Vectors: ['FactionTint']
+Textures: []
+  Vector FactionTint = (1.00, 1.00, 1.00, 1.00)

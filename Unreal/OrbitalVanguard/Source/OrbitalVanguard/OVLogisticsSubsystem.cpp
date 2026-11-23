@@ -4,6 +4,7 @@
 
 namespace
 {
+#include "OVFieldCargo.inl"
 bool Active(const AOVShip* Ship)
 {
     return IsValid(Ship) && Ship->Systems && !Ship->Systems->bWrecked && !Ship->Systems->bNeutral && Ship->Systems->CanUseResources();
@@ -21,6 +22,8 @@ bool UOVLogisticsSubsystem::RegisterDevShip(AOVShip* Ship, EOVDevLogisticsRole R
 void UOVLogisticsSubsystem::RemoveDevShip(AOVShip* Ship)
 {
     RepairLinks.RemoveAll([Ship](const auto& L) { return L.Source == Ship || L.Target == Ship; });
+    Approaches.Remove(Ship);
+    for(auto It=Approaches.CreateIterator();It;++It) if(It.Value()==Ship) It.RemoveCurrent();
     Cargo.RemoveAll([Ship](const auto& C) { return C.Ship == Ship; });
 }
 int32 UOVLogisticsSubsystem::AddDevNode(FVector Position, float Amount)
@@ -44,6 +47,23 @@ float UOVLogisticsSubsystem::DevTransfer(AOVShip* From, AOVShip* To, float Reque
     const float Amount = FMath::Min3(Requested, Source->Amount, Dest->Capacity - Dest->Amount - 3 * Dest->Advanced - 8 * Dest->Rare);
     Source->Amount -= Amount; Dest->Amount += Amount; LastReason = Amount > 0 ? TEXT("수송 완료") : TEXT("재고 또는 적재 공간 부족"); return Amount;
 }
+const FOVDevCargo* UOVLogisticsSubsystem::FindCargo(const AOVShip* Ship) const
+{
+    return Cargo.FindByPredicate([Ship](const FOVDevCargo& Item) { return Item.Ship == Ship; });
+}
+
+float UOVLogisticsSubsystem::UnloadTransport(AOVShip* Ship, int32 DepotFaction, FVector Depot, float Range, float Requested)
+{
+    if (!Active(Ship) || Ship->Systems->FactionId != DepotFaction || Depot.ContainsNaN() ||
+        !FMath::IsFinite(Range) || Range <= 0 || !FMath::IsFinite(Requested) || Requested <= 0 ||
+        FVector::DistSquared(Ship->GetActorLocation(), Depot) > FMath::Square(Range)) return 0;
+    auto* Item = Cargo.FindByPredicate([Ship](const FOVDevCargo& Entry) { return Entry.Ship == Ship; });
+    if (!Item || Item->Role != EOVDevLogisticsRole::Transport) return 0;
+    const float Amount = FMath::Min(Requested, Item->Amount);
+    Item->Amount -= Amount;
+    return Amount;
+}
+
 float UOVLogisticsSubsystem::DevRepairHull(AOVShip* RepairShip, AOVShip* Target, float RequestedHP, float CostPerHP, float MaxRange)
 {
     auto* Source = Cargo.FindByPredicate([RepairShip](const auto& C) { return C.Ship == RepairShip; });
@@ -80,6 +100,38 @@ float SurfaceDistance(const AOVShip* A, const AOVShip* B)
     return float(FMath::Max(0.0, Distance - Radius(A) - Radius(B)));
 }
 }
+float UOVLogisticsSubsystem::FieldCapacity(FName Hull)
+{
+    if(Hull==TEXT("repair"))return RepairStock.X+3*RepairStock.Y+8*RepairStock.Z;
+    return Hull==TEXT("mining") ? MiningStock : TransportStock;
+}
+bool UOVLogisticsSubsystem::StockFieldShip(AOVShip* Ship)
+{
+    if (!Ship || !Ship->Systems || !Ship->Systems->HasPhysicalFacility(EOVFacilityType::ResourceStorage)) return false;
+    const FName Id=Ship->HullDefinitionId;
+    const bool Repair=Id==TEXT("repair"), Mining=Id==TEXT("mining");
+    const FVector Stock=Repair ? RepairStock : FVector(FieldCapacity(Id),0,0);
+    const float Capacity=Stock.X+3*Stock.Y+8*Stock.Z;
+    return RegisterDevShip(Ship,Repair ? EOVDevLogisticsRole::Repair : Mining ? EOVDevLogisticsRole::Mining : EOVDevLogisticsRole::Transport,Capacity,0) && SetDevMaterials(Ship,Stock);
+}
+void UOVLogisticsSubsystem::CancelFieldOrder(AOVShip* Source)
+{
+    Approaches.Remove(Source);
+    RepairLinks.RemoveAll([Source](const auto& Link){return !Link.bHero && Link.Source==Source;});
+}
+bool UOVLogisticsSubsystem::OrderRepair(AOVShip* Source,AOVShip* Target)
+{
+    const auto* C=FindCargo(Source);
+    if(!C || C->Role!=EOVDevLogisticsRole::Repair || !Active(Source) || !IsValid(Target) || Source==Target ||
+       !Target->Systems || Target->Systems->bWrecked || Target->Systems->bNeutral || Source->bFTLCharging || Target->bFTLCharging ||
+       Source->Systems->FactionId!=Target->Systems->FactionId || Target->Systems->HullHP>=Target->Systems->MaxHullHP ||
+       PackageCost(Target->HullDefinitionId).IsZero()) { LastReason=TEXT("수리 불가 · 손상된 아군 함선을 지정하세요"); return false; }
+    CancelFieldOrder(Source);
+    Source->SetAutomation(false,Source->IsAttackAutomatic());
+    Approaches.Add(Source,Target);
+    LastReason=TEXT("수리함 접근 중");
+    return true;
+}
 bool UOVLogisticsSubsystem::SetDevMaterials(AOVShip* Ship, FVector Materials)
 {
     FOVDevCargo* C = Cargo.FindByPredicate([Ship](const auto& Item) { return Item.Ship == Ship; });
@@ -106,6 +158,28 @@ bool UOVLogisticsSubsystem::CancelDevRepair(AOVShip* Target, FGuid HeroId)
 void UOVLogisticsSubsystem::Simulate(float GameDelta)
 {
     if (!FMath::IsFinite(GameDelta) || GameDelta <= 0) return;
+    for(auto It=Approaches.CreateIterator();It;++It)
+    {
+        AOVShip* Source=It.Key().Get(); AOVShip* Target=It.Value().Get();
+        if(!Active(Source) || !IsValid(Target) || !Target->Systems || Target->Systems->bWrecked ||
+           Target->Systems->bNeutral || Target->Systems->FactionId!=Source->Systems->FactionId || Source->IsHidden() || Target->IsHidden() ||
+           Source->bFTLCharging || Target->bFTLCharging || Target->Systems->HullHP>=Target->Systems->MaxHullHP)
+        { It.RemoveCurrent(); continue; }
+        if(const auto* C=FindCargo(Source);!C || ResourceLimit(*C,PackageCost(Target->HullDefinitionId)*(.45/Target->Systems->MaxHullHP))<=0){
+            LastReason=TEXT("수리 자원 소진");It.RemoveCurrent();continue;
+        }
+        const float Gap=SurfaceDistance(Source,Target);
+        if(Gap>10500)
+        {
+            const FVector Toward=(Target->GetActorLocation()-Source->GetActorLocation()).GetSafeNormal();
+            const FVector Point=Source->GetActorLocation()+Toward*(Gap-8500);
+            if(!Source->bHasDestination || FVector::DistSquared(Point,Source->Destination)>FMath::Square(500.)) Source->SetDestination(Point);
+            continue;
+        }
+        if(!Source->bHold)Source->StopMovement();
+        if(RepairLinks.ContainsByPredicate([Source,Target](const auto& L){return !L.bHero && L.Source==Source && L.Target==Target;}))continue;
+        if(!StartDevRepair(Source,Target,false,{},PackageCost(Target->HullDefinitionId)*(.30/Target->Systems->MaxHullHP),12000,0,0,0))It.RemoveCurrent();
+    }
     for (int32 I = RepairLinks.Num() - 1; I >= 0; --I)
     {
         auto& L = RepairLinks[I]; auto* C = Cargo.FindByPredicate([&L](const auto& Item) { return Item.Ship == L.Source; });

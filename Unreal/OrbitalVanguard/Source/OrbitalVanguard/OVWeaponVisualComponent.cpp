@@ -234,7 +234,7 @@ static bool SourceTrialArt(const FOVWeaponMountDefinition& Definition,FSourceTri
 FVector MuzzleLocal(const FOVWeaponMountDefinition& Definition, FRotator Aim,
     FVector HullHalfExtent, bool bFixedVLS, int32 BarrelIndex)
 {
-    const float Length=BarrelLength(HullHalfExtent,Definition.Tier,Definition.Type==EOVWeaponType::Interception);
+    const float Length=Definition.GeometryScale * BarrelLength(HullHalfExtent,Definition.Tier,Definition.Type==EOVWeaponType::Interception);
     if (bFixedVLS) return Definition.LocalPosition + SurfaceNormal(Definition)*Length;
     FSourceTrialArt Art{};
     if (SourceTrialArt(Definition,Art))
@@ -296,7 +296,8 @@ UStaticMeshComponent* UOVWeaponVisualComponent::MakeMesh(USceneComponent* Parent
     Part->SetCollisionResponseToAllChannels(ECR_Ignore);
     Part->SetGenerateOverlapEvents(false);
     Part->SetCanEverAffectNavigation(false);
-    Part->SetCastShadow(false);
+    // Only the short-lived muzzle flash is a luminous sphere.
+    Part->SetCastShadow(FCString::Strcmp(Asset, TEXT("/Engine/BasicShapes/Sphere.Sphere")) != 0);
     Part->SetRelativeLocation(Position);
     Part->SetRelativeRotation(Rotation);
     Part->SetRelativeScale3D(Scale);
@@ -315,7 +316,7 @@ void UOVWeaponVisualComponent::Initialize(const FOVWeaponMountDefinition& InDefi
     const FVector Normal=OVWeaponGeometry::SurfaceNormal(Definition);
     const bool bSide=FMath::Abs(Normal.Z)<.999;
     State.bBottom = !bSide && Normal.Z < 0;
-    Length = OVWeaponGeometry::BarrelLength(Extent, Definition.Tier, State.bPointDefense);
+    Length = Definition.GeometryScale * OVWeaponGeometry::BarrelLength(Extent, Definition.Tier, State.bPointDefense);
     SetRelativeLocation(Definition.LocalPosition);
     if(bSide) SetRelativeRotation(FRotationMatrix::MakeFromZ(Normal).Rotator());
     const float Side = State.bBottom ? -1.f : 1.f;
@@ -378,7 +379,7 @@ void UOVWeaponVisualComponent::Initialize(const FOVWeaponMountDefinition& InDefi
     {
         const TCHAR* LauncherAsset = Definition.PresentationProfile == TEXT("AntiShipMissileModule")
             ? TEXT("/Game/Presentation/Missiles/AntiShipModule/SM_Source.SM_Source")
-            : (Definition.Tier >= 3
+            : ((Definition.PresentationProfile==TEXT("GuidedMissilePod") || (Definition.PresentationProfile.IsNone() && Definition.Tier>=3))
                 ? TEXT("/Game/Presentation/WeaponsFull/missile_pod_mm48/SM_Source.SM_Source")
                 : TEXT("/Game/Presentation/WeaponsFull/missile_pod_mm24/SM_Source.SM_Source"));
         if (UStaticMesh* LauncherMesh = LoadObject<UStaticMesh>(nullptr, LauncherAsset, nullptr, LOAD_NoWarn))
@@ -433,7 +434,7 @@ void UOVWeaponVisualComponent::Initialize(const FOVWeaponMountDefinition& InDefi
 bool UOVWeaponVisualComponent::Matches(const FOVWeaponMountDefinition& Other, FVector HullHalfExtent) const
 {
     return Definition.WeaponId == Other.WeaponId && Definition.Type == Other.Type
-        && Definition.Tier == Other.Tier && Definition.PresentationProfile==Other.PresentationProfile && Definition.LocalPosition.Equals(Other.LocalPosition)
+        && Definition.GeometryScale == Other.GeometryScale && Definition.Tier == Other.Tier && Definition.PresentationProfile==Other.PresentationProfile && Definition.LocalPosition.Equals(Other.LocalPosition)
         && Definition.LocalSurfaceNormal.Equals(Other.LocalSurfaceNormal)
         && Extent.Equals(HullHalfExtent);
 }

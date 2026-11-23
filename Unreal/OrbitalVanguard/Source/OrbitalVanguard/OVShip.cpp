@@ -20,6 +20,8 @@
 // still need art alignment. Combat and selection geometry remain unchanged.
 static TAutoConsoleVariable<int32> CVarOVImportedHull(TEXT("ov.Presentation.ImportedHull"),1,
     TEXT("Source hulls: 1 enables available meshes on the next scenario creation; 0 restores the placeholders. No combat geometry changes."));
+static TAutoConsoleVariable<int32> CVarOVPC14FieldMaterial(TEXT("ov.Presentation.PC14FieldMaterial"),1,TEXT("PC14 field lighting material; zero restores the original tonal response."));
+static TAutoConsoleVariable<float> CVarOVPC14Lift(TEXT("ov.Presentation.PC14Exposure"),0.45f,TEXT("PC14 source-map brightness in fleet and preview rendering."));
 static TAutoConsoleVariable<int32> CVarOVPC14SourceMaterial(TEXT("ov.Presentation.PC14SourceMaterial"),1,
     TEXT("PC14 source-map material with provisional visibility fill; 0 uses faction placeholder material."));
 
@@ -66,7 +68,7 @@ namespace OVShipMotion
     static bool Advance(FVector& Position, FQuat& Orientation, FVector& Velocity,
         const FVector& Destination, float Speed, float TurnRate, float Delta,
         float Acceleration = 1700.0f, float Braking = 2200.0f, float ArrivalRadius = 5.0f,
-        bool bManualAttitude = false, const FQuat& ManualOrientation = FQuat::Identity)
+        bool bManualAttitude = false, const FQuat& ManualOrientation = FQuat::Identity, float LateralRate = 1700.f)
     {
         if (Delta <= 0.0f || !FMath::IsFinite(Delta) || Destination.ContainsNaN()) return false;
         const double Radius = FMath::Max(0.1f, ArrivalRadius);
@@ -76,26 +78,31 @@ namespace OVShipMotion
             const float Step = FMath::Min(Remaining, 1.0f / 120.0f);
             const FVector Offset = Destination - Position;
             const double Distance = Offset.Size();
-            if (Distance <= Radius)
+            const double BrakeRate = FMath::Max(1.f, Braking);
+            // Only finish a sub-centimetre numerical remainder after braking.
+            if (Distance <= FMath::Min(Radius, .01) && Velocity.Size() <= BrakeRate * Step)
             {
                 Position = Destination;
                 Velocity = FVector::ZeroVector;
                 return true;
             }
-            const FVector Direction = Offset / Distance;
+            const FVector Direction = Offset.GetSafeNormal();
             Turn(Orientation, bManualAttitude ? ManualOrientation : Direction.ToOrientationQuat(), TurnRate, Step);
             const double Alignment = FVector::DotProduct(Orientation.GetForwardVector(), Direction);
             const double Throttle = bManualAttitude ? 1.0 : FMath::Clamp((Alignment - 0.6) / 0.4, 0.0, 1.0);
-            const double BrakeRate = FMath::Max(1.0f, Braking);
-            const double ArrivalSpeed = FMath::Sqrt(2.0 * BrakeRate * FMath::Max(0.0, Distance - Radius));
-            const double DesiredSpeed = FMath::Min(FMath::Max(0.0f, Speed) * Throttle, ArrivalSpeed);
-            const double Rate = DesiredSpeed < Velocity.Size() ? BrakeRate : FMath::Max(0.0f, Acceleration);
-            const FVector Travel = ChangeVelocity(Velocity, Direction * DesiredSpeed, Rate, Step);
-            // Swept arrival catches a high-speed step without teleporting across a lateral miss.
-            const double TravelSquared = Travel.SizeSquared();
-            const double ClosestT = TravelSquared > UE_SMALL_NUMBER
-                ? FMath::Clamp(FVector::DotProduct(Offset, Travel) / TravelSquared, 0.0, 1.0) : 0.0;
-            if ((Offset - Travel * ClosestT).SizeSquared() <= Radius * Radius)
+            // Reserve one integration step of reaction time. This avoids crossing a near goal
+            // and waiting for a 180-degree turnaround when the throttle closes.
+            const double Reaction = 2. * BrakeRate * Step;
+            const double ArrivalSpeed = FMath::Sqrt(Reaction*Reaction + 1.6*BrakeRate*Distance) - Reaction;
+            const double DesiredSpeed = FMath::Min(FMath::Max(0.f, Speed) * Throttle, ArrivalSpeed);
+            const double Along = FVector::DotProduct(Velocity, Direction);
+            FVector Axial = Direction * Along;
+            FVector Lateral = Velocity - Axial;
+            FVector Travel = ChangeVelocity(Axial, Direction * DesiredSpeed, Along > DesiredSpeed || Along < 0 ? BrakeRate : Acceleration, Step);
+            Travel += ChangeVelocity(Lateral, FVector::ZeroVector, FMath::Max(1.f,LateralRate), Step);
+            Velocity = Axial + Lateral;
+            if (Distance <= Radius && Velocity.Size() <= BrakeRate * Step * 2 &&
+                (Offset-Travel).SizeSquared() < .0001)
             {
                 Position = Destination;
                 Velocity = FVector::ZeroVector;
@@ -114,10 +121,12 @@ AOVShip::AOVShip()
     Systems = CreateDefaultSubobject<UOVShipSystemsComponent>(TEXT("ShipSystems"));
     USceneComponent* Root = CreateDefaultSubobject<USceneComponent>(TEXT("ShipRoot"));
     SetRootComponent(Root);
+    VisualRoot = CreateDefaultSubobject<USceneComponent>(TEXT("ShipPresentation"));
+    VisualRoot->SetupAttachment(Root);
     static ConstructorHelpers::FObjectFinder<UStaticMesh> Cube(TEXT("/Engine/BasicShapes/Cube.Cube"));
     static ConstructorHelpers::FObjectFinder<UStaticMesh> Cone(TEXT("/Engine/BasicShapes/Cone.Cone"));
     Hull = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Hull"));
-    Hull->SetupAttachment(Root);
+    Hull->SetupAttachment(VisualRoot);
     Hull->SetStaticMesh(Cube.Object);
     Hull->SetRelativeScale3D(FVector(3.2, 1.0, 0.6));
     Hull->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
@@ -128,7 +137,7 @@ AOVShip::AOVShip()
     auto AddAccent = [&](const TCHAR* Name, UStaticMesh* Mesh, FVector Location, FVector Scale, FRotator Rotation)
     {
         UStaticMeshComponent* Part = CreateDefaultSubobject<UStaticMeshComponent>(Name);
-        Part->SetupAttachment(Root);
+        Part->SetupAttachment(VisualRoot);
         Part->SetStaticMesh(Mesh);
         Part->SetRelativeLocation(Location);
         Part->SetRelativeScale3D(Scale);
@@ -186,6 +195,7 @@ void AOVShip::SetCalibrationHull(const FVector* LocalHalfExtent)
 
 void AOVShip::ApplyPresentationHull(FName DefinitionId)
 {
+    HullDefinitionId=DefinitionId;
     ResetShipVisualVFX();
     if(CVarOVImportedHull.GetValueOnGameThread()!=1 || !Systems || !Systems->Layout)return;
     const bool bCorvette=DefinitionId==TEXT("corvette");
@@ -205,7 +215,7 @@ void AOVShip::ApplyPresentationHull(FName DefinitionId)
         DefinitionId==TEXT("battleship")?TEXT("/Game/Presentation/Ships/BattleshipFull/SM_Hull.SM_Hull"):
         DefinitionId==TEXT("dreadnought")?TEXT("/Game/Presentation/Ships/DreadnoughtFull/SM_Hull.SM_Hull"):
         DefinitionId==TEXT("battlecarrier")?TEXT("/Game/Presentation/Ships/BattlecarrierFull/SM_Hull.SM_Hull"):nullptr;
-    const TCHAR* MaterialPath=bCorvette?TEXT("/Game/Presentation/PC14Full/M_PC14_FullReadable.M_PC14_FullReadable"):
+    const TCHAR* MaterialPath=bCorvette?(CVarOVPC14FieldMaterial.GetValueOnGameThread()!=0?TEXT("/Game/Presentation/PC14Full/M_PC14_FieldReadable.M_PC14_FieldReadable"):TEXT("/Game/Presentation/PC14Full/M_PC14_FullReadable.M_PC14_FullReadable")):
         DefinitionId==TEXT("vector")?TEXT("/Game/Presentation/Ships/VectorFull/M_Readable.M_Readable"):
         DefinitionId==TEXT("bastion")?TEXT("/Game/Presentation/Ships/BastionFull/M_Readable.M_Readable"):
         DefinitionId==TEXT("carrier")?TEXT("/Game/Presentation/Ships/CarrierFull/M_Readable.M_Readable"):
@@ -231,7 +241,7 @@ void AOVShip::ApplyPresentationHull(FName DefinitionId)
     if(!bCorvette||CVarOVPC14SourceMaterial.GetValueOnGameThread()==1)
             if(auto* Instance=UMaterialInstanceDynamic::Create(Material,this)) {
                 SavedHullMaterial=Hull->GetMaterial(0);bSavedHullMaterial=true;
-                Instance->SetVectorParameterValue(TEXT("FactionTint"),bFriendly?FLinearColor(.8f,.9f,1.f):FLinearColor(1.f,.72f,.7f));
+                Instance->SetVectorParameterValue(TEXT("FactionTint"),(bFriendly?FLinearColor(.8f,.9f,1.f):FLinearColor(1.f,.72f,.7f)) * (bCorvette ? CVarOVPC14Lift.GetValueOnGameThread() : 1.f));
                 Hull->SetMaterial(0,Instance);
             }
     const FBoxSphereBounds Bounds=Mesh->GetBounds();
@@ -250,9 +260,8 @@ void AOVShip::ApplyPresentationHull(FName DefinitionId)
     // corvette hardpoints. Final art alignment still requires review;
     // these do not alter the physical mount, muzzle or collision OBB.
     if(!bCorvette)return;
-    const FVector ExpectedExtent(175,75,30);
     const auto& Mounts=Systems->Layout->WeaponMounts;
-    if(!Available.Equals(ExpectedExtent,.01)||Mounts.Num()<2)return;
+    if(Mounts.Num()<2)return;
     const FVector ExpectedPositions[]={FVector(-46.6666667,0,42),FVector(46.6666667,0,-42)};
     const double SurfaceAtUnitScale[]={7.3664/.7723395451,-28.0984/.7723395451};
     for(int32 I=0;I<2;++I)
@@ -267,7 +276,7 @@ void AOVShip::ApplyPresentationHull(FName DefinitionId)
         if(Height<=.01)continue;
         const FName Name=MakeUniqueObjectName(this,UStaticMeshComponent::StaticClass(),TEXT("PC14MountSupport"));
         auto* Support=NewObject<UStaticMeshComponent>(this,Name);
-        AddInstanceComponent(Support);Support->SetupAttachment(GetRootComponent());
+        AddInstanceComponent(Support);Support->SetupAttachment(VisualRoot);
         Support->SetStaticMesh(LoadObject<UStaticMesh>(nullptr,TEXT("/Engine/BasicShapes/Cube.Cube")));
         Support->SetCollisionEnabled(ECollisionEnabled::NoCollision);Support->SetGenerateOverlapEvents(false);
         Support->SetRelativeLocation(FVector(Mount.LocalPosition.X,Mount.LocalPosition.Y,(BaseInner+Surface)*.5));
@@ -284,6 +293,8 @@ void AOVShip::Configure(const FString& Name, bool Friendly, float Speed, float R
 {
     ResetShipVisualVFX();
     if(bSavedHullMaterial){Hull->SetMaterial(0,SavedHullMaterial);SavedHullMaterial=nullptr;bSavedHullMaterial=false;}
+    ConfigureClassMotion(0);
+    EnvironmentPullVelocity = FVector::ZeroVector;
     ShipName = Name;
     bFriendly = Friendly;
     MoveSpeed = FMath::Max(0.0f, Speed);
@@ -322,7 +333,9 @@ void AOVShip::RefreshWeaponVisuals()
         bool bDestroyed, int32 ShotId, double ShotTime, double Clock, int32 ShotsFired, bool bCannon, bool bKineticPD, bool bBeamAttack)
     {
         FOVWeaponMountDefinition VisualDef = Def;
-        if (!bCannon && !bBeamAttack && Def.PresentationProfile != TEXT("AntiShipMissileModule")) VisualDef.PresentationProfile = NAME_None;
+        if(Def.Type==EOVWeaponType::Missile && Def.PresentationProfile!=TEXT("AntiShipMissileModule"))
+            VisualDef.PresentationProfile=bFixedVLS ? TEXT("StandardMissilePod") : TEXT("GuidedMissilePod");
+        else if(!bCannon && !bBeamAttack && Def.Type!=EOVWeaponType::Missile) VisualDef.PresentationProfile=NAME_None;
         if (bCannon) VisualDef.PresentationProfile=OVWeaponGeometry::CannonSourceTrialProfile(VisualDef);
         if (Def.Type==EOVWeaponType::Interception && OVWeaponGeometry::CIWSBTrialEnabled()) VisualDef.PresentationProfile=bKineticPD?TEXT("CIWS6Trial"):TEXT("CIWSBTrial");
         if (Def.Type==EOVWeaponType::Beam && bBeamAttack) VisualDef.PresentationProfile=OVWeaponGeometry::BeamSourceTrialProfile(VisualDef);
@@ -339,7 +352,7 @@ void AOVShip::RefreshWeaponVisuals()
         {
             Visual = NewObject<UOVWeaponVisualComponent>(this);
             AddInstanceComponent(Visual);
-            Visual->SetupAttachment(GetRootComponent());
+            Visual->SetupAttachment(VisualRoot);
             Visual->RegisterComponent();
             Visual->Initialize(VisualDef, Systems->Layout->LocalHalfExtent);
             WeaponVisuals.Add(Visual);
@@ -408,17 +421,14 @@ FVector AOVShip::GetWeaponMuzzleWorld(FName MountId) const
         if (const auto* State = PD->Ships.FindByPredicate([this](const FOVPDShipState& S) { return S.Ship == this; }))
             if (const auto* Mount = State->Mounts.FindByPredicate([MountId](const FOVPDMountState& M) { return M.MountId == MountId; }))
             {
+                FOVWeaponMountDefinition Def;
+                const auto* Authored = Mount->bLayoutMount ? Systems->Layout->WeaponMounts.FindByPredicate(
+                    [MountId](const FOVWeaponMountDefinition& D){return D.WeaponId == MountId;}) : nullptr;
+                if (Authored) Def = *Authored;
+                else { Def.Type=EOVWeaponType::Interception; Def.LocalPosition=Mount->LocalPosition; Def.Tier=Systems->Layout->WeaponTier; }
                 if (OVWeaponGeometry::CIWSBTrialEnabled())
-                {
-                    FOVWeaponMountDefinition Def;
-                    const auto* Authored=Mount->bLayoutMount?Systems->Layout->WeaponMounts.FindByPredicate([MountId](const FOVWeaponMountDefinition& D){return D.WeaponId==MountId;}):nullptr;
-                    if (Authored) Def=*Authored;
-                    else { Def.WeaponId=MountId;Def.Type=EOVWeaponType::Interception;Def.LocalPosition=Mount->LocalPosition;Def.Tier=Systems->Layout->WeaponTier; }
                     Def.PresentationProfile=Mount->Profile.Kind==EOVPDWeaponKind::Kinetic?TEXT("CIWS6Trial"):TEXT("CIWSBTrial");
-                    if (OVWeaponGeometry::HasSourcePDTrial(Def)) return GetActorTransform().TransformPosition(OVWeaponGeometry::MuzzleLocal(Def,Mount->LocalAim,Systems->Layout->LocalHalfExtent,false,0));
-                }
-                return GetActorTransform().TransformPosition(OVWeaponGeometry::MuzzleLocal(Mount->LocalPosition, Mount->LocalAim,
-                    OVWeaponGeometry::BarrelLength(Systems->Layout->LocalHalfExtent, Systems->Layout->WeaponTier, true), false));
+                return GetActorTransform().TransformPosition(OVWeaponGeometry::MuzzleLocal(Def,Mount->LocalAim,Systems->Layout->LocalHalfExtent,false,0));
             }
     return GetActorLocation();
 }
@@ -464,13 +474,30 @@ bool AOVShip::IsAttackAutomatic() const
     return bManual != bLastManual ? !bManual : bAttackAutomatic;
 }
 
+void AOVShip::ConfigureClassMotion(int32 Size)
+{
+    struct FResponse { float AccelerateSeconds, BrakeSeconds, LateralSeconds; };
+    static constexpr FResponse Trial[] = {{2.4f,1.8f,3.f},{4.f,3.f,5.f},{6.f,4.5f,8.f},{9.f,7.f,12.f}};
+    if (Size < 1 || Size > 4)
+    {
+        Acceleration=1700; Braking=2200; LateralAcceleration=1700;
+        return;
+    }
+    const FResponse& Response=Trial[Size-1];
+    Acceleration=MoveSpeed/Response.AccelerateSeconds;
+    Braking=MoveSpeed/Response.BrakeSeconds;
+    LateralAcceleration=MoveSpeed/Response.LateralSeconds;
+}
+
 void AOVShip::Simulate(float SimDelta)
 {
     if (!FMath::IsFinite(SimDelta) || SimDelta <= 0.0f) return;
     if (bFTLCharging || !Systems || !Systems->CanMove())
     {
         // Gameplay immobilization is separate from an ordinary inertial stop order.
-        Velocity = FVector::ZeroVector;
+        if (!bFTLCharging && Systems && !Systems->bWrecked && !Systems->bNeutral)
+            AddActorWorldOffset(Velocity * SimDelta, false);
+        else Velocity = FVector::ZeroVector;
         if (bFTLCharging || (Systems && (Systems->bWrecked || Systems->bNeutral)))
         {
             bHasDestination = false;
@@ -486,7 +513,7 @@ void AOVShip::Simulate(float SimDelta)
     if (bHasDestination && !bHold)
     {
         if (OVShipMotion::Advance(Position, Orientation, Velocity, Destination, MoveSpeed * EngineEfficiency * (1.f+Duty.SpeedBonus), TurnRate * EngineEfficiency * (1.f+Duty.TurnBonus),
-            SimDelta, Acceleration, Braking, ArrivalRadius, bManualAttitude, ManualAttitude.Quaternion()))
+            SimDelta, Acceleration, Braking, ArrivalRadius, bManualAttitude, ManualAttitude.Quaternion(), LateralAcceleration))
         {
             bHasDestination = false;
             bHold = true;
@@ -532,7 +559,7 @@ void AOVShip::UpdateShieldImpactVisuals(float Pulse)
     const FVector LayoutExt = (Systems && Systems->Layout) ? Systems->Layout->LocalHalfExtent : FVector(175.f, 75.f, 30.f);
     const float ClampedPulse = FMath::Clamp(Pulse, 0.0f, 1.0f);
     const float RippleExpand = 1.0f + 0.022f * (1.0f - ClampedPulse);
-    const FVector BaseScale = LayoutExt * FVector(1.228f, 1.328f, 1.428f) / 50.0f;
+    const FVector BaseScale = GetLocalShieldRadii() * (1.006 / 50.0);
 
     // Deep saturated faction hues so UE5 ACES Filmic tonemapper preserves rich crimson red (enemy)
     // and crisp electric cyan-blue (friendly) without desaturating to peach/white under bloom.
@@ -605,6 +632,11 @@ void AOVShip::ResetShipVisualVFX()
     }
 }
 
+FVector AOVShip::GetLocalShieldRadii() const
+{
+    return Systems && Systems->Layout ? Systems->Layout->GetShieldRadii() : FVector(213.5,99,42.6);
+}
+
 FVector AOVShip::GetVisualHullHalfExtent() const
 {
     if (Hull && Hull->GetStaticMesh() && !Hull->GetStaticMesh()->GetPathName().StartsWith(TEXT("/Engine/BasicShapes/")))
@@ -674,7 +706,7 @@ void AOVShip::EnsureShipVFXInitialized()
             const FName CoreName = (i == 0) ? FName(TEXT("ThrusterCoreMesh_0")) : FName(TEXT("ThrusterCoreMesh_1"));
             UStaticMeshComponent* CoreComp = NewObject<UStaticMeshComponent>(this, CoreName);
             AddInstanceComponent(CoreComp);
-            CoreComp->SetupAttachment(GetRootComponent());
+            CoreComp->SetupAttachment(VisualRoot);
             CoreComp->SetStaticMesh(CachedThrusterSphereMesh.Get());
             CoreComp->SetCollisionEnabled(ECollisionEnabled::NoCollision);
             CoreComp->SetCollisionResponseToAllChannels(ECR_Ignore);
@@ -698,7 +730,7 @@ void AOVShip::EnsureShipVFXInitialized()
             const FName JetName = (i == 0) ? FName(TEXT("ThrusterJetMesh_0")) : FName(TEXT("ThrusterJetMesh_1"));
             UStaticMeshComponent* JetComp = NewObject<UStaticMeshComponent>(this, JetName);
             AddInstanceComponent(JetComp);
-            JetComp->SetupAttachment(GetRootComponent());
+            JetComp->SetupAttachment(VisualRoot);
             JetComp->SetStaticMesh(CachedThrusterConeMesh.Get());
             JetComp->SetCollisionEnabled(ECollisionEnabled::NoCollision);
             JetComp->SetCollisionResponseToAllChannels(ECR_Ignore);
@@ -730,7 +762,7 @@ void AOVShip::EnsureShipVFXInitialized()
         for (int32 i = 0; i < 2; ++i)
         {
             UNiagaraComponent* Comp = NewObject<UNiagaraComponent>(this);
-            Comp->SetupAttachment(GetRootComponent());
+            Comp->SetupAttachment(VisualRoot);
             Comp->SetAsset(CachedThrusterSys.Get());
             Comp->SetRelativeLocation(ThrusterOffsets[i]);
             Comp->SetRelativeRotation(FRotator(0.f, 90.f, 90.f));
@@ -752,7 +784,7 @@ void AOVShip::EnsureShipVFXInitialized()
         for (int32 i = 0; i < 2; ++i)
         {
             UNiagaraComponent* Comp = NewObject<UNiagaraComponent>(this);
-            Comp->SetupAttachment(GetRootComponent());
+            Comp->SetupAttachment(VisualRoot);
             Comp->SetAsset(CachedWingTrailSys.Get());
             Comp->SetRelativeLocation(WingOffsets[i]);
             Comp->SetRelativeScale3D(FVector(0.16f));
@@ -775,15 +807,14 @@ void AOVShip::EnsureShipVFXInitialized()
     if (!CachedShieldGlowMat.IsValid())
         CachedShieldGlowMat = LoadObject<UMaterialInterface>(nullptr, TEXT("/Game/Presentation/Effects/M_ShieldImpactGlow.M_ShieldImpactGlow"), nullptr, LOAD_NoWarn);
 
-    const FVector LayoutExt = (Systems && Systems->Layout) ? Systems->Layout->LocalHalfExtent : FVector(175.f, 75.f, 30.f);
-    const FVector MeshShieldScale = LayoutExt * FVector(1.228f, 1.328f, 1.428f) / 50.0f;
+    const FVector MeshShieldScale = GetLocalShieldRadii() * (1.006 / 50.0);
     if (CachedShieldSphereMesh.IsValid())
     {
         if (CachedShieldWFMat.IsValid())
         {
             ShieldImpactWFMesh = NewObject<UStaticMeshComponent>(this, TEXT("ShieldImpactWFMesh"));
             AddInstanceComponent(ShieldImpactWFMesh);
-            ShieldImpactWFMesh->SetupAttachment(GetRootComponent());
+            ShieldImpactWFMesh->SetupAttachment(VisualRoot);
             ShieldImpactWFMesh->SetStaticMesh(CachedShieldSphereMesh.Get());
             ShieldImpactWFMesh->SetCollisionEnabled(ECollisionEnabled::NoCollision);
             ShieldImpactWFMesh->SetCollisionResponseToAllChannels(ECR_Ignore);
@@ -804,7 +835,7 @@ void AOVShip::EnsureShipVFXInitialized()
         {
             ShieldImpactGlowMesh = NewObject<UStaticMeshComponent>(this, TEXT("ShieldImpactGlowMesh"));
             AddInstanceComponent(ShieldImpactGlowMesh);
-            ShieldImpactGlowMesh->SetupAttachment(GetRootComponent());
+            ShieldImpactGlowMesh->SetupAttachment(VisualRoot);
             ShieldImpactGlowMesh->SetStaticMesh(CachedShieldSphereMesh.Get());
             ShieldImpactGlowMesh->SetCollisionEnabled(ECollisionEnabled::NoCollision);
             ShieldImpactGlowMesh->SetCollisionResponseToAllChannels(ECR_Ignore);
@@ -827,9 +858,9 @@ void AOVShip::EnsureShipVFXInitialized()
     // so enemy hits never display NS_ShieldStandard's hardcoded blue particle color or demo Points sprites).
     if (CachedShieldSys.IsValid())
     {
-        const FVector ShieldScale = LayoutExt * FVector(1.22f, 1.32f, 1.42f) / 1000.0f;
+        const FVector ShieldScale = GetLocalShieldRadii() / 1000.0;
         ShieldVFX = NewObject<UNiagaraComponent>(this);
-        ShieldVFX->SetupAttachment(GetRootComponent());
+        ShieldVFX->SetupAttachment(VisualRoot);
         ShieldVFX->SetAsset(CachedShieldSys.Get());
         ShieldVFX->SetRelativeLocation(FVector::ZeroVector);
         ShieldVFX->SetRelativeScale3D(ShieldScale);
@@ -964,7 +995,7 @@ void AOVShip::RefreshShipVisualVFX(float DeltaSeconds)
     // Dissolve sequence on wreck
     if (bDissolving)
     {
-        const float Step = (SafeDt > 0.0f ? SafeDt : 0.016f) * 0.45f;
+        const float Step = SafeDt * 0.45f;
         DissolveProgress = FMath::Clamp(DissolveProgress + Step, 0.0f, 1.0f);
         if (Hull)
         {
@@ -1137,6 +1168,28 @@ bool FOVShipTimeScaleTest::RunTest(const FString& Parameters)
     for (int32 Frame = 0; Frame < 180; ++Frame)
         OVShipMotion::Advance(Position, Rotation, Velocity, NearbyTarget, 700, 60, 1.0f / 60.0f);
     TestTrue(TEXT("Ship stays stationary for three simulated seconds after arrival"), Position.Equals(NearbyTarget));
+    return true;
+}
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(FOVInertiaFrames, "OrbitalVanguard.Ship.InertialRetargetAtLowFPS",
+    EAutomationTestFlags::EditorContext | EAutomationTestFlags::EngineFilter)
+bool FOVInertiaFrames::RunTest(const FString&)
+{
+    FVector Baseline, BaselineVelocity;
+    for (const int FPS : {60, 10})
+        for (const int Speed : {1,2,3})
+        {
+            FVector Position=FVector::ZeroVector, Velocity(800,0,0);
+            FQuat Rotation=FQuat::Identity;
+            const float Dt=float(Speed)/FPS;
+            for (int I=0; I<3*FPS/Speed; ++I)
+            {
+                OVShipMotion::Advance(Position,Rotation,Velocity,FVector(0,20000,0),1600,20,Dt,400,600,5,true,FQuat::Identity,180);
+                if (I==0) TestTrue(TEXT("Retarget retains previous transverse momentum"),Velocity.X>700 && Velocity.Y>0);
+            }
+            if (FPS==60 && Speed==1) { Baseline=Position; BaselineVelocity=Velocity; }
+            TestTrue(TEXT("Equal game time across frame rates and speeds"),Position.Equals(Baseline,.1) && Velocity.Equals(BaselineVelocity,.1));
+            TestTrue(TEXT("Broadside attitude retained"),Rotation.Equals(FQuat::Identity,.001));
+        }
     return true;
 }
 #endif

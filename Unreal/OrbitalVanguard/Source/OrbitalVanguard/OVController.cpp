@@ -1,3 +1,4 @@
+#include "OVLogisticsSubsystem.h"
 #include "OVController.h"
 #include "OVShip.h"
 #include "OVHUD.h"
@@ -29,6 +30,7 @@
 #include "ProfilingDebugging/CsvProfiler.h"
 #include "ProfilingDebugging/CpuProfilerTrace.h"
 #include "Engine/World.h"
+#include "Engine/TextureCube.h"
 #include "InputCoreTypes.h"
 #include "Kismet/GameplayStatics.h"
 #include "Components/InstancedStaticMeshComponent.h"
@@ -100,8 +102,14 @@ void AOVController::BeginPlay()
   MissilePlumeMeshes=CreateInstanced(TEXT("MissilePlumePresentation"),BurstMesh,PlumeMat,FLinearColor(1.f,1.f,1.f),TEXT("FactionTint"));
   ShieldImpactMeshes=CreateInstanced(TEXT("ShieldImpactPresentation"),BurstMesh,ShieldHitMat,FLinearColor(1.f,1.f,1.f),TEXT("FactionTint"));
   HullImpactMeshes=CreateInstanced(TEXT("HullImpactPresentation"),BurstMesh,HullHitMat,FLinearColor(1.f,1.f,1.f),TEXT("FactionTint"));
+  const bool bHasMilkyWay = LoadObject<UTextureCube>(nullptr,TEXT("/Game/BlackHole/Textures/TC_MilkyWay.TC_MilkyWay"),nullptr,LOAD_NoWarn)!=nullptr;
+  UMaterialInterface* MilkyWay = bHasMilkyWay ? LoadObject<UMaterialInterface>(nullptr,TEXT("/Game/Presentation/Environment/SpaceSkybox/M_MilkyWaySky.M_MilkyWaySky"),nullptr,LOAD_NoWarn) : nullptr;
   auto* SkyboxMeshAsset=LoadObject<UStaticMesh>(nullptr,TEXT("/Game/Presentation/Environment/SpaceSkybox/SM_Source.SM_Source"),nullptr,LOAD_NoWarn);
   auto* SkyboxMatAsset=LoadObject<UMaterialInterface>(nullptr,TEXT("/Game/Presentation/Environment/SpaceSkybox/M_Source.M_Source"),nullptr,LOAD_NoWarn);
+  if (MilkyWay) {
+   SkyboxMeshAsset=LoadObject<UStaticMesh>(nullptr,TEXT("/Engine/BasicShapes/Sphere.Sphere"));
+   SkyboxMatAsset=MilkyWay;
+  }
   if(SkyboxMeshAsset && SkyboxMatAsset) {
    SpaceSkyboxMesh=NewObject<UStaticMeshComponent>(AircraftPresentationActor,TEXT("SpaceSkyboxPresentation"));
    AircraftPresentationActor->AddInstanceComponent(SpaceSkyboxMesh);
@@ -112,12 +120,14 @@ void AOVController::BeginPlay()
    SpaceSkyboxMesh->SetGenerateOverlapEvents(false);
    SpaceSkyboxMesh->SetCanEverAffectNavigation(false);
    SpaceSkyboxMesh->SetCastShadow(false);
-   if(auto* SkyDyn=UMaterialInstanceDynamic::Create(SkyboxMatAsset,SpaceSkyboxMesh)) {
+   SpaceSkyboxMesh->SetVisibleInRayTracing(false);
+   if(MilkyWay) SpaceSkyboxMesh->SetMaterial(0,MilkyWay);
+   else if(auto* SkyDyn=UMaterialInstanceDynamic::Create(SkyboxMatAsset,SpaceSkyboxMesh)) {
     SkyDyn->SetVectorParameterValue(TEXT("FactionTint"),FLinearColor(0.85f,0.95f,1.15f,1.f));
     SkyDyn->SetScalarParameterValue(TEXT("Intensity"),1.0f);
     SpaceSkyboxMesh->SetMaterial(0,SkyDyn);
    }
-   SpaceSkyboxMesh->SetWorldScale3D(FVector(1400.f));
+   SpaceSkyboxMesh->SetWorldScale3D(FVector(160000.f));
    SpaceSkyboxMesh->RegisterComponent();
   }
   auto* SphereShape=LoadObject<UStaticMesh>(nullptr,TEXT("/Engine/BasicShapes/Sphere.Sphere"),nullptr,LOAD_NoWarn);
@@ -138,28 +148,37 @@ void AOVController::BeginPlay()
    }
    DistantPlanetMesh->RegisterComponent();
   }
-  auto* StarPointMat=LoadObject<UMaterialInterface>(nullptr,TEXT("/Game/Presentation/Environment/SpaceSkybox/M_StarPoint.M_StarPoint"),nullptr,LOAD_NoWarn);
-  StarfieldMeshes=CreateInstanced(TEXT("StarfieldPresentation"),SphereShape?SphereShape:BurstMesh,StarPointMat?StarPointMat:ShieldHitMat,FLinearColor(0.90f,0.96f,1.0f),TEXT("FactionTint"),3.4f,1.f);
-  CachedStarTransforms.Reset();
-  FRandomStream StarRng(20261118);
-  for(int32 S=0;S<420;++S) {
-   FVector Dir=StarRng.GetUnitVector();
-   if(FMath::Abs(Dir.Z)>0.92f) Dir.Z*=0.5f;
-   Dir=Dir.GetSafeNormal(UE_SMALL_NUMBER,FVector::ForwardVector);
-   const int32 Layer=S<120?0:(S<280?1:2);
-   const float Dist=Layer==0?StarRng.FRandRange(10000.f,17000.f):(Layer==1?StarRng.FRandRange(19000.f,32000.f):StarRng.FRandRange(34000.f,48000.f));
-   const float StarScale=Layer==0?StarRng.FRandRange(0.06f,0.13f):(Layer==1?StarRng.FRandRange(0.12f,0.22f):StarRng.FRandRange(0.20f,0.36f));
-   CachedStarTransforms.Emplace(FQuat::Identity,Dir*Dist,FVector(StarScale));
+  if (!MilkyWay) {
+   auto* StarPointMat=LoadObject<UMaterialInterface>(nullptr,TEXT("/Game/Presentation/Environment/SpaceSkybox/M_StarPoint.M_StarPoint"),nullptr,LOAD_NoWarn);
+   StarfieldMeshes=CreateInstanced(TEXT("StarfieldPresentation"),SphereShape?SphereShape:BurstMesh,StarPointMat?StarPointMat:ShieldHitMat,FLinearColor(0.90f,0.96f,1.0f),TEXT("FactionTint"),3.4f,1.f);
+   CachedStarTransforms.Reset();
+   FRandomStream StarRng(20261118);
+   for(int32 S=0;S<420;++S) {
+    FVector Dir=StarRng.GetUnitVector();
+    if(FMath::Abs(Dir.Z)>0.92f) Dir.Z*=0.5f;
+    Dir=Dir.GetSafeNormal(UE_SMALL_NUMBER,FVector::ForwardVector);
+    const int32 Layer=S<120?0:(S<280?1:2);
+    const float Dist=Layer==0?StarRng.FRandRange(10000.f,17000.f):(Layer==1?StarRng.FRandRange(19000.f,32000.f):StarRng.FRandRange(34000.f,48000.f));
+    const float StarScale=Layer==0?StarRng.FRandRange(0.06f,0.13f):(Layer==1?StarRng.FRandRange(0.12f,0.22f):StarRng.FRandRange(0.20f,0.36f));
+    CachedStarTransforms.Emplace(FQuat::Identity,Dir*Dist,FVector(StarScale));
+   }
   }
   auto* AsteroidMeshAsset=LoadObject<UStaticMesh>(nullptr,TEXT("/Game/Presentation/Environment/Asteroid/SM_Source.SM_Source"),nullptr,LOAD_NoWarn);
   auto* AsteroidMatAsset=LoadObject<UMaterialInterface>(nullptr,TEXT("/Game/Presentation/Environment/Asteroid/M_Source.M_Source"),nullptr,LOAD_NoWarn);
-  auto* BlackHoleMeshAsset=LoadObject<UStaticMesh>(nullptr,TEXT("/Game/Presentation/Environment/BlackHole/SM_Source.SM_Source"),nullptr,LOAD_NoWarn);
-  auto* BlackHoleMatAsset=LoadObject<UMaterialInterface>(nullptr,TEXT("/Game/Presentation/Environment/BlackHole/M_Source.M_Source"),nullptr,LOAD_NoWarn);
   auto* HazardMeshAsset=LoadObject<UStaticMesh>(nullptr,TEXT("/Game/Presentation/Environment/HazardZone/SM_Source.SM_Source"),nullptr,LOAD_NoWarn);
   auto* RadiationMatAsset=LoadObject<UMaterialInterface>(nullptr,TEXT("/Game/Presentation/Environment/HazardZone/M_Radiation.M_Radiation"),nullptr,LOAD_NoWarn);
   auto* SolarFlareMatAsset=LoadObject<UMaterialInterface>(nullptr,TEXT("/Game/Presentation/Environment/HazardZone/M_SolarFlare.M_SolarFlare"),nullptr,LOAD_NoWarn);
   AsteroidMeshes=CreateInstanced(TEXT("AsteroidEnvironmentPresentation"),AsteroidMeshAsset,AsteroidMatAsset,FLinearColor(1.f,1.f,1.f),TEXT("FactionTint"),1.0f,1.f);
-  BlackHoleMeshes=CreateInstanced(TEXT("BlackHoleEnvironmentPresentation"),BlackHoleMeshAsset,BlackHoleMatAsset,FLinearColor(1.f,0.85f,0.65f),TEXT("FactionTint"),2.8f,1.f);
+  BlackHoleMeshes=NewObject<UStaticMeshComponent>(AircraftPresentationActor,TEXT("BlackHoleEnvironmentPresentation"));
+  AircraftPresentationActor->AddInstanceComponent(BlackHoleMeshes);
+  BlackHoleMeshes->SetupAttachment(ActorRoot);
+  BlackHoleMeshes->SetMobility(EComponentMobility::Movable);
+  BlackHoleMeshes->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+  BlackHoleMeshes->SetCastShadow(false);
+  BlackHoleMeshes->SetCanEverAffectNavigation(false);
+  AOVBlackHoleHazardActor::ConfigureVisualMesh(*BlackHoleMeshes,FOVSpaceEnvironmentProfile::MakeBlackHoleE1Profile().CoreHazardRadiusCm);
+  BlackHoleMeshes->SetVisibility(false);
+  BlackHoleMeshes->RegisterComponent();
   RadiationZoneMeshes=CreateInstanced(TEXT("RadiationZoneEnvironmentPresentation"),HazardMeshAsset,RadiationMatAsset,FLinearColor(0.35f,1.f,0.75f),TEXT("FactionTint"),2.2f,0.32f);
   SolarFlareMeshes=CreateInstanced(TEXT("SolarFlareEnvironmentPresentation"),HazardMeshAsset,SolarFlareMatAsset,FLinearColor(1.f,0.68f,0.22f),TEXT("FactionTint"),3.0f,0.42f);
  }
@@ -278,9 +297,10 @@ void AOVController::ResetDeathThroes()
   AOVShip* Ship=Pair.Key.Get();
   if(!IsValid(Ship)||!Ship->Hull) continue;
   if(Pair.Value.bHasBaseTransform) {
-   Ship->Hull->SetRelativeLocation(Pair.Value.BaseRelLocation);
-   Ship->Hull->SetRelativeRotation(Pair.Value.BaseRelRotation);
+   Ship->VisualRoot->SetRelativeLocation(Pair.Value.BaseRelLocation);
+   Ship->VisualRoot->SetRelativeRotation(Pair.Value.BaseRelRotation);
   }
+  if (Pair.Value.bVanished) Ship->SetActorHiddenInGame(false);
   Ship->Hull->SetVisibility(true);
   TInlineComponentArray<UOVWeaponVisualComponent*> Visuals(Ship);
   for(UOVWeaponVisualComponent* V:Visuals) if(IsValid(V)) V->SetVisibility(true,true);
@@ -312,6 +332,7 @@ bool AOVController::IsShipShelteredFromSolarFlare(const AOVShip* Ship) const
 }
 void AOVController::SetSpaceEnvironment(EOVSpaceEnvironmentType NewEnvironment)
 {
+ for (AOVShip* Ship:Ships) if (IsValid(Ship)) Ship->EnvironmentPullVelocity=FVector::ZeroVector;
  ActiveEnvironment=NewEnvironment;
  ActiveAsteroids.Reset();
  ActiveRadiationZones.Reset();
@@ -380,6 +401,11 @@ bool AOVController::DispatchFleetFTL(FName TargetSystemId)
  if(CurrentNode && !CurrentNode->Links.Contains(TargetSystemId)) {
   LastAction=TEXT("FTL 항로 미연결 · 인접 성계로만 도약 가능");
   return false;
+ }
+ if(auto* Play=GetPlayScenario();Play && !Play->ActiveId.IsNone()){
+  const bool Ok=Play->OrderJump(*this,TargetSystemId);
+  if(Ok)if(auto* HUD=Cast<AOVHUD>(GetHUD()))HUD->bStarMapOpen=false;
+  return Ok;
  }
  SwitchStarSystem(TargetSystemId);
  if(TargetNode->OwnerFaction==TEXT("neutral")) {
@@ -483,9 +509,8 @@ void AOVController::UpdateCombatPresentation()
   const bool bVisible=!Ship->IsHidden()&&!bDeparted&&!Ship->Systems->bWrecked&&Ship->Systems->bShieldActive&&Ship->Systems->Shield>0.5f;
   Bubble->SetVisibility(bVisible);
   if(bVisible) {
-   const FVector Extent=Ship->Systems->Layout?Ship->Systems->Layout->LocalHalfExtent:FVector(175,75,30);
    Bubble->SetWorldLocationAndRotation(Ship->GetActorLocation(),Ship->GetActorRotation());
-   Bubble->SetWorldScale3D(Extent*Ship->GetActorScale3D()*FVector(1.22,1.32,1.42)/50.0);
+   Bubble->SetWorldScale3D(Ship->GetLocalShieldRadii()*Ship->GetActorScale3D()/50.0);
    if(auto* Dyn=Cast<UMaterialInstanceDynamic>(Bubble->GetMaterial(0))) {
     const float Ratio=FMath::Clamp(Ship->Systems->Shield/FMath::Max(1.f,Ship->Systems->MaxShield),0.15f,1.f);
     float HitBoost=0.f;
@@ -506,23 +531,32 @@ void AOVController::UpdateCombatPresentation()
  // 2. 3D Missiles (Standard vs Anti-Ship), Cannon Bolts, Laser Beams, and Impact Effects
  TArray<FTransform> StdMissiles,AntiShipMissiles,CannonBolts,FriendlyBeams,EnemyBeams,Plumes,ShieldHits,HullHits;
  const float FX=CalibrationScenario>=0?14.f:1.f;
+ const float MissileScale = 1.50f * (CalibrationScenario>=0 ? 1.f : .12f);
+ const float StdScale = .13f * MissileScale, AntiShipScale = .30f * MissileScale;
+ // Imported missiles point down -X. Use the actual lengths instead of the generic FX cylinder.
+ const auto MissileLength = [](UInstancedStaticMeshComponent* Instances, float Scale)
+ {
+  const UStaticMesh* Mesh = Instances ? Instances->GetStaticMesh() : nullptr;
+  return Mesh ? 2.0 * Mesh->GetBounds().BoxExtent.X * Scale : DBL_MAX;
+ };
+ const double ShellLimit = .85 * FMath::Min(MissileLength(StandardMissileMeshes,StdScale),MissileLength(AntiShipMissileMeshes,AntiShipScale));
  if(Combat&&Combat->bEnabled) {
   for(const auto& Shot:Combat->Attacks) {
-   if(Shot.Position.ContainsNaN()||Shot.Direction.ContainsNaN()) continue;
+   if(Shot.Result!=EOVAttackResult::Flying || Shot.Weapon.Kind==EOVAttackKind::Beam || Shot.Position.ContainsNaN()||Shot.Direction.ContainsNaN()) continue;
    const FVector Dir=Shot.Direction.GetSafeNormal(UE_SMALL_NUMBER,FVector::ForwardVector);
    if(Shot.Weapon.Kind==EOVAttackKind::Cannon) {
-    const float BoltLen=FMath::Clamp(Shot.Weapon.Speed*0.005f,55.f*FX,140.f*FX);
+    const float BoltLen=FMath::Min<double>(.70f*FMath::Clamp(Shot.Weapon.Speed*.005f,55.f*FX,140.f*FX),ShellLimit);
     const float BoltRad=BoltLen*0.26f;
     AddSegmentCylinder(CannonBolts,Shot.Position-Dir*(BoltLen*0.8f),Shot.Position+Dir*(BoltLen*0.2f),BoltRad);
    } else {
     const FQuat Rot=Dir.Rotation().Quaternion()*FRotator(0,180,0).Quaternion();
-    const float ScaleFactor=CalibrationScenario>=0?1.f:0.12f;
+    const float ScaleFactor=MissileScale;
     if(Shot.bAntiShipMissile) {
-     const float S=0.30f*ScaleFactor;
+     const float S=AntiShipScale;
      AntiShipMissiles.Emplace(Rot,Shot.Position,FVector(S));
      Plumes.Emplace(Rot,Shot.Position-Dir*(115.f*ScaleFactor),FVector(0.55f*ScaleFactor,0.24f*ScaleFactor,0.24f*ScaleFactor));
     } else {
-     const float S=0.13f*ScaleFactor;
+     const float S=StdScale;
      StdMissiles.Emplace(Rot,Shot.Position,FVector(S));
      Plumes.Emplace(Rot,Shot.Position-Dir*(85.f*ScaleFactor),FVector(0.42f*ScaleFactor,0.18f*ScaleFactor,0.18f*ScaleFactor));
     }
@@ -536,7 +570,7 @@ void AOVController::UpdateCombatPresentation()
    if(Event.Result==EOVAttackResult::Hit && Event.HullDamage<=0.f && !Event.bShieldDepleted) {
     for(AOVShip* HitShip:Ships) if(IsValid(HitShip) && HitShip->GetFName()==Event.HitShipId && HitShip->Systems && HitShip->Systems->Layout) {
      const FTransform ShipXf=HitShip->GetActorTransform();
-     const FVector Radii=HitShip->Systems->Layout->LocalHalfExtent*FVector(1.22f,1.32f,1.42f);
+     const FVector Radii=HitShip->GetLocalShieldRadii();
      const FVector InvR(1.0/FMath::Max(1.0,Radii.X),1.0/FMath::Max(1.0,Radii.Y),1.0/FMath::Max(1.0,Radii.Z));
      const FVector LocalHit=ShipXf.InverseTransformPosition(ImpactPos)*InvR;
      if(LocalHit.SizeSquared()<0.98) {
@@ -576,16 +610,17 @@ void AOVController::UpdateCombatPresentation()
   }
  }
  // 3. Ship Death Throe (완파 침몰·연쇄 폭발·소멸 연출 — prototype ShipState.gd / SpaceViewport.gd)
- const float PresentationDt=bSimulationPaused?0.f:FMath::Clamp(float(FApp::GetDeltaTime())*SimulationSpeed,0.f,0.1f);
+ const float PresentationDt=bSimulationPaused?0.f:FMath::Clamp(float(FApp::GetDeltaTime())*SimulationSpeed,0.f,1.f);
  const double NowReal=FPlatformTime::Seconds();
  for(AOVShip* Ship:Ships) {
   if(!IsValid(Ship)||!Ship->Systems||!Ship->Hull) continue;
   if(!Ship->Systems->bWrecked) {
    if(FOVDeathThroeState* Existing=DeathThroes.Find(Ship)) {
     if(Existing->bHasBaseTransform) {
-     Ship->Hull->SetRelativeLocation(Existing->BaseRelLocation);
-     Ship->Hull->SetRelativeRotation(Existing->BaseRelRotation);
+     Ship->VisualRoot->SetRelativeLocation(Existing->BaseRelLocation);
+     Ship->VisualRoot->SetRelativeRotation(Existing->BaseRelRotation);
     }
+    if (Existing->bVanished) Ship->SetActorHiddenInGame(false);
     Ship->Hull->SetVisibility(true);
     TInlineComponentArray<UOVWeaponVisualComponent*> Visuals(Ship);
     for(UOVWeaponVisualComponent* V:Visuals) if(IsValid(V)) V->SetVisibility(true,true);
@@ -597,44 +632,44 @@ void AOVController::UpdateCombatPresentation()
   if(!DT.bActive && !DT.bVanished) {
    DT.bActive=true;
    DT.bHasBaseTransform=true;
-   DT.BaseRelLocation=Ship->Hull->GetRelativeLocation();
-   DT.BaseRelRotation=Ship->Hull->GetRelativeRotation();
+   DT.BaseRelLocation=Ship->VisualRoot->GetRelativeLocation();
+   DT.BaseRelRotation=Ship->VisualRoot->GetRelativeRotation();
    const bool bSmall=Ship->Systems->Layout && Ship->Systems->Layout->bSmallHull;
    const int32 Decks=Ship->Systems->Layout?Ship->Systems->Layout->DeckCount:2;
-   DT.TotalDuration=bSmall?0.35f:(Decks<=2?2.6f:(Decks==3?3.1f:3.5f));
+   DT.TotalDuration=bSmall?1.4f:(Decks<=2?2.6f:(Decks==3?3.1f:3.5f));
    DT.Remaining=DT.TotalDuration;
    DT.BurstAccum=0.f;
    DT.RollDirection=(GetTypeHash(Ship->GetFName())%2==0)?1.f:-1.f;
-   DT.ExtraBursts.Emplace(Ship->GetActorLocation(),NowReal);
+   DT.ExtraBursts.Emplace(Ship->GetActorLocation(),SimulationSeconds);
   }
   if(DT.bActive) {
    DT.Remaining=FMath::Max(0.f,DT.Remaining-PresentationDt);
    DT.BurstAccum+=PresentationDt;
    const float Progress=FMath::Clamp(1.f-(DT.Remaining/FMath::Max(0.01f,DT.TotalDuration)),0.f,1.f);
    const float Ease=Progress*Progress;
-   const float SinkZ=-Ease*180.f*(CalibrationScenario>=0?10.f:1.f);
    const FRotator ThroeRot(-Ease*25.f,0.f,DT.RollDirection*Ease*40.f);
-   Ship->Hull->SetRelativeLocation(DT.BaseRelLocation+FVector(0.f,0.f,SinkZ));
-   Ship->Hull->SetRelativeRotation((FQuat(ThroeRot)*FQuat(DT.BaseRelRotation)).Rotator());
+   Ship->VisualRoot->SetRelativeRotation((FQuat(ThroeRot)*FQuat(DT.BaseRelRotation)).Rotator());
    const FVector HullExt=Ship->Systems->Layout?(Ship->Systems->Layout->LocalHalfExtent*Ship->GetActorScale3D()):FVector(180,80,40);
    while(DT.BurstAccum>=0.22f) {
     DT.BurstAccum-=0.22f;
     const FVector LocalRand(FMath::FRandRange(-0.85f,0.85f)*HullExt.X,FMath::FRandRange(-0.75f,0.75f)*HullExt.Y,FMath::FRandRange(-0.5f,0.8f)*HullExt.Z);
-    DT.ExtraBursts.Emplace(Ship->GetActorLocation()+Ship->GetActorQuat().RotateVector(LocalRand)+FVector(0,0,SinkZ),NowReal);
+    DT.ExtraBursts.Emplace(Ship->GetActorLocation()+Ship->VisualRoot->GetComponentQuat().RotateVector(LocalRand),SimulationSeconds);
    }
    if(DT.Remaining<=0.f) {
     DT.bActive=false;
     DT.bVanished=true;
     for(int32 B=-1;B<=1;++B) {
-     DT.ExtraBursts.Emplace(Ship->GetActorLocation()+Ship->GetActorQuat().RotateVector(FVector(B*HullExt.X*0.55f,0,0))+FVector(0,0,SinkZ),NowReal);
+     DT.ExtraBursts.Emplace(Ship->GetActorLocation()+Ship->VisualRoot->GetComponentQuat().RotateVector(FVector(B*HullExt.X*0.55f,0,0)),SimulationSeconds);
     }
+    Ship->SetActorHiddenInGame(true);
+    if (Selection.Contains(Ship)) SelectAdditional(Ship);
     Ship->Hull->SetVisibility(false);
     TInlineComponentArray<UOVWeaponVisualComponent*> Visuals(Ship);
     for(UOVWeaponVisualComponent* V:Visuals) if(IsValid(V)) V->SetVisibility(false,true);
    }
   }
   for(int32 BI=DT.ExtraBursts.Num()-1;BI>=0;--BI) {
-   const double Age=NowReal-DT.ExtraBursts[BI].Value;
+   const double Age=SimulationSeconds-DT.ExtraBursts[BI].Value;
    if(Age<0 || Age>0.38) { if(Age>0.38) DT.ExtraBursts.RemoveAt(BI); continue; }
    const float Alpha=FMath::Clamp(1.f-float(Age/0.38),0.15f,1.f);
    const float BurstRad=(28.f+(1.f-Alpha)*54.f)*FX;
@@ -646,15 +681,27 @@ void AOVController::UpdateCombatPresentation()
  const float StarDistScale=CalibrationScenario>=0?12.f:1.f;
  if(IsValid(SpaceSkyboxMesh)) {
   SpaceSkyboxMesh->SetWorldLocation(SkyCenter);
-  SpaceSkyboxMesh->SetWorldScale3D(FVector(CalibrationScenario>=0?18000.f:1400.f));
  }
  if(IsValid(DistantPlanetMesh)) {
   const uint32 SysHash=GetTypeHash(CurrentStarSystemId);
   const float AngleDeg=float(SysHash%360);
   const FVector PlanetDir=FRotator(-14.f,AngleDeg,0.f).Vector();
   const FVector PlanetAnchor=FMath::Lerp(CameraFocus,SkyCenter,0.82f);
-  DistantPlanetMesh->SetWorldLocationAndRotation(PlanetAnchor+PlanetDir*(27500.f*StarDistScale),FRotator(16.f,float(NowReal*1.8),12.f));
-  DistantPlanetMesh->SetWorldScale3D(FVector((72.f+float(SysHash%35))*StarDistScale));
+  const FVector Sightline = PlanetAnchor + PlanetDir*(27500.f*StarDistScale) - SkyCenter;
+  const double PlanetScale = (72.f + float(SysHash%35)) * StarDistScale;
+  double DepthFactor = 1.0;
+  if (ActiveEnvironment == EOVSpaceEnvironmentType::BlackHole && BlackHoleMeshes && BlackHoleMeshes->GetStaticMesh())
+  {
+   // The original lens shader renders on the far surface of a large sphere.
+   // Keep even the nearest point of the decorative planet behind that surface.
+   const double LensDepth = FVector::Dist(SkyCenter, ActiveBlackHoleCenter) + BlackHoleMeshes->Bounds.SphereRadius;
+   const double PlanetRadius = DistantPlanetMesh->GetStaticMesh()->GetBounds().SphereRadius * PlanetScale;
+   const double NearDepth = Sightline.Size() - PlanetRadius;
+   if (NearDepth > 1.0) DepthFactor = FMath::Max(1.0, (LensDepth + PlanetRadius) / NearDepth);
+  }
+  // Scale position and radius together about the eye to preserve its apparent size and parallax.
+  DistantPlanetMesh->SetWorldLocationAndRotation(SkyCenter + Sightline*DepthFactor,FRotator(16.f,float(NowReal*1.8),12.f));
+  DistantPlanetMesh->SetWorldScale3D(FVector(PlanetScale*DepthFactor));
  }
  if(IsValid(StarfieldMeshes)) {
   TArray<FTransform> Stars;
@@ -668,7 +715,7 @@ void AOVController::UpdateCombatPresentation()
   SyncInstances(StarfieldMeshes,Stars);
  }
  // 5. 3D Space Environments (운석지대, 우주 방사능 지대, 태양 플레어, 소규모 블랙홀)
- TArray<FTransform> AsteroidXfs,RadiationXfs,SolarFlareXfs,BlackHoleXfs;
+ TArray<FTransform> AsteroidXfs,RadiationXfs,SolarFlareXfs;
  for(int32 AI=0;AI<ActiveAsteroids.Num();++AI) {
   const FVector4& A=ActiveAsteroids[AI];
   const float Spin=float(SimulationSeconds*(8.0+(AI%5)*3.0)+AI*47.0);
@@ -692,15 +739,14 @@ void AOVController::UpdateCombatPresentation()
    SolarFlareXfs.Emplace(WaveRot.Quaternion(),FVector(WaveX,0.f,300.f*(CalibrationScenario>=0?6.f:1.f)),FVector(6.5f*Scale,48.f*Scale,14.f*Scale));
   }
  }
- if(ActiveEnvironment==EOVSpaceEnvironmentType::BlackHole) {
-  const float Scale=CalibrationScenario>=0?20.f:1.f;
-  const FRotator BHRot(14.f,float(NowReal*38.0),8.f);
-  BlackHoleXfs.Emplace(BHRot.Quaternion(),ActiveBlackHoleCenter,FVector(11.5f*Scale));
+ if (BlackHoleMeshes) {
+  BlackHoleMeshes->SetVisibility(ActiveEnvironment==EOVSpaceEnvironmentType::BlackHole);
+  if(ActiveEnvironment==EOVSpaceEnvironmentType::BlackHole)
+   BlackHoleMeshes->SetWorldLocation(ActiveBlackHoleCenter);
  }
  SyncInstances(AsteroidMeshes,AsteroidXfs);
  SyncInstances(RadiationZoneMeshes,RadiationXfs);
  SyncInstances(SolarFlareMeshes,SolarFlareXfs);
- SyncInstances(BlackHoleMeshes,BlackHoleXfs);
  SyncInstances(StandardMissileMeshes,StdMissiles);
  SyncInstances(AntiShipMissileMeshes,AntiShipMissiles);
  SyncInstances(CannonProjectileMeshes,CannonBolts);
@@ -831,6 +877,20 @@ void AOVController::SelectAdditional(AOVShip* Ship)
  if(Selection.Contains(Ship)) { Selection.Remove(Ship); Ship->bSelected=false; if(Selected==Ship) { Selected=Selection.Num()?Selection[0]:nullptr; ViewedDeck=0; SelectedSlot=0; SelectedArmor=0; SelectedWeapon=0; bPlacing=false; InputMode=EOVInputMode::None; bFollow=false; } }
  else { Selection.Add(Ship); Ship->bSelected=true; }
 }
+int32 AOVController::SelectFleetRectangle(FVector2D Start, FVector2D End, bool bAdditive)
+{
+ const FBox2D Box(Start.ComponentMin(End),Start.ComponentMax(End));
+ if(!bAdditive || (Selected && !Selected->bFriendly)) ClearSelection();
+ for(AOVShip* Ship : Ships) {
+  FVector2D Pixel;
+  if(!IsValid(Ship) || !Ship->bFriendly || Ship->Systems->bWrecked || Ship->IsHidden() ||
+     (Combat && Combat->IsDeparted(Ship)) || Selection.Contains(Ship)) continue;
+  if(ProjectWorldLocationToScreen(Ship->GetActorLocation(),Pixel) && Box.IsInsideOrOn(Pixel))
+   SelectAdditional(Ship);
+ }
+ LastAction=FString::Printf(TEXT("아군 %d척 선택"),Selection.Num());
+ return Selection.Num();
+}
 void AOVController::SetTarget(AOVShip* Ship)
 {
  if(Combat && Combat->bEnabled && Combat->IsDeparted(Ship)) return;
@@ -853,6 +913,10 @@ bool AOVController::ActionPressed(FName Name) const
 }
 void AOVController::Action(FName Name)
 {
+ if(Name==TEXT("RepairOrder")) { InputMode=EOVInputMode::Repair; bPlacing=false; LastAction=TEXT("수리할 아군 함선을 클릭하세요"); return; }
+ if(Name==TEXT("Move") || Name==TEXT("Stop") || Name==TEXT("MoveAuto"))
+  for(AOVShip* FieldShip:Selection) GetWorld()->GetSubsystem<UOVLogisticsSubsystem>()->CancelFieldOrder(FieldShip);
+
  if(auto* Play=GetWorld()->GetSubsystem<UOVPlayScenarioSubsystem>();Play&&Play->HandleAction(*this,Name)) return;
  if(Name==TEXT("Env_None")) { SetSpaceEnvironment(EOVSpaceEnvironmentType::None); return; }
  if(Name==TEXT("Env_AsteroidField")) { SetSpaceEnvironment(EOVSpaceEnvironmentType::AsteroidField); return; }
@@ -871,7 +935,7 @@ void AOVController::Action(FName Name)
  if(Name==TEXT("Overview")) { FrameEngagement(); return; }
  if(Name.ToString().StartsWith(TEXT("Pick_")) || Name.ToString().StartsWith(TEXT("WorldPick_"))) {
   const int32 Index=FCString::Atoi(*Name.ToString().Mid(Name.ToString().StartsWith(TEXT("WorldPick_"))?10:5));
-  if(Ships.IsValidIndex(Index)) { if(InputMode==EOVInputMode::Target) SetTarget(Ships[Index]); else SelectShipFromUser(Ships[Index],false); } return;
+  if(Ships.IsValidIndex(Index)) { if(InputMode==EOVInputMode::Repair){auto* Service=GetWorld()->GetSubsystem<UOVLogisticsSubsystem>(); Service->OrderRepair(Selected,Ships[Index]);LastAction=Service->LastReason;InputMode=EOVInputMode::None;} else if(InputMode==EOVInputMode::Target) SetTarget(Ships[Index]); else SelectShipFromUser(Ships[Index],false); } return;
  }
  if(Name==TEXT("CalibrationRange")) { StartCalibrationRange((CalibrationScenario+1)%3); return; }
  if(Name==TEXT("CombatRange")) { StartCombatRange(); return; }
@@ -892,38 +956,48 @@ void AOVController::Action(FName Name)
  if(Name==TEXT("Speed1")) SimulationSpeed=1;
  if(Name==TEXT("Speed2")) SimulationSpeed=2;
  if(Name==TEXT("Speed3")) SimulationSpeed=3;
- if(Name==TEXT("Ship1")) SelectShip(Ships[0]);
- if(Name==TEXT("Ship2")) SelectShip(Ships[1]);
- if(Name==TEXT("Ship3")) SelectShip(Ships[2]);
+ if(Name==TEXT("Ship1") && Ships.IsValidIndex(0)) SelectShip(Ships[0]);
+ if(Name==TEXT("Ship2") && Ships.IsValidIndex(1)) SelectShip(Ships[1]);
+ if(Name==TEXT("Ship3") && Ships.IsValidIndex(2)) SelectShip(Ships[2]);
  if(Name==TEXT("Deselect")) ClearSelection();
  if(Name==TEXT("ToggleDebugOutlines")) { bShowDebugOutlines=!bShowDebugOutlines; LastAction=bShowDebugOutlines?TEXT("윤곽선 표시 켜짐"):TEXT("윤곽선 표시 꺼짐"); return; }
  if(Name==TEXT("Developer")) { FlushPressedKeys(); bDeveloperMode=!bDeveloperMode; ViewedDeck=0; if(auto* HUD=Cast<AOVHUD>(GetHUD()))HUD->SyncAddedUI(); }
- if(Selected && Selected->bFriendly && Selected->Systems->CanCommand() && !(Combat&&Combat->bEnabled&&Combat->IsDeparted(Selected))) {
-  if(Name==TEXT("Manual")) { Selected->SetAutomation(false,false); LastAction=TEXT("이동·사격 수동"); }
-  if(Name==TEXT("Auto")) { Selected->SetAutomation(true,true); bPlacing=false; InputMode=EOVInputMode::None; LastAction=TEXT("AUTO / Hold and manual attitude preserved")+(Combat&&Combat->bEnabled?FString(TEXT(" / automatic engagement")):FString(TEXT("; combat deferred"))); }
-  if(Name==TEXT("MoveAuto") && Combat && Combat->bEnabled) {
-   Selected->SetAutomation(!Selected->IsMovementAutomatic(),Selected->IsAttackAutomatic());
-   bPlacing=false; InputMode=EOVInputMode::None;
-   LastAction=TEXT("이동 자동화 변경 · 사격과 정지/수동 자세 유지");
+ const auto CanReceive = [this](AOVShip* Ship) {
+  return IsValid(Ship) && Ship->bFriendly && Ship->Systems->CanCommand() && !(Combat && Combat->IsDeparted(Ship));
+ };
+ if(Selection.Num()>1 && !CanReceive(Selected)) {
+  for(AOVShip* Ship : Selection) if(CanReceive(Ship)) {
+   Selected=Ship; SelectedWeapon=SelectedSlot=SelectedArmor=ViewedDeck=0; bFollow=false; break;
   }
-  if(Name==TEXT("FireAuto") && Combat && Combat->bEnabled) {
-   Selected->SetAutomation(Selected->IsMovementAutomatic(),!Selected->IsAttackAutomatic());
-   LastAction=TEXT("사격 자동화 변경 · 이동 명령 유지");
-  }
-  if(Name==TEXT("AutoFree") && Combat && Combat->bEnabled) {
-   Selected->SetAutomation(true,true);
-   if(!Selected->bHasDestination && !Selected->bFTLCharging && !Selected->bManualAttitude) Selected->bHold=false;
-   bPlacing=false; InputMode=EOVInputMode::None;
-   LastAction=TEXT("AUTO FREE / release Hold only; existing destination, manual attitude and FTL remain authoritative");
+ }
+ if(CanReceive(Selected)) {
+  const bool bSetMoveAuto=Name==TEXT("MoveAuto"), bSetFireAuto=Name==TEXT("FireAuto");
+  const bool bAuto=Name==TEXT("Auto") || Name==TEXT("AutoFree"), bManual=Name==TEXT("Manual");
+  if(bAuto || bManual || bSetMoveAuto || bSetFireAuto)
+  {
+   const bool MoveOn=bAuto || (bSetMoveAuto && !Selected->IsMovementAutomatic());
+   const bool FireOn=bAuto || (bSetFireAuto && !Selected->IsAttackAutomatic());
+   for(AOVShip* Ship : Selection) if(CanReceive(Ship)) {
+    Ship->SetAutomation(bSetFireAuto?Ship->IsMovementAutomatic():MoveOn,bSetMoveAuto?Ship->IsAttackAutomatic():FireOn);
+    if(Name==TEXT("AutoFree") && !Ship->bHasDestination && !Ship->bFTLCharging && !Ship->bManualAttitude) Ship->bHold=false;
+   }
+   if(!bSetFireAuto) { bPlacing=false; InputMode=EOVInputMode::None; }
+   LastAction=bSetMoveAuto?TEXT("선택함 이동 자동화 변경"):bSetFireAuto?TEXT("선택함 사격 자동화 변경"):bAuto?TEXT("선택함 자동 운용"):TEXT("선택함 수동 운용");
   }
   if(Combat && Combat->bEnabled) {
    const auto Order=Combat->GetShipState(Selected);
-   if(!Order.ForcedMount.IsNone() && (Name==TEXT("Cancel") || Name==TEXT("Move") || Name==TEXT("Stop") || Name==TEXT("Heading") || Name==TEXT("Manual") || Name==TEXT("Auto") || Name==TEXT("AutoFree") || Name==TEXT("FireAuto") || Name==TEXT("MoveAuto")))
-    Combat->SetAttackIntent(Selected,Order.Intent);
-   if(Name==TEXT("HullIntent")) Combat->SetAttackIntent(Selected,EOVAttackIntent::DestroyHull);
-   if(Name==TEXT("GunIntent")) Combat->SetAttackIntent(Selected,EOVAttackIntent::DisableWeapons);
-   if(Name==TEXT("CancelAttack")) Combat->CancelAttackOrder(Selected);
-   if(Name==TEXT("Protection")) Combat->SetProtectionPolicy(Selected,static_cast<EOVProtectionPolicy>((static_cast<int32>(Order.Protection)+1)%3));
+   const auto NextProtection=static_cast<EOVProtectionPolicy>((static_cast<int32>(Order.Protection)+1)%3);
+   const bool CancelForced=bAuto||bManual||bSetMoveAuto||bSetFireAuto||Name==TEXT("Cancel")||Name==TEXT("Move")||Name==TEXT("Stop")||Name==TEXT("Heading");
+   for(AOVShip* Ship : Selection) if(CanReceive(Ship)) {
+    if(CancelForced) {
+     const auto Current=Combat->GetShipState(Ship);
+     if(!Current.ForcedMount.IsNone()) Combat->SetAttackIntent(Ship,Current.Intent);
+    }
+    if(Name==TEXT("HullIntent")) Combat->SetAttackIntent(Ship,EOVAttackIntent::DestroyHull);
+    if(Name==TEXT("GunIntent")) Combat->SetAttackIntent(Ship,EOVAttackIntent::DisableWeapons);
+    if(Name==TEXT("CancelAttack")) Combat->CancelAttackOrder(Ship);
+    if(Name==TEXT("Protection")) Combat->SetProtectionPolicy(Ship,NextProtection);
+   }
    if(Name==TEXT("ForceGun") && Selected->Systems->WeaponMountStates.IsValidIndex(SelectedWeapon)) {
     const FName M=Selected->Systems->WeaponMountStates[SelectedWeapon].WeaponMountId;
     if(Combat->SetAttackIntent(Selected,EOVAttackIntent::DisableWeapons,M)) Combat->RequestFire(Selected,M);
@@ -942,21 +1016,25 @@ void AOVController::Action(FName Name)
   if((Name==TEXT("Fire") || Name==TEXT("FireAll")) && Combat && Combat->bEnabled) {
    const auto& Mounts=Selected->Systems->WeaponMountStates;
    const FName Mount=Name==TEXT("FireAll")?NAME_None:(Mounts.IsValidIndex(SelectedWeapon)?Mounts[SelectedWeapon].WeaponMountId:NAME_None);
-   const bool Accepted=Combat->RequestFire(Selected,Mount);
+   bool Accepted=false;
+   if(Name==TEXT("FireAll")) {
+    for(AOVShip* Ship : Selection)
+     if(Ship->bFriendly && Ship->Systems->CanCommand()) Accepted |= Combat->RequestFire(Ship,NAME_None);
+   } else Accepted=Combat->RequestFire(Selected,Mount);
    LastAction=Accepted?TEXT("발사 요청 접수 · 조준/사거리/시설 조건 충족 시 한 차례 발사"):TEXT("발사 요청 거부 · 표적/소유/무장 상태 확인");
   }
   if(Name==TEXT("Move")) { bPlacing=true; InputMode=EOVInputMode::Move; Preview=Selected->GetActorLocation(); PlacementPlaneZ=Preview.Z; OrderInput.Reset(); LastAction=(bPlayGame3?TEXT("평면 위치 지정 · Shift 드래그 고도 · 클릭/Enter 확정"):TEXT("평면 위치 지정 · Shift/우클릭 고도 · 클릭/Enter 확정")); }
   if(Name==TEXT("Up") && bPlacing) Preview.Z=FMath::Min(Preview.Z+250*AltitudeScale(),CommandMaxZ());
   if(Name==TEXT("Down") && bPlacing) Preview.Z=FMath::Max(Preview.Z-250*AltitudeScale(),CommandMinZ());
   if(Name==TEXT("Confirm")) ConfirmMove();
-  if(Name==TEXT("Stop")) { for(AOVShip* Ship:Selection) { Transport->SuspendShuttle(Ship); Ship->StopMovement(); } bPlacing=false; InputMode=EOVInputMode::None; LastAction=TEXT("감속 정지 · 위치 유지"); }
+  if(Name==TEXT("Stop")) { for(AOVShip* Ship:Selection) if(CanReceive(Ship)) { Transport->SuspendShuttle(Ship); Ship->StopMovement(); } bPlacing=false; InputMode=EOVInputMode::None; LastAction=TEXT("감속 정지 · 위치 유지"); }
   if(Name==TEXT("Target")) { bPlacing=false; InputMode=EOVInputMode::Target; LastAction=TEXT("적을 클릭해 표적 지정 · 발사는 별도 B/L 명령"); }
   if(Name==TEXT("ClearTarget")) { if(Combat&&Combat->bEnabled) Combat->SetTarget(Selected,nullptr); else Selected->AttackTarget=nullptr; }
   if(Name==TEXT("Heading")) { Transport->SuspendShuttle(Selected); bPlacing=false; InputMode=EOVInputMode::Heading; PlacementPlaneZ=Selected->GetActorLocation().Z; LastAction=TEXT("전장을 클릭해 방향 지정 · 현재 상하 기울기 유지"); }
   if(Name==TEXT("Port") || Name==TEXT("Starboard")) { FRotator Attitude=Selected->GetActorRotation(); Attitude.Yaw+=Name==TEXT("Port")?-90:90; Selected->SetManualAttitude(Attitude); }
   if(Name==TEXT("Repair")) LastAction=TEXT("보급 수리 미지원 · 시험 수리는 DEV에서만 가능");
  }
- if(Name==TEXT("Cancel")) { bPlacing=false; InputMode=EOVInputMode::None; bRightGesture=false; }
+ if(Name==TEXT("Cancel")) { bFleetDrag=false; bPlacing=false; InputMode=EOVInputMode::None; bRightGesture=false; }
  if(Name==TEXT("Focus") && Selected) { bFollow=!bFollow && !Selected->Systems->bWrecked; if(bFollow || !bPlayGame3) CameraFocus=Selected->GetActorLocation(); }
  if(Name==TEXT("Details")) if(AOVHUD* HUD=Cast<AOVHUD>(GetHUD())) HUD->OpenDetails();
  if(Selected && Selected->Systems->Layout) {
@@ -989,7 +1067,7 @@ void AOVController::Action(FName Name)
 void AOVController::ConfirmMove()
 {
  if(!bPlacing || !Selected || !Selected->bFriendly || !Selected->Systems->CanCommand()) return;
- for(AOVShip* Ship:Selection) if(Ship->bFriendly && Ship->Systems->CanCommand()) { Transport->SuspendShuttle(Ship); Ship->SetAutomation(false,Ship->IsAttackAutomatic()); Ship->SetDestination(Preview+(Ship->GetActorLocation()-Selected->GetActorLocation())); }
+ for(AOVShip* Ship:Selection) if(Ship->bFriendly && Ship->Systems->CanCommand()) { GetWorld()->GetSubsystem<UOVLogisticsSubsystem>()->CancelFieldOrder(Ship); Transport->SuspendShuttle(Ship); Ship->SetAutomation(false,Ship->IsAttackAutomatic()); Ship->SetDestination(Preview+(Ship->GetActorLocation()-Selected->GetActorLocation())); }
  bPlacing=false; InputMode=EOVInputMode::None;
  LastAction=FString::Printf(TEXT("이동 명령 수락 · X %.0fm  Y %.0fm  고도 %.0fm"),Preview.X/100,Preview.Y/100,Preview.Z/100);
  UE_LOG(LogTemp,Display,TEXT("OV: %s"),*LastAction);
@@ -1038,7 +1116,7 @@ void AOVController::ApplyCameraInput(FVector2D OrbitDelta, FVector LocalPan, flo
 {
  const float Dt=FMath::Clamp(RealSeconds,0.f,.1f);
  CameraYaw=FRotator::NormalizeAxis(CameraYaw+OrbitDelta.X*(bPlayGame3?.32:.3)+YawAxis*75*Dt);
- CameraPitch=FMath::Clamp(CameraPitch-OrbitDelta.Y*(bPlayGame3?.28:.3),bPlayGame3?-84.:-85.,bPlayGame3?-12.:-10.);
+ CameraPitch=FRotator::NormalizeAxis(CameraPitch-OrbitDelta.Y*(bPlayGame3?.28:.3));
  if(Wheel)
  {
   float MinDistance=1200;
@@ -1107,6 +1185,8 @@ void AOVController::CancelRightMove()
 
 void AOVController::FlushPressedKeys()
 {
+ bFleetDrag=false;
+ SandboxConsumedButton=FKey();
  Super::FlushPressedKeys();
  OrbitGesture={};
  bConsumeAltLeft=false;
@@ -1219,6 +1299,51 @@ bool AOVController::InputKey(const FInputKeyEventArgs& Params)
   auto* HUD=Cast<AOVHUD>(GetHUD());
   const bool OverUI=Inside && HUD && HUD->IsOverPanel(Cursor.X,Cursor.Y);
   const bool Alt=Params.Viewport && (Params.Viewport->KeyState(EKeys::LeftAlt)||Params.Viewport->KeyState(EKeys::RightAlt));
+  if(Released && SandboxConsumedButton==Key) { SandboxConsumedButton=FKey(); return true; }
+  if(auto* Play=GetPlayScenario(); Play && Play->bSandboxPlacing && HUD && HUD->AllowsSandboxPlacement() && Pressed) {
+   if(Key==EKeys::Escape || (!OverUI && Inside && Key==EKeys::RightMouseButton)) {
+    Play->HandleAction(*this,TEXT("Cancel")); SandboxConsumedButton=Key; return true;
+   }
+   if(!Alt && Key==EKeys::LeftMouseButton && Inside && !OverUI && OrbitGesture.Surface==EOVOrbitSurface::None) {
+    if(Play->UpdateSandboxPointer(*this,Cursor,true)) Play->PlaceSandboxShip(Play->SandboxPoint);
+    else Play->SandboxHint=TEXT("배치 불가 · 시야각, 간격 또는 경계를 확인하세요");
+    SandboxConsumedButton=Key; return true;
+   }
+  }
+  if(bFleetDrag)
+  {
+   if(Released && Key==EKeys::LeftMouseButton)
+   {
+    bFleetDrag=false;
+    if(Inside && !OverUI && Params.Viewport->HasFocus()) {
+     if(FVector2D::Distance(FleetDragStart,Cursor)>=6)
+      SelectFleetRectangle(FleetDragStart,Cursor,bFleetDragAdd);
+     else {
+      FHitResult Hit;
+      GetHitResultAtScreenPosition(Cursor,ECC_Visibility,false,Hit);
+      AOVShip* Pick=Cast<AOVShip>(Hit.GetActor());
+      const FName Marker=HUD ? HUD->WorldMarkerAt(Cursor) : NAME_None;
+      if(!Marker.IsNone()) {
+       const int32 I=FCString::Atoi(*Marker.ToString().Mid(10));
+       if(Ships.IsValidIndex(I)) Pick=Ships[I];
+      }
+      SelectShipFromUser(Pick,bFleetDragAdd);
+     }
+    }
+    return true;
+   }
+   if(Key==EKeys::Escape) { bFleetDrag=false; return true; }
+   if(Key.IsMouseButton()) return true;
+  }
+  if(Pressed && Key==EKeys::LeftMouseButton && !Alt && Inside && !OverUI &&
+     !bPlacing && InputMode==EOVInputMode::None && !RightMove.bActive &&
+     OrbitGesture.Surface==EOVOrbitSurface::None)
+  {
+   FleetDragStart=FleetDragEnd=Cursor;
+   bFleetDragAdd=Params.Viewport->KeyState(EKeys::LeftShift)||Params.Viewport->KeyState(EKeys::RightShift);
+   bFleetDrag=true;
+   return true;
+  }
   const bool AltLeft=Key==EKeys::LeftMouseButton && (bConsumeAltLeft || (bPlayGame3 && Pressed && Alt));
   if(Key==EKeys::MiddleMouseButton || AltLeft)
   {
@@ -1296,7 +1421,14 @@ void AOVController::StepSimulation(float DeltaTime)
    LastAction=bAnyUnsheltered?TEXT("태양 플레어 파동 통과 · 비엄폐 함선 쉴드 과부하 및 레이더 일시 교란"):TEXT("태양 플레어 파동 통과 · 운석 엄폐로 피해 완화");
   }
  }
- if(Combat && Combat->bEnabled) { Combat->Simulate(Remaining); if(Selected&&Combat->IsDeparted(Selected)) ClearSelection(); return; }
+ if(Combat && Combat->bEnabled) { Combat->Simulate(Remaining); for(int32 I=Selection.Num()-1;I>=0;--I) {
+  AOVShip* Ship=Selection[I];
+  if(!IsValid(Ship) || Combat->IsDeparted(Ship)) {
+   if(Ship) Ship->bSelected=false;
+   Selection.RemoveAt(I);
+   if(Selected==Ship) { Selected=Selection.IsEmpty()?nullptr:Selection[0]; bFollow=false; bPlacing=false; InputMode=EOVInputMode::None; SelectedWeapon=0; ViewedDeck=0; SelectedSlot=SelectedArmor=0; }
+  }
+ } return; }
  while(Remaining>UE_SMALL_NUMBER) {
   const float Dt=FMath::Min(Remaining,1.f/60.f); Remaining-=Dt;
   for(AOVShip* Ship:Ships) {
@@ -1321,20 +1453,39 @@ void AOVController::ResolveContacts(float SimDelta)
   AOVShip* A=Ships[I]; AOVShip* B=Ships[J];
   if(A->Systems->bWrecked||B->Systems->bWrecked) continue;
   if(Combat && Combat->bEnabled && (Combat->IsDeparted(A)||Combat->IsDeparted(B))) continue;
-  const double RadiusA=ContactRadius(A), RadiusB=ContactRadius(B);
-  FVector Delta=B->GetActorLocation()-A->GetActorLocation(); const double Distance=Delta.Size();
-  const FVector Normal=Distance>0.001?Delta/Distance:FVector::RightVector;
+  const FVector Centers=B->Hull->Bounds.Origin-A->Hull->Bounds.Origin;
+  if (Centers.SizeSquared() > FMath::Square(A->Hull->Bounds.SphereRadius+B->Hull->Bounds.SphereRadius+80.)) continue;
+  if (!A->Hull->GetStaticMesh() || !B->Hull->GetStaticMesh()) continue;
+  // Separating axes of the two fitted hull envelopes. Use the shallowest contact,
+  // not the diagonal of a long thin hull, to steer and resolve overlap.
+  const FVector EA=A->Hull->GetStaticMesh()->GetBounds().BoxExtent*A->Hull->GetComponentScale().GetAbs();
+  const FVector EB=B->Hull->GetStaticMesh()->GetBounds().BoxExtent*B->Hull->GetComponentScale().GetAbs();
+  const FQuat QA=A->Hull->GetComponentQuat(), QB=B->Hull->GetComponentQuat();
+  const FVector AxesA[]={QA.GetAxisX(),QA.GetAxisY(),QA.GetAxisZ()};
+  const FVector AxesB[]={QB.GetAxisX(),QB.GetAxisY(),QB.GetAxisZ()};
+  double Penetration=DBL_MAX;
+  FVector Normal=FVector::RightVector;
+  auto Project=[&](FVector Axis)
+  {
+   if (!Axis.Normalize()) return;
+   const double Span=EA.Dot(QA.UnrotateVector(Axis).GetAbs())+EB.Dot(QB.UnrotateVector(Axis).GetAbs());
+   const double Signed=Centers.Dot(Axis);
+   const double Depth=Span-FMath::Abs(Signed);
+   if (Depth<Penetration) { Penetration=Depth; Normal=Signed<0 ? -Axis : Axis; }
+  };
+  for (const FVector& Axis:AxesA) Project(Axis);
+  for (const FVector& Axis:AxesB) Project(Axis);
+  for (const FVector& X:AxesA) for (const FVector& Y:AxesB) Project(X.Cross(Y));
+  if (Penetration < -80.) continue;
   const bool MoveA=A->Systems->CanMove()&&!A->bFTLCharging;
   const bool MoveB=B->Systems->CanMove()&&!B->bFTLCharging;
   if(!MoveA&&!MoveB) continue;
-  if(Distance<RadiusA+RadiusB+80) {
-   // Soft avoidance steers velocity before hard overlap correction.
-   const float Push=40*SimDelta;
-   if(MoveA&&!A->bHold) A->Velocity-=Normal*Push;
-   if(MoveB&&!B->bHold) B->Velocity+=Normal*Push;
-  }
-  if(Distance<RadiusA+RadiusB) {
-   const FVector Correction=Normal*(RadiusA+RadiusB-Distance+0.1);
+  const double Closing=FMath::Max(0.,(A->Velocity-B->Velocity).Dot(Normal));
+  const double Push=FMath::Min(Closing, (80.+Penetration)*10.*SimDelta);
+  if(MoveA&&!A->bHold) A->Velocity-=Normal*Push*(MoveB&&!B->bHold?.5:1.);
+  if(MoveB&&!B->bHold) B->Velocity+=Normal*Push*(MoveA&&!A->bHold?.5:1.);
+  if(Penetration>0) {
+   const FVector Correction=Normal*FMath::Min(Penetration,350.*SimDelta);
    if(MoveA) A->AddActorWorldOffset(-Correction*(MoveB?0.5:1));
    if(MoveB) B->AddActorWorldOffset(Correction*(MoveA?0.5:1));
    ++PairResolutionCount;
@@ -1353,7 +1504,7 @@ void AOVController::ResolveContacts(float SimDelta)
     const double Distance=Delta.Size();
     const FVector Normal=Distance>0.001?Delta/Distance:FVector::RightVector;
     if(Distance<ShipRad+AstRad+100.0 && !Ship->bHold) Ship->Velocity+=Normal*(65.f*SimDelta);
-    if(Distance<ShipRad+AstRad) Ship->AddActorWorldOffset(Normal*(ShipRad+AstRad-Distance+0.1));
+    if(Distance<ShipRad+AstRad) Ship->AddActorWorldOffset(Normal*FMath::Min(ShipRad+AstRad-Distance,350.*SimDelta));
    }
   }
  }
@@ -1376,12 +1527,11 @@ void AOVController::ResolveContacts(float SimDelta)
      const FVector Dir=ToCenter/Dist;
      const float Accel=FOVSpaceEnvironmentProfile::ComputeBlackHoleGravityAccelerationCm(
          float(Dist),BH.CoreHazardRadiusCm,BH.InfluenceRadiusCm,BH.MaxAccelerationCmPerSec2);
-     if(Ship->bFTLCharging || Ship->bHold || !Ship->Systems->CanMove()) {
-      Ship->AddActorWorldOffset(Dir*(0.5f*Accel*SimDelta*SimDelta + Accel*SimDelta),false);
-     } else {
-      Ship->Velocity+=Dir*(Accel*SimDelta);
-     }
-    }
+     Ship->AddActorWorldOffset(Ship->EnvironmentPullVelocity*SimDelta + Dir*(.5f*Accel*SimDelta*SimDelta), false);
+     Ship->EnvironmentPullVelocity+=Dir*(Accel*SimDelta);
+     if (FVector::DistSquared(ActiveBlackHoleCenter,Ship->GetActorLocation()) <= FMath::Square(BH.CoreHazardRadiusCm))
+     { Ship->Systems->ForceWreckInstant(); Ship->TriggerWreckDissolve(); }
+    } else Ship->EnvironmentPullVelocity=FVector::ZeroVector;
    }
   }
  }
@@ -1399,6 +1549,18 @@ void AOVController::PlayerTick(float DeltaTime)
  const float MX=Cursor.X,MY=Cursor.Y;
  const bool Inside=Focused&&Pixel.X>=0&&Pixel.Y>=0&&Pixel.X<Size.X&&Pixel.Y<Size.Y;
  AOVHUD* HUD=Cast<AOVHUD>(GetHUD());
+ if(auto* Play=GetPlayScenario(); Play && Play->bSandboxPlacing)
+  Play->UpdateSandboxPointer(*this,Cursor,Inside && HUD && HUD->AllowsSandboxPlacement() && !HUD->IsOverPanel(MX,MY));
+ if(bFleetDrag) {
+  if(!Inside || (HUD && (HUD->bStarMapOpen || HUD->IsTitleScreenOpen() || HUD->IsAddedUIEditing()))) bFleetDrag=false;
+  else FleetDragEnd=Cursor;
+ }
+ if (HUD && (HUD->bPauseMenu || HUD->bStarMapOpen || HUD->IsTitleScreenOpen()))
+ {
+  OrbitGesture={}; CancelRightMove(); HUD->CancelPointerDrag();
+  if (WasInputKeyJustPressed(EKeys::Escape) || (HUD->bPauseMenu && !HUD->IsTitleScreenOpen() && WasInputKeyJustPressed(EKeys::F1))) HUD->CloseTopModal();
+  StepSimulation(DeltaTime); UpdateCamera(); UpdateCombatPresentation(); return;
+ }
  if(HUD&&HUD->IsAddedUIEditing())
  {
   OrbitGesture={};CancelRightMove();HUD->CancelPointerDrag();
@@ -1465,7 +1627,14 @@ void AOVController::PlayerTick(float DeltaTime)
  if(ActionPressed(TEXT("OVSpeed1"))) Action(TEXT("Speed1"));
  if(ActionPressed(TEXT("OVSpeed2"))) Action(TEXT("Speed2"));
  if(ActionPressed(TEXT("OVSpeed3"))) Action(TEXT("Speed3"));
- if(ActionPressed(TEXT("OVCancel"))) Action(TEXT("Cancel"));
+ if(ActionPressed(TEXT("OVCancel")))Action(TEXT("Cancel"));
+ if(WasInputKeyJustPressed(EKeys::Escape)) {
+  if(HUD && HUD->CloseTopModal()) {}
+  else if(bPlacing || bRightGesture || bFleetDrag || InputMode!=EOVInputMode::None) Action(TEXT("Cancel"));
+  else if(Selected) ClearSelection();
+  else if(HUD) HUD->TogglePauseMenu();
+  return;
+ }
  if(InWorld) {
   if(ActionPressed(TEXT("OVFollow"))) Action(TEXT("Focus"));
   if(ActionPressed(TEXT("OVMove"))) Action(TEXT("Move"));
@@ -1499,7 +1668,8 @@ void AOVController::PlayerTick(float DeltaTime)
   if(bPlacing) ConfirmMove();
   else if(InputMode==EOVInputMode::Heading) { FVector O,D,P; if(DeprojectMousePositionToWorld(O,D)&&FOVOrderInput::Project(O,D,PlacementPlaneZ,P,ProjectionNearDistance,CommandRayLength())) IssueHeading(P); }
   else { FHitResult Hit; AOVShip* Ship=nullptr; if(GetHitResultUnderCursor(ECC_Visibility,false,Hit)) Ship=Cast<AOVShip>(Hit.GetActor());
-   if(InputMode==EOVInputMode::Target) { if(Ship) SetTarget(Ship); }
+   if(InputMode==EOVInputMode::Repair) { auto* Service=GetWorld()->GetSubsystem<UOVLogisticsSubsystem>(); Service->OrderRepair(Selected,Ship); LastAction=Service->LastReason; InputMode=EOVInputMode::None; }
+   else if(InputMode==EOVInputMode::Target) { if(Ship) SetTarget(Ship); }
    else SelectShipFromUser(Ship,Shift);
   }
  }

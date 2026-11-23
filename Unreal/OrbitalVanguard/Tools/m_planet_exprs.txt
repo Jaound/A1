@@ -1,0 +1,55 @@
+Num expressions: 54
+MaterialExpressionTextureSampleParameter2D: MaterialExpressionTextureSampleParameter2D_0 (Param: Diffuse Texture, Tex: T_8k_earth_daymap)
+MaterialExpressionScalarParameter: MaterialExpressionScalarParameter_4 (Param: Metallic Amount, Val: 0.0)
+MaterialExpressionReroute: MaterialExpressionReroute_12
+MaterialExpressionSwitch: MaterialExpressionSwitch_0
+MaterialExpressionTextureSampleParameter2D: MaterialExpressionTextureSampleParameter2D_1 (Param: Roughness Texture, Tex: DefaultTexture)
+MaterialExpressionMultiply: MaterialExpressionMultiply_0
+MaterialExpressionMultiply: MaterialExpressionMultiply_1
+MaterialExpressionPower: MaterialExpressionPower_1
+MaterialExpressionSkyAtmosphereLightDirection: MaterialExpressionSkyAtmosphereLightDirection_0
+MaterialExpressionVertexNormalWS: MaterialExpressionVertexNormalWS_0
+MaterialExpressionDotProduct: MaterialExpressionDotProduct_0
+MaterialExpressionOneMinus: MaterialExpressionOneMinus_0
+MaterialExpressionClamp: MaterialExpressionClamp_0
+MaterialExpressionPower: MaterialExpressionPower_2
+MaterialExpressionTextureSampleParameter2D: MaterialExpressionTextureSampleParameter2D_3 (Param: Emissive_Texture, Tex: Black)
+MaterialExpressionScalarParameter: MaterialExpressionScalarParameter_1 (Param: Emissive Strength, Val: 1.0)
+MaterialExpressionScalarParameter: MaterialExpressionScalarParameter_3 (Param: Roughness, Val: 0.5)
+MaterialExpressionVectorParameter: MaterialExpressionVectorParameter_2 (Param: Specular Color, Val: <Struct 'LinearColor' (0x0000020919C1FCF8) {r: 0.500000, g: 0.500000, b: 0.500000, a: 1.000000}>)
+MaterialExpressionTextureSampleParameter2D: MaterialExpressionTextureSampleParameter2D_7 (Param: Specular Texture, Tex: T_8k_earth_specular_map)
+MaterialExpressionTextureSampleParameter2D: MaterialExpressionTextureSampleParameter2D_8 (Param: Normal_Texture, Tex: T_8k_earth_normal_map)
+MaterialExpressionScalarParameter: MaterialExpressionScalarParameter_6 (Param: Normal_Intensity, Val: 1.0)
+MaterialExpressionMaterialFunctionCall: MaterialExpressionMaterialFunctionCall_1
+MaterialExpressionConstant: MaterialExpressionConstant_0
+MaterialExpressionMultiply: MaterialExpressionMultiply_4
+MaterialExpressionConstant3Vector: MaterialExpressionConstant3Vector_4
+MaterialExpressionScalarParameter: MaterialExpressionScalarParameter_0 (Param: Trim Lights, Val: 1.0)
+MaterialExpressionScalarParameter: MaterialExpressionScalarParameter_2 (Param: Emissive Falloff, Val: 10.0)
+MaterialExpressionMultiply: MaterialExpressionMultiply_5
+MaterialExpressionScalarParameter: MaterialExpressionScalarParameter_5 (Param: Roughness_Weight, Val: 1.0)
+MaterialExpressionMultiply: MaterialExpressionMultiply_6
+MaterialExpressionScalarParameter: MaterialExpressionScalarParameter_8 (Param: Specular Weight, Val: 1.0)
+MaterialExpressionMultiply: MaterialExpressionMultiply_2
+MaterialExpressionPanner: MaterialExpressionPanner_0
+MaterialExpressionTextureCoordinate: MaterialExpressionTextureCoordinate_0
+MaterialExpressionAppendVector: MaterialExpressionAppendVector_0
+MaterialExpressionScalarParameter: MaterialExpressionScalarParameter_11 (Param: Planet_Rotation_Speed, Val: 0.0)
+MaterialExpressionConstant: MaterialExpressionConstant_4
+MaterialExpressionNamedRerouteDeclaration: MaterialExpressionNamedRerouteDeclaration_0
+MaterialExpressionNamedRerouteUsage: MaterialExpressionNamedRerouteUsage_0
+MaterialExpressionNamedRerouteUsage: MaterialExpressionNamedRerouteUsage_1
+MaterialExpressionNamedRerouteUsage: MaterialExpressionNamedRerouteUsage_2
+MaterialExpressionNamedRerouteUsage: MaterialExpressionNamedRerouteUsage_3
+MaterialExpressionNamedRerouteUsage: MaterialExpressionNamedRerouteUsage_4
+MaterialExpressionScalarParameter: MaterialExpressionScalarParameter_7 (Param: City_Lights, Val: 0.0)
+MaterialExpressionScalarParameter: MaterialExpressionScalarParameter_9 (Param: City_Lights_Shadow_Only, Val: 0.0)
+MaterialExpressionSwitch: MaterialExpressionSwitch_1
+MaterialExpressionSwitch: MaterialExpressionSwitch_2
+MaterialExpressionScalarParameter: MaterialExpressionScalarParameter_10 (Param: Specular_Switch, Val: 0.0)
+MaterialExpressionSwitch: MaterialExpressionSwitch_3
+MaterialExpressionScalarParameter: MaterialExpressionScalarParameter_12 (Param: Roughness_Switch, Val: 1.0)
+MaterialExpressionMultiply: MaterialExpressionMultiply_3
+MaterialExpressionVectorParameter: MaterialExpressionVectorParameter_0 (Param: Planet_Color_Blend, Val: <Struct 'LinearColor' (0x0000020919C1FB78) {r: 1.000000, g: 1.000000, b: 1.000000, a: 1.000000}>)
+MaterialExpressionScalarParameter: MaterialExpressionScalarParameter_13 (Param: Planet_Color_Blend_Intensity, Val: 0.0)
+MaterialExpressionMultiply: MaterialExpressionMultiply_7

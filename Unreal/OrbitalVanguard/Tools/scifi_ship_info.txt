@@ -1,0 +1,4 @@
+SM_SciFiShip:
+  Origin: <Struct 'Vector' (0x00000267A0E53440) {x: -159.600769, y: 0.000046, z: 295.298061}>
+  BoxExtent: <Struct 'Vector' (0x00000267A0E53458) {x: 685.531921, y: 307.903641, z: 238.337376}>
+  Mat: MM_SciFiShip

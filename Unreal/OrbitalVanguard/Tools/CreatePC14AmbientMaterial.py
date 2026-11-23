@@ -37,7 +37,14 @@ try:
     tint=lib.create_material_expression(mat,unreal.MaterialExpressionVectorParameter,-700,-220)
     tint.set_editor_property('parameter_name','FactionTint');tint.set_editor_property('default_value',unreal.LinearColor(1,1,1,1))
     tinted=lib.create_material_expression(mat,unreal.MaterialExpressionMultiply,-360,-80)
-    check('TINT',lib.connect_material_expressions(nodes['base'],'RGB',tinted,'A') and lib.connect_material_expressions(tint,'RGB',tinted,'B'))
+    albedo=nodes['base']; channel='RGB'
+    if name=='M_PC14_FieldReadable':
+        # 선체 도장의 어두운 중간톤만 올리고, 노멀·거칠기·금속도는 원본을 쓴다.
+        lifted=lib.create_material_expression(mat,unreal.MaterialExpressionPower,-510,-110)
+        lifted.set_editor_property('const_exponent',.58)
+        check('SHADOW-LIFT',lib.connect_material_expressions(albedo,'RGB',lifted,'Base'))
+        albedo=lifted;channel=''
+    check('TINT',lib.connect_material_expressions(albedo,channel,tinted,'A') and lib.connect_material_expressions(tint,'RGB',tinted,'B'))
     check('BASE',lib.connect_material_property(tinted,'',unreal.MaterialProperty.MP_BASE_COLOR))
     for kind,prop in [('normal',unreal.MaterialProperty.MP_NORMAL),('roughness',unreal.MaterialProperty.MP_ROUGHNESS),('metallic',unreal.MaterialProperty.MP_METALLIC)]:
         check('CONNECT-'+kind,lib.connect_material_property(nodes[kind],'RGB' if kind=='normal' else 'R',prop))

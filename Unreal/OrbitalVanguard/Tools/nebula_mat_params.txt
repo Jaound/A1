@@ -1,0 +1,23 @@
+=== M_Starfield_Nebula_Free_v02 ===
+Scalars: ['-- Starfield Pro adds layered nebula depth, rotation,  animated flow and full color control for cinematic results --', 'Nebula 1 intensity', 'Nebula 1 Hue', 'Nebula 1 De-Saturation', 'Nebula Layers (Pro)', 'Flow Animation (Pro)']
+Vectors: []
+Textures: ['Nebula 1']
+=== MI_Planet ===
+Scalars: ['Metallic Amount', 'Emissive Strength', 'Roughness', 'Normal_Intensity', 'Trim Lights', 'Emissive Falloff', 'Roughness_Weight', 'Specular Weight', 'Planet_Rotation_Speed', 'City_Lights', 'City_Lights_Shadow_Only', 'Specular_Switch', 'Roughness_Switch', 'Planet_Color_Blend_Intensity']
+Vectors: ['Specular Color', 'Planet_Color_Blend']
+  Scalar Metallic Amount = 0.0
+  Scalar Emissive Strength = 1.3118749856948853
+  Scalar Roughness = 0.5
+  Scalar Normal_Intensity = 5.0
+  Scalar Trim Lights = 3.0
+  Scalar Emissive Falloff = 10.0
+  Scalar Roughness_Weight = 1.0
+  Scalar Specular Weight = -1.0
+  Scalar Planet_Rotation_Speed = 9.999999747378752e-05
+  Scalar City_Lights = 0.0
+  Scalar City_Lights_Shadow_Only = 0.0
+  Scalar Specular_Switch = 0.0
+  Scalar Roughness_Switch = 1.0
+  Scalar Planet_Color_Blend_Intensity = 100.0
+  Vector Specular Color = (0.50, 0.50, 0.50, 1.00)
+  Vector Planet_Color_Blend = (0.02, 0.34, 1.00, 1.00)

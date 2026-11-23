@@ -37,11 +37,29 @@ bool UOVDevelopmentSubsystem::OpenRosterRoom()
 TArray<AOVShip*> UOVDevelopmentSubsystem::SpawnShips(FName Id, int32 Faction, int32 Count,
     FVector Location, float Spacing, int32 AircraftPerHangar, int32 Troops, bool MoveAuto, bool FireAuto)
 {
+    auto* PC = Cast<AOVController>(GetWorld()->GetFirstPlayerController());
+    if (!PC || !PC->bDeveloperMode) { LastMessage=TEXT("개발 모드를 켜야 시험 함선을 생성할 수 있습니다."); return {}; }
+    return SpawnTrialShips(Id,Faction,Count,Location,Spacing,AircraftPerHangar,Troops,MoveAuto,FireAuto,false);
+}
+
+bool UOVDevelopmentSubsystem::HasPlacementClearance(const AOVController& PC, FVector Position, double Radius)
+{
+    for (AOVShip* Other : PC.Ships)
+        if (IsValid(Other) && !Other->IsHidden() && Other->Systems->Layout)
+        {
+            const double OtherRadius = (Other->Systems->Layout->LocalHalfExtent * Other->GetActorScale3D()).Size();
+            if (FVector::Dist(Position,Other->GetActorLocation()) < Radius + OtherRadius + 200) return false;
+        }
+    return true;
+}
+
+TArray<AOVShip*> UOVDevelopmentSubsystem::SpawnTrialShips(FName Id, int32 Faction, int32 Count,
+    FVector Location, float Spacing, int32 AircraftPerHangar, int32 Troops, bool MoveAuto, bool FireAuto, bool bPlayerRange)
+{
     TArray<AOVShip*> Result;
     auto* PC = Cast<AOVController>(GetWorld()->GetFirstPlayerController());
     auto* Combat = GetWorld()->GetSubsystem<UOVCombatSubsystem>();
-    if (!PC || !PC->bDeveloperMode) { LastMessage=TEXT("개발 모드를 켜야 시험 함선을 생성할 수 있습니다."); return Result; }
-    if (!Combat->bEnabled || PC->CalibrationScenario < 0)
+    if (!PC || !Combat->bEnabled || PC->CalibrationScenario < 0)
     { LastMessage=TEXT("후보 프로필 시험장(F6/F7/통합 임무)을 먼저 여세요. 기존 장면은 자동 초기화하지 않습니다."); return Result; }
     const double Scale = OVCalibration::GetHullGeometryScale(Id);
     if (Scale<=0 || Faction<0 || Faction>1 || Count<1 || Count>16 || AircraftPerHangar<0 || AircraftPerHangar>20 || Troops<0 || Troops>12 ||
@@ -56,23 +74,17 @@ TArray<AOVShip*> UOVDevelopmentSubsystem::SpawnShips(FName Id, int32 Faction, in
         if(FMath::Abs(Position.X)>OVCalibration::XYLimit || FMath::Abs(Position.Y)>OVCalibration::XYLimit ||
             Position.Z<OVCalibration::MinZ || Position.Z>OVCalibration::MaxZ)
         { LastMessage=TEXT("이동 가능한 시험장 범위 밖입니다. 좌표 또는 배치 간격을 줄이세요."); break; }
+        if(!HasPlacementClearance(*PC,Position,OVCalibration::GetHullWorldHalfExtent(Id).Size()))
+        { LastMessage=TEXT("다른 함선과 너무 가깝습니다."); break; }
         AOVShip* Ship=GetWorld()->SpawnActor<AOVShip>();
         if(!Ship || !OVCalibration::ConfigureHull(*Combat,*Ship,Id,Faction==0,Position,Scale))
         { if(Ship)Ship->Destroy(); LastMessage=TEXT("함체/시설/무장 프로필 생성 실패"); break; }
-        const FVector Extent=Ship->Systems->Layout->LocalHalfExtent*Ship->GetActorScale3D();
-        bool Overlap=false;
-        for(AOVShip* Other:PC->Ships) if(IsValid(Other)&&!Other->IsHidden()&&Other->Systems->Layout)
-        {
-            const FVector OtherExtent=Other->Systems->Layout->LocalHalfExtent*Other->GetActorScale3D();
-            // Circumscribed spheres conservatively reject overlapping rotated hulls.
-            if(FVector::Dist(Position,Other->GetActorLocation())<Extent.Size()+OtherExtent.Size()+200) {Overlap=true;break;}
-        }
-        if(Overlap)
-        {
-            Combat->Ships.RemoveAll([Ship](const auto& S){return S.Ship==Ship;}); Ship->Destroy();
-            LastMessage=TEXT("함체 겹침 위험: 다른 위치 또는 더 큰 배치 간격이 필요합니다."); break;
-        }
-        Ship->ShipName=FString::Printf(TEXT("시험 %s · %s"),*OVCalibration::GetHullName(Id),*Ship->GetName());
+        const FString HullName=OVCalibration::GetHullName(Id);
+        if(bPlayerRange) {
+            int32 Ordinal=PC->Ships.Num();
+            do { Ship->ShipName=FString::Printf(TEXT("%s %02d"),*HullName,++Ordinal); }
+            while(PC->Ships.ContainsByPredicate([Ship](const auto& Other){ return IsValid(Other.Get()) && Other->ShipName==Ship->ShipName; }));
+        } else Ship->ShipName=FString::Printf(TEXT("시험 %s · %s"),*HullName,*Ship->GetName());
         Ship->SetAutomation(MoveAuto,FireAuto); PC->Ships.Add(Ship); SpawnedShips.Add(Ship); Result.Add(Ship);
         int32 PDCount=0;for(const auto& M:Ship->Systems->Layout->WeaponMounts)if(M.Type==EOVWeaponType::Interception)++PDCount;
         auto* PD=GetWorld()->GetSubsystem<UOVPointDefenseSubsystem>();
@@ -88,7 +100,7 @@ TArray<AOVShip*> UOVDevelopmentSubsystem::SpawnShips(FName Id, int32 Faction, in
     }
     if(Result.Num()==Count)LastMessage=FString::Printf(TEXT("시험 함선 %d척 생성 · 최초 재고/병력만 공급 · 캠페인 획득 아님"),Count);
     else if(Result.Num()>0)LastMessage=FString::Printf(TEXT("%d/%d척 생성. "),Result.Num(),Count)+LastMessage;
-    if(Result.Num()>0)PC->SelectShip(Result.Last());
+    if(Result.Num()>0 && !bPlayerRange)PC->SelectShip(Result.Last());
     return Result;
 }
 
@@ -97,6 +109,13 @@ bool UOVDevelopmentSubsystem::DeleteShip(AOVShip* Ship)
     auto* PC=Cast<AOVController>(GetWorld()->GetFirstPlayerController());
     if(!PC||!PC->bDeveloperMode||!IsValid(Ship)||!SpawnedShips.Contains(Ship))
     {LastMessage=TEXT("이 창에서 만든 시험 함선만 삭제할 수 있습니다. 원래 시험 편제는 장면 재시작을 사용하세요.");return false;}
+    return RemoveTrialShip(Ship);
+}
+
+bool UOVDevelopmentSubsystem::RemoveTrialShip(AOVShip* Ship)
+{
+    auto* PC=Cast<AOVController>(GetWorld()->GetFirstPlayerController());
+    if(!PC || !IsValid(Ship) || !SpawnedShips.Contains(Ship)) return false;
     auto* Wing=GetWorld()->GetSubsystem<UOVCarrierSubsystem>();
     auto* Transit=GetWorld()->GetSubsystem<UOVTransportSubsystem>();
     if(Wing->HasOutstandingAircraft(Ship)) {LastMessage=TEXT("미귀환 함재기가 있습니다. 실제 회수 후 삭제하세요.");return false;}
