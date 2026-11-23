@@ -94,6 +94,8 @@ TArray<AOVShip*> UOVDevelopmentSubsystem::SpawnTrialShips(FName Id, int32 Factio
         Transit->AddShip(Ship); Interior->AddShip(Ship);
         if(Id==TEXT("assault"))Transit->RegisterShuttle(Ship);
         if(Troops>0)Interior->RegisterBoardingTeam(Ship,Faction,0,Troops);
+        if(Ship->Systems->Layout->bAllowAircraftOperations)
+            GetWorld()->GetSubsystem<UOVLogisticsSubsystem>()->StockFieldShip(Ship,bPlayerRange?-1:0);
         if(Id==TEXT("repair")||Id==TEXT("mining")||Id==TEXT("transport"))
             GetWorld()->GetSubsystem<UOVLogisticsSubsystem>()->RegisterDevShip(Ship,Id==TEXT("repair")?EOVDevLogisticsRole::Repair:
                 Id==TEXT("mining")?EOVDevLogisticsRole::Mining:EOVDevLogisticsRole::Transport,1000,Id==TEXT("repair")?500:0);

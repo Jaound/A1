@@ -59,11 +59,12 @@ USTRUCT(BlueprintType)
 struct ORBITALVANGUARD_API FOVAircraftManeuverProfile
 {
     GENERATED_BODY()
-    UPROPERTY(EditAnywhere, BlueprintReadWrite) FName ProfileId = TEXT("Trial_StrikeManeuver_v1");
+    UPROPERTY(EditAnywhere, BlueprintReadWrite) FName ProfileId = TEXT("StrikeManeuver_Sector_v2");
     UPROPERTY(EditAnywhere, BlueprintReadWrite) float TurnDegreesPerSecond = 300;
     UPROPERTY(EditAnywhere, BlueprintReadWrite) float AttackRangeFraction = .50f;
     UPROPERTY(EditAnywhere, BlueprintReadWrite) float EgressSeconds = .30f;
-    UPROPERTY(EditAnywhere, BlueprintReadWrite) float ReformSeconds = 1.55f;
+    UPROPERTY(EditAnywhere, BlueprintReadWrite) float ReformSeconds = 1.38f;
+    UPROPERTY(EditAnywhere, BlueprintReadWrite) float SplitReformSeconds = .27f;
     UPROPERTY(EditAnywhere, BlueprintReadWrite) float RegroupTurnRadii = 1.15f;
     UPROPERTY(EditAnywhere, BlueprintReadWrite) float HullClearance = 400;
     UPROPERTY(EditAnywhere, BlueprintReadWrite) int32 SectionSize = 4;
@@ -238,9 +239,9 @@ private:
     void AddStored(AOVShip* Ship,const FOVHangarState& Hangar);
     void AdvanceProduction(AOVShip* Ship,const FOVAircraftOverview& Wing,float Delta);
     void AdvanceAircraft(FOVAircraftRecord& Craft, float Delta);
-    AOVShip* SelectStrikeTarget(const FOVAircraftRecord& Craft) const;
+    AOVShip* SelectStrikeTarget(const FOVAircraftRecord& Craft, bool& bSplit) const;
     const FOVAircraftRecord* SelectAirTarget(FOVAircraftRecord& Craft, AOVShip* StrikeTarget, float Delta);
-    void AdvanceStrike(FOVAircraftRecord& Craft, AOVShip* Target, float Delta);
+    void AdvanceStrike(FOVAircraftRecord& Craft, AOVShip* Target, float Delta, bool bSplit);
     void AdvanceDogfight(FOVAircraftRecord& Craft, const FOVAircraftRecord& Target, float Delta);
     void FlyToward(FOVAircraftRecord& Craft, FVector Point, float Delta, bool bFiniteTurn);
     void AdvanceBolts(float Delta);

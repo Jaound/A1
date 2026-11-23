@@ -531,7 +531,8 @@ void UOVCarrierSubsystem::AdvanceAircraft(FOVAircraftRecord& Craft, float Delta)
         return;
     }
 
-    AOVShip* Target = SelectStrikeTarget(Craft);
+    bool bSplit=false;
+    AOVShip* Target = SelectStrikeTarget(Craft,bSplit);
     if (Target != Craft.StrikeTarget.Get())
     {
         Craft.StrikeTarget = Target; Craft.InterceptTargetId = 0;
@@ -541,7 +542,7 @@ void UOVCarrierSubsystem::AdvanceAircraft(FOVAircraftRecord& Craft, float Delta)
     Craft.AttackDelay = FMath::Max(0.f, Craft.AttackDelay - Delta);
     const auto* AirTarget = SelectAirTarget(Craft, Target, Delta);
     if (AirTarget) AdvanceDogfight(Craft, *AirTarget, Delta);
-    else if (Target) AdvanceStrike(Craft, Target, Delta);
+    else if (Target) AdvanceStrike(Craft, Target, Delta, bSplit);
     else
     {
         Craft.Maneuver = EOVAircraftManeuver::Patrol;
@@ -581,7 +582,7 @@ void UOVCarrierSubsystem::RebuildStrikeCandidates()
     }
 }
 
-AOVShip* UOVCarrierSubsystem::SelectStrikeTarget(const FOVAircraftRecord& Craft) const
+AOVShip* UOVCarrierSubsystem::SelectStrikeTarget(const FOVAircraftRecord& Craft, bool& bSplit) const
 {
     CSV_SCOPED_TIMING_STAT_EXCLUSIVE(OV_CarrierTargeting);
     TRACE_CPUPROFILER_EVENT_SCOPE(OV_CarrierSelectShipTarget);
@@ -590,6 +591,7 @@ AOVShip* UOVCarrierSubsystem::SelectStrikeTarget(const FOVAircraftRecord& Craft)
     auto Eligible = [&](AOVShip* Candidate) { return Candidate && Entry->Candidates.Contains(Candidate); };
     if(Entry->EscortGroup.Num()>1 && Eligible(Craft.Carrier->AttackTarget))
     {
+        bSplit=true;
         const int32 Section=(Craft.AircraftId-1)/FMath::Max(1,ManeuverProfile.SectionSize);
         return Entry->EscortGroup[Section%Entry->EscortGroup.Num()].Get();
     }
@@ -678,8 +680,10 @@ void UOVCarrierSubsystem::FlyToward(FOVAircraftRecord& Craft, FVector Point, flo
     Craft.Position += Craft.Direction * FMath::Min(double(Profile.Speed * Delta), V.Size());
 }
 
-void UOVCarrierSubsystem::AdvanceStrike(FOVAircraftRecord& Craft, AOVShip* Target, float Delta)
+void UOVCarrierSubsystem::AdvanceStrike(FOVAircraftRecord& Craft, AOVShip* Target, float Delta, bool bSplit)
 {
+    // Separate attack lanes need extra time to re-form before crossing the escort group again.
+    const float ReformTime=FMath::Max(0.f,ManeuverProfile.ReformSeconds+(bSplit?ManeuverProfile.SplitReformSeconds:0.f));
     Craft.StrikeCenter = Target->GetActorLocation();
     Craft.TurnRadius = Profile.Speed / FMath::DegreesToRadians(FMath::Max(1.f, ManeuverProfile.TurnDegreesPerSecond));
     const double HullRadius = (Target->Systems->Layout->LocalHalfExtent * Target->GetActorScale3D()).Size();
@@ -691,14 +695,19 @@ void UOVCarrierSubsystem::AdvanceStrike(FOVAircraftRecord& Craft, AOVShip* Targe
     const double Side = Section % 2 == 0 ? 1. : -1.;
     auto Offset = [&](double Heading, double Radius)
     {
-        return Target->GetActorRotation().RotateVector(FVector(FMath::Cos(Heading), FMath::Sin(Heading), Side * (.18 + Lane * .04)).GetSafeNormal() * Radius);
+        FVector Direction = Target->GetActorRotation().RotateVector(FVector(FMath::Cos(Heading), FMath::Sin(Heading), Side * (.18 + Lane * .04)).GetSafeNormal());
+        // Keep the next turn ahead of a fast target; circling behind a faster
+        // hull spends the next pass chasing its old location.
+        const double SpeedFraction=FMath::Clamp(Target->Velocity.Size()/FMath::Max(1.f,Profile.Speed),0.,1.);
+        Direction=(Direction+Target->Velocity.GetSafeNormal()*SpeedFraction*1.5).GetSafeNormal();
+        return Direction*Radius;
     };
     const double EgressRadius = AttackRadius + Profile.Speed * FMath::Max(.05f, ManeuverProfile.EgressSeconds);
     const double RegroupRadius = AttackRadius + Craft.TurnRadius * FMath::Max(.5f, ManeuverProfile.RegroupTurnRadii);
     Craft.ApproachPoint = Craft.StrikeCenter + Offset(Angle, AttackRadius);
     Craft.EgressPoint = Craft.StrikeCenter + Offset(Angle + Side * .5, EgressRadius);
     const double ReformArc=Craft.Maneuver==EOVAircraftManeuver::Regroup?
-        (ManeuverProfile.ReformSeconds-FMath::Max(0.f,Craft.LegRemaining))*Profile.Speed/FMath::Max(1.,RegroupRadius):0.;
+        FMath::Max(0.f,ReformTime-Craft.LegRemaining)*Profile.Speed/FMath::Max(1.,RegroupRadius):0.;
     Craft.RegroupPoint = Craft.StrikeCenter + Offset(Angle + Side * (1.1+ReformArc), RegroupRadius);
     // Includes turn/exit space; it is a steering guard, never a teleport/clamp of position.
     Craft.AllowedRadius = FMath::Max(EgressRadius, RegroupRadius) + 2 * Craft.TurnRadius + Profile.Speed * .1;
@@ -740,7 +749,7 @@ void UOVCarrierSubsystem::AdvanceStrike(FOVAircraftRecord& Craft, AOVShip* Targe
     {
         Craft.LegRemaining = FMath::Max(0.f, Craft.LegRemaining - Delta);
         if (Craft.LegRemaining <= 0 || FVector::DistSquared(Craft.Position, Craft.EgressPoint) < CaptureDistance * CaptureDistance)
-        { Craft.Maneuver = EOVAircraftManeuver::Regroup; Craft.Leg = EOVAircraftLeg::Regroup; Craft.LegRemaining=ManeuverProfile.ReformSeconds; }
+        { Craft.Maneuver = EOVAircraftManeuver::Regroup; Craft.Leg = EOVAircraftLeg::Regroup; Craft.LegRemaining=ReformTime; }
     }
     if (Craft.Maneuver == EOVAircraftManeuver::Regroup) Craft.LegRemaining=FMath::Max(0.f,Craft.LegRemaining-Delta);
     if (Craft.Maneuver == EOVAircraftManeuver::Regroup && Craft.LegRemaining<=0 && FVector::DistSquared(Craft.Position, Craft.RegroupPoint) < CaptureDistance * CaptureDistance)

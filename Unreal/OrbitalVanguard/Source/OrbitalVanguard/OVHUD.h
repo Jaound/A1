@@ -185,6 +185,7 @@ private:
  TArray<int32,TInlineAllocator<64>> BattleNoticeIndices() const;
  float BattleNoticeTop() const;
  int32 BattleNoticeRows() const;
+ float CommandPanelHeight() const;
  FString GetWeaponSummary(AOVShip* Ship,int32 Weapon) const;
  float PinnedPanelX() const;
  float PinnedPanelY() const;

@@ -139,8 +139,11 @@ void UOVLogisticsSubsystem::LoseStoredCargo(AOVShip* Ship)
 }
 int32 UOVLogisticsSubsystem::ResupplyCarrier(AOVShip* Ship)
 {
+    if(!Active(Ship) || !Ship->Systems->Layout->bAllowAircraftOperations || Ship->bFTLCharging || Ship->IsHidden()) return 0;
+    // Legacy missions can supply an empty physical bay without minting cargo.
+    if(!FindCargo(Ship)) StockFieldShip(Ship,0);
     const auto* Dest=FindCargo(Ship);
-    if(!Active(Ship) || !Dest || Dest->Role!=EOVDevLogisticsRole::Carrier || Ship->bFTLCharging || Ship->IsHidden()) return 0;
+    if(!Dest || Dest->Role!=EOVDevLogisticsRole::Carrier) return 0;
     int32 Received=0;
     for(auto& Source:Cargo)
     {

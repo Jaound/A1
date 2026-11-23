@@ -313,7 +313,8 @@ void AOVHUD::DrawPlayHUD()
   }
   DrawText(EnvStatus,EnvColor,BX+10,BY+4,GEngine->GetSmallFont());
  }
- const float Y=H-220;
+ const float PanelHeight=CommandPanelHeight();
+ const float Y=H-PanelHeight-10;
  const float GridWidth=FleetPanelWidth(W), GX=W-GridWidth-10;
  const float GridY=H-218;
  TArray<AOVShip*,TInlineAllocator<32>> Friends;
@@ -387,7 +388,7 @@ void AOVHUD::DrawPlayHUD()
   }
  }
  bCommandShipClipped=bCommandTargetClipped=false;
- DrawRect(PlayPanel,10,Y,610,210);
+ DrawRect(PlayPanel,10,Y,610,PanelHeight);
  if(!PC->Selected) {DrawText(TEXT("함선을 선택하세요"),PlayInk,24,Y+20,GEngine->GetMediumFont());return;}
  auto* Ship=PC->Selected.Get();
  const FString ShipLabel=FitCommandLabel(this,GEngine->GetMediumFont(),Ship->ShipName,280);
@@ -436,8 +437,8 @@ void AOVHUD::DrawPlayHUD()
   Button(TEXT("LaunchAircraft"),TEXT("함재기 출격"),380,Y+128,108);
   Button(TEXT("RecallAircraft"),TEXT("함재기 귀환"),495,Y+128,108);
   if(auto* State=Carrier->Carriers.FindByPredicate([Ship](const auto& C){return C.Carrier==Ship;})){
-   Button(TEXT("AutoWing"),State->bAutoLaunch?TEXT("자동 출격 ✓"):TEXT("자동 출격"),393,Y+178,100,State->bAutoLaunch);
-   Button(TEXT("WingSupply"),TEXT("항공 보급"),499,Y+178,102);
+   Button(TEXT("AutoWing"),State->bRecallOrdered?TEXT("자동 재개"):State->bAutoLaunch?TEXT("자동 출격 ✓"):TEXT("자동 출격"),393,Y+209,100,State->bAutoLaunch);
+   Button(TEXT("WingSupply"),TEXT("항공 보급"),499,Y+209,102);
   }
   FOVAircraftOverview Air;
   for(const auto& C:Carrier->Carriers) {
@@ -498,6 +499,13 @@ float AOVHUD::BattleNoticeTop() const
  if(Scene && Scene->ActiveId==TEXT("Sandbox")) return Scene->bSandboxHullMenu?401.f:218.f;
  return Scene && Scene->ActiveId==TEXT("Evacuation") ? 184.f : 66.f;
 }
+float AOVHUD::CommandPanelHeight() const
+{
+ const auto* PC=Cast<AOVController>(PlayerOwner);
+ const auto* Ship=PC?PC->Selected.Get():nullptr;
+ return Ship && Ship->bFriendly && Ship->Systems && Ship->Systems->Layout && Ship->Systems->Layout->bAllowAircraftOperations ? 242.f : 210.f;
+}
+
 int32 AOVHUD::BattleNoticeRows() const
 {
  const auto* PC=Cast<AOVController>(PlayerOwner);if(!PC||PC->bDeveloperMode||bSceneMenuOpen)return 0;
@@ -556,12 +564,6 @@ void AOVHUD::DrawWorldIndicators()
    DrawLine(Last.X,Last.Y,Next.X,Next.Y,Color,Thickness);Last=Next;
   }
  };
- for(const auto& Slot:PC->FormationPreview){
-  FVector2D P;
-  if(auto* Ship=Slot.Key.Get();Ship && Project(Slot.Value,P)){
-   Ring(P,10,6,PlayAccent,2);DrawText(Ship->ShipName,PlayInk,P.X+12,P.Y-8,GEngine->GetSmallFont());
-  }
- }
  if(const auto* Play=PC->GetPlayScenario()) for(const auto& Trail:Play->JumpTrails){
   FVector2D A,B;if(!PC->ProjectWorldLocationToScreen(Trail.Start,A)||!PC->ProjectWorldLocationToScreen(Trail.End,B))continue;
   A/=UIScale;B/=UIScale;const float Age=FMath::Clamp((Play->ElapsedSeconds-Trail.At)/1.2,0.,1.);
@@ -599,7 +601,7 @@ void AOVHUD::DrawWorldIndicators()
    DrawLine(P.X+Radius,P.Y-Radius,P.X+Radius,P.Y+Radius,Color,Selected?3:1);
    DrawLine(P.X-Radius,P.Y-Radius,P.X+Radius,P.Y-Radius,Color,Selected?3:1);
   }
-  if(Selected||Target||bInThroe||PC->CameraDistance<45000) {
+  if(!PC->FormationPreview.Contains(Ship) && (Selected||Target||bInThroe||PC->CameraDistance<45000)) {
    const FString Name=(Target?TEXT("공격 ▶ "):Selected?TEXT("선택 ▶ "):TEXT(""))+Ship->ShipName;
    DrawText(FitCommandLabel(this,GEngine->GetSmallFont(),Name,180),Color,Label.X,Label.Y,GEngine->GetSmallFont());
   }
@@ -608,11 +610,21 @@ void AOVHUD::DrawWorldIndicators()
   DrawRect(Color,Label.X,Label.Y+17,86*Hull,3);
   DrawRect(FLinearColor(.25f,.4f,1),Label.X,Label.Y+22,86*Ship->Systems->Shield/FMath::Max(1.f,Ship->Systems->MaxShield),3);
   if(bInThroe)DrawText(FString::Printf(TEXT("★ 침몰 붕괴 (%.1fs)"),ThroeRemaining),FLinearColor(1.f,0.45f,0.2f),Label.X,Label.Y+29,GEngine->GetSmallFont());
-  else if(Selected||Target)DrawText(FString::Printf(TEXT("고도 %.0fm"),Ship->GetActorLocation().Z/100),PlayInk,Label.X,Label.Y+29,GEngine->GetSmallFont());
+  else if((Selected||Target) && !PC->FormationPreview.Contains(Ship))DrawText(FString::Printf(TEXT("고도 %.0fm"),Ship->GetActorLocation().Z/100),PlayInk,Label.X,Label.Y+29,GEngine->GetSmallFont());
   const FName Marker(*FString::Printf(TEXT("WorldPick_%d"),I));
   AddHitBox((P-FVector2D(Radius+6,Radius+6))*UIScale,FVector2D(2*Radius+12,2*Radius+12)*UIScale,Marker,true,5);
   ActionCenters.Add(Marker,P);
-  if(Selected&&Ship->bHasDestination) { FVector2D D;if(Project(Ship->Destination,D))DrawText(FString::Printf(TEXT("이동 목적지  고도 %.0fm"),Ship->Destination.Z/100),FLinearColor::Green,D.X,D.Y,GEngine->GetSmallFont()); }
+  if(Selected&&Ship->bHasDestination && PC->FormationPreview.IsEmpty()) { FVector2D D;if(Project(Ship->Destination,D))DrawText(FString::Printf(TEXT("이동 목적지  고도 %.0fm"),Ship->Destination.Z/100),FLinearColor::Green,D.X,D.Y,GEngine->GetSmallFont()); }
+ }
+ for(const auto& Slot:PC->FormationPreview){
+  FVector2D P;
+  if(auto* Ship=Slot.Key.Get();Ship && Project(Slot.Value,P)){
+   float Width=0,Height=0;
+   GetTextSize(Ship->ShipName,Width,Height,GEngine->GetSmallFont());
+   Ring(P,10,6,PlayAccent,2);
+   DrawRect(PlayPanel,P.X+11,P.Y+3,Width+6,Height+2);
+   DrawText(Ship->ShipName,PlayInk,P.X+14,P.Y+4,GEngine->GetSmallFont());
+  }
  }
  if(PC->bPlacing) { FVector2D P;if(Project(PC->Preview,P))DrawText(FString::Printf(TEXT("고도 %.0fm · 해제/Enter 확정"),PC->Preview.Z/100),FLinearColor::Yellow,P.X+14,P.Y-20,GEngine->GetSmallFont()); }
  TSet<FName> ShownImpacts;

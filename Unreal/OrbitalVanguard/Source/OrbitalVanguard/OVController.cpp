@@ -922,7 +922,7 @@ void AOVController::Action(FName Name)
   if(IsValid(Selected) && Selected->bFriendly && Selected->Systems->CanCommand() && Carrier && !Combat->IsDeparted(Selected)){
    for(auto& State:Carrier->Carriers) if(State.Carrier==Selected){
     if(Name==TEXT("AutoWing")) {
-     State.bAutoLaunch=!State.bAutoLaunch;
+     State.bAutoLaunch=State.bRecallOrdered || !State.bAutoLaunch;
      if(State.bAutoLaunch)State.bRecallOrdered=false;
     }
     else LastAction=FString::Printf(TEXT("항공 보급 %d대분 · 아군 수리함 120m 이내"),GetWorld()->GetSubsystem<UOVLogisticsSubsystem>()->ResupplyCarrier(Selected));

@@ -546,9 +546,9 @@ bool FOVWingProduction::RunTest(const FString&)
     if(!TestTrue(TEXT("register actual stock and empty flight deck"),R.Wing->RegisterCarrier(C,0) && R.Supply->StockFieldShip(C,100)))return false;
     TestEqual(TEXT("100 complete kits"),R.Supply->AircraftKits(C),100);
     R.Wing->Simulate(0);
-    R.Wing->Simulate(6.9);
+    R.Wing->Simulate(6.9f);
     TestEqual(TEXT("production takes game time"),R.Wing->Aircraft.Num(),0);
-    R.Wing->Simulate(.2);
+    R.Wing->Simulate(.2f);
     TestEqual(TEXT("four separate paid lines"),R.Wing->CountAircraft(C,EOVAircraftState::Stored),4);
     TestEqual(TEXT("debit at delivery"),R.Supply->AircraftKits(C),96);
     R.Wing->Simulate(133);
@@ -605,7 +605,7 @@ bool FOVWingResupply::RunTest(const FString&)
     OVCarrierTest::FBattle R(126);
     auto* C=R.Ship(TEXT("carrier"),true,FVector::ZeroVector);
     auto* Repair=R.Ship(TEXT("repair"),true,FVector(60000,0,0));
-    if(!C || !Repair || !R.Wing->RegisterCarrier(C,0) || !R.Supply->StockFieldShip(C,0) || !R.Supply->StockFieldShip(Repair))return false;
+    if(!C || !Repair || !R.Wing->RegisterCarrier(C,0) || !R.Supply->StockFieldShip(Repair))return false;
     TestEqual(TEXT("원거리 보급 차단"),R.Supply->ResupplyCarrier(C),0);
     Repair->SetActorLocation(FVector(6000,0,0));
     const int32 Stock=R.Supply->AircraftKits(Repair);
@@ -667,9 +667,11 @@ bool FOVWingLargeTargets::RunTest(const FString&)
 IMPLEMENT_SIMPLE_AUTOMATION_TEST(FOVWingDefenceBalance,"OrbitalVanguard.Carrier.DefenceBalanceTargets",EAutomationTestFlags::EditorContext|EAutomationTestFlags::EngineFilter)
 bool FOVWingDefenceBalance::RunTest(const FString&)
 {
+    int32 Seed=126;
+    FParse::Value(FCommandLine::Get(),TEXT("OVWingSeed="),Seed);
     for(int32 Count:{1,3,2}){
         const int32 Bays=Count==1?2:4;
-        OVCarrierTest::FBattle R(126);
+        OVCarrierTest::FBattle R(Seed);
         auto* C=R.Ship(TEXT("carrier"),false,FVector(35000,0,0),Bays);
         if(!C || !R.Wing->RegisterCarrier(C,20) || !R.Supply->StockFieldShip(C,Count==1?0:100))return false;
         TArray<AOVShip*> Defenders;
@@ -681,6 +683,9 @@ bool FOVWingDefenceBalance::RunTest(const FString&)
             if(!R.PD->RegisterShip(S,Mounts,1.5f))return false;
             Defenders.Add(S);
         }
+        // An isolated wing-versus-PD trial. A wrecked bridge otherwise
+        // releases conventional ship guns under the independent fire rule.
+        for(auto& SurfaceShip:R.Combat->Ships) SurfaceShip.Mounts.Reset();
         TArray<FString> Waves;
         int32 Step=0;
         for(;Step<12000;++Step){
@@ -702,13 +707,17 @@ bool FOVWingDefenceBalance::RunTest(const FString&)
             if(!S->Systems->bWrecked)++Survivors;
             InBand&=HP>=(Count==1?35.:45.) && HP<=(Count==1?45.:65.);
         }
-        AddInfo(FString::Printf(TEXT("WING_BALANCE defenders=%d seed=126 seconds=%.1f hull_pct=[%s] shield_pct=[%s] survivors=%d waves=[%s] fighters=%d destroyed=%d kits_left=%d shots=%d hits=%d"),
-            Count,Step*.1,*FString::Join(Hulls,TEXT(",")),*FString::Join(Shields,TEXT(",")),Survivors,*FString::Join(Waves,TEXT(",")),R.Wing->Aircraft.Num(),R.Wing->LossCount,R.Supply->AircraftKits(C),R.Wing->ShotCount,R.Wing->HitCount));
+        AddInfo(FString::Printf(TEXT("WING_BALANCE defenders=%d seed=%d seconds=%.1f hull_pct=[%s] shield_pct=[%s] survivors=%d waves=[%s] fighters=%d destroyed=%d kits_left=%d shots=%d hits=%d"),
+            Count,Seed,Step*.1,*FString::Join(Hulls,TEXT(",")),*FString::Join(Shields,TEXT(",")),Survivors,*FString::Join(Waves,TEXT(",")),R.Wing->Aircraft.Num(),R.Wing->LossCount,R.Supply->AircraftKits(C),R.Wing->ShotCount,R.Wing->HitCount));
         AddInfo(FString::Printf(TEXT("WING_DEFENCE defenders=%d core_hp=[%s] pd_shots=%d pd_hits=%d pd_kills=%d"),
             Count,*FString::Join(Cores,TEXT(",")),R.PD->ShotCount,R.PD->HitCount,R.PD->KillCount));
         TestTrue(TEXT("fight resolved"),Step<12000);
         if(Count==2)TestEqual(TEXT("two escorts lose defence"),Survivors,0);
-        else TestTrue(TEXT("all escorts survive in requested hull band"),Survivors==Count && InBand);
+        else {
+            TestTrue(TEXT("all escorts survive in requested hull band"),Survivors==Count && InBand);
+            TestEqual(TEXT("전체 편대 소진"),R.Wing->LossCount,Count==1?40:180);
+            TestEqual(TEXT("실제 교전 출격 파동"),FString::Join(Waves,TEXT("/")),Count==1?FString(TEXT("40")):FString(TEXT("80/80/20")));
+        }
     }
     return true;
 }
