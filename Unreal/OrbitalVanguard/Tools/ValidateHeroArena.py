@@ -64,6 +64,28 @@ def run():
     hud.handle_interior_action("InteriorSelectedShip")
     node=next(x for x in p(p(p(ships[0],"systems"),"layout"),"slots") if p(x,"slot_id")==p(iris,"node_id"))
     hud.handle_interior_action("InteriorDeck_"+str(p(node,"deck_id")))
+    iris_floor=p(node,"deck_id")
+    uid=p(iris,"unit_id")
+    marker="InteriorMarker_"+str(uid)
+    original_scale=hud.get_user_ui_scale_multiplier()
+    hud.handle_interior_action(marker)
+    check("선내 몸통 선택과 영웅 개인 ID",uid in list(p(hud,"interior_selected_units")),uid)
+    for _ in range(3):yield
+    original_size=hud.get_interior_window_size()
+    hud.handle_interior_action("InteriorMax")
+    hud.set_user_ui_scale_multiplier(1.25,False)
+    for _ in range(6):yield
+    center=hud.get_action_center(marker)
+    check("확대 창과 UI 125%에서 영웅 표시",center.x>=0 and center.y>=0 and uid in list(p(hud,"interior_selected_units")),center)
+    hud.handle_interior_action("InteriorDeck_"+str(1 if iris_floor!=1 else 2))
+    for _ in range(4):yield
+    check("다른 층 영웅 클릭 영역 제거",hud.get_action_center(marker).x<0,hud.get_action_center(marker))
+    hud.handle_interior_action("InteriorDeck_"+str(iris_floor))
+    hud.set_user_ui_scale_multiplier(original_scale,False)
+    hud.handle_interior_action("InteriorMax")
+    for _ in range(6):yield
+    size=hud.get_interior_window_size()
+    check("선내 창 원래 크기·표시 복원",abs(size.x-original_size.x)<1 and abs(size.y-original_size.y)<1 and hud.get_action_center(marker).x>=0,size)
     yield from capture("HeroArenaDeck")
     hud.handle_interior_action("InteriorClose")
     pc.action("ArenaFight")

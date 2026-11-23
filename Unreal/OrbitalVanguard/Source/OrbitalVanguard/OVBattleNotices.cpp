@@ -62,14 +62,16 @@ void UOVBattleNotices::RecordInteriorEvent(FName EventKind,const FOVInteriorUnit
     else if(EventKind==TEXT("Capture"))Kind=EOVBattleNoticeKind::FacilityCaptured;
     else return;
     FOVAttackState Event;Event.HitShipId=Ship->GetFName();Event.Position=Ship->GetActorTransform().TransformPosition(Unit.LocalPosition);Event.ResolvedAt=GameTime;
-    Append(Event,Ship,Kind,1,Unit.UnitId);
+    Append(Event,Ship,Kind,1,Unit.UnitId,Unit.FactionId==0 && Unit.Role!=EOVInteriorRole::Trooper ? Unit.DefinitionId : NAME_None);
 }
 
 void UOVBattleNotices::RecordHeroRescue(int32 Faction,int32 UnitId,FVector Position,double GameTime)
 {
     if(Faction!=0||UnitId<=0||Position.ContainsNaN())return;
     FOVAttackState Event;Event.Position=Position;Event.ResolvedAt=GameTime;
-    Append(Event,nullptr,EOVBattleNoticeKind::HeroRescue,1,UnitId);
+    const auto* Interior=GetWorld()->GetSubsystem<UOVInteriorSubsystem>();
+    const auto Unit=Interior?Interior->GetUnit(UnitId):FOVInteriorUnitRecord();
+    Append(Event,nullptr,EOVBattleNoticeKind::HeroRescue,1,UnitId,Unit.FactionId==Faction?Unit.DefinitionId:NAME_None);
 }
 
 void UOVBattleNotices::RecordAircraftThreshold(AOVShip* Carrier,bool bFleet,int32 PreviousSeverity,int32 Severity,int32 Remaining,int32 Baseline,FVector Position,double GameTime)
@@ -91,7 +93,7 @@ void UOVBattleNotices::RecordAircraftAdjustment(AOVShip* Carrier,int32 Remaining
     Notices.Last().Remaining=Remaining;Notices.Last().Baseline=Baseline;
 }
 
-void UOVBattleNotices::Append(const FOVAttackState& Attack,AOVShip* Victim,EOVBattleNoticeKind Kind,int32 Count,int32 UnitId)
+void UOVBattleNotices::Append(const FOVAttackState& Attack,AOVShip* Victim,EOVBattleNoticeKind Kind,int32 Count,int32 UnitId,FName HeroDefinition)
 {
     const bool bWrecked=Kind==EOVBattleNoticeKind::ShipWrecked;
     FOVBattleNotice* Last=Notices.IsEmpty()?nullptr:&Notices.Last();
@@ -101,6 +103,7 @@ void UOVBattleNotices::Append(const FOVAttackState& Attack,AOVShip* Victim,EOVBa
     }
     FOVBattleNotice& Notice=Notices.AddDefaulted_GetRef();
     Notice.Serial=NextSerial++;
+    Notice.FriendlyHeroDefinition=HeroDefinition;
     Notice.ShipName=Victim?Victim->ShipName:TEXT("아군 영웅");
     if(Victim&&Victim->Systems&&Victim->Systems->FactionId!=0&&!Notice.ShipName.StartsWith(TEXT("적 ")))
         Notice.ShipName=TEXT("적 ")+Notice.ShipName;

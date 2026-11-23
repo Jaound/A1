@@ -808,7 +808,12 @@ void UOVInteriorSubsystem::AdvanceUnit(FOVInteriorUnitRecord& U,float Delta)
         const float Reduction=InteriorReduction(*Enemy,Ignore,Phase);
         if(Phase && Reduction+UE_SMALL_NUMBER<InteriorReduction(*Enemy,Ignore,false))++U.PassiveHits;
         if(bBurst){if(GameTime>=Enemy->SlowUntil)Enemy->SlowFraction=0;Enemy->SlowUntil=FMath::Max(Enemy->SlowUntil,GameTime+4+(U.DefinitionId==TEXT("R01") && Tracked?1.5:0.));
-            if(U.DefinitionId==TEXT("R04") && Enemy->State==EOVInteriorState::Operating)Enemy->SuppressedUntil=GameTime+2.5;Enemy->SlowFraction=FMath::Max(Enemy->SlowFraction,.20f+.05f*(OVInterior::Rank(U,2)-1));}
+            if(U.DefinitionId==TEXT("R04") && (Enemy->State==EOVInteriorState::Operating ||
+                (Enemy->DefinitionId==TEXT("M05") && Enemy->Order==EOVInteriorOrder::Sabotage && Enemy->NodeId==Enemy->TargetSlot &&
+                 Operations.ContainsByPredicate([&](const auto& Op){return !Op.bCompleted && Op.Ship==Enemy->Ship &&
+                     Op.SlotId==Enemy->TargetSlot && Op.ParticipantUnitIds.Contains(Enemy->UnitId);}))))
+                Enemy->SuppressedUntil=GameTime+2.5;
+            Enemy->SlowFraction=FMath::Max(Enemy->SlowFraction,.20f+.05f*(OVInterior::Rank(U,2)-1));}
         ApplyDamage(*Enemy,Damage*(1-Reduction),TEXT("선내 교전 사망"));
         if(U.DefinitionId==TEXT("M10") && Enemy->HP<=0){
             const bool SquadEliminated=Enemy->SquadId>0 && !Units.ContainsByPredicate([&](const auto& Member){

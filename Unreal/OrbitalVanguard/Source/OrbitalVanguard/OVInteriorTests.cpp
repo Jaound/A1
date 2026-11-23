@@ -75,13 +75,14 @@ bool FOVInteriorHeroHitNotice::RunTest(const FString&)
     const int32 Hero=R.Interior->RegisterUnit(R.Origin,0,EOVInteriorRole::Ranged,Room);
     const int32 Enemy=R.Interior->RegisterUnit(R.Origin,1,EOVInteriorRole::Trooper,Room);
     for(auto& U:R.Interior->Units) {
-        if(U.UnitId==Hero){U.HP=U.MaxHP=10000;U.Damage=0;U.Evasion=0;}
+        if(U.UnitId==Hero){U.DefinitionId=TEXT("R04");U.HP=U.MaxHP=10000;U.Damage=0;U.Evasion=0;}
         if(U.UnitId==Enemy){U.Damage=10;U.Evasion=0;}
     }
     R.Advance(5);
     auto* Feed=R.World->GetSubsystem<UOVBattleNotices>();
     const auto* Hit=Feed->Notices.FindByPredicate([Hero](const FOVBattleNotice& N){return N.Kind==EOVBattleNoticeKind::HeroHit&&N.UnitId==Hero;});
     TestTrue(TEXT("실제 선내 공격 피해로 아군 영웅 알림"),R.Interior->GetUnit(Hero).HP<10000&&Hit!=nullptr);
+    TestTrue(TEXT("알림은 실제 아군 영웅 정의를 기억"),Hit && Hit->FriendlyHeroDefinition==TEXT("R04"));
     TestTrue(TEXT("같은 영웅의 반복 피격은 묶임"),Hit&&Hit->Count>1);
     TestFalse(TEXT("적 일반병의 피격은 아군 영웅으로 표시하지 않음"),Feed->Notices.ContainsByPredicate([Enemy](const FOVBattleNotice& N){return N.Kind==EOVBattleNoticeKind::HeroHit&&N.UnitId==Enemy;}));
     const int32 Other=R.Interior->RegisterUnit(R.Origin,0,EOVInteriorRole::Melee,Room);
@@ -810,6 +811,73 @@ bool FOVIrisArcGeometryTest::RunTest(const FString&)
     TestEqual(TEXT("정면 바라본 역장 1회 종료"),R.Interior->GetUnit(Id).SignatureUses,1);
     TestTrue(TEXT("호형 안 두 대상 실제 피해"),R.Interior->GetUnit(Front).HP<2000 && R.Interior->GetUnit(Flank).HP<2000);
     for(const int32 Excluded:{Back,Far,Upstairs})TestEqual(TEXT("후방·거리 밖·다른 층 피해 없음"),R.Interior->GetUnit(Excluded).HP,2000.f);
+    return true;
+}
+
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(FOVHeroTacticalEffectsTest,"OrbitalVanguard.Hero.NamedTacticalEffects",
+    EAutomationTestFlags::EditorContext|EAutomationTestFlags::EngineFilter)
+bool FOVHeroTacticalEffectsTest::RunTest(const FString&)
+{
+    OVInteriorTest::FRange R;
+    const FName Bridge=R.Slot(EOVFacilityType::Bridge);
+    auto Spawn=[&](int32 Side,EOVInteriorRole Role,FName Definition){
+        int32 Id=R.Interior->RegisterUnit(R.Target,Side,Role,Bridge);
+        R.Interior->Units.Last().DefinitionId=Definition;
+        return Id;
+    };
+    const int32 Captain=Spawn(0,EOVInteriorRole::Commander,TEXT("C01"));
+    const int32 Troop=Spawn(0,EOVInteriorRole::Trooper,NAME_None);
+    const int32 Guard=Spawn(1,EOVInteriorRole::Melee,TEXT("M09"));
+    const int32 Officer=Spawn(1,EOVInteriorRole::Ranged,TEXT("R04"));
+    const int32 Rival=Spawn(0,EOVInteriorRole::Melee,TEXT("M08"));
+    if(!Captain || !Troop || !Guard || !Officer || !Rival)return false;
+    auto* C=R.Interior->FindUnit(Captain);auto* T=R.Interior->FindUnit(Troop);
+    auto* G=R.Interior->FindUnit(Guard);auto* O=R.Interior->FindUnit(Officer);auto* M=R.Interior->FindUnit(Rival);
+    C->State=EOVInteriorState::Operating; C->Order=EOVInteriorOrder::Capture;
+    const float BridgeGuard=R.Interior->InteriorReduction(*T,0,false);
+    C->State=EOVInteriorState::Defending;
+    TestTrue(TEXT("함교 점령 중에만 일반 병력 엄호"),BridgeGuard>R.Interior->InteriorReduction(*T,0,false));
+    T->Order=EOVInteriorOrder::Retreat;
+    const float NoRally=R.Interior->MovementBonus(*T);
+    C->Skill3ActiveUntil=8;
+    TestTrue(TEXT("전투 동조 중 철수 이동 가속"),R.Interior->MovementBonus(*T)>NoRally);
+    O->bDutyActive=false;
+    const float NoGuard=R.Interior->InteriorReduction(*O,0,false);
+    O->bDutyActive=true;
+    const float Protected=R.Interior->InteriorReduction(*O,0,false);
+    TestTrue(TEXT("기관 인계 완료한 보직자 엄호"),Protected>NoGuard);
+    M->State=EOVInteriorState::Fighting;M->EnemyId=Officer;M->TrackedSince=0;
+    R.Interior->GameTime=5.1;
+    TestTrue(TEXT("결투 상대만 외부 엄호 약화"),R.Interior->InteriorReduction(*O,0,false)<Protected &&
+        R.Interior->ExternalAuraScale(*G)==1.f);
+    M->HeroSkillRanks={1,1,1,1};M->HP=M->MaxHP=100;M->bSkill4Armed=true;
+    R.Interior->ApplyDamage(*M,80,TEXT("시험 타격"));
+    TestTrue(TEXT("치명상 생존 스킬과 한계 해방 연동"),M->HP==20 && M->ApexUntil>R.Interior->GameTime+3.9);
+    auto Shot=[](FName Definition){
+        OVInteriorTest::FRange Arena;
+        const FName Engine=Arena.Slot(EOVFacilityType::Engine);
+        const int32 Id=Arena.Interior->RegisterUnit(Arena.Target,0,EOVInteriorRole::Ranged,Engine);
+        auto& Gunner=Arena.Interior->Units.Last();Gunner.DefinitionId=Definition;Gunner.HeroSkillRanks={1,1,0,0};
+        const int32 Victim=Arena.Interior->RegisterUnit(Arena.Target,1,EOVInteriorRole::Trooper,Engine);
+        auto& Target=Arena.Interior->Units.Last();Target.HP=Target.MaxHP=2000;Target.Evasion=0;Target.AttackReadyAt=10000;
+        Arena.Advance(.3f);
+        return FVector2D(Arena.Interior->GetUnit(Id).Hits,2000-Arena.Interior->GetUnit(Victim).HP);
+    };
+    OVInteriorTest::FRange Breach;
+    const FName Engine=Breach.Slot(EOVFacilityType::Engine);
+    const int32 Worker=Breach.Interior->RegisterUnit(Breach.Target,0,EOVInteriorRole::Melee,Engine);
+    Breach.Interior->Units.Last().DefinitionId=TEXT("M05");
+    Breach.Interior->Units.Last().HP=Breach.Interior->Units.Last().MaxHP=5000;
+    Breach.Interior->Units.Last().Evasion=0;
+    Breach.Interior->IssueOrder({Worker},EOVInteriorOrder::Sabotage,Engine);
+    Breach.Advance(3);
+    const int32 Suppressor=Breach.Interior->RegisterUnit(Breach.Target,1,EOVInteriorRole::Ranged,Engine);
+    auto& Sniper=Breach.Interior->Units.Last();Sniper.DefinitionId=TEXT("R04");Sniper.HeroSkillRanks={1,1,1,0};
+    Breach.Advance(.7f);
+    TestTrue(TEXT("실제 공작자에게 제압 사격 후 2.5초 작업 중단"),Breach.Interior->GetUnit(Suppressor).Hits>0 &&
+        Breach.Interior->GetUnit(Worker).SuppressedUntil>Breach.Interior->GameTime+1.7);
+    const auto Regular=Shot(TEXT("G02")), Marksman=Shot(TEXT("R06"));
+    TestTrue(TEXT("약점 감지 사용 중 초감각 조준 실제 피해 상승"),Regular.X>0 && Regular.X==Marksman.X && Marksman.Y>Regular.Y);
     return true;
 }
 

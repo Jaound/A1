@@ -23,6 +23,7 @@ void UOVHeroSubsystem::Initialize(FSubsystemCollectionBase& Collection)
         FOVHeroDefinition D;
         D.Id=FName(Json->GetStringField(TEXT("id"))); D.Name=Json->GetStringField(TEXT("name"));
         D.Role=static_cast<EOVInteriorRole>(Json->GetIntegerField(TEXT("role")));
+        Json->TryGetStringField(TEXT("validation"),D.ValidationNote);
         D.Story=Json->GetStringField(TEXT("story")); D.Origin=Json->GetStringField(TEXT("origin"));
         D.Passive=Json->GetStringField(TEXT("passive")); D.Signature=Json->GetStringField(TEXT("signature"));
         auto Texture=[&](const TCHAR* Key)->UTexture2D*{
@@ -30,6 +31,13 @@ void UOVHeroSubsystem::Initialize(FSubsystemCollectionBase& Collection)
             return Ref.IsEmpty()?nullptr:LoadObject<UTexture2D>(nullptr,*Ref);
         };
         D.Portrait=Texture(TEXT("portrait"));D.Standing=Texture(TEXT("standing"));D.SD=Texture(TEXT("sd"));
+        const TArray<TSharedPtr<FJsonValue>>* Region=nullptr;
+        if(Json->TryGetArrayField(TEXT("standingRegion"),Region) && Region->Num()==4){
+            const FVector2D Min((*Region)[0]->AsNumber(),(*Region)[1]->AsNumber());
+            const FVector2D Max((*Region)[2]->AsNumber(),(*Region)[3]->AsNumber());
+            if(Min.X>=0 && Min.Y>=0 && Max.X<=1 && Max.Y<=1 && Min.X<Max.X && Min.Y<Max.Y)
+                D.StandingRegion=FBox2D(Min,Max);
+        }
         const auto& Foot=Json->GetArrayField(TEXT("foot"));
         if(Foot.Num()==2)D.Foot=FVector2D(Foot[0]->AsNumber(),Foot[1]->AsNumber());
         D.Scale=FMath::Clamp(Json->GetNumberField(TEXT("scale")),.25,3.);

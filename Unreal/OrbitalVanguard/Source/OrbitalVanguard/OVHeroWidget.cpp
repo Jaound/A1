@@ -155,6 +155,14 @@ void UOVHeroWidget::NativeOnInitialized()
     Search->SetHintText(FText::FromString(TEXT("이름 · 유형 · 위치 · 상태 검색")));
     Search->SetForegroundColor(FLinearColor(.05f,.10f,.15f));
     Box->AddChildToVerticalBox(Search);
+    auto* Filters=WidgetTree->ConstructWidget<UHorizontalBox>();
+    Box->AddChildToVerticalBox(Filters);
+    FilterCategory=WidgetTree->ConstructWidget<UComboBoxString>();
+    FilterValue=WidgetTree->ConstructWidget<UComboBoxString>();
+    for(const TCHAR* Label:{TEXT("유형"),TEXT("임무"),TEXT("위치"),TEXT("상태")})FilterCategory->AddOption(Label);
+    FilterCategory->SetSelectedIndex(0);
+    Filters->AddChildToHorizontalBox(FilterCategory);
+    Filters->AddChildToHorizontalBox(FilterValue);
     OwnedLabel = Text(WidgetTree,TEXT("보유 영웅")); Box->AddChildToVerticalBox(OwnedLabel)->SetPadding(FMargin(0,6));
     OwnedCards = WidgetTree->ConstructWidget<UWrapBox>(); OwnedCards->SetInnerSlotPadding(FVector2D(6,6)); Box->AddChildToVerticalBox(OwnedCards);
     MissionLabel = Text(WidgetTree,TEXT("임무 전용 영웅")); Box->AddChildToVerticalBox(MissionLabel)->SetPadding(FMargin(0,6));
@@ -284,6 +292,29 @@ void UOVHeroWidget::Refresh()
         View.State=OVHeroUI::State(Unit); View.Location=OVHeroUI::Location(Unit); View.HP=Unit.HP; View.MaxHP=Unit.MaxHP;
         View.bHPKnown=true; View.bMissionOnly=true; View.bLost=Unit.State==EOVInteriorState::Dead; Views.Add(View);
     }
+    const int32 Category=FilterCategory->GetSelectedIndex();
+    auto ValueOf=[Category](const FOVHeroCardView& V)->FString{
+        switch(Category){
+        case 1: return V.bMissionOnly?TEXT("임무 전용"):V.UnitId>0?TEXT("작전 참가"):TEXT("대기 명단");
+        case 2: return V.Location;
+        case 3: return V.State;
+        default:return V.Role;
+        }
+    };
+    TArray<FString> Options;
+    for(const auto& V:Views)Options.AddUnique(ValueOf(V));
+    Options.Sort();
+    if(LastFilterCategory!=Category || Options!=LastFilterOptions){
+        const FString Previous=LastFilterCategory==Category?FilterValue->GetSelectedOption():FString();
+        FilterValue->ClearOptions();FilterValue->AddOption(TEXT("전체"));
+        for(const auto& Option:Options)FilterValue->AddOption(Option);
+        FilterValue->SetSelectedIndex(Options.Find(Previous)+1);
+        LastFilterOptions=MoveTemp(Options);LastFilterCategory=Category;
+    }
+    if(FilterValue->GetSelectedIndex()>0){
+        const FString SelectedValue=FilterValue->GetSelectedOption();
+        Views.RemoveAll([&](const auto& V){return ValueOf(V)!=SelectedValue;});
+    }
     const FString Filter=Search->GetText().ToString().TrimStartAndEnd();
     if(!Filter.IsEmpty())
         Views.RemoveAll([&](const auto& V){return !(V.Name+TEXT(" ")+V.Role+TEXT(" ")+V.Location+TEXT(" ")+V.State).Contains(Filter);});
@@ -320,7 +351,13 @@ void UOVHeroWidget::Refresh()
     const auto* Def=Selected?Heroes->Definition(Selected->DefinitionId):nullptr;
     StandingBox->SetVisibility(Def && Def->Standing?ESlateVisibility::Visible:ESlateVisibility::Collapsed);
     if(Def && Def->Standing && Standing->GetBrush().GetResourceObject()!=Def->Standing)
-        Standing->SetBrushFromTexture(Def->Standing,true);
+    {
+        FSlateBrush Brush;
+        Brush.SetResourceObject(Def->Standing);
+        Brush.SetUVRegion(Def->StandingRegion);
+        Brush.SetImageSize(Def->StandingRegion.GetSize()*FVector2D(Def->Standing->GetSizeX(),Def->Standing->GetSizeY()));
+        Standing->SetBrush(Brush);
+    }
     if (!Selected)
     {
         Detail->SetText(FText::FromString(TEXT("시험 장면에서 대표 영웅을 만나보세요.")));
@@ -336,7 +373,7 @@ void UOVHeroWidget::Refresh()
     if (Selected->RoleIndex==int32(EOVInteriorRole::Support)) Summary+=FString::Printf(TEXT("  ·  촉매 %d"),bUnit?Unit.Medkits:Hero.Catalysts);
     if(bOwned && (Hero.ArmorTier || Hero.FocusTier || Hero.TacticalTier))
         Summary+=FString::Printf(TEXT("\n초점 T%d · 외피 T%d · 증폭 T%d"),Hero.FocusTier,Hero.ArmorTier,Hero.TacticalTier);
-    if(Def && !Def->Passive.IsEmpty())Summary+=Def->Id==TEXT("M02")?TEXT("\n고경감 파쇄 · 역장 종료 시 잔영 베기"):TEXT("\n고유 능력 · 상세 설명 보기");
+    if(Def && !Def->Passive.IsEmpty())Summary+=Def->Id==TEXT("M02")?TEXT("\n고경감 파쇄 · 역장 종료 시 잔영 베기"):TEXT("\n고유 능력 · 마우스를 올려 설명 확인");
     Detail->SetText(FText::FromString(Summary)); Detail->SetToolTipText(FText::FromString(Def ? Def->Story+TEXT("\n")+Def->Passive+TEXT("\n")+Def->Signature+TEXT("\n")+Unit.Reason : Unit.Reason));
     AOVShip* UnitShip=Unit.Ship.Get();
     if (DutyHero!=SelectedHeroId || DutyShip.Get()!=UnitShip)
@@ -502,7 +539,7 @@ void UOVHeroWidget::ToggleCatalogue()
     for(const auto& D:GetGameInstance()->GetSubsystem<UOVHeroSubsystem>()->Definitions)
         Lines+=FString::Printf(TEXT("\n%s  %s   %s / %s / %s   %s"),*D.Id.ToString(),*D.Name,
             D.Standing?TEXT("●"):TEXT("―"),D.Portrait?TEXT("●"):TEXT("―"),D.SD?TEXT("●"):TEXT("―"),
-            D.Passive.IsEmpty()?TEXT("공통 기술"):D.Id==TEXT("M02")?TEXT("개별 판정 연결"):TEXT("개별 검증 대기"));
+            D.Passive.IsEmpty()?TEXT("공통 기술"):(D.ValidationNote.IsEmpty()?TEXT("판정 연결 · 발동 검증 대기"):*D.ValidationNote));
     CatalogueReport->SetText(FText::FromString(Lines));CatalogueReport->SetVisibility(ESlateVisibility::Visible);
 }
 void UOVHeroWidget::RosterRoom() { if (auto* Development=GetWorld()->GetSubsystem<UOVDevelopmentSubsystem>()) { Development->OpenRosterRoom(); SetFeedback(Development->LastMessage); Refresh(); } }

@@ -1,5 +1,6 @@
 #include "OVShipPreview.h"
 #include "Engine/TextureRenderTarget2D.h"
+#include "Engine/Texture2D.h"
 #include "OVHUD.h"
 #include "OVCalibration.h"
 #include "OVController.h"
@@ -597,7 +598,12 @@ void AOVHUD::DrawBattleNotices()
   const FString Suffix=N.Baseline>0?FString::Printf(TEXT(" %d/%d"),N.Remaining,N.Baseline):N.Count>1?FString::Printf(TEXT(" ×%d"),N.Count):FString();
   const int32 Seconds=FMath::Max(0,FMath::FloorToInt(N.GameTime));
   const FString Label=FString::Printf(TEXT("%02d:%02d %s · %s%s"),Seconds/60,Seconds%60,*N.ShipName.Left(6),Names[FMath::Clamp(int32(N.Kind),0,16)],*Suffix);
-  Button(FName(*FString::Printf(TEXT("BattleNotice_%lld"),N.Serial)),Label,X,BattleNoticeTop()+I*36,340,N.bCritical);
+  const float RowY=BattleNoticeTop()+I*36;
+  Button(FName(*FString::Printf(TEXT("BattleNotice_%lld"),N.Serial)),Label,X,RowY,340,N.bCritical);
+  if(!N.FriendlyHeroDefinition.IsNone()){
+   const auto* Definition=GetGameInstance()->GetSubsystem<UOVHeroSubsystem>()->Definition(N.FriendlyHeroDefinition);
+   if(Definition && Definition->Portrait)DrawTexture(Definition->Portrait,X+307,RowY+1,26,26,0,0,1,1);
+  }
  }
  if(Count==0)DrawText(TEXT("표시할 기록 없음"),PlayInk,X+8,BattleNoticeTop()+6,GEngine->GetSmallFont());
  if(bBattleFeedOpen) {

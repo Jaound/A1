@@ -73,6 +73,10 @@ public:
     void PickCard(FGuid HeroId, int32 UnitId);
 private:
     UPROPERTY() TObjectPtr<class UEditableTextBox> Search;
+    UPROPERTY() TObjectPtr<UComboBoxString> FilterCategory;
+    UPROPERTY() TObjectPtr<UComboBoxString> FilterValue;
+    TArray<FString> LastFilterOptions;
+    int32 LastFilterCategory=INDEX_NONE;
     UPROPERTY() TObjectPtr<UComboBoxString> TemplateChoice;
     UPROPERTY() TObjectPtr<UTextBlock> CatalogueReport;
     UPROPERTY() TObjectPtr<UButton> ArenaAssign;

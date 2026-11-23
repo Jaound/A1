@@ -22,6 +22,7 @@ struct ORBITALVANGUARD_API FOVBattleNotice
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly) double GameTime=0;
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly) int32 Count=0;
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly) int32 UnitId=0;
+    UPROPERTY(VisibleAnywhere, BlueprintReadOnly) FName FriendlyHeroDefinition;
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly) int32 Remaining=0;
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly) int32 Baseline=0;
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly) bool bFleetScope=false;
@@ -52,5 +53,5 @@ public:
 private:
     TArray<int32> RecentAttackIds;
     int64 NextSerial=1;
-    void Append(const FOVAttackState& Attack,AOVShip* Victim,EOVBattleNoticeKind Kind,int32 Count,int32 UnitId=0);
+    void Append(const FOVAttackState& Attack,AOVShip* Victim,EOVBattleNoticeKind Kind,int32 Count,int32 UnitId=0,FName HeroDefinition=NAME_None);
 };

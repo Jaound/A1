@@ -245,6 +245,7 @@ public:
     UFUNCTION(BlueprintPure) FString GetSummary(int32 ViewerFaction) const;
     UFUNCTION(BlueprintPure) bool ValidateInterior(AOVShip* Ship, TArray<FString>& Errors) const;
 private:
+    friend class FOVHeroTacticalEffectsTest;
     struct FGraphState
     {
         TWeakObjectPtr<AOVShip> Ship;

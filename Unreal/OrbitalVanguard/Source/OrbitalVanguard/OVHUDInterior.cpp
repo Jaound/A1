@@ -175,6 +175,8 @@ void AOVHUD::DrawInterior()
  const FOVInteriorUnitRecord* Focus=FocusEntry?*FocusEntry:nullptr;
  if(Focus)
  {
+  const auto* Definition=Focus->DefinitionId.IsNone()?nullptr:GetGameInstance()->GetSubsystem<UOVHeroSubsystem>()->Definition(Focus->DefinitionId);
+  if(Definition && Definition->Portrait)DrawTexture(Definition->Portrait,X+173,Y+402,38,38,0,0,1,1);
   DrawText(Focus->Name,Accent,X+12,Y+408,GEngine->GetSmallFont());
   DrawText(FString::Printf(TEXT("HP %.0f / %.0f"),Focus->HP,Focus->MaxHP),Ink,X+12,Y+428,GEngine->GetSmallFont());
   if(Focus->State==EOVInteriorState::Operating)
@@ -287,9 +289,13 @@ void AOVHUD::DrawInterior()
    if(ArcAge>=0 && ArcAge<.35f){
     const float Radius=12.f+ArcAge*32.f;
     const FLinearColor Phase(1,.28f,.68f,1-ArcAge/.35f);
-    FVector2D Prev=P+FVector2D(.5f,-.866f)*Radius;
+    const FVector Extent=Ship->GetActorScale3D();
+    FVector2D Heading=(Project(U.LocalPosition+U.FieldFacing/Extent)-Project(U.LocalPosition)).GetSafeNormal();
+    if(Heading.IsNearlyZero())Heading=FVector2D(1,0);
+    const float Bearing=FMath::Atan2(Heading.Y,Heading.X);
+    FVector2D Prev=P+Heading.GetRotated(-60.f)*Radius;
     for(int32 I=1;I<=8;++I){
-     const float Angle=FMath::DegreesToRadians(-60.f+15.f*I);
+     const float Angle=Bearing+FMath::DegreesToRadians(-60.f+15.f*I);
      const FVector2D Next=P+FVector2D(FMath::Cos(Angle),FMath::Sin(Angle))*Radius;
      DrawLine(Prev.X,Prev.Y,Next.X,Next.Y,Phase,2);Prev=Next;
     }

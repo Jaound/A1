@@ -89,7 +89,8 @@
         0.95
       ],
       "scale": 1.0,
-      "mirror": false
+      "mirror": false,
+      "validation": "강화 돌입 주변 감속 확인"
     },
     {
       "id": "M02",
@@ -107,7 +108,15 @@
         0.95
       ],
       "scale": 1.0,
-      "mirror": false
+      "mirror": false,
+      "standingRegion": [
+        0,
+        0,
+        1,
+        1
+      ],
+      "poses": {},
+      "validation": "경감 무시·역장 종료 호형·실제 화면 확인"
     },
     {
       "id": "M03",
@@ -125,7 +134,8 @@
         0.95
       ],
       "scale": 1.0,
-      "mirror": false
+      "mirror": false,
+      "validation": "진입 감속·동일 접촉 중복 차단 확인"
     },
     {
       "id": "M04",
@@ -143,7 +153,8 @@
         0.95
       ],
       "scale": 1.0,
-      "mirror": false
+      "mirror": false,
+      "validation": "돌입 경로 추가 피해·대상 수 제한 확인"
     },
     {
       "id": "M05",
@@ -161,7 +172,8 @@
         0.95
       ],
       "scale": 1.0,
-      "mirror": false
+      "mirror": false,
+      "validation": "교전 중 공작·제압에 의한 중단 확인"
     },
     {
       "id": "M06",
@@ -179,7 +191,8 @@
         0.95
       ],
       "scale": 1.0,
-      "mirror": false
+      "mirror": false,
+      "validation": "근접 역장의 적 사수 교란 확인"
     },
     {
       "id": "M07",
@@ -197,7 +210,8 @@
         0.95
       ],
       "scale": 1.0,
-      "mirror": false
+      "mirror": false,
+      "validation": "시설 재난 피해·지속시간 확인"
     },
     {
       "id": "M08",
@@ -215,7 +229,8 @@
         0.95
       ],
       "scale": 1.0,
-      "mirror": false
+      "mirror": false,
+      "validation": "결투 상대의 외부 엄호 약화·저체력 해방 확인"
     },
     {
       "id": "M09",
@@ -233,7 +248,8 @@
         0.95
       ],
       "scale": 1.0,
-      "mirror": false
+      "mirror": false,
+      "validation": "보직자 엄호 확인"
     },
     {
       "id": "M10",
@@ -251,7 +267,8 @@
         0.95
       ],
       "scale": 1.0,
-      "mirror": false
+      "mirror": false,
+      "validation": "분대 전멸 후 점령 강화 확인"
     },
     {
       "id": "R01",
@@ -269,7 +286,8 @@
         0.95
       ],
       "scale": 1.0,
-      "mirror": false
+      "mirror": false,
+      "validation": "보직·세력 격리 검사"
     },
     {
       "id": "R02",
@@ -287,7 +305,8 @@
         0.95
       ],
       "scale": 1.0,
-      "mirror": false
+      "mirror": false,
+      "validation": "보직·세력 격리 검사"
     },
     {
       "id": "R03",
@@ -305,7 +324,8 @@
         0.95
       ],
       "scale": 1.0,
-      "mirror": false
+      "mirror": false,
+      "validation": "보직·세력 격리 검사"
     },
     {
       "id": "R04",
@@ -323,7 +343,8 @@
         0.95
       ],
       "scale": 1.0,
-      "mirror": false
+      "mirror": false,
+      "validation": "공작 중인 적 제압 확인"
     },
     {
       "id": "R05",
@@ -341,7 +362,8 @@
         0.95
       ],
       "scale": 1.0,
-      "mirror": false
+      "mirror": false,
+      "validation": "보직·세력 격리 검사"
     },
     {
       "id": "R06",
@@ -359,7 +381,8 @@
         0.95
       ],
       "scale": 1.0,
-      "mirror": false
+      "mirror": false,
+      "validation": "약점 감지와 조준 피해 연동 확인"
     },
     {
       "id": "R07",
@@ -377,7 +400,8 @@
         0.95
       ],
       "scale": 1.0,
-      "mirror": false
+      "mirror": false,
+      "validation": "보직·세력 격리 검사"
     },
     {
       "id": "R08",
@@ -395,7 +419,8 @@
         0.95
       ],
       "scale": 1.0,
-      "mirror": false
+      "mirror": false,
+      "validation": "적 돌입에 대한 대응 사격 확인"
     },
     {
       "id": "R09",
@@ -413,7 +438,8 @@
         0.95
       ],
       "scale": 1.0,
-      "mirror": false
+      "mirror": false,
+      "validation": "보직·세력 격리 검사"
     },
     {
       "id": "R10",
@@ -431,7 +457,8 @@
         0.95
       ],
       "scale": 1.0,
-      "mirror": false
+      "mirror": false,
+      "validation": "보직·세력 격리 검사"
     },
     {
       "id": "S01",
@@ -449,7 +476,8 @@
         0.95
       ],
       "scale": 1.0,
-      "mirror": false
+      "mirror": false,
+      "validation": "유한 촉매·저체력 추가 회복 확인"
     },
     {
       "id": "S02",
@@ -467,7 +495,8 @@
         0.95
       ],
       "scale": 1.0,
-      "mirror": false
+      "mirror": false,
+      "validation": "보직·세력 격리 검사"
     },
     {
       "id": "S03",
@@ -485,7 +514,8 @@
         0.95
       ],
       "scale": 1.0,
-      "mirror": false
+      "mirror": false,
+      "validation": "보직·세력 격리 검사"
     },
     {
       "id": "S04",
@@ -503,7 +533,8 @@
         0.95
       ],
       "scale": 1.0,
-      "mirror": false
+      "mirror": false,
+      "validation": "보직·세력 격리 검사"
     },
     {
       "id": "S05",
@@ -521,7 +552,8 @@
         0.95
       ],
       "scale": 1.0,
-      "mirror": false
+      "mirror": false,
+      "validation": "유한 촉매·회복 재사용 단축 확인"
     },
     {
       "id": "C01",
@@ -539,7 +571,8 @@
         0.95
       ],
       "scale": 1.0,
-      "mirror": false
+      "mirror": false,
+      "validation": "함교 점령 엄호·철수 가속 확인"
     },
     {
       "id": "C02",
@@ -557,7 +590,8 @@
         0.95
       ],
       "scale": 1.0,
-      "mirror": false
+      "mirror": false,
+      "validation": "보직·세력 격리 검사"
     },
     {
       "id": "C03",
@@ -575,7 +609,8 @@
         0.95
       ],
       "scale": 1.0,
-      "mirror": false
+      "mirror": false,
+      "validation": "공유 레이더·선회·거리 및 세력 경계 확인"
     },
     {
       "id": "C04",
@@ -593,7 +628,8 @@
         0.95
       ],
       "scale": 1.0,
-      "mirror": false
+      "mirror": false,
+      "validation": "보직·세력 격리 검사"
     },
     {
       "id": "C05",
@@ -611,7 +647,8 @@
         0.95
       ],
       "scale": 1.0,
-      "mirror": false
+      "mirror": false,
+      "validation": "보직·세력 격리 검사"
     }
   ]
 }
