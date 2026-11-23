@@ -865,7 +865,11 @@ void AOVController::ClearSelection()
 }
 void AOVController::SelectShipFromUser(AOVShip* Ship, bool bAdditive)
 {
- if(bAdditive && Ship) SelectAdditional(Ship); else SelectShip(Ship);
+ if(bAdditive){
+  if(!IsValid(Ship) || !Ship->bFriendly || Ship->IsHidden() || Ship->Systems->bWrecked || (Combat && Combat->IsDeparted(Ship)))return;
+  if(Selected && !Selected->bFriendly)ClearSelection();
+  SelectAdditional(Ship);
+ } else SelectShip(Ship);
  if(auto* HUD=Cast<AOVHUD>(GetHUD())) {
   if(Selected) HUD->OpenDetails(); else HUD->SetDetailsOpen(false);
  }
@@ -988,7 +992,7 @@ void AOVController::Action(FName Name)
  if(Name==TEXT("Overview")) { FrameEngagement(); return; }
  if(Name.ToString().StartsWith(TEXT("Pick_")) || Name.ToString().StartsWith(TEXT("WorldPick_"))) {
   const int32 Index=FCString::Atoi(*Name.ToString().Mid(Name.ToString().StartsWith(TEXT("WorldPick_"))?10:5));
-  if(Ships.IsValidIndex(Index)) { if(InputMode==EOVInputMode::Survey)SurveyEnemy(Ships[Index]); else if(InputMode==EOVInputMode::Repair){auto* Service=GetWorld()->GetSubsystem<UOVLogisticsSubsystem>(); Service->OrderRepair(Selected,Ships[Index]);LastAction=Service->LastReason;InputMode=EOVInputMode::None;} else if(InputMode==EOVInputMode::Target) SetTarget(Ships[Index]); else SelectShipFromUser(Ships[Index],false); } return;
+  if(Ships.IsValidIndex(Index)) { if(InputMode==EOVInputMode::Survey)SurveyEnemy(Ships[Index]); else if(InputMode==EOVInputMode::Repair){auto* Service=GetWorld()->GetSubsystem<UOVLogisticsSubsystem>(); Service->OrderRepair(Selected,Ships[Index]);LastAction=Service->LastReason;InputMode=EOVInputMode::None;} else if(InputMode==EOVInputMode::Target) SetTarget(Ships[Index]); else SelectShipFromUser(Ships[Index],IsInputKeyDown(EKeys::LeftShift)||IsInputKeyDown(EKeys::RightShift)); } return;
  }
  if(Name==TEXT("CalibrationRange")) { StartCalibrationRange((CalibrationScenario+1)%3); return; }
  if(Name==TEXT("CombatRange")) { StartCombatRange(); return; }

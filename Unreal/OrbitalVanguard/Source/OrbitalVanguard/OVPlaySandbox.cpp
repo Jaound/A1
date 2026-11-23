@@ -153,6 +153,7 @@ bool UOVPlayScenarioSubsystem::SandboxAction(AOVController& PC,FName Name)
                 Ship->SetDestination(Ship->GetActorLocation()+ToEnemy.GetSafeNormal()*ClosingDistance);
             }
         }
+        for(int32 Side=0;Side<2;++Side)AssignScenarioHeroes(PC,Side);
         FreshDeployments.Reset();
         EndSandboxPlacement(); bSandboxHullMenu=false;
         bSandboxEngaged=true; PC.bSimulationPaused=false; SandboxHint=TEXT("교전 진행"); return true;

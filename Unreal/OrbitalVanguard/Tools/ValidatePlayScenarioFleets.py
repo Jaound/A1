@@ -43,7 +43,7 @@ def verify(pc):
     combat = prop(pc, "combat")
     carrier = prop(pc, "carrier")
     play = pc.get_play_scenario()
-    expected_aircraft = {50: 40, 100: 40, 200: 80, 300: 80}
+    expected_aircraft = {50: 40, 100: 40, 200: 80, 300: 40}
     previous_ship = None
     for budget in (50, 100, 200, 300):
         check(f"FLEET-{budget}-START", pc.start_play_scenario(f"Fleet{budget}"), prop(pc, "last_action"))
@@ -61,6 +61,29 @@ def verify(pc):
             actual_costs.append(sum({1: 1, 2: 5, 3: 25, 4: 125}[size] for size in classes))
         check(f"FLEET-{budget}-SPAWNED-COST", actual_costs == [budget, budget], actual_costs)
         check(f"FLEET-{budget}-CAPITALS", caps == [max(0,budget // 100 - 1)] * 2, caps)
+        for side in (0, 1):
+            friendly = [s for s in ships if faction(s) == side]
+            ranked = sorted(friendly, key=lambda s: -prop(combat.get_ship_state(s), "weapon_tier_cap"))
+            records = [u for u in prop(prop(pc, "interior"), "units") if prop(u, "faction_id") == side
+                       and prop(u, "role") != unreal.OVInteriorRole.TROOPER]
+            quota = {50: 3, 100: 5, 200: 10, 300: 15}[budget]
+            check(f"FLEET-{budget}-HEROES-{side}", len(records) == quota and len({prop(u, "person_id") for u in records}) == quota)
+            actual = [sum(prop(u, "ship") == s for u in records) for s in ranked]
+            check(f"FLEET-{budget}-BERTHS-{side}", actual == [max(0, min(4, quota-4*i)) for i in range(len(ranked))], actual)
+            if budget == 300:
+                missile = [s for s in friendly if "전략미사일" in str(prop(s, "ship_name")).replace(" ", "")]
+                check(f"FLEET-300-STRATEGIC-{side}", len(missile) == 1 and any(
+                    str(prop(m, "presentation_profile")) == "AntiShipMissileModule"
+                    for m in prop(prop(prop(missile[0], "systems"), "layout"), "weapon_mounts")))
+        if budget == 50:
+            first, second = [s for s in ships if faction(s) == 0][:2]
+            pc.select_ship_from_user(first, False)
+            pc.select_ship_from_user(second, True)
+            check("FLEET-ADDITIVE-SELECT", list(prop(pc, "selection")) == [first, second])
+            pc.select_ship_from_user(next(s for s in ships if faction(s) == 1), True)
+            check("FLEET-ADDITIVE-ENEMY", list(prop(pc, "selection")) == [first, second])
+            pc.select_ship_from_user(first, True)
+            check("FLEET-ADDITIVE-REMOVE", list(prop(pc, "selection")) == [second] and prop(pc, "selected") == second)
         aircraft = prop(carrier, "aircraft")
         check(f"FLEET-{budget}-AIRCRAFT", [sum(prop(a,"faction_id") == side for a in aircraft) for side in (0,1)]
               == [expected_aircraft[budget]] * 2, len(aircraft))
@@ -125,6 +148,21 @@ def verify(pc):
     pc.action("Pause")
     advance(pc, 1)
     check("FLEET-SANDBOX-NO-RESULT", prop(play, "result") == unreal.OVPlaySceneResult.RUNNING)
+    # 대형함을 먼저 배치해도 교전 시작 시 강습선부터 승선한다.
+    for key, side, x in [("dreadnought", "SBAlly", -90000), ("assault", "SBAlly", -30000), ("corvette", "SBEnemy", 70000)]:
+        for action in ("SBMenu", "SBHull_" + key, side, "SBPlace"):
+            pc.action(action)
+        check("FLEET-SANDBOX-PLACE-" + key, play.place_sandbox_ship(unreal.Vector(x, 0, 2000)))
+    pc.action("SBStart")
+    inside = prop(pc, "interior")
+    assigned = [u for u in prop(inside, "units") if prop(u, "faction_id") == 0 and prop(u, "role") != unreal.OVInteriorRole.TROOPER]
+    check("FLEET-ASSAULT-PRIORITY", len(assigned) == 7 and sum("강습선" in prop(prop(u, "ship"), "ship_name") for u in assigned) == 4)
+    transport = next(s for s in prop(pc, "ships") if "강습선" in prop(s, "ship_name"))
+    check("FLEET-FIFTH-HERO-BLOCKED", inside.register_unit(transport, 0, unreal.OVInteriorRole.MELEE, "None") == 0)
+    identifiers = {prop(u, "unit_id") for u in assigned}
+    pc.action("SBStop"); pc.action("SBStart")
+    check("FLEET-SANDBOX-RESUME-PRESERVES-HEROES", identifiers == {prop(u, "unit_id") for u in prop(inside, "units")
+           if prop(u, "faction_id") == 0 and prop(u, "role") != unreal.OVInteriorRole.TROOPER})
     pc.leave_play_scenario()
     check("FLEET-LEAVE-RESET", str(prop(play, "active_id")) == "None" and not prop(pc, "selected"))
     check("FLEET-LEGACY-API-RESTORE", pc.start_calibration_range(1) and len(prop(pc, "ships")) == 3)

@@ -48,6 +48,7 @@ class ORBITALVANGUARD_API UOVPlayScenarioSubsystem : public UWorldSubsystem
 {
     GENERATED_BODY()
 public:
+    static constexpr int32 HeroBerthsPerShip=4;
     static TConstArrayView<FOVPlaySceneDefinition> Definitions();
     const FOVPlaySceneDefinition* GetActiveDefinition() const;
     bool Start(AOVController& Controller, FName Id);
@@ -109,6 +110,7 @@ private:
     double LastProgressAt = 0;
     double PreviousIntegrity = -1;
     FString Resolution;
+    int32 IssuedHeroes[2]={};
     TArray<FGuid> ScenarioHeroes;
     void AssignScenarioHeroes(AOVController& PC,int32 Faction);
 

@@ -63,13 +63,20 @@ bool UOVHeroSubsystem::CanChangeRoster() const
 
 FGuid UOVHeroSubsystem::CreateDevHero(int32 FactionId,EOVInteriorRole Role,const FString& Name)
 {
-    if(!CanChangeRoster() || FactionId<0 || Role==EOVInteriorRole::Trooper ||
+    if(!CanChangeRoster()){LastMessage=TEXT("시험 영웅 생성은 비전투 상태에서 가능합니다");return {};}
+    return CreateRosterEntry(FactionId,Role,Name,false);
+}
+
+FGuid UOVHeroSubsystem::CreateRosterEntry(int32 FactionId,EOVInteriorRole Role,const FString& Name,bool bDeploy)
+{
+    if(FactionId<0 || (bDeploy && CountDeployed(FactionId)>=15) || Role==EOVInteriorRole::Trooper ||
         static_cast<uint8>(Role)>static_cast<uint8>(EOVInteriorRole::Commander))
     {LastMessage=TEXT("시험 영웅 생성 불가: 비전투 상태와 유효한 세력/유형이 필요합니다");return FGuid();}
     int32 Count=0;for(const auto& H:Heroes)if(H.FactionId==FactionId && H.Status!=EOVHeroStatus::Dead)++Count;
     if(Count>=30){LastMessage=TEXT("후보 로스터 한도 30명");return FGuid();}
     FOVHeroRecord H;H.HeroId=FGuid::NewGuid();H.FactionId=FactionId;H.Role=Role;
     H.Name=Name.IsEmpty()?TEXT("시험 영웅"):Name;H.SkillRanks={1,0,0,0};H.CooldownRemaining.Init(0,4);
+    H.bDeploymentReserved=bDeploy;H.Status=bDeploy?EOVHeroStatus::Deployed:EOVHeroStatus::Reserve;
     H.Catalysts=Role==EOVInteriorRole::Support?4:0;Heroes.Add(H);
     LastMessage=TEXT("시험 영웅 생성 · 후보 수치");return H.HeroId;
 }

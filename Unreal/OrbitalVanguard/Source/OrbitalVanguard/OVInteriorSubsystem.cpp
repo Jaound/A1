@@ -1,4 +1,5 @@
 #include "OVInteriorSubsystem.h"
+#include "OVPlayScenarioSubsystem.h"
 #include "OVBattleNotices.h"
 #include "OVTransportSubsystem.h"
 #include "OVShip.h"
@@ -228,6 +229,14 @@ bool UOVInteriorSubsystem::RemoveShip(AOVShip* Ship)
     bEnabled=!Graphs.IsEmpty();return true;
 }
 
+int32 UOVInteriorSubsystem::CountEmbarkedHeroes(const AOVShip* Ship,int32 Faction) const
+{
+    int32 Count=0;
+    for(const auto& U:Units)
+        if(U.Ship==Ship && U.FactionId==Faction && OVInterior::Hero(U) && U.HP>0)++Count;
+    return Count;
+}
+
 int32 UOVInteriorSubsystem::CountActiveHeroes(int32 Faction) const
 {
     int32 Count=0; for (const auto& U:Units) if(U.FactionId==Faction && OVInterior::Hero(U) && U.State!=EOVInteriorState::Dead) ++Count;
@@ -239,6 +248,10 @@ int32 UOVInteriorSubsystem::RegisterUnit(AOVShip* Ship,int32 Faction,EOVInterior
     if(!bEnabled || !FindGraph(Ship) || Faction<0 || Ship->Systems->bWrecked ||
         (Role!=EOVInteriorRole::Trooper && CountActiveHeroes(Faction)>=FMath::Min(15,Settings.MaxActiveHeroesPerFaction)))
     { LastMessage=TEXT("인원 등록 불가: 배치·생존·세력 영웅 15명 한도 확인"); return 0; }
+    if(Role!=EOVInteriorRole::Trooper && GetWorld()->GetSubsystem<UOVPlayScenarioSubsystem>()->GetActiveDefinition() &&
+       CountEmbarkedHeroes(Ship,Faction)>=UOVPlayScenarioSubsystem::HeroBerthsPerShip){
+        LastMessage=TEXT("시나리오 편성: 함선당 영웅 4명까지 배치할 수 있습니다");return 0;
+    }
     auto* L=Ship->Systems->Layout.Get();
     if(SlotId.IsNone()) SlotId=L->CoreSlotId;
     const int32 Index=L->GetSlotIndex(SlotId); if(Index==INDEX_NONE) return 0;

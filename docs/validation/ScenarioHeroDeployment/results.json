@@ -1,0 +1,520 @@
+{
+  "시작 코드": "579f1e1",
+  "빌드": "UE 5.8.4 Win64 Development Editor 성공",
+  "자동 검사": 152,
+  "엔진 초기 자체 검사 메시지": 15,
+  "플레이 함대 검사": [
+    {
+      "id": "FLEET-50-START",
+      "passed": true,
+      "detail": "50코스트 함대전 · 준비 완료"
+    },
+    {
+      "id": "FLEET-50-COST",
+      "passed": true,
+      "detail": "[50, 50]"
+    },
+    {
+      "id": "FLEET-50-REGISTERED",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "FLEET-50-SPAWNED-COST",
+      "passed": true,
+      "detail": "[50, 50]"
+    },
+    {
+      "id": "FLEET-50-CAPITALS",
+      "passed": true,
+      "detail": "[0, 0]"
+    },
+    {
+      "id": "FLEET-50-HEROES-0",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "FLEET-50-BERTHS-0",
+      "passed": true,
+      "detail": "[3, 0, 0, 0, 0, 0, 0, 0, 0, 0]"
+    },
+    {
+      "id": "FLEET-50-HEROES-1",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "FLEET-50-BERTHS-1",
+      "passed": true,
+      "detail": "[3, 0, 0, 0, 0, 0, 0, 0, 0, 0]"
+    },
+    {
+      "id": "FLEET-ADDITIVE-SELECT",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "FLEET-ADDITIVE-ENEMY",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "FLEET-ADDITIVE-REMOVE",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "FLEET-50-AIRCRAFT",
+      "passed": true,
+      "detail": "80"
+    },
+    {
+      "id": "FLEET-50-AIRCRAFT-IDS",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "FLEET-50-MANUAL-WINGS-WAIT",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "FLEET-50-AA-ESCORT",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "FLEET-50-SCREEN-IN-FRONT",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "FLEET-50-PAUSED",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "FLEET-50-ENEMY-MOVEMENT",
+      "passed": true,
+      "detail": "59423.905274275356"
+    },
+    {
+      "id": "FLEET-50-REAL-HITS",
+      "passed": true,
+      "detail": "818"
+    },
+    {
+      "id": "FLEET-50-BOTH-SIDES-FIRE",
+      "passed": true,
+      "detail": "[454, 446]"
+    },
+    {
+      "id": "FLEET-50-BOTH-SIDES-LAUNCH",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "FLEET-100-START",
+      "passed": true,
+      "detail": "100코스트 함대전 · 준비 완료"
+    },
+    {
+      "id": "FLEET-100-OLD-ACTOR-CLEARED",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "FLEET-100-COST",
+      "passed": true,
+      "detail": "[100, 100]"
+    },
+    {
+      "id": "FLEET-100-REGISTERED",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "FLEET-100-SPAWNED-COST",
+      "passed": true,
+      "detail": "[100, 100]"
+    },
+    {
+      "id": "FLEET-100-CAPITALS",
+      "passed": true,
+      "detail": "[0, 0]"
+    },
+    {
+      "id": "FLEET-100-HEROES-0",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "FLEET-100-BERTHS-0",
+      "passed": true,
+      "detail": "[4, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]"
+    },
+    {
+      "id": "FLEET-100-HEROES-1",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "FLEET-100-BERTHS-1",
+      "passed": true,
+      "detail": "[4, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]"
+    },
+    {
+      "id": "FLEET-100-AIRCRAFT",
+      "passed": true,
+      "detail": "80"
+    },
+    {
+      "id": "FLEET-100-AIRCRAFT-IDS",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "FLEET-100-MANUAL-WINGS-WAIT",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "FLEET-100-PAUSED",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "FLEET-100-ENEMY-MOVEMENT",
+      "passed": true,
+      "detail": "79944.31254948294"
+    },
+    {
+      "id": "FLEET-100-REAL-HITS",
+      "passed": true,
+      "detail": "822"
+    },
+    {
+      "id": "FLEET-100-BOTH-SIDES-FIRE",
+      "passed": true,
+      "detail": "[519, 506]"
+    },
+    {
+      "id": "FLEET-100-BOTH-SIDES-LAUNCH",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "FLEET-200-START",
+      "passed": true,
+      "detail": "200코스트 함대전 · 준비 완료"
+    },
+    {
+      "id": "FLEET-200-OLD-ACTOR-CLEARED",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "FLEET-200-COST",
+      "passed": true,
+      "detail": "[200, 200]"
+    },
+    {
+      "id": "FLEET-200-REGISTERED",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "FLEET-200-SPAWNED-COST",
+      "passed": true,
+      "detail": "[200, 200]"
+    },
+    {
+      "id": "FLEET-200-CAPITALS",
+      "passed": true,
+      "detail": "[1, 1]"
+    },
+    {
+      "id": "FLEET-200-HEROES-0",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "FLEET-200-BERTHS-0",
+      "passed": true,
+      "detail": "[4, 4, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0]"
+    },
+    {
+      "id": "FLEET-200-HEROES-1",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "FLEET-200-BERTHS-1",
+      "passed": true,
+      "detail": "[4, 4, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0]"
+    },
+    {
+      "id": "FLEET-200-AIRCRAFT",
+      "passed": true,
+      "detail": "160"
+    },
+    {
+      "id": "FLEET-200-AIRCRAFT-IDS",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "FLEET-200-MANUAL-WINGS-WAIT",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "FLEET-200-PAUSED",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "FLEET-200-ENEMY-MOVEMENT",
+      "passed": true,
+      "detail": "81923.32813193908"
+    },
+    {
+      "id": "FLEET-200-REAL-HITS",
+      "passed": true,
+      "detail": "656"
+    },
+    {
+      "id": "FLEET-200-BOTH-SIDES-FIRE",
+      "passed": true,
+      "detail": "[477, 467]"
+    },
+    {
+      "id": "FLEET-200-BOTH-SIDES-LAUNCH",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "FLEET-300-START",
+      "passed": true,
+      "detail": "300코스트 함대전 · 준비 완료"
+    },
+    {
+      "id": "FLEET-300-OLD-ACTOR-CLEARED",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "FLEET-300-COST",
+      "passed": true,
+      "detail": "[300, 300]"
+    },
+    {
+      "id": "FLEET-300-REGISTERED",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "FLEET-300-SPAWNED-COST",
+      "passed": true,
+      "detail": "[300, 300]"
+    },
+    {
+      "id": "FLEET-300-CAPITALS",
+      "passed": true,
+      "detail": "[2, 2]"
+    },
+    {
+      "id": "FLEET-300-HEROES-0",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "FLEET-300-BERTHS-0",
+      "passed": true,
+      "detail": "[4, 4, 4, 3, 0, 0, 0, 0, 0, 0, 0, 0]"
+    },
+    {
+      "id": "FLEET-300-STRATEGIC-0",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "FLEET-300-HEROES-1",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "FLEET-300-BERTHS-1",
+      "passed": true,
+      "detail": "[4, 4, 4, 3, 0, 0, 0, 0, 0, 0, 0, 0]"
+    },
+    {
+      "id": "FLEET-300-STRATEGIC-1",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "FLEET-300-AIRCRAFT",
+      "passed": true,
+      "detail": "80"
+    },
+    {
+      "id": "FLEET-300-AIRCRAFT-IDS",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "FLEET-300-MANUAL-WINGS-WAIT",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "FLEET-300-PAUSED",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "FLEET-300-ENEMY-MOVEMENT",
+      "passed": true,
+      "detail": "413223.0033199641"
+    },
+    {
+      "id": "FLEET-300-REAL-HITS",
+      "passed": true,
+      "detail": "314"
+    },
+    {
+      "id": "FLEET-300-BOTH-SIDES-FIRE",
+      "passed": true,
+      "detail": "[227, 399]"
+    },
+    {
+      "id": "FLEET-300-BOTH-SIDES-LAUNCH",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "FLEET-DEPARTURE-VICTORY",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "FLEET-RESTART-RESET",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "FLEET-DEPARTURE-DEFEAT",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "FLEET-CLOCK-1-START",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "FLEET-CLOCK-2-START",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "FLEET-CLOCK-3-START",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "FLEET-CLOCK-123",
+      "passed": true,
+      "detail": "[4.0, 4.0, 4.0]"
+    },
+    {
+      "id": "FLEET-STALEMATE",
+      "passed": true,
+      "detail": "교착 · 전력 변화 없음"
+    },
+    {
+      "id": "FLEET-SANDBOX-START",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "FLEET-SANDBOX-EMPTY",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "FLEET-SANDBOX-NO-RESULT",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "FLEET-SANDBOX-PLACE-dreadnought",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "FLEET-SANDBOX-PLACE-assault",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "FLEET-SANDBOX-PLACE-corvette",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "FLEET-ASSAULT-PRIORITY",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "FLEET-FIFTH-HERO-BLOCKED",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "FLEET-SANDBOX-RESUME-PRESERVES-HEROES",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "FLEET-LEAVE-RESET",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "FLEET-LEGACY-API-RESTORE",
+      "passed": true,
+      "detail": ""
+    }
+  ],
+  "명령 HUD 검사": [
+    "50코스트 출격",
+    "Fleet50 렌더",
+    "초계함_기존 렌더",
+    "초계함_보정 렌더",
+    "세력 0 50코스트 실인원 3명",
+    "세력 1 50코스트 실인원 3명",
+    "재시작",
+    "스타팅 영웅 명단 중복 없음",
+    "재시작",
+    "스타팅 영웅 명단 중복 없음",
+    "비전용 일반·유도 모듈 장착",
+    "17종 사건별 표시 설정",
+    "8개 임무 마지막 행 표시",
+    "수리함 초도 보급",
+    "적 수리 거절",
+    "실제 손상 표적",
+    "원거리 접근 후 유상 수리",
+    "정지 명령이 수리 취소",
+    "수리함_화물 렌더",
+    "목적지 전에는 충전 없음",
+    "목적지 선택 후 충전",
+    "지도 명령 후 선택 유지",
+    "정지 중 도약 보류",
+    "충전 후 선택함 이탈"
+  ],
+  "직접 Shift 클릭 검증": false
+}

@@ -121,6 +121,7 @@ void UOVPlayScenarioSubsystem::StepEscort(AOVController& Controller, float Delta
             Raider->SetDestination(Trial.Exchange + FVector(13000, 9000 * Lane, 0));
             if (InConvoy(Haulers[Lane].Get(), Combat)) Combat.SetTarget(Raider, Haulers[Lane].Get());
         }
+        AssignScenarioHeroes(Controller,1);
         bRaidLaunched = true;
     }
 

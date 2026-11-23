@@ -68,4 +68,7 @@ public:
     UFUNCTION(BlueprintCallable) bool LoadRoster(const FString& SlotName, int32 UserIndex = 0);
     bool CanChangeRoster() const;
     FOVHeroRecord* FindHero(FGuid Id);
+private:
+    friend class UOVPlayScenarioSubsystem;
+    FGuid CreateRosterEntry(int32 FactionId,EOVInteriorRole Role,const FString& Name,bool bDeploy);
 };

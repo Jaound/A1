@@ -55,10 +55,10 @@ def run():
     heroes=p(pc,"heroes")
     for side in [0,1]:
         records=[h for h in heroes.get_heroes(side) if p(h,"runtime_unit_id")>0]
-        check(f"세력 {side} 실인원 15명",len(records)==15 and len({p(h,"runtime_person_id") for h in records})==15)
+        check(f"세력 {side} 50코스트 실인원 3명",len(records)==3 and len({p(h,"runtime_person_id") for h in records})==3)
     for _ in range(2):
         check("재시작",pc.start_play_scenario("Fleet100"))
-        check("스타팅 영웅 명단 중복 없음",len([h for h in heroes.get_heroes(0) if p(h,"runtime_unit_id")>0])==15)
+        check("스타팅 영웅 명단 중복 없음",len([h for h in heroes.get_heroes(0) if p(h,"runtime_unit_id")>0])==5)
     ships=list(p(pc,"ships"))
     ally=[s for s in ships if p(s,"friendly")]
     repair=next(x for x in ally if "보급수리함" in p(x,"ship_name"))

@@ -8,6 +8,7 @@
 #include "OVShip.h"
 #include "OVShipSystemsComponent.h"
 #include "Engine/World.h"
+#include "GameFramework/PlayerInput.h"
 #include "Misc/AutomationTest.h"
 
 #if WITH_DEV_AUTOMATION_TESTS
@@ -619,6 +620,31 @@ bool FOVWingResupply::RunTest(const FString&)
     TestEqual(TEXT("반 인원은 7초에 미완성"),R.Wing->Aircraft.Num(),0);
     R.Wing->Simulate(7.f);
     TestEqual(TEXT("반 인원은 14초에 각 1대"),R.Wing->CountAircraft(C,EOVAircraftState::Stored),2);
+    return true;
+}
+
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(FOVShiftFleetSelection,"OrbitalVanguard.Fleet.ShiftSelection",EAutomationTestFlags::EditorContext|EAutomationTestFlags::EngineFilter)
+bool FOVShiftFleetSelection::RunTest(const FString&)
+{
+    OVCarrierTest::FBattle R(126);
+    auto* PC=R.World->SpawnActor<AOVController>();
+    auto* First=R.Ship(TEXT("corvette"),true,FVector::ZeroVector);
+    auto* Second=R.Ship(TEXT("frigate"),true,FVector(12000,0,0));
+    if(!PC || !First || !Second)return false;
+    PC->Combat=R.Combat;PC->Ships={First,Second};PC->PlayerInput=NewObject<UPlayerInput>(PC);
+    auto Key=[&](FKey Shift,EInputEvent Event){
+        PC->PlayerInput->InputKey(FInputKeyEventArgs(nullptr,INPUTDEVICEID_NONE,Shift,Event,FPlatformTime::Cycles64()));
+        PC->PlayerInput->ProcessInputStack({},1.f/60.f,false);
+    };
+    for(FKey Shift:{EKeys::LeftShift,EKeys::RightShift}){
+        PC->SelectShip(First);Key(Shift,IE_Pressed);
+        PC->Action(TEXT("WorldPick_1"));
+        TestTrue(TEXT("이름표 Shift 추가"),PC->Selection.Num()==2 && Second->bSelected);
+        PC->Action(TEXT("Pick_0"));
+        TestTrue(TEXT("카드 Shift 해제와 대표함 전환"),PC->Selection.Num()==1 && PC->Selected==Second && !First->bSelected);
+        Key(Shift,IE_Released);PC->Action(TEXT("WorldPick_0"));
+        TestTrue(TEXT("Shift 해제 후 단일 선택"),PC->Selection.Num()==1 && PC->Selected==First);
+    }
     return true;
 }
 

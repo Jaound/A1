@@ -207,6 +207,7 @@ public:
     UFUNCTION(BlueprintPure) FOVInteriorUnitRecord GetUnit(int32 UnitId) const;
     UFUNCTION(BlueprintPure) TArray<int32> GetPassengerIds(const TArray<int32>& UnitIds) const;
     UFUNCTION(BlueprintPure) TArray<int32> GetUnitsOnShip(AOVShip* Ship, int32 Faction) const;
+    int32 CountEmbarkedHeroes(const AOVShip* Ship,int32 Faction) const;
     UFUNCTION(BlueprintPure) int32 CountActiveHeroes(int32 Faction) const;
     UFUNCTION(BlueprintPure) bool CanObserve(int32 ViewerFaction, int32 UnitId) const;
     UFUNCTION(BlueprintPure) bool IsStructureKnown(int32 ViewerFaction, AOVShip* Ship) const;

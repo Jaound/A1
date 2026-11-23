@@ -36,7 +36,7 @@ const FOVPlaySceneDefinition Scenes[] = {
     {TEXT("Fleet300"), TEXT("300코스트 함대전"), TEXT("두 초대형함과 혼성 호위 전력을 운용하세요."),
      EOVPlaySceneKind::Fleet, 300, {{TEXT("corvette"),3}, {TEXT("frigate"),1}, {TEXT("vector"),1},
      {TEXT("bastion"),1}, {TEXT("dreadnought"),1}, {TEXT("battlecarrier"),1,20}, {TEXT("air_defense"),1},
-     {TEXT("radar"),1}, {TEXT("carrier"),1,20}, {TEXT("repair"),1}}, true, 120.f, 0.f, EOVSpaceHazardKind::None},
+     {TEXT("radar"),1}, {TEXT("missile_ship"),1}, {TEXT("repair"),1}}, true, 120.f, 0.f, EOVSpaceHazardKind::None},
     {TEXT("BlackHoleTrial"), TEXT("블랙홀 중력전 (E1)"), TEXT("블랙홀 1,000m 중력권과 45m 즉사 중심부를 피해 상대를 무력화하세요."),
      EOVPlaySceneKind::Fleet, 100, {{TEXT("corvette"),3}, {TEXT("frigate"),1}, {TEXT("vector"),1},
      {TEXT("bastion"),1}, {TEXT("battleship"),2}, {TEXT("air_defense"),1}, {TEXT("radar"),1},
@@ -238,6 +238,7 @@ void UOVPlayScenarioSubsystem::Clear()
     if(auto* GI=GetWorld()->GetGameInstance()) if(auto* Roster=GI->GetSubsystem<UOVHeroSubsystem>())
         Roster->Heroes.RemoveAll([this](const auto& H){return ScenarioHeroes.Contains(H.HeroId);});
     ScenarioHeroes.Reset();
+    for(int32& Count:IssuedHeroes)Count=0;
     DestroyActiveHazardActors();
     if (auto* Marker = OreMarker.Get()) Marker->Destroy();
     OreMarker.Reset();
@@ -272,15 +273,6 @@ bool UOVPlayScenarioSubsystem::Start(AOVController& Controller, FName Id)
     ActiveId = Id;
     InitialCosts.Init(0, FactionCount);
     InitialAircraft.Init(0, FactionCount);
-    if(auto* GI=Controller.GetGameInstance()) if(auto* Roster=GI->GetSubsystem<UOVHeroSubsystem>())
-        for(int32 Side=0;Side<FactionCount;++Side)
-            for(int32 I=Roster->CountDeployed(Side);I<15;++I){
-                static const TCHAR* Roles[]={TEXT("돌격"),TEXT("사수"),TEXT("지원"),TEXT("지휘")};
-                const FGuid IdHero=Roster->CreateDevHero(Side,static_cast<EOVInteriorRole>(1+I%4),FString::Printf(TEXT("%s %02d"),Roles[I%4],I+1));
-                if(!IdHero.IsValid())break;
-                ScenarioHeroes.Add(IdHero);
-                if(!Roster->SetDeployment(IdHero,true))break;
-            }
     OVCalibration::BeginSession(*Controller.Combat, ScenarioSeed);
     Controller.PointDefense->Reset(ScenarioSeed);
     Controller.Transport->ResetScenario({});
@@ -333,17 +325,42 @@ bool UOVPlayScenarioSubsystem::Start(AOVController& Controller, FName Id)
 
 void UOVPlayScenarioSubsystem::AssignScenarioHeroes(AOVController& PC,int32 Side)
 {
+    auto* Roster=PC.GetGameInstance()?PC.GetGameInstance()->GetSubsystem<UOVHeroSubsystem>():nullptr;
+    if(!Roster || Side<0 || Side>=FactionCount)return;
     auto* Interior=GetWorld()->GetSubsystem<UOVInteriorSubsystem>();
-    if(ScenarioHeroes.IsEmpty() || !PC.GetGameInstance())return;
-    auto* Roster=PC.GetGameInstance()->GetSubsystem<UOVHeroSubsystem>();
-    TArray<AOVShip*> Ships;
-    for(AOVShip* S:PC.Ships) if(IsValid(S) && S->Systems && S->Systems->FactionId==Side && Interior->AddShip(S))Ships.Add(S);
-    if(Ships.IsEmpty())return;
-    int32 Index=0;
-    for(const FGuid& Id:ScenarioHeroes){
-        const auto H=Roster->GetHero(Id);
-        if(H.FactionId==Side && H.bDeploymentReserved && !H.RuntimeUnitId && H.Status==EOVHeroStatus::Deployed)
-            Interior->SpawnRosterHero(Ships[Index++%Ships.Num()],Id);
+    TArray<AOVShip*> Hosts;
+    int32 CurrentCost=0;
+    for(AOVShip* Ship:PC.Ships){
+        if(!IsValid(Ship) || !Ship->Systems->Layout || Ship->Systems->FactionId!=Side ||
+           !Ship->Systems->CanAct() || Ship->bFTLCharging || PC.Combat->IsDeparted(Ship))continue;
+        FOVHullMetadata Hull;
+        if(!OVCalibration::GetHullMetadata(Ship->HullDefinitionId,Hull))continue;
+        CurrentCost+=Hull.FleetCost;
+        Hosts.Add(Ship);
+    }
+    const int32 Budget=ActiveId==TEXT("Sandbox")?CurrentCost:InitialCosts[Side];
+    const int32 Quota=FMath::Min(15,FMath::DivideAndRoundUp(Budget,20));
+    Hosts.StableSort([](const AOVShip& A,const AOVShip& B){
+        const bool AssaultA=A.HullDefinitionId==TEXT("assault"), AssaultB=B.HullDefinitionId==TEXT("assault");
+        if(AssaultA!=AssaultB)return AssaultA;
+        return A.Systems->Layout->HullSizeClass>B.Systems->Layout->HullSizeClass;
+    });
+    for(AOVShip* Ship:Hosts){
+        int32 Berths=HeroBerthsPerShip-Interior->CountEmbarkedHeroes(Ship,Side);
+        while(Berths>0 && IssuedHeroes[Side]<Quota && Roster->CountDeployed(Side)<15){
+            const int32 Index=IssuedHeroes[Side];
+            static const TCHAR* Roles[]={TEXT("돌격"),TEXT("사수"),TEXT("지원"),TEXT("지휘")};
+            const FGuid Hero=Roster->CreateRosterEntry(Side,static_cast<EOVInteriorRole>(1+Index%4),
+                FString::Printf(TEXT("%s %02d"),Roles[Index%4],Index+1),true);
+            if(!Hero.IsValid())return;
+            if(!Interior->SpawnRosterHero(Ship,Hero)){
+                Roster->Heroes.RemoveAll([Hero](const auto& H){return H.HeroId==Hero;});
+                UE_LOG(LogTemp,Warning,TEXT("시나리오 영웅 배치 실패: %s / %s"),*Ship->ShipName,*Interior->LastMessage);
+                break;
+            }
+            ScenarioHeroes.Add(Hero);++IssuedHeroes[Side];--Berths;
+        }
+        if(IssuedHeroes[Side]>=Quota)return;
     }
 }
 AOVShip* UOVPlayScenarioSubsystem::Spawn(AOVController& Controller, const FOVPlayFleetEntry& Entry,
@@ -372,7 +389,6 @@ AOVShip* UOVPlayScenarioSubsystem::Spawn(AOVController& Controller, const FOVPla
     GetWorld()->GetSubsystem<UOVInteriorSubsystem>()->AddShip(Ship);
     if (ActiveId != TEXT("Logistics") || (Entry.Hull != TEXT("mining") && Entry.Hull != TEXT("transport")))
         GetWorld()->GetSubsystem<UOVLogisticsSubsystem>()->StockFieldShip(Ship,Entry.ReplacementStock);
-    if(ActiveId==TEXT("Sandbox") || (Faction==1 && (ActiveId==TEXT("Evacuation") || ActiveId==TEXT("Logistics")))) AssignScenarioHeroes(Controller,Faction);
     InitialCosts[Faction] += Metadata.FleetCost;
     return Ship;
 }
@@ -749,6 +765,7 @@ void UOVPlayScenarioSubsystem::StepEvacuation(AOVController& Controller, float D
             Controller.Combat->SetTarget(Enemy,First);
             // The carrier subsystem handles auto launches when a hostile target is acquired.
         }
+        AssignScenarioHeroes(Controller,1);
         ++ArrivedWaves;
     }
 }
