@@ -83,6 +83,11 @@ const FHull* FindHull(FName Key)
     for (const FHull& Hull : Hulls)
         if (FName(Hull.Key) == Key)
         {
+            if (Key == TEXT("corvette"))
+            {
+                static const FHull Screen = [&Hull]() { FHull H=Hull; H.Mounts[1].Weapon=H.Mounts[0].Weapon; return H; }();
+                return &Screen;
+            }
             if(Key==TEXT("battleship")){
                 // 플레이 편제 후보. 일반 모듈 두 좌를 교체한 뒤 시설·장착 검증은 같은 경로를 사용한다.
                 static const FHull Modular=[&Hull](){FHull Result=Hull;Result.Mounts[0].Weapon=4;Result.Mounts[1].Weapon=5;return Result;}();
@@ -396,7 +401,7 @@ UShipLayoutDataAsset* MakeLayout(UObject* Outer, const FHull& Hull)
     if (Layout->CannonSlots > 0) DesiredFacilities.Add(EOVFacilityType::Ammo);
     if (Layout->BeamSlots > 0) DesiredFacilities.Add(EOVFacilityType::Capacitor);
     if (Layout->MissileSlots > 0) DesiredFacilities.Add(EOVFacilityType::MissileStorage);
-    if (HullId == TEXT("repair") || HullId == TEXT("mining") || HullId == TEXT("transport"))
+    if (Rule.bAircraftCapable || HullId == TEXT("repair") || HullId == TEXT("mining") || HullId == TEXT("transport"))
         DesiredFacilities.Add(EOVFacilityType::ResourceStorage);
     if (HullId == TEXT("assault"))
         DesiredFacilities.Add(EOVFacilityType::Boarding);
@@ -406,6 +411,7 @@ UShipLayoutDataAsset* MakeLayout(UObject* Outer, const FHull& Hull)
         RequiredFacilities.Add(EOVFacilityType::Hangar);
         RequiredFacilities.Add(EOVFacilityType::FighterControl);
     }
+    if (HullId == TEXT("corvette")) RequiredFacilities.Add(EOVFacilityType::ShieldControl);
     if (HullId == TEXT("air_defense")) RequiredFacilities.Add(EOVFacilityType::Interception);
     if (HullId == TEXT("radar")) RequiredFacilities.Add(EOVFacilityType::Radar);
     if (Hull.Shield > 0.f) DesiredFacilities.Add(EOVFacilityType::ShieldControl);
@@ -501,7 +507,7 @@ bool OVCalibration::GetHullMetadata(FName HullId, FOVHullMetadata& OutMetadata)
 
     if (Hull->MountCount > 0) OutMetadata.RoleTags.Add(TEXT("공격"));
     // Explicit documented specializations; neither PD count nor weapon count infers a role.
-    if (HullId == TEXT("corvette")) OutMetadata.RoleTags.Add(TEXT("정찰"));
+    if (HullId == TEXT("corvette")) OutMetadata.RoleTags.Add(TEXT("전방 차폐"));
     if (HullId == TEXT("frigate")) OutMetadata.RoleTags.Add(TEXT("호위"));
     if (HullId == TEXT("air_defense")) OutMetadata.RoleTags.Add(TEXT("방공"));
     if (HullId == TEXT("radar")) OutMetadata.RoleTags.Add(TEXT("탐지 지원"));
@@ -519,7 +525,7 @@ bool OVCalibration::GetHullMetadata(FName HullId, FOVHullMetadata& OutMetadata)
         Hull->Size, Hull->FleetCost, Hull->Decks, OutMetadata.TotalInteriorSlots,
         Rule.MaxHangars, HangarDesc, Hull->HP, Hull->Shield, Rule.ArmorMaxReduction * 100.f,
         Hull->Speed / 100.f, Hull->Speed, Hull->Turn, Hull->RadarTier, Hull->MountCount, Hull->PD);
-    if (HullId == TEXT("corvette")) OutMetadata.Description += TEXT(" · 7칸: 쉴드·PD·자체 레이더 미가동");
+    if (HullId == TEXT("corvette")) OutMetadata.Description += TEXT(" · 7칸 · 동일 함포 2문 · 쉴드 제어실 · 전방 차폐");
     if (HullId == TEXT("frigate")) OutMetadata.Description += TEXT(" · 7칸: PD·자체 레이더 미가동");
     if (HullId == TEXT("vector") || HullId == TEXT("assault") || HullId == TEXT("repair") || HullId == TEXT("mining"))
         OutMetadata.Description += TEXT(" · 자체 레이더 미설치");
@@ -678,7 +684,7 @@ bool OVCalibration::Start(UOVCombatSubsystem& Combat, const TArray<AOVShip*>& Sh
     return true;
 }
 
-bool OVCalibration::ConfigureHull(UOVCombatSubsystem& Combat, AOVShip& Ship, FName HullId, bool Friendly, FVector Position, double Scale)
+bool OVCalibration::ConfigureHull(UOVCombatSubsystem& Combat, AOVShip& Ship, FName HullId, bool Friendly, FVector Position, double Scale,int32 AircraftBays)
 {
     const FHull* Hull=FindHull(HullId);
     if(!Hull || !Combat.Settings || !FMath::IsFinite(Scale) || Scale <= 0.) return false;
@@ -700,7 +706,11 @@ bool OVCalibration::ConfigureHull(UOVCombatSubsystem& Combat, AOVShip& Ship, FNa
         Install(EOVFacilityType::ResourceStorage, 1);
     Install(EOVFacilityType::Interception,1);
     Install(EOVFacilityType::Boarding,1);
-    if(Rule.bAircraftCapable && Rule.MaxHangars > 0) { Install(EOVFacilityType::Hangar,2); Install(EOVFacilityType::FighterControl,1); }
+    if(Rule.bAircraftCapable) {
+        if(AircraftBays<2 || AircraftBays>Rule.MaxHangars)return false;
+        Install(EOVFacilityType::Hangar,AircraftBays);
+        if(Layout->Slots.FilterByPredicate([](const auto& S){return S.Facility==EOVFacilityType::Hangar;}).Num()!=AircraftBays)return false;
+    }
     AppendDefenseMounts(*Hull,*Layout);
     Ship.Configure(HullId.ToString().ToUpper(),Friendly,Hull->Speed,Hull->Turn,FVector(Scale),Friendly?FLinearColor(.12f,.65f,1):FLinearColor(1,.15f,.08f));
     Ship.ConfigureClassMotion(Hull->Size);

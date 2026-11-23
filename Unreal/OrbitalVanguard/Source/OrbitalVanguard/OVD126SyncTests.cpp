@@ -144,8 +144,10 @@ bool FOVD126GridRulesAndCapacityAuditTest::RunTest(const FString&)
             UShipLayoutDataAsset::AuditFacilityCapacity(CorvLayout, FullDesired, Unplaced, AuditReport));
         TestEqual(TEXT("Corvette has exactly 3 unplaced secondary rooms (7/7 mandatory occupied)"), Unplaced.Num(), 3);
         TestTrue(TEXT("Audit report contains explicit capacity shortage note"), AuditReport.Contains(TEXT("deficit")));
-        TestTrue(TEXT("Corvette keeps Cannon and Beam firing capability"),
-            Ship->Systems->CanFireCannons() && Ship->Systems->CanFireBeams());
+        TestTrue(TEXT("초계함은 함포용 탄약고와 작동하는 쉴드를 함께 운용한다"),
+            Ship->Systems->CanFireCannons() && !Ship->Systems->CanFireBeams() && Ship->Systems->MaxShield > 0 && Ship->Systems->bShieldActive);
+        TestEqual(TEXT("함포 2문을 모두 유지한다"), CorvLayout->WeaponMounts.FilterByPredicate(
+            [](const auto& Mount) { return Mount.Type == EOVWeaponType::Cannon; }).Num(), 2);
     }
 
     World->DestroyWorld(false);

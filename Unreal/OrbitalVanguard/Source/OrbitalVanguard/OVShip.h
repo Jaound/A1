@@ -55,6 +55,7 @@ public:
     float ArrivalRadius = 5.0f;
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Orders")
     bool bHold = true;
+    bool bPlayerHold = false;
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Orders", meta=(ScriptName="has_manual_attitude"))
     bool bManualAttitude = false;
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Orders")

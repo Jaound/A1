@@ -17,6 +17,8 @@ struct FOVPlayFleetEntry
     FName Hull;
     int32 Count;
     int32 AircraftPerHangar = 0;
+    int32 AircraftBays = 2;
+    int32 ReplacementStock = -1; // -1: 25 aircraft kits per installed bay
 };
 
 struct FOVPlaySceneDefinition
@@ -107,7 +109,6 @@ private:
     double LastProgressAt = 0;
     double PreviousIntegrity = -1;
     FString Resolution;
-    TSet<TWeakObjectPtr<AOVShip>> InitialSorties;
     TArray<FGuid> ScenarioHeroes;
     void AssignScenarioHeroes(AOVController& PC,int32 Faction);
 

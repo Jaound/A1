@@ -43,7 +43,7 @@ def verify(pc):
     combat = prop(pc, "combat")
     carrier = prop(pc, "carrier")
     play = pc.get_play_scenario()
-    expected_aircraft = {50: 40, 100: 40, 200: 40, 300: 80}
+    expected_aircraft = {50: 40, 100: 40, 200: 80, 300: 80}
     previous_ship = None
     for budget in (50, 100, 200, 300):
         check(f"FLEET-{budget}-START", pc.start_play_scenario(f"Fleet{budget}"), prop(pc, "last_action"))
@@ -66,6 +66,16 @@ def verify(pc):
               == [expected_aircraft[budget]] * 2, len(aircraft))
         ids = [prop(a, "aircraft_id") for a in aircraft]
         check(f"FLEET-{budget}-AIRCRAFT-IDS", len(ids) == len(set(ids)) and all(prop(a,"carrier") in ships for a in aircraft))
+        own_carriers = [prop(c,"carrier") for c in prop(carrier,"carriers") if faction(prop(c,"carrier")) == 0]
+        check(f"FLEET-{budget}-MANUAL-WINGS-WAIT", all(prop(a,"state") == unreal.OVAircraftState.STORED for a in aircraft if prop(a,"faction_id") == 0))
+        for mother in own_carriers:
+            pc.select_ship(mother)
+            pc.action("LaunchAircraft")
+        if budget == 50:
+            allies = [ship for ship in ships if faction(ship) == 0]
+            check("FLEET-50-AA-ESCORT", sum(str(prop(ship,"ship_name")).startswith("방공함 ") for ship in allies)==1)
+            scouts = [ship.get_actor_location().x for ship in allies if str(prop(ship,"ship_name")).startswith("초계함 ")]
+            check("FLEET-50-SCREEN-IN-FRONT", min(scouts)>max(ship.get_actor_location().x for ship in allies if not str(prop(ship,"ship_name")).startswith("초계함 ")))
         positions = [ship.get_actor_location() for ship in ships]
         advance(pc, 1)
         check(f"FLEET-{budget}-PAUSED", prop(play, "elapsed_seconds") == 0)

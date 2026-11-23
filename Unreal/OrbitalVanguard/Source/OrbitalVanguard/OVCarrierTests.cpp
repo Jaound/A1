@@ -1,7 +1,10 @@
 #include "OVCarrierSubsystem.h"
+#include "OVController.h"
 #include "OVBattleNotices.h"
 #include "OVCombatSubsystem.h"
 #include "OVCalibration.h"
+#include "OVPointDefenseSubsystem.h"
+#include "OVLogisticsSubsystem.h"
 #include "OVShip.h"
 #include "OVShipSystemsComponent.h"
 #include "Engine/World.h"
@@ -514,4 +517,200 @@ bool FOVCarrierMultipleSectionsTest::RunTest(const FString&)
     TestTrue(TEXT("독립 공중전을 모함 위치로 강제 복귀시키지 않는다"), R.Fleet->Aircraft[0].Position.X > 80000);
     return true;
 }
+
+namespace OVCarrierTest
+{
+struct FBattle
+{
+    UWorld* World=UWorld::CreateWorld(EWorldType::Game,false);
+    UOVCombatSubsystem* Combat=World->GetSubsystem<UOVCombatSubsystem>();
+    UOVCarrierSubsystem* Wing=World->GetSubsystem<UOVCarrierSubsystem>();
+    UOVPointDefenseSubsystem* PD=World->GetSubsystem<UOVPointDefenseSubsystem>();
+    UOVLogisticsSubsystem* Supply=World->GetSubsystem<UOVLogisticsSubsystem>();
+    explicit FBattle(int32 Seed){ OVCalibration::BeginSession(*Combat,Seed); Wing->Reset(Seed); PD->Reset(Seed); }
+    ~FBattle(){World->DestroyWorld(false);}
+    AOVShip* Ship(FName Id,bool Friendly,FVector Position,int32 Bays=2)
+    {
+        auto* S=World->SpawnActor<AOVShip>();
+        return OVCalibration::ConfigureHull(*Combat,*S,Id,Friendly,Position,OVCalibration::GetHullGeometryScale(Id),Bays)?S:nullptr;
+    }
+};
+}
+
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(FOVWingProduction,"OrbitalVanguard.Carrier.PaidParallelReplacement",EAutomationTestFlags::EditorContext|EAutomationTestFlags::EngineFilter)
+bool FOVWingProduction::RunTest(const FString&)
+{
+    OVCarrierTest::FBattle R(126);
+    auto* C=R.Ship(TEXT("carrier"),true,FVector::ZeroVector,4);
+    if(!TestNotNull(TEXT("four installed hangars"),C))return false;
+    if(!TestTrue(TEXT("register actual stock and empty flight deck"),R.Wing->RegisterCarrier(C,0) && R.Supply->StockFieldShip(C,100)))return false;
+    TestEqual(TEXT("100 complete kits"),R.Supply->AircraftKits(C),100);
+    R.Wing->Simulate(0);
+    R.Wing->Simulate(6.9);
+    TestEqual(TEXT("production takes game time"),R.Wing->Aircraft.Num(),0);
+    R.Wing->Simulate(.2);
+    TestEqual(TEXT("four separate paid lines"),R.Wing->CountAircraft(C,EOVAircraftState::Stored),4);
+    TestEqual(TEXT("debit at delivery"),R.Supply->AircraftKits(C),96);
+    R.Wing->Simulate(133);
+    TestEqual(TEXT("80 after 140 seconds"),R.Wing->Aircraft.Num(),80);
+    TestEqual(TEXT("group launch"),R.Wing->Launch(C),80);
+    R.Wing->Simulate(8);
+    TestEqual(TEXT("sorties reserve capacity"),R.Wing->Aircraft.Num(),80);
+    for(int32 I=0;I<4;++I) R.Wing->ApplyAircraftDamage(R.Wing->Aircraft[I].AircraftId,10000);
+    C->Systems->DebugDestroySlot(R.Wing->Hangars[0].SlotId,EOVDamageCause::Sabotage);
+    R.Wing->Simulate(8);
+    TestEqual(TEXT("lost hangar removes twenty places"),R.Wing->GetAircraftOverview(C).Capacity,60);
+    TestEqual(TEXT("no replacements above reduced limit"),R.Wing->Aircraft.Num(),80);
+    for(const auto& Slot:C->Systems->Layout->Slots) if(Slot.Facility==EOVFacilityType::ResourceStorage)
+        C->Systems->DebugDestroySlot(Slot.SlotId,EOVDamageCause::Sabotage);
+    TestEqual(TEXT("cargo destroyed immediately"),R.Supply->AircraftKits(C),0);
+    for(const auto& A:R.Wing->Aircraft)R.Wing->ApplyAircraftDamage(A.AircraftId,10000);
+    R.Wing->Simulate(15);
+    TestEqual(TEXT("no free production"),R.Wing->Aircraft.Num(),80);
+    return true;
+}
+
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(FOVWingBatchPolicy,"OrbitalVanguard.Carrier.ReplacementBatchPolicy",EAutomationTestFlags::EditorContext|EAutomationTestFlags::EngineFilter)
+bool FOVWingBatchPolicy::RunTest(const FString&)
+{
+    OVCarrierTest::FBattle R(126);
+    auto* C=R.Ship(TEXT("carrier"),false,FVector::ZeroVector,4);
+    auto* T=R.Ship(TEXT("air_defense"),true,FVector(35000,0,0));
+    if(!C || !T || !R.Wing->RegisterCarrier(C,20) || !R.Supply->StockFieldShip(C,100))return false;
+    R.Combat->SetTarget(C,T);
+    R.Wing->Simulate(.02f);
+    auto& State=R.Wing->Carriers[0];
+    TestEqual(TEXT("첫 편대"),State.LastBatchSize,80);
+    for(int32 Expected:{80,20})
+    {
+        // 격추 시점을 고정하는 집결 정책 시험. 별도 교전 시험에서는 실제 PD만 격추한다.
+        for(const auto& A:R.Wing->Aircraft)
+            if(A.State==EOVAircraftState::Sortie)R.Wing->ApplyAircraftDamage(A.AircraftId,10000);
+        const int32 Before=State.LaunchBatches;
+        R.Wing->Simulate(7.1f);
+        TestEqual(TEXT("보충 첫 네 대는 대기"),R.Wing->CountAircraft(C,EOVAircraftState::Stored),4);
+        TestEqual(TEXT("단독 출격 차단"),State.LaunchBatches,Before);
+        R.Wing->Simulate(Expected*7.f/4-7.f);
+        TestEqual(TEXT("가득 차거나 자원이 동난 뒤 한 번만 출격"),State.LaunchBatches,Before+1);
+        TestEqual(TEXT("실제 출격 대수"),State.LastBatchSize,Expected);
+    }
+    TestEqual(TEXT("생산으로 늘어난 개체만 총 180대"),R.Wing->Aircraft.Num(),180);
+    TestEqual(TEXT("기체 100대분 소모"),R.Supply->AircraftKits(C),0);
+    return true;
+}
+
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(FOVWingResupply,"OrbitalVanguard.Carrier.FieldResupplyAndCrew",EAutomationTestFlags::EditorContext|EAutomationTestFlags::EngineFilter)
+bool FOVWingResupply::RunTest(const FString&)
+{
+    OVCarrierTest::FBattle R(126);
+    auto* C=R.Ship(TEXT("carrier"),true,FVector::ZeroVector);
+    auto* Repair=R.Ship(TEXT("repair"),true,FVector(60000,0,0));
+    if(!C || !Repair || !R.Wing->RegisterCarrier(C,0) || !R.Supply->StockFieldShip(C,0) || !R.Supply->StockFieldShip(Repair))return false;
+    TestEqual(TEXT("원거리 보급 차단"),R.Supply->ResupplyCarrier(C),0);
+    Repair->SetActorLocation(FVector(6000,0,0));
+    const int32 Stock=R.Supply->AircraftKits(Repair);
+    const int32 Sent=R.Supply->ResupplyCarrier(C);
+    TestTrue(TEXT("실재 화물 인계"),Sent>0 && R.Supply->AircraftKits(C)==Sent && R.Supply->AircraftKits(Repair)==Stock-Sent);
+    for(const auto& H:R.Wing->Hangars){
+        const int32 I=C->Systems->Layout->GetSlotIndex(H.SlotId);
+        C->Systems->DebugSetCrew(H.SlotId,C->Systems->Layout->Slots[I].RequiredCrew*.5f);
+    }
+    R.Wing->Simulate(7.1f);
+    TestEqual(TEXT("반 인원은 7초에 미완성"),R.Wing->Aircraft.Num(),0);
+    R.Wing->Simulate(7.f);
+    TestEqual(TEXT("반 인원은 14초에 각 1대"),R.Wing->CountAircraft(C,EOVAircraftState::Stored),2);
+    return true;
+}
+
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(FOVFormationOrders,"OrbitalVanguard.Fleet.FormationPresetOrders",EAutomationTestFlags::EditorContext|EAutomationTestFlags::EngineFilter)
+bool FOVFormationOrders::RunTest(const FString&)
+{
+    OVCarrierTest::FBattle R(126);
+    auto* PC=R.World->SpawnActor<AOVController>();
+    auto* C=R.Ship(TEXT("carrier"),true,FVector(-8000,0,0));
+    auto* Scout=R.Ship(TEXT("corvette"),true,FVector(8000,0,0));
+    auto* Escort=R.Ship(TEXT("air_defense"),true,FVector(0,9000,0));
+    auto* Hold=R.Ship(TEXT("frigate"),true,FVector(0,-19000,0));
+    if(!PC || !C || !Scout || !Escort || !Hold)return false;
+    PC->Combat=R.Combat;PC->CalibrationScenario=0;PC->Ships={C,Scout,Escort,Hold};PC->Selection=PC->Ships;PC->Selected=C;
+    Hold->bPlayerHold=true;
+    for(FName Id:{FName(TEXT("FormationCarrier")),FName(TEXT("FormationConvoy")),FName(TEXT("FormationScreen"))}){
+        PC->FormationAction(TEXT("FormationMenu"));PC->FormationAction(Id);
+        TestEqual(TEXT("미리보기는 움직일 수 있는 3척만"),PC->FormationPreview.Num(),3);
+        TestFalse(TEXT("지정 정지함 제외"),PC->FormationPreview.Contains(Hold));
+        if(PC->FormationPreview.Num()!=3)return false;
+        const FVector Expected=PC->FormationPreview.FindChecked(Scout);
+        if(Id==TEXT("FormationScreen"))TestTrue(TEXT("초계함 전방 차폐"),FVector::DotProduct(Expected-PC->FormationPreview.FindChecked(C),C->GetActorForwardVector())>0);
+        const bool Fire=Scout->IsAttackAutomatic();
+        PC->FormationAction(TEXT("FormationApply"));
+        TestTrue(TEXT("미리보기 좌표로 실제 이동 명령"),Scout->bHasDestination && Scout->Destination.Equals(Expected,1) && !PC->bFormationMenu);
+        TestEqual(TEXT("사격 자동화 유지"),Scout->IsAttackAutomatic(),Fire);
+    }
+    return true;
+}
+
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(FOVWingLargeTargets,"OrbitalVanguard.Carrier.StrikeCapitalHullRange",EAutomationTestFlags::EditorContext|EAutomationTestFlags::EngineFilter)
+bool FOVWingLargeTargets::RunTest(const FString&)
+{
+    for(const FName Id:{FName(TEXT("dreadnought")),FName(TEXT("battlecarrier"))}){
+        OVCarrierTest::FBattle R(126);
+        auto* C=R.Ship(TEXT("carrier"),true,FVector::ZeroVector);
+        auto* Target=R.Ship(Id,false,FVector(25000,0,0));
+        if(!C || !Target)return false;
+        R.Combat->SetTarget(C,Target); R.Wing->RegisterCarrier(C,2); R.Wing->Launch(C);
+        R.Combat->Simulate(8);
+        TestTrue(TEXT("physical strike hits capital"),R.Wing->HitCount>0 && Target->Systems->Shield<Target->Systems->MaxShield);
+    }
+    return true;
+}
+
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(FOVWingDefenceBalance,"OrbitalVanguard.Carrier.DefenceBalanceTargets",EAutomationTestFlags::EditorContext|EAutomationTestFlags::EngineFilter)
+bool FOVWingDefenceBalance::RunTest(const FString&)
+{
+    for(int32 Count:{1,3,2}){
+        const int32 Bays=Count==1?2:4;
+        OVCarrierTest::FBattle R(126);
+        auto* C=R.Ship(TEXT("carrier"),false,FVector(35000,0,0),Bays);
+        if(!C || !R.Wing->RegisterCarrier(C,20) || !R.Supply->StockFieldShip(C,Count==1?0:100))return false;
+        TArray<AOVShip*> Defenders;
+        for(int I=0;I<Count;++I){
+            auto* S=R.Ship(TEXT("air_defense"),true,FVector(0,(I-(Count-1)*.5)*9000.,0));
+            if(!S)return false;
+            S->ShipName=FString::Printf(TEXT("AA%d"),I+1);
+            const int32 Mounts=S->Systems->Layout->WeaponMounts.FilterByPredicate([](const auto& M){return M.Type==EOVWeaponType::Interception;}).Num();
+            if(!R.PD->RegisterShip(S,Mounts,1.5f))return false;
+            Defenders.Add(S);
+        }
+        TArray<FString> Waves;
+        int32 Step=0;
+        for(;Step<12000;++Step){
+            AOVShip** Living=Defenders.FindByPredicate([](AOVShip* S){return !S->Systems->bWrecked;});
+            if(!Living)break;
+            if(!C->AttackTarget || C->AttackTarget->Systems->bWrecked)R.Combat->SetTarget(C,*Living);
+            const int32 Batches=R.Wing->Carriers[0].LaunchBatches;
+            R.Combat->Simulate(.1f);
+            const auto Wing=R.Wing->GetAircraftOverview(C);
+            if(Batches!=R.Wing->Carriers[0].LaunchBatches) Waves.Add(FString::FromInt(R.Wing->Carriers[0].LastBatchSize));
+            if(Wing.Surviving==0 && Wing.ReplacementKits==0 && R.Wing->Bolts.IsEmpty())break;
+        }
+        TArray<FString> Hulls,Shields,Cores;int32 Survivors=0;bool InBand=true;
+        for(AOVShip* S:Defenders){
+            const double HP=S->Systems->HullHP*100./S->Systems->MaxHullHP;
+            Cores.Add(FString::SanitizeFloat(S->Systems->GetSlotState(S->Systems->Layout->CoreSlotId).HP));
+            Hulls.Add(FString::Printf(TEXT("%.2f"),HP));
+            Shields.Add(FString::Printf(TEXT("%.2f"),100.*S->Systems->Shield/FMath::Max(1.f,S->Systems->MaxShield)));
+            if(!S->Systems->bWrecked)++Survivors;
+            InBand&=HP>=(Count==1?35.:45.) && HP<=(Count==1?45.:65.);
+        }
+        AddInfo(FString::Printf(TEXT("WING_BALANCE defenders=%d seed=126 seconds=%.1f hull_pct=[%s] shield_pct=[%s] survivors=%d waves=[%s] fighters=%d destroyed=%d kits_left=%d shots=%d hits=%d"),
+            Count,Step*.1,*FString::Join(Hulls,TEXT(",")),*FString::Join(Shields,TEXT(",")),Survivors,*FString::Join(Waves,TEXT(",")),R.Wing->Aircraft.Num(),R.Wing->LossCount,R.Supply->AircraftKits(C),R.Wing->ShotCount,R.Wing->HitCount));
+        AddInfo(FString::Printf(TEXT("WING_DEFENCE defenders=%d core_hp=[%s] pd_shots=%d pd_hits=%d pd_kills=%d"),
+            Count,*FString::Join(Cores,TEXT(",")),R.PD->ShotCount,R.PD->HitCount,R.PD->KillCount));
+        TestTrue(TEXT("fight resolved"),Step<12000);
+        if(Count==2)TestEqual(TEXT("two escorts lose defence"),Survivors,0);
+        else TestTrue(TEXT("all escorts survive in requested hull band"),Survivors==Count && InBand);
+    }
+    return true;
+}
+
 #endif

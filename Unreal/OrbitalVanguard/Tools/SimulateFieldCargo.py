@@ -30,7 +30,7 @@ for _ in range(4096):
     samples.append(demand)
 stock = [math.ceil(statistics.quantiles([s[i] for s in samples], n=4)[2]) for i in range(3)]
 print("4096회 / 상위 25% 경계", stock, "가중 용량", sum(a*b for a,b in zip(stock,[1,3,8])))
-out = ["// SimulateFieldCargo.py / D126 시험 후보", "static const FVector RepairStock(%d, %d, %d);" % tuple(stock), "static FVector PackageCost(FName Hull)", "{"]
+out = ["// SimulateFieldCargo.py / D126 시험 후보", "static const FVector AircraftKitCost(35, 5, 0);", "static const FVector RepairStock(%d, %d, %d);" % tuple(stock), "static FVector PackageCost(FName Hull)", "{"]
 # 채굴선 1척은 초당 5, 수송선은 같은 채굴선 2척의 인계를 받는다.
 # 시험 교대 간격은 삼각분포(초)다. 중형 선창의 체급 상승 여유는 체급 부피비 5의 세제곱근으로 제한한다.
 mine_batches = [5*rng.triangular(9,19,14) for _ in range(4096)]
@@ -39,7 +39,7 @@ def capacity(batches):
     return 5*math.ceil(statistics.quantiles(batches,n=4)[2]/5)
 miner = capacity(mine_batches)
 shuttle = min(capacity(shuttle_batches), 5*math.floor(miner*5**(1/3)/5))
-out[2:2] = [f"static constexpr int32 MiningStock={miner}, TransportStock={shuttle};"]
+out[3:3] = [f"static constexpr int32 MiningStock={miner}, TransportStock={shuttle};"]
 print("채굴·수송 적재 후보",miner,shuttle)
 for key, cost in quotes.items():
     out.append('    if (Hull == TEXT("%s")) return FVector(%d,%d,%d);' % (key, *cost))

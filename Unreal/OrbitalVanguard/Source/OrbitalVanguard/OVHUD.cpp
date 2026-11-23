@@ -89,7 +89,7 @@ bool AOVHUD::IsOverPanel(float X,float Y) const
  const auto* Feed=GetBattleNoticeFeed();const int32 Footer=bBattleFeedOpen?(bNoticeSettings?242:66)+(Feed&&Feed->DroppedCount>0?20:0):0;
  if(Notices>0&&P.X>=NoticeX&&P.X<=NoticeX+340&&P.Y>=BattleNoticeTop()&&P.Y<=BattleNoticeTop()+Notices*36+Footer)return true;
  // The basic HUD remains visible under the separate developer window.
- if(P.Y<62 || (P.X<620 && P.Y>ViewportPixels.Y/UIScale-220) || (!PC->Selection.IsEmpty() && P.X>=ViewportPixels.X/UIScale-FleetPanelWidth(ViewportPixels.X/UIScale)-10 && P.Y>=ViewportPixels.Y/UIScale-218) || (bSceneMenuOpen && P.X>=216 && P.X<=FMath::Min(900.,ViewportPixels.X/UIScale-10) && P.Y<=110+UOVPlayScenarioSubsystem::Definitions().Num()*36)) return true;
+ if(P.Y<62 || (P.X<620 && P.Y>ViewportPixels.Y/UIScale-220) || (!PC->Selection.IsEmpty() && P.X>=ViewportPixels.X/UIScale-FleetPanelWidth(ViewportPixels.X/UIScale)-10 && P.Y>=ViewportPixels.Y/UIScale-(PC->bFormationMenu?310:218)) || (bSceneMenuOpen && P.X>=216 && P.X<=FMath::Min(900.,ViewportPixels.X/UIScale-10) && P.Y<=110+UOVPlayScenarioSubsystem::Definitions().Num()*36)) return true;
  return !PC->bDeveloperMode&&PC->Selected&&bDetailsOpen&&P.X>=WindowPosition.X&&P.X<=WindowPosition.X+WindowSize.X&&P.Y>=WindowPosition.Y&&P.Y<=WindowPosition.Y+(bMinimized?32:WindowSize.Y);
 }
 bool AOVHUD::HasOrbitPreview() const

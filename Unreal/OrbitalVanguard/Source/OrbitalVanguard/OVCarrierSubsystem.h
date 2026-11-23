@@ -13,7 +13,11 @@ USTRUCT(BlueprintType)
 struct ORBITALVANGUARD_API FOVAircraftOverview
 {
     GENERATED_BODY()
+    UPROPERTY(VisibleAnywhere, BlueprintReadOnly) int32 Capacity = 0;
+    UPROPERTY(VisibleAnywhere, BlueprintReadOnly) int32 ReplacementKits = 0;
+    UPROPERTY(VisibleAnywhere, BlueprintReadOnly) float ProductionFraction = 0;
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly) int32 Stored = 0;
+    UPROPERTY(VisibleAnywhere, BlueprintReadOnly) int32 ReadyStored = 0;
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly) int32 Sortie = 0;
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly) int32 Returning = 0;
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly) int32 ControlLost = 0;
@@ -29,21 +33,21 @@ enum class EOVHangarMode : uint8 { Aircraft, SmallShip };
 UENUM(BlueprintType)
 enum class EOVHangarAvailability : uint8 { Unknown, Ready, Offline, Destroyed, ShipLost };
 
-/** D116 fighter candidate, not an economic/production implementation. All distances are cm. */
+/** Fleet fighter profile. All distances are cm. */
 USTRUCT(BlueprintType)
 struct ORBITALVANGUARD_API FOVAircraftProfile
 {
     GENERATED_BODY()
-    UPROPERTY(EditAnywhere, BlueprintReadWrite) FName ProfileId = TEXT("D116_Fighter_2C_v1");
-    UPROPERTY(EditAnywhere, BlueprintReadWrite) float Hull = 240;
-    UPROPERTY(EditAnywhere, BlueprintReadWrite) float Shield = 80;
-    UPROPERTY(EditAnywhere, BlueprintReadWrite) float Evasion = .62f;
+    UPROPERTY(EditAnywhere, BlueprintReadWrite) FName ProfileId = TEXT("Fighter_100m_v2");
+    UPROPERTY(EditAnywhere, BlueprintReadWrite) float Hull = 220;
+    UPROPERTY(EditAnywhere, BlueprintReadWrite) float Shield = 60;
+    UPROPERTY(EditAnywhere, BlueprintReadWrite) float Evasion = .60f;
     UPROPERTY(EditAnywhere, BlueprintReadWrite) float Speed = 10000;
     UPROPERTY(EditAnywhere, BlueprintReadWrite) float ReturnSpeed = 12000;
-    UPROPERTY(EditAnywhere, BlueprintReadWrite) float Damage = 20;
+    UPROPERTY(EditAnywhere, BlueprintReadWrite) float Damage = 19;
     UPROPERTY(EditAnywhere, BlueprintReadWrite) float Period = 1.2f;
     // UE trial geometry/timing: R16/R23/R25, separate from Python aggregate DPS.
-    UPROPERTY(EditAnywhere, BlueprintReadWrite) float AttackRange = 12000;
+    UPROPERTY(EditAnywhere, BlueprintReadWrite) float AttackRange = 10000;
     UPROPERTY(EditAnywhere, BlueprintReadWrite) float BoltSpeed = 45000;
     UPROPERTY(EditAnywhere, BlueprintReadWrite) float BoltLifetime = 3;
     UPROPERTY(EditAnywhere, BlueprintReadWrite) float CollisionRadius = 100;
@@ -59,6 +63,7 @@ struct ORBITALVANGUARD_API FOVAircraftManeuverProfile
     UPROPERTY(EditAnywhere, BlueprintReadWrite) float TurnDegreesPerSecond = 300;
     UPROPERTY(EditAnywhere, BlueprintReadWrite) float AttackRangeFraction = .50f;
     UPROPERTY(EditAnywhere, BlueprintReadWrite) float EgressSeconds = .30f;
+    UPROPERTY(EditAnywhere, BlueprintReadWrite) float ReformSeconds = 1.55f;
     UPROPERTY(EditAnywhere, BlueprintReadWrite) float RegroupTurnRadii = 1.15f;
     UPROPERTY(EditAnywhere, BlueprintReadWrite) float HullClearance = 400;
     UPROPERTY(EditAnywhere, BlueprintReadWrite) int32 SectionSize = 4;
@@ -76,6 +81,7 @@ struct ORBITALVANGUARD_API FOVHangarState
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly) TWeakObjectPtr<AOVShip> Carrier;
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly) FName SlotId;
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly) EOVHangarMode Mode = EOVHangarMode::Aircraft;
+    UPROPERTY(VisibleAnywhere, BlueprintReadOnly) float ProductionSeconds = 0;
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly) int32 ExtraAircraftCapacity = 0;
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly) TWeakObjectPtr<AOVShip> StoredSmallShip;
 };
@@ -91,9 +97,9 @@ struct ORBITALVANGUARD_API FOVAircraftRecord
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly) EOVAircraftState State = EOVAircraftState::Stored;
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly) EOVAircraftState ResumeState = EOVAircraftState::Sortie;
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly) EOVAircraftLeg Leg = EOVAircraftLeg::Ingress;
-    UPROPERTY(VisibleAnywhere, BlueprintReadOnly) float HP = 240;
-    UPROPERTY(VisibleAnywhere, BlueprintReadOnly) float Shield = 80;
-    UPROPERTY(VisibleAnywhere, BlueprintReadOnly) float Evasion = .62f;
+    UPROPERTY(VisibleAnywhere, BlueprintReadOnly) float HP = 220;
+    UPROPERTY(VisibleAnywhere, BlueprintReadOnly) float Shield = 60;
+    UPROPERTY(VisibleAnywhere, BlueprintReadOnly) float Evasion = .60f;
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly) FVector Position = FVector::ZeroVector;
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly) FVector PreviousPosition = FVector::ZeroVector;
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly) FVector Velocity = FVector::ZeroVector;
@@ -134,7 +140,7 @@ struct ORBITALVANGUARD_API FOVAircraftBolt
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly) FVector Origin = FVector::ZeroVector;
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly) FVector Position = FVector::ZeroVector;
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly) FVector Direction = FVector::ForwardVector;
-    UPROPERTY(VisibleAnywhere, BlueprintReadOnly) float Damage = 20;
+    UPROPERTY(VisibleAnywhere, BlueprintReadOnly) float Damage = 19;
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly) float Speed = 45000;
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly) float Age = 0;
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly) float Lifetime = 3;
@@ -151,6 +157,9 @@ struct ORBITALVANGUARD_API FOVCarrierState
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly) bool bRecallOrdered = false;
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly) bool bAbandonOutstanding = false;
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly) bool bWasFTLCharging = false;
+    UPROPERTY(VisibleAnywhere, BlueprintReadOnly) bool bAutoLaunch = false;
+    UPROPERTY(VisibleAnywhere, BlueprintReadOnly) int32 LaunchBatches = 0;
+    UPROPERTY(VisibleAnywhere, BlueprintReadOnly) int32 LastBatchSize = 0;
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly) int32 LastFaction = -1;
 };
 
@@ -214,6 +223,7 @@ private:
     {
         TWeakObjectPtr<AOVShip> Source;
         TArray<TWeakObjectPtr<AOVShip>> Candidates;
+        TArray<TWeakObjectPtr<AOVShip>> EscortGroup;
     };
     // Rebuilt every fixed step; retained capacity avoids per-aircraft detection allocations.
     TArray<FStrikeCandidateCache> StrikeCandidateCache;
@@ -224,6 +234,9 @@ private:
     FVector HangarPosition(const FOVHangarState& Hangar) const;
     FOVHangarState* FindDock(FOVAircraftRecord& Craft);
     void Step(float Delta);
+    static constexpr float ProductionPeriod = 7.f;
+    void AddStored(AOVShip* Ship,const FOVHangarState& Hangar);
+    void AdvanceProduction(AOVShip* Ship,const FOVAircraftOverview& Wing,float Delta);
     void AdvanceAircraft(FOVAircraftRecord& Craft, float Delta);
     AOVShip* SelectStrikeTarget(const FOVAircraftRecord& Craft) const;
     const FOVAircraftRecord* SelectAirTarget(FOVAircraftRecord& Craft, AOVShip* StrikeTarget, float Delta);

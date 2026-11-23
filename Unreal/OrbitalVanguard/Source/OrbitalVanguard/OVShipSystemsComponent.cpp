@@ -1,6 +1,7 @@
 #include "OVShipSystemsComponent.h"
 #include "GameFramework/Actor.h"
 #include "OVShip.h"
+#include "OVLogisticsSubsystem.h"
 #include "OVCombatSubsystem.h"
 #include "OVBattleNotices.h"
 #include "Engine/World.h"
@@ -335,6 +336,8 @@ void UOVShipSystemsComponent::DestroyFacility(int32 SlotIndex, EOVDamageCause Ca
     if (!Slots.IsValidIndex(SlotIndex) || Layout->Slots[SlotIndex].Facility == EOVFacilityType::None) return;
     FOVFacilityState& State = Slots[SlotIndex];
     State.HP = 0;
+    if(Layout->Slots[SlotIndex].Facility==EOVFacilityType::ResourceStorage && !HasPhysicalFacility(EOVFacilityType::ResourceStorage) && GetWorld())
+        GetWorld()->GetSubsystem<UOVLogisticsSubsystem>()->LoseStoredCargo(Cast<AOVShip>(GetOwner()));
     if (Layout->Slots[SlotIndex].Facility == EOVFacilityType::Bridge && bBridgeCaptured)
     {
         bCapturedBridgeDestroyed = true; FactionId = -1;

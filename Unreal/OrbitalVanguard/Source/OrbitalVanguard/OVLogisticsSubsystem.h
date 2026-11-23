@@ -6,7 +6,7 @@ class AOVShip;
 
 // Development-only, explicitly supplied quantities; no campaign economy is synthesized.
 UENUM(BlueprintType)
-enum class EOVDevLogisticsRole : uint8 { Repair, Mining, Transport };
+enum class EOVDevLogisticsRole : uint8 { Repair, Mining, Transport, Carrier };
 
 /** D126 R37/R29 remote star-system outpost specialization. */
 UENUM(BlueprintType)
@@ -135,7 +135,11 @@ public:
     // Withdraws only cargo physically delivered to the specified friendly mission depot.
     float UnloadTransport(AOVShip* Ship, int32 DepotFaction, FVector Depot, float Range, float Requested);
     static float FieldCapacity(FName Hull);
-    bool StockFieldShip(AOVShip* Ship);
+    bool StockFieldShip(AOVShip* Ship, int32 ReplacementStock=-1);
+    int32 AircraftKits(const AOVShip* Ship) const;
+    bool ConsumeAircraftKit(AOVShip* Ship);
+    int32 ResupplyCarrier(AOVShip* Ship);
+    void LoseStoredCargo(AOVShip* Ship);
     bool OrderRepair(AOVShip* Source, AOVShip* Target);
     void CancelFieldOrder(AOVShip* Source);
     void ResetFieldOrders(){Approaches.Reset();}

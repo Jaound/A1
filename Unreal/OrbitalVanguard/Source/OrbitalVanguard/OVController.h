@@ -153,6 +153,13 @@ public:
  UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Control Range") FString LastAction=TEXT("Select a ship to begin");
  UFUNCTION(BlueprintCallable, Category="Control Range")
  void SelectShip(AOVShip* Ship);
+ bool bFormationMenu=false;
+ TMap<TWeakObjectPtr<AOVShip>,FVector> FormationPreview;
+ FName FormationKind;
+ static int32 FormationRow(FName Preset,FName Hull);
+ bool FormationAction(FName Action);
+ void CloseFormation();
+ bool CanForm(AOVShip* Ship) const;
  UFUNCTION(BlueprintCallable) int32 SelectFleetRectangle(FVector2D Start, FVector2D End, bool bAdditive);
  bool bFleetDrag = false;
  FVector2D FleetDragStart, FleetDragEnd;

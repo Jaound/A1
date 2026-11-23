@@ -1,4 +1,5 @@
 // SimulateFieldCargo.py / D126 시험 후보
+static const FVector AircraftKitCost(35, 5, 0);
 static const FVector RepairStock(1809, 267, 17);
 static constexpr int32 MiningStock=80, TransportStock=130;
 static FVector PackageCost(FName Hull)

@@ -325,6 +325,17 @@ void AOVHUD::DrawPlayHUD()
   DrawRect(PlayPanel,GX,GridY,GridWidth,208);
   DrawText(FString::Printf(TEXT("선택 함대   %d척"),Friends.Num()),PlayAccent,GX+9,GridY+6,GEngine->GetMediumFont());
   if(Pages>1){Button(TEXT("FleetPrevious"),TEXT("◀"),GX+GridWidth-72,GridY+2,30);Button(TEXT("FleetNext"),TEXT("▶"),GX+GridWidth-38,GridY+2,30);}
+  if(Friends.Num()>1)Button(TEXT("FormationMenu"),TEXT("진형"),GX+GridWidth-126,GridY+2,48,PC->bFormationMenu);
+  if(PC->bFormationMenu){
+   const float FY=GridY-92, BW=(GridWidth-12)/3;
+   DrawRect(PlayPanel,GX,FY,GridWidth,90);
+   DrawText(TEXT("진형 미리보기"),PlayAccent,GX+6,FY+4,GEngine->GetSmallFont());
+   const FName Keys[]={TEXT("FormationScreen"),TEXT("FormationCarrier"),TEXT("FormationConvoy")};
+   const TCHAR* Labels[]={TEXT("균형 전열"),TEXT("항모 호위"),TEXT("수송 호위")};
+   for(int32 I=0;I<3;++I)Button(Keys[I],Labels[I],GX+4+I*BW,FY+26,BW-2,PC->FormationKind==Keys[I]);
+   if(!PC->FormationPreview.IsEmpty())Button(TEXT("FormationApply"),TEXT("배치 적용"),GX+4,FY+57,84,true);
+   Button(TEXT("FormationClose"),TEXT("닫기"),GX+GridWidth-60,FY+57,55);
+  }
   const float Cell=(GridWidth-16)/Cols;
   for(int32 J=0;J<PerPage && FleetPage*PerPage+J<Friends.Num();++J){
    auto* S=Friends[FleetPage*PerPage+J];const float X=GX+8+(J%Cols)*Cell, CY=GridY+31+(J/Cols)*56;
@@ -424,17 +435,25 @@ void AOVHUD::DrawPlayHUD()
  if(auto* Carrier=GetWorld()->GetSubsystem<UOVCarrierSubsystem>();Carrier&&Carrier->Carriers.ContainsByPredicate([&](const auto& C){return C.Carrier.IsValid() && PC->Selection.Contains(C.Carrier.Get());})) {
   Button(TEXT("LaunchAircraft"),TEXT("함재기 출격"),380,Y+128,108);
   Button(TEXT("RecallAircraft"),TEXT("함재기 귀환"),495,Y+128,108);
+  if(auto* State=Carrier->Carriers.FindByPredicate([Ship](const auto& C){return C.Carrier==Ship;})){
+   Button(TEXT("AutoWing"),State->bAutoLaunch?TEXT("자동 출격 ✓"):TEXT("자동 출격"),393,Y+178,100,State->bAutoLaunch);
+   Button(TEXT("WingSupply"),TEXT("항공 보급"),499,Y+178,102);
+  }
   FOVAircraftOverview Air;
   for(const auto& C:Carrier->Carriers) {
    AOVShip* CarrierShip=C.Carrier.Get();
    if(!CarrierShip||!CarrierShip->bFriendly||(!bFleetAirOverview && !PC->Selection.Contains(CarrierShip)))continue;
    const FOVAircraftOverview Part=Carrier->GetAircraftOverview(CarrierShip);
+   Air.Capacity+=Part.Capacity; Air.ReplacementKits+=Part.ReplacementKits;
+   Air.ProductionFraction=FMath::Max(Air.ProductionFraction,Part.ProductionFraction);
    Air.Surviving+=Part.Surviving;Air.Stored+=Part.Stored;Air.Sortie+=Part.Sortie;
    Air.Returning+=Part.Returning;Air.ControlLost+=Part.ControlLost;Air.Wrecked+=Part.Wrecked;
   }
   Button(TEXT("AirScope"),bFleetAirOverview?TEXT("함대 전체"):TEXT("선택 모함"),24,Y+178,75,bFleetAirOverview);
-  DrawText(FString::Printf(TEXT("생존 %d · 보관 %d · 출격 %d · 귀환 %d · 관제상실 %d · 손실 %d"),
-      Air.Surviving,Air.Stored,Air.Sortie,Air.Returning,Air.ControlLost,Air.Wrecked),PlayInk,105,Y+184,GEngine->GetSmallFont());
+  DrawText(FString::Printf(TEXT("대기 %d/%d · 생산 %.0f%% · 보충 %d대분"),
+      Air.Stored,Air.Capacity,100*Air.ProductionFraction,Air.ReplacementKits),PlayInk,105,Y+184,GEngine->GetSmallFont());
+  DrawRect(FLinearColor(.08f,.15f,.20f),106,Y+202,280,4);
+  DrawRect(PlayAccent,106,Y+202,280*Air.ProductionFraction,4);
  }
 }
 
@@ -537,6 +556,12 @@ void AOVHUD::DrawWorldIndicators()
    DrawLine(Last.X,Last.Y,Next.X,Next.Y,Color,Thickness);Last=Next;
   }
  };
+ for(const auto& Slot:PC->FormationPreview){
+  FVector2D P;
+  if(auto* Ship=Slot.Key.Get();Ship && Project(Slot.Value,P)){
+   Ring(P,10,6,PlayAccent,2);DrawText(Ship->ShipName,PlayInk,P.X+12,P.Y-8,GEngine->GetSmallFont());
+  }
+ }
  if(const auto* Play=PC->GetPlayScenario()) for(const auto& Trail:Play->JumpTrails){
   FVector2D A,B;if(!PC->ProjectWorldLocationToScreen(Trail.Start,A)||!PC->ProjectWorldLocationToScreen(Trail.End,B))continue;
   A/=UIScale;B/=UIScale;const float Age=FMath::Clamp((Play->ElapsedSeconds-Trail.At)/1.2,0.,1.);

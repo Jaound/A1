@@ -845,6 +845,7 @@ double AOVController::AltitudeScale() const { return CalibrationScenario>=0 ? OV
 
 void AOVController::SelectShip(AOVShip* Ship)
 {
+ CloseFormation();
  CancelRightMove();
  if(Combat && Combat->bEnabled && Combat->IsDeparted(Ship)) Ship=nullptr;
  if(!Ship) { ClearSelection(); return; }
@@ -857,6 +858,7 @@ void AOVController::SelectShip(AOVShip* Ship)
 }
 void AOVController::ClearSelection()
 {
+ CloseFormation();
  CancelRightMove();
  for(AOVShip* Ship:Ships) Ship->bSelected=false;
  Selection.Reset(); Selected=nullptr; bPlacing=false; InputMode=EOVInputMode::None; bFollow=false;
@@ -870,6 +872,7 @@ void AOVController::SelectShipFromUser(AOVShip* Ship, bool bAdditive)
 }
 void AOVController::SelectAdditional(AOVShip* Ship)
 {
+ CloseFormation();
  if(!Ship) return;
  if(Combat && Combat->bEnabled && Combat->IsDeparted(Ship)) return;
  CancelRightMove();
@@ -913,6 +916,20 @@ bool AOVController::ActionPressed(FName Name) const
 }
 void AOVController::Action(FName Name)
 {
+ if(FormationAction(Name)) return;
+ if(Name==TEXT("Move") || Name==TEXT("Stop") || Name==TEXT("Cancel") || Name==TEXT("Target")) CloseFormation();
+ if(Name==TEXT("AutoWing") || Name==TEXT("WingSupply")){
+  if(IsValid(Selected) && Selected->bFriendly && Selected->Systems->CanCommand() && Carrier && !Combat->IsDeparted(Selected)){
+   for(auto& State:Carrier->Carriers) if(State.Carrier==Selected){
+    if(Name==TEXT("AutoWing")) {
+     State.bAutoLaunch=!State.bAutoLaunch;
+     if(State.bAutoLaunch)State.bRecallOrdered=false;
+    }
+    else LastAction=FString::Printf(TEXT("항공 보급 %d대분 · 아군 수리함 120m 이내"),GetWorld()->GetSubsystem<UOVLogisticsSubsystem>()->ResupplyCarrier(Selected));
+   }
+  }
+  return;
+ }
  if(Name==TEXT("RepairOrder")) { InputMode=EOVInputMode::Repair; bPlacing=false; LastAction=TEXT("수리할 아군 함선을 클릭하세요"); return; }
  if(Name==TEXT("Move") || Name==TEXT("Stop") || Name==TEXT("MoveAuto"))
   for(AOVShip* FieldShip:Selection) GetWorld()->GetSubsystem<UOVLogisticsSubsystem>()->CancelFieldOrder(FieldShip);
@@ -1027,7 +1044,7 @@ void AOVController::Action(FName Name)
   if(Name==TEXT("Up") && bPlacing) Preview.Z=FMath::Min(Preview.Z+250*AltitudeScale(),CommandMaxZ());
   if(Name==TEXT("Down") && bPlacing) Preview.Z=FMath::Max(Preview.Z-250*AltitudeScale(),CommandMinZ());
   if(Name==TEXT("Confirm")) ConfirmMove();
-  if(Name==TEXT("Stop")) { for(AOVShip* Ship:Selection) if(CanReceive(Ship)) { Transport->SuspendShuttle(Ship); Ship->StopMovement(); } bPlacing=false; InputMode=EOVInputMode::None; LastAction=TEXT("감속 정지 · 위치 유지"); }
+  if(Name==TEXT("Stop")) { for(AOVShip* Ship:Selection) if(CanReceive(Ship)) { Transport->SuspendShuttle(Ship); Ship->StopMovement(); Ship->bPlayerHold=true; } bPlacing=false; InputMode=EOVInputMode::None; LastAction=TEXT("감속 정지 · 위치 유지"); }
   if(Name==TEXT("Target")) { bPlacing=false; InputMode=EOVInputMode::Target; LastAction=TEXT("적을 클릭해 표적 지정 · 발사는 별도 B/L 명령"); }
   if(Name==TEXT("ClearTarget")) { if(Combat&&Combat->bEnabled) Combat->SetTarget(Selected,nullptr); else Selected->AttackTarget=nullptr; }
   if(Name==TEXT("Heading")) { Transport->SuspendShuttle(Selected); bPlacing=false; InputMode=EOVInputMode::Heading; PlacementPlaneZ=Selected->GetActorLocation().Z; LastAction=TEXT("전장을 클릭해 방향 지정 · 현재 상하 기울기 유지"); }
@@ -1630,6 +1647,7 @@ void AOVController::PlayerTick(float DeltaTime)
  if(ActionPressed(TEXT("OVCancel")))Action(TEXT("Cancel"));
  if(WasInputKeyJustPressed(EKeys::Escape)) {
   if(HUD && HUD->CloseTopModal()) {}
+  else if(bFormationMenu) CloseFormation();
   else if(bPlacing || bRightGesture || bFleetDrag || InputMode!=EOVInputMode::None) Action(TEXT("Cancel"));
   else if(Selected) ClearSelection();
   else if(HUD) HUD->TogglePauseMenu();

@@ -437,6 +437,7 @@ void AOVShip::SetDestination(const FVector& Location)
 {
     if (!Location.ContainsNaN() && !bFTLCharging && Systems && Systems->CanMove())
     {
+        bPlayerHold = false;
         Destination = Location;
         bHasDestination = true;
         bHold = false;

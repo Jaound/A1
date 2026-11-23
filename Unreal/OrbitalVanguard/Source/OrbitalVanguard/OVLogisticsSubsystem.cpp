@@ -105,14 +105,55 @@ float UOVLogisticsSubsystem::FieldCapacity(FName Hull)
     if(Hull==TEXT("repair"))return RepairStock.X+3*RepairStock.Y+8*RepairStock.Z;
     return Hull==TEXT("mining") ? MiningStock : TransportStock;
 }
-bool UOVLogisticsSubsystem::StockFieldShip(AOVShip* Ship)
+bool UOVLogisticsSubsystem::StockFieldShip(AOVShip* Ship, int32 ReplacementStock)
 {
     if (!Ship || !Ship->Systems || !Ship->Systems->HasPhysicalFacility(EOVFacilityType::ResourceStorage)) return false;
     const FName Id=Ship->HullDefinitionId;
     const bool Repair=Id==TEXT("repair"), Mining=Id==TEXT("mining");
+    if(Ship->Systems->Layout->bAllowAircraftOperations)
+    {
+        const int32 Bays=Ship->Systems->Layout->Slots.FilterByPredicate([](const auto& S){ return S.Facility==EOVFacilityType::Hangar; }).Num();
+        const int32 Kits=ReplacementStock<0 ? Bays*25 : ReplacementStock;
+        const FVector Materials=AircraftKitCost*Kits;
+        return RegisterDevShip(Ship,EOVDevLogisticsRole::Carrier,FMath::Max(Bays*25,Kits)*(AircraftKitCost.X+3*AircraftKitCost.Y),0)
+            && SetDevMaterials(Ship,Materials);
+    }
     const FVector Stock=Repair ? RepairStock : FVector(FieldCapacity(Id),0,0);
     const float Capacity=Stock.X+3*Stock.Y+8*Stock.Z;
     return RegisterDevShip(Ship,Repair ? EOVDevLogisticsRole::Repair : Mining ? EOVDevLogisticsRole::Mining : EOVDevLogisticsRole::Transport,Capacity,0) && SetDevMaterials(Ship,Stock);
+}
+int32 UOVLogisticsSubsystem::AircraftKits(const AOVShip* Ship) const
+{
+    const auto* C=FindCargo(Ship);
+    return C ? FMath::FloorToInt(ResourceLimit(*C,AircraftKitCost)) : 0;
+}
+bool UOVLogisticsSubsystem::ConsumeAircraftKit(AOVShip* Ship)
+{
+    if(!Active(Ship) || AircraftKits(Ship)<1) return false;
+    const auto* C=FindCargo(Ship);
+    return SetDevMaterials(Ship,FVector(C->Amount,C->Advanced,C->Rare)-AircraftKitCost);
+}
+void UOVLogisticsSubsystem::LoseStoredCargo(AOVShip* Ship)
+{
+    SetDevMaterials(Ship,FVector::ZeroVector);
+}
+int32 UOVLogisticsSubsystem::ResupplyCarrier(AOVShip* Ship)
+{
+    const auto* Dest=FindCargo(Ship);
+    if(!Active(Ship) || !Dest || Dest->Role!=EOVDevLogisticsRole::Carrier || Ship->bFTLCharging || Ship->IsHidden()) return 0;
+    int32 Received=0;
+    for(auto& Source:Cargo)
+    {
+        if(Source.Role!=EOVDevLogisticsRole::Repair || !Active(Source.Ship) || Source.Ship->IsHidden() || Source.Ship->bFTLCharging ||
+           Source.Ship->Systems->FactionId!=Ship->Systems->FactionId || SurfaceDistance(Source.Ship,Ship)>12000) continue;
+        const double Free=Dest->Capacity-Dest->Amount-3*Dest->Advanced-8*Dest->Rare;
+        const int32 Kits=FMath::Min(AircraftKits(Source.Ship),FMath::FloorToInt(Free/(AircraftKitCost.X+3*AircraftKitCost.Y)));
+        if(Kits<=0) continue;
+        const FVector Load=Kits*AircraftKitCost;
+        if(!SetDevMaterials(Ship,FVector(Dest->Amount,Dest->Advanced,Dest->Rare)+Load)) continue;
+        Source.Amount-=Load.X; Source.Advanced-=Load.Y; Received+=Kits;
+    }
+    return Received;
 }
 void UOVLogisticsSubsystem::CancelFieldOrder(AOVShip* Source)
 {

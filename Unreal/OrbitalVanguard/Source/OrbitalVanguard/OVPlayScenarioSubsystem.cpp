@@ -24,28 +24,28 @@ constexpr int32 FactionCount = 2;
 // LimitSeconds defaults to 0 (disabled) to respect D126 18~26.9 min fleet battle duration.
 const FOVPlaySceneDefinition Scenes[] = {
     {TEXT("Fleet50"), TEXT("50코스트 함대전"), TEXT("호위 전력과 항공대로 적 함대를 무력화하세요."),
-     EOVPlaySceneKind::Fleet, 50, {{TEXT("carrier"),1,20},{TEXT("vector"),2},{TEXT("bastion"),2},{TEXT("corvette"),3},{TEXT("frigate"),1},{TEXT("repair"),1}}, true, 120.f, 0.f, EOVSpaceHazardKind::None},
+     EOVPlaySceneKind::Fleet, 50, {{TEXT("carrier"),1,20},{TEXT("vector"),1},{TEXT("air_defense"),1},{TEXT("bastion"),2},{TEXT("corvette"),3},{TEXT("frigate"),1},{TEXT("repair"),1}}, true, 120.f, 0.f, EOVSpaceHazardKind::None},
     {TEXT("Fleet100"), TEXT("100코스트 함대전"), TEXT("혼성 함대로 상대의 전투 능력을 무력화하세요."),
      EOVPlaySceneKind::Fleet, 100, {{TEXT("corvette"),3}, {TEXT("frigate"),1}, {TEXT("vector"),1},
      {TEXT("bastion"),1}, {TEXT("battleship"),2}, {TEXT("air_defense"),1}, {TEXT("radar"),1},
-     {TEXT("carrier"),1,10}, {TEXT("repair"),1}}, true, 120.f, 0.f, EOVSpaceHazardKind::None},
+     {TEXT("carrier"),1,20}, {TEXT("repair"),1}}, true, 120.f, 0.f, EOVSpaceHazardKind::None},
     {TEXT("Fleet200"), TEXT("200코스트 함대전"), TEXT("초대형 주력함과 호위 함대로 상대를 무력화하세요."),
      EOVPlaySceneKind::Fleet, 200, {{TEXT("corvette"),3}, {TEXT("frigate"),1}, {TEXT("vector"),1},
      {TEXT("bastion"),1}, {TEXT("dreadnought"),1}, {TEXT("air_defense"),1}, {TEXT("radar"),1},
-     {TEXT("battleship"),1}, {TEXT("carrier"),1,10}, {TEXT("repair"),1}}, true, 120.f, 0.f, EOVSpaceHazardKind::None},
+     {TEXT("battleship"),1}, {TEXT("carrier"),1,20,4,100}, {TEXT("repair"),1}}, true, 120.f, 0.f, EOVSpaceHazardKind::None},
     {TEXT("Fleet300"), TEXT("300코스트 함대전"), TEXT("두 초대형함과 혼성 호위 전력을 운용하세요."),
      EOVPlaySceneKind::Fleet, 300, {{TEXT("corvette"),3}, {TEXT("frigate"),1}, {TEXT("vector"),1},
-     {TEXT("bastion"),1}, {TEXT("dreadnought"),1}, {TEXT("battlecarrier"),1,10}, {TEXT("air_defense"),1},
-     {TEXT("radar"),1}, {TEXT("carrier"),1,10}, {TEXT("repair"),1}}, true, 120.f, 0.f, EOVSpaceHazardKind::None},
+     {TEXT("bastion"),1}, {TEXT("dreadnought"),1}, {TEXT("battlecarrier"),1,20}, {TEXT("air_defense"),1},
+     {TEXT("radar"),1}, {TEXT("carrier"),1,20}, {TEXT("repair"),1}}, true, 120.f, 0.f, EOVSpaceHazardKind::None},
     {TEXT("BlackHoleTrial"), TEXT("블랙홀 중력전 (E1)"), TEXT("블랙홀 1,000m 중력권과 45m 즉사 중심부를 피해 상대를 무력화하세요."),
      EOVPlaySceneKind::Fleet, 100, {{TEXT("corvette"),3}, {TEXT("frigate"),1}, {TEXT("vector"),1},
      {TEXT("bastion"),1}, {TEXT("battleship"),2}, {TEXT("air_defense"),1}, {TEXT("radar"),1},
-     {TEXT("carrier"),1,10}, {TEXT("repair"),1}}, true, 120.f, 0.f, EOVSpaceHazardKind::BlackHole, FVector(0.f, 0.f, 2000.f)},
+     {TEXT("carrier"),1,20}, {TEXT("repair"),1}}, true, 120.f, 0.f, EOVSpaceHazardKind::BlackHole, FVector(0.f, 0.f, 2000.f)},
     {TEXT("Logistics"), TEXT("채굴·수송 엄호"), TEXT("채굴선과 수송선을 보호하고 자원을 납품하세요."),
      EOVPlaySceneKind::Logistics, 0, {{TEXT("vector"),1},{TEXT("frigate"),2},{TEXT("mining"),2},{TEXT("transport"),2}}, true, 120.f, 0.f, EOVSpaceHazardKind::None},
     {TEXT("Evacuation"), TEXT("공습 생존·퇴각"), TEXT("공습을 버티고 함선을 초광속으로 이탈시키세요."),
      EOVPlaySceneKind::Evacuation, 0, {{TEXT("corvette"),3},{TEXT("air_defense"),2},{TEXT("battleship"),1},
-     {TEXT("carrier"),1,10},{TEXT("dreadnought"),1}}, true, 120.f, 0.f, EOVSpaceHazardKind::None},
+     {TEXT("carrier"),1,20},{TEXT("dreadnought"),1}}, true, 120.f, 0.f, EOVSpaceHazardKind::None},
     {TEXT("Sandbox"), TEXT("자유 전투 시험장"), TEXT("양측 함선을 원하는 위치에 배치하고 교전하세요."),
      EOVPlaySceneKind::Sandbox, 0, {}, true, 120.f, 0.f, EOVSpaceHazardKind::None}
 };
@@ -115,6 +115,21 @@ void ArrangeFleet(AOVController& Controller, int32 Faction, bool bRetreat)
     if (Group.IsEmpty()) return;
     const double Side = Faction == 0 ? -1.0 : 1.0;
     const FVector Centre(bRetreat ? 0 : Side * 44000, 0, 2000);
+    if(!bRetreat)
+    {
+        // Start the standard engagement facing the opposing line. Convoys and raid entries own their positions.
+        const double Spacing=FMath::Max(5500.,2.15*(Group[0]->Systems->Layout->LocalHalfExtent*Group[0]->GetActorScale3D()).Size()+600.);
+        int32 Counts[4]={}, Used[4]={};
+        for(auto* Ship:Group)++Counts[AOVController::FormationRow(TEXT("FormationScreen"),Ship->HullDefinitionId)+1];
+        for(auto* Ship:Group){
+            const int32 Row=AOVController::FormationRow(TEXT("FormationScreen"),Ship->HullDefinitionId);
+            const double Across=Used[Row+1]++-(Counts[Row+1]-1)*.5;
+            const FVector Position=Centre+FVector(-Side*Row*Spacing,Across*Spacing,0);
+            Ship->SetActorLocation(Position);
+            Ship->SetDestination(Position+FVector(-Side*17000,0,0));
+        }
+        return;
+    }
     // Phyllotactic offsets keep the widest hull at the centre and vary escort bearings.
     TArray<FVector> Placed;
     TArray<double> Radii;
@@ -135,8 +150,7 @@ void ArrangeFleet(AOVController& Controller, int32 Faction, bool bRetreat)
             if (Clear) break;
         }
         Ship->SetActorLocation(Position);
-        if (bRetreat) Ship->StopMovement();
-        else Ship->SetDestination(Position + FVector(-Side * 17000,0,0));
+        Ship->StopMovement();
         Placed.Add(Position);
         Radii.Add(Radius);
     }
@@ -238,7 +252,6 @@ void UOVPlayScenarioSubsystem::Clear()
     LastProgressAt = 0;
     Resolution.Reset();
     DebriefLines.Reset();
-    InitialSorties.Reset();
 }
 
 bool UOVPlayScenarioSubsystem::Start(AOVController& Controller, FName Id)
@@ -337,7 +350,7 @@ AOVShip* UOVPlayScenarioSubsystem::Spawn(AOVController& Controller, const FOVPla
     AOVShip* Ship = GetWorld()->SpawnActor<AOVShip>();
     if (!Ship) return nullptr;
     Controller.Ships.Add(Ship); // The session owns even partially configured actors.
-    if (!OVCalibration::ConfigureHull(*Controller.Combat, *Ship, Entry.Hull, bFriendly, Position, Scale)) return nullptr;
+    if (!OVCalibration::ConfigureHull(*Controller.Combat, *Ship, Entry.Hull, bFriendly, Position, Scale,Entry.AircraftBays)) return nullptr;
     Ship->ShipName = FString::Printf(TEXT("%s %02d"), *OVCalibration::GetHullName(Entry.Hull), Ordinal + 1);
     Ship->SetAutomation(true, true);
     Ship->SetDestination(FVector(Side * (18000 + (Ordinal / 4) * 6000), Position.Y * .48, Position.Z));
@@ -345,11 +358,11 @@ AOVShip* UOVPlayScenarioSubsystem::Spawn(AOVController& Controller, const FOVPla
     for (const FOVWeaponMountDefinition& Mount : Ship->Systems->Layout->WeaponMounts)
         if (Mount.Type == EOVWeaponType::Interception) ++DefenseMounts;
     Controller.PointDefense->RegisterShip(Ship, DefenseMounts, Entry.Hull == TEXT("air_defense") ? 1.5f : 1.f);
-    if (Entry.AircraftPerHangar > 0 && !Controller.Carrier->RegisterCarrier(Ship, 20)) return nullptr;
+    if (Ship->Systems->Layout->bAllowAircraftOperations && !Controller.Carrier->RegisterCarrier(Ship, Entry.AircraftPerHangar)) return nullptr;
     Controller.Transport->AddShip(Ship);
     GetWorld()->GetSubsystem<UOVInteriorSubsystem>()->AddShip(Ship);
     if (ActiveId != TEXT("Logistics") || (Entry.Hull != TEXT("mining") && Entry.Hull != TEXT("transport")))
-        GetWorld()->GetSubsystem<UOVLogisticsSubsystem>()->StockFieldShip(Ship);
+        GetWorld()->GetSubsystem<UOVLogisticsSubsystem>()->StockFieldShip(Ship,Entry.ReplacementStock);
     if(ActiveId==TEXT("Sandbox") || (Faction==1 && (ActiveId==TEXT("Evacuation") || ActiveId==TEXT("Logistics")))) AssignScenarioHeroes(Controller,Faction);
     InitialCosts[Faction] += Metadata.FleetCost;
     return Ship;
@@ -406,7 +419,7 @@ bool UOVPlayScenarioSubsystem::HandleAction(AOVController& Controller, FName Act
                 Controller.Carrier->Carriers.ContainsByPredicate([Ship](const auto& C){ return C.Carrier == Ship; }))
             {
                 HasCarrier = true;
-                if (Controller.CommandCarrier(Ship, Action == TEXT("LaunchAircraft"))) InitialSorties.Add(Ship);
+                Controller.CommandCarrier(Ship, Action == TEXT("LaunchAircraft"));
             }
         if (!HasCarrier) Controller.LastAction = TEXT("운용할 아군 항모를 선택하세요");
         return true;
@@ -491,9 +504,7 @@ void UOVPlayScenarioSubsystem::CheckFleetResult(AOVController& Controller, const
                     (Aircraft.State == EOVAircraftState::Sortie || (bCanLaunch && Aircraft.State != EOVAircraftState::Wrecked));
             });
         Potential[Faction] |= bHasAircraft;
-        if (bCanLaunch && !Carrier.bRecallOrdered && Ship->IsAttackAutomatic() && IsValid(Ship->AttackTarget) && bHasAircraft &&
-            !InitialSorties.Contains(Ship) && Controller.Carrier->Launch(Ship) > 0)
-            InitialSorties.Add(Ship);
+        if(Controller.Carrier->GetAircraftOverview(Ship).ReplacementKits>0 && Ship->Systems->CanUseResources() && bCanLaunch) Potential[Faction]=true;
     }
     for (const auto& Aircraft : Controller.Carrier->Aircraft)
         if (Aircraft.State != EOVAircraftState::Wrecked) Integrity += Aircraft.HP;
@@ -727,7 +738,7 @@ void UOVPlayScenarioSubsystem::StepEvacuation(AOVController& Controller, float D
             Enemy->SetAutomation(false, true);
             Enemy->SetDestination(Centre + Wave.Heading * (Outer + (bCarrier ? 30000 : 22500)) + Across*(I-1)*11500);
             Controller.Combat->SetTarget(Enemy,First);
-            if (bCarrier) Controller.Carrier->Launch(Enemy);
+            // The carrier subsystem handles auto launches when a hostile target is acquired.
         }
         ++ArrivedWaves;
     }
