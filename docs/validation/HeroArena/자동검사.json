@@ -1,637 +1,826 @@
 {
   "대상": "Win64 Development Editor / OrbitalVanguard 전체",
-  "성공": 107,
+  "구현": "550850a",
+  "기획": "6fb4ae9",
+  "성공": 113,
   "경고 동반 성공": 50,
   "실패": 0,
   "미실행": 0,
   "검사": [
     {
       "검사": "OrbitalVanguard.Audio.SafeMissingAssetHooks",
-      "결과": "Success"
+      "결과": "Success",
+      "경고": 0
     },
     {
       "검사": "OrbitalVanguard.Carrier.AircraftLossThresholdsAndOwnership",
-      "결과": "Success"
+      "결과": "Success",
+      "경고": 0
     },
     {
       "검사": "OrbitalVanguard.Carrier.AlternateHangarAndExclusiveModes",
-      "결과": "Success"
+      "결과": "Success",
+      "경고": 0
     },
     {
       "검사": "OrbitalVanguard.Carrier.DefenceBalanceTargets",
-      "결과": "Success"
+      "결과": "Success",
+      "경고": 3
     },
     {
       "검사": "OrbitalVanguard.Carrier.DogfightAndMotherLoss",
-      "결과": "Success"
+      "결과": "Success",
+      "경고": 0
     },
     {
       "검사": "OrbitalVanguard.Carrier.FacilityControlAndDockQueue",
-      "결과": "Success"
+      "결과": "Success",
+      "경고": 0
     },
     {
       "검사": "OrbitalVanguard.Carrier.FieldResupplyAndCrew",
-      "결과": "Success"
+      "결과": "Success",
+      "경고": 0
     },
     {
       "검사": "OrbitalVanguard.Carrier.HangarAvailabilityPresentation",
-      "결과": "Success"
+      "결과": "Success",
+      "경고": 0
     },
     {
       "검사": "OrbitalVanguard.Carrier.InteriorProtectionAndInFlightLifetime",
-      "결과": "Success"
+      "결과": "Success",
+      "경고": 0
     },
     {
       "검사": "OrbitalVanguard.Carrier.InventoryCapacityAndRecall",
-      "결과": "Success"
+      "결과": "Success",
+      "경고": 0
     },
     {
       "검사": "OrbitalVanguard.Carrier.MultipleCarrierSectionsAndPureDogfight",
-      "결과": "Success"
+      "결과": "Success",
+      "경고": 0
     },
     {
       "검사": "OrbitalVanguard.Carrier.OwnershipFTLAndLaunchAttribution",
-      "결과": "Success"
+      "결과": "Success",
+      "경고": 0
     },
     {
       "검사": "OrbitalVanguard.Carrier.PaidParallelReplacement",
-      "결과": "Success"
+      "결과": "Success",
+      "경고": 0
     },
     {
       "검사": "OrbitalVanguard.Carrier.ReadOnlyAircraftOverview",
-      "결과": "Success"
+      "결과": "Success",
+      "경고": 0
     },
     {
       "검사": "OrbitalVanguard.Carrier.RealProjectilesAndFixedTime",
-      "결과": "Success"
+      "결과": "Success",
+      "경고": 0
     },
     {
       "검사": "OrbitalVanguard.Carrier.ReplacementBatchPolicy",
-      "결과": "Success"
+      "결과": "Success",
+      "경고": 0
     },
     {
       "검사": "OrbitalVanguard.Carrier.StrikeCapitalHullRange",
-      "결과": "Success"
+      "결과": "Success",
+      "경고": 2
     },
     {
       "검사": "OrbitalVanguard.Carrier.StrikeDefensiveRejoinAndInvalidation",
-      "결과": "Success"
+      "결과": "Success",
+      "경고": 0
     },
     {
       "검사": "OrbitalVanguard.Carrier.StrikeMovingHullEnvelope",
-      "결과": "Success"
+      "결과": "Success",
+      "경고": 0
     },
     {
       "검사": "OrbitalVanguard.Combat.BlindArcPreventsHullPenetration",
-      "결과": "Success"
+      "결과": "Success",
+      "경고": 1
     },
     {
       "검사": "OrbitalVanguard.Combat.ConfirmedFriendlyNotices",
-      "결과": "Success"
+      "결과": "Success",
+      "경고": 1
     },
     {
       "검사": "OrbitalVanguard.Combat.DataProfilesAndTierLimits",
-      "결과": "Success"
+      "결과": "Success",
+      "경고": 0
     },
     {
       "검사": "OrbitalVanguard.Combat.DetectionLossStartsLastKnownTracking",
-      "결과": "Success"
+      "결과": "Success",
+      "경고": 1
     },
     {
       "검사": "OrbitalVanguard.Combat.DetectionLossWreckDepartureAndExpiry",
-      "결과": "Success"
+      "결과": "Success",
+      "경고": 5
     },
     {
       "검사": "OrbitalVanguard.Combat.DetectionSourcesAndInvalidation",
-      "결과": "Success"
+      "결과": "Success",
+      "경고": 0
     },
     {
       "검사": "OrbitalVanguard.Combat.DisarmSelectsUnoccludedMount",
-      "결과": "Success"
+      "결과": "Success",
+      "경고": 1
     },
     {
       "검사": "OrbitalVanguard.Combat.EvadedMissileFuseAndClosestApproach",
-      "결과": "Success"
+      "결과": "Success",
+      "경고": 2
     },
     {
       "검사": "OrbitalVanguard.Combat.FixedVLSPathAndContinuousSpread",
-      "결과": "Success"
+      "결과": "Success",
+      "경고": 3
     },
     {
       "검사": "OrbitalVanguard.Combat.IndependentMovementAndAttackAutomation",
-      "결과": "Success"
+      "결과": "Success",
+      "경고": 10
     },
     {
       "검사": "OrbitalVanguard.Combat.LaunchedDamageChainAndSingleImpact",
-      "결과": "Success"
+      "결과": "Success",
+      "경고": 1
     },
     {
       "검사": "OrbitalVanguard.Combat.LocalArcsTraverseAndManualAttitude",
-      "결과": "Success"
+      "결과": "Success",
+      "경고": 1
     },
     {
       "검사": "OrbitalVanguard.Combat.MarkedCandidateActualWeaponHit",
-      "결과": "Success"
+      "결과": "Success",
+      "경고": 518
     },
     {
       "검사": "OrbitalVanguard.Combat.MarkedCandidateHullDamage",
-      "결과": "Success"
+      "결과": "Success",
+      "경고": 113
     },
     {
       "검사": "OrbitalVanguard.Combat.MarkedGeneralModuleSwap",
-      "결과": "Success"
+      "결과": "Success",
+      "경고": 1
     },
     {
       "검사": "OrbitalVanguard.Combat.MissileGuideAndFriendlyClearance",
-      "결과": "Success"
+      "결과": "Success",
+      "경고": 1
     },
     {
       "검사": "OrbitalVanguard.Combat.ObservedEnemyNoticePrivacy",
-      "결과": "Success"
+      "결과": "Success",
+      "경고": 2
     },
     {
       "검사": "OrbitalVanguard.Combat.OrdersAndFriendlyClearance",
-      "결과": "Success"
+      "결과": "Success",
+      "경고": 6
     },
     {
       "검사": "OrbitalVanguard.Combat.PC14TrialBottomMountImpact",
-      "결과": "Success"
+      "결과": "Success",
+      "경고": 2
     },
     {
       "검사": "OrbitalVanguard.Combat.PC14TrialMountOcclusion",
-      "결과": "Success"
+      "결과": "Success",
+      "경고": 32
     },
     {
       "검사": "OrbitalVanguard.Combat.PC14TrialRecessArmorImpact",
-      "결과": "Success"
+      "결과": "Success",
+      "경고": 4
     },
     {
       "검사": "OrbitalVanguard.Combat.ReadinessAndFacilityGates",
-      "결과": "Success"
+      "결과": "Success",
+      "경고": 1
     },
     {
       "검사": "OrbitalVanguard.Combat.RealMountImpactShieldThenMountOnly",
-      "결과": "Success"
+      "결과": "Success",
+      "경고": 1
     },
     {
       "검사": "OrbitalVanguard.Combat.SalvoCancellationAndGeometricMiss",
-      "결과": "Success"
+      "결과": "Success",
+      "경고": 3
     },
     {
       "검사": "OrbitalVanguard.Combat.SeededTimeScalePauseAndManualControl",
-      "결과": "Success"
+      "결과": "Success",
+      "경고": 3
     },
     {
       "검사": "OrbitalVanguard.Combat.TrajectoryLifetimeAndLaunchOwnership",
-      "결과": "Success"
+      "결과": "Success",
+      "경고": 3
     },
     {
       "검사": "OrbitalVanguard.Controls.OrbitOwnerAndReset",
-      "결과": "Success"
+      "결과": "Success",
+      "경고": 0
     },
     {
       "검사": "OrbitalVanguard.Controls.RightMoveAnchorAndRelease",
-      "결과": "Success"
+      "결과": "Success",
+      "경고": 0
     },
     {
       "검사": "OrbitalVanguard.D126.GridRulesAndCapacityAudit",
-      "결과": "Success"
+      "결과": "Success",
+      "경고": 0
     },
     {
       "검사": "OrbitalVanguard.D126.HangarAndAircraftRestrictions",
-      "결과": "Success"
+      "결과": "Success",
+      "경고": 0
     },
     {
       "검사": "OrbitalVanguard.D126.HullBalanceTableSync",
-      "결과": "Success"
+      "결과": "Success",
+      "경고": 0
     },
     {
       "검사": "OrbitalVanguard.D126.LaunchAuditAndMountGeometry",
-      "결과": "Success"
+      "결과": "Success",
+      "경고": 0
     },
     {
       "검사": "OrbitalVanguard.D126.OutpostAndMediumTransportLoop",
-      "결과": "Success"
+      "결과": "Success",
+      "경고": 0
     },
     {
       "검사": "OrbitalVanguard.Development.CatalogueDefinitions",
-      "결과": "Success"
+      "결과": "Success",
+      "경고": 0
     },
     {
       "검사": "OrbitalVanguard.Development.FacilityDamageControl",
-      "결과": "Success"
+      "결과": "Success",
+      "경고": 0
     },
     {
       "검사": "OrbitalVanguard.Development.FiniteLogistics",
-      "결과": "Success"
+      "결과": "Success",
+      "경고": 0
     },
     {
       "검사": "OrbitalVanguard.Development.InteriorSurvey",
-      "결과": "Success"
+      "결과": "Success",
+      "경고": 0
     },
     {
       "검사": "OrbitalVanguard.Development.TimedRepair",
-      "결과": "Success"
+      "결과": "Success",
+      "경고": 0
     },
     {
       "검사": "OrbitalVanguard.E1.BlackHoleGravityFTLAndInstantWreck",
-      "결과": "Success"
+      "결과": "Success",
+      "경고": 25
     },
     {
       "검사": "OrbitalVanguard.Fleet.FormationPresetOrders",
-      "결과": "Success"
+      "결과": "Success",
+      "경고": 0
     },
     {
       "검사": "OrbitalVanguard.Fleet.ShiftSelection",
-      "결과": "Success"
+      "결과": "Success",
+      "경고": 0
     },
     {
       "검사": "OrbitalVanguard.Hero.CandidateGrowthAndDuplicateAward",
-      "결과": "Success"
+      "결과": "Success",
+      "경고": 0
+    },
+    {
+      "검사": "OrbitalVanguard.Hero.IrisArcRespectsFacingDeckAndRange",
+      "결과": "Success",
+      "경고": 0
     },
     {
       "검사": "OrbitalVanguard.Hero.IrisPhaseDuel",
-      "결과": "Success"
+      "결과": "Success",
+      "경고": 0
+    },
+    {
+      "검사": "OrbitalVanguard.Hero.LegacyRosterIdentityAndLoss",
+      "결과": "Success",
+      "경고": 0
+    },
+    {
+      "검사": "OrbitalVanguard.Hero.NamedBoardingGuardsAndFiniteHealing",
+      "결과": "Success",
+      "경고": 0
     },
     {
       "검사": "OrbitalVanguard.Hero.NamedDutyLifecycle",
-      "결과": "Success"
+      "결과": "Success",
+      "경고": 0
+    },
+    {
+      "검사": "OrbitalVanguard.Hero.NamedFacilityOperationsAndRelay",
+      "결과": "Success",
+      "경고": 0
+    },
+    {
+      "검사": "OrbitalVanguard.Hero.NamedRushAndSquadActions",
+      "결과": "Success",
+      "경고": 0
+    },
+    {
+      "검사": "OrbitalVanguard.Hero.NamedTacticalEffects",
+      "결과": "Success",
+      "경고": 0
     },
     {
       "검사": "OrbitalVanguard.Hero.OfficerBonusesFollowRoomAndFaction",
-      "결과": "Success"
+      "결과": "Success",
+      "경고": 0
     },
     {
       "검사": "OrbitalVanguard.Input.AnchoredAltitudeAndUI",
-      "결과": "Success"
+      "결과": "Success",
+      "경고": 0
     },
     {
       "검사": "OrbitalVanguard.Input.ProjectionGuards",
-      "결과": "Success"
+      "결과": "Success",
+      "경고": 0
     },
     {
       "검사": "OrbitalVanguard.Interior.ActualEntryCaptureAndOriginalPodReturn",
-      "결과": "Success"
+      "결과": "Success",
+      "경고": 0
     },
     {
       "검사": "OrbitalVanguard.Interior.ActualOperationContributors",
-      "결과": "Success"
+      "결과": "Success",
+      "경고": 0
     },
     {
       "검사": "OrbitalVanguard.Interior.BridgeCapturePhysicalRetakeAndDestruction",
-      "결과": "Success"
+      "결과": "Success",
+      "경고": 0
     },
     {
       "검사": "OrbitalVanguard.Interior.CommanderAdvancedSkills",
-      "결과": "Success"
+      "결과": "Success",
+      "경고": 0
     },
     {
       "검사": "OrbitalVanguard.Interior.FixedClockBlockedRouteAndOrders",
-      "결과": "Success"
+      "결과": "Success",
+      "경고": 0
     },
     {
       "검사": "OrbitalVanguard.Interior.FourRolesCombatAndFiniteHealing",
-      "결과": "Success"
+      "결과": "Success",
+      "경고": 0
     },
     {
       "검사": "OrbitalVanguard.Interior.GraphVersionAndFactionRoster",
-      "결과": "Success"
+      "결과": "Success",
+      "경고": 0
     },
     {
       "검사": "OrbitalVanguard.Interior.HeroHitNotice",
-      "결과": "Success"
+      "결과": "Success",
+      "경고": 0
     },
     {
       "검사": "OrbitalVanguard.Interior.HostileBoardingNotice",
-      "결과": "Success"
+      "결과": "Success",
+      "경고": 0
     },
     {
       "검사": "OrbitalVanguard.Interior.ImmediateProtectionAndMixedPresenceSources",
-      "결과": "Success"
+      "결과": "Success",
+      "경고": 0
     },
     {
       "검사": "OrbitalVanguard.Interior.MeleeAdvancedSkills",
-      "결과": "Success"
+      "결과": "Success",
+      "경고": 0
     },
     {
       "검사": "OrbitalVanguard.Interior.PassiveAuraSkills",
-      "결과": "Success"
+      "결과": "Success",
+      "경고": 0
     },
     {
       "검사": "OrbitalVanguard.Interior.RangedAdvancedSkills",
-      "결과": "Success"
+      "결과": "Success",
+      "경고": 0
     },
     {
       "검사": "OrbitalVanguard.Interior.RealPodRescueNotice",
-      "결과": "Success"
+      "결과": "Success",
+      "경고": 0
     },
     {
       "검사": "OrbitalVanguard.Interior.RuntimeResidentDepartureSuspendsAndPreserves",
-      "결과": "Success"
+      "결과": "Success",
+      "경고": 0
     },
     {
       "검사": "OrbitalVanguard.Interior.RuntimeShuttleCaptureWreckAndDeparture",
-      "결과": "Success"
+      "결과": "Success",
+      "경고": 0
     },
     {
       "검사": "OrbitalVanguard.Interior.SabotageCheckpointAndDamagePath",
-      "결과": "Success"
+      "결과": "Success",
+      "경고": 0
     },
     {
       "검사": "OrbitalVanguard.Interior.SupportDutyFiniteRepair",
-      "결과": "Success"
+      "결과": "Success",
+      "경고": 0
     },
     {
       "검사": "OrbitalVanguard.Interior.SupportFiniteSkills",
-      "결과": "Success"
+      "결과": "Success",
+      "경고": 0
     },
     {
       "검사": "OrbitalVanguard.Layout.RejectInvalidAuthoring",
-      "결과": "Success"
+      "결과": "Success",
+      "경고": 0
     },
     {
       "검사": "OrbitalVanguard.Layout.SixFacesAndBoundaryMapping",
-      "결과": "Success"
+      "결과": "Success",
+      "경고": 0
     },
     {
       "검사": "OrbitalVanguard.Mission.AutoAssaultHoldScope",
-      "결과": "Success"
+      "결과": "Success",
+      "경고": 1
     },
     {
       "검사": "OrbitalVanguard.Mission.PauseManualPriorityAndTimeout",
-      "결과": "Success"
+      "결과": "Success",
+      "경고": 1
     },
     {
       "검사": "OrbitalVanguard.Mission.PreEntryRecallIsNotInteriorExtraction",
-      "결과": "Success"
+      "결과": "Success",
+      "경고": 0
     },
     {
       "검사": "OrbitalVanguard.Mission.RealRosterShieldAndTransportGate",
-      "결과": "Success"
+      "결과": "Success",
+      "경고": 0
     },
     {
       "검사": "OrbitalVanguard.Mission.ResizedCarrierClearance",
-      "결과": "Success"
+      "결과": "Success",
+      "경고": 3
     },
     {
       "검사": "OrbitalVanguard.Mission.RestartDefenseAndLegacyPreservation",
-      "결과": "Success"
+      "결과": "Success",
+      "경고": 9
     },
     {
       "검사": "OrbitalVanguard.PointDefense.ActualAircraftKillsTriggerWarnings",
-      "결과": "Success"
+      "결과": "Success",
+      "경고": 0
     },
     {
       "검사": "OrbitalVanguard.PointDefense.ActualHeroPodRescueWarning",
-      "결과": "Success"
+      "결과": "Success",
+      "경고": 0
     },
     {
       "검사": "OrbitalVanguard.PointDefense.CIWS6TrialRealShotMuzzle",
-      "결과": "Success"
+      "결과": "Success",
+      "경고": 1
     },
     {
       "검사": "OrbitalVanguard.PointDefense.CIWSBTrialRealShotMuzzle",
-      "결과": "Success"
+      "결과": "Success",
+      "경고": 1
     },
     {
       "검사": "OrbitalVanguard.PointDefense.FacilityRangeOwnershipAndCrew",
-      "결과": "Success"
+      "결과": "Success",
+      "경고": 1
     },
     {
       "검사": "OrbitalVanguard.PointDefense.LaunchedMissileSingleOpportunityAndImpact",
-      "결과": "Success"
+      "결과": "Success",
+      "경고": 1
     },
     {
       "검사": "OrbitalVanguard.PointDefense.MarkedSideMountArc",
-      "결과": "Success"
+      "결과": "Success",
+      "경고": 0
     },
     {
       "검사": "OrbitalVanguard.PointDefense.PriorityAndAlliedCoverage",
-      "결과": "Success"
+      "결과": "Success",
+      "경고": 1
     },
     {
       "검사": "OrbitalVanguard.PointDefense.ProbabilityAndTargetBoundary",
-      "결과": "Success"
+      "결과": "Success",
+      "경고": 0
     },
     {
       "검사": "OrbitalVanguard.Presentation.BF120SourceTrialActualTwinShots",
-      "결과": "Success"
+      "결과": "Success",
+      "경고": 1
     },
     {
       "검사": "OrbitalVanguard.Presentation.BF120TrialAlternatingMuzzles",
-      "결과": "Success"
+      "결과": "Success",
+      "경고": 1
     },
     {
       "검사": "OrbitalVanguard.Presentation.CarrierAssaultSourceMeshes",
-      "결과": "Success"
+      "결과": "Success",
+      "경고": 0
     },
     {
       "검사": "OrbitalVanguard.Presentation.CIWSBTrialSurfaceMuzzle",
-      "결과": "Success"
+      "결과": "Success",
+      "경고": 0
     },
     {
       "검사": "OrbitalVanguard.Presentation.CriticalToastPriority",
-      "결과": "Success"
+      "결과": "Success",
+      "경고": 0
     },
     {
       "검사": "OrbitalVanguard.Presentation.FittedHullAndWeapons",
-      "결과": "Success"
+      "결과": "Success",
+      "경고": 0
     },
     {
       "검사": "OrbitalVanguard.Presentation.FrigateCruiserRadarSourceMeshes",
-      "결과": "Success"
+      "결과": "Success",
+      "경고": 0
     },
     {
       "검사": "OrbitalVanguard.Presentation.HeavyShipSourceMeshes",
-      "결과": "Success"
+      "결과": "Success",
+      "경고": 0
     },
     {
       "검사": "OrbitalVanguard.Presentation.ImportedBF120MuzzleCandidates",
-      "결과": "Success"
+      "결과": "Success",
+      "경고": 0
     },
     {
       "검사": "OrbitalVanguard.Presentation.ImportedPC14MountAdapter",
-      "결과": "Success"
+      "결과": "Success",
+      "경고": 0
     },
     {
       "검사": "OrbitalVanguard.Presentation.ImportedPC14MountSurface",
-      "결과": "Success"
+      "결과": "Success",
+      "경고": 0
     },
     {
       "검사": "OrbitalVanguard.Presentation.ImportedPC14SurfaceGrid",
-      "결과": "Success"
+      "결과": "Success",
+      "경고": 0
     },
     {
       "검사": "OrbitalVanguard.Presentation.LB30TrialActualBeam",
-      "결과": "Success"
+      "결과": "Success",
+      "경고": 1
     },
     {
       "검사": "OrbitalVanguard.Presentation.MarkedAllUESurfaces",
-      "결과": "Success"
+      "결과": "Success",
+      "경고": 0
     },
     {
       "검사": "OrbitalVanguard.Presentation.MarkedCorvetteUESurface",
-      "결과": "Success"
+      "결과": "Success",
+      "경고": 0
     },
     {
       "검사": "OrbitalVanguard.Presentation.MarkedSlotCandidates",
-      "결과": "Success"
+      "결과": "Success",
+      "경고": 0
     },
     {
       "검사": "OrbitalVanguard.Presentation.MissileDefenseSourceMeshes",
-      "결과": "Success"
+      "결과": "Success",
+      "경고": 0
     },
     {
       "검사": "OrbitalVanguard.Presentation.MuzzleAttackEventAndGameClock",
-      "결과": "Success"
+      "결과": "Success",
+      "경고": 1
     },
     {
       "검사": "OrbitalVanguard.Presentation.PC14DefaultPresentation",
-      "결과": "Success"
+      "결과": "Success",
+      "경고": 0
     },
     {
       "검사": "OrbitalVanguard.Presentation.PC14FullMeshMountSurface",
-      "결과": "Success"
+      "결과": "Success",
+      "경고": 0
     },
     {
       "검사": "OrbitalVanguard.Presentation.PDActualTargetMuzzleAndOpportunity",
-      "결과": "Success"
+      "결과": "Success",
+      "경고": 1
     },
     {
       "검사": "OrbitalVanguard.Presentation.PlasmaTrialActualBeam",
-      "결과": "Success"
+      "결과": "Success",
+      "경고": 1
     },
     {
       "검사": "OrbitalVanguard.Presentation.ProfileReplacementRechecksActualMuzzle",
-      "결과": "Success"
+      "결과": "Success",
+      "경고": 2
     },
     {
       "검사": "OrbitalVanguard.Presentation.PrototypeWeaponScaleBuffering",
-      "결과": "Success"
+      "결과": "Success",
+      "경고": 0
     },
     {
       "검사": "OrbitalVanguard.Presentation.RG200TrialActualTwinShots",
-      "결과": "Success"
+      "결과": "Success",
+      "경고": 1
     },
     {
       "검사": "OrbitalVanguard.Presentation.SHC400TrialActualCannon",
-      "결과": "Success"
+      "결과": "Success",
+      "경고": 1
     },
     {
       "검사": "OrbitalVanguard.Presentation.SideMountGeometry",
-      "결과": "Success"
+      "결과": "Success",
+      "경고": 0
     },
     {
       "검사": "OrbitalVanguard.Presentation.SupportShipSourceMeshes",
-      "결과": "Success"
+      "결과": "Success",
+      "경고": 0
     },
     {
       "검사": "OrbitalVanguard.Presentation.TurretPoseOwnershipAndLifecycle",
-      "결과": "Success"
+      "결과": "Success",
+      "경고": 1
     },
     {
       "검사": "OrbitalVanguard.Presentation.UpperLowerVLSAndDestroyedTracking",
-      "결과": "Success"
+      "결과": "Success",
+      "경고": 1
     },
     {
       "검사": "OrbitalVanguard.Revision.D116CandidateCatalog",
-      "결과": "Success"
+      "결과": "Success",
+      "경고": 0
     },
     {
       "검사": "OrbitalVanguard.Revision.DisableObservedWeapons",
-      "결과": "Success"
+      "결과": "Success",
+      "경고": 1
     },
     {
       "검사": "OrbitalVanguard.Revision.FactionProtectionAndForceScope",
-      "결과": "Success"
+      "결과": "Success",
+      "경고": 1
     },
     {
       "검사": "OrbitalVanguard.Revision.MarkedEquippedMounts",
-      "결과": "Success"
+      "결과": "Success",
+      "경고": 0
     },
     {
       "검사": "OrbitalVanguard.Revision.ProtectionSalvoAndSurvivorBoundary",
-      "결과": "Success"
+      "결과": "Success",
+      "경고": 1
     },
     {
       "검사": "OrbitalVanguard.Revision.VolumeRatioTrial",
-      "결과": "Success"
+      "결과": "Success",
+      "경고": 0
     },
     {
       "검사": "OrbitalVanguard.Ship.ClassTurnRates",
-      "결과": "Success"
+      "결과": "Success",
+      "경고": 0
     },
     {
       "검사": "OrbitalVanguard.Ship.FiniteTurnXYZArrival",
-      "결과": "Success"
+      "결과": "Success",
+      "경고": 0
     },
     {
       "검사": "OrbitalVanguard.Ship.InertialRetargetAtLowFPS",
-      "결과": "Success"
+      "결과": "Success",
+      "경고": 0
     },
     {
       "검사": "OrbitalVanguard.Ship.TimeScaleAndStoppedArrival",
-      "결과": "Success"
+      "결과": "Success",
+      "경고": 0
     },
     {
       "검사": "OrbitalVanguard.Systems.ArmorCausesAndSingleHullDamage",
-      "결과": "Success"
+      "결과": "Success",
+      "경고": 0
     },
     {
       "검사": "OrbitalVanguard.Systems.D116NoDelayCrewAndDamage",
-      "결과": "Success"
+      "결과": "Success",
+      "경고": 0
     },
     {
       "검사": "OrbitalVanguard.Systems.ExplosionQueueAndWeaponIndependence",
-      "결과": "Success"
+      "결과": "Success",
+      "경고": 0
     },
     {
       "검사": "OrbitalVanguard.Systems.IndependentInstancesAndCrew",
-      "결과": "Success"
+      "결과": "Success",
+      "경고": 0
     },
     {
       "검사": "OrbitalVanguard.Systems.PartialShieldCapacityTransition",
-      "결과": "Success"
+      "결과": "Success",
+      "경고": 0
     },
     {
       "검사": "OrbitalVanguard.Systems.RejectInvalidRuntimeLayout",
-      "결과": "Success"
+      "결과": "Success",
+      "경고": 0
     },
     {
       "검사": "OrbitalVanguard.Systems.ShieldStateAndTime",
-      "결과": "Success"
+      "결과": "Success",
+      "경고": 0
     },
     {
       "검사": "OrbitalVanguard.Systems.ThreeDeckDestructionFaces",
-      "결과": "Success"
+      "결과": "Success",
+      "경고": 0
     },
     {
       "검사": "OrbitalVanguard.Systems.VerticalPenetrationAndEmptySlots",
-      "결과": "Success"
+      "결과": "Success",
+      "경고": 0
     },
     {
       "검사": "OrbitalVanguard.Transport.FixedTimePauseAndLowFps",
-      "결과": "Success"
+      "결과": "Success",
+      "경고": 0
     },
     {
       "검사": "OrbitalVanguard.Transport.InterceptionShieldAndSingleCasualty",
-      "결과": "Success"
+      "결과": "Success",
+      "경고": 0
     },
     {
       "검사": "OrbitalVanguard.Transport.LocalEntryOriginalPodAndProtection",
-      "결과": "Success"
+      "결과": "Success",
+      "경고": 0
     },
     {
       "검사": "OrbitalVanguard.Transport.PersonalLaunchScheduleAndFacilityRecheck",
-      "결과": "Success"
+      "결과": "Success",
+      "경고": 0
     },
     {
       "검사": "OrbitalVanguard.Transport.ShuttleDeliveryRecoveryAndLoss",
-      "결과": "Success"
+      "결과": "Success",
+      "경고": 0
     },
     {
       "검사": "OrbitalVanguard.Transport.TargetDepartureReturnFallbackAndResidentDeath",
-      "결과": "Success"
+      "결과": "Success",
+      "경고": 0
     }
   ]
 }
