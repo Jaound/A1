@@ -49,5 +49,5 @@ void BeginSession(UOVCombatSubsystem& Combat, int32 Seed);
 // Returns false before initializing any runtime profile if the requested roster is invalid.
 bool Start(UOVCombatSubsystem& Combat, const TArray<AOVShip*>& Ships, int32 Scenario);
 // Candidate data reuse for 2C. Does not alter stored inventory or reload profiles.
-bool ConfigureHull(UOVCombatSubsystem& Combat, AOVShip& Ship, FName HullId, bool Friendly, FVector Position, double Scale,int32 AircraftBays=2);
+bool ConfigureHull(UOVCombatSubsystem& Combat, AOVShip& Ship, FName HullId, bool Friendly, FVector Position, double Scale,int32 AircraftBays=2,bool bUnarmedTrial=false);
 }

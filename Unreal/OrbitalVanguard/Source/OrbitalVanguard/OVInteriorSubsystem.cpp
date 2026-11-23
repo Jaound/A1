@@ -249,8 +249,8 @@ int32 UOVInteriorSubsystem::RegisterUnit(AOVShip* Ship,int32 Faction,EOVInterior
         (Role!=EOVInteriorRole::Trooper && CountActiveHeroes(Faction)>=FMath::Min(15,Settings.MaxActiveHeroesPerFaction)))
     { LastMessage=TEXT("인원 등록 불가: 배치·생존·세력 영웅 15명 한도 확인"); return 0; }
     if(Role!=EOVInteriorRole::Trooper && GetWorld()->GetSubsystem<UOVPlayScenarioSubsystem>()->GetActiveDefinition() &&
-       CountEmbarkedHeroes(Ship,Faction)>=UOVPlayScenarioSubsystem::HeroBerthsPerShip){
-        LastMessage=TEXT("시나리오 편성: 함선당 영웅 4명까지 배치할 수 있습니다");return 0;
+       CountEmbarkedHeroes(Ship,Faction)>=GetWorld()->GetSubsystem<UOVPlayScenarioSubsystem>()->CurrentHeroBerths()){
+        LastMessage=TEXT("이 함선의 시나리오 영웅 정원이 찼습니다");return 0;
     }
     auto* L=Ship->Systems->Layout.Get();
     if(SlotId.IsNone()) SlotId=L->CoreSlotId;

@@ -46,6 +46,8 @@ const FOVPlaySceneDefinition Scenes[] = {
     {TEXT("Evacuation"), TEXT("공습 생존·퇴각"), TEXT("공습을 버티고 함선을 초광속으로 이탈시키세요."),
      EOVPlaySceneKind::Evacuation, 0, {{TEXT("corvette"),3},{TEXT("air_defense"),2},{TEXT("battleship"),1},
      {TEXT("carrier"),1,20},{TEXT("dreadnought"),1}}, true, 120.f, 0.f, EOVSpaceHazardKind::None},
+    {TEXT("HeroArena"), TEXT("영웅 전투 시험장"), TEXT("10명을 편성하고 개인 포드로 적 함교를 점령하세요."),
+     EOVPlaySceneKind::HeroArena, 0, {{TEXT("dreadnought"),1}}, true, 0.f, 0.f, EOVSpaceHazardKind::None},
     {TEXT("Sandbox"), TEXT("자유 전투 시험장"), TEXT("양측 함선을 원하는 위치에 배치하고 교전하세요."),
      EOVPlaySceneKind::Sandbox, 0, {}, true, 120.f, 0.f, EOVSpaceHazardKind::None}
 };
@@ -226,6 +228,7 @@ void UOVPlayScenarioSubsystem::SetEnvironmentOverride(EOVSpaceHazardKind Kind)
 
 void UOVPlayScenarioSubsystem::Clear()
 {
+    ArenaPicked.Reset(); ArenaCandidate=0; bArenaStarted=false;
     EndSandboxPlacement();
     bSandboxHullMenu = false;
     SandboxFaction = 0;
@@ -237,6 +240,12 @@ void UOVPlayScenarioSubsystem::Clear()
     FreshDeployments.Reset();
     if(auto* GI=GetWorld()->GetGameInstance()) if(auto* Roster=GI->GetSubsystem<UOVHeroSubsystem>())
         Roster->Heroes.RemoveAll([this](const auto& H){return ScenarioHeroes.Contains(H.HeroId);});
+    if(bArenaOwnsRoster)
+    {
+        if(auto* GI=GetWorld()->GetGameInstance())
+            GI->GetSubsystem<UOVHeroSubsystem>()->Heroes=MoveTemp(ArenaSavedRoster);
+        bArenaOwnsRoster=false;
+    }
     ScenarioHeroes.Reset();
     for(int32& Count:IssuedHeroes)Count=0;
     DestroyActiveHazardActors();
@@ -313,7 +322,19 @@ bool UOVPlayScenarioSubsystem::Start(AOVController& Controller, FName Id)
     }
     if (Definition->Kind == EOVPlaySceneKind::Fleet || bEvacuation)
         for (int32 Side = 0; Side < (bEvacuation ? 1 : 2); ++Side) ArrangeFleet(Controller, Side, bEvacuation);
-    for(int32 Side=0;Side<FactionCount;++Side) AssignScenarioHeroes(Controller,Side);
+    if (Definition->Kind==EOVPlaySceneKind::HeroArena)
+    {
+        ArenaSavedRoster=MoveTemp(Controller.GetGameInstance()->GetSubsystem<UOVHeroSubsystem>()->Heroes);
+        bArenaOwnsRoster=true;
+        for(int32 I=0; I<ArenaTeamSize; ++I)
+            if(!AddArenaHero(Controller,1,I%4))
+            {
+                Controller.ResetPlayScenarioSession(false);
+                Controller.LastAction=TEXT("상대 시험 편성 실패 · 로스터 정원과 강습 시설을 확인하세요");
+                return false;
+            }
+    }
+    else for(int32 Side=0;Side<FactionCount;++Side) AssignScenarioHeroes(Controller,Side);
     if (bEvacuation)
         for (AOVShip* Ship : Controller.Ships) RescueFleet.Add(Ship);
     for (const FOVAircraftRecord& Aircraft : Controller.Carrier->Aircraft)
@@ -325,6 +346,58 @@ bool UOVPlayScenarioSubsystem::Start(AOVController& Controller, FName Id)
     }
     Controller.LastAction = FString::Printf(TEXT("%s · 준비 완료"), Definition->Title);
     return true;
+}
+
+TArray<FGuid> UOVPlayScenarioSubsystem::ArenaOwnedCandidates() const
+{
+    TArray<FGuid> ResultIds;
+    for(const auto& Hero:ArenaSavedRoster)
+        if(Hero.FactionId==0 && (Hero.Status==EOVHeroStatus::Reserve || Hero.Status==EOVHeroStatus::Deployed)
+           && !ArenaPicked.Contains(Hero.HeroId)) ResultIds.Add(Hero.HeroId);
+    return ResultIds;
+}
+
+FString UOVPlayScenarioSubsystem::ArenaCandidateLabel() const
+{
+    static const TCHAR* Labels[]={TEXT("근거리 장교"),TEXT("원거리 사수"),TEXT("지원 정비관"),TEXT("함교 지휘관")};
+    if(ArenaCandidate>=0 && ArenaCandidate<4) return Labels[ArenaCandidate];
+    const auto Candidates=ArenaOwnedCandidates();
+    if(Candidates.IsValidIndex(ArenaCandidate-4))
+        for(const auto& H:ArenaSavedRoster) if(H.HeroId==Candidates[ArenaCandidate-4]) return H.Name;
+    return TEXT("후보 선택");
+}
+
+bool UOVPlayScenarioSubsystem::AddArenaHero(AOVController& PC,int32 Side,int32 Choice)
+{
+    if(!PC.Ships.IsValidIndex(Side) || IssuedHeroes[Side]>=ArenaTeamSize) return false;
+    auto* Roster=PC.GetGameInstance()->GetSubsystem<UOVHeroSubsystem>();
+    const auto Pool=ArenaOwnedCandidates();
+    const FOVHeroRecord* Source=nullptr;
+    if(Choice>=4 && Pool.IsValidIndex(Choice-4))
+        Source=ArenaSavedRoster.FindByPredicate([&](const auto& H){return H.HeroId==Pool[Choice-4];});
+    if(Choice<0 || (Choice>=4 && !Source)) return false;
+    static const TCHAR* Labels[]={TEXT("근거리 장교"),TEXT("원거리 사수"),TEXT("지원 정비관"),TEXT("함교 지휘관")};
+    const auto Role=Source?Source->Role:static_cast<EOVInteriorRole>(Choice+1);
+    const auto Id=Roster->CreateRosterEntry(Side,Role,Source?Source->Name:FString::Printf(TEXT("%s %02d"),Labels[Choice],IssuedHeroes[Side]+1),true);
+    if(!Id.IsValid()) return false;
+    if(Source)
+    {
+        auto* H=Roster->FindHero(Id);
+        *H=*Source; H->HeroId=Id; H->RuntimeUnitId=0; H->RuntimePersonId=0;
+        H->bDeploymentReserved=true; H->Status=EOVHeroStatus::Deployed;
+    }
+    AOVShip* Ship=PC.Ships[Side];
+    FName Station=Ship->Systems->Layout->CoreSlotId;
+    if(Side==1)
+        for(const auto& Slot:Ship->Systems->Layout->Slots)
+            if(Slot.Facility==EOVFacilityType::Bridge) {Station=Slot.SlotId;break;}
+    if(!PC.Interior->SpawnRosterHero(Ship,Id,Station))
+    {
+        Roster->Heroes.RemoveAll([Id](const auto& H){return H.HeroId==Id;});
+        PC.LastAction=PC.Interior->LastMessage;return false;
+    }
+    if(Source) {ArenaPicked.Add(Source->HeroId);ArenaCandidate=0;}
+    ScenarioHeroes.Add(Id); ++IssuedHeroes[Side]; return true;
 }
 
 void UOVPlayScenarioSubsystem::AssignScenarioHeroes(AOVController& PC,int32 Side)
@@ -376,14 +449,15 @@ AOVShip* UOVPlayScenarioSubsystem::Spawn(AOVController& Controller, const FOVPla
     const double Side = bFriendly ? -1 : 1;
     const double Scale = OVCalibration::GetHullGeometryScale(Entry.Hull);
     // The same formation is mirrored. Front scouts lead, capital hulls and support are behind them.
-    const FVector Position = PositionOverride.Get(FVector(Side * (42000 + (Ordinal / 4) * 30500), (Ordinal % 4 - 1.5) * 29000, 2000));
+    const bool bArena=ActiveId==TEXT("HeroArena");
+    const FVector Position = bArena ? FVector(Side*9000,0,2000) : PositionOverride.Get(FVector(Side * (42000 + (Ordinal / 4) * 30500), (Ordinal % 4 - 1.5) * 29000, 2000));
     AOVShip* Ship = GetWorld()->SpawnActor<AOVShip>();
     if (!Ship) return nullptr;
     Controller.Ships.Add(Ship); // The session owns even partially configured actors.
-    if (!OVCalibration::ConfigureHull(*Controller.Combat, *Ship, Entry.Hull, bFriendly, Position, Scale,Entry.AircraftBays)) return nullptr;
+    if (!OVCalibration::ConfigureHull(*Controller.Combat, *Ship, Entry.Hull, bFriendly, Position, Scale,Entry.AircraftBays,bArena)) return nullptr;
     Ship->ShipName = FString::Printf(TEXT("%s %02d"), *OVCalibration::GetHullName(Entry.Hull), Ordinal + 1);
-    Ship->SetAutomation(true, true);
-    Ship->SetDestination(FVector(Side * (18000 + (Ordinal / 4) * 6000), Position.Y * .48, Position.Z));
+    Ship->SetAutomation(!bArena, !bArena);
+    if(!bArena) Ship->SetDestination(FVector(Side * (18000 + (Ordinal / 4) * 6000), Position.Y * .48, Position.Z));
     int32 DefenseMounts = 0;
     for (const FOVWeaponMountDefinition& Mount : Ship->Systems->Layout->WeaponMounts)
         if (Mount.Type == EOVWeaponType::Interception) ++DefenseMounts;
@@ -399,6 +473,23 @@ AOVShip* UOVPlayScenarioSubsystem::Spawn(AOVController& Controller, const FOVPla
 
 bool UOVPlayScenarioSubsystem::HandleAction(AOVController& Controller, FName Action)
 {
+    if(ActiveId==TEXT("HeroArena") && Action.ToString().StartsWith(TEXT("Arena")))
+    {
+        if(bArenaStarted || Controller.Ships.Num()!=2) return true;
+        if(Action==TEXT("ArenaNext")) ArenaCandidate=(ArenaCandidate+1)%(4+ArenaOwnedCandidates().Num());
+        if(Action==TEXT("ArenaAdd")) AddArenaHero(Controller,0,ArenaCandidate);
+        if(Action==TEXT("ArenaFill"))
+            while(IssuedHeroes[0]<ArenaTeamSize && AddArenaHero(Controller,0,IssuedHeroes[0]%4)) {}
+        if(Action==TEXT("ArenaFight") && IssuedHeroes[0]==ArenaTeamSize)
+        {
+            AOVShip* Home=Controller.Ships[0]; AOVShip* Target=Controller.Ships[1];
+            for(const auto& Unit:Controller.Interior->Units)
+                if(Unit.FactionId==0) Controller.Interior->SetHeroBoardingAssignment(Unit.UnitId,true);
+            if(Controller.Transport->LaunchPods(Home,Target)==ArenaTeamSize) { bArenaStarted=true; Controller.bSimulationPaused=false; }
+            else Controller.LastAction=Controller.Transport->LastMessage;
+        }
+        return true;
+    }
     if (Action == TEXT("PlaySceneExit"))
     {
         Controller.LeavePlayScenario();
@@ -473,6 +564,15 @@ void UOVPlayScenarioSubsystem::Step(float Delta)
         BlackHole->SimulateHazard(Delta);
     }
 
+    if(Definition->Kind==EOVPlaySceneKind::HeroArena)
+    {
+        if(!bArenaStarted || Controller->Ships.Num()!=2) return;
+        ElapsedSeconds+=Delta;
+        AOVShip* Target=Controller->Ships[1];
+        if(Target->Systems->FactionId==0) Finish(*Controller,EOVPlaySceneResult::Victory,TEXT("적 함교 점령"));
+        else if(Controller->Interior->CountActiveHeroes(0)==0) Finish(*Controller,EOVPlaySceneResult::Defeat,TEXT("강습대 전멸"));
+        return;
+    }
     ElapsedSeconds += Delta;
     AdvanceJumps(*Controller);
     if (Definition->Kind!=EOVPlaySceneKind::Sandbox || bSandboxEngaged) StepCommandAI(*Controller,Delta);
@@ -632,6 +732,9 @@ FString UOVPlayScenarioSubsystem::GetStatus() const
         if (Result == EOVPlaySceneResult::Defeat) return FString(TEXT("패배 · ")) + Resolution;
         return Resolution;
     }
+    if(ActiveId==TEXT("HeroArena"))
+        return bArenaStarted ? TEXT("강습 진행 · 선내 지도에서 적 함교를 목표로 지정하세요") :
+            FString::Printf(TEXT("아군 편성 %d / %d   ·   %s"),IssuedHeroes[0],ArenaTeamSize,*ArenaCandidateLabel());
     if (ActiveId == TEXT("Evacuation")) return GetEvacuationStatus(nullptr);
     if (ActiveId == TEXT("Logistics"))
         return FString::Printf(TEXT("납품 %d / %.0f   ·   %s"), FMath::FloorToInt(DeliveredCargo), EscortQuota(),

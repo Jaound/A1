@@ -686,7 +686,7 @@ bool OVCalibration::Start(UOVCombatSubsystem& Combat, const TArray<AOVShip*>& Sh
     return true;
 }
 
-bool OVCalibration::ConfigureHull(UOVCombatSubsystem& Combat, AOVShip& Ship, FName HullId, bool Friendly, FVector Position, double Scale,int32 AircraftBays)
+bool OVCalibration::ConfigureHull(UOVCombatSubsystem& Combat, AOVShip& Ship, FName HullId, bool Friendly, FVector Position, double Scale,int32 AircraftBays,bool bUnarmedTrial)
 {
     const FHull* Hull=FindHull(HullId);
     if(!Hull || !Combat.Settings || !FMath::IsFinite(Scale) || Scale <= 0.) return false;
@@ -713,12 +713,17 @@ bool OVCalibration::ConfigureHull(UOVCombatSubsystem& Combat, AOVShip& Ship, FNa
         Install(EOVFacilityType::Hangar,AircraftBays);
         if(Layout->Slots.FilterByPredicate([](const auto& S){return S.Facility==EOVFacilityType::Hangar;}).Num()!=AircraftBays)return false;
     }
-    AppendDefenseMounts(*Hull,*Layout);
+    if (bUnarmedTrial)
+    {
+        Layout->WeaponMounts.Reset();
+        Layout->BeamSlots = Layout->CannonSlots = Layout->MissileSlots = 0;
+    }
+    else AppendDefenseMounts(*Hull,*Layout);
     Ship.Configure(HullId.ToString().ToUpper(),Friendly,Hull->Speed,Hull->Turn,FVector(Scale),Friendly?FLinearColor(.12f,.65f,1):FLinearColor(1,.15f,.08f));
     Ship.ConfigureClassMotion(Hull->Size);
     Ship.SetCalibrationHull(&Layout->LocalHalfExtent);
     auto& S=*Ship.Systems;
-    S.Tuning=GetDefault<UOVShipSystemsComponent>()->Tuning; S.Tuning.ShieldBase=Hull->Shield; S.Tuning.ExplosionBase=40; // D116 provisional balance
+    S.Tuning=GetDefault<UOVShipSystemsComponent>()->Tuning; S.Tuning.ShieldBase=bUnarmedTrial ? 0.f : Hull->Shield; S.Tuning.ExplosionBase=40; // D116 provisional balance
     S.Tuning.ArmorMaxReduction = Rule.ArmorMaxReduction;
     S.Tuning.ShieldRegenFraction=ShieldCombat; S.Tuning.ShieldNonCombatRegenFraction=ShieldNonCombat;
     S.Tuning.NoHitRecoveryInterval=ShieldTransition; S.Tuning.ShieldRecoveryDelay=ShieldDelay; S.Tuning.CrewDamageCoefficient=CrewInjury;
@@ -727,7 +732,7 @@ bool OVCalibration::ConfigureHull(UOVCombatSubsystem& Combat, AOVShip& Ship, FNa
     Ship.SetActorHiddenInGame(false); Ship.SetActorEnableCollision(true);
     Ship.SetActorLocationAndRotation(Position,FRotator(0,Friendly?0:180,0)); Ship.DebugResetMotion(); Ship.SetAutomation(false,false);
     Combat.RegisterShip(&Ship,Hull->RadarTier,HullId==TEXT("radar"),Hull->Size);
-    for(int32 I=0;I<Hull->MountCount;++I) Combat.SetWeaponProfile(&Ship,Layout->WeaponMounts[I].WeaponId,ProfileId(Weapons[Hull->Mounts[I].Weapon],Hull->Mounts[I].Tier));
+    for(int32 I=0;!bUnarmedTrial && I<Hull->MountCount;++I) Combat.SetWeaponProfile(&Ship,Layout->WeaponMounts[I].WeaponId,ProfileId(Weapons[Hull->Mounts[I].Weapon],Hull->Mounts[I].Tier));
     return true;
 }
 

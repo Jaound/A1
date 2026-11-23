@@ -1,0 +1,41 @@
+{
+  "checks": {
+    "구축전함 두 척": {
+      "passed": true,
+      "value": "2"
+    },
+    "OVShip_3 무장·쉴드 해제": {
+      "passed": true,
+      "value": "0.0"
+    },
+    "OVShip_4 무장·쉴드 해제": {
+      "passed": true,
+      "value": "0.0"
+    },
+    "편성 전 적 수호대": {
+      "passed": true,
+      "value": "10"
+    },
+    "양측 10명과 고유 개인 ID": {
+      "passed": true,
+      "value": "20"
+    },
+    "원 포드 10기": {
+      "passed": true,
+      "value": "10"
+    },
+    "열 명 실제 진입 및 이동 명령": {
+      "passed": true,
+      "value": "10"
+    },
+    "선내 실제 명중": {
+      "passed": true,
+      "value": "3"
+    },
+    "일반 함대 무장 복원": {
+      "passed": true,
+      "value": "20"
+    }
+  },
+  "passed": true
+}

@@ -2,6 +2,7 @@
 
 #include "CoreMinimal.h"
 #include "OVSpaceEnvironmentTypes.h"
+#include "OVHeroSubsystem.h"
 #include "Subsystems/WorldSubsystem.h"
 #include "OVPlayScenarioSubsystem.generated.h"
 
@@ -13,7 +14,7 @@ class AOVShip;
 UENUM(BlueprintType)
 enum class EOVCommandDifficulty : uint8 { Easy, Normal, Hard };
 
-enum class EOVPlaySceneKind : uint8 { Fleet, Logistics, Evacuation, Sandbox };
+enum class EOVPlaySceneKind : uint8 { Fleet, Logistics, Evacuation, Sandbox, HeroArena };
 
 struct FOVPlayFleetEntry
 {
@@ -52,6 +53,10 @@ class ORBITALVANGUARD_API UOVPlayScenarioSubsystem : public UWorldSubsystem
     GENERATED_BODY()
 public:
     static constexpr int32 HeroBerthsPerShip=4;
+    static constexpr int32 ArenaTeamSize=10;
+    int32 CurrentHeroBerths() const { return ActiveId==TEXT("HeroArena") ? ArenaTeamSize : HeroBerthsPerShip; }
+    bool bArenaStarted=false;
+    FString ArenaCandidateLabel() const;
     static TConstArrayView<FOVPlaySceneDefinition> Definitions();
     const FOVPlaySceneDefinition* GetActiveDefinition() const;
     bool Start(AOVController& Controller, FName Id);
@@ -125,6 +130,12 @@ private:
     double PreviousIntegrity = -1;
     FString Resolution;
     int32 IssuedHeroes[2]={};
+    int32 ArenaCandidate=0;
+    TSet<FGuid> ArenaPicked;
+    TArray<FOVHeroRecord> ArenaSavedRoster;
+    bool bArenaOwnsRoster=false;
+    TArray<FGuid> ArenaOwnedCandidates() const;
+    bool AddArenaHero(AOVController& PC,int32 Side,int32 Choice);
     TArray<FGuid> ScenarioHeroes;
     void AssignScenarioHeroes(AOVController& PC,int32 Faction);
 
