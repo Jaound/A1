@@ -21,14 +21,18 @@ void UOVShipPreview::Release()
     Mirrors.Reset(); Sources.Reset(); Subject.Reset(); LastCapture=-1; LastFocusMount=INDEX_NONE;
 }
 
-void UOVShipPreview::Update(AOVShip* Ship, FRotator Rotation, float Zoom, float Aspect, int32 FocusMount, int32 PixelWidth)
+void UOVShipPreview::Update(AOVShip* Ship, FRotator Rotation, float Zoom, float Aspect, int32 FocusMount, int32 PixelWidth, bool bPortrait)
 {
     TRACE_CPUPROFILER_EVENT_SCOPE(OV_ShipPreview);
     CSV_SCOPED_TIMING_STAT_EXCLUSIVE(OV_Preview);
     if (!IsValid(Ship) || !Ship->Systems || !Ship->Systems->Layout) { Release(); return; }
     if (Subject!=Ship) Release();
+    Aspect=FMath::Max(.5f,Aspect);
+    const int32 WidthPx=FMath::Clamp(PixelWidth,1,FMath::FloorToInt(4096.f*FMath::Min(1.f,Aspect)));
+    const int32 HeightPx=FMath::Max(1,FMath::RoundToInt(WidthPx/Aspect));
+    const bool bSameResolution=Texture && Texture->SizeX==WidthPx && Texture->SizeY==HeightPx;
     const double Now=FPlatformTime::Seconds();
-    if (Now-LastCapture<.05 && Rotation.Equals(ViewRotation) && FMath::IsNearlyEqual(ViewAspect,Aspect) && LastFocusMount==FocusMount) return;
+    if (bSameResolution && Now-LastCapture<.05 && Rotation.Equals(ViewRotation) && FMath::IsNearlyEqual(ViewAspect,Aspect) && LastFocusMount==FocusMount) return;
     LastCapture=Now;LastFocusMount=FocusMount;
     if (!Proxy)
     {
@@ -38,7 +42,10 @@ void UOVShipPreview::Update(AOVShip* Ship, FRotator Rotation, float Zoom, float 
         Proxy->SetActorLocation(FVector(0,0,-10000000));
         Proxy->SetActorEnableCollision(false); Proxy->SetActorTickEnabled(false);
         Texture=NewObject<UTextureRenderTarget2D>(this);
-        Texture->ClearColor=FLinearColor(.009f,.02f,.035f); Texture->InitAutoFormat(PixelWidth,FMath::Max(1,FMath::RoundToInt(PixelWidth/FMath::Max(.5f,Aspect))));
+        Texture->ClearColor=FLinearColor(.009f,.02f,.035f);
+        Texture->Filter=bPortrait ? TF_Trilinear : TF_Bilinear;
+        Texture->bAutoGenerateMips=bPortrait;
+        Texture->InitAutoFormat(WidthPx,HeightPx);
         Capture=NewObject<USceneCaptureComponent2D>(Proxy);
         Capture->SetupAttachment(Root); Capture->RegisterComponent();
         Capture->TextureTarget=Texture; Capture->ProjectionType=ECameraProjectionMode::Orthographic;
@@ -80,7 +87,7 @@ void UOVShipPreview::Update(AOVShip* Ship, FRotator Rotation, float Zoom, float 
         Focus=Rotation.RotateVector(Mount.LocalPosition);
         OrthoWidth=FMath::Max(16.f,Mount.GeometryScale*OVWeaponGeometry::BarrelLength(Extent,Mount.Tier,Mount.Type==EOVWeaponType::Interception)*4.f);
     }
-    if (Texture->SizeY!=FMath::RoundToInt(PixelWidth/ViewAspect)) Texture->ResizeTarget(PixelWidth,FMath::RoundToInt(PixelWidth/ViewAspect));
+    if (Texture->SizeX!=WidthPx || Texture->SizeY!=HeightPx) Texture->ResizeTarget(WidthPx,HeightPx);
     Capture->OrthoWidth=OrthoWidth;
     Capture->SetRelativeLocation(FVector(-FMath::Max(5000.,Extent.Size()*4),Focus.Y,Focus.Z));
     Capture->SetRelativeRotation(FRotator::ZeroRotator);

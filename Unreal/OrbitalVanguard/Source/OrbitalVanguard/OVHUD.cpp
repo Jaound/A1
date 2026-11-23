@@ -21,6 +21,7 @@
 #include "Engine/Canvas.h"
 #include "Engine/Engine.h"
 #include "CanvasItem.h"
+#include "Engine/Font.h"
 #include "CanvasTypes.h"
 namespace {
 const FLinearColor Ink(.75f,.86f,.94f),Accent(.18f,.85f,1),Panel(.008f,.018f,.035f,.96f);
@@ -33,6 +34,25 @@ UOVBattleNotices* AOVHUD::GetBattleNoticeFeed() const
 {
  return GetWorld()?GetWorld()->GetSubsystem<UOVBattleNotices>():nullptr;
 }
+void AOVHUD::DrawText(const FString& Text, FLinearColor Color, float X, float Y, UFont* Font, float Scale)
+{
+ if (!Canvas || Text.IsEmpty() || Scale <= 0.f) return;
+ if (!Font || Font->FontCacheType != EFontCacheType::Runtime) {
+  AHUD::DrawText(Text,Color,X,Y,Font,Scale);
+  return;
+ }
+ auto Info=Font->GetLegacySlateFontInfo();
+ const float LogicalSize=Info.Size*Scale;
+ if (LogicalSize <= 0.f) return;
+ // Canvas scales the geometry after looking up glyphs. Choose the atlas size
+ // from the final pixel footprint and only compensate for rounding in layout.
+ Info.Size=FMath::Max(1,FMath::RoundToInt(LogicalSize*UIScale));
+ const FVector2D Origin(FMath::RoundToFloat(X*UIScale)/UIScale,FMath::RoundToFloat(Y*UIScale)/UIScale);
+ FCanvasTextItem Item(Origin,FText::FromString(Text),Info,Color);
+ Item.Scale=FVector2D(LogicalSize/Info.Size);
+ Canvas->DrawItem(Item);
+}
+
 void AOVHUD::Button(FName N,const FString& L,float X,float Y,float W,bool Active)
 {
  ActionCenters.Add(N,FVector2D(X+W*.5f,Y+13.5f));
@@ -69,7 +89,7 @@ bool AOVHUD::IsOverPanel(float X,float Y) const
  const auto* Feed=GetBattleNoticeFeed();const int32 Footer=bBattleFeedOpen?(bNoticeSettings?242:66)+(Feed&&Feed->DroppedCount>0?20:0):0;
  if(Notices>0&&P.X>=NoticeX&&P.X<=NoticeX+340&&P.Y>=BattleNoticeTop()&&P.Y<=BattleNoticeTop()+Notices*36+Footer)return true;
  // The basic HUD remains visible under the separate developer window.
- if(P.Y<62 || (P.X<620 && P.Y>ViewportPixels.Y/UIScale-220) || (!PC->Selection.IsEmpty() && P.X>=ViewportPixels.X/UIScale-FMath::Clamp(ViewportPixels.X/UIScale-640.,210.,390.)-10 && P.Y>=ViewportPixels.Y/UIScale-218) || (bSceneMenuOpen && P.X>=216 && P.X<=FMath::Min(900.,ViewportPixels.X/UIScale-10) && P.Y<=110+UOVPlayScenarioSubsystem::Definitions().Num()*36)) return true;
+ if(P.Y<62 || (P.X<620 && P.Y>ViewportPixels.Y/UIScale-220) || (!PC->Selection.IsEmpty() && P.X>=ViewportPixels.X/UIScale-FleetPanelWidth(ViewportPixels.X/UIScale)-10 && P.Y>=ViewportPixels.Y/UIScale-218) || (bSceneMenuOpen && P.X>=216 && P.X<=FMath::Min(900.,ViewportPixels.X/UIScale-10) && P.Y<=110+UOVPlayScenarioSubsystem::Definitions().Num()*36)) return true;
  return !PC->bDeveloperMode&&PC->Selected&&bDetailsOpen&&P.X>=WindowPosition.X&&P.X<=WindowPosition.X+WindowSize.X&&P.Y>=WindowPosition.Y&&P.Y<=WindowPosition.Y+(bMinimized?32:WindowSize.Y);
 }
 bool AOVHUD::HasOrbitPreview() const
@@ -416,7 +436,7 @@ void AOVHUD::DrawExternal(float X,float Y,float W)
 {
  auto* PC=Cast<AOVController>(PlayerOwner); if(!PC||!PC->Selected)return;
  if(!ShipPreview)ShipPreview=NewObject<UOVShipPreview>(this);
- ShipPreview->Update(PC->Selected,PreviewRotation,PreviewZoom,W/(WindowSize.Y*.5f));
+ ShipPreview->Update(PC->Selected,PreviewRotation,PreviewZoom,W/(WindowSize.Y*.5f),INDEX_NONE,FMath::CeilToInt(W*UIScale));
  DrawRect(FLinearColor(.009f,.02f,.035f),X,Y,W,WindowSize.Y*.5f);
  if(auto* Texture=ShipPreview->GetTexture())DrawTexture(Texture,X,Y,W,WindowSize.Y*.5f,0,0,1,1,FLinearColor::White,BLEND_Opaque);
  const auto* Systems=PC->Selected->Systems.Get(); const auto* Layout=Systems->Layout.Get();
@@ -436,8 +456,8 @@ void AOVHUD::DrawExternal(float X,float Y,float W)
  }
  if(!PC->Selected->IsHidden()&&!Systems->bWrecked&&(!PC->Combat||!PC->Combat->IsDeparted(PC->Selected))&&Layout->WeaponMounts.IsValidIndex(PC->SelectedWeapon)) {
   if(!WeaponPreview)WeaponPreview=NewObject<UOVShipPreview>(this);
-  WeaponPreview->Update(PC->Selected,FRotator(-25,35,0),1.f,1.7f,PC->SelectedWeapon);
   const float PW=FMath::Min(150.f,W*.4f),PH=88.f,PX=X+W-PW-5,PY=Y+5;
+  WeaponPreview->Update(PC->Selected,FRotator(-25,35,0),1.f,PW/PH,PC->SelectedWeapon,FMath::CeilToInt(PW*UIScale));
   DrawRect(FLinearColor(.009f,.02f,.035f),PX,PY,PW,PH);
   if(auto* Texture=WeaponPreview->GetTexture())DrawTexture(Texture,PX,PY,PW,PH,0,0,1,1,FLinearColor::White,BLEND_Opaque);
   DrawText(TEXT("선택 무장 · 실시간"),Ink,PX+4,PY+4,GEngine->GetSmallFont());
@@ -1036,7 +1056,7 @@ void AOVHUD::DrawPinned()
   if(PinnedDecks[I]==0) {
    auto* Preview=PinnedPreviews[I].Get();
    if(Systems->bWrecked)Preview->Release();
-   else Preview->Update(Ship,FRotator(-25,35,0),1,(W-12)/FMath::Max(1.f,H-83),PinnedWeapons[I]);
+   else Preview->Update(Ship,FRotator(-25,35,0),1,(W-12)/FMath::Max(1.f,H-83),PinnedWeapons[I],FMath::CeilToInt((W-12)*UIScale));
    if(auto* Texture=Preview->GetTexture())DrawTexture(Texture,X+6,Y+64,W-12,H-83,0,0,1,1,FLinearColor::White,BLEND_Opaque);
    else if(Systems->bWrecked)DrawText(TEXT("함선 완파"),Ink,X+12,Y+72,GEngine->GetSmallFont());
    if(Layout->WeaponMounts.Num()>0)Button(FName(*FString::Printf(TEXT("PinnedWeaponNext_%d"),I)),TEXT("무장 +"),X+W-62,Y+(HasHangar?65:35),56,PinnedWeapons[I]>=0);

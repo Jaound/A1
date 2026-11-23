@@ -110,6 +110,8 @@ public:
  UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="UI") FVector2D WindowSize=FVector2D(424,550);
  bool IsOverStarMapPanel(float X,float Y) const;
 private:
+ // Rasterize Canvas labels at the display size while preserving logical HUD coordinates.
+ void DrawText(const FString& Text, FLinearColor Color, float X, float Y, UFont* Font, float Scale=1.f);
  UPROPERTY() TObjectPtr<UOVDevelopmentWidget> DevelopmentWidget;
  UPROPERTY() TObjectPtr<UOVHeroWidget> HeroWidget;
  UPROPERTY() TObjectPtr<UOVTitleScreenWidget> TitleScreenWidget;
@@ -196,6 +198,7 @@ private:
  TOptional<bool> PauseBeforeCards;
  void DrawWorldIndicators();
  void DrawPhase2C();
+ static float FleetPanelWidth(float ScreenWidth) { return FMath::Clamp(ScreenWidth-640.f,210.f,450.f); }
  void DrawExternal(float X,float Y,float W);
  void Button(FName Name,const FString& Label,float X,float Y,float W,bool Active=false);
 };

@@ -13,7 +13,7 @@ class ORBITALVANGUARD_API UOVShipPreview : public UObject
 {
     GENERATED_BODY()
 public:
-    void Update(AOVShip* Ship, FRotator Rotation, float Zoom, float Aspect, int32 FocusMount=INDEX_NONE, int32 PixelWidth=800);
+    void Update(AOVShip* Ship, FRotator Rotation, float Zoom, float Aspect, int32 FocusMount=INDEX_NONE, int32 PixelWidth=800, bool bPortrait=false);
     void Release();
     UTextureRenderTarget2D* GetTexture() const { return Texture; }
     FVector2D Project(FVector LocalPosition) const;

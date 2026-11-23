@@ -73,7 +73,13 @@ FString AOVHUD::GetFleetDisplayLabel(AOVShip* Ship) const
   if(!Other||Other->bFriendly!=Ship->bFriendly||Other->ShipName!=Ship->ShipName)continue;
   ++Same;if(Other==Ship)Ordinal=Same;
  }
- const FString Name=Ship->ShipName.Len()>10?Ship->ShipName.Left(9)+TEXT("…"):Ship->ShipName;
+ const FString& Full=Ship->ShipName;
+ FString Name=Full;
+ if(Full.Len()>14){
+  int32 Space=INDEX_NONE;
+  const FString Suffix=Full.FindLastChar(' ',Space) && Full.Mid(Space+1).IsNumeric() ? Full.Mid(Space) : FString();
+  Name=Full.Left(FMath::Max(1,13-Suffix.Len()))+TEXT("…")+Suffix;
+ }
  return Name+(Same>1?FString::Printf(TEXT(" %d"),Ordinal):FString());
 }
 FString AOVHUD::GetFleetTitleTooltip(FVector2D CanvasPoint) const
@@ -308,12 +314,12 @@ void AOVHUD::DrawPlayHUD()
   DrawText(EnvStatus,EnvColor,BX+10,BY+4,GEngine->GetSmallFont());
  }
  const float Y=H-220;
- const float GridWidth=FMath::Clamp(W-640.f,210.f,390.f), GX=W-GridWidth-10;
+ const float GridWidth=FleetPanelWidth(W), GX=W-GridWidth-10;
  const float GridY=H-218;
  TArray<AOVShip*,TInlineAllocator<32>> Friends;
  for(AOVShip* S:PC->Selection) if(IsValid(S)&&S->bFriendly && S->Systems && !S->Systems->bWrecked && (!PC->Combat||!PC->Combat->IsDeparted(S))) Friends.Add(S);
  if(!Friends.IsEmpty()){
-  const int32 Cols=FMath::Max(3,FMath::FloorToInt((GridWidth-16)/60)),PerPage=Cols*2;
+  const int32 Cols=FMath::Max(1,FMath::FloorToInt((GridWidth-16)/110)),PerPage=Cols*2;
   const int32 Pages=FMath::DivideAndRoundUp(Friends.Num(),PerPage);
   FleetPage=FMath::Clamp(FleetPage,0,Pages-1);
   DrawRect(PlayPanel,GX,GridY,GridWidth,208);
@@ -321,28 +327,44 @@ void AOVHUD::DrawPlayHUD()
   if(Pages>1){Button(TEXT("FleetPrevious"),TEXT("◀"),GX+GridWidth-72,GridY+2,30);Button(TEXT("FleetNext"),TEXT("▶"),GX+GridWidth-38,GridY+2,30);}
   const float Cell=(GridWidth-16)/Cols;
   for(int32 J=0;J<PerPage && FleetPage*PerPage+J<Friends.Num();++J){
-   auto* S=Friends[FleetPage*PerPage+J];const float X=GX+8+(J%Cols)*Cell, CY=GridY+38+(J/Cols)*46;
+   auto* S=Friends[FleetPage*PerPage+J];const float X=GX+8+(J%Cols)*Cell, CY=GridY+31+(J/Cols)*56;
    const FName Key=S->HullDefinitionId;
    auto* Art=SelectionPortraits.FindRef(Key).Get();
    if(!Art&&!Key.IsNone()&&FApp::CanEverRender()){
-    auto* Preview=NewObject<UOVShipPreview>(this);Preview->Update(S,FRotator(-18,68,-15),.92f,1.7f,INDEX_NONE,160);
+    auto* Preview=NewObject<UOVShipPreview>(this);Preview->Update(S,FRotator(-18,68,-15),1.12f,2.8f,INDEX_NONE,384,true);
     Art=Preview->GetTexture();if(Art)SelectionPortraits.Add(Key,Art);Preview->Release();
    }
    const FName Pick(*FString::Printf(TEXT("Pick_%d"),PC->Ships.IndexOfByKey(S)));
-   DrawRect(S==PC->Selected?PlayAccent:FLinearColor(.17f,.32f,.42f),X,CY,Cell-3,43);
-   if(Art)DrawTexture(Art,X+2,CY+2,Cell-7,34,0,0,1,1,FLinearColor::White,BLEND_Opaque);
-   DrawRect(FLinearColor(.05f,.08f,.12f),X+2,CY+35,Cell-7,6);
-   DrawRect(FLinearColor(.27f,.92f,.51f),X+2,CY+35,(Cell-7)*S->Systems->HullHP/FMath::Max(1.f,S->Systems->MaxHullHP),3);
+   const float CardWidth=Cell-3;
+   DrawRect(S==PC->Selected?PlayAccent:FLinearColor(.17f,.32f,.42f),X,CY,CardWidth,53);
+   DrawRect(FLinearColor(.012f,.026f,.042f),X+1,CY+1,CardWidth-2,51);
+   const float PictureWidth=FMath::Min(CardWidth-4,30.f*2.8f);
+   if(Art)DrawTexture(Art,X+(CardWidth-PictureWidth)*.5f,CY+1,PictureWidth,30,0,0,1,1,FLinearColor::White,BLEND_Opaque);
    if(S->bFTLCharging&&Play){
-    DrawRect(FLinearColor(.19f,.11f,.35f),X+2,CY+23,Cell-7,12);
-    DrawRect(FLinearColor(.57f,.38f,1.f),X+2,CY+23,(Cell-7)*Play->ChargeFraction(S),12);
-    DrawText(TEXT("도약"),FLinearColor::White,X+4,CY+22,GEngine->GetSmallFont(),.83f);
+    DrawRect(FLinearColor(.19f,.11f,.35f),X+2,CY+17,CardWidth-4,13);
+    DrawRect(FLinearColor(.57f,.38f,1.f),X+2,CY+17,(CardWidth-4)*Play->ChargeFraction(S),13);
+    DrawText(TEXT("도약"),FLinearColor::White,X+4,CY+17,GEngine->GetSmallFont(),.83f);
    }
-   AddHitBox(FVector2D(X,CY)*UIScale,FVector2D(Cell-3,43)*UIScale,Pick,true,7);ActionCenters.Add(Pick,FVector2D(X+Cell*.5f,CY+20));
+   UFont* Font=GEngine->GetSmallFont();
+   FString Label=GetFleetDisplayLabel(S);
+   float LabelWidth=0,LabelHeight=0; GetTextSize(Label,LabelWidth,LabelHeight,Font);
+   const float LabelScale=FMath::Clamp((CardWidth-10)/FMath::Max(1.f,LabelWidth),.9f,1.f);
+   const float LabelRoom=(CardWidth-10)/LabelScale;
+   int32 LastSpace=INDEX_NONE;
+   if(Label.FindLastChar(' ',LastSpace) && Label.Mid(LastSpace+1).IsNumeric()){
+    const FString Number=Label.Mid(LastSpace);
+    float NumberWidth=0,Height=0; GetTextSize(Number,NumberWidth,Height,Font);
+    Label=FitCommandLabel(this,Font,Label.Left(LastSpace),LabelRoom-NumberWidth)+Number;
+   } else Label=FitCommandLabel(this,Font,Label,LabelRoom);
+   DrawText(Label,PlayInk,X+4,CY+31,Font,LabelScale);
+   DrawRect(FLinearColor(.05f,.08f,.12f),X+2,CY+48,CardWidth-4,3);
+   DrawRect(FLinearColor(.27f,.92f,.51f),X+2,CY+48,(CardWidth-4)*S->Systems->HullHP/FMath::Max(1.f,S->Systems->MaxHullHP),3);
+   AddHitBox(FVector2D(X,CY)*UIScale,FVector2D(CardWidth,53)*UIScale,Pick,true,7);
+   ActionCenters.Add(Pick,FVector2D(X+CardWidth*.5f,CY+26));
   }
   const auto* Store=GetWorld()->GetSubsystem<UOVLogisticsSubsystem>()->FindCargo(PC->Selected);
   if(PC->Selected && PC->Selected->bFriendly && Store && Store->Capacity>0) {
-   const float CY=GridY+135, Width=GridWidth-22;
+   const float CY=GridY+146, Width=GridWidth-22;
    const float Used=Store->Amount+3*Store->Advanced+8*Store->Rare;
    DrawText(FString::Printf(TEXT("화물   %.0f / %.0f    %.0f%%"),Used,Store->Capacity,100*Used/Store->Capacity),PlayInk,GX+10,CY,GEngine->GetMediumFont());
    DrawRect(FLinearColor(.10f,.17f,.22f),GX+10,CY+23,Width,10);

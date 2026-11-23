@@ -1,3 +1,11 @@
+## 2026-11-23 · HUD 해상도와 선택 함대 이름
+
+기준은 개발 브랜치 `6b0959d`다. Windows 게임의 고해상도 표시를 켜고 전장 HUD 글리프를 최종 표시 크기로 그린다. 함선·무장 상세 미리보기는 표시 영역의 픽셀 폭에 맞춰 크기를 갱신하며 긴 축의 상한은 4,096픽셀이다. 선택 카드의 함종별 초상은 384픽셀 원본과 축소 단계 이미지를 캐시한다. 함명과 번호는 카드 아래, 도약 표시는 그림 위에 둔다. 좁은 창에서는 열 수를 줄이고 페이지를 넘긴다.
+
+- UE 5.8.4 Win64 Development Editor 빌드 성공, 프로젝트 자동 143/143. DX11 별도 PIE 창에서 960×540·UI 150%(32개), 1920×1080·100%(29개), 2560×1440·125%(29개) 통과. 아군 10척 전체 선택과 전 페이지 이름·카드 입력 영역·선택 해제, 확대된 상세창의 실제 렌더 타깃 폭을 검사했다. 같은 1080p 장면의 보정 전후를 원본 크기로 잘라 비교했다. 수동 입력·패키징 배포본·다른 Windows DPI 모니터 간 이동은 미검증이다. 한국어 엔진 시작 자체 검사 출력은 기존 기록대로 별도다.
+- 주요 변경은 `DefaultEngine.ini`, `OVHUD`, `OVHUDPlay`, `OVShipPreview`와 `Tools/VerifyFleetRosterDisplay.py`다. 재현은 ControlRange 에디터 출력 로그에서 `py <프로젝트>/Tools/VerifyFleetRosterDisplay.py`. 화면과 배율은 환경변수 `OV_ROSTER_SIZE`, `OV_ROSTER_SCALE`을 사용한다. 로그는 `Saved/Logs/FleetRosterBuild.log`, `FleetRosterFinalAuto.log`, `FleetRosterFinal_<해상도>.log`에 있다. [화면 전후 비교](validation/FleetCommandHUD/fleet-roster-before-after.png) · [검사별 결과](validation/FleetCommandHUD/fleet-roster-checks.json).
+- 다음 제안은 선택 함대에 적용하는 **균형 전열 / 항모 호위 / 수송 호위** 세 가지다. 그림을 누르면 현재 편성으로 예상 위치를 먼저 보여주고, 적용 시 각 함선이 이동한다. 특수 임무 시작 위치와 정지·FTL 고정, 기존 사격 자동화 설정을 보존한다. 이번 작업에서 진형 기능을 구현하지 않았다.
+
 ## 2026-11-23 · 함대 명령·수리·화면 점검
 
 시작 HEAD는 fc9e4f3, 기획은 work의 6d32a1f9dd96349563e30a51eb4d457a7397a836이다. 기존 미커밋 변경 위에 이어서 작업했다. 변경 경로는 OVHUD·OVHUDPlay, OVController, OVShip·OVShipPreview, OVCalibration·OVWeaponVisualComponent, OVLogisticsSubsystem, OVPlayScenarioSubsystem·OVPlayScenarioEscort, OVTitleScreenWidget과 해당 검사 도구다.
