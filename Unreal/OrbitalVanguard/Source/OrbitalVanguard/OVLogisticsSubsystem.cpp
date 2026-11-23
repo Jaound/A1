@@ -22,6 +22,8 @@ bool UOVLogisticsSubsystem::RegisterDevShip(AOVShip* Ship, EOVDevLogisticsRole R
 void UOVLogisticsSubsystem::RemoveDevShip(AOVShip* Ship)
 {
     RepairLinks.RemoveAll([Ship](const auto& L) { return L.Source == Ship || L.Target == Ship; });
+    if(auto* Party=DamageParties.Find(Ship)) ReleaseParty(Ship,*Party);
+    DamageParties.Remove(Ship); RepairOutcome.Remove(Ship);
     Approaches.Remove(Ship);
     for(auto It=Approaches.CreateIterator();It;++It) if(It.Value()==Ship) It.RemoveCurrent();
     Cargo.RemoveAll([Ship](const auto& C) { return C.Ship == Ship; });
@@ -158,9 +160,65 @@ int32 UOVLogisticsSubsystem::ResupplyCarrier(AOVShip* Ship)
     }
     return Received;
 }
+namespace
+{
+int32 RepairPriority(EOVFacilityType Type)
+{
+    switch(Type)
+    {
+    case EOVFacilityType::Core:
+    case EOVFacilityType::Bridge: return 0;
+    case EOVFacilityType::LifeSupport: return 1;
+    case EOVFacilityType::ShieldControl: return 2;
+    case EOVFacilityType::Engine: return 3;
+    case EOVFacilityType::Interception: return 4;
+    case EOVFacilityType::WeaponControl: return 5;
+    default: return 6;
+    }
+}
+int32 DamagedRoom(const UOVShipSystemsComponent& S,bool OnlyWrecked)
+{
+    if(!S.Layout || S.bWrecked)return INDEX_NONE;
+    int32 Best=INDEX_NONE,Rank=MAX_int32;
+    for(int32 I=0;I<S.Slots.Num();++I)
+    {
+        const auto& Room=S.Layout->Slots[I]; const auto& State=S.Slots[I];
+        if(Room.Facility==EOVFacilityType::None || (Room.Facility==EOVFacilityType::Core && State.HP<=0) ||
+            (State.OccupyingFaction>=0 && State.OccupyingFaction!=S.FactionId) ||
+            State.HP>=Room.MaxFacilityHP || (OnlyWrecked && State.HP>0))continue;
+        const int32 Priority=RepairPriority(Room.Facility)+(State.HP>0?10:0);
+        if(Priority<Rank){ Rank=Priority; Best=I; }
+    }
+    return Best;
+}
+bool NeedsService(const UOVShipSystemsComponent& S)
+{
+    return S.HullHP<S.MaxHullHP || DamagedRoom(S,false)!=INDEX_NONE;
+}
+float FieldRate(const UOVShipSystemsComponent& S){ return .5f*FMath::Max(64.f,.001f*S.MaxHullHP); }
+FVector RoomCost(FVector HullCost)
+{
+    return FVector(HullCost.X+3*HullCost.Y+8*HullCost.Z,0,0);
+}
+float RepairRoom(UOVShipSystemsComponent& S,int32 I,float Budget)
+{
+    auto& State=S.Slots[I]; const float Max=S.Layout->Slots[I].MaxFacilityHP;
+    const bool Rebuilding=State.HP<=0;
+    float& Work=Rebuilding?State.RebuildHP:State.HP;
+    const float Before=Work;
+    Work=FMath::Min(Max,Before+Budget);
+    const float Actual=Work-Before;
+    if(Rebuilding && Work>=Max){ State.HP=Max; State.RebuildHP=0; S.RefreshDerivedState(); }
+    return Actual;
+}
+void Spend(FOVDevCargo& C,FVector Bill)
+{
+    C.Amount=FMath::Max(0.f,float(C.Amount-Bill.X)); C.Advanced=FMath::Max(0.f,float(C.Advanced-Bill.Y)); C.Rare=FMath::Max(0.f,float(C.Rare-Bill.Z));
+}
+}
 void UOVLogisticsSubsystem::CancelFieldOrder(AOVShip* Source)
 {
-    Approaches.Remove(Source);
+    RepairOutcome.Remove(Source); Approaches.Remove(Source);
     RepairLinks.RemoveAll([Source](const auto& Link){return !Link.bHero && Link.Source==Source;});
 }
 bool UOVLogisticsSubsystem::OrderRepair(AOVShip* Source,AOVShip* Target)
@@ -168,7 +226,7 @@ bool UOVLogisticsSubsystem::OrderRepair(AOVShip* Source,AOVShip* Target)
     const auto* C=FindCargo(Source);
     if(!C || C->Role!=EOVDevLogisticsRole::Repair || !Active(Source) || !IsValid(Target) || Source==Target ||
        !Target->Systems || Target->Systems->bWrecked || Target->Systems->bNeutral || Source->bFTLCharging || Target->bFTLCharging ||
-       Source->Systems->FactionId!=Target->Systems->FactionId || Target->Systems->HullHP>=Target->Systems->MaxHullHP ||
+       Source->Systems->FactionId!=Target->Systems->FactionId || !NeedsService(*Target->Systems) ||
        PackageCost(Target->HullDefinitionId).IsZero()) { LastReason=TEXT("수리 불가 · 손상된 아군 함선을 지정하세요"); return false; }
     CancelFieldOrder(Source);
     Source->SetAutomation(false,Source->IsAttackAutomatic());
@@ -186,8 +244,8 @@ bool UOVLogisticsSubsystem::StartDevRepair(AOVShip* Source, AOVShip* Target, boo
 {
     FOVDevCargo* C = Cargo.FindByPredicate([Source](const auto& Item) { return Item.Ship == Source; });
     const bool ValidQuote = !BaseCostPerHP.ContainsNaN() && BaseCostPerHP.X >= 0 && BaseCostPerHP.Y >= 0 && BaseCostPerHP.Z >= 0 && !BaseCostPerHP.IsNearlyZero();
-    if (!C || !Active(Source) || !IsValid(Target) || !Target->Systems || Target->Systems->bWrecked || Target->Systems->bNeutral || Source->Systems->FactionId != Target->Systems->FactionId || !ValidQuote || !FMath::IsFinite(Range) || Range < 0 || Range > 12000 || SurfaceDistance(Source, Target) > Range || Target->Systems->HullHP >= Target->Systems->MaxHullHP || ResourceLimit(*C, BaseCostPerHP * 1.5) <= 0 || (!bHero && (C->Role != EOVDevLogisticsRole::Repair || Source == Target)) || (bHero && (!HeroId.IsValid() || Source != Target || !FMath::IsFinite(HeroRate) || HeroRate <= 0 || !FMath::IsFinite(HeroDuration) || HeroDuration <= 0 || HeroDuration > 10 || !FMath::IsFinite(HeroTotalHP) || HeroTotalHP <= 0))) { LastReason = TEXT("수리 링크 조건 또는 DEV 견적 불충족"); return false; }
-    const float Rate = bHero ? HeroRate : .5f * FMath::Max(64.f, .001f * Target->Systems->MaxHullHP);
+    if (!C || !Active(Source) || !IsValid(Target) || !Target->Systems || Target->Systems->bWrecked || Target->Systems->bNeutral || Source->Systems->FactionId != Target->Systems->FactionId || !ValidQuote || !FMath::IsFinite(Range) || Range < 0 || Range > 12000 || SurfaceDistance(Source, Target) > Range || (bHero ? Target->Systems->HullHP >= Target->Systems->MaxHullHP : !NeedsService(*Target->Systems)) || ResourceLimit(*C, (!bHero && DamagedRoom(*Target->Systems,false)!=INDEX_NONE ? RoomCost(BaseCostPerHP) : BaseCostPerHP) * 1.5) <= 0 || (!bHero && (C->Role != EOVDevLogisticsRole::Repair || Source == Target)) || (bHero && (!HeroId.IsValid() || Source != Target || !FMath::IsFinite(HeroRate) || HeroRate <= 0 || !FMath::IsFinite(HeroDuration) || HeroDuration <= 0 || HeroDuration > 10 || !FMath::IsFinite(HeroTotalHP) || HeroTotalHP <= 0))) { LastReason = TEXT("수리 링크 조건 또는 DEV 견적 불충족"); return false; }
+    const float Rate = bHero ? HeroRate : FieldRate(*Target->Systems);
     FOVDevRepairLink* Existing = RepairLinks.FindByPredicate([Target](const auto& L) { return L.Target == Target; });
     if (Existing && Existing->Rate >= Rate) { LastReason = TEXT("더 빠르거나 같은 기존 수리 링크가 있음"); return false; }
     if (RepairLinks.ContainsByPredicate([Source, Target, bHero](const auto& L) { return !bHero && !L.bHero && L.Source == Source && L.Target != Target; })) { LastReason = TEXT("수리함은 동시에 한 대상만 작업"); return false; }
@@ -207,10 +265,11 @@ void UOVLogisticsSubsystem::Simulate(float GameDelta)
         AOVShip* Source=It.Key().Get(); AOVShip* Target=It.Value().Get();
         if(!Active(Source) || !IsValid(Target) || !Target->Systems || Target->Systems->bWrecked ||
            Target->Systems->bNeutral || Target->Systems->FactionId!=Source->Systems->FactionId || Source->IsHidden() || Target->IsHidden() ||
-           Source->bFTLCharging || Target->bFTLCharging || Target->Systems->HullHP>=Target->Systems->MaxHullHP)
-        { It.RemoveCurrent(); continue; }
-        if(const auto* C=FindCargo(Source);!C || ResourceLimit(*C,PackageCost(Target->HullDefinitionId)*(.45/Target->Systems->MaxHullHP))<=0){
-            LastReason=TEXT("수리 자원 소진");It.RemoveCurrent();continue;
+           Source->bFTLCharging || Target->bFTLCharging || !NeedsService(*Target->Systems))
+        { if(IsValid(Source))RepairOutcome.Add(Source,IsValid(Target) && Target->Systems && !Target->Systems->bWrecked && !NeedsService(*Target->Systems)?TEXT("수리 완료"):TEXT("수리 중단")); It.RemoveCurrent(); continue; }
+        const FVector Quote=PackageCost(Target->HullDefinitionId)*(.45/Target->Systems->MaxHullHP);
+        if(const auto* C=FindCargo(Source);!C || ResourceLimit(*C,DamagedRoom(*Target->Systems,false)!=INDEX_NONE?RoomCost(Quote):Quote)<=KINDA_SMALL_NUMBER){
+            LastReason=TEXT("수리 자원 소진");RepairOutcome.Add(Source,LastReason);It.RemoveCurrent();continue;
         }
         const float Gap=SurfaceDistance(Source,Target);
         if(Gap>10500)
@@ -222,29 +281,119 @@ void UOVLogisticsSubsystem::Simulate(float GameDelta)
         }
         if(!Source->bHold)Source->StopMovement();
         if(RepairLinks.ContainsByPredicate([Source,Target](const auto& L){return !L.bHero && L.Source==Source && L.Target==Target;}))continue;
-        if(!StartDevRepair(Source,Target,false,{},PackageCost(Target->HullDefinitionId)*(.30/Target->Systems->MaxHullHP),12000,0,0,0))It.RemoveCurrent();
+        if(!StartDevRepair(Source,Target,false,{},PackageCost(Target->HullDefinitionId)*(.30/Target->Systems->MaxHullHP),12000,0,0,0)){RepairOutcome.Add(Source,LastReason);It.RemoveCurrent();}
     }
     for (int32 I = RepairLinks.Num() - 1; I >= 0; --I)
     {
         auto& L = RepairLinks[I]; auto* C = Cargo.FindByPredicate([&L](const auto& Item) { return Item.Ship == L.Source; });
-        if (!C || !Active(L.Source) || !IsValid(L.Target) || !L.Target->Systems || L.Target->Systems->bWrecked || L.Target->Systems->bNeutral || L.Source->Systems->FactionId != L.Faction || L.Target->Systems->FactionId != L.Faction || SurfaceDistance(L.Source, L.Target) > L.Range) { LastReason = TEXT("수리 링크 조건 상실"); RepairLinks.RemoveAt(I); continue; }
+        if (!C || !Active(L.Source) || !IsValid(L.Target) || !L.Target->Systems || L.Target->Systems->bWrecked || L.Target->Systems->bNeutral || L.Source->Systems->FactionId != L.Faction || L.Target->Systems->FactionId != L.Faction || L.Source->bFTLCharging || L.Target->bFTLCharging || L.Source->IsHidden() || L.Target->IsHidden() || SurfaceDistance(L.Source, L.Target) > L.Range) { LastReason = TEXT("수리 링크 조건 상실"); if(!L.bHero && IsValid(L.Source))RepairOutcome.Add(L.Source,LastReason); RepairLinks.RemoveAt(I); continue; }
         float Delta = GameDelta;
         const float Setup = FMath::Min(Delta, L.SetupRemaining); L.SetupRemaining -= Setup; Delta -= Setup;
         if (Delta <= 0) continue;
         L.State = TEXT("수리 중");
-        const FVector Cost = L.BaseCostPerHP * 1.5;
-        const float Time = FMath::Min(Delta, L.TimeRemaining);
-        const float HP = FMath::Min(FMath::Min3(L.Rate * Time, L.HPRemaining, L.Target->Systems->MaxHullHP - L.Target->Systems->HullHP), ResourceLimit(*C, Cost));
-        if (HP > 0) { C->Amount = FMath::Max(0.f, float(C->Amount - HP * Cost.X)); C->Advanced = FMath::Max(0.f, float(C->Advanced - HP * Cost.Y)); C->Rare = FMath::Max(0.f, float(C->Rare - HP * Cost.Z)); L.Target->Systems->HullHP += HP; L.HPRemaining -= HP; }
-        L.TimeRemaining -= Time;
-        if (HP <= 0 || L.HPRemaining <= KINDA_SMALL_NUMBER || L.TimeRemaining <= KINDA_SMALL_NUMBER || L.Target->Systems->HullHP >= L.Target->Systems->MaxHullHP || ResourceLimit(*C, Cost) <= KINDA_SMALL_NUMBER) { LastReason = TEXT("수리 완료 또는 자원 소진"); RepairLinks.RemoveAt(I); }
+        auto& S=*L.Target->Systems;
+        const int32 Room=L.bHero?INDEX_NONE:DamagedRoom(S,false);
+        const FVector Cost=(Room!=INDEX_NONE?RoomCost(L.BaseCostPerHP):L.BaseCostPerHP)*1.5;
+        const float Time=FMath::Min(Delta,L.TimeRemaining);
+        const float Budget=FMath::Min3(L.Rate*Time,L.HPRemaining,ResourceLimit(*C,Cost));
+        float HP=0;
+        if(Room!=INDEX_NONE){ L.State=TEXT("시설 수리 중"); HP=RepairRoom(S,Room,Budget); }
+        else { L.State=TEXT("선체 수리 중"); HP=FMath::Min(Budget,S.MaxHullHP-S.HullHP); S.HullHP+=HP; }
+        Spend(*C,Cost*HP); L.HPRemaining-=HP; L.TimeRemaining-=Time;
+        const bool Finished=L.bHero ? S.HullHP>=S.MaxHullHP : !NeedsService(S);
+        if(HP<=0 || Finished || L.HPRemaining<=KINDA_SMALL_NUMBER || L.TimeRemaining<=KINDA_SMALL_NUMBER)
+        {
+            if(!L.bHero){
+                Approaches.Remove(L.Source);
+                RepairOutcome.Add(L.Source,Finished?TEXT("수리 완료"):TEXT("자원 부족"));
+            }
+            RepairLinks.RemoveAt(I);
+        }
     }
+    AdvanceParties(GameDelta);
     if (!Outposts.IsEmpty() || !RemoteMiners.IsEmpty() || !TransportRoutes.IsEmpty())
     {
         SimulateOutpostLogistics(GameDelta);
     }
 }
 
+void UOVLogisticsSubsystem::ReleaseParty(AOVShip* Ship,FDamageParty& P)
+{
+    if(IsValid(Ship) && Ship->Systems && !Ship->Systems->bWrecked)
+        for(const auto& Loan:P.Donors) if(Ship->Systems->Slots.IsValidIndex(Loan.Key))
+            Ship->Systems->Slots[Loan.Key].Crew+=Loan.Value;
+    if(IsValid(Ship) && Ship->Systems && Ship->Systems->Slots.IsValidIndex(P.Slot))Ship->Systems->Slots[P.Slot].RepairCrew=0;
+    P.Slot=INDEX_NONE; P.Donors.Reset();
+    if(IsValid(Ship) && Ship->Systems)Ship->Systems->RefreshDerivedState();
+}
+void UOVLogisticsSubsystem::ResetFieldOrders()
+{
+    for(auto& Pair:DamageParties)ReleaseParty(Pair.Key.Get(),Pair.Value);
+    DamageParties.Reset(); Approaches.Reset(); RepairOutcome.Reset();
+}
+bool UOVLogisticsSubsystem::InternalRepairEnabled(AOVShip* Ship) const {return DamageParties.Contains(Ship);}
+FString UOVLogisticsSubsystem::InternalRepairStatus(AOVShip* Ship) const
+{
+    if(const auto* P=DamageParties.Find(Ship))return P->Status;
+    return TEXT("꺼짐");
+}
+bool UOVLogisticsSubsystem::ToggleInternalRepair(AOVShip* Ship)
+{
+    if(auto* P=DamageParties.Find(Ship)){ReleaseParty(Ship,*P);DamageParties.Remove(Ship);return true;}
+    if(!IsValid(Ship) || !Ship->Systems || !Ship->Systems->CanAct() || !Ship->Systems->HasPhysicalFacility(EOVFacilityType::ResourceStorage))return false;
+    auto& P=DamageParties.Add(Ship); P.Faction=Ship->Systems->FactionId; P.Status=TEXT("대기");
+    return true;
+}
+FString UOVLogisticsSubsystem::RepairStatus(AOVShip* Ship) const
+{
+    if(const auto* L=RepairLinks.FindByPredicate([Ship](const auto& Link){return !Link.bHero && Link.Source==Ship;}))
+        return IsValid(L->Target)?FString::Printf(TEXT("%s · %s"),*L->State,*L->Target->ShipName):FString(TEXT("연결 해제"));
+    if(const auto* T=Approaches.Find(Ship); T && T->IsValid())return TEXT("접근 중 · ")+T->Get()->ShipName;
+    if(const auto* Last=RepairOutcome.Find(Ship))return *Last;
+    return TEXT("수리 대기");
+}
+void UOVLogisticsSubsystem::AdvanceParties(float Delta)
+{
+    constexpr float Efficiency=.3f;
+    for(auto It=DamageParties.CreateIterator();It;++It)
+    {
+        AOVShip* Ship=It.Key().Get(); auto& P=It.Value();
+        if(!IsValid(Ship) || !Ship->Systems || !Ship->Systems->CanAct() || Ship->Systems->FactionId!=P.Faction || Ship->IsHidden()){
+            ReleaseParty(Ship,P); It.RemoveCurrent();continue;
+        }
+        auto& S=*Ship->Systems;
+        const int32 Room=DamagedRoom(S,true);
+        auto* C=Cargo.FindByPredicate([Ship](const auto& Item){return Item.Ship==Ship;});
+        const FVector Cost=RoomCost(PackageCost(Ship->HullDefinitionId))*(.45/(FMath::Max(1.f,S.MaxHullHP)*Efficiency));
+        const bool Supplied=Active(Ship) && C && !Cost.IsNearlyZero() && ResourceLimit(*C,Cost)>KINDA_SMALL_NUMBER;
+        const bool External=RepairLinks.ContainsByPredicate([Ship](const auto& L){return !L.bHero && L.Target==Ship;});
+        if(P.Slot!=INDEX_NONE && (P.Slot!=Room || !Supplied || External || Ship->bFTLCharging))ReleaseParty(Ship,P);
+        if(Room==INDEX_NONE){P.Status=TEXT("대기");continue;}
+        if(!Supplied || Ship->bFTLCharging || External){P.Status=External?TEXT("외부 수리 중"):Ship->bFTLCharging?TEXT("도약 대기"):TEXT("적재실·자원 확인");continue;}
+        // Unstaffed security rooms need one visiting technician.
+        const float Required=FMath::Max(1.f,.5f*S.Layout->Slots[Room].RequiredCrew);
+        if(P.Slot==INDEX_NONE)
+        {
+            float Left=Required;
+            // Keep at least half the normal watch in each donor room.
+            for(int32 Rank=6;Rank>=0 && Left>KINDA_SMALL_NUMBER;--Rank)
+                for(int32 I=0;I<S.Slots.Num() && Left>KINDA_SMALL_NUMBER;++I)
+                {
+                    const auto& D=S.Layout->Slots[I]; auto& Slot=S.Slots[I];
+                    if(I==Room || D.RequiredCrew<=0 || Slot.HP<=0 || RepairPriority(D.Facility)!=Rank ||
+                       (Slot.OccupyingFaction>=0 && Slot.OccupyingFaction!=S.FactionId))continue;
+                    const float N=FMath::Min(Left,FMath::Max(0.f,Slot.Crew-.5f*D.RequiredCrew));
+                    if(N>0){P.Donors.Emplace(I,N);Slot.Crew-=N;Left-=N;}
+                }
+            if(Left>KINDA_SMALL_NUMBER){ReleaseParty(Ship,P);P.Status=TEXT("인원 부족");continue;}
+            P.Slot=Room; S.Slots[Room].RepairCrew=Required; S.RefreshDerivedState();
+        }
+        const float HP=RepairRoom(S,Room,FMath::Min(FieldRate(S)*Efficiency*Delta,ResourceLimit(*C,Cost)));
+        Spend(*C,Cost*HP);
+        P.Status=FString::Printf(TEXT("복구 %.0f%% · %.0f명"),100*S.Slots[Room].RebuildHP/S.Layout->Slots[Room].MaxFacilityHP,Required);
+        if(S.Slots[Room].HP>0){ReleaseParty(Ship,P);P.Status=TEXT("복구 완료");}
+    }
+}
 void UOVLogisticsSubsystem::ResetOutpostLogistics()
 {
     Outposts.Reset();

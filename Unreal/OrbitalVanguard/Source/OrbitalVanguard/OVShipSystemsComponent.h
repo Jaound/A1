@@ -42,6 +42,10 @@ struct ORBITALVANGUARD_API FOVFacilityState
     GENERATED_BODY()
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="State") FName SlotId;
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="State") float HP = 0;
+    // A destroyed room stays offline until the paid rebuild is complete.
+    UPROPERTY(VisibleAnywhere, BlueprintReadOnly) float RebuildHP = 0;
+    UPROPERTY(VisibleAnywhere, BlueprintReadOnly) float RepairCrew = 0;
+    UPROPERTY(VisibleAnywhere, BlueprintReadOnly) bool bUnreadLoss = false;
     /** Compatibility display: minimum linked armor HP; ArmorSections is authoritative. */
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="State") float Armor = 0;
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="State") float Crew = 0;
@@ -113,6 +117,7 @@ public:
     UFUNCTION(BlueprintCallable, Category="Systems") void ResetState();
     UFUNCTION(BlueprintCallable, Category="Systems") void Simulate(float SimDelta);
     UFUNCTION(BlueprintPure, Category="Systems") float GetEfficiency(EOVFacilityType Type) const;
+    bool CanAct() const;
     bool HasPhysicalFacility(EOVFacilityType Type) const;
     UFUNCTION(BlueprintPure, Category="Systems") bool CanMove() const;
     UFUNCTION(BlueprintPure, Category="Systems") bool CanCommand() const;
@@ -167,7 +172,7 @@ private:
     TMap<int32, bool> RuntimeInteriorObjectives;
     bool bProcessingCombatDamage = false;
     bool IsOperational(int32 Index) const;
-    bool CanAct() const;
+
     void MarkWrecked();
     void NotifyShieldActivated();
     void SyncArmorDisplay();

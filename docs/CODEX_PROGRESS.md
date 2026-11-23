@@ -1,4 +1,14 @@
-## 현재 · 2026-11-23 진형과 함재기 보충
+## 현재 · 2026-11-23 수리·정찰·시설 경보·함대 배치
+
+개발 브랜치 `codex/phase1-playground`, 시작 `3620185`. 보급수리함은 선체가 온전해도 손상된 아군 시설을 복구한다. 자가 수리는 실제 승무원을 차출하고 자체 화물을 소비한다. 시설 파괴 경보는 확인할 때까지 남고 클릭하면 해당 층과 슬롯을 연다. 레이더함의 정찰은 관측 시점의 층별 정보를 보존한다. 함대전은 양측 최전방이 최장 사거리 밖에서 시작한다.
+
+UE 5.8.4 Win64 Development Editor 빌드 성공. 프로젝트 자동 검사 151/151 통과. 신규 검사에서 유상 시설 재건, 수리반 해제·인원 보존, 속도와 자원당 복구량 각각 30%, 정찰 기록 고정·재충전·재밍을 확인했다. 기존 한국어 엔진 초기 자체 검사 메시지 15건은 별도다. PIE 20개 항목에서 5개 편성의 시작 거리와 정찰·경보 경로를 확인했다. 별도 플레이 창에서 실제 마우스로 시설 경보를 눌러 전함 10의 1층 엔진을 여는 것도 확인했다.
+
+재현은 UE 출력 로그에서 `py <프로젝트>/Tools/VerifyDamageControl.py`, 자동 검사는 `Automation RunTests OrbitalVanguard`다. 프로젝트 `Saved/Logs/DamageControlFinalBuild.log`, `DamageControlFinalAuto.log`, `DamageControlFinalPIE.log`에 실행 결과가 있다. 다음 플레이 점검은 200코스트전에서 수리함의 재료 소모량과 전투당 정찰 사용 횟수를 기록해 300초 충전의 적정성을 평가하는 것이다.
+
+[조작과 우선순위](PLAY_SCENARIOS_GUIDE.md) · [PIE와 실제 마우스 경보 검사](validation/DamageControl/pie.json) · [기존 함대 명령 24건과 시나리오 70건 통과](validation/DamageControl/regression.json)
+
+## 이전 작업 · 2026-11-23 진형과 함재기 보충
 
 개발 `codex/phase1-playground`, 시작 `6b0959d`, 구현 `d1624c6`·`2d70797`, 확인한 기획 `6d32a1f`. 균형 전열·항모 호위·수송 호위, 초계함 단일 함포 2문과 쉴드, Fleet50 방공함, 함재기 사거리 100m, 유상 병렬 생산과 집결 일제 출격을 적용했다. 실행 안내는 [시나리오 가이드](PLAY_SCENARIOS_GUIDE.md)에 있다.
 

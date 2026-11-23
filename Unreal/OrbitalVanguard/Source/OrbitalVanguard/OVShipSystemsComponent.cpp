@@ -335,7 +335,7 @@ void UOVShipSystemsComponent::DestroyFacility(int32 SlotIndex, EOVDamageCause Ca
 {
     if (!Slots.IsValidIndex(SlotIndex) || Layout->Slots[SlotIndex].Facility == EOVFacilityType::None) return;
     FOVFacilityState& State = Slots[SlotIndex];
-    State.HP = 0;
+    State.HP = 0; State.RebuildHP=0; State.bUnreadLoss=(FactionId==0);
     if(Layout->Slots[SlotIndex].Facility==EOVFacilityType::ResourceStorage && !HasPhysicalFacility(EOVFacilityType::ResourceStorage) && GetWorld())
         GetWorld()->GetSubsystem<UOVLogisticsSubsystem>()->LoseStoredCargo(Cast<AOVShip>(GetOwner()));
     if (Layout->Slots[SlotIndex].Facility == EOVFacilityType::Bridge && bBridgeCaptured)
@@ -450,7 +450,7 @@ void UOVShipSystemsComponent::DebugRepairSlot(FName SlotId)
 {
     const int32 Index = Layout ? Layout->GetSlotIndex(SlotId) : INDEX_NONE;
     if (bWrecked || !Slots.IsValidIndex(Index)) return;
-    Slots[Index].HP = Layout->Slots[Index].MaxFacilityHP;
+    Slots[Index].HP = Layout->Slots[Index].MaxFacilityHP; Slots[Index].RebuildHP=0;
     // Physical repair never changes crew, occupation, weapon health, or current shield charge.
     RefreshDerivedState();
 }

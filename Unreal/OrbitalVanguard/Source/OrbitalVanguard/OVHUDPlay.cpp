@@ -211,33 +211,33 @@ void AOVHUD::DrawPlayHUD()
  if(!bSceneMenuOpen && Play && Play->GetActiveDefinition()) {
   const bool Evac = Play->ActiveId == TEXT("Evacuation");
   const bool Sandbox=Play->ActiveId==TEXT("Sandbox");
-  DrawRect(PlayPanel,216,63,Sandbox?426:508,Sandbox ? (Play->bSandboxHullMenu ? 333 : 150) : Evac ? 156 : 126);
-  DrawRect(PlayAccent,216,63,4,Sandbox?140:110);
+  DrawRect(PlayPanel,0,63,Sandbox?426:508,Sandbox ? (Play->bSandboxHullMenu ? 333 : 150) : Evac ? 156 : 126);
+  DrawRect(PlayAccent,0,63,4,Sandbox?140:110);
   if(!Sandbox){
    const FLinearColor Sig=Evac?FLinearColor(1,.70f,.32f):PlayAccent;
-   DrawLine(230,83,239,74,Sig,2);DrawLine(239,74,248,83,Sig,2);DrawLine(248,83,239,92,Sig,2);DrawLine(239,92,230,83,Sig,2);
+   DrawLine(14,83,23,74,Sig,2);DrawLine(23,74,32,83,Sig,2);DrawLine(32,83,23,92,Sig,2);DrawLine(23,92,14,83,Sig,2);
   }
-  DrawText(Play->GetActiveDefinition()->Title,PlayAccent,Sandbox?229:255,68,GEngine->GetMediumFont(),1.36f);
+  DrawText(Play->GetActiveDefinition()->Title,PlayAccent,Sandbox?13:39,68,GEngine->GetMediumFont(),1.36f);
   if(Sandbox) {
    const bool Active=Play->bSandboxEngaged;
    const FString Tip=Play->SandboxHint.IsEmpty()?FString(TEXT("진영과 함종을 고른 뒤 위치 배치를 누르세요")):Play->SandboxHint;
-   DrawText(FitCommandLabel(this,GEngine->GetSmallFont(),Tip,404),PlayInk,226,98,GEngine->GetSmallFont());
+   DrawText(FitCommandLabel(this,GEngine->GetSmallFont(),Tip,404),PlayInk,10,98,GEngine->GetSmallFont());
    if(!Active) {
-    Button(TEXT("SBAlly"),TEXT("아군"),226,122,49,Play->SandboxFaction==0);
-    Button(TEXT("SBEnemy"),TEXT("적군"),278,122,49,Play->SandboxFaction==1);
-    Button(TEXT("SBMenu"),FString(TEXT("함종  "))+OVCalibration::GetHullName(Play->SandboxHull),332,122,124,Play->bSandboxHullMenu);
-    Button(TEXT("SBCount"),FString::Printf(TEXT("%d척씩"),Play->SandboxCount),460,122,55);
-    Button(TEXT("SBDown"),TEXT("−"),520,122,26);
-    DrawText(FString::Printf(TEXT("%dm"),FMath::RoundToInt(Play->SandboxAltitude/100)),PlayInk,549,129,GEngine->GetSmallFont());
-    Button(TEXT("SBUp"),TEXT("+"),606,122,26);
-    Button(TEXT("SBPlace"),Play->bSandboxPlacing?TEXT("배치 마침"):TEXT("위치 배치"),226,158,93,Play->bSandboxPlacing);
-    Button(TEXT("SBRemove"),TEXT("선택 제거"),324,158,92);
-    Button(TEXT("SBStart"),TEXT("교전 시작 ▷"),494,158,138,true);
+    Button(TEXT("SBAlly"),TEXT("아군"),10,122,49,Play->SandboxFaction==0);
+    Button(TEXT("SBEnemy"),TEXT("적군"),62,122,49,Play->SandboxFaction==1);
+    Button(TEXT("SBMenu"),FString(TEXT("함종  "))+OVCalibration::GetHullName(Play->SandboxHull),116,122,124,Play->bSandboxHullMenu);
+    Button(TEXT("SBCount"),FString::Printf(TEXT("%d척씩"),Play->SandboxCount),244,122,55);
+    Button(TEXT("SBDown"),TEXT("−"),304,122,26);
+    DrawText(FString::Printf(TEXT("%dm"),FMath::RoundToInt(Play->SandboxAltitude/100)),PlayInk,333,129,GEngine->GetSmallFont());
+    Button(TEXT("SBUp"),TEXT("+"),390,122,26);
+    Button(TEXT("SBPlace"),Play->bSandboxPlacing?TEXT("배치 마침"):TEXT("위치 배치"),10,158,93,Play->bSandboxPlacing);
+    Button(TEXT("SBRemove"),TEXT("선택 제거"),108,158,92);
+    Button(TEXT("SBStart"),TEXT("교전 시작 ▷"),278,158,138,true);
     if(Play->bSandboxHullMenu) {
      static const TArray<FName> Hulls=OVCalibration::GetHullIds();
      for(int32 I=0;I<Hulls.Num();++I)
       Button(FName(*(FString(TEXT("SBHull_"))+Hulls[I].ToString())),OVCalibration::GetHullName(Hulls[I]),
-             226+(I%3)*136,204+(I/3)*31,132,Hulls[I]==Play->SandboxHull);
+             10+(I%3)*136,204+(I/3)*31,132,Hulls[I]==Play->SandboxHull);
     }
     if(Play->bSandboxHasPoint) {
      FVector2D P;
@@ -249,29 +249,29 @@ void AOVHUD::DrawPlayHUD()
      }
     }
    } else {
-    DrawText(TEXT("중단하면 이동·사격·함재기·비행 중 탄이 멈춥니다"),PlayInk,226,129,GEngine->GetSmallFont());
-    Button(TEXT("SBStop"),TEXT("교전 중단 Ⅱ"),494,158,138,true);
+    DrawText(TEXT("중단하면 이동·사격·함재기·비행 중 탄이 멈춥니다"),PlayInk,10,129,GEngine->GetSmallFont());
+    Button(TEXT("SBStop"),TEXT("교전 중단 Ⅱ"),278,158,138,true);
    }
   } else {
-   DrawText(Play->GetStatus(),PlayInk,230,100,GEngine->GetMediumFont());
-   DrawRect(FLinearColor(.12f,.21f,.29f),230,Evac?180:151,475,1);
-   DrawText(FitCommandLabel(this,GEngine->GetSmallFont(),Play->GetActiveDefinition()->Objective,470),PlayAccent,230,Evac?190:160,GEngine->GetSmallFont());
+   DrawText(Play->GetStatus(),PlayInk,14,100,GEngine->GetMediumFont());
+   DrawRect(FLinearColor(.12f,.21f,.29f),14,Evac?180:151,475,1);
+   DrawText(FitCommandLabel(this,GEngine->GetSmallFont(),Play->GetActiveDefinition()->Objective,470),PlayAccent,14,Evac?190:160,GEngine->GetSmallFont());
   }
   if (Play->ActiveId == TEXT("Logistics")) {
-   DrawText(Play->GetConvoyStatus(), PlayInk, 226, 127, GEngine->GetSmallFont());
+   DrawText(Play->GetConvoyStatus(), PlayInk, 10, 127, GEngine->GetSmallFont());
    if (Play->Result == EOVPlaySceneResult::Running)
-    Button(TEXT("ResumeConvoy"), TEXT("항로 복귀"), 552, 109, 82);
+    Button(TEXT("ResumeConvoy"), TEXT("항로 복귀"), 336, 109, 82);
 
   }
   if(Evac && Play->Result == EOVPlaySceneResult::Running) {
-   DrawText(PC->Selected ? Play->GetEvacuationStatus(PC->Selected) : FString(TEXT("아군 함대를 드래그해 선택하세요")),PlayInk,226,124,GEngine->GetSmallFont());
-   DrawText(TEXT("퇴로 개방 후 함선 명령에서 도약"),PlayInk,226,144,GEngine->GetSmallFont());
-   Button(TEXT("EvacAbandon"),TEXT("잔여기 포기"),462,142,90);
-   if(Play->EscapedShips>0) Button(TEXT("EvacFinish"),TEXT("철수 종료"),554,142,80);
+   DrawText(PC->Selected ? Play->GetEvacuationStatus(PC->Selected) : FString(TEXT("아군 함대를 드래그해 선택하세요")),PlayInk,10,124,GEngine->GetSmallFont());
+   DrawText(TEXT("퇴로 개방 후 함선 명령에서 도약"),PlayInk,10,144,GEngine->GetSmallFont());
+   Button(TEXT("EvacAbandon"),TEXT("잔여기 포기"),246,142,90);
+   if(Play->EscapedShips>0) Button(TEXT("EvacFinish"),TEXT("철수 종료"),338,142,80);
   }
-  if(Play->Result!=EOVPlaySceneResult::Running) Button(TEXT("ShowResult"),TEXT("결과 보기"),383,69,89);
-  Button(TEXT("RestartScene"),TEXT("재시작"),479,69,72);
-  Button(TEXT("PlaySceneExit"),TEXT("목록 복귀"),557,69,75);
+  if(Play->Result!=EOVPlaySceneResult::Running) Button(TEXT("ShowResult"),TEXT("결과 보기"),167,69,89);
+  Button(TEXT("RestartScene"),TEXT("재시작"),263,69,72);
+  Button(TEXT("PlaySceneExit"),TEXT("목록 복귀"),341,69,75);
  }
  if(bSceneMenuOpen) {
   const float ListWidth=FMath::Min(684.f,W-226);
@@ -412,6 +412,20 @@ void AOVHUD::DrawPlayHUD()
   ActionCenters.Add(TEXT("CommandTargetLabel"),FVector2D(425,Y+46));
  }
  if(!Ship->bFriendly) {DrawText(TEXT("적 함선 · 관측된 외장 정보"),PlayInk,24,Y+72,GEngine->GetSmallFont());return;}
+ auto* Logistics=GetWorld()->GetSubsystem<UOVLogisticsSubsystem>();
+ const float ServiceY=Y+PanelHeight-33;
+ if(Ship->Systems->Layout->Slots.ContainsByPredicate([](const auto& D){return D.Facility==EOVFacilityType::ResourceStorage;})){
+  const bool Enabled=Logistics->InternalRepairEnabled(Ship);
+  Button(TEXT("InternalRepair"),Enabled?TEXT("자가 수리 켜짐"):TEXT("자가 수리 꺼짐"),24,ServiceY,110,Enabled);
+  DrawText(Logistics->InternalRepairStatus(Ship),PlayInk,143,ServiceY+5,GEngine->GetSmallFont());
+ }
+ if(Ship->HullDefinitionId==TEXT("repair"))
+  DrawText(Logistics->RepairStatus(Ship),PlayAccent,321,ServiceY+5,GEngine->GetMediumFont());
+ if(Ship->HullDefinitionId==TEXT("radar") && PC->Combat){
+  const int32 Wait=FMath::Max(0,FMath::CeilToInt(Ship->ScanReadyAt-PC->Combat->GameTime));
+  const bool Offline=!Ship->Systems->CanCommand() || !Ship->Systems->HasRadar() || Ship->bFTLCharging || PC->Combat->EnvironmentRadarDisruptRemaining>0;
+  Button(TEXT("RadarSurvey"),Offline?FString(TEXT("정찰 불가")):Wait?FString::Printf(TEXT("정찰 충전 · %d초"),Wait):PC->InputMode==EOVInputMode::Survey?TEXT("적 함선을 선택"):TEXT("적 내부 정찰"),344,ServiceY,156,PC->InputMode==EOVInputMode::Survey);
+ }
  if(Ship->HullDefinitionId==TEXT("repair") && PC->InputMode==EOVInputMode::Repair)DrawText(TEXT("수리할 아군을 클릭하세요"),PlayAccent,212,Y+181,GEngine->GetMediumFont());
  if(Ship->HullDefinitionId==TEXT("repair")) Button(TEXT("RepairOrder"),TEXT("아군 수리"),198,Y+128,112,PC->InputMode==EOVInputMode::Repair);
  if(Ship->bFTLCharging && PC->Carrier && !PC->Carrier->CanDepart(Ship))Button(TEXT("AbandonJumpWing"),TEXT("잔여기 포기"),377,Y+164,108);
@@ -503,7 +517,10 @@ float AOVHUD::CommandPanelHeight() const
 {
  const auto* PC=Cast<AOVController>(PlayerOwner);
  const auto* Ship=PC?PC->Selected.Get():nullptr;
- return Ship && Ship->bFriendly && Ship->Systems && Ship->Systems->Layout && Ship->Systems->Layout->bAllowAircraftOperations ? 242.f : 210.f;
+ if(!Ship || !Ship->bFriendly || !Ship->Systems || !Ship->Systems->Layout)return 210.f;
+ const bool HasServiceRow=Ship->HullDefinitionId==TEXT("radar") || Ship->HullDefinitionId==TEXT("repair") ||
+     Ship->Systems->Layout->Slots.ContainsByPredicate([](const auto& D){return D.Facility==EOVFacilityType::ResourceStorage;});
+ return (Ship->Systems->Layout->bAllowAircraftOperations?242.f:210.f)+(HasServiceRow?36.f:0.f);
 }
 
 int32 AOVHUD::BattleNoticeRows() const

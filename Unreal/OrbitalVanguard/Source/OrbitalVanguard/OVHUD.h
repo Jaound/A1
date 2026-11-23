@@ -69,6 +69,7 @@ public:
  bool IsOverOrbitPreview(FVector2D Cursor) const;
  void OrbitPreview(FVector2D Delta);
  UFUNCTION(BlueprintCallable, Category="UI") void CancelPointerDrag() { bDragging=false; bResizing=false; bInteriorDragging=false; bInteriorResizing=false; bDevDragging=false; bDevResizing=false; DraggedPin=INDEX_NONE; bPinResizing=false; }
+ void OpenSurvey(){bHangarView=false;OpenDetails();}
  void OpenDetails() { bDetailsOpen=true; bMinimized=false; bHeroPanelOpen=false; SyncAddedUI(); }
  UFUNCTION(BlueprintCallable, Category="UI") bool HandlePointer(float X,float Y,bool Pressed,bool Down,float Wheel,bool Orbit,float DX,float DY);
  UFUNCTION(BlueprintCallable, Category="UI") void SetDetailsOpen(bool Open) { bDetailsOpen=Open; bMinimized=false; }
@@ -182,6 +183,8 @@ private:
  FRotator PreviewRotation=FRotator(-25,35,0);
  float PreviewZoom=1;
  void DrawDetails();
+ void DrawFacilityAlerts();
+ bool ConfirmFacilityAlert(FName Action);
  TArray<int32,TInlineAllocator<64>> BattleNoticeIndices() const;
  float BattleNoticeTop() const;
  int32 BattleNoticeRows() const;

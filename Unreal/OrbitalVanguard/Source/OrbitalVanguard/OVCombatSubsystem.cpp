@@ -177,7 +177,11 @@ void UOVCombatSubsystem::EnableCombat(const TArray<AOVShip*>& InShips, int32 See
 void UOVCombatSubsystem::DisableCombat()
 {
     if(auto* World=GetWorld())if(auto* Notices=World->GetSubsystem<UOVBattleNotices>())Notices->Reset();
-    for (const auto& State : Ships) if (IsValid(State.Ship)) State.Ship->ClearWeaponVisuals();
+    for (const auto& State : Ships) if (IsValid(State.Ship))
+    {
+        State.Ship->ClearWeaponVisuals();
+        State.Ship->Survey.Reset(); State.Ship->LastSurveyAt=-1; State.Ship->ScanReadyAt=0;
+    }
     bEnabled = false; GameTime = 0; Accumulator = 0;
     ShotCount = 0; HitCount = 0; Ships.Reset(); Attacks.Reset(); RecentEvents.Reset();
     ResolvedAttackIds.Reset(); EnvironmentAsteroids.Reset(); EnvironmentRadarDisruptRemaining = 0.f;

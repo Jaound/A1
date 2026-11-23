@@ -60,6 +60,8 @@ class ORBITALVANGUARD_API UOVCombatSettings : public UObject
     GENERATED_BODY()
 public:
     UOVCombatSettings();
+    // Three scans at 0, 5, and 10 minutes in a typical 10–15 minute fleet engagement.
+    UPROPERTY(Config, EditAnywhere, Category="Radar", meta=(ClampMin="1")) float InteriorSurveyCooldownSeconds=300.f;
     UPROPERTY(Config, EditAnywhere, BlueprintReadWrite, Category="Provisional 2B") TArray<FOVWeaponProfile> Weapons;
     UPROPERTY(Config, EditAnywhere, BlueprintReadWrite, Category="Provisional 2B") TArray<FOVRadarProfile> Radars;
     UPROPERTY(Config, EditAnywhere, BlueprintReadWrite, Category="Provisional 2B") float GuaranteedRange = 1600;

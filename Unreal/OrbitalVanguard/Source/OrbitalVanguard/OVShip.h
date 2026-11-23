@@ -3,6 +3,7 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
 #include "OVWeaponVisualComponent.h"
+#include "OVShipLayout.h"
 #include "OVShip.generated.h"
 
 class UStaticMeshComponent;
@@ -11,6 +12,14 @@ class UOVShipSystemsComponent;
 class UMaterialInterface;
 class UMaterialInstanceDynamic;
 
+struct FOVScanCell
+{
+    int32 Deck;
+    FVector Centre;
+    EOVFacilityType Facility;
+    float Integrity;
+};
+
 /** Placeholder vessel. The controller supplies the single simulation clock. */
 UCLASS()
 class ORBITALVANGUARD_API AOVShip : public AActor
@@ -18,6 +27,10 @@ class ORBITALVANGUARD_API AOVShip : public AActor
     GENERATED_BODY()
 public:
     AOVShip();
+    double ScanReadyAt=0;
+    double LastSurveyAt=-1;
+    TArray<FOVScanCell> Survey;
+
 
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Ship")
     TObjectPtr<UStaticMeshComponent> Hull;

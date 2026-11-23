@@ -71,8 +71,9 @@ bool AOVHUD::IsOverPanel(float X,float Y) const
  if(bPauseMenu || bConsumeDebriefClick || IsDebriefOpen() || LastMapCloseFrame==GFrameCounter || bStarMapOpen || bTitleScreenOpen || IsOverAddedUI(X,Y)) return true;
  const auto* PC=Cast<AOVController>(PlayerOwner); if(!PC) return false;
  const FVector2D P(X/UIScale,Y/UIScale);
+ if(GetHitActionAtCanvasPoint(P).ToString().StartsWith(TEXT("FacilityAlert_")))return true;
  if (const auto* Play = PC->GetPlayScenario(); Play && Play->GetActiveDefinition() && !bSceneMenuOpen &&
-     P.X >= 216 && P.X <= (Play->ActiveId==TEXT("Sandbox")?642:724) && P.Y >= 63 && P.Y <= (Play->ActiveId==TEXT("Sandbox") ? (Play->bSandboxHullMenu?396:213) : Play->ActiveId == TEXT("Evacuation") ? 219 : 189)) return true;
+     P.X >= 0 && P.X <= (Play->ActiveId==TEXT("Sandbox")?426:508) && P.Y >= 63 && P.Y <= (Play->ActiveId==TEXT("Sandbox") ? (Play->bSandboxHullMenu?396:213) : Play->ActiveId == TEXT("Evacuation") ? 219 : 189)) return true;
 
 
  if(IsOverInteriorPanel(X,Y)) return true;
@@ -209,6 +210,14 @@ void AOVHUD::NotifyHitBoxClick(FName N)
    TogglePauseMenu();if(N==TEXT("PauseTitle")){OpenTitleScreen();return;}
    if(N==TEXT("PauseList"))NotifyHitBoxClick(TEXT("PlaySceneExit"));
    else if(auto* PC=Cast<AOVController>(PlayerOwner))PC->Action(TEXT("RestartScene"));
+  }
+  return;
+ }
+ if(N.ToString().StartsWith(TEXT("FacilityAlert_"))){ConfirmFacilityAlert(N);return;}
+ if(N.ToString().StartsWith(TEXT("SurveyDeck_"))){
+  auto* PC=Cast<AOVController>(PlayerOwner);
+  if(PC && PC->Selected && PC->Selected->LastSurveyAt>=0){
+    PC->ViewedDeck=FCString::Atoi(*N.ToString().Mid(11));bHangarView=false;
   }
   return;
  }
@@ -526,6 +535,48 @@ FString AOVHUD::GetWeaponSummary(AOVShip* Ship,int32 Weapon) const
  const FString RangeText=bRangeKnown?FString::Printf(TEXT("%.0fm"),Range/100.f):TEXT("사거리 미확인");
  return FString::Printf(TEXT("%s · T%.0f · %s\nHP %.0f/%.0f · %s"),*Kind,Def.Tier,*RangeText,HP,MaxHP,*Status);
 }
+void AOVHUD::DrawFacilityAlerts()
+{
+ auto* PC=Cast<AOVController>(PlayerOwner);
+ if(!PC || PC->bDeveloperMode || bSceneMenuOpen)return;
+ const float Bottom=ViewportPixels.Y/UIScale-CommandPanelHeight()-13;
+ int32 Count=0;
+ for(int32 ShipId=0;ShipId<PC->Ships.Num();++ShipId){
+  auto* Ship=PC->Ships[ShipId].Get();
+  if(!IsValid(Ship)||!Ship->bFriendly||!Ship->Systems||!Ship->Systems->Layout)continue;
+  for(int32 I=0;I<Ship->Systems->Slots.Num();++I){
+   if(!Ship->Systems->Slots[I].bUnreadLoss)continue;
+   if(++Count>2)continue;
+   const auto& D=Ship->Systems->Layout->Slots[I];
+   const FString Label=FString::Printf(TEXT("시설 파괴   %s   ·   %d층 %s   ›"),*Ship->ShipName,D.DeckId,*Facility(D.Facility));
+   const float Y=Bottom-Count*29;
+   Button(FName(*FString::Printf(TEXT("FacilityAlert_%d_%d"),ShipId,I)),Label,10,Y,385);
+   DrawRect(FLinearColor(1,.32f,.08f),10,Y,4,27);
+  }
+ }
+ if(Count>2)DrawText(FString::Printf(TEXT("미확인 %d건"),Count),Ink,400,Bottom-50,GEngine->GetMediumFont());
+}
+
+bool AOVHUD::ConfirmFacilityAlert(FName Action)
+{
+ TArray<FString> Parts;Action.ToString().ParseIntoArray(Parts,TEXT("_"));
+ auto* PC=Cast<AOVController>(PlayerOwner);
+ if(Parts.Num()!=3 || !PC)return false;
+ const int32 ShipId=FCString::Atoi(*Parts[1]), Slot=FCString::Atoi(*Parts[2]);
+ if(!PC->Ships.IsValidIndex(ShipId))return false;
+ AOVShip* Ship=PC->Ships[ShipId];
+ if(!IsValid(Ship)||!Ship->bFriendly||!Ship->Systems->Layout||!Ship->Systems->Slots.IsValidIndex(Slot))return false;
+ auto& S=Ship->Systems->Slots[Slot];if(!S.bUnreadLoss)return false;
+ S.bUnreadLoss=false;
+ PC->SelectShip(Ship);if(!PC->Selected)return true;
+ PC->bFollow=true;PC->CameraFocus=Ship->GetActorLocation();PC->UpdateCamera();
+ const auto& Slots=Ship->Systems->Layout->Slots;
+ PC->ViewedDeck=Slots[Slot].DeckId;PC->SelectedSlot=Slot;
+ int32 Before=0;for(int32 I=0;I<Slot;++I)if(Slots[I].DeckId==PC->ViewedDeck)++Before;
+ DetailsPageShip=Ship;DetailsPageDeck=PC->ViewedDeck;DetailsSlotPage=Before/15;
+ bHangarView=false;OpenDetails();return true;
+}
+
 void AOVHUD::DrawDetails()
 {
  auto* PC=Cast<AOVController>(PlayerOwner);if(!PC->Selected||!bDetailsOpen)return;
@@ -552,6 +603,26 @@ void AOVHUD::DrawDetails()
  Button(TEXT("HangarView"),TEXT("격납고"),X+116,Y+38,74,bHangarView);
  Button(TEXT("WindowPin"),TEXT("핀"),X+W-128,Y+2,30,PinnedShips.Contains(PC->Selected));
  const bool Reveal=PC->Selected->bFriendly||PC->bDeveloperMode;
+ if(!Reveal && PC->Selected->LastSurveyAt>=0){
+  const auto& Survey=PC->Selected->Survey;
+  int32 Decks=0;for(const auto& Room:Survey)Decks=FMath::Max(Decks,Room.Deck);
+  for(int32 D=1;D<=Decks;++D)Button(FName(*FString::Printf(TEXT("SurveyDeck_%d"),D)),FString::Printf(TEXT("%d층"),D),X+194+(D-1)*43,Y+38,40,PC->ViewedDeck==D);
+  if(!bHangarView && PC->ViewedDeck>0){
+   DrawText(FString::Printf(TEXT("내부 정찰 기록   ·   %.0f초 시점"),PC->Selected->LastSurveyAt),Accent,X+12,Y+85,GEngine->GetMediumFont());
+   TArray<double> Columns,Rows;
+   for(const auto& R:Survey)if(R.Deck==PC->ViewedDeck){Columns.AddUnique(R.Centre.X);Rows.AddUnique(R.Centre.Y);}
+   Columns.Sort();Rows.Sort();
+   const float CW=(W-24)/FMath::Max(1,Columns.Num()),CH=FMath::Min(56.,(WindowSize.Y-146)/FMath::Max(1,Rows.Num()));
+   for(const auto& R:Survey)if(R.Deck==PC->ViewedDeck){
+    const float CX=X+12+Columns.IndexOfByKey(R.Centre.X)*CW,CY=Y+125+Rows.IndexOfByKey(R.Centre.Y)*CH;
+    DrawRect(Panel,CX,CY,CW-2,CH-2);
+    DrawText(Facility(R.Facility),R.Integrity>0?Ink:FLinearColor(1,.35f,.19f),CX+2,CY+2,GEngine->GetSmallFont());
+    DrawRect(FLinearColor(.23f,.28f,.3f),CX+2,CY+CH-9,CW-6,4);
+    DrawRect(Accent,CX+2,CY+CH-9,(CW-6)*FMath::Clamp(R.Integrity,0.f,1.f),4);
+   }
+   return;
+  }
+ }
  for(int32 D=1;D<=L->DeckCount;++D) if(Reveal)Button(FName(*FString::Printf(TEXT("Deck%d"),D)),FString::Printf(TEXT("%dF"),D),X+198+(D-1)*46,Y+38,40,PC->ViewedDeck==D);
  if(bHangarView) {
   if(!Reveal) DrawText(TEXT("적 격납고 · 미확인"),Ink,X+16,Y+88,GEngine->GetSmallFont());
@@ -652,6 +723,9 @@ void AOVHUD::DrawDetails()
   }
  }else if(Reveal&&L->Slots.IsValidIndex(PC->SelectedSlot)) {
   const auto& F=S->Slots[PC->SelectedSlot];const auto& D=L->Slots[PC->SelectedSlot];
+  if(F.HP<=0 && D.Facility!=EOVFacilityType::None)
+   DrawText(FString::Printf(TEXT("시설 파괴   ·   복구 %.0f%%   ·   수리반 %.0f명"),100*F.RebuildHP/FMath::Max(1.f,D.MaxFacilityHP),F.RepairCrew),
+            FLinearColor(1,.57f,.22f),X+10,InfoY+387,GEngine->GetMediumFont());
   DrawText(FString::Printf(TEXT("%s %s 내구 %.0f/%.0f 인원 %.0f/%.0f"),*(PC->bDeveloperMode?F.SlotId.ToString():FString(TEXT("시설"))),*Facility(D.Facility),F.HP,D.MaxFacilityHP,F.Crew,D.RequiredCrew),Ink,X+10,InfoY+322,GEngine->GetSmallFont());
   if(PC->bDeveloperMode)DrawText(S->GetSlotStatus(F.SlotId).Left(45),Accent,X+10,InfoY+341,GEngine->GetSmallFont());
   else Button(TEXT("DetailsInteriorToggle"),TEXT("선내 작전 열기"),X+10,InfoY+390,150);
@@ -727,7 +801,7 @@ void AOVHUD::DrawHUD()
   Canvas->Canvas->PopTransform();return;
  }
  if(IsDebriefOpen()) { DrawDebrief(); Canvas->Canvas->PopTransform(); return; }
- DrawPlayHUD(); DrawWorldIndicators(); DrawPhase2C(); DrawMission();
+ DrawPlayHUD(); DrawFacilityAlerts(); DrawWorldIndicators(); DrawPhase2C(); DrawMission();
  DrawBattleNotices();
  DrawPinned();
  if(!PC->bDeveloperMode) { DrawDetails(); DrawInterior(); DrawStarMap(); }

@@ -914,6 +914,32 @@ bool AOVController::ActionPressed(FName Name) const
   && (!Mapping.bAlt || IsInputKeyDown(EKeys::LeftAlt)||IsInputKeyDown(EKeys::RightAlt))) return true;
  return false;
 }
+bool AOVController::SurveyEnemy(AOVShip* Target)
+{
+ InputMode=EOVInputMode::None;
+ AOVShip* Sensor=Selected;
+ if(!Sensor || !Sensor->bFriendly || Sensor->HullDefinitionId!=TEXT("radar") || !Combat || !Combat->Settings ||
+    !Sensor->Systems->CanCommand() || !Sensor->Systems->HasRadar() || Sensor->bFTLCharging || Combat->IsDeparted(Sensor) ||
+    Combat->EnvironmentRadarDisruptRemaining>0){LastAction=TEXT("레이더 사용 불가");return false;}
+ if(Combat->GameTime<Sensor->ScanReadyAt){LastAction=TEXT("정찰 재충전 중");return false;}
+ const int32 Tier=Combat->GetShipState(Sensor).RadarTier;
+ const auto* Radar=Combat->Settings->Radars.FindByPredicate([Tier](const FOVRadarProfile& R){return R.Tier==Tier;});
+ if(!IsValid(Target) || !Target->Systems || !Target->Systems->Layout || !Radar ||
+    !Combat->GetDetection(Sensor,Target).bDetected || Target->bFriendly ||
+    FVector::Dist(Sensor->GetActorLocation(),Target->GetActorLocation())>Radar->Range){
+    LastAction=TEXT("자체 레이더 범위 안의 적 함선을 선택하세요");return false;}
+ Target->Survey.Reset();
+ for(int32 I=0;I<Target->Systems->Slots.Num();++I){
+    const auto& D=Target->Systems->Layout->Slots[I];
+    Target->Survey.Add({D.DeckId,D.LocalCenter,D.Facility,Target->Systems->Slots[I].HP/FMath::Max(1.f,D.MaxFacilityHP)});
+ }
+ Target->LastSurveyAt=Combat->GameTime;
+ Sensor->ScanReadyAt=Combat->GameTime+FMath::Max(1.f,Combat->Settings->InteriorSurveyCooldownSeconds);
+ SelectShip(Target);ViewedDeck=1;
+ if(auto* HUD=Cast<AOVHUD>(GetHUD()))HUD->OpenSurvey();
+ LastAction=TEXT("내부 정찰 완료");return true;
+}
+
 void AOVController::Action(FName Name)
 {
  if(FormationAction(Name)) return;
@@ -929,6 +955,16 @@ void AOVController::Action(FName Name)
    }
   }
   return;
+ }
+ if(Name==TEXT("InternalRepair") && Selected && Selected->bFriendly){
+  GetWorld()->GetSubsystem<UOVLogisticsSubsystem>()->ToggleInternalRepair(Selected);return;
+ }
+ if(Name==TEXT("RadarSurvey") && Selected && Selected->bFriendly && Selected->HullDefinitionId==TEXT("radar")){
+  if(!Combat || Combat->GameTime<Selected->ScanReadyAt || !Selected->Systems->HasRadar() ||
+     !Selected->Systems->CanCommand() || Selected->bFTLCharging || Combat->EnvironmentRadarDisruptRemaining>0){
+    LastAction=TEXT("정찰 대기 · 충전 및 레이더 상태를 확인하세요");return;
+  }
+  InputMode=EOVInputMode::Survey;bPlacing=false;LastAction=TEXT("정찰할 적 함선을 클릭하세요");return;
  }
  if(Name==TEXT("RepairOrder")) { InputMode=EOVInputMode::Repair; bPlacing=false; LastAction=TEXT("수리할 아군 함선을 클릭하세요"); return; }
  if(Name==TEXT("Move") || Name==TEXT("Stop") || Name==TEXT("MoveAuto"))
@@ -952,7 +988,7 @@ void AOVController::Action(FName Name)
  if(Name==TEXT("Overview")) { FrameEngagement(); return; }
  if(Name.ToString().StartsWith(TEXT("Pick_")) || Name.ToString().StartsWith(TEXT("WorldPick_"))) {
   const int32 Index=FCString::Atoi(*Name.ToString().Mid(Name.ToString().StartsWith(TEXT("WorldPick_"))?10:5));
-  if(Ships.IsValidIndex(Index)) { if(InputMode==EOVInputMode::Repair){auto* Service=GetWorld()->GetSubsystem<UOVLogisticsSubsystem>(); Service->OrderRepair(Selected,Ships[Index]);LastAction=Service->LastReason;InputMode=EOVInputMode::None;} else if(InputMode==EOVInputMode::Target) SetTarget(Ships[Index]); else SelectShipFromUser(Ships[Index],false); } return;
+  if(Ships.IsValidIndex(Index)) { if(InputMode==EOVInputMode::Survey)SurveyEnemy(Ships[Index]); else if(InputMode==EOVInputMode::Repair){auto* Service=GetWorld()->GetSubsystem<UOVLogisticsSubsystem>(); Service->OrderRepair(Selected,Ships[Index]);LastAction=Service->LastReason;InputMode=EOVInputMode::None;} else if(InputMode==EOVInputMode::Target) SetTarget(Ships[Index]); else SelectShipFromUser(Ships[Index],false); } return;
  }
  if(Name==TEXT("CalibrationRange")) { StartCalibrationRange((CalibrationScenario+1)%3); return; }
  if(Name==TEXT("CombatRange")) { StartCombatRange(); return; }
@@ -1686,7 +1722,8 @@ void AOVController::PlayerTick(float DeltaTime)
   if(bPlacing) ConfirmMove();
   else if(InputMode==EOVInputMode::Heading) { FVector O,D,P; if(DeprojectMousePositionToWorld(O,D)&&FOVOrderInput::Project(O,D,PlacementPlaneZ,P,ProjectionNearDistance,CommandRayLength())) IssueHeading(P); }
   else { FHitResult Hit; AOVShip* Ship=nullptr; if(GetHitResultUnderCursor(ECC_Visibility,false,Hit)) Ship=Cast<AOVShip>(Hit.GetActor());
-   if(InputMode==EOVInputMode::Repair) { auto* Service=GetWorld()->GetSubsystem<UOVLogisticsSubsystem>(); Service->OrderRepair(Selected,Ship); LastAction=Service->LastReason; InputMode=EOVInputMode::None; }
+   if(InputMode==EOVInputMode::Survey)SurveyEnemy(Ship);
+   else if(InputMode==EOVInputMode::Repair) { auto* Service=GetWorld()->GetSubsystem<UOVLogisticsSubsystem>(); Service->OrderRepair(Selected,Ship); LastAction=Service->LastReason; InputMode=EOVInputMode::None; }
    else if(InputMode==EOVInputMode::Target) { if(Ship) SetTarget(Ship); }
    else SelectShipFromUser(Ship,Shift);
   }

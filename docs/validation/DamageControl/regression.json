@@ -1,0 +1,17 @@
+{
+  "빌드": "UE 5.8.4 Win64 Development Editor",
+  "프로젝트 자동 검사": {
+    "통과": 151,
+    "실패": 0
+  },
+  "엔진 초기 자체 검사 메시지": 15,
+  "함대 명령 UI": {
+    "통과": 24,
+    "원시 결과": "Saved/Validation/FleetCommands_20261123_212731/result.json"
+  },
+  "함대 시나리오": {
+    "통과": 70,
+    "원시 결과": "Saved/Validation/PlayScenarioFleets_local_20261123_212802.json"
+  },
+  "직접 입력": "게임 창에서 시설 파괴 경보를 마우스로 클릭. 전함 10 추적, 1층 엔진 선택 및 경보 소거."
+}

@@ -142,7 +142,11 @@ public:
     void LoseStoredCargo(AOVShip* Ship);
     bool OrderRepair(AOVShip* Source, AOVShip* Target);
     void CancelFieldOrder(AOVShip* Source);
-    void ResetFieldOrders(){Approaches.Reset();}
+    void ResetFieldOrders();
+    UFUNCTION(BlueprintCallable) bool ToggleInternalRepair(AOVShip* Ship);
+    UFUNCTION(BlueprintPure) FString RepairStatus(AOVShip* Ship) const;
+    UFUNCTION(BlueprintPure) bool InternalRepairEnabled(AOVShip* Ship) const;
+    UFUNCTION(BlueprintPure) FString InternalRepairStatus(AOVShip* Ship) const;
     const FOVDevCargo* FindCargo(const AOVShip* Ship) const;
     UFUNCTION(BlueprintCallable) bool SetDevMaterials(AOVShip* Ship, FVector Materials);
     // Explicit DEV base quote per HP. Field cost is 1.5 times this quote.
@@ -182,6 +186,17 @@ public:
     bool DiagnoseOutpostBottleneck(int32 OutpostId, FString& OutDiagnosis) const;
 
 private:
+    struct FDamageParty
+    {
+        int32 Faction = INDEX_NONE;
+        int32 Slot = INDEX_NONE;
+        TArray<TPair<int32,float>> Donors;
+        FString Status;
+    };
+    TMap<TWeakObjectPtr<AOVShip>, FDamageParty> DamageParties;
+    void ReleaseParty(AOVShip* Ship, FDamageParty& Party);
+    void AdvanceParties(float Delta);
+    TMap<TWeakObjectPtr<AOVShip>, FString> RepairOutcome;
     TMap<TWeakObjectPtr<AOVShip>, TWeakObjectPtr<AOVShip>> Approaches;
     int32 NextNodeId = 1;
     int32 NextOutpostId = 1;

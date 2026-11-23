@@ -114,11 +114,20 @@ void ArrangeFleet(AOVController& Controller, int32 Faction, bool bRetreat)
     });
     if (Group.IsEmpty()) return;
     const double Side = Faction == 0 ? -1.0 : 1.0;
-    const FVector Centre(bRetreat ? 0 : Side * 44000, 0, 2000);
+    FVector Centre(0, 0, 2000);
     if(!bRetreat)
     {
         // Start the standard engagement facing the opposing line. Convoys and raid entries own their positions.
         const double Spacing=FMath::Max(5500.,2.15*(Group[0]->Systems->Layout->LocalHalfExtent*Group[0]->GetActorScale3D()).Size()+600.);
+        double LongestRange=0, LargestHull=0;
+        for(const auto& Member:Controller.Combat->Ships)
+        {
+            if(!IsValid(Member.Ship))continue;
+            LargestHull=FMath::Max(LargestHull,(Member.Ship->Systems->Layout->LocalHalfExtent*Member.Ship->GetActorScale3D()).Size());
+            for(const auto& Mount:Member.Mounts)LongestRange=FMath::Max(LongestRange,double(Mount.Profile.Range));
+        }
+        // Keep even opposing forward escorts outside surface-to-surface firing range.
+        Centre.X=Side*(.5*LongestRange+LargestHull+15000.+2*Spacing);
         int32 Counts[4]={}, Used[4]={};
         for(auto* Ship:Group)++Counts[AOVController::FormationRow(TEXT("FormationScreen"),Ship->HullDefinitionId)+1];
         for(auto* Ship:Group){
@@ -126,7 +135,7 @@ void ArrangeFleet(AOVController& Controller, int32 Faction, bool bRetreat)
             const double Across=Used[Row+1]++-(Counts[Row+1]-1)*.5;
             const FVector Position=Centre+FVector(-Side*Row*Spacing,Across*Spacing,0);
             Ship->SetActorLocation(Position);
-            Ship->SetDestination(Position+FVector(-Side*17000,0,0));
+            Ship->SetDestination(Position+FVector(-Centre.X+Side*(2*Spacing+18000.),0,0));
         }
         return;
     }

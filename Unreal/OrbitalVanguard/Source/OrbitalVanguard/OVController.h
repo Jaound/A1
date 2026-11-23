@@ -18,7 +18,7 @@ class UOVHeroSubsystem;
 class UInstancedStaticMeshComponent;
 class UStaticMeshComponent;
 UENUM(BlueprintType)
-enum class EOVInputMode : uint8 { None, Move, Target, Heading, Repair };
+enum class EOVInputMode : uint8 { None, Move, Target, Heading, Repair, Survey };
 UENUM(BlueprintType)
 enum class EOVSpaceEnvironmentType : uint8 { None, AsteroidField, RadiationZone, SolarFlare, BlackHole };
 UENUM(BlueprintType)
@@ -174,7 +174,8 @@ public:
  UFUNCTION(BlueprintCallable, Category="Control Range")
  void ConfirmMove();
  UFUNCTION(BlueprintCallable, Category="Control Range")
- void UpdateCamera();
+ bool SurveyEnemy(AOVShip* Target);
+ UFUNCTION(BlueprintCallable, Category="Control Range") void UpdateCamera();
  void UpdatePreview();
  UFUNCTION(BlueprintCallable, Category="Control Range")
  void StepSimulation(float DeltaTime);
