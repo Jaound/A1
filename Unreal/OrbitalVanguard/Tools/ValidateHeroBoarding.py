@@ -40,7 +40,7 @@ def run(pc):
         pc.action("Developer")
     original_ships = list(p(pc, "ships")); target = original_ships[2]
     target_pos = target.get_actor_location()
-    spawned = list(dev.spawn_ships("vector", 0, 1, target_pos + unreal.Vector(-15000, 0, 0), 0, 0, 0, False, False))
+    spawned = list(dev.spawn_ships("assault", 0, 1, target_pos + unreal.Vector(-15000, 0, 0), 0, 0, 0, False, False))
     check("HB-EXPLICIT-TEST-ORIGIN", len(spawned) == 1, p(dev, "last_message"))
     origin = spawned[0]; interior = p(pc, "interior"); transport = p(pc, "transport")
     check("HB-TARGET-NOT-KNOWN-BEFORE-ENTRY", not interior.is_structure_known(0, target))

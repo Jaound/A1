@@ -75,6 +75,8 @@ private:
     UPROPERTY() TObjectPtr<class UEditableTextBox> Search;
     UPROPERTY() TObjectPtr<UComboBoxString> TemplateChoice;
     UPROPERTY() TObjectPtr<UTextBlock> CatalogueReport;
+    UPROPERTY() TObjectPtr<UButton> ArenaAssign;
+    UFUNCTION() void AssignArenaCandidate();
     UFUNCTION() void CreateTemplate();
     UFUNCTION() void ToggleCatalogue();
     UPROPERTY() TObjectPtr<UTextBlock> Header;

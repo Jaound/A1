@@ -366,6 +366,17 @@ TArray<FGuid> UOVPlayScenarioSubsystem::ArenaOwnedCandidates() const
     return ResultIds;
 }
 
+void UOVPlayScenarioSubsystem::SelectArenaHero(AOVController& PC,FName DefinitionId)
+{
+    if(!IsArenaPreparing())return;
+    const auto* Roster=PC.GetGameInstance()->GetSubsystem<UOVHeroSubsystem>();
+    const int32 Index=Roster->Definitions.IndexOfByPredicate([&](const auto& D){return D.Id==DefinitionId;});
+    if(Index==INDEX_NONE)return;
+    ArenaCandidate=Index;
+    if(IssuedHeroes[0]>=ArenaTeamSize){PC.LastAction=TEXT("시험 편성 10명이 모두 배치되었습니다");return;}
+    if(AddArenaHero(PC,0,Index))PC.LastAction=Roster->Definitions[Index].Name+TEXT(" 배치");
+}
+
 FString UOVPlayScenarioSubsystem::ArenaCandidateLabel() const
 {
     const auto* Roster=GetWorld()->GetGameInstance()->GetSubsystem<UOVHeroSubsystem>();
@@ -588,7 +599,19 @@ void UOVPlayScenarioSubsystem::Step(float Delta)
         ElapsedSeconds+=Delta;
         AOVShip* Target=Controller->Ships[1];
         if(Target->Systems->FactionId==0) Finish(*Controller,EOVPlaySceneResult::Victory,TEXT("적 함교 점령"));
-        else if(Controller->Interior->CountActiveHeroes(0)==0) Finish(*Controller,EOVPlaySceneResult::Defeat,TEXT("강습대 전멸"));
+        else {
+            int32 Survivors=0, Returned=0;
+            for(const auto& Unit:Controller->Interior->Units){
+                if(Unit.FactionId!=0 || Unit.State==EOVInteriorState::Dead || Unit.State==EOVInteriorState::RescueWaiting)continue;
+                ++Survivors;
+                if(Unit.Ship==Controller->Ships[0] && Unit.State!=EOVInteriorState::InTransit &&
+                    Controller->Transport->Pods.ContainsByPredicate([&](const auto& Pod){
+                        return Pod.PersonId==Unit.PersonId && Pod.State==EOVPodFlightState::Recovered;
+                    }))++Returned;
+            }
+            if(!Survivors)Finish(*Controller,EOVPlaySceneResult::Defeat,TEXT("작전 가능한 강습대 없음"));
+            else if(Returned==Survivors)Finish(*Controller,EOVPlaySceneResult::PartialVictory,TEXT("생존 영웅 원 포드 철수 완료"));
+        }
         return;
     }
     ElapsedSeconds += Delta;

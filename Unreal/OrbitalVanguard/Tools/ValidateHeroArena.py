@@ -122,6 +122,58 @@ def run():
         last=now
     result["PIE 프레임 간격(ms)"]={"조건":"마지막 시험장, 함선 2척·초기 영웅 20명, DX11, Slate 후처리 콜백 240프레임",
         "평균":statistics.mean(frames),"p95":sorted(frames)[227],"최대":max(frames)}
+    ship_pair=list(p(pc,"ships"))
+    all_friendly=[p(x,"unit_id") for x in units() if p(x,"faction_id")==0 and p(x,"ship")==ship_pair[1]]
+    check("실제 철수 명령",len(all_friendly)==10 and interior.issue_order(all_friendly,u.OVInteriorOrder.RETREAT,""),all_friendly)
+    scenario=pc.get_play_scenario()
+    for _ in range(1800):
+        pc.step_simulation(.05)
+        if p(scenario,"result")!=u.OVPlaySceneResult.RUNNING:break
+    returned=[x for x in p(p(pc,"transport"),"pods") if p(x,"state")==u.OVPodFlightState.RECOVERED]
+    check("개인 포드 전원 회수와 철수 결과",len(returned)==10 and p(scenario,"result")==u.OVPlaySceneResult.PARTIAL_VICTORY,len(returned))
+    clocks=[]
+    for speed in [1,2,3]:
+        assert pc.start_play_scenario("HeroArena")
+        pc.action("ArenaAdd")
+        pc.action("ArenaFill")
+        pc.action("ArenaFight")
+        pc.action("Pause")
+        clock0=p(interior,"game_time")
+        pc.step_simulation(3)
+        check("일시정지 선내시계 "+str(speed),p(interior,"game_time")==clock0,clock0)
+        pc.action("Pause")
+        pc.action("Speed"+str(speed))
+        for _ in range(600//speed): pc.step_simulation(1/60)
+        ship_pair=list(p(pc,"ships"))
+        inside=[p(x,"unit_id") for x in units() if p(x,"faction_id")==0 and p(x,"ship")==ship_pair[1]]
+        target_bridge=next(p(x,"slot_id") for x in p(p(p(ship_pair[1],"systems"),"layout"),"slots") if p(x,"facility")==u.OVFacilityType.BRIDGE)
+        assert len(inside)==10 and interior.issue_order(inside,u.OVInteriorOrder.CAPTURE,target_bridge)
+        for _ in range(1200//speed):pc.step_simulation(1/60)
+        friendly=[x for x in units() if p(x,"faction_id")==0]
+        clocks.append({"배속":speed,"시계":p(interior,"game_time")-clock0,"명중":sum(p(x,"hits") for x in friendly),
+                       "생존":sum(p(x,"hp")>0 for x in friendly),"남은 HP":sum(p(x,"hp") for x in friendly)})
+    result["동일 게임 시간"]=clocks
+    for c in clocks:
+        check("동일 시간 교전 "+str(c["배속"]),abs(c["시계"]-clocks[0]["시계"])<.06 and c["명중"]==clocks[0]["명중"] and c["생존"]==clocks[0]["생존"] and abs(c["남은 HP"]-clocks[0]["남은 HP"])<1, c)
+    pc.leave_play_scenario()
+    assert p(pc,"development").open_roster_room()
+    own=heroes.create_defined_hero(0,"M02")
+    name_of=lambda key: str(p(heroes.get_hero(key),"definition_id"))
+    check("동일 세력 고유 중복 차단",name_of(own)=="M02" and name_of(heroes.create_defined_hero(0,"M02"))!="M02",str(own))
+    check("반대 세력 독립 명단",name_of(heroes.create_defined_hero(1,"M02"))=="M02",1)
+    check("시험 지휘 단계",heroes.set_trial_command_tier(0,1) and heroes.deployment_limit(0)==3,heroes.deployment_limit(0))
+    generic=[heroes.create_defined_hero(0,"G01") for _ in range(4)]
+    check("세력 배치 3명 경계",all(heroes.set_deployment(x,True) for x in generic[:3]) and not heroes.set_deployment(generic[3],True),heroes.count_deployed(0))
+    import uuid
+    slot="OVNamedHeroTest_"+uuid.uuid4().hex
+    try:
+        assert heroes.grant_dev_xp(own,500) and heroes.save_roster(slot,0)
+        before=heroes.get_hero(own)
+        assert heroes.grant_dev_xp(own,500) and heroes.load_roster(slot,0)
+        after=heroes.get_hero(own)
+        check("개인 ID·정의·성장·지휘 한도 복원",name_of(own)=="M02" and p(before,"xp")==p(after,"xp") and heroes.deployment_limit(0)==3,str(own))
+    finally:
+        u.GameplayStatics.delete_game_in_slot(slot,0)
     result["편성·진입 검증"]=batches
     result["passed"]=True
 def tick(_):

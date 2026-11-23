@@ -375,7 +375,7 @@ void AOVHUD::DrawPlayHUD()
    if(PC->Interior){
     const int32 Count=PC->Interior->CountEmbarkedHeroes(S,S->Systems->FactionId);
     const bool Limited=Play && Play->GetActiveDefinition();
-    const FString Berths=Limited?FString::Printf(TEXT("%d/%d"),Count,UOVPlayScenarioSubsystem::HeroBerthsPerShip):FString::FromInt(Count);
+    const FString Berths=Limited?FString::Printf(TEXT("%d/%d"),Count,Play->CurrentHeroBerths()):FString::FromInt(Count);
     const FLinearColor Gold=Count?FLinearColor(1,.83f,.40f):FLinearColor(.64f,.69f,.73f);
     float TW,TH; GetTextSize(Berths,TW,TH,GEngine->GetSmallFont());
     const float BX=X+CardWidth-TW-20;

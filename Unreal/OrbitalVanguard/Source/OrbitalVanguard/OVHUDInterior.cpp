@@ -232,15 +232,39 @@ void AOVHUD::DrawInterior()
    DrawLine(P.X-10,P.Y-12,P.X-10,P.Y+16,Accent,2);
    DrawLine(P.X+11,P.Y-12,P.X+11,P.Y+16,Accent,2);
   }
-  if(U.State==EOVInteriorState::Dead)
+  const bool Dead=U.State==EOVInteriorState::Dead;
+  const bool ArtVisible=Art && Art->SD && InteriorMapScale>=.79f;
+  if(Dead && !(ArtVisible && Art->Poses.Contains(TEXT("death"))))
   {
    DrawLine(P.X-6,P.Y-4,P.X+6,P.Y+7,C,3);DrawLine(P.X-6,P.Y+7,P.X+6,P.Y-4,C,3);
   }
-  else if(Art && Art->SD && InteriorMapScale>=.79f)
+  else if(ArtVisible)
   {
-   const float Size=46.f*Art->Scale*InteriorMapScale;
-   DrawTexture(Art->SD,P.X-Size*Art->Foot.X,P.Y+11-Size*Art->Foot.Y+Step,Size,Size,0,0,1,1,
-       Interior->GameTime-U.LastDamagedAt<.18?FLinearColor(1,.55f,.55f):FLinearColor::White);
+   const float Height=46.f*Art->Scale*InteriorMapScale;
+   const bool Hit=Interior->GameTime-U.LastDamagedAt<.18;
+   const bool Skill=Interior->GameTime-U.LastPhaseArcAt<.35 || Interior->GameTime<U.SkillActiveUntil;
+   const FName Pose=Dead?TEXT("death"):Hit?TEXT("hit"):Skill?TEXT("skill"):Moving?TEXT("move"):
+       U.State==EOVInteriorState::Fighting?TEXT("attack"):U.State==EOVInteriorState::Operating?TEXT("operate"):TEXT("idle");
+   UTexture2D* Image=Art->SD;
+   if(const auto* Sequence=Art->Poses.Find(Pose);Sequence && !Sequence->Frames.IsEmpty()){
+    const double Time=(Dead || Hit)?FMath::Max(0.,Interior->GameTime-U.LastDamagedAt):Interior->GameTime;
+    const int32 Frame=FMath::FloorToInt(Time*Sequence->FramesPerSecond);
+    Image=Sequence->Frames[Dead?FMath::Min(Frame,Sequence->Frames.Num()-1):Frame%Sequence->Frames.Num()];
+   }
+   FVector2D Direction=FVector2D::ZeroVector;
+   if(U.EnemyId>0){
+    const auto* Target=Interior->Units.FindByPredicate([&](const auto& Other){return Other.UnitId==U.EnemyId;});
+    if(Target && Interior->CanObserve(0,Target->UnitId))Direction=(Project(Target->LocalPosition)-Project(U.LocalPosition)).GetSafeNormal();
+   }else if(const int32 Goal=L->GetSlotIndex(U.TargetSlot);Moving && Goal!=INDEX_NONE)
+    Direction=(Project(L->Slots[Goal].LocalCenter)-Project(U.LocalPosition)).GetSafeNormal();
+   const bool Flip=Art->bAllowMirror && Direction.X<0;
+   const float Width=Height*Image->GetSizeX()/FMath::Max(1,Image->GetSizeY());
+   DrawTexture(Image,P.X-Width*(Flip?1-Art->Foot.X:Art->Foot.X),P.Y+11-Height*Art->Foot.Y+Step,Width,Height,
+       Flip?1:0,0,Flip?-1:1,1,Hit?FLinearColor(1,.55f,.55f):FLinearColor::White);
+   if(Selected && !Direction.IsNearlyZero()){
+    const FVector2D End=P+Direction*17;
+    DrawLine(P.X+Direction.X*8,P.Y+Direction.Y*8,End.X,End.Y,Accent,2);
+   }
    DrawLine(P.X-7,P.Y+13,P.X+7,P.Y+13,Selected?Accent:C,2);
   }
   else
@@ -259,6 +283,17 @@ void AOVHUD::DrawInterior()
    }
   }
   if(U.State!=EOVInteriorState::Dead){
+   const float ArcAge=static_cast<float>(Interior->GameTime-U.LastPhaseArcAt);
+   if(ArcAge>=0 && ArcAge<.35f){
+    const float Radius=12.f+ArcAge*32.f;
+    const FLinearColor Phase(1,.28f,.68f,1-ArcAge/.35f);
+    FVector2D Prev=P+FVector2D(.5f,-.866f)*Radius;
+    for(int32 I=1;I<=8;++I){
+     const float Angle=FMath::DegreesToRadians(-60.f+15.f*I);
+     const FVector2D Next=P+FVector2D(FMath::Cos(Angle),FMath::Sin(Angle))*Radius;
+     DrawLine(Prev.X,Prev.Y,Next.X,Next.Y,Phase,2);Prev=Next;
+    }
+   }
    const double SinceShot=Interior->GameTime-(U.AttackReadyAt-U.Period);
    if(U.Shots>0&&U.State==EOVInteriorState::Fighting&&SinceShot>=0&&SinceShot<.16)
    {

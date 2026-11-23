@@ -604,4 +604,213 @@ bool FOVOfficerIdentityTest::RunTest(const FString&)
     return true;
 }
 
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(FOVNamedOfficersTest,"OrbitalVanguard.Hero.OfficerBonusesFollowRoomAndFaction",
+    EAutomationTestFlags::EditorContext|EAutomationTestFlags::EngineFilter)
+bool FOVNamedOfficersTest::RunTest(const FString&)
+{
+    using Check=bool(*)(const FOVHeroDutyBonuses&);
+    struct FCase { const TCHAR* Id; EOVInteriorRole Role; Check Applies; };
+    const FCase Cases[]={
+        {TEXT("R01"),EOVInteriorRole::Ranged,[](const auto& B){return B.bOpeningAim;}},
+        {TEXT("R03"),EOVInteriorRole::Ranged,[](const auto& B){return B.bLongAim;}},
+        {TEXT("R07"),EOVInteriorRole::Ranged,[](const auto& B){return B.BoltSpeedScale>1 && B.WingPeriodScale<1;}},
+        {TEXT("R09"),EOVInteriorRole::Ranged,[](const auto& B){return B.bNearTraverse;}},
+        {TEXT("R10"),EOVInteriorRole::Ranged,[](const auto& B){return B.bExposedAim;}},
+        {TEXT("S02"),EOVInteriorRole::Support,[](const auto& B){return B.bEngineering;}},
+        {TEXT("S03"),EOVInteriorRole::Support,[](const auto& B){return B.bShieldHarmonizer;}},
+        {TEXT("S04"),EOVInteriorRole::Support,[](const auto& B){return B.ProductionScale<1 && B.DockScale<1;}},
+        {TEXT("C02"),EOVInteriorRole::Commander,[](const auto& B){return B.LateralScale>1 && B.AccelerationScale>1;}},
+        {TEXT("C04"),EOVInteriorRole::Commander,[](const auto& B){return B.ReformScale<1 && B.ReturnScale>1;}},
+        {TEXT("C05"),EOVInteriorRole::Commander,[](const auto& B){return B.PodScale>1 && B.ShuttleDockScale<1;}}
+    };
+    for(const auto& Candidate:Cases)
+    {
+        OVInteriorTest::FRange Range;
+        Range.Target->Systems->Layout->bAllowAircraftOperations=true;
+        Range.Target->Systems->Layout->HullSizeClass=EOVHullSizeClass::Large;
+        const auto Facility=Candidate.Role==EOVInteriorRole::Commander?EOVFacilityType::Bridge:
+            Candidate.Role==EOVInteriorRole::Ranged?EOVFacilityType::WeaponControl:EOVFacilityType::Engine;
+        const FName Room=Range.Slot(Facility);
+        const int32 Id=Range.Interior->RegisterUnit(Range.Target,1,Candidate.Role,Room);
+        if(!TestTrue(Candidate.Id,Id>0))return false;
+        auto& Unit=Range.Interior->Units.Last();
+        Unit.DefinitionId=Candidate.Id; Unit.HeroSkillRanks={1,1,1,0};
+        TestFalse(FString(Candidate.Id)+TEXT(" 보직 전"),Candidate.Applies(Range.Interior->GetDutyBonuses(Range.Target)));
+        TestTrue(Candidate.Id,Range.Interior->SetHeroDuty(Id,true,Room));
+        Range.Advance(3.5f);
+        TestTrue(FString(Candidate.Id)+TEXT(" 인계 후"),Candidate.Applies(Range.Interior->GetDutyBonuses(Range.Target)));
+        TestFalse(FString(Candidate.Id)+TEXT(" 상대편"),Candidate.Applies(Range.Interior->GetDutyBonuses(Range.Origin)));
+        Range.Target->Systems->DebugDestroySlot(Room,EOVDamageCause::Sabotage);
+        TestFalse(FString(Candidate.Id)+TEXT(" 파괴 후"),Candidate.Applies(Range.Interior->GetDutyBonuses(Range.Target)));
+    }
+    return true;
+}
+
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(FOVNamedWardAndHealingTest,"OrbitalVanguard.Hero.NamedBoardingGuardsAndFiniteHealing",
+    EAutomationTestFlags::EditorContext|EAutomationTestFlags::EngineFilter)
+bool FOVNamedWardAndHealingTest::RunTest(const FString&)
+{
+    // Each run uses the same patient, position, clock and seed.
+    auto Heal=[this](FName Id){
+        OVInteriorTest::FRange R;
+        const FName Room=R.Slot(EOVFacilityType::Engine);
+        const int32 Medic=R.Interior->RegisterUnit(R.Target,1,EOVInteriorRole::Support,Room);
+        R.Interior->Units.Last().DefinitionId=Id;
+        R.Interior->Units.Last().Medkits=1;
+        const int32 Patient=R.Interior->RegisterUnit(R.Target,1,EOVInteriorRole::Melee,Room);
+        R.Interior->Units.Last().HP=10;
+        R.Advance(.15f);
+        const auto State=R.Interior->GetUnit(Medic);
+        TestEqual(Id.ToString()+TEXT(" 촉매 1개 차감"),State.Medkits,0);
+        return FVector2D(R.Interior->GetUnit(Patient).HP,State.SkillReadyAt);
+    };
+    const auto Common=Heal(TEXT("G03")), Lifeline=Heal(TEXT("S01")), Surgeon=Heal(TEXT("S05"));
+    TestTrue(TEXT("저체력 환자에게만 추가 회복"),Lifeline.X>Common.X && FMath::IsNearlyEqual(Common.X,Surgeon.X));
+    TestTrue(TEXT("의무관 재사용 1초 단축"),FMath::IsNearlyEqual(Common.Y-Surgeon.Y,1.0));
+    OVInteriorTest::FRange R;
+    const auto Raiders=R.Enter();
+    if(Raiders.IsEmpty())return false;
+    const auto Arrival=R.Interior->GetUnit(Raiders[0]);
+    const int32 Sentinel=R.Interior->RegisterUnit(R.Target,1,EOVInteriorRole::Melee,Arrival.NodeId);
+    R.Interior->Units.Last().DefinitionId=TEXT("M03");
+    R.Interior->IssueOrder({Sentinel},EOVInteriorOrder::Defend,Arrival.NodeId);
+    R.Advance(.1);
+    const double First=R.Interior->GetUnit(Raiders[0]).GuardSlowUntil;
+    TestTrue(TEXT("수호자가 실제 진입한 적에게 감속"),First>R.Interior->GameTime+1.5);
+    R.Advance(.5);
+    TestEqual(TEXT("격실 안에 있는 동안 감속 무한 연장 방지"),R.Interior->GetUnit(Raiders[0]).GuardSlowUntil,First);
+    const int32 Jammer=R.Interior->RegisterUnit(R.Target,1,EOVInteriorRole::Melee,Arrival.NodeId);
+    R.Interior->Units.Last().DefinitionId=TEXT("M06");
+    const int32 Gunner=R.Interior->RegisterUnit(R.Target,0,EOVInteriorRole::Ranged,Arrival.NodeId);
+    R.Advance(.2);
+    TestTrue(TEXT("근접 역장이 실제 적 사수를 교란"),R.Interior->GetUnit(Gunner).JamUntil>R.Interior->GameTime);
+    TestTrue(TEXT("역장 사용자는 아군 교란 없음"),R.Interior->GetUnit(Jammer).JamUntil<=R.Interior->GameTime);
+    return true;
+}
+
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(FOVNamedOperationsTest,"OrbitalVanguard.Hero.NamedFacilityOperationsAndRelay",
+    EAutomationTestFlags::EditorContext|EAutomationTestFlags::EngineFilter)
+bool FOVNamedOperationsTest::RunTest(const FString&)
+{
+    auto Sabotage=[](FName Definition,bool Defended){
+        OVInteriorTest::FRange R;
+        const FName Engine=R.Slot(EOVFacilityType::Engine);
+        const int32 Raider=R.Interior->RegisterUnit(R.Target,0,EOVInteriorRole::Melee,Engine);
+        auto& U=R.Interior->Units.Last();U.DefinitionId=Definition;U.Damage=0;
+        if(Defended){
+            R.Interior->RegisterUnit(R.Target,1,EOVInteriorRole::Melee,Engine);
+            R.Interior->Units.Last().Damage=0;
+        }
+        R.Interior->IssueOrder({Raider},EOVInteriorOrder::Sabotage,Engine);
+        R.Advance(5);
+        return R.Interior->GetUnit(Raider).Progress;
+    };
+    const float Full=Sabotage(TEXT("M05"),false),Half=Sabotage(TEXT("M05"),true);
+    TestTrue(TEXT("교전 중 공작 절반 유지"),Full>0 && Half>Full*.46f && Half<Full*.54f);
+    TestEqual(TEXT("일반 강습원 교전 중 공작 정지"),Sabotage(TEXT("G01"),true),0.f);
+    auto Disaster=[](FName Definition){
+        OVInteriorTest::FRange R;
+        const FName Engine=R.Slot(EOVFacilityType::Engine);
+        const int32 Id=R.Interior->RegisterUnit(R.Target,1,EOVInteriorRole::Melee,Engine);
+        auto& U=R.Interior->Units.Last();U.DefinitionId=Definition;U.HP=U.MaxHP=10000;
+        R.Target->Systems->DebugDestroySlot(Engine,EOVDamageCause::Sabotage);
+        R.Advance(16);
+        const float Before=R.Interior->GetUnit(Id).HP;
+        R.Advance(2);
+        return FVector2D(10000-Before,Before-R.Interior->GetUnit(Id).HP);
+    };
+    const auto Normal=Disaster(TEXT("G01")),Warden=Disaster(TEXT("M07"));
+    TestTrue(TEXT("재난 피해 완화 및 15초 종료"),Warden.X>0 && Warden.X<Normal.X && Warden.Y==0 && Normal.Y>0);
+    OVInteriorTest::FRange R;
+    auto* Major=R.Make(1,FVector(9000,0,0),3);
+    Major->Systems->Layout->HullSizeClass=EOVHullSizeClass::Large;R.Combat->RegisterShip(Major);
+    const auto Bridge=R.Slot(EOVFacilityType::Bridge);
+    const int32 Id=R.Interior->RegisterUnit(R.Target,1,EOVInteriorRole::Commander,Bridge);
+    auto& Officer=R.Interior->Units.Last();Officer.DefinitionId=TEXT("C03");Officer.HeroSkillRanks={1,1,1,0};
+    R.Interior->SetHeroDuty(Id,true,Bridge);R.Advance(3.5f);
+    TestTrue(TEXT("아군 공유 보정과 근접 주력함 선회"),R.Interior->FormationRadarBonus(Major)>0 && R.Interior->GetDutyBonuses(Major).TurnBonus>0);
+    TestEqual(TEXT("적 세력 격리"),R.Interior->FormationRadarBonus(R.Origin),0.f);
+    Major->SetActorLocation(FVector(41000,0,0));
+    TestEqual(TEXT("400m 이탈 해제"),R.Interior->FormationRadarBonus(Major),0.f);
+    return true;
+}
+
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(FOVNamedStrikeTest,"OrbitalVanguard.Hero.NamedRushAndSquadActions",
+    EAutomationTestFlags::EditorContext|EAutomationTestFlags::EngineFilter)
+bool FOVNamedStrikeTest::RunTest(const FString&)
+{
+    for(FName Id:{FName(TEXT("M01")),FName(TEXT("M04"))})
+    {
+        OVInteriorTest::FRange R;
+        const auto Room=R.Slot(EOVFacilityType::Engine);
+        const int32 Raider=R.Interior->RegisterUnit(R.Target,0,EOVInteriorRole::Melee,Room);
+        auto& Attacker=R.Interior->Units.Last();
+        Attacker.HeroSkillRanks={1,1,1,0};Attacker.DefinitionId=Id;Attacker.Evasion=0;
+        const FVector Start=Attacker.LocalPosition,Scale=R.Target->GetActorScale3D();
+        TArray<int32> Foes;
+        for(int32 I=0;I<3;++I){
+            Foes.Add(R.Interior->RegisterUnit(R.Target,1,EOVInteriorRole::Ranged,Room));
+            auto& Defender=R.Interior->Units.Last();
+            const float Along=Id==TEXT("M04") && I>0?90.f+I*25.f:360.f+I*8.f;
+            Defender.LocalPosition=Start+FVector(Along,I*4,0)/Scale;
+            Defender.HP=Defender.MaxHP=10000;Defender.Damage=0;Defender.Evasion=0;
+            if(I==0)Defender.DefinitionId=TEXT("R08");
+        }
+        R.Interior->Units[0].EnemyId=Foes[0];
+        R.Advance(.1f);
+        TestTrue(TEXT("돌입에 반응한 원거리 사수"),R.Interior->GetUnit(Foes[0]).AttackReadyAt>R.Interior->GameTime && R.Interior->GetUnit(Raider).bRushWeakened);
+        R.Advance(1.2f);
+        const auto Fighter=R.Interior->GetUnit(Raider);
+        if(Id==TEXT("M01")){
+            const auto Victim=R.Interior->GetUnit(Foes[0]);
+            TestTrue(TEXT("강화 돌입 도달 때 주변 감속"),Victim.SlowUntil>0 && Victim.SlowFraction>=.25f);
+        }else{
+            TestTrue(TEXT("돌입 경로상의 별도 피해, 최대 두 명"),Fighter.RushTargets.Num()>0 && Fighter.RushTargets.Num()<=2);
+        }
+    }
+    OVInteriorTest::FRange R;
+    const auto Squad=R.Interior->RegisterBoardingTeam(R.Target,1,0,2);
+    if(!TestEqual(TEXT("실제 일반 병력 편제"),Squad.Num(),2))return false;
+    const auto Start=R.Interior->GetUnit(Squad[0]);
+    const int32 Id=R.Interior->RegisterUnit(R.Target,0,EOVInteriorRole::Melee,Start.NodeId);
+    for(auto& U:R.Interior->Units){
+        U.LocalPosition=Start.LocalPosition;
+        if(U.UnitId==Id){U.DefinitionId=TEXT("M10");U.Damage=10000;}
+        else{U.Damage=0;U.Evasion=0;}
+    }
+    R.Advance(8);
+    TestTrue(TEXT("같은 분대 전멸"),R.Interior->GetUnit(Squad[0]).HP<=0 && R.Interior->GetUnit(Squad[1]).HP<=0);
+    TestTrue(TEXT("마지막 병사 사망 후 점령 효과"),R.Interior->GetUnit(Id).KillRallyUntil>R.Interior->GameTime);
+    return true;
+}
+
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(FOVIrisArcGeometryTest,"OrbitalVanguard.Hero.IrisArcRespectsFacingDeckAndRange",
+    EAutomationTestFlags::EditorContext|EAutomationTestFlags::EngineFilter)
+bool FOVIrisArcGeometryTest::RunTest(const FString&)
+{
+    OVInteriorTest::FRange R;
+    const auto Room=R.Slot(EOVFacilityType::Engine);
+    const auto Id=R.Interior->RegisterUnit(R.Target,0,EOVInteriorRole::Melee,Room);
+    auto& Iris=R.Interior->Units.Last();Iris.DefinitionId=TEXT("M02");Iris.AttackReadyAt=1000;
+    const FVector Anchor=Iris.LocalPosition;
+    const auto* L=R.Target->Systems->Layout.Get();
+    const int32 Deck=L->Slots[L->GetSlotIndex(Room)].DeckId;
+    const auto* OtherDeck=L->Slots.FindByPredicate([&](const auto& S){return S.DeckId!=Deck;});
+    if(!OtherDeck)return false;
+    auto Target=[&](float X,float Y,FName Slot){
+        const int32 UnitId=R.Interior->RegisterUnit(R.Target,1,EOVInteriorRole::Ranged,Slot);
+        auto& V=R.Interior->Units.Last();V.AttackReadyAt=1000;V.HP=V.MaxHP=2000;
+        V.LocalPosition=Anchor+FVector(X,Y,0)/R.Target->GetActorScale3D();
+        return UnitId;
+    };
+    const int32 Front=Target(80,0,Room), Flank=Target(130,60,Room), Back=Target(-80,0,Room);
+    const int32 Far=Target(270,0,Room), Upstairs=Target(80,0,OtherDeck->SlotId);
+    R.Interior->Units[0].EnemyId=Front;
+    R.Advance(4.25);
+    TestEqual(TEXT("정면 바라본 역장 1회 종료"),R.Interior->GetUnit(Id).SignatureUses,1);
+    TestTrue(TEXT("호형 안 두 대상 실제 피해"),R.Interior->GetUnit(Front).HP<2000 && R.Interior->GetUnit(Flank).HP<2000);
+    for(const int32 Excluded:{Back,Far,Upstairs})TestEqual(TEXT("후방·거리 밖·다른 층 피해 없음"),R.Interior->GetUnit(Excluded).HP,2000.f);
+    return true;
+}
+
 #endif

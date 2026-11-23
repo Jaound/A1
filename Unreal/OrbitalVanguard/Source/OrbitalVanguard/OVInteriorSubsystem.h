@@ -136,6 +136,8 @@ struct ORBITALVANGUARD_API FOVInteriorUnitRecord
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly) double AttackReadyAt = 0;
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly) double SkillReadyAt = 0;
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly) double SkillActiveUntil = 0;
+    int32 SquadId=0;
+    double LastPhaseArcAt=-1000;
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly) double LastDamagedAt = -1000;
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly) double OperationContributedAt = -1000;
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly) int32 EnemyId = 0;
@@ -160,7 +162,7 @@ struct ORBITALVANGUARD_API FOVHeroDutyBonuses
 {
     GENERATED_BODY()
     float PDInterval=1, PDAccuracy=0, MissileInterval=1, GuidedTurn=1, GuidedSpread=1;
-    float AccelerationScale=1, LateralScale=1;
+    float AccelerationScale=1, BrakingScale=1, LateralScale=1;
     bool bNearTraverse=false, bLongAim=false, bExposedAim=false;
     bool bShieldHarmonizer=false, bShipDisasterField=false, bEngineering=false, bHangarEfficiency=false;
     float ProductionScale=1, DockScale=1, BoltSpeedScale=1, WingPeriodScale=1, WingEvasion=0;
@@ -268,6 +270,8 @@ private:
     bool MoveTowards(FOVInteriorUnitRecord& Unit, FName Goal, float Delta);
     bool MovePoint(FOVInteriorUnitRecord& Unit, FVector Goal, float Delta);
     bool Visible(const FOVInteriorUnitRecord& A, const FOVInteriorUnitRecord& B, float Range) const;
+    float MovementBonus(const FOVInteriorUnitRecord& U) const;
+    float ExternalAuraScale(const FOVInteriorUnitRecord& Target) const;
     bool IsOnboard(const FOVInteriorUnitRecord& Unit) const;
     void Step(float Delta);
     void SyncTransport(FOVInteriorUnitRecord& Unit);

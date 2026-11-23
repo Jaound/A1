@@ -32,7 +32,28 @@ void UOVHeroSubsystem::Initialize(FSubsystemCollectionBase& Collection)
         D.Portrait=Texture(TEXT("portrait"));D.Standing=Texture(TEXT("standing"));D.SD=Texture(TEXT("sd"));
         const auto& Foot=Json->GetArrayField(TEXT("foot"));
         if(Foot.Num()==2)D.Foot=FVector2D(Foot[0]->AsNumber(),Foot[1]->AsNumber());
-        D.Scale=Json->GetNumberField(TEXT("scale"));
+        D.Scale=FMath::Clamp(Json->GetNumberField(TEXT("scale")),.25,3.);
+        Json->TryGetBoolField(TEXT("mirror"),D.bAllowMirror);
+        const TSharedPtr<FJsonObject>* Poses=nullptr;
+        if(Json->TryGetObjectField(TEXT("poses"),Poses) && Poses && Poses->IsValid())
+        {
+            for(const auto& Pair:(*Poses)->Values){
+                const TSharedPtr<FJsonObject>* Pose=nullptr;
+                if(!Pair.Value->TryGetObject(Pose))continue;
+                FOVHeroPose Sequence;
+                double Fps=6;
+                (*Pose)->TryGetNumberField(TEXT("fps"),Fps);
+                Sequence.FramesPerSecond=FMath::Clamp(Fps,1.,30.);
+                const TArray<TSharedPtr<FJsonValue>>* Frames=nullptr;
+                if(!(*Pose)->TryGetArrayField(TEXT("frames"),Frames))continue;
+                for(const auto& Frame:*Frames){
+                    FString Asset;
+                    if(Frame->TryGetString(Asset) && Asset.StartsWith(TEXT("/Game/")))
+                        if(auto* Image=LoadObject<UTexture2D>(nullptr,*Asset))Sequence.Frames.Add(Image);
+                }
+                if(!Sequence.Frames.IsEmpty())D.Poses.Add(FName(Pair.Key),MoveTemp(Sequence));
+            }
+        }
         Definitions.Add(MoveTemp(D));
     }
 }
@@ -155,7 +176,7 @@ bool UOVHeroSubsystem::SetDeployment(FGuid HeroId,bool bDeploy)
     {LastMessage=TEXT("배치 변경 불가: 비전투 상태의 살아 있는 영웅이 필요합니다");return false;}
     if(bDeploy && (H->Status==EOVHeroStatus::Captured || H->Status==EOVHeroStatus::Missing ||
         H->Status==EOVHeroStatus::RescueWaiting || (!H->bDeploymentReserved && CountDeployed(H->FactionId)>=DeploymentLimit(H->FactionId))))
-    {LastMessage=TEXT("배치 불가: 구조/포로 상태 또는 세력 전체 15명 한도");return false;}
+    {LastMessage=FString::Printf(TEXT("배치 불가 · 인원 상태 또는 세력 배치 한도 %d명"),DeploymentLimit(H->FactionId));return false;}
     H->bDeploymentReserved=bDeploy;
     if(H->Status==EOVHeroStatus::Reserve || H->Status==EOVHeroStatus::Deployed)
         H->Status=bDeploy?EOVHeroStatus::Deployed:EOVHeroStatus::Reserve;
@@ -246,7 +267,11 @@ bool UOVHeroSubsystem::LoadRoster(const FString& SlotName,int32 UserIndex)
 {
     if(!CanChangeRoster() || SlotName.IsEmpty()){LastMessage=TEXT("비전투 상태에서 불러오세요");return false;}
     for(const auto& H:Heroes)if(H.RuntimeUnitId!=0 || H.RuntimePersonId!=0){LastMessage=TEXT("실행 중인 영웅 연결이 있습니다");return false;}
-    const auto* Save=Cast<UOVHeroSaveGame>(UGameplayStatics::LoadGameFromSlot(SlotName,UserIndex));
+    return RestoreRoster(Cast<UOVHeroSaveGame>(UGameplayStatics::LoadGameFromSlot(SlotName,UserIndex)));
+}
+
+bool UOVHeroSubsystem::RestoreRoster(const UOVHeroSaveGame* Save)
+{
     if(!Save || (Save->Version!=1 && Save->Version!=2)){LastMessage=TEXT("저장 데이터가 없거나 버전이 다릅니다");return false;}
     TSet<FGuid> Ids;TMap<int32,int32> Deployed,Owned;
     for(const auto& H:Save->Heroes)
@@ -272,6 +297,7 @@ bool UOVHeroSubsystem::LoadRoster(const FString& SlotName,int32 UserIndex)
     for(const auto& Pair:Save->CommandTiers)if(Pair.Key<0 || Pair.Value<1 || Pair.Value>4 || Deployed.FindRef(Pair.Key)>Limits[Pair.Value-1])return false;
     for(const auto& Pair:Deployed)if(Pair.Value>15){LastMessage=TEXT("배치 한도 초과");return false;}
     auto Restored=Save->Heroes;
+    TMap<int32,TSet<FName>> UniqueByFaction;
     for(auto& H:Restored)
     {
         if(H.FocusTier<0 || H.FocusTier>4 || H.ArmorTier<0 || H.ArmorTier>4 || H.TacticalTier<0 || H.TacticalTier>4 ||
@@ -279,6 +305,11 @@ bool UOVHeroSubsystem::LoadRoster(const FString& SlotName,int32 UserIndex)
         if(H.DefinitionId.IsNone())H.DefinitionId=FName(*FString::Printf(TEXT("G%02d"),static_cast<int32>(H.Role)));
         const auto* D=Definition(H.DefinitionId);
         if(!D || D->Role!=H.Role){LastMessage=TEXT("영웅 정의와 저장된 유형이 일치하지 않습니다");return false;}
+        if(!D->Passive.IsEmpty()){
+            auto& Existing=UniqueByFaction.FindOrAdd(H.FactionId);
+            if(Existing.Contains(D->Id)){LastMessage=TEXT("한 세력에 같은 고유 영웅이 두 번 기록되었습니다");return false;}
+            Existing.Add(D->Id);
+        }
     }
     CommandTiers=Save->CommandTiers;Heroes=MoveTemp(Restored);LastMessage=TEXT("영웅 명단 불러오기");return true;
 }

@@ -9,6 +9,14 @@
 UENUM(BlueprintType)
 enum class EOVHeroStatus : uint8 { Reserve, Deployed, RescueWaiting, Captured, Missing, Dead };
 
+USTRUCT()
+struct FOVHeroPose
+{
+    GENERATED_BODY()
+    UPROPERTY(Transient) TArray<TObjectPtr<UTexture2D>> Frames;
+    float FramesPerSecond=6;
+};
+
 USTRUCT(BlueprintType)
 struct FOVHeroDefinition
 {
@@ -23,8 +31,10 @@ struct FOVHeroDefinition
     UPROPERTY(Transient) TObjectPtr<UTexture2D> Portrait;
     UPROPERTY(Transient) TObjectPtr<UTexture2D> Standing;
     UPROPERTY(Transient) TObjectPtr<UTexture2D> SD;
+    UPROPERTY(Transient) TMap<FName,FOVHeroPose> Poses;
     FVector2D Foot=FVector2D(.5,.95);
     float Scale=1;
+    bool bAllowMirror=false;
 };
 
 /** D114 v0.5 성장/정원은 실게임 검증 전 후보. HeroId는 개인, UnitId/PersonId는 장면 실행 ID다. */
@@ -101,6 +111,8 @@ public:
     FOVHeroRecord* FindHero(FGuid Id);
 private:
     friend class UOVPlayScenarioSubsystem;
+    friend class FOVHeroSaveMigrationTest;
+    bool RestoreRoster(const UOVHeroSaveGame* Save);
     void SetArenaLevel(FGuid Id,int32 Level);
     FGuid CreateRosterEntry(int32 FactionId,EOVInteriorRole Role,const FString& Name,bool bDeploy);
 };

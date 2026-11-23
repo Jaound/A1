@@ -59,6 +59,8 @@ public:
     FString ArenaCandidateLabel() const;
     static TConstArrayView<FOVPlaySceneDefinition> Definitions();
     const FOVPlaySceneDefinition* GetActiveDefinition() const;
+    bool IsArenaPreparing() const {return ActiveId==TEXT("HeroArena") && !bArenaStarted;}
+    void SelectArenaHero(AOVController& PC,FName DefinitionId);
     bool Start(AOVController& Controller, FName Id);
     void Clear();
     virtual void Deinitialize() override;

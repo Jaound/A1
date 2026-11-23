@@ -175,6 +175,8 @@ void UOVHeroWidget::NativeOnInitialized()
     for(const auto& D:GetGameInstance()->GetSubsystem<UOVHeroSubsystem>()->Definitions)
         TemplateChoice->AddOption(D.Name);
     TemplateChoice->SetSelectedIndex(0); FormationBox->AddChildToVerticalBox(TemplateChoice);
+    ArenaAssign=Button(WidgetTree,FormationBox,TEXT("선택한 후보를 시험장에 배치"));
+    ArenaAssign->OnClicked.AddDynamic(this,&UOVHeroWidget::AssignArenaCandidate);
     Button(WidgetTree,FormationBox,TEXT("편성실에서 시험 영웅 생성"))->OnClicked.AddDynamic(this,&UOVHeroWidget::CreateTemplate);
     Button(WidgetTree,FormationBox,TEXT("개발 · 정의와 아트 현황"))->OnClicked.AddDynamic(this,&UOVHeroWidget::ToggleCatalogue);
     CatalogueReport=Text(WidgetTree,TEXT(""),13); FormationBox->AddChildToVerticalBox(CatalogueReport);
@@ -312,6 +314,9 @@ void UOVHeroWidget::Refresh()
     LocateButton->SetIsEnabled(bUnit); InteriorButton->SetIsEnabled(bUnit); RetreatButton->SetIsEnabled(bUnit&&!Selected->bLost);
     for (const auto& Action : OwnedActions) Action->SetIsEnabled(bOwned);
     DutyChoice->SetIsEnabled(bOwned&&bUnit);
+    const auto* Scenario=PC->GetPlayScenario();
+    const bool Preparing=Scenario && Scenario->IsArenaPreparing();
+    ArenaAssign->SetVisibility(Preparing?ESlateVisibility::Visible:ESlateVisibility::Collapsed);
     const auto* Def=Selected?Heroes->Definition(Selected->DefinitionId):nullptr;
     StandingBox->SetVisibility(Def && Def->Standing?ESlateVisibility::Visible:ESlateVisibility::Collapsed);
     if(Def && Def->Standing && Standing->GetBrush().GetResourceObject()!=Def->Standing)
@@ -469,6 +474,17 @@ void UOVHeroWidget::DutyOff()
 }
 void UOVHeroWidget::Spend(int32 Index) { if (auto* Heroes=GetGameInstance()->GetSubsystem<UOVHeroSubsystem>()) { Heroes->SpendSkillPoint(SelectedId(),Index); SetFeedback(Heroes->LastMessage); } Refresh(); }
 void UOVHeroWidget::Skill0(){Spend(0);} void UOVHeroWidget::Skill1(){Spend(1);} void UOVHeroWidget::Skill2(){Spend(2);} void UOVHeroWidget::Skill3(){Spend(3);}
+void UOVHeroWidget::AssignArenaCandidate()
+{
+    auto* PC=Cast<AOVController>(GetOwningPlayer());
+    auto* Scenario=PC?PC->GetPlayScenario():nullptr;
+    const auto* Roster=GetGameInstance()->GetSubsystem<UOVHeroSubsystem>();
+    const int32 Index=TemplateChoice->GetSelectedIndex();
+    if(!Scenario || !Roster->Definitions.IsValidIndex(Index))return;
+    Scenario->SelectArenaHero(*PC,Roster->Definitions[Index].Id);
+    SetFeedback(PC->LastAction);Refresh();
+}
+
 void UOVHeroWidget::CreateTemplate()
 {
     auto* Roster=GetGameInstance()->GetSubsystem<UOVHeroSubsystem>();

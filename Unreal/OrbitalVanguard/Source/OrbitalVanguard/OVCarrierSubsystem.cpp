@@ -439,7 +439,12 @@ void UOVCarrierSubsystem::AdvanceProduction(AOVShip* Ship,const FOVAircraftOverv
         if(H.Mode!=EOVHangarMode::Aircraft || IsHangarDestroyed(H) || Vacancies<=0) { H.ProductionSeconds=0; continue; }
         if(Wing.ReplacementKits<=0 || !Ship->Systems->CanUseResources() || !IsHangarOperational(H)) continue;
         const int32 I=Ship->Systems->Layout->GetSlotIndex(H.SlotId);
-        H.ProductionSeconds+=Delta/WingDuty.FindRef(Ship).ProductionScale*FMath::Clamp(Ship->Systems->Slots[I].Crew/Ship->Systems->Layout->Slots[I].RequiredCrew,0.f,1.f);
+        const auto Duty=WingDuty.FindRef(Ship);
+        const auto& Slot=Ship->Systems->Slots[I];
+        const auto& Def=Ship->Systems->Layout->Slots[I];
+        float CrewRatio=FMath::Clamp(Slot.Crew/Def.RequiredCrew,0.f,1.f);
+        if(Duty.bHangarEfficiency && Slot.HP<Def.MaxFacilityHP)CrewRatio+=(1-CrewRatio)*.2f;
+        H.ProductionSeconds+=Delta*CrewRatio/Duty.ProductionScale;
         if(H.ProductionSeconds+KINDA_SMALL_NUMBER<ProductionPeriod) continue;
         // A working line may deliver to another operating bay with space.
         auto Available=[&](const FOVHangarState& Bay) {

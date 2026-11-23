@@ -1,0 +1,173 @@
+{
+  "kind": "F6 보유 영웅 강습 PIE API",
+  "checks": [
+    {
+      "id": "HB-ROSTER",
+      "passed": true,
+      "detail": "비전투 편성실 · 영웅 HP/성장/손실/소모품 유지 · 임무 시작 시 선택 편제만 배치"
+    },
+    {
+      "id": "HB-RESERVE",
+      "passed": true,
+      "detail": "영웅 편제 변경"
+    },
+    {
+      "id": "HB-F6",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "HB-EXPLICIT-TEST-ORIGIN",
+      "passed": true,
+      "detail": "시험 함선 1척 생성 · 최초 재고/병력만 공급 · 캠페인 획득 아님"
+    },
+    {
+      "id": "HB-TARGET-NOT-KNOWN-BEFORE-ENTRY",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "HB-SPAWN",
+      "passed": true,
+      "detail": "실제 인원 배치"
+    },
+    {
+      "id": "HB-NOT-AUTOMATICALLY-ASSIGNED",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "HB-UNASSIGNED-NO-LAUNCH",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "HB-DUTY-REQUEST",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "HB-DUTY-NOT-AUTO-DRAFTED",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "HB-DUTY-RELEASE",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "HB-EXPLICIT-ASSIGN",
+      "passed": true,
+      "detail": "영웅을 강습 대상으로 명시 편성했습니다"
+    },
+    {
+      "id": "HB-PERSON-ASSIGNMENT",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "HB-SHIELD-DOWN",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "HB-QUEUE-ONE",
+      "passed": true,
+      "detail": "개인 포드 1기 발사 예약"
+    },
+    {
+      "id": "HB-QUEUED-POD",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "HB-UNASSIGN-BEFORE-LAUNCH",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "HB-QUEUED-CANCELLED-PERSON-ABOARD",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "HB-REASSIGN",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "HB-REUSE-CANCELLED-POD",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "HB-FLYING-NOT-CANCELLED",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "HB-ACTUAL-ENTRY",
+      "passed": true,
+      "detail": "목표 방 도착 · 제어점 확보 확인"
+    },
+    {
+      "id": "HB-GRAPH-REVEALED-ON-ENTRY",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "HB-DEFEND-DOES-NOT-CAPTURE",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "HB-ORDER-ACCEPTED",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "HB-EXPLICIT-CAPTURE-PROGRESSES",
+      "passed": true,
+      "detail": "0.009259259328246117"
+    },
+    {
+      "id": "HB-ACTUAL-MOVEMENT",
+      "passed": true,
+      "detail": "점령 진행 1%"
+    },
+    {
+      "id": "HB-DEFEND-ORDER",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "HB-DEFEND-STOPS-CAPTURE",
+      "passed": true,
+      "detail": "0.0"
+    },
+    {
+      "id": "HB-RETREAT-ORDER",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "HB-ORIGINAL-POD-RECOVERY",
+      "passed": true,
+      "detail": "목표 방 도착 · 제어점 확보 확인"
+    },
+    {
+      "id": "HB-SAME-PERSON-AND-UNIT",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "HB-ENEMY-PRESENCE-CLEARED",
+      "passed": true,
+      "detail": ""
+    }
+  ],
+  "errors": [],
+  "scope": "명시적 DEV 시험 함선과 쉴드 파괴 fixture; 실제 키보드·마우스 검사는 아님",
+  "passed": true
+}
