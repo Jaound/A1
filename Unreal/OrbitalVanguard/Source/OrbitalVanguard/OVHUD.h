@@ -250,6 +250,8 @@ private:
  int32 BaseDragWindow = INDEX_NONE;
  bool bResizeBaseWindow = false;
  FVector2D BaseDragOffset = FVector2D::ZeroVector;
+ int32 BaseHullChoice=0, BaseBerthChoice=0, BaseTechChoice=1, BaseTechPage=0;
+ bool bBaseInstantResearch=false;
  int32 BaseWindowAt(FVector2D Point) const;
  void OpenBaseWindow(int32 Index);
  void DrawBaseWindow(int32 Index, int32 Priority);

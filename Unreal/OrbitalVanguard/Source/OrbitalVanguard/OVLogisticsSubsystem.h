@@ -140,6 +140,7 @@ public:
     bool ConsumeAircraftKit(AOVShip* Ship);
     int32 ResupplyCarrier(AOVShip* Ship);
     void LoseStoredCargo(AOVShip* Ship);
+    static FVector StandardHullPrice(FName Hull);
     void RepairBerthedHull(AOVShip* Host,AOVShip* Guest,float GameDelta,float RateScale);
     bool OrderRepair(AOVShip* Source, AOVShip* Target);
     void CancelFieldOrder(AOVShip* Source);

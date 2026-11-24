@@ -54,7 +54,7 @@ bool UOVDevelopmentSubsystem::HasPlacementClearance(const AOVController& PC, FVe
 }
 
 TArray<AOVShip*> UOVDevelopmentSubsystem::SpawnTrialShips(FName Id, int32 Faction, int32 Count,
-    FVector Location, float Spacing, int32 AircraftPerHangar, int32 Troops, bool MoveAuto, bool FireAuto, bool bPlayerRange)
+    FVector Location, float Spacing, int32 AircraftPerHangar, int32 Troops, bool MoveAuto, bool FireAuto, bool bPlayerRange, bool bNewBuild)
 {
     TArray<AOVShip*> Result;
     auto* PC = Cast<AOVController>(GetWorld()->GetFirstPlayerController());
@@ -95,10 +95,10 @@ TArray<AOVShip*> UOVDevelopmentSubsystem::SpawnTrialShips(FName Id, int32 Factio
         if(Id==TEXT("assault"))Transit->RegisterShuttle(Ship);
         if(Troops>0)Interior->RegisterBoardingTeam(Ship,Faction,0,Troops);
         if(Ship->Systems->Layout->bAllowAircraftOperations)
-            GetWorld()->GetSubsystem<UOVLogisticsSubsystem>()->StockFieldShip(Ship,bPlayerRange?-1:0);
+            GetWorld()->GetSubsystem<UOVLogisticsSubsystem>()->StockFieldShip(Ship,bPlayerRange && !bNewBuild?-1:0);
         if(Id==TEXT("repair")||Id==TEXT("mining")||Id==TEXT("transport"))
             GetWorld()->GetSubsystem<UOVLogisticsSubsystem>()->RegisterDevShip(Ship,Id==TEXT("repair")?EOVDevLogisticsRole::Repair:
-                Id==TEXT("mining")?EOVDevLogisticsRole::Mining:EOVDevLogisticsRole::Transport,1000,Id==TEXT("repair")?500:0);
+                Id==TEXT("mining")?EOVDevLogisticsRole::Mining:EOVDevLogisticsRole::Transport,1000,!bNewBuild && Id==TEXT("repair")?500:0);
     }
     if(Result.Num()==Count)LastMessage=FString::Printf(TEXT("시험 함선 %d척 생성 · 최초 재고/병력만 공급 · 캠페인 획득 아님"),Count);
     else if(Result.Num()>0)LastMessage=FString::Printf(TEXT("%d/%d척 생성. "),Result.Num(),Count)+LastMessage;

@@ -1,4 +1,5 @@
 #include "OVShip.h"
+#include "OVBasePresentation.h"
 #include "OVAudioSubsystem.h"
 #include "OVInteriorSubsystem.h"
 #include "OVCombatSubsystem.h"
@@ -492,12 +493,16 @@ void AOVShip::ConfigureClassMotion(int32 Size)
 
 void AOVShip::Simulate(float SimDelta)
 {
-    if (!FMath::IsFinite(SimDelta) || SimDelta <= 0.0f) return;
+    if (bUnderBaseControl || !FMath::IsFinite(SimDelta) || SimDelta <= 0.0f) return;
     if (bFTLCharging || !Systems || !Systems->CanMove())
     {
         // Gameplay immobilization is separate from an ordinary inertial stop order.
         if (!bFTLCharging && Systems && !Systems->bWrecked && !Systems->bNeutral)
-            AddActorWorldOffset(Velocity * SimDelta, false);
+        {
+            FVector to=GetActorLocation()+Velocity*SimDelta;
+            if (auto* base=TrialStation.Get()) to=base->ClipTravel(*this,GetActorLocation(),to,GetActorQuat());
+            SetActorLocation(to);
+        }
         else Velocity = FVector::ZeroVector;
         if (bFTLCharging || (Systems && (Systems->bWrecked || Systems->bNeutral)))
         {
@@ -525,6 +530,7 @@ void AOVShip::Simulate(float SimDelta)
         OVShipMotion::Brake(Position, Velocity, Braking*Duty.BrakingScale, SimDelta);
         if (bManualAttitude) OVShipMotion::Turn(Orientation, ManualAttitude.Quaternion(), TurnRate * EngineEfficiency * (1.f+Duty.TurnBonus), SimDelta);
     }
+    if (auto* base=TrialStation.Get()) Position=base->ClipTravel(*this,GetActorLocation(),Position,Orientation);
     SetActorLocationAndRotation(Position, Orientation, false, nullptr, ETeleportType::TeleportPhysics);
 }
 

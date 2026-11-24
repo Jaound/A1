@@ -9,6 +9,20 @@ class AOVShip;
 class UStaticMeshComponent;
 class UStaticMesh;
 
+enum class EOVBayPhase : uint8 { Building, Ready, Departing, Field, Returning, Entering, Berthed, Repairing, Refitting };
+struct FOVBayOrder
+{
+    FGuid Id;
+    FName Hull, Mount, Equipment;
+    int32 Facility=0, Berth=0, ApproachLeg=0, RefitYard=0;
+    EOVBayPhase Phase=EOVBayPhase::Building;
+    float Time=0, Total=0, LateralCm=0;
+    TWeakObjectPtr<AOVShip> Ship;
+    TArray<FName> RemovedGear;
+    FString Wait;
+};
+struct FOVResearchOrder { int32 Tech=0, Lab=0; float Time=0; };
+
 UCLASS()
 class AOVBasePresentation : public AActor
 {
@@ -17,6 +31,36 @@ class AOVBasePresentation : public AActor
 public:
     AOVBasePresentation();
     void InitializeModules();
+    UFUNCTION(BlueprintCallable) bool OrderHull(int32 Index, FName Hull);
+    UFUNCTION(BlueprintCallable) bool DockVessel(int32 Index, AOVShip* Ship);
+    UFUNCTION(BlueprintCallable) bool LaunchVessel(FGuid Id);
+    UFUNCTION(BlueprintCallable) bool ServiceVessel(FGuid Id, bool Refit);
+    UFUNCTION(BlueprintCallable) bool RefitFacilities(FGuid Id);
+    FString FacilityOffer(FGuid Id) const;
+    int32 AvailableYard(FName Hull) const;
+    UFUNCTION(BlueprintCallable) bool QueueResearch(int32 Tech);
+    UFUNCTION(BlueprintCallable) bool PrepareOperationsTrial();
+    UFUNCTION(BlueprintPure) FString OperationStatus() const {return OperationMessage;}
+    UFUNCTION(BlueprintPure) FGuid VesselId(AOVShip* Ship) const;
+    UFUNCTION(BlueprintPure) AOVShip* FindVessel(FGuid Id) const;
+    UFUNCTION(BlueprintPure) TArray<FGuid> FacilityOrders(int32 Index) const;
+    UFUNCTION(BlueprintPure) FString RefitOffer(FGuid Id) const;
+    UFUNCTION(BlueprintPure) int32 VesselPhase(FGuid Id) const;
+    FVector ClipTravel(AOVShip& Ship,FVector From,FVector To,const FQuat& Rotation) const;
+    void AdvanceOperations(float Seconds);
+    int32 ModuleIndex(int32 StableId) const;
+    int32 UsedPoints(int32 Index) const;
+    FString ShipOffer(FName Hull) const;
+    FString ServiceQuote(const FOVBayOrder& Order) const;
+    static OVBase::Resources ResearchPrice(int32 Tech);
+    static float ResearchSeconds(int32 Tech);
+    TArray<FOVBayOrder> Orders;
+    TArray<FOVResearchOrder> Science;
+    FString OperationMessage;
+    bool Reject(const FString& Why) { OperationMessage=Why; return false; }
+    bool InService(int32 Index) const;
+    void BayPath(int32 Index,FVector& Inside,FVector& Outside, float LateralCm=0) const;
+    bool FitBerth(int32 Index,FName Hull,float& Offset) const;
     void RefreshMeshes();
     void AdvanceConstruction(float GameSeconds);
     const AOVShip* ConstructionBlocker(int32 Index) const;

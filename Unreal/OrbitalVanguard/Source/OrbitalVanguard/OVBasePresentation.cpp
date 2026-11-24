@@ -277,6 +277,7 @@ const AOVShip* AOVBasePresentation::ConstructionBlocker(int32 index) const
 
 void AOVBasePresentation::AdvanceConstruction(float seconds)
 {
+    AdvanceOperations(seconds);
     const auto& items=Build.Modules();
     if (std::none_of(items.begin(),items.end(),[](const auto& m){return m.Remaining>0;})) return;
     std::vector<bool> blocked(items.size());
@@ -299,7 +300,7 @@ bool AOVBasePresentation::ReserveModule(FName id,FIntVector origin,int32 turns)
 
 bool AOVBasePresentation::DemolishModule(int32 index)
 {
-    if (index<0 || !Build.Demolish(index)) return false;
+    if (index<0 || index>=ModuleCount() || InService(index) || !Build.Demolish(index)) return false;
     RefreshMeshes();
     return true;
 }
@@ -311,7 +312,7 @@ bool AOVBasePresentation::UpgradeModule(int32 index)
 
 bool AOVBasePresentation::PrepareTrialTechnology(int32 id)
 {
-    return id>0 && id<static_cast<int32>(OVBase::Technology::Count) &&
+    return !Science.ContainsByPredicate([id](const auto& j){return j.Tech==id;}) && id>0 && id<static_cast<int32>(OVBase::Technology::Count) &&
         Build.UnlockTestTechnology(static_cast<OVBase::Technology>(id));
 }
 
@@ -403,9 +404,12 @@ void AOVBasePresentation::RefreshMeshes()
             }
         }
         PortSleeves.Add(sleeve);
-        if (OVBase::HasBay(Item.Type) && Assets[index])
+        if (Asset)
         {
             Mesh->SetCollisionProfileName(TEXT("BlockAll"));
+            Mesh->SetCollisionResponseToAllChannels(ECR_Ignore);
+            Mesh->SetCollisionResponseToChannel(ECC_GameTraceChannel18,ECR_Block);
+            if (OVBase::HasBay(Item.Type)) Mesh->SetCollisionResponseToChannel(ECC_Visibility,ECR_Block);
             Mesh->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
         }
     }

@@ -97,6 +97,9 @@ public:
     void SetCalibrationHull(const FVector* LocalHalfExtent);
     /** Optional imported presentation mesh; never changes combat or selection bounds. */
     FName HullDefinitionId;
+    FGuid BaseVesselId;
+    TWeakObjectPtr<class AOVBasePresentation> TrialStation;
+    bool bUnderBaseControl=false;
     void ApplyPresentationHull(FName DefinitionId);
     void Configure(const FString& Name, bool Friendly, float Speed, float RotationRate,
         const FVector& Scale, const FLinearColor& Color);

@@ -721,3 +721,5 @@ bool UOVLogisticsSubsystem::DiagnoseOutpostBottleneck(int32 OutpostId, FString& 
     OutDiagnosis = FString::Printf(TEXT("자원 전초기지 물류 정상 (창고 적재율 %.0f%%)."), FillRatio * 100.0f);
     return false;
 }
+
+FVector UOVLogisticsSubsystem::StandardHullPrice(FName hull) { return PackageCost(hull); }

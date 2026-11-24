@@ -6,6 +6,8 @@
 #include "Engine/World.h"
 #include "InputCoreTypes.h"
 #include "OVBasePresentation.h"
+#include "OVCalibration.h"
+#include "OVShipSystemsComponent.h"
 #include "OVController.h"
 #include "OVShip.h"
 
@@ -90,6 +92,7 @@ bool AOVHUD::BeginBaseTrial()
     BasePresentation=GetWorld()->SpawnActor<AOVBasePresentation>(FVector(0,0,2000),FRotator::ZeroRotator);
     if (!BasePresentation) return false;
     BasePresentation->InitializeModules();
+    for (AOVShip* ship:pc->Ships) if (ship) {ship->TrialStation=BasePresentation;ship->BaseVesselId=FGuid(0,0,0,1);}
     pc->bFollow=false;
     pc->CameraFocus=BasePresentation->GetActorLocation();
     pc->CameraDistance=25500;
@@ -132,7 +135,7 @@ void AOVHUD::OpenBaseWindow(int32 id)
     auto& window=BaseWindows[id];
     if (window.Size.IsZero())
     {
-        window.Size=id<2?FVector2D(500,455):id==2?FVector2D(250,408):FVector2D(235,190);
+        window.Size=id<2?FVector2D(500,455):id==2?FVector2D(500,408):FVector2D(235,190);
         window.Position=FVector2D(12+id*48,78+id*26);
     }
     window.bMinimized=false;
@@ -146,6 +149,14 @@ bool AOVHUD::HandleBaseAction(FName action)
     {
         if (!bTitleScreenOpen && !bPauseMenu && !bStarMapOpen && !IsDebriefOpen() && !PickingShip())
             ToggleBaseView();
+        return true;
+    }
+    if (action==TEXT("BaseDockSelected") && IsValid(BasePresentation))
+    {
+        auto* pc=Cast<AOVController>(PlayerOwner);
+        for(int i=1;pc && i<BasePresentation->ModuleCount();++i)
+            if(BasePresentation->DockVessel(i,pc->Selected)){pc->LastAction=TEXT("복귀 · 도크로 접근");return true;}
+        if(pc)pc->LastAction=TEXT("선택함을 받을 가동 도크나 빈 베이가 없습니다.");
         return true;
     }
     if (!bBaseViewOpen || !IsValid(BasePresentation)) return false;
@@ -177,7 +188,61 @@ bool AOVHUD::HandleBaseAction(FName action)
         if (action==TEXT("Frame")) return true;
     }
     auto& build=BasePresentation->Build;
-    if (action==TEXT("BaseBack")) ToggleBaseView();
+    const auto hulls=OVCalibration::GetHullIds();
+    auto* pc=Cast<AOVController>(PlayerOwner);
+    auto selectedOrder=[&]() -> FOVBayOrder* {
+        TArray<FOVBayOrder*> found;
+        for(auto& o:BasePresentation->Orders)
+            if(BasePresentation->ModuleIndex(o.Facility)==BaseInspect)found.Add(&o);
+        return found.IsEmpty()?nullptr:found[BaseBerthChoice%found.Num()];
+    };
+    if(action==TEXT("BaseTrialOps")) {BasePresentation->PrepareOperationsTrial();BaseNotice=BasePresentation->OperationStatus();}
+    else if(action==TEXT("BaseInspectNext")){
+        BaseInspect=(BaseInspect+1)%BasePresentation->ModuleCount(); BaseBerthChoice=0;BaseRemoval=0;
+    }
+    else if(action==TEXT("BaseAcademyRoster")&&BaseInspect>=0&&BaseInspect<BasePresentation->ModuleCount()&&build.Modules()[BaseInspect].Type==OVBase::Kind::Academy&&BasePresentation->IsModuleConnected(BaseInspect)){
+        ToggleBaseView();ExecuteUIAction(TEXT("HeroPanel"));
+    }
+    else if(action==TEXT("BaseRecruitCrew")){
+        BaseNotice=TEXT("승무원이 부족한 정박함 필요");
+        if(BaseInspect>=0&&BaseInspect<BasePresentation->ModuleCount()&&build.Modules()[BaseInspect].Type==OVBase::Kind::Crew&&BasePresentation->IsModuleConnected(BaseInspect)){
+            for(auto& order:BasePresentation->Orders){
+                auto* vessel=order.Ship.Get();
+                if(!vessel||order.Phase!=EOVBayPhase::Berthed||!BasePresentation->IsModuleConnected(BasePresentation->ModuleIndex(order.Facility)))continue;
+                auto& sys=*vessel->Systems;
+                for(int slot=0;slot<sys.Slots.Num();++slot){
+                    auto& room=sys.Slots[slot];auto required=sys.Layout->Slots[slot].RequiredCrew;
+                    if(room.HP<=0||room.OccupyingFaction>=0||room.Crew>=required)continue;
+                    if(!build.Pay({10,0,0})){BaseNotice=TEXT("충원 자원 부족");return true;}
+                    room.Crew=FMath::Min(required,room.Crew+1);sys.RefreshDerivedState();BaseNotice=TEXT("운영 승무원 충원");return true;
+                }
+            }
+        }
+    }
+    else if(action==TEXT("BaseRoomsRefit")){if(auto* o=selectedOrder())BasePresentation->RefitFacilities(o->Id);BaseNotice=BasePresentation->OperationStatus();}
+    else if(action==TEXT("BaseHullNext"))++BaseHullChoice;
+    else if(action==TEXT("BaseBerthNext"))++BaseBerthChoice;
+    else if(action==TEXT("BaseOrderHull")&&!hulls.IsEmpty()){BasePresentation->OrderHull(BaseInspect,hulls[BaseHullChoice%hulls.Num()]);BaseNotice=BasePresentation->OperationStatus();}
+    else if(action==TEXT("BaseBerthSelected")){BasePresentation->DockVessel(BaseInspect,pc?pc->Selected:nullptr);BaseNotice=BasePresentation->OperationStatus();}
+    else if(action==TEXT("BaseBayLaunch")||action==TEXT("BaseBayRepair")||action==TEXT("BaseBayRefit")){
+        if(auto* o=selectedOrder()){
+            if(action==TEXT("BaseBayLaunch"))BasePresentation->LaunchVessel(o->Id);
+            else BasePresentation->ServiceVessel(o->Id,action==TEXT("BaseBayRefit"));
+            BaseNotice=BasePresentation->OperationStatus();
+        }
+    }
+    else if(action==TEXT("BaseTechPage"))BaseTechPage=1-BaseTechPage;
+    else if(action==TEXT("BaseDamageExercise")){
+        if(auto* o=selectedOrder();o&&o->Phase==EOVBayPhase::Berthed&&o->Ship.IsValid()){
+            auto* sys=o->Ship->Systems.Get();sys->HullHP=FMath::Min(sys->HullHP,sys->MaxHullHP*.8f);BaseNotice=TEXT("시험 손상 · 선체 20%");
+        }
+    }
+    else if(action==TEXT("BaseResearchMode"))bBaseInstantResearch=!bBaseInstantResearch;
+    else if(action==TEXT("BaseResearchStart")){
+        if(bBaseInstantResearch)BaseNotice=BasePresentation->PrepareTrialTechnology(BaseTechChoice)?TEXT("시험 해금 완료"):TEXT("선행 조건을 확인하세요");
+        else{BasePresentation->QueueResearch(BaseTechChoice);BaseNotice=BasePresentation->OperationStatus();}
+    }
+    else if (action==TEXT("BaseBack")) ToggleBaseView();
     else if (action==TEXT("BaseOperations") || action==TEXT("BaseBuild") || action==TEXT("BaseResearch") || action==TEXT("BaseFiles"))
     {
         for (int id=0;id<4;++id) if (action==WindowActions[id]) OpenBaseWindow(id);
@@ -270,8 +335,7 @@ bool AOVHUD::HandleBaseAction(FName action)
         for (int32 i=1;i<static_cast<int32>(OVBase::Technology::Count);++i)
             if (action==TechnologyAction(i))
             {
-                BaseNotice=build.UnlockTestTechnology(static_cast<OVBase::Technology>(i))?
-                    TEXT("시험용 선행 기술을 준비했습니다."):TEXT("코어 등급과 선행 기술부터 준비하세요.");
+                BaseTechChoice=i;
                 return true;
             }
     }
@@ -507,7 +571,7 @@ void AOVHUD::DrawBaseWindow(int32 id,int32 priority)
 {
     auto& win=BaseWindows[id];
     const float screenW=ViewportPixels.X/UIScale, screenH=ViewportPixels.Y/UIScale;
-    const float designW=id<2?495.f:225.f;
+    const float designW=id<=2?495.f:225.f;
     const float designH=id<2?429.f:id==2?365.f:140.f;
     win.Size.X=FMath::Clamp(win.Size.X,FMath::Min(designW*.72,double(screenW)),double(screenW));
     win.Size.Y=FMath::Clamp(win.Size.Y,FMath::Min(designH*.72+38,double(screenH-110)),double(screenH-110));
@@ -572,16 +636,30 @@ void AOVHUD::DrawBaseWindow(int32 id,int32 priority)
     }
     else if (id==2)
     {
-        label(TEXT("선행 기술 · 시험 준비"),AccentColor,12,66,heading);
-        label(TEXT("시험장에만 적용"),FLinearColor::White,12,94,body);
+        const auto& techRule=OVBase::Technologies[BaseTechChoice];
+        button(TEXT("BaseResearchMode"),bBaseInstantResearch?TEXT("시험 · 즉시 해금 ✓"):TEXT("일반 연구"),right,96,225,bBaseInstantResearch);
+        label(techRule.Name,AccentColor,right,139,heading);
+        label(FString::Printf(TEXT("선행 · %s"),TechnologyName(techRule.Prior)),FLinearColor::White,right,173,body);
+        label(FString::Printf(TEXT("코어 %s · 연구소 %s"),roman[techRule.CoreTier-1],roman[techRule.CoreTier-1]),FLinearColor::White,right,199,body);
+        label(bBaseInstantResearch?TEXT("자원·시간 무료"):ResourceText(BasePresentation->ResearchPrice(BaseTechChoice)),AccentColor,right,232,body);
+        label(FString::Printf(TEXT("%.0f초 · 대기열 %d건"),bBaseInstantResearch?0.f:BasePresentation->ResearchSeconds(BaseTechChoice),BasePresentation->Science.Num()),FLinearColor::White,right,258,body);
+        button(TEXT("BaseResearchStart"),bBaseInstantResearch?TEXT("시험 해금"):TEXT("연구 예약"),right,292,225);
+        if(!BasePresentation->Science.IsEmpty()){
+            const auto& j=BasePresentation->Science[0];
+            label(FString::Printf(TEXT("%s · %.0f초"),OVBase::Technologies[j.Tech].Name,j.Time),AccentColor,right,330,body);
+        }
+        label(TEXT("기술 연구"),AccentColor,12,66,heading);
+
+        button(TEXT("BaseTechPage"),BaseTechPage?TEXT("기술 2/2 · 이전"):TEXT("기술 1/2 · 다음"),12,92,191);
         const float row=FMath::Clamp((height-160.f)/8.f,29.f,38.f);
         for (int32 i=1;i<static_cast<int32>(OVBase::Technology::Count);++i)
         {
+            if ((i-1)/8!=BaseTechPage)continue;
             const auto tech=static_cast<OVBase::Technology>(i);
             const auto& rule=OVBase::Technologies[i];
             const FString techLabel=build.HasTechnology(tech)?FString(rule.Name)+TEXT(" ✓"):
                 FString::Printf(TEXT("%s · 코어 %s"),rule.Name,roman[rule.CoreTier-1]);
-            button(TechnologyAction(i),techLabel,12,118+(i-1)*row,191,build.HasTechnology(tech));
+            button(TechnologyAction(i),techLabel,12,126+(i-1)%8*row,191,build.HasTechnology(tech));
         }
     }
     else if (id==3)
@@ -598,6 +676,8 @@ void AOVHUD::DrawBaseWindow(int32 id,int32 priority)
         button(TEXT("BaseCore"),TEXT("중앙 코어 보기"),12,137,190,BaseInspect==0);
         button(TEXT("BaseFunded"),build.Charges()?TEXT("비용 시험 끄기"):TEXT("비용 시험 켜기"),12,175,190,build.Charges());
         button(TEXT("BaseFill"),TEXT("시험 자원 채우기"),12,213,190);
+        button(TEXT("BaseTrialOps"),TEXT("시험 · 운영 편성 준비"),12,352,190);
+        button(TEXT("BaseInspectNext"),TEXT("다음 시설 보기"),12,390,190);
         int links=0,facilities=0,queue=0;
         for (const auto& item:build.Modules())
         {
@@ -662,7 +742,47 @@ void AOVHUD::DrawBaseWindow(int32 id,int32 priority)
         label(item.Remaining>0?FString::Printf(TEXT("%s · %.1f초"),*phase,item.Remaining):
             FString(network[BaseInspect]?TEXT("코어 연결 · 가동 중"):TEXT("코어 단절 · 작업 정지")),
             FLinearColor::White,right,227,body);
-        if (BaseRemoval)
+        if(!BaseRemoval && OVBase::HasBay(item.Type) && item.Type!=OVBase::Kind::Logistics && !item.Remaining){
+            const bool yard=OVBase::Def(item.Type).YardBay;
+            if(yard){
+                auto hulls=OVCalibration::GetHullIds();if(!hulls.IsEmpty()){
+                    auto hull=hulls[BaseHullChoice%hulls.Num()];
+                    label(BasePresentation->ShipOffer(hull),AccentColor,right,64,body);
+                    button(TEXT("BaseHullNext"),TEXT("다음 함체"),right,115,110);
+                    button(TEXT("BaseOrderHull"),TEXT("건조 주문"),right+116,115,115);
+                }
+            }else button(TEXT("BaseBerthSelected"),TEXT("선택함 복귀·접안"),right,115,230);
+            TArray<const FOVBayOrder*> here;
+            for(const auto& o:BasePresentation->Orders)if(o.Facility==item.Id)here.Add(&o);
+            label(FString::Printf(TEXT("점유 %d · 함선 %d척"),BasePresentation->UsedPoints(BaseInspect),here.Num()),AccentColor,right,259,body);
+            if(!here.IsEmpty()){
+                const auto& o=*here[BaseBerthChoice%here.Num()];
+                const TCHAR* phases[]={TEXT("건조"),TEXT("출항 대기"),TEXT("출항"),TEXT("함대"),TEXT("접근"),TEXT("진입"),TEXT("정박"),TEXT("수리"),TEXT("개조")};
+                label(FString::Printf(TEXT("%s · %s %.0f초"),*OVCalibration::GetHullName(o.Hull),phases[int(o.Phase)],o.Time),FLinearColor::White,right,283,body);
+                label(o.Wait.IsEmpty()?BasePresentation->ServiceQuote(o):o.Wait,FLinearColor::Yellow,right,308,body);
+                button(TEXT("BaseBerthNext"),TEXT("다음 함선"),right,338,106);
+                if(o.Phase==EOVBayPhase::Ready||o.Phase==EOVBayPhase::Berthed)button(TEXT("BaseBayLaunch"),TEXT("출격"),right+114,338,110);
+                if(o.Phase==EOVBayPhase::Berthed){
+                    button(TEXT("BaseDamageExercise"),TEXT("시험 · 손상 부여"),12,434,190);
+                    button(TEXT("BaseRoomsRefit"),TEXT("시설 재배치 · 40"),right,434,220);
+                    label(BasePresentation->FacilityOffer(o.Id),FLinearColor::White,right,464,body);
+                    label(BasePresentation->RefitOffer(o.Id),AccentColor,right,407,body);
+                    button(TEXT("BaseBayRepair"),TEXT("견적 수리"),right,373,106);
+                    button(TEXT("BaseBayRefit"),TEXT("무장 교체 · 40"),right+114,373,114);
+                }
+            }else button(TEXT("BaseDemolish"),TEXT("철거 보기"),right,365,232);
+        }
+        else if(!BaseRemoval && item.Type==OVBase::Kind::Academy && !item.Remaining && network[BaseInspect]){
+            button(TEXT("BaseAcademyRoster"),TEXT("세력 영웅 명단"),right,270,230);
+            label(TEXT("영입·훈련 경제 준비 중"),FLinearColor::White,right,311,body);
+            button(TEXT("BaseDemolish"),TEXT("철거 보기"),right,365,232);
+        }
+        else if(!BaseRemoval && item.Type==OVBase::Kind::Crew && !item.Remaining && network[BaseInspect]){
+            button(TEXT("BaseRecruitCrew"),TEXT("정박함 승무원 충원"),right,270,230);
+            label(TEXT("시험 단가 · 1명당 일반 10"),FLinearColor::White,right,311,body);
+            button(TEXT("BaseDemolish"),TEXT("철거 보기"),right,365,232);
+        }
+        else if (BaseRemoval)
         {
             const auto info=build.InspectRemoval(BaseInspect,BaseRemoval==1);
             label(FString::Printf(TEXT("%s  %s"),BaseRemoval==1?TEXT("취소 환불"):TEXT("철거 환불"),

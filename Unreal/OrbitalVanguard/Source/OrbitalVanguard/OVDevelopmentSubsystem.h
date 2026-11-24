@@ -24,7 +24,8 @@ public:
     static bool HasPlacementClearance(const class AOVController& PC, FVector Position, double Radius);
 private:
     friend class UOVPlayScenarioSubsystem;
+    friend class AOVBasePresentation;
     TArray<AOVShip*> SpawnTrialShips(FName Id, int32 Faction, int32 Count, FVector Location, float Spacing,
-        int32 AircraftPerHangar, int32 Troops, bool MoveAuto, bool FireAuto, bool bPlayerRange);
+        int32 AircraftPerHangar, int32 Troops, bool MoveAuto, bool FireAuto, bool bPlayerRange, bool bNewBuild=false);
     bool RemoveTrialShip(AOVShip* Ship);
 };

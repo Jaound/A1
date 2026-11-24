@@ -23,7 +23,7 @@ enum class Kind
     Core, Corridor, Junction, Storage, Yard, Dock, YardMedium, YardLarge, YardSuperheavy,
     DockMedium, DockLarge, DockSuperheavy, Logistics, Research, Academy, Crew, Defense, Radar, Shield, Count
 };
-enum class Technology { None, EngineeringII, EngineeringIII, EngineeringIV, HullMedium, HullLarge, HullSuperheavy, StorageII, StorageIII, Count };
+enum class Technology { None, EngineeringII, EngineeringIII, EngineeringIV, HullMedium, HullLarge, HullSuperheavy, StorageII, StorageIII, SupportHull, Aviation, Missile, Strategic, CombinedAir, Count };
 enum class Error { None, Occupied, Direction, NoConnection, Funds, Limit, Busy, Outside, Seam, Clearance, Ship, Tier, Research, Capacity, Dependency, Upgrade };
 struct Resources
 {
@@ -91,7 +91,10 @@ inline constexpr TechnologyRule Technologies[] = {
     {L"기지공학 III",2,Technology::EngineeringII}, {L"기지공학 IV",3,Technology::EngineeringIII},
     {L"중형 함체",2,Technology::EngineeringII}, {L"대형 함체",3,Technology::HullMedium},
     {L"초대형 함체",4,Technology::HullLarge}, {L"창고 증설 II",2,Technology::None},
-    {L"창고 증설 III",3,Technology::StorageII}
+    {L"창고 증설 III",3,Technology::StorageII},
+    {L"중형 지원함",2,Technology::HullMedium},{L"항공 운용",3,Technology::HullLarge},
+    {L"일반 미사일",2,Technology::EngineeringII},{L"전략 미사일 함체",3,Technology::HullLarge},
+    {L"복합 항공함체",4,Technology::HullSuperheavy}
 };
 inline constexpr Resources CoreCapacity{6000,1000,100};
 
@@ -219,6 +222,12 @@ public:
     explicit BuildState(bool chargeResources = true) : ChargeResources(chargeResources) {}
     const std::vector<Module>& Modules() const { return Items; }
     int Funds() const { return Stock.Common; }
+    bool Pay(Resources price)
+    {
+        if (!price.Covers({}) || !Stock.Covers(price)) return false;
+        Stock=Stock-price;
+        return true;
+    }
     Resources Available() const { return Stock; }
     bool Charges() const { return ChargeResources; }
     unsigned ResearchMask() const { return Research; }
@@ -234,6 +243,8 @@ public:
         if (tech <= Technology::None || tech >= Technology::Count) return false;
         const auto& rule = Technologies[static_cast<int>(tech)];
         if (CoreTier() < rule.CoreTier || !HasTechnology(rule.Prior)) return false;
+        if ((tech==Technology::Strategic && !HasTechnology(Technology::Missile)) ||
+            (tech==Technology::CombinedAir && !HasTechnology(Technology::Aviation))) return false;
         Research |= 1u << static_cast<int>(tech);
         return true;
     }
@@ -361,6 +372,8 @@ public:
             const auto& rule = Cores[item.Level];
             return {item.Level+1,rule.Price,rule.Seconds,item.Level,rule.Required};
         }
+        if (item.Type==Kind::Research && item.Level<4)
+            return {item.Level+1,{400*item.Level,80*item.Level,0},60*item.Level,item.Level+1,Technology::None};
         if (item.Type == Kind::Storage && item.Level < 3)
         {
             const auto& rule = Warehouses[item.Level];
@@ -503,13 +516,13 @@ public:
                 !std::isfinite(item.Remaining) || item.Remaining < 0 || !item.Paid.Covers({}) || !item.Reserved.Covers({}) ||
                 !Resources{50000,10000,2000}.Covers(item.Paid) || !Resources{50000,10000,2000}.Covers(item.Reserved))
                 return false;
-            const int maxLevel = item.Type == Kind::Core ? 4 : item.Type == Kind::Storage ? 3 : 1;
+            const int maxLevel = (item.Type == Kind::Core || item.Type == Kind::Research) ? 4 : item.Type == Kind::Storage ? 3 : 1;
             if (item.Level < 1 || item.Level > maxLevel ||
                 (item.UpgradeLevel && (item.UpgradeLevel != item.Level + 1 || item.UpgradeLevel > maxLevel || item.Remaining <= 0)) ||
                 (!item.Remaining && !(item.Reserved == Resources{})) ||
                 (i == 0 && item.Remaining > 0 && !item.UpgradeLevel)) return false;
             const double duration = item.UpgradeLevel ?
-                (item.Type == Kind::Core ? Cores[item.Level].Seconds : Warehouses[item.Level].Seconds) : Duration(item.Type);
+                (item.Type == Kind::Core ? Cores[item.Level].Seconds : item.Type==Kind::Research ? 60*item.Level : Warehouses[item.Level].Seconds) : Duration(item.Type);
             if (item.Remaining > duration) return false;
             ids.push_back(item.Id);
         }
