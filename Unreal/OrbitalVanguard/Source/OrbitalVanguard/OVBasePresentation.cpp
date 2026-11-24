@@ -112,8 +112,11 @@ FTransform AOVBasePresentation::PlacementTransform(const OVBase::Module& candida
     const auto type=static_cast<int32>(candidate.Type);
     const auto* asset=Assets.IsValidIndex(type)?Assets[type].Get():nullptr;
     const FRotator rotation(0,90*candidate.Turns,0);
+    // 끊어진 가지는 격자에 남고, 재연결 시 코어 쪽 소켓을 기준으로 다시 맞춘다.
+    const auto anchored=state.Network(true);
     for (int32 i=0; i<transforms.Num(); ++i)
     {
+        if (!anchored[i]) continue;
         const auto& other=state.Modules()[i];
         const int32 otherType=static_cast<int32>(other.Type);
         if (!asset || !OVBase::Connected(other,candidate) || !Assets.IsValidIndex(otherType) || !Assets[otherType]) continue;
