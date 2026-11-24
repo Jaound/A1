@@ -1,0 +1,74 @@
+{
+  "CoreHub_5x5x5": {
+    "triangles": [
+      2326602,
+      80000
+    ],
+    "maps": {
+      "color": 8192,
+      "normal": 4096,
+      "metallic": 4096,
+      "roughness": 4096
+    }
+  },
+  "CorridorStraight_1x1x1": {
+    "triangles": [
+      1147628,
+      80000
+    ],
+    "maps": {
+      "color": 8192,
+      "normal": 4096,
+      "metallic": 4096,
+      "roughness": 4096
+    }
+  },
+  "CorridorHub_1x1x1": {
+    "triangles": [
+      3072363,
+      79999
+    ],
+    "maps": {
+      "color": 8192,
+      "normal": 4096,
+      "metallic": 4096,
+      "roughness": 4096
+    }
+  },
+  "StorageVault": {
+    "triangles": [
+      2649475,
+      79999
+    ],
+    "maps": {
+      "color": 8192,
+      "normal": 4096,
+      "metallic": 4096,
+      "roughness": 4096
+    }
+  },
+  "YardSmall": {
+    "triangles": [
+      2414560,
+      80256
+    ],
+    "maps": {
+      "color": 8192,
+      "normal": 4096,
+      "metallic": 4096,
+      "roughness": 4096
+    }
+  },
+  "DockStandard": {
+    "triangles": [
+      2160264,
+      80255
+    ],
+    "maps": {
+      "color": 8192,
+      "normal": 4096,
+      "metallic": 4096,
+      "roughness": 4096
+    }
+  }
+}
