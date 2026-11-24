@@ -319,18 +319,7 @@ bool FindRoomSwap(const UOVShipSystemsComponent& sys,int& first,int& second)
     }
     return false;
 }
-bool MoveRooms(AOVShip& s,int a,int b){
-    auto& sys=*s.Systems;
-    auto* layout=DuplicateObject<UShipLayoutDataAsset>(sys.Layout,&s);
-    if(!layout)return false;
-    auto& x=layout->Slots[a];auto& y=layout->Slots[b];
-    Swap(x.Facility,y.Facility);Swap(x.MaxFacilityHP,y.MaxFacilityHP);Swap(x.RequiredCrew,y.RequiredCrew);
-    TArray<FString> errors;
-    if(!layout->ValidateLayout(errors))return false;
-    sys.Layout=layout;Swap(sys.Slots[a],sys.Slots[b]);sys.Slots[a].SlotId=x.SlotId;sys.Slots[b].SlotId=y.SlotId;
-    Swap(sys.Slots[a].Armor,sys.Slots[b].Armor);
-    sys.RefreshDerivedState();return true;
-}
+
 }
 
 FString AOVBasePresentation::FacilityOffer(FGuid id) const
@@ -469,7 +458,7 @@ void AOVBasePresentation::AdvanceOperations(float seconds)
             const auto* layout=s->Systems->Layout.Get();
             const int a=layout->GetSlotIndex(o.Mount),b=layout->GetSlotIndex(o.Equipment);
             if(a>=0&&b>=0){
-                if(MoveRooms(*s,a,b)){o.RefitYard=0;o.Phase=EOVBayPhase::Berthed;}
+                if(s->Systems->SwapDesignRooms(a,b)){o.RefitYard=0;o.Phase=EOVBayPhase::Berthed;}
                 else o.Wait=TEXT("시설 배치 검증 실패");
                 continue;
             }

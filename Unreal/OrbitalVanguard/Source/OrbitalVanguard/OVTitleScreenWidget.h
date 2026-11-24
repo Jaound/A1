@@ -21,7 +21,7 @@ enum class EOVTitleMenuPanel : uint8
     Title,
     ScenarioSelect,
     Settings,
-    Tutorial, Practice
+    Tutorial, Practice, Sortie
 };
 
 UCLASS()
@@ -35,6 +35,8 @@ public:
 
     UPROPERTY()
     FName ScenarioId;
+    FName SortieAction;
+    int32 Choice=0;
 
     UPROPERTY()
     TObjectPtr<UTextBlock> TitleText;
@@ -98,6 +100,8 @@ public:
     UFUNCTION(BlueprintCallable) void SelectPractice(int32 Index);
     UFUNCTION(BlueprintCallable) void LaunchPractice();
     void BackFromCurrentPanel();
+    UFUNCTION(BlueprintCallable) void SortieClick(FName Action,int32 Index=0);
+    void RefreshSortie();
     UFUNCTION(BlueprintPure, Category = "UI|TitleScreen")
     EOVTitleMenuPanel GetCurrentPanel() const { return CurrentPanel; }
 
@@ -108,6 +112,9 @@ private:
     UPROPERTY() TObjectPtr<UBorder> PracticePanel;
     UPROPERTY() TObjectPtr<UTextBlock> PracticeBrief;
     UPROPERTY() TArray<TObjectPtr<UOVScenarioPickButton>> PracticeRows;
+    UPROPERTY() TObjectPtr<UBorder> SortiePanel;
+    UPROPERTY() TObjectPtr<class UOVShipPreview> SortieMirror;
+    void BuildSortie(class UOverlay* Root);
     int32 ChosenPractice=0;
     void BuildPractice(class UOverlay* Root);
     void BuildProgrammaticTree();

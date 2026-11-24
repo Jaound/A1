@@ -162,7 +162,9 @@ void AOVHUD::DrawDebrief()
   LineY+=24;
  }
  Button(TEXT("ResultField"),TEXT("전장 보기"),X+24,Y+Height-48,88);
- Button(TEXT("RestartScene"),TEXT("다시 도전"),X+Width-128,Y+Height-48,104,true);
+ const bool prepared=Play->LastSortie.Mission==Play->ActiveId;
+ if(prepared)Button(TEXT("EditSortie"),TEXT("편성 수정"),X+Width-338,Y+Height-48,92);
+ Button(TEXT("RestartScene"),prepared?TEXT("같은 편성 재시작"):TEXT("다시 도전"),X+Width-128,Y+Height-48,104,true);
  Button(TEXT("PlaySceneExit"),TEXT("임무 목록"),X+Width-236,Y+Height-48,94);
 }
 

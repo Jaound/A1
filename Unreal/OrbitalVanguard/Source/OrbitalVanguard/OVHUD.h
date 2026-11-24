@@ -51,6 +51,7 @@ public:
  UFUNCTION(BlueprintPure, Category="UI") UOVTitleScreenWidget* GetTitleScreen() const { return TitleScreenWidget; }
  UFUNCTION(BlueprintPure, Category="UI") bool IsTitleScreenOpen() const { return bTitleScreenOpen; }
  UFUNCTION(BlueprintCallable, Category="UI") void OpenTitleScreen();
+ UFUNCTION(BlueprintCallable) bool BeginFleetPreparation(FName Id,bool Edit=false);
  UFUNCTION(BlueprintCallable, Category="UI") void OpenTutorialGuide();
  UFUNCTION(BlueprintCallable, Category="UI") void CloseTitleScreen();
  UFUNCTION(BlueprintCallable, Category="UI") void SetUserUIScaleMultiplier(float NewScale, bool bPersist = true);

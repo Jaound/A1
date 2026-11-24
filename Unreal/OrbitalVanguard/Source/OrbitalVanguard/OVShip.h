@@ -96,7 +96,7 @@ public:
     FVector GetLocalShieldRadii() const;
     void SetCalibrationHull(const FVector* LocalHalfExtent);
     /** Optional imported presentation mesh; never changes combat or selection bounds. */
-    FName HullDefinitionId;
+    UPROPERTY(VisibleAnywhere, BlueprintReadOnly) FName HullDefinitionId;
     FGuid BaseVesselId;
     TWeakObjectPtr<class AOVBasePresentation> TrialStation;
     bool bUnderBaseControl=false;

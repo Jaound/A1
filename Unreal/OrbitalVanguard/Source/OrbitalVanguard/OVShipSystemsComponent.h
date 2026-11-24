@@ -78,6 +78,7 @@ public:
     UOVShipSystemsComponent();
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Systems") TObjectPtr<UShipLayoutDataAsset> Layout;
     UPROPERTY(Config, EditAnywhere, BlueprintReadWrite, Category="Systems") FOVDamageTuning Tuning;
+    bool SwapDesignRooms(int32 A,int32 B);
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Systems") TArray<FOVFacilityState> Slots;
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Systems") TArray<FOVArmorSectionState> ArmorSections;
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Systems") TArray<FOVWeaponMountState> WeaponMountStates;

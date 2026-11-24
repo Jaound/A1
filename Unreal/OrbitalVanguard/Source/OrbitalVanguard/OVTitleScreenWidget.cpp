@@ -1,6 +1,15 @@
 #include "OVTitleScreenWidget.h"
 #include "Components/ScrollBox.h"
 #include "OVTypography.h"
+#include "OVShipPreview.h"
+#include "OVCombatSubsystem.h"
+#include "OVShipSystemsComponent.h"
+#include "Engine/TextureRenderTarget2D.h"
+#include "OVShip.h"
+#include "Components/UniformGridPanel.h"
+#include "Components/CanvasPanel.h"
+#include "Components/CanvasPanelSlot.h"
+#include "OVSortiePlot.h"
 
 #include "OVAudioSubsystem.h"
 #include "OVCalibration.h"
@@ -200,6 +209,7 @@ void UOVScenarioPickButton::HandleClicked()
 {
     if (OwnerWidget)
     {
+        if(!SortieAction.IsNone()){OwnerWidget->SortieClick(SortieAction,Choice);return;}
         if(OwnerWidget->GetCurrentPanel()==EOVTitleMenuPanel::Practice)
             OwnerWidget->SelectPractice(ScenarioId.GetNumber()-1);
         else OwnerWidget->SelectScenario(ScenarioId);
@@ -599,7 +609,7 @@ void UOVTitleScreenWidget::BuildProgrammaticTree()
 
     // LAYER 5: 5-STEP BEGINNER TUTORIAL / GAME GUIDE MODAL
     BuildTutorialModal(RootOverlay);
-    BuildPractice(RootOverlay);
+    BuildPractice(RootOverlay);BuildSortie(RootOverlay);
 
     RefreshScenarioBriefing();
     RefreshModeLabel();
@@ -965,6 +975,7 @@ void UOVTitleScreenWidget::ActivateFieldPanel(EOVTitleMenuPanel Panel)
 
 void UOVTitleScreenWidget::DeactivateTitleScreen()
 {
+    if(SortieMirror)SortieMirror->Release();
     bBackdropActive = false;
     bOpenedFromInGame = false;
     SetVisibility(ESlateVisibility::Collapsed);
@@ -990,6 +1001,8 @@ void UOVTitleScreenWidget::ReleaseBackdrop()
 void UOVTitleScreenWidget::ShowPanel(EOVTitleMenuPanel Panel)
 {
     CurrentPanel = Panel;
+    if(SortiePanel)SortiePanel->SetVisibility(Panel==EOVTitleMenuPanel::Sortie?ESlateVisibility::Visible:ESlateVisibility::Collapsed);
+    if(Panel!=EOVTitleMenuPanel::Sortie && SortieMirror)SortieMirror->Release();
     if(PracticePanel)PracticePanel->SetVisibility(Panel==EOVTitleMenuPanel::Practice?ESlateVisibility::Visible:ESlateVisibility::Collapsed);
     if(DifficultyText && GetWorld()) if(auto* Play=GetWorld()->GetSubsystem<UOVPlayScenarioSubsystem>())
         DifficultyText->SetText(FText::FromString(Play->DifficultyLabel()));
@@ -1178,6 +1191,7 @@ void UOVTitleScreenWidget::HandleOpenSettings()
 
 void UOVTitleScreenWidget::BackFromCurrentPanel()
 {
+    if(CurrentPanel==EOVTitleMenuPanel::Sortie){SortieClick("Cancel");return;}
     if (CurrentPanel == EOVTitleMenuPanel::Tutorial) HandleCloseTutorial();
     else HandleBackToTitle();
 }
@@ -1231,6 +1245,9 @@ void UOVTitleScreenWidget::HandleLaunchSelectedScenario()
     AOVController* Controller = Cast<AOVController>(World->GetFirstPlayerController());
     if (!Controller) return;
 
+    if(UOVPlayScenarioSubsystem::IsBudgetMission(SelectedScenarioId)){
+        if(auto* hud=Cast<AOVHUD>(Controller->GetHUD()))hud->BeginFleetPreparation(SelectedScenarioId);return;
+    }
     if (!Controller->StartPlayScenario(SelectedScenarioId))
     {
         if (AOVHUD* HUD = Cast<AOVHUD>(Controller->GetHUD())) HUD->OpenTitleScreen();
@@ -1425,3 +1442,5 @@ void UOVTitleScreenWidget::LaunchPractice()
         OpenPractice();PracticeBrief->SetText(FText::FromString(TEXT("시험 편성을 준비할 수 없습니다. 다시 시작하세요.")));
     }
 }
+
+#include "OVSortieMenu.inl"

@@ -17,6 +17,7 @@ bool UOVPlayScenarioSubsystem::PrepareArenaForces(AOVController& PC)
         if(ArenaWaves[Wave].Troopers.Num()!=12)return false;
     }
     for(const auto Facility:{EOVFacilityType::Core,EOVFacilityType::Bridge,EOVFacilityType::LifeSupport}){
+        if(bPreparingBoardingLesson && Facility!=EOVFacilityType::Core)continue;
         const auto* Room=Target->Systems->Layout->Slots.FindByPredicate([Facility](const auto& D){return D.Facility==Facility;});
         if(!Room)return false;
         int32 Squad=0;

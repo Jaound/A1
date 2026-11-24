@@ -1,0 +1,491 @@
+{
+  "checks": [
+    {
+      "name": "1장 타이틀에서 진입",
+      "passed": true
+    },
+    {
+      "name": "1장 독립 편성",
+      "passed": true
+    },
+    {
+      "name": "1장 재시작",
+      "passed": true
+    },
+    {
+      "name": "1장 목록 복귀",
+      "passed": true
+    },
+    {
+      "name": "2장 타이틀에서 진입",
+      "passed": true
+    },
+    {
+      "name": "2장 독립 편성",
+      "passed": true
+    },
+    {
+      "name": "2장 재시작",
+      "passed": true
+    },
+    {
+      "name": "2장 목록 복귀",
+      "passed": true
+    },
+    {
+      "name": "3장 타이틀에서 진입",
+      "passed": true
+    },
+    {
+      "name": "3장 독립 편성",
+      "passed": true
+    },
+    {
+      "name": "3장 재시작",
+      "passed": true
+    },
+    {
+      "name": "3장 목록 복귀",
+      "passed": true
+    },
+    {
+      "name": "4장 타이틀에서 진입",
+      "passed": true
+    },
+    {
+      "name": "4장 독립 편성",
+      "passed": true
+    },
+    {
+      "name": "4장 재시작",
+      "passed": true
+    },
+    {
+      "name": "4장 목록 복귀",
+      "passed": true
+    },
+    {
+      "name": "5장 타이틀에서 진입",
+      "passed": true
+    },
+    {
+      "name": "5장 독립 편성",
+      "passed": true
+    },
+    {
+      "name": "5장 재시작",
+      "passed": true
+    },
+    {
+      "name": "5장 목록 복귀",
+      "passed": true
+    },
+    {
+      "name": "6장 타이틀에서 진입",
+      "passed": true
+    },
+    {
+      "name": "6장 독립 편성",
+      "passed": true
+    },
+    {
+      "name": "6장 재시작",
+      "passed": true
+    },
+    {
+      "name": "6장 목록 복귀",
+      "passed": true
+    },
+    {
+      "name": "7장 타이틀에서 진입",
+      "passed": true
+    },
+    {
+      "name": "7장 독립 편성",
+      "passed": true
+    },
+    {
+      "name": "7장 재시작",
+      "passed": true
+    },
+    {
+      "name": "7장 목록 복귀",
+      "passed": true
+    },
+    {
+      "name": "8장 타이틀에서 진입",
+      "passed": true
+    },
+    {
+      "name": "8장 독립 편성",
+      "passed": true
+    },
+    {
+      "name": "8장 재시작",
+      "passed": true
+    },
+    {
+      "name": "8장 목록 복귀",
+      "passed": true
+    },
+    {
+      "name": "9장 타이틀에서 진입",
+      "passed": true
+    },
+    {
+      "name": "9장 독립 편성",
+      "passed": true
+    },
+    {
+      "name": "9장 재시작",
+      "passed": true
+    },
+    {
+      "name": "9장 목록 복귀",
+      "passed": true
+    },
+    {
+      "name": "1장 타이틀에서 진입",
+      "passed": true
+    },
+    {
+      "name": "조작 전 다음 차단",
+      "passed": true
+    },
+    {
+      "name": "카메라 이동",
+      "passed": true
+    },
+    {
+      "name": "카메라 회전",
+      "passed": true
+    },
+    {
+      "name": "카메라 줌",
+      "passed": true
+    },
+    {
+      "name": "단일 선택",
+      "passed": true
+    },
+    {
+      "name": "다중 선택",
+      "passed": true
+    },
+    {
+      "name": "이동 명령만으로 완료되지 않음",
+      "passed": true
+    },
+    {
+      "name": "실제 함선 목표 도착 0",
+      "passed": true
+    },
+    {
+      "name": "이동 명령만으로 완료되지 않음",
+      "passed": true
+    },
+    {
+      "name": "실제 함선 목표 도착 4000",
+      "passed": true
+    },
+    {
+      "name": "전술 정지",
+      "passed": true
+    },
+    {
+      "name": "2배속과 장 완료",
+      "passed": true
+    },
+    {
+      "name": "7장 타이틀에서 진입",
+      "passed": true
+    },
+    {
+      "name": "실제 격납고 열림",
+      "passed": true
+    },
+    {
+      "name": "실습 항모 재고",
+      "passed": true
+    },
+    {
+      "name": "실제 출격",
+      "passed": true
+    },
+    {
+      "name": "귀환 명령",
+      "passed": true
+    },
+    {
+      "name": "같은 ID 기체 실제 재격납",
+      "passed": true
+    },
+    {
+      "name": "재고 보존",
+      "passed": true
+    },
+    {
+      "name": "2장 타이틀에서 진입",
+      "passed": true
+    },
+    {
+      "name": "항모 선택",
+      "passed": true
+    },
+    {
+      "name": "선체 상세",
+      "passed": true
+    },
+    {
+      "name": "선내 방 선택",
+      "passed": true
+    },
+    {
+      "name": "탑승 영웅 명단",
+      "passed": true
+    },
+    {
+      "name": "기체 현황",
+      "passed": true
+    },
+    {
+      "name": "항모 알림 확인",
+      "passed": true
+    },
+    {
+      "name": "3장 타이틀에서 진입",
+      "passed": true
+    },
+    {
+      "name": "이동 접수",
+      "passed": true
+    },
+    {
+      "name": "정지",
+      "passed": true
+    },
+    {
+      "name": "수동 표적 지정",
+      "passed": true
+    },
+    {
+      "name": "발사 요청",
+      "passed": true
+    },
+    {
+      "name": "수동 실제 발사",
+      "passed": true
+    },
+    {
+      "name": "자동 사격 발사",
+      "passed": true
+    },
+    {
+      "name": "사격 중지",
+      "passed": true
+    },
+    {
+      "name": "4장 타이틀에서 진입",
+      "passed": true
+    },
+    {
+      "name": "적함 탐지",
+      "passed": true
+    },
+    {
+      "name": "무장 발사 가능",
+      "passed": true
+    },
+    {
+      "name": "실제 쉴드 피격",
+      "passed": true
+    },
+    {
+      "name": "장갑 이후 선체 피격",
+      "passed": true
+    },
+    {
+      "name": "요격으로 격추",
+      "passed": true
+    },
+    {
+      "name": "5장 타이틀에서 진입",
+      "passed": true
+    },
+    {
+      "name": "방공함 선택",
+      "passed": true
+    },
+    {
+      "name": "호위 표식 도착",
+      "passed": true
+    },
+    {
+      "name": "6장 타이틀에서 진입",
+      "passed": true
+    },
+    {
+      "name": "시설 확인 <OVFacilityType.CORE: 1>",
+      "passed": true
+    },
+    {
+      "name": "시설 확인 <OVFacilityType.BRIDGE: 2>",
+      "passed": true
+    },
+    {
+      "name": "시설 확인 <OVFacilityType.ENGINE: 4>",
+      "passed": true
+    },
+    {
+      "name": "시설 확인 <OVFacilityType.WEAPON_CONTROL: 5>",
+      "passed": true
+    },
+    {
+      "name": "호환 무장 실제 장착",
+      "passed": true
+    },
+    {
+      "name": "상위 티어 장착 거부",
+      "passed": true
+    },
+    {
+      "name": "8장 타이틀에서 진입",
+      "passed": true
+    },
+    {
+      "name": "영웅 명단",
+      "passed": true
+    },
+    {
+      "name": "지원 보직 지시",
+      "passed": true
+    },
+    {
+      "name": "영웅 보직 활성",
+      "passed": true
+    },
+    {
+      "name": "수호로 변경",
+      "passed": true
+    },
+    {
+      "name": "지원 효과 해제",
+      "passed": true
+    },
+    {
+      "name": "지원 복귀",
+      "passed": true
+    },
+    {
+      "name": "동일 영웅 복귀",
+      "passed": true
+    },
+    {
+      "name": "9장 타이틀에서 진입",
+      "passed": true
+    },
+    {
+      "name": "실제 강습 편성 및 적함 지정",
+      "passed": true
+    },
+    {
+      "name": "강습 목표 접수",
+      "passed": true
+    },
+    {
+      "name": "탑승 후 포드 발사",
+      "passed": true
+    },
+    {
+      "name": "적함에 실제 진입",
+      "passed": true
+    },
+    {
+      "name": "실제 시설 점령",
+      "passed": true
+    },
+    {
+      "name": "생존자 철수 명령",
+      "passed": true
+    },
+    {
+      "name": "원 수송수단으로 회수",
+      "passed": true
+    }
+  ],
+  "강습 시설 상태": [
+    [
+      92,
+      "<OVInteriorState.DEFENDING: 4>",
+      "목표 방 도착 · 제어점 확보 확인",
+      "D3_X1_H1"
+    ],
+    [
+      93,
+      "<OVInteriorState.DEFENDING: 4>",
+      "목표 방 도착 · 제어점 확보 확인",
+      "D3_X1_H1"
+    ],
+    [
+      94,
+      "<OVInteriorState.DEFENDING: 4>",
+      "목표 방 도착 · 제어점 확보 확인",
+      "D3_X1_H1"
+    ],
+    [
+      95,
+      "<OVInteriorState.DEFENDING: 4>",
+      "목표 방 도착 · 제어점 확보 확인",
+      "D3_X1_H1"
+    ],
+    [
+      96,
+      "<OVInteriorState.DEFENDING: 4>",
+      "목표 방 도착 · 제어점 확보 확인",
+      "D3_X1_H1"
+    ],
+    [
+      97,
+      "<OVInteriorState.DEFENDING: 4>",
+      "목표 방 도착 · 제어점 확보 확인",
+      "D3_X1_H1"
+    ],
+    [
+      98,
+      "<OVInteriorState.DEFENDING: 4>",
+      "목표 방 도착 · 제어점 확보 확인",
+      "D3_X1_H1"
+    ],
+    [
+      99,
+      "<OVInteriorState.DEFENDING: 4>",
+      "목표 방 도착 · 제어점 확보 확인",
+      "D3_X1_H1"
+    ],
+    [
+      120,
+      "<OVInteriorState.DEFENDING: 4>",
+      "목표 방 도착 · 제어점 확보 확인",
+      "D3_X1_H1"
+    ],
+    [
+      121,
+      "<OVInteriorState.DEFENDING: 4>",
+      "목표 방 도착 · 제어점 확보 확인",
+      "D3_X1_H1"
+    ],
+    [
+      122,
+      "<OVInteriorState.DEFENDING: 4>",
+      "목표 방 도착 · 제어점 확보 확인",
+      "D3_X1_H1"
+    ],
+    [
+      123,
+      "<OVInteriorState.DEFENDING: 4>",
+      "목표 방 도착 · 제어점 확보 확인",
+      "D3_X1_H1"
+    ]
+  ],
+  "passed": true
+}

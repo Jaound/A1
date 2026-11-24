@@ -1,0 +1,1057 @@
+{
+  "checks": [
+    {
+      "name": "50코스트 · 1번 환경 일반 출격 창",
+      "passed": true
+    },
+    {
+      "name": "50코스트 · 1번 환경 전투 격리",
+      "passed": true
+    },
+    {
+      "name": "50코스트 · 1번 환경 예산 추천",
+      "passed": true
+    },
+    {
+      "name": "예산 초과 거부",
+      "passed": true
+    },
+    {
+      "name": "빈 함대 출격 거부",
+      "passed": true
+    },
+    {
+      "name": "혼성 편성 battleship",
+      "passed": true
+    },
+    {
+      "name": "혼성 편성 vector",
+      "passed": true
+    },
+    {
+      "name": "혼성 편성 corvette",
+      "passed": true
+    },
+    {
+      "name": "50코스트 · 1번 환경 설계 이동",
+      "passed": true
+    },
+    {
+      "name": "잘못된 교환 거부",
+      "passed": true
+    },
+    {
+      "name": "불법 장착 거부",
+      "passed": true
+    },
+    {
+      "name": "50코스트 · 1번 환경 배치 이동",
+      "passed": true
+    },
+    {
+      "name": "50코스트 · 1번 환경 아군 영역 경계",
+      "passed": true
+    },
+    {
+      "name": "50코스트 · 1번 환경 함체 겹침",
+      "passed": true
+    },
+    {
+      "name": "50코스트 · 1번 환경 영웅 선택 이동",
+      "passed": true
+    },
+    {
+      "name": "50코스트 · 1번 환경 영웅 선택",
+      "passed": true
+    },
+    {
+      "name": "50코스트 · 1번 환경 영웅 배치 이동",
+      "passed": true
+    },
+    {
+      "name": "50코스트 · 1번 환경 영웅 시작 시설",
+      "passed": true
+    },
+    {
+      "name": "50코스트 · 1번 환경 최종 브리핑",
+      "passed": true
+    },
+    {
+      "name": "최종에서 편성 수정",
+      "passed": true
+    },
+    {
+      "name": "수정 후 다음 단계",
+      "passed": true
+    },
+    {
+      "name": "수정 후 다음 단계",
+      "passed": true
+    },
+    {
+      "name": "수정 후 다음 단계",
+      "passed": true
+    },
+    {
+      "name": "수정 후 다음 단계",
+      "passed": true
+    },
+    {
+      "name": "삭제된 함선의 영웅 재배치 요구",
+      "passed": true
+    },
+    {
+      "name": "남은 함선에 재배치",
+      "passed": true
+    },
+    {
+      "name": "50코스트 · 1번 환경 출격",
+      "passed": true
+    },
+    {
+      "name": "50코스트 · 1번 환경 실제 아군 함종",
+      "passed": true
+    },
+    {
+      "name": "50코스트 · 1번 환경 실제 적 공개 편성",
+      "passed": true
+    },
+    {
+      "name": "50코스트 · 1번 환경 위치와 고도",
+      "passed": true
+    },
+    {
+      "name": "50코스트 · 1번 환경 실제 탑승 영웅",
+      "passed": true
+    },
+    {
+      "name": "50코스트 · 1번 환경 환경 일치",
+      "passed": true
+    },
+    {
+      "name": "50코스트 · 1번 환경 중복 출격 차단",
+      "passed": true
+    },
+    {
+      "name": "같은 편성 재시작",
+      "passed": true
+    },
+    {
+      "name": "50코스트 · 1번 환경 환경 정리",
+      "passed": true
+    },
+    {
+      "name": "50코스트 · 2번 환경 일반 출격 창",
+      "passed": true
+    },
+    {
+      "name": "50코스트 · 2번 환경 전투 격리",
+      "passed": true
+    },
+    {
+      "name": "50코스트 · 2번 환경 예산 추천",
+      "passed": true
+    },
+    {
+      "name": "50코스트 · 2번 환경 설계 이동",
+      "passed": true
+    },
+    {
+      "name": "50코스트 · 2번 환경 배치 이동",
+      "passed": true
+    },
+    {
+      "name": "50코스트 · 2번 환경 아군 영역 경계",
+      "passed": true
+    },
+    {
+      "name": "50코스트 · 2번 환경 함체 겹침",
+      "passed": true
+    },
+    {
+      "name": "50코스트 · 2번 환경 영웅 선택 이동",
+      "passed": true
+    },
+    {
+      "name": "50코스트 · 2번 환경 영웅 선택",
+      "passed": true
+    },
+    {
+      "name": "50코스트 · 2번 환경 영웅 배치 이동",
+      "passed": true
+    },
+    {
+      "name": "50코스트 · 2번 환경 영웅 시작 시설",
+      "passed": true
+    },
+    {
+      "name": "50코스트 · 2번 환경 최종 브리핑",
+      "passed": true
+    },
+    {
+      "name": "50코스트 · 2번 환경 출격",
+      "passed": true
+    },
+    {
+      "name": "50코스트 · 2번 환경 실제 아군 함종",
+      "passed": true
+    },
+    {
+      "name": "50코스트 · 2번 환경 실제 적 공개 편성",
+      "passed": true
+    },
+    {
+      "name": "50코스트 · 2번 환경 위치와 고도",
+      "passed": true
+    },
+    {
+      "name": "50코스트 · 2번 환경 실제 탑승 영웅",
+      "passed": true
+    },
+    {
+      "name": "50코스트 · 2번 환경 환경 일치",
+      "passed": true
+    },
+    {
+      "name": "50코스트 · 2번 환경 중복 출격 차단",
+      "passed": true
+    },
+    {
+      "name": "50코스트 · 2번 환경 환경 정리",
+      "passed": true
+    },
+    {
+      "name": "50코스트 · 3번 환경 일반 출격 창",
+      "passed": true
+    },
+    {
+      "name": "50코스트 · 3번 환경 전투 격리",
+      "passed": true
+    },
+    {
+      "name": "50코스트 · 3번 환경 예산 추천",
+      "passed": true
+    },
+    {
+      "name": "50코스트 · 3번 환경 설계 이동",
+      "passed": true
+    },
+    {
+      "name": "50코스트 · 3번 환경 배치 이동",
+      "passed": true
+    },
+    {
+      "name": "50코스트 · 3번 환경 아군 영역 경계",
+      "passed": true
+    },
+    {
+      "name": "50코스트 · 3번 환경 함체 겹침",
+      "passed": true
+    },
+    {
+      "name": "50코스트 · 3번 환경 실체 겹침 차단",
+      "passed": true
+    },
+    {
+      "name": "50코스트 · 3번 환경 영웅 선택 이동",
+      "passed": true
+    },
+    {
+      "name": "50코스트 · 3번 환경 영웅 선택",
+      "passed": true
+    },
+    {
+      "name": "50코스트 · 3번 환경 영웅 배치 이동",
+      "passed": true
+    },
+    {
+      "name": "50코스트 · 3번 환경 영웅 시작 시설",
+      "passed": true
+    },
+    {
+      "name": "50코스트 · 3번 환경 최종 브리핑",
+      "passed": true
+    },
+    {
+      "name": "50코스트 · 3번 환경 출격",
+      "passed": true
+    },
+    {
+      "name": "50코스트 · 3번 환경 실제 아군 함종",
+      "passed": true
+    },
+    {
+      "name": "50코스트 · 3번 환경 실제 적 공개 편성",
+      "passed": true
+    },
+    {
+      "name": "50코스트 · 3번 환경 위치와 고도",
+      "passed": true
+    },
+    {
+      "name": "50코스트 · 3번 환경 실제 탑승 영웅",
+      "passed": true
+    },
+    {
+      "name": "50코스트 · 3번 환경 환경 일치",
+      "passed": true
+    },
+    {
+      "name": "50코스트 · 3번 환경 중복 출격 차단",
+      "passed": true
+    },
+    {
+      "name": "50코스트 · 3번 환경 소행성 파괴",
+      "passed": true
+    },
+    {
+      "name": "50코스트 · 3번 환경 환경 정리",
+      "passed": true
+    },
+    {
+      "name": "100코스트 · 1번 환경 일반 출격 창",
+      "passed": true
+    },
+    {
+      "name": "100코스트 · 1번 환경 전투 격리",
+      "passed": true
+    },
+    {
+      "name": "100코스트 · 1번 환경 예산 추천",
+      "passed": true
+    },
+    {
+      "name": "100코스트 · 1번 환경 설계 이동",
+      "passed": true
+    },
+    {
+      "name": "100코스트 · 1번 환경 배치 이동",
+      "passed": true
+    },
+    {
+      "name": "100코스트 · 1번 환경 아군 영역 경계",
+      "passed": true
+    },
+    {
+      "name": "100코스트 · 1번 환경 함체 겹침",
+      "passed": true
+    },
+    {
+      "name": "100코스트 · 1번 환경 영웅 선택 이동",
+      "passed": true
+    },
+    {
+      "name": "100코스트 · 1번 환경 영웅 선택",
+      "passed": true
+    },
+    {
+      "name": "100코스트 · 1번 환경 영웅 배치 이동",
+      "passed": true
+    },
+    {
+      "name": "100코스트 · 1번 환경 영웅 시작 시설",
+      "passed": true
+    },
+    {
+      "name": "100코스트 · 1번 환경 최종 브리핑",
+      "passed": true
+    },
+    {
+      "name": "100코스트 · 1번 환경 출격",
+      "passed": true
+    },
+    {
+      "name": "100코스트 · 1번 환경 실제 아군 함종",
+      "passed": true
+    },
+    {
+      "name": "100코스트 · 1번 환경 실제 적 공개 편성",
+      "passed": true
+    },
+    {
+      "name": "100코스트 · 1번 환경 위치와 고도",
+      "passed": true
+    },
+    {
+      "name": "100코스트 · 1번 환경 실제 탑승 영웅",
+      "passed": true
+    },
+    {
+      "name": "100코스트 · 1번 환경 환경 일치",
+      "passed": true
+    },
+    {
+      "name": "100코스트 · 1번 환경 중복 출격 차단",
+      "passed": true
+    },
+    {
+      "name": "100코스트 · 1번 환경 환경 정리",
+      "passed": true
+    },
+    {
+      "name": "100코스트 · 2번 환경 일반 출격 창",
+      "passed": true
+    },
+    {
+      "name": "100코스트 · 2번 환경 전투 격리",
+      "passed": true
+    },
+    {
+      "name": "100코스트 · 2번 환경 예산 추천",
+      "passed": true
+    },
+    {
+      "name": "100코스트 · 2번 환경 설계 이동",
+      "passed": true
+    },
+    {
+      "name": "100코스트 · 2번 환경 배치 이동",
+      "passed": true
+    },
+    {
+      "name": "100코스트 · 2번 환경 아군 영역 경계",
+      "passed": true
+    },
+    {
+      "name": "100코스트 · 2번 환경 함체 겹침",
+      "passed": true
+    },
+    {
+      "name": "100코스트 · 2번 환경 영웅 선택 이동",
+      "passed": true
+    },
+    {
+      "name": "100코스트 · 2번 환경 영웅 선택",
+      "passed": true
+    },
+    {
+      "name": "100코스트 · 2번 환경 영웅 배치 이동",
+      "passed": true
+    },
+    {
+      "name": "100코스트 · 2번 환경 영웅 시작 시설",
+      "passed": true
+    },
+    {
+      "name": "100코스트 · 2번 환경 최종 브리핑",
+      "passed": true
+    },
+    {
+      "name": "100코스트 · 2번 환경 출격",
+      "passed": true
+    },
+    {
+      "name": "100코스트 · 2번 환경 실제 아군 함종",
+      "passed": true
+    },
+    {
+      "name": "100코스트 · 2번 환경 실제 적 공개 편성",
+      "passed": true
+    },
+    {
+      "name": "100코스트 · 2번 환경 위치와 고도",
+      "passed": true
+    },
+    {
+      "name": "100코스트 · 2번 환경 실제 탑승 영웅",
+      "passed": true
+    },
+    {
+      "name": "100코스트 · 2번 환경 환경 일치",
+      "passed": true
+    },
+    {
+      "name": "100코스트 · 2번 환경 중복 출격 차단",
+      "passed": true
+    },
+    {
+      "name": "100코스트 · 2번 환경 환경 정리",
+      "passed": true
+    },
+    {
+      "name": "100코스트 · 3번 환경 일반 출격 창",
+      "passed": true
+    },
+    {
+      "name": "100코스트 · 3번 환경 전투 격리",
+      "passed": true
+    },
+    {
+      "name": "100코스트 · 3번 환경 예산 추천",
+      "passed": true
+    },
+    {
+      "name": "100코스트 · 3번 환경 설계 이동",
+      "passed": true
+    },
+    {
+      "name": "100코스트 · 3번 환경 배치 이동",
+      "passed": true
+    },
+    {
+      "name": "100코스트 · 3번 환경 아군 영역 경계",
+      "passed": true
+    },
+    {
+      "name": "100코스트 · 3번 환경 함체 겹침",
+      "passed": true
+    },
+    {
+      "name": "100코스트 · 3번 환경 실체 겹침 차단",
+      "passed": true
+    },
+    {
+      "name": "100코스트 · 3번 환경 영웅 선택 이동",
+      "passed": true
+    },
+    {
+      "name": "100코스트 · 3번 환경 영웅 선택",
+      "passed": true
+    },
+    {
+      "name": "100코스트 · 3번 환경 영웅 배치 이동",
+      "passed": true
+    },
+    {
+      "name": "100코스트 · 3번 환경 영웅 시작 시설",
+      "passed": true
+    },
+    {
+      "name": "100코스트 · 3번 환경 최종 브리핑",
+      "passed": true
+    },
+    {
+      "name": "100코스트 · 3번 환경 출격",
+      "passed": true
+    },
+    {
+      "name": "100코스트 · 3번 환경 실제 아군 함종",
+      "passed": true
+    },
+    {
+      "name": "100코스트 · 3번 환경 실제 적 공개 편성",
+      "passed": true
+    },
+    {
+      "name": "100코스트 · 3번 환경 위치와 고도",
+      "passed": true
+    },
+    {
+      "name": "100코스트 · 3번 환경 실제 탑승 영웅",
+      "passed": true
+    },
+    {
+      "name": "100코스트 · 3번 환경 환경 일치",
+      "passed": true
+    },
+    {
+      "name": "100코스트 · 3번 환경 중복 출격 차단",
+      "passed": true
+    },
+    {
+      "name": "100코스트 · 3번 환경 소행성 파괴",
+      "passed": true
+    },
+    {
+      "name": "100코스트 · 3번 환경 환경 정리",
+      "passed": true
+    },
+    {
+      "name": "200코스트 · 1번 환경 일반 출격 창",
+      "passed": true
+    },
+    {
+      "name": "200코스트 · 1번 환경 전투 격리",
+      "passed": true
+    },
+    {
+      "name": "200코스트 · 1번 환경 예산 추천",
+      "passed": true
+    },
+    {
+      "name": "200코스트 · 1번 환경 설계 이동",
+      "passed": true
+    },
+    {
+      "name": "200코스트 · 1번 환경 배치 이동",
+      "passed": true
+    },
+    {
+      "name": "200코스트 · 1번 환경 아군 영역 경계",
+      "passed": true
+    },
+    {
+      "name": "200코스트 · 1번 환경 함체 겹침",
+      "passed": true
+    },
+    {
+      "name": "200코스트 · 1번 환경 영웅 선택 이동",
+      "passed": true
+    },
+    {
+      "name": "200코스트 · 1번 환경 영웅 선택",
+      "passed": true
+    },
+    {
+      "name": "200코스트 · 1번 환경 영웅 배치 이동",
+      "passed": true
+    },
+    {
+      "name": "200코스트 · 1번 환경 영웅 시작 시설",
+      "passed": true
+    },
+    {
+      "name": "200코스트 · 1번 환경 최종 브리핑",
+      "passed": true
+    },
+    {
+      "name": "200코스트 · 1번 환경 출격",
+      "passed": true
+    },
+    {
+      "name": "200코스트 · 1번 환경 실제 아군 함종",
+      "passed": true
+    },
+    {
+      "name": "200코스트 · 1번 환경 실제 적 공개 편성",
+      "passed": true
+    },
+    {
+      "name": "200코스트 · 1번 환경 위치와 고도",
+      "passed": true
+    },
+    {
+      "name": "200코스트 · 1번 환경 실제 탑승 영웅",
+      "passed": true
+    },
+    {
+      "name": "200코스트 · 1번 환경 환경 일치",
+      "passed": true
+    },
+    {
+      "name": "200코스트 · 1번 환경 중복 출격 차단",
+      "passed": true
+    },
+    {
+      "name": "200코스트 · 1번 환경 환경 정리",
+      "passed": true
+    },
+    {
+      "name": "200코스트 · 2번 환경 일반 출격 창",
+      "passed": true
+    },
+    {
+      "name": "200코스트 · 2번 환경 전투 격리",
+      "passed": true
+    },
+    {
+      "name": "200코스트 · 2번 환경 예산 추천",
+      "passed": true
+    },
+    {
+      "name": "200코스트 · 2번 환경 설계 이동",
+      "passed": true
+    },
+    {
+      "name": "200코스트 · 2번 환경 배치 이동",
+      "passed": true
+    },
+    {
+      "name": "200코스트 · 2번 환경 아군 영역 경계",
+      "passed": true
+    },
+    {
+      "name": "200코스트 · 2번 환경 함체 겹침",
+      "passed": true
+    },
+    {
+      "name": "200코스트 · 2번 환경 영웅 선택 이동",
+      "passed": true
+    },
+    {
+      "name": "200코스트 · 2번 환경 영웅 선택",
+      "passed": true
+    },
+    {
+      "name": "200코스트 · 2번 환경 영웅 배치 이동",
+      "passed": true
+    },
+    {
+      "name": "200코스트 · 2번 환경 영웅 시작 시설",
+      "passed": true
+    },
+    {
+      "name": "200코스트 · 2번 환경 최종 브리핑",
+      "passed": true
+    },
+    {
+      "name": "200코스트 · 2번 환경 출격",
+      "passed": true
+    },
+    {
+      "name": "200코스트 · 2번 환경 실제 아군 함종",
+      "passed": true
+    },
+    {
+      "name": "200코스트 · 2번 환경 실제 적 공개 편성",
+      "passed": true
+    },
+    {
+      "name": "200코스트 · 2번 환경 위치와 고도",
+      "passed": true
+    },
+    {
+      "name": "200코스트 · 2번 환경 실제 탑승 영웅",
+      "passed": true
+    },
+    {
+      "name": "200코스트 · 2번 환경 환경 일치",
+      "passed": true
+    },
+    {
+      "name": "200코스트 · 2번 환경 중복 출격 차단",
+      "passed": true
+    },
+    {
+      "name": "200코스트 · 2번 환경 환경 정리",
+      "passed": true
+    },
+    {
+      "name": "200코스트 · 3번 환경 일반 출격 창",
+      "passed": true
+    },
+    {
+      "name": "200코스트 · 3번 환경 전투 격리",
+      "passed": true
+    },
+    {
+      "name": "200코스트 · 3번 환경 예산 추천",
+      "passed": true
+    },
+    {
+      "name": "200코스트 · 3번 환경 설계 이동",
+      "passed": true
+    },
+    {
+      "name": "200코스트 · 3번 환경 배치 이동",
+      "passed": true
+    },
+    {
+      "name": "200코스트 · 3번 환경 아군 영역 경계",
+      "passed": true
+    },
+    {
+      "name": "200코스트 · 3번 환경 함체 겹침",
+      "passed": true
+    },
+    {
+      "name": "200코스트 · 3번 환경 실체 겹침 차단",
+      "passed": true
+    },
+    {
+      "name": "200코스트 · 3번 환경 영웅 선택 이동",
+      "passed": true
+    },
+    {
+      "name": "200코스트 · 3번 환경 영웅 선택",
+      "passed": true
+    },
+    {
+      "name": "200코스트 · 3번 환경 영웅 배치 이동",
+      "passed": true
+    },
+    {
+      "name": "200코스트 · 3번 환경 영웅 시작 시설",
+      "passed": true
+    },
+    {
+      "name": "200코스트 · 3번 환경 최종 브리핑",
+      "passed": true
+    },
+    {
+      "name": "200코스트 · 3번 환경 출격",
+      "passed": true
+    },
+    {
+      "name": "200코스트 · 3번 환경 실제 아군 함종",
+      "passed": true
+    },
+    {
+      "name": "200코스트 · 3번 환경 실제 적 공개 편성",
+      "passed": true
+    },
+    {
+      "name": "200코스트 · 3번 환경 위치와 고도",
+      "passed": true
+    },
+    {
+      "name": "200코스트 · 3번 환경 실제 탑승 영웅",
+      "passed": true
+    },
+    {
+      "name": "200코스트 · 3번 환경 환경 일치",
+      "passed": true
+    },
+    {
+      "name": "200코스트 · 3번 환경 중복 출격 차단",
+      "passed": true
+    },
+    {
+      "name": "200코스트 · 3번 환경 소행성 파괴",
+      "passed": true
+    },
+    {
+      "name": "200코스트 · 3번 환경 환경 정리",
+      "passed": true
+    },
+    {
+      "name": "300코스트 · 1번 환경 일반 출격 창",
+      "passed": true
+    },
+    {
+      "name": "300코스트 · 1번 환경 전투 격리",
+      "passed": true
+    },
+    {
+      "name": "300코스트 · 1번 환경 예산 추천",
+      "passed": true
+    },
+    {
+      "name": "300코스트 · 1번 환경 설계 이동",
+      "passed": true
+    },
+    {
+      "name": "300코스트 · 1번 환경 배치 이동",
+      "passed": true
+    },
+    {
+      "name": "300코스트 · 1번 환경 아군 영역 경계",
+      "passed": true
+    },
+    {
+      "name": "300코스트 · 1번 환경 함체 겹침",
+      "passed": true
+    },
+    {
+      "name": "300코스트 · 1번 환경 영웅 선택 이동",
+      "passed": true
+    },
+    {
+      "name": "300코스트 · 1번 환경 영웅 선택",
+      "passed": true
+    },
+    {
+      "name": "300코스트 · 1번 환경 영웅 배치 이동",
+      "passed": true
+    },
+    {
+      "name": "300코스트 · 1번 환경 영웅 시작 시설",
+      "passed": true
+    },
+    {
+      "name": "300코스트 · 1번 환경 최종 브리핑",
+      "passed": true
+    },
+    {
+      "name": "300코스트 · 1번 환경 출격",
+      "passed": true
+    },
+    {
+      "name": "300코스트 · 1번 환경 실제 아군 함종",
+      "passed": true
+    },
+    {
+      "name": "300코스트 · 1번 환경 실제 적 공개 편성",
+      "passed": true
+    },
+    {
+      "name": "300코스트 · 1번 환경 위치와 고도",
+      "passed": true
+    },
+    {
+      "name": "300코스트 · 1번 환경 실제 탑승 영웅",
+      "passed": true
+    },
+    {
+      "name": "300코스트 · 1번 환경 환경 일치",
+      "passed": true
+    },
+    {
+      "name": "300코스트 · 1번 환경 중복 출격 차단",
+      "passed": true
+    },
+    {
+      "name": "300코스트 · 1번 환경 환경 정리",
+      "passed": true
+    },
+    {
+      "name": "300코스트 · 2번 환경 일반 출격 창",
+      "passed": true
+    },
+    {
+      "name": "300코스트 · 2번 환경 전투 격리",
+      "passed": true
+    },
+    {
+      "name": "300코스트 · 2번 환경 예산 추천",
+      "passed": true
+    },
+    {
+      "name": "300코스트 · 2번 환경 설계 이동",
+      "passed": true
+    },
+    {
+      "name": "300코스트 · 2번 환경 배치 이동",
+      "passed": true
+    },
+    {
+      "name": "300코스트 · 2번 환경 아군 영역 경계",
+      "passed": true
+    },
+    {
+      "name": "300코스트 · 2번 환경 함체 겹침",
+      "passed": true
+    },
+    {
+      "name": "300코스트 · 2번 환경 영웅 선택 이동",
+      "passed": true
+    },
+    {
+      "name": "300코스트 · 2번 환경 영웅 선택",
+      "passed": true
+    },
+    {
+      "name": "300코스트 · 2번 환경 영웅 배치 이동",
+      "passed": true
+    },
+    {
+      "name": "300코스트 · 2번 환경 영웅 시작 시설",
+      "passed": true
+    },
+    {
+      "name": "300코스트 · 2번 환경 최종 브리핑",
+      "passed": true
+    },
+    {
+      "name": "300코스트 · 2번 환경 출격",
+      "passed": true
+    },
+    {
+      "name": "300코스트 · 2번 환경 실제 아군 함종",
+      "passed": true
+    },
+    {
+      "name": "300코스트 · 2번 환경 실제 적 공개 편성",
+      "passed": true
+    },
+    {
+      "name": "300코스트 · 2번 환경 위치와 고도",
+      "passed": true
+    },
+    {
+      "name": "300코스트 · 2번 환경 실제 탑승 영웅",
+      "passed": true
+    },
+    {
+      "name": "300코스트 · 2번 환경 환경 일치",
+      "passed": true
+    },
+    {
+      "name": "300코스트 · 2번 환경 중복 출격 차단",
+      "passed": true
+    },
+    {
+      "name": "300코스트 · 2번 환경 환경 정리",
+      "passed": true
+    },
+    {
+      "name": "300코스트 · 3번 환경 일반 출격 창",
+      "passed": true
+    },
+    {
+      "name": "300코스트 · 3번 환경 전투 격리",
+      "passed": true
+    },
+    {
+      "name": "300코스트 · 3번 환경 예산 추천",
+      "passed": true
+    },
+    {
+      "name": "300코스트 · 3번 환경 설계 이동",
+      "passed": true
+    },
+    {
+      "name": "300코스트 · 3번 환경 배치 이동",
+      "passed": true
+    },
+    {
+      "name": "300코스트 · 3번 환경 아군 영역 경계",
+      "passed": true
+    },
+    {
+      "name": "300코스트 · 3번 환경 함체 겹침",
+      "passed": true
+    },
+    {
+      "name": "300코스트 · 3번 환경 실체 겹침 차단",
+      "passed": true
+    },
+    {
+      "name": "300코스트 · 3번 환경 영웅 선택 이동",
+      "passed": true
+    },
+    {
+      "name": "300코스트 · 3번 환경 영웅 선택",
+      "passed": true
+    },
+    {
+      "name": "300코스트 · 3번 환경 영웅 배치 이동",
+      "passed": true
+    },
+    {
+      "name": "300코스트 · 3번 환경 영웅 시작 시설",
+      "passed": true
+    },
+    {
+      "name": "300코스트 · 3번 환경 최종 브리핑",
+      "passed": true
+    },
+    {
+      "name": "300코스트 · 3번 환경 출격",
+      "passed": true
+    },
+    {
+      "name": "300코스트 · 3번 환경 실제 아군 함종",
+      "passed": true
+    },
+    {
+      "name": "300코스트 · 3번 환경 실제 적 공개 편성",
+      "passed": true
+    },
+    {
+      "name": "300코스트 · 3번 환경 위치와 고도",
+      "passed": true
+    },
+    {
+      "name": "300코스트 · 3번 환경 실제 탑승 영웅",
+      "passed": true
+    },
+    {
+      "name": "300코스트 · 3번 환경 환경 일치",
+      "passed": true
+    },
+    {
+      "name": "300코스트 · 3번 환경 중복 출격 차단",
+      "passed": true
+    },
+    {
+      "name": "300코스트 · 3번 환경 소행성 파괴",
+      "passed": true
+    },
+    {
+      "name": "300코스트 · 3번 환경 환경 정리",
+      "passed": true
+    }
+  ],
+  "passed": true
+}

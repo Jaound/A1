@@ -587,3 +587,20 @@ bool UOVShipSystemsComponent::CompleteInteriorOperation(FName SlotId, int32 Acti
     RefreshDerivedState();
     return true;
 }
+
+bool UOVShipSystemsComponent::SwapDesignRooms(int a,int b){
+    auto& sys=*this;
+    if(!Layout || a==b || !Slots.IsValidIndex(a)||!Slots.IsValidIndex(b)||!Layout->Slots.IsValidIndex(a)||!Layout->Slots.IsValidIndex(b))return false;
+    const auto& left=Layout->Slots[a];const auto& right=Layout->Slots[b];
+    auto fixed=[](EOVFacilityType t){return t==EOVFacilityType::Core||t==EOVFacilityType::Engine||t==EOVFacilityType::Bridge||t==EOVFacilityType::Hangar;};
+    if(fixed(left.Facility)||fixed(right.Facility)||left.Facility==right.Facility||!left.AllowedFacilities.Contains(right.Facility)||!right.AllowedFacilities.Contains(left.Facility))return false;
+    auto* layout=DuplicateObject<UShipLayoutDataAsset>(sys.Layout,GetOwner());
+    if(!layout)return false;
+    auto& x=layout->Slots[a];auto& y=layout->Slots[b];
+    Swap(x.Facility,y.Facility);Swap(x.MaxFacilityHP,y.MaxFacilityHP);Swap(x.RequiredCrew,y.RequiredCrew);
+    TArray<FString> errors;
+    if(!layout->ValidateLayout(errors))return false;
+    sys.Layout=layout;Swap(sys.Slots[a],sys.Slots[b]);sys.Slots[a].SlotId=x.SlotId;sys.Slots[b].SlotId=y.SlotId;
+    Swap(sys.Slots[a].Armor,sys.Slots[b].Armor);
+    sys.RefreshDerivedState();return true;
+}

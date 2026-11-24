@@ -958,19 +958,21 @@ bool UOVCombatSubsystem::SweepAttack(FOVAttackState& Attack, FVector End)
         }
     }
     float BestAsteroidFraction = BestFraction;
-    bool bHitAsteroid = false;
-    for (const FVector4& Ast : EnvironmentAsteroids)
+    int32 hitAsteroid=INDEX_NONE;
+    for (int32 i=0;i<EnvironmentAsteroids.Num();++i)
     {
+        const FVector4& Ast=EnvironmentAsteroids[i];
         float AstFrac = 1.f; FVector AstNorm;
         if (SegmentMount(Attack.Position, End, FTransform::Identity, FVector(Ast.X, Ast.Y, Ast.Z), float(Ast.W), AstFrac, AstNorm)
             && AstFrac < BestAsteroidFraction)
         {
             BestAsteroidFraction = AstFrac;
-            bHitAsteroid = true;
+            hitAsteroid=i;
         }
     }
-    if (bHitAsteroid)
+    if (hitAsteroid!=INDEX_NONE)
     {
+        if(auto* pc=Cast<AOVController>(GetWorld()->GetFirstPlayerController()))pc->DamageEnvironmentAsteroid(hitAsteroid,Attack.Damage);
         Attack.Position = FMath::Lerp(Attack.Position, End, BestAsteroidFraction);
         Attack.Result = EOVAttackResult::Miss;
         Attack.ResolvedAt = GameTime;

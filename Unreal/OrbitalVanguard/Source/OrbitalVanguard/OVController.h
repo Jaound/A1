@@ -103,6 +103,8 @@ public:
  UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Campaign") int32 ResourceSupreme=35;
  UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Environment") EOVSpaceEnvironmentType ActiveEnvironment=EOVSpaceEnvironmentType::None;
  TArray<FVector4> ActiveAsteroids;
+ TArray<float> AsteroidHealth;
+ UFUNCTION(BlueprintCallable) bool DamageEnvironmentAsteroid(int32 Index,float Damage);
  TArray<FVector4> ActiveRadiationZones;
  FVector ActiveBlackHoleCenter=FVector(0,0,250);
  float ActiveBlackHoleRadius=2600.f;

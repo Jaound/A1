@@ -29,6 +29,17 @@ void AOVHUD::DrawPractice()
     }
  }
  if(!play->bPracticeHints)return;
+ if(!play->bPracticeReady && !done){
+    FVector2D focus=GetActionCenter(play->PracticeControl());float span=29;
+    if(auto* s=play->PracticeFocus()){FVector2D pixels;if(pc->ProjectWorldLocationToScreen(s->GetActorLocation(),pixels,true)){focus=pixels/UIScale;span=22;}}
+    if(focus.X>=0 && focus.Y>=0){
+       for(int side:{-1,1})for(int vertical:{-1,1}){
+          const FVector2D corner=focus+FVector2D(side*span,vertical*13);
+          DrawLine(corner.X,corner.Y,corner.X-side*8,corner.Y,accent,1.4f);
+          DrawLine(corner.X,corner.Y,corner.X,corner.Y-vertical*6,accent,1.4f);
+       }
+    }
+ }
  const FString tip=play->PracticeInput();int32 start=0;
  for(int line=0;line<3 && start<tip.Len();++line){
     int end=start+1;float w=0,h=0;

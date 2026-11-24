@@ -25,6 +25,28 @@ struct FOVPlayFleetEntry
     int32 ReplacementStock = -1; // -1: 25 aircraft kits per installed bay
 };
 
+struct FOVSortieHull
+{
+    FOVPlayFleetEntry Entry;
+    int32 Key=0;
+    FVector Position=FVector::ZeroVector;
+    float Yaw=0;
+    TArray<FIntPoint> RoomSwaps;
+    TMap<FName,FName> Weapons;
+};
+struct FOVSortieHero
+{
+    FName Definition; int32 HullKey=0;
+    FName StartRoom, DutyRoom; bool bBoard=false;
+};
+struct FOVSortieDraft
+{
+    FName Mission;
+    EOVSpaceHazardKind Map=EOVSpaceHazardKind::None;
+    TArray<FOVSortieHull> Hulls;
+    TArray<FOVSortieHero> Heroes;
+    int32 NextKey=1;
+};
 struct FOVPlaySceneDefinition
 {
     FName Id;
@@ -66,6 +88,8 @@ public:
     static int32 CompletedPracticeMask();
     FString PracticeObjective() const;
     FString PracticeInput() const;
+    FName PracticeControl() const;
+    AOVShip* PracticeFocus() const;
     int32 PracticeStepCount() const;
     bool PracticeEquipment(bool Invalid);
     void ConfirmPracticeNotice(FName Subject);
@@ -78,7 +102,41 @@ private:
     int32 PracticeShots=0, PracticeParticipant=INDEX_NONE;
     bool bPracticeOrder=false;
     TSet<int32> PracticeWing;
+    bool bPreparingBoardingLesson=false;
     TWeakObjectPtr<AOVShip> PracticeShip, PracticeEnemy;
+public:
+    static bool IsBudgetMission(FName Id);
+    UFUNCTION(BlueprintCallable) bool OpenSortie(AOVController* PC,FName Mission,bool Edit=false);
+    UFUNCTION(BlueprintCallable) bool SortieCommand(FName Action,int32 Index=0);
+    UFUNCTION(BlueprintCallable) bool SetSortiePosition(FVector Point,float Yaw);
+    UFUNCTION(BlueprintPure) int32 SortieCost() const;
+    UFUNCTION(BlueprintPure) int32 SortieBudget() const;
+    UFUNCTION(BlueprintPure) int32 SortieHeroLimit() const;
+    UFUNCTION(BlueprintPure) FString SortieProblem(int32 Stage) const;
+    UFUNCTION(BlueprintCallable) bool CommitSortie();
+    UFUNCTION(BlueprintPure) TArray<FName> SortieCatalog() const;
+    UFUNCTION(BlueprintPure) int32 SortieFleetCount() const {return Draft.Hulls.Num();}
+    UFUNCTION(BlueprintPure) FName SortieHull(int32 Index) const {return Draft.Hulls.IsValidIndex(Index)?Draft.Hulls[Index].Entry.Hull:NAME_None;}
+    UFUNCTION(BlueprintPure) FVector SortieLocation(int32 Index) const {return Draft.Hulls.IsValidIndex(Index)?Draft.Hulls[Index].Position:FVector::ZeroVector;}
+    UPROPERTY(BlueprintReadOnly) int32 SortieStage=0;
+    UPROPERTY(BlueprintReadOnly) FString SortieFeedback;
+    FOVSortieDraft Draft, LastSortie;
+    int32 SortieSelected=0,SortieHero=0,SortieRoom=0,SortieMount=0,SortieDeck=1,SortieRosterIndex=0;
+    bool bSortieExternal=false;
+    int32 SortieSizeFilter=0,SortieRoleFilter=0;
+    bool bSortieDetails=false;
+    UFUNCTION(BlueprintCallable) AOVShip* InspectSortie(int32 Index);
+    FString PlacementProblem(int32 Index,FVector Point) const;
+    TArray<FName> SortieRoster() const;
+private:
+    TWeakObjectPtr<AOVShip> SortiePreview;
+    int32 PreviewKey=0;
+    bool bApplyingSortie=false;
+    void ReleaseSortiePreview();
+    bool FitSortieHull(AOVShip& Ship,const FOVSortieHull& Design) const;
+    void AutoPlaceSortie();
+    void RecommendSortie();
+    bool ApplySortieHeroes(AOVController& PC);
 public:
     static constexpr int32 ArenaHeroBerths=10;
     float MissionPanelHeight() const;

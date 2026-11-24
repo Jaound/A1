@@ -338,7 +338,7 @@ void AOVController::SetSpaceEnvironment(EOVSpaceEnvironmentType NewEnvironment)
 {
  for (AOVShip* Ship:Ships) if (IsValid(Ship)) Ship->EnvironmentPullVelocity=FVector::ZeroVector;
  ActiveEnvironment=NewEnvironment;
- ActiveAsteroids.Reset();
+ ActiveAsteroids.Reset();AsteroidHealth.Reset();
  ActiveRadiationZones.Reset();
  EnvironmentTickAccum=0.f;
  SolarFlareCycleTime=0.f;
@@ -375,6 +375,8 @@ void AOVController::SetSpaceEnvironment(EOVSpaceEnvironmentType NewEnvironment)
   ActiveRadiationZones.Emplace(780.f*Scale,520.f*Scale,340.f*(CalibrationScenario>=0?6.f:1.f),1050.f*Scale);
  }
  if(Combat) {
+  // Trial profile: larger cover takes more projectile damage to break.
+  for(auto a:ActiveAsteroids)AsteroidHealth.Add(float(a.W)*.2f);
   Combat->EnvironmentAsteroids=ActiveAsteroids;
   Combat->EnvironmentRadarDisruptRemaining=0.f;
  }
@@ -1859,4 +1861,11 @@ void AOVController::PlayerTick(float DeltaTime)
   DrawDebugCircle(GetWorld(),Ground,180*(CalibrationScenario>=0?20:1),32,FColor::Yellow,false,-1,0,3,FVector::ForwardVector,FVector::RightVector,false);
   if(Selected) DrawDebugLine(GetWorld(),Selected->GetActorLocation(),Preview,FColor::Yellow,false,-1,0,2);
  }
+}
+
+bool AOVController::DamageEnvironmentAsteroid(int32 index,float damage)
+{
+ if(!Combat||!ActiveAsteroids.IsValidIndex(index)||!AsteroidHealth.IsValidIndex(index)||!Combat->EnvironmentAsteroids.IsValidIndex(index)||Combat->EnvironmentAsteroids[index]!=ActiveAsteroids[index]||damage<=0)return false;
+ AsteroidHealth[index]-=damage;if(AsteroidHealth[index]>0)return false;
+ ActiveAsteroids.RemoveAt(index);AsteroidHealth.RemoveAt(index);Combat->EnvironmentAsteroids.RemoveAt(index);return true;
 }

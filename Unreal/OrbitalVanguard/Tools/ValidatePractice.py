@@ -116,7 +116,7 @@ def run():
     reach("수동 실제 발사")
     ship.set_automation(False,True);reach("자동 사격 발사")
     ship.set_automation(False,False);pc.action("CancelAttack");advance("사격 중지")
-    ship,enemy=begin(3)
+    ship,enemy,*escort=begin(3)
     pc.set_target(enemy);advance("적함 탐지")
     reach("무장 발사 가능")
     ship.set_automation(False,True)
@@ -136,6 +136,29 @@ def run():
     check("지원 보직 지시",interior.set_hero_duty(hero.unit_id,True,duty));reach("영웅 보직 활성")
     check("수호로 변경",interior.set_hero_duty(hero.unit_id,False,duty));advance("지원 효과 해제")
     check("지원 복귀",interior.set_hero_duty(hero.unit_id,True,duty));reach("동일 영웅 복귀")
+    home,target,*_=begin(8)
+    troops=[a for a in pc.interior.units if a.ship==home and a.faction_id==0]
+    ids=[a.unit_id for a in troops if a.role!=u.OVInteriorRole.TROOPER][:4]+[a.unit_id for a in troops if a.role==u.OVInteriorRole.TROOPER][:8]
+    check("실제 강습 편성 및 적함 지정",len(ids)==12 and pc.prepare_boarding(home,target,None,ids))
+    advance("강습 목표 접수")
+    for _ in range(1200):
+        pc.step_simulation(.05)
+        if pc.confirm_boarding(pc.last_crew_operation()):break
+    reach("탑승 후 포드 발사");reach("적함에 실제 진입")
+    objective=slot(target,u.OVFacilityType.BRIDGE)
+    ordered=set()
+    for _ in range(6000):
+        pc.step_simulation(.05)
+        if _%5:continue
+        for uid in pc.interior.get_units_on_ship(target,0):
+            if uid not in ordered and pc.interior.issue_order([uid],u.OVInteriorOrder.CAPTURE,objective):ordered.add(uid)
+        play.observe_practice()
+        if play.practice_ready:break
+    report["강습 시설 상태"]=[(a.unit_id,str(a.state),str(a.reason),str(a.node_id)) for a in pc.interior.units if a.unit_id in ids]
+    advance("실제 시설 점령")
+    survivors=list(pc.interior.get_units_on_ship(target,0))
+    check("생존자 철수 명령",survivors and pc.interior.issue_order(survivors,u.OVInteriorOrder.RETREAT,""))
+    reach("원 수송수단으로 회수",2400)
     hud.execute_ui_action("PracticeIndex")
 def tick(_):
     try:

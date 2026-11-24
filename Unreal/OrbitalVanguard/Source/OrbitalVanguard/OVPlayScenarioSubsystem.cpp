@@ -61,6 +61,8 @@ const FOVPlaySceneDefinition Scenes[] = {
 const FOVPlaySceneDefinition* FindDefinition(FName Id)
 {
     static const FOVPlaySceneDefinition Lesson{TEXT("Practice"),TEXT("시스템 실습"),TEXT("안내에 따라 직접 조작하세요."),EOVPlaySceneKind::Sandbox,0,{}};
+    static const FOVPlaySceneDefinition Staging{TEXT("SortiePrep"),TEXT("출격 준비"),TEXT("함대를 편성하세요."),EOVPlaySceneKind::Sandbox,0,{}};
+    if(Id==Staging.Id)return &Staging;
     if(Id==Lesson.Id)return &Lesson;
     return MakeArrayView(Scenes).FindByPredicate([Id](const FOVPlaySceneDefinition& Entry) { return Entry.Id == Id; });
 }
@@ -193,7 +195,6 @@ const FOVPlaySceneDefinition* UOVPlayScenarioSubsystem::GetActiveDefinition() co
 
 void UOVPlayScenarioSubsystem::DestroyActiveHazardActors()
 {
-    if(ActiveId==TEXT("Practice"))return;
     if (AOVBlackHoleHazardActor* BlackHole = ActiveBlackHoleActor.Get())
     {
         BlackHole->Destroy();
@@ -247,6 +248,8 @@ void UOVPlayScenarioSubsystem::Deinitialize()
 }
 void UOVPlayScenarioSubsystem::Clear()
 {
+    ReleaseSortiePreview();
+    if(!bApplyingSortie){Draft={};LastSortie={};}
     PracticeChapter=INDEX_NONE; PracticeStep=0; bPracticeReady=false; PracticeWing.Reset(); PracticeShip.Reset(); PracticeEnemy.Reset();
     if(Owner.IsValid())Owner->ResetShipOperations();
     for(auto& Wave:ArenaWaves){
@@ -324,7 +327,7 @@ bool UOVPlayScenarioSubsystem::Start(AOVController& Controller, FName Id)
     Interior->ResetScenario({}, ScenarioSeed);
 
     const bool bBaseTrial = Definition->Kind == EOVPlaySceneKind::BaseTrial;
-    const EOVSpaceHazardKind EffectiveHazard = !bBaseTrial && (EnvironmentOverride != EOVSpaceHazardKind::None)
+    const EOVSpaceHazardKind EffectiveHazard = bApplyingSortie ? Draft.Map : (bPreparingBoardingLesson||Id==TEXT("Practice")||Id==TEXT("SortiePrep"))?EOVSpaceHazardKind::None : !bBaseTrial && (EnvironmentOverride != EOVSpaceHazardKind::None)
         ? EnvironmentOverride
         : Definition->EnvironmentHazard;
     SyncEnvironmentHazard(Controller, EffectiveHazard, Definition->HazardLocation);
@@ -339,12 +342,14 @@ bool UOVPlayScenarioSubsystem::Start(AOVController& Controller, FName Id)
     for (int32 Faction = 0; Definition->Kind != EOVPlaySceneKind::Logistics && Faction < ((bEvacuation || bBaseTrial) ? 1 : FactionCount); ++Faction)
     {
         int32 Ordinal = 0;
-        for (const FOVPlayFleetEntry& Entry : Definition->Fleet)
+        TArray<FOVPlayFleetEntry> Custom;
+        if(bApplyingSortie && Faction==0)for(const auto& hull:Draft.Hulls)Custom.Add(hull.Entry);
+        for (const FOVPlayFleetEntry& Entry : (bApplyingSortie && Faction==0?Custom:Definition->Fleet))
         {
             for (int32 I = 0; I < Entry.Count; ++I)
             {
                 FOVPlayFleetEntry Actual=Entry;
-                if(bCompareShuttle && Faction==0 && I==0 && Entry.Hull==TEXT("corvette"))Actual.Hull=TEXT("assault");
+                if(!bApplyingSortie && bCompareShuttle && Faction==0 && I==0 && Entry.Hull==TEXT("corvette"))Actual.Hull=TEXT("assault");
                 if (!Spawn(Controller, Actual, Faction, Ordinal++, bBaseTrial ? TOptional<FVector>(FVector(9300,4800,2000)) : TOptional<FVector>()))
                 {
                     Controller.ResetPlayScenarioSession(false);
@@ -356,7 +361,20 @@ bool UOVPlayScenarioSubsystem::Start(AOVController& Controller, FName Id)
     }
     if (Definition->Kind == EOVPlaySceneKind::Fleet || bEvacuation)
         for (int32 Side = 0; Side < (bEvacuation ? 1 : 2); ++Side) ArrangeFleet(Controller, Side, bEvacuation);
-    if (Definition->Kind==EOVPlaySceneKind::HeroArena)
+    if(bApplyingSortie){
+        for(int i=0;i<Draft.Hulls.Num();++i){
+            auto* ship=Controller.Ships[i].Get();const auto& design=Draft.Hulls[i];
+            ship->SetActorLocationAndRotation(design.Position,FRotator(0,design.Yaw,0));
+            ship->StopMovement();ship->SetAutomation(false,false);
+            if(!FitSortieHull(*ship,design)){Controller.ResetPlayScenarioSession(false);return false;}
+        }
+        ArenaRoster=Controller.GetGameInstance()->GetSubsystem<UOVHeroSubsystem>();
+        ArenaSavedRoster=MoveTemp(ArenaRoster->Heroes);ArenaSavedTiers=MoveTemp(ArenaRoster->CommandTiers);
+        bArenaOwnsRoster=true;ArenaRoster->CommandTiers.Add(0,4);ArenaRoster->CommandTiers.Add(1,4);
+        if(!ApplySortieHeroes(Controller)){Controller.ResetPlayScenarioSession(false);return false;}
+        AssignScenarioHeroes(Controller,1);
+    }
+    else if (Definition->Kind==EOVPlaySceneKind::HeroArena)
     {
         ArenaRoster=Controller.GetGameInstance()->GetSubsystem<UOVHeroSubsystem>();
         ArenaSavedRoster=MoveTemp(ArenaRoster->Heroes);
@@ -364,7 +382,7 @@ bool UOVPlayScenarioSubsystem::Start(AOVController& Controller, FName Id)
         bArenaOwnsRoster=true;
         const auto& Definitions=Controller.GetGameInstance()->GetSubsystem<UOVHeroSubsystem>()->Definitions;
         ArenaCandidate=FMath::Max(0,Definitions.IndexOfByPredicate([](const auto& D){return D.Id==TEXT("M02");}));
-        for(int32 I=0; I<ArenaHeroBerths; ++I)
+        for(int32 I=0; I<(bPreparingBoardingLesson?1:ArenaHeroBerths); ++I)
             if(!AddArenaHero(Controller,1,Definitions.IndexOfByPredicate([I](const auto& D){return D.Id==FName(*FString::Printf(TEXT("G%02d"),1+I%4));})))
             {
                 Controller.ResetPlayScenarioSession(false);
@@ -375,7 +393,7 @@ bool UOVPlayScenarioSubsystem::Start(AOVController& Controller, FName Id)
     }
     else if (!bBaseTrial) for(int32 Side=0;Side<FactionCount;++Side) AssignScenarioHeroes(Controller,Side);
 #if WITH_EDITOR
-    if(bCompareShuttle){
+    if(!bApplyingSortie && bCompareShuttle){
         AOVShip* Shuttle=nullptr;
         for(AOVShip* Ship : Controller.Ships)
             if(Ship->bFriendly && Ship->HullDefinitionId==TEXT("assault"))Shuttle=Ship;
@@ -614,7 +632,10 @@ bool UOVPlayScenarioSubsystem::HandleAction(AOVController& Controller, FName Act
     }
     if (Action == TEXT("RestartScene") && !ActiveId.IsNone())
     {
-        Start(Controller, ActiveId);
+        if(LastSortie.Mission==ActiveId && !ActiveId.IsNone()){
+            Draft=LastSortie;TGuardValue<bool> applying(bApplyingSortie,true);
+            Start(Controller,ActiveId);
+        }else Start(Controller, ActiveId);
         return true;
     }
     if (Action == TEXT("ToggleBlackHoleEnv"))
@@ -672,6 +693,7 @@ bool UOVPlayScenarioSubsystem::HandleAction(AOVController& Controller, FName Act
 
 void UOVPlayScenarioSubsystem::Step(float Delta)
 {
+    if(ActiveId==TEXT("Practice") || ActiveId==TEXT("SortiePrep"))return;
     const FOVPlaySceneDefinition* Definition = GetActiveDefinition();
     AOVController* Controller = Owner.Get();
     if (!Controller || !Definition || Result != EOVPlaySceneResult::Running) return;

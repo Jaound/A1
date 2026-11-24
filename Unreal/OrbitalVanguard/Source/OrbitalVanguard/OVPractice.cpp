@@ -50,6 +50,7 @@ bool UOVPlayScenarioSubsystem::HasPracticeMarker()const{
 bool UOVPlayScenarioSubsystem::StartPractice(AOVController* pc,int32 chapter)
 {
  if(!pc||chapter<0||chapter>=UE_ARRAY_COUNT(Lessons))return false;
+ TGuardValue<bool> preparing(bPreparingBoardingLesson,chapter==8);
  if(!Start(*pc,chapter==8?TEXT("HeroArena"):TEXT("Practice")))return false;
  PracticeChapter=chapter; PracticeStep=0; bPracticeDetail=false;
  GConfig->GetBool(TEXT("OrbitalVanguard.Practice"),TEXT("Hints"),bPracticeHints,GGameUserSettingsIni);
@@ -65,10 +66,11 @@ bool UOVPlayScenarioSubsystem::StartPractice(AOVController* pc,int32 chapter)
        if(ship){ship->SetAutomation(false,false);ship->StopMovement();}
        return ship;
     };
-    const FName hull=(chapter==1||chapter==6||chapter==7)?TEXT("carrier"):chapter==3||chapter==4?TEXT("air_defense"):TEXT("corvette");
+    const FName hull=(chapter==1||chapter==6||chapter==7)?TEXT("carrier"):chapter==3?TEXT("battleship"):chapter==4?TEXT("air_defense"):TEXT("corvette");
     PracticeShip=add(hull,0,FVector(0,0,2000),4);
     if(chapter==0||chapter==4) {if(!add(chapter==0?TEXT("frigate"):TEXT("battleship"),0,FVector(-9000,9500,2000))){pc->LeavePlayScenario();return false;}}
-    if(chapter==2||chapter==3)PracticeEnemy=add(chapter==3?TEXT("carrier"):TEXT("frigate"),1,FVector(21500,0,2000),chapter==3?3:0);
+    if(chapter==2||chapter==3)PracticeEnemy=add(TEXT("frigate"),1,FVector(21500,0,2000));
+    if(chapter==3 && (!add(TEXT("air_defense"),0,FVector(4000,7000,2000)) || !add(TEXT("carrier"),1,FVector(24500,10000,2000),3))){pc->LeavePlayScenario();return false;}
     if(!PracticeShip.IsValid()||((chapter==2||chapter==3)&&!PracticeEnemy.IsValid())){pc->LeavePlayScenario();return false;}
     if(chapter==1||chapter==7)AssignScenarioHeroes(*pc,0);
  }
@@ -88,7 +90,11 @@ void UOVPlayScenarioSubsystem::BeginPracticeStep(){
     const int32 count=pc->Carrier->CountAircraft(PracticeShip.Get(),EOVAircraftState::Stored);
     GetWorld()->GetSubsystem<UOVBattleNotices>()->RecordAircraftAdjustment(PracticeShip.Get(),count,count,pc->SimulationSeconds);
  }
- if(key=="Intercept"&&PracticeEnemy.IsValid()){pc->Combat->SetTarget(PracticeEnemy.Get(),PracticeShip.Get());pc->Carrier->Launch(PracticeEnemy.Get());}
+ if(key=="Intercept"){
+    for(AOVShip* candidate:pc->Ships)if(candidate && !candidate->bFriendly && candidate->HullDefinitionId=="carrier"){
+      pc->Combat->SetTarget(candidate,PracticeShip.Get());pc->Carrier->Launch(candidate);break;
+    }
+ }
 }
 void UOVPlayScenarioSubsystem::ObservePractice(){
  auto* pc=Owner.Get();auto* ship=PracticeShip.Get();if(!pc||!ship||bPracticeReady||PracticeStep>=PracticeStepCount())return;
@@ -148,7 +154,16 @@ void UOVPlayScenarioSubsystem::ObservePractice(){
       if(u.FactionId!=0)continue;
       if(k=="Transit"&&(u.State==EOVInteriorState::InTransit||u.Ship.Get()==enemy))ok=true;
       if(k=="Inside"&&u.Ship.Get()==enemy){PracticeWing.Add(u.UnitId);ok=true;}
-      if(k=="Return"&&PracticeWing.Contains(u.UnitId)&&(u.Ship.Get()==ship||u.State==EOVInteriorState::RescueWaiting))ok=true;
+      if(u.Ship.Get()==enemy)PracticeWing.Add(u.UnitId);
+    }
+    if(k=="Return"){
+       bool recovered=false,pending=false;
+       for(const auto& person:pc->Transport->Persons)if(PracticeWing.Contains(person.RuntimeUnitId)){
+          bool home=person.State==EOVPassengerState::Aboard && (person.CurrentShip.Get()==ship || (person.CurrentShip.IsValid() && person.CurrentShip->HangarHost.Get()==ship));
+          recovered|=home||person.State==EOVPassengerState::RescueWaiting;
+          pending|=!home && person.State!=EOVPassengerState::RescueWaiting && person.State!=EOVPassengerState::Dead;
+       }
+       ok=recovered&&!pending;
     }
     if(k=="Operation"&&enemy)for(const auto& op:GetWorld()->GetSubsystem<UOVInteriorSubsystem>()->Operations)ok|=op.Ship.Get()==enemy && op.FactionId==0 && op.bCompleted;
  }
@@ -178,4 +193,17 @@ bool UOVPlayScenarioSubsystem::AdvancePractice(){
     GConfig->Flush(false,GGameUserSettingsIni);
  }else BeginPracticeStep();
  return true;
+}
+
+FName UOVPlayScenarioSubsystem::PracticeControl() const{
+ if(PracticeChapter<0||PracticeStep>=PracticeStepCount())return NAME_None;
+ const auto key=Lessons[PracticeChapter].Goals[PracticeStep].Id;
+ static const TMap<FName,FName> Controls={{"Details","Details"},{"HeroPanel","CommandHeroPanel"},{"Feed","BattleFeedToggle"},{"Hangar","HangarView"},{"Move","Move"},{"Hold","Stop"},{"Target","Target"},{"Contact","Target"},{"Fire","FireAll"},{"AutoFire","FireAuto"},{"Cease","CancelAttack"},{"Pause","Pause"},{"Speed","Speed2"},{"Launch","HangarLaunchAircraft"},{"Recall","HangarRecallAircraft"},{"BoardTarget","OpsAssault"}};
+ return Controls.FindRef(key);
+}
+AOVShip* UOVPlayScenarioSubsystem::PracticeFocus() const{
+ if(PracticeChapter<0||PracticeStep>=PracticeStepCount())return nullptr;
+ const auto key=Lessons[PracticeChapter].Goals[PracticeStep].Id;
+ if(key=="Single"||key=="Multi")return PracticeShip.Get();
+ return key=="Contact"||key=="Target"||key=="BoardTarget"?PracticeEnemy.Get():nullptr;
 }

@@ -315,6 +315,7 @@ void AOVHUD::NotifyHitBoxClick(FName N)
  if(N==TEXT("SceneMenuClose")){bSceneMenuOpen=false;return;}
  if(HandleInteriorAction(N)) return;
  if(N==TEXT("HeroPanel")) { SetHeroPanelOpen(!bHeroPanelOpen);return; }
+ if(N==TEXT("EditSortie")){auto* pc=CastChecked<AOVController>(PlayerOwner);BeginFleetPreparation(pc->GetPlayScenario()->ActiveId,true);return;}
  if(N==TEXT("TitleScreen")) { OpenTitleScreen(); return; }
  if(N==TEXT("OpenTutorialGuide")) { OpenTutorialGuide(); return; }
  if(N==TEXT("BattleFeedToggle")) { bBattleFeedOpen=!bBattleFeedOpen;BattleFeedPage=0;BattleFeedFilter=0;return; }
@@ -388,6 +389,7 @@ void AOVHUD::NotifyHitBoxClick(FName N)
  }
  if(UOVPlayScenarioSubsystem::Definitions().ContainsByPredicate([N](const auto& Scene){return Scene.Id==N;}))
  {
+  if(UOVPlayScenarioSubsystem::IsBudgetMission(N)){BeginFleetPreparation(N);return;}
   if(auto* PC=Cast<AOVController>(PlayerOwner);PC&&PC->StartPlayScenario(N)) bSceneMenuOpen=false;
   return;
  }
@@ -1363,6 +1365,12 @@ void AOVHUD::SyncAddedUI()
   return;
  }
  if(HeroWidget){HeroWidget->SetPositionInViewport(HeroPos/Dpi,false);HeroWidget->SetDesiredSizeInViewport(HeroSize/Dpi);HeroWidget->SetVisibility(PC->bDeveloperMode||!bHeroPanelOpen||bBaseViewOpen?ESlateVisibility::Collapsed:ESlateVisibility::Visible);}
+}
+bool AOVHUD::BeginFleetPreparation(FName Id,bool Edit)
+{
+ auto* pc=Cast<AOVController>(PlayerOwner);
+ if(!TitleScreenWidget||!pc||!pc->GetPlayScenario()->OpenSortie(pc,Id,Edit))return false;
+ OpenTitleScreen();TitleScreenWidget->ShowPanel(EOVTitleMenuPanel::Sortie);TitleScreenWidget->RefreshSortie();return true;
 }
 void AOVHUD::OpenTitleScreen()
 {
