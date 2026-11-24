@@ -83,11 +83,11 @@ bool UOVPlayScenarioSubsystem::SendArenaWave(AOVController& PC,int32 Index)
         Ship->SetActorLocation(PC.Carrier->HangarPosition(*Bay));
         if(!Transit->Shuttles.ContainsByPredicate([Ship](const auto& S){return S.Ship==Ship;}))Transit->RegisterShuttle(Ship,Home);
         if(!Transit->DispatchShuttle(Ship,Target,People)){Undo();PC.LastAction=Transit->LastMessage;return false;}
-        Bay->StoredSmallShip.Reset();Ship->SetActorHiddenInGame(false);Ship->SetActorEnableCollision(true);Ship->SetActorTickEnabled(true);
+        Bay->StoredSmallShip.Reset();Ship->HangarHost.Reset();Ship->SetActorHiddenInGame(false);Ship->SetActorEnableCollision(true);Ship->SetActorTickEnabled(true);
         PC.Ships.AddUnique(Ship);PC.Combat->RegisterShip(Ship,1,false,1);
         PC.PointDefense->RegisterShip(Ship,1);Transit->AddShip(Ship);PC.Interior->AddShip(Ship);
     }else if(Transit->LaunchPodTeam(Home,Target,People)!=People.Num()){Undo();PC.LastAction=Transit->LastMessage;return false;}
-    Wave.Units=MoveTemp(Team);Wave.Sent=true;bArenaFormationOpen=false;
+    Wave.Units=MoveTemp(Team);Wave.UsedShuttle=ByShuttle;Wave.ActualShuttle=ByShuttle?Ship:nullptr;Wave.Sent=true;bArenaFormationOpen=false;
     PC.LastAction=ByShuttle?TEXT("격납고에서 강습선 출발"):TEXT("개인 포드 발사 개시");
     return true;
 }
@@ -98,13 +98,13 @@ void UOVPlayScenarioSubsystem::RecallArenaWave(AOVController& PC,int32 Index)
     W.Recalled=true;
     PC.Interior->IssueOrder(W.Units,EOVInteriorOrder::Retreat,NAME_None);
     PC.Transport->RecallTeamPods(PC.Interior->GetPassengerIds(W.Units));
-    if(ArenaRoute==1 || (ArenaRoute==2 && Index==1))PC.Transport->RecallShuttle(W.Shuttle.Get());
+    if(W.UsedShuttle)PC.Transport->RecallShuttle(W.ActualShuttle.Get());
 }
 
 FString UOVPlayScenarioSubsystem::ArenaWaveStatus(int32 Index) const
 {
     const auto& W=ArenaWaves[Index];
-    const bool Shuttle=ArenaRoute==1 || (ArenaRoute==2 && Index==1);
+    const bool Shuttle=W.Sent?W.UsedShuttle:(ArenaRoute==1 || (ArenaRoute==2 && Index==1));
     const TCHAR* Route=Shuttle?TEXT("강습선"):TEXT("포드");
     if(!W.Sent){
         int32 Heroes=0;
@@ -132,21 +132,27 @@ void UOVPlayScenarioSubsystem::StepArena(AOVController& PC,float Delta)
     int32 Living=0,Recovered=0;
     for(auto& W:ArenaWaves){
         if(!W.Sent)continue;
-        auto* Record=PC.Transport->Shuttles.FindByPredicate([&](const auto& S){return S.Ship==W.Shuttle;});
+        auto* Record=PC.Transport->Shuttles.FindByPredicate([&](const auto& S){return S.Ship==W.ActualShuttle;});
         bool AllOnWayBack=true;
         for(int32 Id:W.Units){
             const auto U=PC.Interior->GetUnit(Id);const auto P=PC.Transport->GetPerson(U.PersonId);
             if(P.State==EOVPassengerState::Dead || P.State==EOVPassengerState::RescueWaiting)continue;
             ++Living;
-            if(P.State==EOVPassengerState::Aboard && P.CurrentShip==Home && U.Ship==Home && U.State!=EOVInteriorState::InTransit){
+            const bool OnReturnedShuttle=W.PlayerDirected && W.ActualShuttle.IsValid() && W.ActualShuttle->HangarHost==Home && P.CurrentShip==W.ActualShuttle;
+            if(P.State==EOVPassengerState::Aboard && ((P.CurrentShip==Home && U.Ship==Home)||OnReturnedShuttle) && U.State!=EOVInteriorState::InTransit){
                 if(W.Recalled || PC.Transport->Pods.ContainsByPredicate([&](const auto& Pod){return Pod.PersonId==P.PersonId && Pod.State==EOVPodFlightState::Recovered;}))++Recovered;
             }
             if(P.State==EOVPassengerState::InsideTarget && U.Order!=EOVInteriorOrder::Retreat)AllOnWayBack=false;
         }
-        if(Record && Record->State==EOVShuttleState::Delivered && AllOnWayBack){PC.Transport->RecallShuttle(W.Shuttle.Get());W.Recalled=true;}
-        if(Record && Record->State==EOVShuttleState::Ready && PC.Ships.Contains(W.Shuttle.Get())){
-            auto* Ship=W.Shuttle.Get();
-            if(PC.Carrier->StoreShuttle(Home,W.Bay,Ship)){
+        if(Record && Record->State==EOVShuttleState::Delivered && AllOnWayBack){PC.Transport->RecallShuttle(W.ActualShuttle.Get());W.Recalled=true;}
+        if(W.Recalled && Record && Record->State==EOVShuttleState::Ready && PC.Ships.Contains(W.ActualShuttle.Get())){
+            auto* Ship=W.ActualShuttle.Get();
+            if(W.PlayerDirected){
+                if(!Ship->HangarHost.IsValid()){
+                    auto* Bay=PC.Carrier->Hangars.FindByPredicate([&](const auto& H){return H.Carrier==Home && H.Mode==EOVHangarMode::SmallShip && !H.StoredSmallShip.IsValid() && !H.InboundShip.IsValid() && PC.Carrier->IsHangarOperational(H);});
+                    if(Bay && !PC.Carrier->Hangars.ContainsByPredicate([Ship](const auto& H){return H.InboundShip==Ship;}))PC.RequestSmallShipDock(Bay->HangarId,Ship);
+                }
+            }else if(PC.Carrier->StoreShuttle(Home,W.Bay,Ship)){
                 for(auto& P:PC.Transport->Persons)if(P.CurrentShip==Ship && P.State==EOVPassengerState::Aboard)P.CurrentShip=Home;
                 PC.Ships.Remove(Ship);PC.Combat->Ships.RemoveAll([Ship](const auto& S){return S.Ship==Ship;});
                 PC.PointDefense->Ships.RemoveAll([Ship](const auto& S){return S.Ship==Ship;});

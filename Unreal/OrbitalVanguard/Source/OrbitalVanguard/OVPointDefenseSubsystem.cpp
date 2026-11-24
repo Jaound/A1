@@ -142,6 +142,7 @@ FString UOVPointDefenseSubsystem::GetReadiness(AOVShip* Ship) const
 {
     if (!bEnabled) return TEXT("PD OFF");
     if (!IsValid(Ship) || !Ship->Systems || Ship->Systems->bWrecked) return TEXT("SHIP LOST");
+    if (Ship->HangarHost.IsValid()) return TEXT("DOCKED");
     if (Ship->Systems->bNeutral || Ship->Systems->FactionId < 0) return TEXT("NO OWNER");
     if (GetWorld()->GetSubsystem<UOVCombatSubsystem>()->IsDeparted(Ship)) return TEXT("DEPARTED");
     const FOVPDShipState* State = Ships.FindByPredicate([Ship](const FOVPDShipState& S) { return S.Ship == Ship; });

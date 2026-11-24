@@ -22,6 +22,16 @@ public:
  bool IsOverAddedUI(float X,float Y) const;
  bool IsAddedUIEditing() const;
  bool CloseTopModal();
+ bool PickingShip() const;
+ UFUNCTION(BlueprintCallable, Category="UI") bool AcceptShipPick(AOVShip* Ship);
+ bool HandleShipOperations(FName Action);
+ void DrawShipOperations();
+ bool DrawSmallBays(AOVShip* Home,float X,float Y,float W);
+ int32 PendingBay=0;
+ bool bChoosingTransport=false,bChoosingTransfer=false,bAircraftOnly=false;
+ TWeakObjectPtr<AOVShip> BoardingOrigin,BoardingShuttle;
+ TArray<int32> BoardingSelection;
+
  UFUNCTION(BlueprintPure, Category="UI") UOVDevelopmentWidget* GetDevelopmentPanel() const { return DevelopmentWidget; }
  UFUNCTION(BlueprintPure, Category="UI") UOVHeroWidget* GetHeroPanel() const { return HeroWidget; }
  UFUNCTION(BlueprintPure, Category="UI") UOVTitleScreenWidget* GetTitleScreen() const { return TitleScreenWidget; }
@@ -73,7 +83,7 @@ public:
  void OrbitPreview(FVector2D Delta);
  UFUNCTION(BlueprintCallable, Category="UI") void CancelPointerDrag() { bInteriorScrolling=false; bDragging=false; bResizing=false; bInteriorDragging=false; bInteriorResizing=false; bDevDragging=false; bDevResizing=false; DraggedPin=INDEX_NONE; bPinResizing=false; }
  void OpenSurvey(){bHangarView=false;OpenDetails();}
- void OpenDetails() { bDetailsOpen=true; bMinimized=false; bHeroPanelOpen=false; SyncAddedUI(); }
+ void OpenDetails() { bInteriorOpen=false;bDetailsOpen=true; bMinimized=false; bHeroPanelOpen=false; SyncAddedUI(); }
  UFUNCTION(BlueprintCallable, Category="UI") bool HandlePointer(float X,float Y,bool Pressed,bool Down,float Wheel,bool Orbit,float DX,float DY);
  UFUNCTION(BlueprintCallable, Category="UI") void SetDetailsOpen(bool Open) { bDetailsOpen=Open; bMinimized=false; }
  UFUNCTION(BlueprintPure, Category="UI") FVector2D GetActionCenter(FName Action) const;

@@ -147,7 +147,9 @@ public:
     // DEV supplied confirmation of reaching original entry point. Interior pathfinding is not implemented.
     UFUNCTION(BlueprintCallable) bool DevReturnPersonToEntry(int32 PersonId);
     UFUNCTION(BlueprintCallable) bool InterceptPod(int32 PodId, float Damage);
+    bool MoveDockedPassengers(AOVShip* From,AOVShip* To,const TArray<int32>& People);
     UFUNCTION(BlueprintCallable) bool RegisterShuttle(AOVShip* Ship, AOVShip* Home = nullptr);
+    bool CanDispatchCrew(AOVShip* Ship,AOVShip* Target,const TArray<int32>& Ids);
     UFUNCTION(BlueprintCallable) bool DispatchShuttle(AOVShip* Ship, AOVShip* Target, const TArray<int32>& PassengerIds);
     UFUNCTION(BlueprintCallable) bool SuspendShuttle(AOVShip* Ship);
     UFUNCTION(BlueprintCallable) bool RecallShuttle(AOVShip* Ship);

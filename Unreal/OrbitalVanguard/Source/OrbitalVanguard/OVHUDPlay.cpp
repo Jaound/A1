@@ -269,9 +269,7 @@ void AOVHUD::DrawPlayHUD()
    Button(TEXT("ArenaLevel"),TEXT("생성 레벨"),423,122,76);
   }
   if(Play->ActiveId==TEXT("HeroArena") && Play->Result==EOVPlaySceneResult::Running){
-   const TCHAR* Modes[]={TEXT("개인 포드만"),TEXT("강습선만"),TEXT("혼합 · A 포드 / B 강습선")};
-   if(!Play->bArenaStarted)Button(TEXT("ArenaRoute"),Modes[Play->ArenaRoute],12,154,186);
-   else DrawText(Modes[Play->ArenaRoute],PlayAccent,12,156,OVTypography::Font(EOVTextRole::Body));
+   Button(TEXT("OpsInterior"),TEXT("선내 지휘"),12,154,110);
    if(!Play->bArenaStarted)Button(TEXT("ArenaFormation"),Play->bArenaFormationOpen?TEXT("편성 닫기"):TEXT("팀 편성"),408,154,90,Play->bArenaFormationOpen);
    const float Wait=PC->Ships.Num()>=2?PC->Transport->NextTeamDelay(PC->Ships[1]):0;
    DrawText(Play->ArenaWaves[0].Sent && Play->ArenaWaves[1].Sent?FString(TEXT("두 팀 출발 완료")):Wait>.001f?FString::Printf(TEXT("다음 팀까지 %d초"),FMath::CeilToInt(Wait)):TEXT("목표당 두 팀 · 출발 간격 30초"),PlayInk,210,161,OVTypography::Font(EOVTextRole::Numeric));
@@ -279,8 +277,7 @@ void AOVHUD::DrawPlayHUD()
     const auto& Team=Play->ArenaWaves[I];
     const float Row=188+I*35;
     DrawText(FString(I?TEXT("B팀  "):TEXT("A팀  "))+Play->ArenaWaveStatus(I),PlayInk,12,Row+5,OVTypography::Font(EOVTextRole::Body));
-    if(!Team.Sent)Button(I?TEXT("ArenaWaveB"):TEXT("ArenaFight"),TEXT("출발"),354,Row,66,Wait<=.001f);
-    else{
+    if(Team.Sent){
      Button(I?TEXT("ArenaViewB"):TEXT("ArenaViewA"),TEXT("지휘"),354,Row,66);
      Button(I?TEXT("ArenaReturnB"):TEXT("ArenaReturnA"),TEXT("철수"),426,Row,66);
     }
@@ -685,7 +682,7 @@ void AOVHUD::DrawWorldIndicators()
   DrawLine(Tail.X,Tail.Y,Head.X,Head.Y,FLinearColor(.15f,.6f,1.f,1-Age),9*(1-Age));DrawLine(Tail.X,Tail.Y,Head.X,Head.Y,FLinearColor(.85f,.96f,1,1-Age),3*(1-Age));
  }
  for(int32 I=0;I<PC->Ships.Num();++I) {
-  AOVShip* Ship=PC->Ships[I]; if(PC->Combat&&PC->Combat->bEnabled&&PC->Combat->IsDeparted(Ship))continue;
+  AOVShip* Ship=PC->Ships[I]; if(!IsValid(Ship)||Ship->HangarHost.IsValid()||(PC->Combat&&PC->Combat->bEnabled&&PC->Combat->IsDeparted(Ship)))continue;
   if(PC->IsShipVanished(Ship))continue;
   FVector2D P; if(!Project(Ship->GetActorLocation(),P))continue;
   const bool Selected=PC->Selection.Contains(Ship),Target=PC->Selected&&PC->Selected->AttackTarget==Ship;

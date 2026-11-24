@@ -90,6 +90,7 @@ public:
     /** Explicit test controls; no FTL travel or production repair behavior. */
     UFUNCTION(BlueprintCallable, Category="Debug") void DebugResetMotion();
     UFUNCTION(BlueprintCallable, Category="Debug") void DebugSetFTLCharging(bool bCharging);
+    TWeakObjectPtr<AOVShip> HangarHost;
     void Simulate(float SimDelta);
     FVector GetLocalShieldRadii() const;
     void SetCalibrationHull(const FVector* LocalHalfExtent);

@@ -462,7 +462,7 @@ bool UOVTransportSubsystem::RegisterShuttle(AOVShip* Ship, AOVShip* Home)
     return true;
 }
 
-bool UOVTransportSubsystem::DispatchShuttle(AOVShip* Ship, AOVShip* Target, const TArray<int32>& Ids)
+bool UOVTransportSubsystem::CanDispatchCrew(AOVShip* Ship, AOVShip* Target, const TArray<int32>& Ids)
 {
     FOVShuttleRecord* Shuttle = Shuttles.FindByPredicate([Ship](const FOVShuttleRecord& S) { return S.Ship == Ship; });
     if (!bEnabled || !Shuttle || Shuttle->State != EOVShuttleState::Ready || !Usable(Ship) || !Usable(Target) ||
@@ -481,6 +481,13 @@ bool UOVTransportSubsystem::DispatchShuttle(AOVShip* Ship, AOVShip* Target, cons
         Seen.Add(Id); Heroes += (Person->bHeroTypeDEV || Person->bRuntimeHero) ? 1 : 0;
     }
     if (Heroes > Settings.ShuttleHeroCapacity) { LastMessage = TEXT("출발 불가 · 영웅 탑승 정원 초과"); return false; }
+    return true;
+}
+
+bool UOVTransportSubsystem::DispatchShuttle(AOVShip* Ship, AOVShip* Target, const TArray<int32>& Ids)
+{
+    if(!CanDispatchCrew(Ship,Target,Ids))return false;
+    auto* Shuttle=Shuttles.FindByPredicate([Ship](const auto& S){return S.Ship==Ship;});
     RecordTeam(Target,Ids);
     Shuttle->PassengerIds = Ids; Shuttle->Target = Target; Shuttle->FactionId = Ship->Systems->FactionId;
     Shuttle->State = EOVShuttleState::Approaching; Shuttle->Progress = 0; Shuttle->HomePosition = Ship->GetActorLocation();
@@ -679,4 +686,19 @@ FString UOVTransportSubsystem::GetSummary() const
     return FString::Printf(TEXT("DEV 승객 %d | 비행 %d | 내부 %d | 회수대기 %d | 구조 %d | 사망 %d"),
         Persons.Num(), CountState(EOVPassengerState::InPod), CountState(EOVPassengerState::InsideTarget),
         CountState(EOVPassengerState::AwaitingRecovery), CountState(EOVPassengerState::RescueWaiting), CountState(EOVPassengerState::Dead));
+}
+
+bool UOVTransportSubsystem::MoveDockedPassengers(AOVShip* From,AOVShip* To,const TArray<int32>& People)
+{
+    if(!Usable(From)||!Usable(To)||From->Systems->FactionId!=To->Systems->FactionId||People.IsEmpty()||
+       (From->HangarHost!=To && To->HangarHost!=From))return false;
+    TSet<int32> Seen;
+    for(int32 Id:People){
+        const auto* P=FindPerson(Id);
+        if(!P||P->CurrentShip!=From||P->FactionId!=To->Systems->FactionId||P->State!=EOVPassengerState::Aboard||
+           Seen.Contains(Id))return false;
+        Seen.Add(Id);
+    }
+    for(int32 Id:People){auto* P=FindPerson(Id);P->CurrentShip=To;P->Shuttle.Reset();}
+    return true;
 }

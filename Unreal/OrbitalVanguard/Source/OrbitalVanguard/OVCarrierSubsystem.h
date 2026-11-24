@@ -86,6 +86,9 @@ struct ORBITALVANGUARD_API FOVHangarState
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly) float ProductionSeconds = 0;
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly) int32 ExtraAircraftCapacity = 0;
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly) TWeakObjectPtr<AOVShip> StoredSmallShip;
+    TWeakObjectPtr<AOVShip> InboundShip;
+    FVector ApproachDestination=FVector::ZeroVector;
+    int32 StoredHostFaction=INDEX_NONE;
 };
 
 USTRUCT(BlueprintType)
@@ -186,7 +189,9 @@ public:
     UFUNCTION(BlueprintCallable) void Reset(int32 Seed = 260112);
     // Idempotent. The DEV initial inventory is allocated only for a newly registered carrier.
     UFUNCTION(BlueprintCallable) bool RegisterCarrier(AOVShip* Ship, int32 InitialPerHangar = 20);
+    void RegisterSmallBays(AOVShip* Home);
     bool StoreShuttle(AOVShip* Home,FName Slot,AOVShip* Shuttle);
+    bool IsHangarDestroyed(const FOVHangarState& Hangar) const;
     bool IsHangarOperational(const FOVHangarState& Hangar) const;
     FVector HangarPosition(const FOVHangarState& Hangar) const;
     UFUNCTION(BlueprintCallable) int32 Launch(AOVShip* Ship);
@@ -235,7 +240,6 @@ private:
     TArray<FStrikeCandidateCache> StrikeCandidateCache;
     void RebuildStrikeCandidates();
 
-    bool IsHangarDestroyed(const FOVHangarState& Hangar) const;
     bool HasControl(AOVShip* Ship) const;
 
     FOVHangarState* FindDock(FOVAircraftRecord& Craft);

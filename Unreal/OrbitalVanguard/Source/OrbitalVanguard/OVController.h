@@ -18,7 +18,7 @@ class UOVHeroSubsystem;
 class UInstancedStaticMeshComponent;
 class UStaticMeshComponent;
 UENUM(BlueprintType)
-enum class EOVInputMode : uint8 { None, Move, Target, Heading, Repair, Survey };
+enum class EOVInputMode : uint8 { None, Move, Target, Heading, Repair, Survey, BoardingTarget, DockingTarget };
 UENUM(BlueprintType)
 enum class EOVSpaceEnvironmentType : uint8 { None, AsteroidField, RadiationZone, SolarFlare, BlackHole };
 UENUM(BlueprintType)
@@ -181,6 +181,27 @@ public:
  void UpdatePreview();
  UFUNCTION(BlueprintCallable, Category="Control Range")
  void StepSimulation(float DeltaTime);
+ UFUNCTION(BlueprintCallable) bool RequestSmallShipDock(int32 BayId,AOVShip* Guest);
+ UFUNCTION(BlueprintCallable) bool LaunchSmallShip(int32 BayId);
+ UFUNCTION(BlueprintCallable) bool PrepareBoarding(AOVShip* Origin,AOVShip* Target,AOVShip* Shuttle,const TArray<int32>& Units);
+ UFUNCTION(BlueprintCallable) bool TransferDockedCrew(AOVShip* Origin,AOVShip* Destination,const TArray<int32>& Units);
+ UFUNCTION(BlueprintCallable) bool ConfirmBoarding(int32 Serial);
+ UFUNCTION(BlueprintCallable) void CancelCrewOperation(int32 Serial);
+ struct FCrewOperation {
+  int32 Serial=0;
+  TWeakObjectPtr<AOVShip> Origin,Target,Shuttle;
+  FName Room;
+  TArray<int32> Units;
+  bool bTransfer=false;
+ };
+ TArray<FCrewOperation> CrewOperations;
+ int32 NextCrewOperation=1;
+ UFUNCTION(BlueprintPure) int32 LastCrewOperation() const { return CrewOperations.IsEmpty()?0:CrewOperations.Last().Serial; }
+ int32 Mustered(const FCrewOperation& Op) const;
+ void AdvanceShipOperations();
+ void ResetShipOperations();
+ bool BeginCrewOperation(FCrewOperation Op);
+
  UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Combat") TObjectPtr<UOVCombatSubsystem> Combat;
  UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Combat") TObjectPtr<UOVCarrierSubsystem> Carrier;
  UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Combat") TObjectPtr<UOVPointDefenseSubsystem> PointDefense;

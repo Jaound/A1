@@ -12,7 +12,7 @@ namespace
 {
 bool LivingShip(const AOVShip* Ship)
 {
-    return IsValid(Ship) && Ship->Systems && Ship->Systems->Layout && !Ship->Systems->bWrecked && !Ship->Systems->bNeutral;
+    return IsValid(Ship) && !Ship->HangarHost.IsValid() && Ship->Systems && Ship->Systems->Layout && !Ship->Systems->bWrecked && !Ship->Systems->bNeutral;
 }
 
 bool SegmentSphere(const FVector& Start, const FVector& End, const FVector& Center, double Radius, float& Fraction)
@@ -299,9 +299,22 @@ void UOVCarrierSubsystem::SetCapacityBonus(AOVShip* Ship, int32 ExtraPerHangar)
     // No aircraft creation, healing, cooldown reset, or deletion when capacity changes.
 }
 
+void UOVCarrierSubsystem::RegisterSmallBays(AOVShip* Home)
+{
+    if(!LivingShip(Home)) return;
+    for(const auto& Slot:Home->Systems->Layout->Slots){
+        if(Slot.Facility!=EOVFacilityType::Hangar || Hangars.ContainsByPredicate([&](const auto& H){return H.Carrier==Home && H.SlotId==Slot.SlotId;}))continue;
+        auto& Bay=Hangars.AddDefaulted_GetRef();
+        Bay.HangarId=NextHangarId++;
+        Bay.Carrier=Home;
+        Bay.SlotId=Slot.SlotId;
+        Bay.Mode=EOVHangarMode::SmallShip;
+    }
+}
+
 bool UOVCarrierSubsystem::StoreShuttle(AOVShip* Home,FName Slot,AOVShip* Shuttle)
 {
-    if(!LivingShip(Home) || !LivingShip(Shuttle) || Shuttle->HullDefinitionId!=TEXT("assault") ||
+    if(!LivingShip(Home) || !LivingShip(Shuttle) || Home==Shuttle || !Shuttle->Systems->Layout->bSmallHull || Shuttle->Systems->Layout->DeckCount!=1 ||
         Home->Systems->FactionId!=Shuttle->Systems->FactionId)return false;
     auto* Bay=Hangars.FindByPredicate([&](const auto& H){return H.Carrier==Home && H.SlotId==Slot;});
     if(Hangars.ContainsByPredicate([&](const auto& H){return H.StoredSmallShip==Shuttle;}))return false;
@@ -311,7 +324,17 @@ bool UOVCarrierSubsystem::StoreShuttle(AOVShip* Home,FName Slot,AOVShip* Shuttle
         NewBay.HangarId=NextHangarId++;Bay=&Hangars.Add_GetRef(NewBay);
     }
     if(!IsHangarOperational(*Bay) || Bay->Mode!=EOVHangarMode::SmallShip || Bay->StoredSmallShip.IsValid())return false;
-    Bay->StoredSmallShip=Shuttle;return true;
+    Bay->StoredSmallShip=Shuttle;
+    Bay->StoredHostFaction=Home->Systems->FactionId;
+    Bay->InboundShip.Reset();
+    Shuttle->HangarHost=Home;
+    Shuttle->StopMovement();
+    Shuttle->Velocity=FVector::ZeroVector;
+    Shuttle->AttackTarget=nullptr;
+    Shuttle->SetActorHiddenInGame(true);
+    Shuttle->SetActorEnableCollision(false);
+    Shuttle->SetActorTickEnabled(false);
+    return true;
 }
 
 bool UOVCarrierSubsystem::SetHangarMode(int32 HangarId, EOVHangarMode Mode)
@@ -327,7 +350,7 @@ bool UOVCarrierSubsystem::SetHangarMode(int32 HangarId, EOVHangarMode Mode)
         }
     }
     if (H->Mode == Mode) return true;
-    if (H->StoredSmallShip.IsValid() || Aircraft.ContainsByPredicate([HangarId](const FOVAircraftRecord& C)
+    if (H->InboundShip.IsValid() || H->StoredSmallShip.IsValid() || Aircraft.ContainsByPredicate([HangarId](const FOVAircraftRecord& C)
         { return C.HangarId == HangarId && C.State != EOVAircraftState::Wrecked; })) return false;
     H->Mode = Mode; return true;
 }

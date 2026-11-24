@@ -1,5 +1,5 @@
-#include "OVLogisticsSubsystem.h"
 #include "OVController.h"
+#include "OVLogisticsSubsystem.h"
 #include "OVShip.h"
 #include "OVHUD.h"
 #include "OVCalibration.h"
@@ -1438,6 +1438,7 @@ bool AOVController::InputKey(const FInputKeyEventArgs& Params)
    }
    return true;
   }
+  if(HUD && HUD->PickingShip() && Key==EKeys::RightMouseButton)return true;
   if(bPlayGame3 && Key==EKeys::RightMouseButton)
   {
    const bool Shift=Params.Viewport && (Params.Viewport->KeyState(EKeys::LeftShift)||Params.Viewport->KeyState(EKeys::RightShift));
@@ -1499,7 +1500,7 @@ void AOVController::StepSimulation(float DeltaTime)
    LastAction=bAnyUnsheltered?TEXT("태양 플레어 파동 통과 · 비엄폐 함선 쉴드 과부하 및 레이더 일시 교란"):TEXT("태양 플레어 파동 통과 · 운석 엄폐로 피해 완화");
   }
  }
- if(Combat && Combat->bEnabled) { Combat->Simulate(Remaining); for(int32 I=Selection.Num()-1;I>=0;--I) {
+ if(Combat && Combat->bEnabled) { Combat->Simulate(Remaining); AdvanceShipOperations(); for(int32 I=Selection.Num()-1;I>=0;--I) {
   AOVShip* Ship=Selection[I];
   if(!IsValid(Ship) || Combat->IsDeparted(Ship)) {
    if(Ship) Ship->bSelected=false;
@@ -1529,7 +1530,7 @@ void AOVController::ResolveContacts(float SimDelta)
  // Each unordered pair is resolved exactly once per substep. No ramming damage in 2A.
  for(int32 I=0;I<Ships.Num();++I) for(int32 J=I+1;J<Ships.Num();++J) {
   AOVShip* A=Ships[I]; AOVShip* B=Ships[J];
-  if(A->Systems->bWrecked||B->Systems->bWrecked) continue;
+  if(A->HangarHost.IsValid()||B->HangarHost.IsValid()||A->Systems->bWrecked||B->Systems->bWrecked) continue;
   if(Combat && Combat->bEnabled && (Combat->IsDeparted(A)||Combat->IsDeparted(B))) continue;
   const FVector Centers=B->Hull->Bounds.Origin-A->Hull->Bounds.Origin;
   if (Centers.SizeSquared() > FMath::Square(A->Hull->Bounds.SphereRadius+B->Hull->Bounds.SphereRadius+80.)) continue;
@@ -1647,7 +1648,7 @@ void AOVController::PlayerTick(float DeltaTime)
  const bool LeftPressed=Inside&&WasInputKeyJustPressed(EKeys::LeftMouseButton);
  const int Wheel=Focused?int(WasInputKeyJustPressed(EKeys::MouseScrollUp))-int(WasInputKeyJustPressed(EKeys::MouseScrollDown)):0;
  const bool WorldGesture=RightMove.bActive||OrbitGesture.Surface==EOVOrbitSurface::World;
- const bool OverUI=HUD&&Inside&&(HUD->HandlePointer(MX,MY,LeftPressed,IsInputKeyDown(EKeys::LeftMouseButton),WorldGesture?0:Wheel,false,0,0) || (LeftPressed && !WorldGesture && HUD->IsOverWorldMarker(Cursor)));
+ const bool OverUI=HUD&&Inside&&(HUD->HandlePointer(MX,MY,LeftPressed,IsInputKeyDown(EKeys::LeftMouseButton),WorldGesture?0:Wheel,false,0,0) || (LeftPressed && !WorldGesture && (!HUD->PickingShip() && HUD->IsOverWorldMarker(Cursor))));
  const bool InWorld=Inside&&!OverUI;
  if(!Focused)
  {
@@ -1695,6 +1696,13 @@ void AOVController::PlayerTick(float DeltaTime)
   CameraWheel=0;
  }
  ApplyCameraInput(FVector2D::ZeroVector,Pan,YawAxis,CameraWheel,FApp::GetDeltaTime());
+ if(HUD && HUD->PickingShip()){
+  if(WasInputKeyJustPressed(EKeys::Escape))HUD->CloseTopModal();
+  else if(InWorld && LeftPressed && OrbitGesture.Surface==EOVOrbitSurface::None){
+   FHitResult Hit;GetHitResultUnderCursor(ECC_Visibility,false,Hit);HUD->AcceptShipPick(Cast<AOVShip>(Hit.GetActor()));
+  }
+  UpdateCamera();StepSimulation(DeltaTime);UpdateCombatPresentation();return;
+ }
  if(ActionPressed(TEXT("OVCameraProfile"))) Action(TEXT("CameraProfile"));
  if(Focused && ActionPressed(TEXT("OVPhase2C"))) Action(bDeveloperMode?TEXT("Phase2C"):TEXT("Fleet300"));
  if(Focused && ActionPressed(TEXT("OVDeveloper"))) Action(TEXT("Developer"));
@@ -1747,7 +1755,8 @@ void AOVController::PlayerTick(float DeltaTime)
   if(bPlacing) ConfirmMove();
   else if(InputMode==EOVInputMode::Heading) { FVector O,D,P; if(DeprojectMousePositionToWorld(O,D)&&FOVOrderInput::Project(O,D,PlacementPlaneZ,P,ProjectionNearDistance,CommandRayLength())) IssueHeading(P); }
   else { FHitResult Hit; AOVShip* Ship=nullptr; if(GetHitResultUnderCursor(ECC_Visibility,false,Hit)) Ship=Cast<AOVShip>(Hit.GetActor());
-   if(InputMode==EOVInputMode::Survey)SurveyEnemy(Ship);
+   if(HUD && HUD->PickingShip())HUD->AcceptShipPick(Ship);
+   else if(InputMode==EOVInputMode::Survey)SurveyEnemy(Ship);
    else if(InputMode==EOVInputMode::Repair) { auto* Service=GetWorld()->GetSubsystem<UOVLogisticsSubsystem>(); Service->OrderRepair(Selected,Ship); LastAction=Service->LastReason; InputMode=EOVInputMode::None; }
    else if(InputMode==EOVInputMode::Target) { if(Ship) SetTarget(Ship); }
    else SelectShipFromUser(Ship,Shift);

@@ -84,7 +84,7 @@ bool AOVHUD::HandleInteriorAction(FName Action)
   }
   return true;
  }
- if(Action==TEXT("InteriorToggle")||Action==TEXT("InteriorMissionToggle")) { bInteriorOpen=!bInteriorOpen;if(bInteriorOpen)ViewShip(PC->Selected);else CancelPointerDrag();return true; }
+ if(Action==TEXT("InteriorToggle")||Action==TEXT("InteriorMissionToggle")) { bInteriorOpen=!bInteriorOpen;if(bInteriorOpen){bDetailsOpen=false;ViewShip(PC->Selected);}else CancelPointerDrag();return true; }
  if(Action==TEXT("InteriorZoomIn") || Action==TEXT("InteriorZoomOut")){InteriorMapScale=FMath::Clamp(InteriorMapScale+(Action==TEXT("InteriorZoomIn")?.2f:-.2f),.6f,1.f);return true;}
  if(Action==TEXT("InteriorClose")) { bInteriorOpen=false;CancelPointerDrag();return true; }
  if(Action==TEXT("InteriorMin")) { bInteriorMinimized=!bInteriorMinimized;CancelPointerDrag();return true; }
@@ -207,10 +207,11 @@ void AOVHUD::DrawInterior()
  Button(TEXT("InteriorMax"),TEXT("[]"),X+W-90,Y+2,26);
  Button(TEXT("InteriorHeroPanel"),TEXT("영웅"),X+W-158,Y+2,60);
  if(bInteriorMinimized)return;
- Button(TEXT("InteriorSelectedShip"),TEXT("선택 함선 보기"),X+12,Y+37,140);
+ Button(TEXT("OpsExterior"),TEXT("외부 / 무장"),X+12,Y+37,100);
+ Button(TEXT("OpsBays"),TEXT("격납고"),X+118,Y+37,74);
  Button(TEXT("InteriorZoomOut"),TEXT("−"),X+W-74,Y+37,30);
  Button(TEXT("InteriorZoomIn"),TEXT("+"),X+W-40,Y+37,30);
- Button(TEXT("InteriorShipNext"),TEXT("다음 알려진 함선"),X+160,Y+37,150);
+ Button(TEXT("InteriorShipNext"),TEXT("다음 알려진 함선"),X+200,Y+37,130);
  if(!IsValid(Ship)||!Ship->Systems||!Ship->Systems->Layout||!Interior->IsStructureKnown(0,Ship))
  {
   DrawText(TEXT("내부 구조 미관측 · 아군의 실제 진입 후 표시됩니다."),Ink,X+24,Y+110,OVTypography::Font(EOVTextRole::Body));
@@ -355,6 +356,12 @@ void AOVHUD::DrawInterior()
   const FVector2D P=Project(Slot.LocalCenter);
   Markers.Emplace(P-FVector2D(35,13),P+FVector2D(35,14));
   Button(FName(*(TEXT("InteriorSlot_")+Slot.SlotId.ToString())),Facility(Slot.Facility),P.X-35,P.Y-13,70,Slot.SlotId==InteriorTargetSlot);
+  const int32 SI=L->GetSlotIndex(Slot.SlotId);
+  if(Ship->Systems->Slots.IsValidIndex(SI) && (Ship->Systems->FactionId==0 || Own.ContainsByPredicate([&](const auto* U){return Living(*U)&&U->NodeId==Slot.SlotId;}))){
+   const float Ratio=FMath::Clamp(Ship->Systems->Slots[SI].HP/FMath::Max(1.f,Slot.MaxFacilityHP),0.f,1.f);
+   DrawRect(Panel,P.X-32,P.Y+9,64,3);DrawRect(Ratio<.4f?Enemy:Accent,P.X-32,P.Y+9,64*Ratio,3);
+   if(Ratio<=0)Text(TEXT("×"),Enemy,P.X+21,P.Y-12);
+  }
  }
  // Squads are split by room, allegiance and visibility. A separated survivor keeps a marker.
  TMap<TTuple<FName,int32,int32>,TArray<int32>> RoomSquads;
@@ -554,10 +561,10 @@ void AOVHUD::DrawInterior()
    Text(FString::Printf(TEXT("운영 %.0f/%.0f · %s"),S.Crew,Slot.RequiredCrew,S.OccupyingFaction<0?TEXT("미점령"):S.OccupyingFaction==0?TEXT("아군"):TEXT("적군")),Ink,X+18,Footer+169);
   }else Text(TEXT("시설 상태 미관측"),Soft,X+18,Footer+151);
  }
- const FName Commands[]={TEXT("InteriorCapture"),TEXT("InteriorSabotage"),TEXT("InteriorDefend"),TEXT("InteriorRetreat"),TEXT("InteriorCancel")};
- const TCHAR* Labels[]={TEXT("점령"),TEXT("공작"),TEXT("수호"),TEXT("철수"),TEXT("취소")};
- const float CommandWidth=CardsWidth/5;
- for(int32 I=0;I<5;++I)Button(Commands[I],Labels[I],CardsX+I*CommandWidth,Footer+3,CommandWidth-5);
+ const FName Commands[]={TEXT("InteriorCapture"),TEXT("InteriorSabotage"),TEXT("InteriorDefend"),TEXT("InteriorRetreat"),TEXT("InteriorCancel"),TEXT("OpsAssault"),TEXT("OpsTransfer")};
+ const TCHAR* Labels[]={TEXT("점령"),TEXT("공작"),TEXT("수호"),TEXT("철수"),TEXT("취소"),TEXT("강습"),TEXT("옮겨 타기")};
+ const float CommandWidth=CardsWidth/UE_ARRAY_COUNT(Commands);
+ for(int32 I=0;I<UE_ARRAY_COUNT(Commands);++I)Button(Commands[I],Labels[I],CardsX+I*CommandWidth,Footer+3,CommandWidth-5);
  const FString Feedback=Focus&&InteriorSelectedUnits.Num()==1&&!Focus->Reason.IsEmpty()?Focus->Reason:InteriorFeedback;
  if(!Feedback.IsEmpty())Text(Feedback.Left(56),FLinearColor(1,.8f,.25f),CardsX,Y+H-15);
 }

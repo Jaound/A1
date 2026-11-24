@@ -71,7 +71,7 @@ public:
     FString ArenaGroupLabel(int32 Group) const;
     int32 ArenaGroupHeadcount(int32 Column) const;
     int32 ArenaTeamForUnit(int32 Id) const;
-    struct FArenaWave { TArray<int32> Troopers; TArray<int32> Units; TWeakObjectPtr<AOVShip> Shuttle; FName Bay; bool Sent=false; bool Recalled=false; };
+    struct FArenaWave { TArray<int32> Troopers; TArray<int32> Units; TWeakObjectPtr<AOVShip> Shuttle; FName Bay; bool Sent=false; bool Recalled=false; bool UsedShuttle=false; bool PlayerDirected=false; TWeakObjectPtr<AOVShip> ActualShuttle; };
     FArenaWave ArenaWaves[2];
     bool PrepareArenaForces(AOVController& PC);
     bool SendArenaWave(AOVController& PC,int32 Index);

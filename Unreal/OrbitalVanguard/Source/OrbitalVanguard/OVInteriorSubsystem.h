@@ -87,6 +87,7 @@ struct ORBITALVANGUARD_API FOVInteriorUnitRecord
     FName LastDutySlot;
     bool bTraumaTreatmentAvailable=true;
     bool bRushWeakened=false;
+    UPROPERTY(VisibleAnywhere, BlueprintReadOnly) bool bEmbarkedForDeparture=false;
     bool bPendingIrisArc=false;
     FVector FieldFacing=FVector::ForwardVector;
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly) int32 SignatureUses=0;

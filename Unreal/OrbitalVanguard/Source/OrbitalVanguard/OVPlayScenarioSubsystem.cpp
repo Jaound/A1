@@ -1,6 +1,6 @@
+#include "OVPlayScenarioSubsystem.h"
 #include "OVHeroSubsystem.h"
 #include "OVLogisticsSubsystem.h"
-#include "OVPlayScenarioSubsystem.h"
 #include "OVBlackHoleHazardActor.h"
 #include "OVCalibration.h"
 #include "OVCarrierSubsystem.h"
@@ -238,6 +238,7 @@ void UOVPlayScenarioSubsystem::Deinitialize()
 }
 void UOVPlayScenarioSubsystem::Clear()
 {
+    if(Owner.IsValid())Owner->ResetShipOperations();
     for(auto& Wave:ArenaWaves){
         if(Wave.Shuttle.IsValid() && (!Owner.IsValid() || !Owner->Ships.Contains(Wave.Shuttle.Get())))Wave.Shuttle->Destroy();
         Wave=FArenaWave{};
@@ -525,6 +526,7 @@ AOVShip* UOVPlayScenarioSubsystem::Spawn(AOVController& Controller, const FOVPla
         if (Mount.Type == EOVWeaponType::Interception) ++DefenseMounts;
     Controller.PointDefense->RegisterShip(Ship, DefenseMounts, Entry.Hull == TEXT("air_defense") ? 1.5f : 1.f);
     if (Ship->Systems->Layout->bAllowAircraftOperations && !Controller.Carrier->RegisterCarrier(Ship, Entry.AircraftPerHangar)) return nullptr;
+    Controller.Carrier->RegisterSmallBays(Ship);
     Controller.Transport->AddShip(Ship);
     GetWorld()->GetSubsystem<UOVInteriorSubsystem>()->AddShip(Ship);
     if (ActiveId != TEXT("Logistics") || (Entry.Hull != TEXT("mining") && Entry.Hull != TEXT("transport")))

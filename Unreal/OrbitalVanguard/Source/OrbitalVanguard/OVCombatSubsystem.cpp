@@ -270,7 +270,7 @@ bool UOVCombatSubsystem::IsDeparted(AOVShip* Ship) const
 
 bool UOVCombatSubsystem::IsValidTarget(AOVShip* Source, AOVShip* Target) const
 {
-    return IsValid(Source) && IsValid(Target) && Source != Target && Source->Systems && Target->Systems
+    return IsValid(Source) && IsValid(Target) && Source != Target && !Source->HangarHost.IsValid() && !Target->HangarHost.IsValid() && Source->Systems && Target->Systems
         && FindShip(Target) != INDEX_NONE && !Target->Systems->bWrecked && !Target->Systems->bNeutral
         && !IsDeparted(Target) && Target->Systems->FactionId >= 0
         && Source->Systems->FactionId != Target->Systems->FactionId;
@@ -380,7 +380,7 @@ FOVDetectionInfo UOVCombatSubsystem::GetDetection(AOVShip* Ship, AOVShip* Target
     {
         AOVShip* Sensor = Observer.Ship;
         if (!IsValid(Sensor) || !Sensor->Systems || Observer.bDeparted || !Sensor->Systems->HasRadar()
-            || Sensor->Systems->FactionId != Ship->Systems->FactionId) continue;
+            || Sensor->HangarHost.IsValid() || Sensor->Systems->FactionId != Ship->Systems->FactionId) continue;
         const FOVRadarProfile* Radar = Settings->Radars.FindByPredicate(
             [&](const FOVRadarProfile& R) { return R.Tier == Observer.RadarTier; });
         if (!Radar || FVector::Dist(Sensor->GetActorLocation(), Target->GetActorLocation()) > Radar->Range) continue;
@@ -415,6 +415,7 @@ FOVFireReadiness UOVCombatSubsystem::Evaluate(const FOVCombatShipState& State, c
     if (!bEnabled || !IsValid(Ship) || !Ship->Systems || !Settings) return Block(TEXT("COMBAT OFF"));
     const UOVShipSystemsComponent* Systems = Ship->Systems;
     R.Cooldown = Mount.SalvoRemaining > 0 ? Mount.SalvoDelay : Mount.Cooldown;
+    if (Ship->HangarHost.IsValid()) return Block(TEXT("DOCKED"));
     if (State.bDeparted) return Block(TEXT("DEPARTED"));
     if (Systems->bWrecked) return Block(TEXT("WRECKED"));
     if (Systems->bNeutral) return Block(TEXT("NEUTRAL"));
@@ -568,7 +569,7 @@ AOVShip* UOVCombatSubsystem::FindBlockingFriend(AOVShip* Ship, AOVShip* Target, 
     {
         AOVShip* Friend = Other.Ship;
         if (!IsValid(Friend) || Friend == Ship || Friend == Target || !Friend->Systems || !Friend->Systems->Layout
-            || Friend->Systems->bWrecked || Other.bDeparted || Friend->Systems->FactionId != Ship->Systems->FactionId) continue;
+            || Friend->HangarHost.IsValid() || Friend->Systems->bWrecked || Other.bDeparted || Friend->Systems->FactionId != Ship->Systems->FactionId) continue;
         float Fraction; FVector Normal;
         if (Path)
         {
@@ -639,7 +640,7 @@ void UOVCombatSubsystem::Step(float Delta)
     for (FOVCombatShipState& State : Ships)
     {
         AOVShip* Ship = State.Ship;
-        if (!IsValid(Ship) || !Ship->Systems || State.bDeparted) continue;
+        if (!IsValid(Ship) || !Ship->Systems || Ship->HangarHost.IsValid() || State.bDeparted) continue;
         if(State.OrderFaction!=Ship->Systems->FactionId) {
             State.FirstAttackAt=-1;State.FocusFireSince=-1;State.FocusTarget.Reset();
             Ship->bFTLCharging=false;
@@ -675,7 +676,7 @@ void UOVCombatSubsystem::Step(float Delta)
     for (FOVCombatShipState& State : Ships)
     {
         AOVShip* Ship = State.Ship;
-        if (!IsValid(Ship) || !Ship->Systems || State.bDeparted || Ship->Systems->bWrecked || Ship->Systems->bNeutral) continue;
+        if (!IsValid(Ship) || !Ship->Systems || Ship->HangarHost.IsValid() || State.bDeparted || Ship->Systems->bWrecked || Ship->Systems->bNeutral) continue;
         const bool bAutomatic = Ship->IsAttackAutomatic() || !Ship->Systems->CanCommand();
         const auto* Mission=GetWorld()->GetSubsystem<UOVMissionSubsystem>();
         const bool bManualRequest=State.Mounts.ContainsByPredicate([](const FOVCombatMountState& M){return M.bFireRequested;});
@@ -905,7 +906,7 @@ bool UOVCombatSubsystem::SweepAttack(FOVAttackState& Attack, FVector End)
     {
         AOVShip* Ship = State.Ship;
         if (!IsValid(Ship) || Ship == Attack.Attacker.Get() || !Ship->Systems || !Ship->Systems->Layout
-            || Ship->Systems->bWrecked || State.bDeparted) continue;
+            || Ship->HangarHost.IsValid() || Ship->Systems->bWrecked || State.bDeparted) continue;
         float Fraction; FVector Normal;
         const auto& Boxes=Ship->Systems->Layout->CombatHullBoxes;
         if (Ship->Systems->bShieldActive && Ship->Systems->Shield > 0 && (!Boxes.IsEmpty() || Ship->Systems->Layout->FittedShieldRadii.GetMin()>0))
@@ -983,7 +984,7 @@ bool UOVCombatSubsystem::ResolveImpact(FOVAttackState& Attack, AOVShip* HitShip,
 {
     if (Attack.Result != EOVAttackResult::Flying || Attack.AttackId <= 0 || Attack.AttackId > ShotCount || ResolvedAttackIds.Contains(Attack.AttackId)
         || !IsValid(HitShip) || !HitShip->Systems
-        || HitShip->Systems->bWrecked || IsDeparted(HitShip)) return false;
+        || HitShip->HangarHost.IsValid() || HitShip->Systems->bWrecked || IsDeparted(HitShip)) return false;
     // Mark resolved before the damage path, including its queued secondary explosions.
     Attack.Result = EOVAttackResult::Hit; Attack.Position = Point; Attack.HitShipId = HitShip->GetFName();
     Attack.ResolvedAt = GameTime; ResolvedAttackIds.Add(Attack.AttackId);

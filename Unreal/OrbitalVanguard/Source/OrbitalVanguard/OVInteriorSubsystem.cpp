@@ -642,6 +642,7 @@ void UOVInteriorSubsystem::ReleaseIrisField(FOVInteriorUnitRecord& Unit)
 void UOVInteriorSubsystem::AdvanceUnit(FOVInteriorUnitRecord& U,float Delta)
 {
     if(!IsOnboard(U)||U.State==EOVInteriorState::AwaitingRecovery){U.bPendingIrisArc=false;return;}
+    if(U.bEmbarkedForDeparture)return;
     if(U.bDutyRequested || U.Order==EOVInteriorOrder::Retreat)U.bPendingIrisArc=false;
     if(!FindGraph(U.Ship.Get())){U.State=EOVInteriorState::Blocked;U.Reason=TEXT("내부 배치가 없어 이동할 수 없습니다");return;}
     if(GetWorld()->GetSubsystem<UOVCombatSubsystem>()->IsDeparted(U.Ship.Get()))

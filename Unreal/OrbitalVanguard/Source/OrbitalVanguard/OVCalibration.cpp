@@ -713,12 +713,14 @@ bool OVCalibration::ConfigureHull(UOVCombatSubsystem& Combat, AOVShip& Ship, FNa
         Install(EOVFacilityType::Hangar,AircraftBays);
         if(Layout->Slots.FilterByPredicate([](const auto& S){return S.Facility==EOVFacilityType::Hangar;}).Num()!=AircraftBays)return false;
     }
+    if (HullId == TEXT("dreadnought"))
+    {
+        const int32 SmallShipBays = bUnarmedTrial ? 2 : 1;
+        Install(EOVFacilityType::Hangar, SmallShipBays);
+        if (Layout->Slots.FilterByPredicate([](const auto& Slot){return Slot.Facility==EOVFacilityType::Hangar;}).Num() < SmallShipBays) return false;
+    }
     if (bUnarmedTrial)
     {
-        if(HullId==TEXT("dreadnought")){
-            Install(EOVFacilityType::Hangar,2);
-            if(Layout->Slots.FilterByPredicate([](const auto& S){return S.Facility==EOVFacilityType::Hangar;}).Num()<2)return false;
-        }
         Layout->WeaponMounts.Reset();
         Layout->BeamSlots = Layout->CannonSlots = Layout->MissileSlots = 0;
     }

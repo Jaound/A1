@@ -79,7 +79,7 @@ void AOVHUD::Button(FName N,const FString& L,float X,float Y,float W,bool Active
  DrawRect(Active?FLinearColor(.03f,.4f,.55f,.95f):FLinearColor(.04f,.08f,.13f,.98f),X,Y,W,27);
  UFont* LabelFont=OVTypography::Font(TextRole);
  DrawText(FitLabel(LabelFont,L,W-12),Active?FLinearColor::White:Ink,X+6,Y+5,LabelFont);
- AddHitBox(FVector2D(X,Y)*UIScale,FVector2D(W,27)*UIScale,N,true,(bDrawingStarMap || (bStarMapOpen && (N==TEXT("StarMapToggle") || N==TEXT("TitleScreen") || N==TEXT("OpenTutorialGuide"))))?310:bDrawingInterior?210:bDrawingDetails?110:10);
+ AddHitBox(FVector2D(X,Y)*UIScale,FVector2D(W,27)*UIScale,N,true,(N.ToString().StartsWith(TEXT("OpsReady_"))||N.ToString().StartsWith(TEXT("OpsCancel_")))?230:(bDrawingStarMap || (bStarMapOpen && (N==TEXT("StarMapToggle") || N==TEXT("TitleScreen") || N==TEXT("OpenTutorialGuide"))))?310:bDrawingInterior?210:bDrawingDetails?110:10);
 }
 FName AOVHUD::GetHitActionAtCanvasPoint(FVector2D Point) const
 {
@@ -89,10 +89,13 @@ FName AOVHUD::GetHitActionAtCanvasPoint(FVector2D Point) const
 }
 bool AOVHUD::IsOverPanel(float X,float Y) const
 {
+ if(PickingShip())return false;
+ if(bChoosingTransport||bChoosingTransfer)return true;
  if(bPauseMenu || bConsumeDebriefClick || IsDebriefOpen() || LastMapCloseFrame==GFrameCounter || bStarMapOpen || bTitleScreenOpen || IsOverAddedUI(X,Y)) return true;
  const auto* PC=Cast<AOVController>(PlayerOwner); if(!PC) return false;
  const FVector2D P(X/UIScale,Y/UIScale);
- if(GetHitActionAtCanvasPoint(P).ToString().StartsWith(TEXT("FacilityAlert_")))return true;
+ const FString HitAction=GetHitActionAtCanvasPoint(P).ToString();
+ if(HitAction.StartsWith(TEXT("FacilityAlert_"))||HitAction.StartsWith(TEXT("OpsReady_"))||HitAction.StartsWith(TEXT("OpsCancel_")))return true;
  if (const auto* Play = PC->GetPlayScenario(); Play && Play->GetActiveDefinition() && !bSceneMenuOpen &&
      P.X >= 0 && P.X <= (Play->ActiveId==TEXT("Sandbox")?426:508) && P.Y >= 63 && P.Y <= 63+Play->MissionPanelHeight()) return true;
 
@@ -136,6 +139,7 @@ void AOVHUD::OrbitPreview(FVector2D Delta)
 
 bool AOVHUD::HandlePointer(float X,float Y,bool Pressed,bool Down,float Wheel,bool Orbit,float DX,float DY)
 {
+ if(PickingShip())return false;
  // Canvas buttons dispatch on press. The next field can already be visible
  // when the controller polls that same press later in the frame.
  if(bConsumeDebriefClick) { bConsumeDebriefClick=Down; return true; }
@@ -238,6 +242,9 @@ bool AOVHUD::HandlePointer(float X,float Y,bool Pressed,bool Down,float Wheel,bo
 }
 void AOVHUD::NotifyHitBoxClick(FName N)
 {
+ if(PickingShip())return;
+ if((bChoosingTransport||bChoosingTransfer) && !N.ToString().StartsWith(TEXT("Ops")))return;
+ if(!bPauseMenu && !bTitleScreenOpen && !IsDebriefOpen() && HandleShipOperations(N))return;
  if(N==TEXT("SystemMenu")){TogglePauseMenu();return;}
  if(bPauseMenu){
   if(N==TEXT("PauseSettings") && TitleScreenWidget){bTitleScreenOpen=true;TitleScreenWidget->ActivateFieldPanel(EOVTitleMenuPanel::Settings);SyncAddedUI();return;}
@@ -394,7 +401,7 @@ void AOVHUD::NotifyHitBoxClick(FName N)
    if(Carrier->Aircraft.ContainsByPredicate([&](const FOVAircraftRecord& A){return A.AircraftId==Id&&A.Carrier==PC->Selected&&A.FactionId==PC->Selected->Systems->FactionId;})) SelectedAircraftId=Id;
   return;
  }
- if(N==TEXT("HangarView")) { bHangarView=true;return; }
+ if(N==TEXT("HangarView")) { bHangarView=true;bAircraftOnly=false;return; }
  if(N==TEXT("HangarDisplayMode")) { bAircraftGrid=!bAircraftGrid;return; }
  if(N==TEXT("DetailsPagePrevious")||N==TEXT("DetailsPageNext")) {
   const auto* PC=Cast<AOVController>(PlayerOwner);
@@ -631,7 +638,8 @@ bool AOVHUD::ConfirmFacilityAlert(FName Action)
  PC->ViewedDeck=Slots[Slot].DeckId;PC->SelectedSlot=Slot;
  int32 Before=0;for(int32 I=0;I<Slot;++I)if(Slots[I].DeckId==PC->ViewedDeck)++Before;
  DetailsPageShip=Ship;DetailsPageDeck=PC->ViewedDeck;DetailsSlotPage=Before/15;
- bHangarView=false;OpenDetails();return true;
+ bDetailsOpen=false;bInteriorOpen=true;bInteriorMinimized=false;InteriorShip=Ship;
+ InteriorDeck=PC->ViewedDeck;InteriorTargetSlot=Slots[Slot].SlotId;InteriorSelectedUnits.Reset();return true;
 }
 
 void AOVHUD::DrawDetails()
@@ -680,10 +688,12 @@ void AOVHUD::DrawDetails()
    return;
   }
  }
- for(int32 D=1;D<=L->DeckCount;++D) if(Reveal)Button(FName(*FString::Printf(TEXT("Deck%d"),D)),FString::Printf(TEXT("%dF"),D),X+198+(D-1)*46,Y+38,40,PC->ViewedDeck==D);
+ if(Reveal)Button(TEXT("OpsInterior"),TEXT("선내 작전"),X+198,Y+38,90);
+ if(PC->Selected->HangarHost.IsValid())Button(TEXT("OpsHost"),TEXT("모함 격납고"),X+294,Y+38,100);
  if(bHangarView) {
   if(!Reveal) DrawText(TEXT("적 격납고 · 미확인"),Ink,X+16,Y+88,OVTypography::Font(EOVTextRole::Body));
   else if(auto* Carrier=GetWorld()->GetSubsystem<UOVCarrierSubsystem>()) {
+   if(DrawSmallBays(PC->Selected,X,Y,W))return;
    if(AircraftPageShip!=PC->Selected){AircraftPageShip=PC->Selected;AircraftPage=0;AircraftFilter=0;SelectedAircraftId=0;}
    const int32 Row=Carrier->Hangars.FilterByPredicate([&](const FOVHangarState& H){return H.Carrier==PC->Selected;}).Num();
    if(Row==0)DrawText(TEXT("장착된 격납고 없음"),Ink,X+16,Y+88,OVTypography::Font(EOVTextRole::Body));
@@ -844,6 +854,11 @@ void AOVHUD::DrawHUD()
  UIScale=FMath::Clamp(BaseDrawScale*UserUIScaleMultiplier,.25f,4.f);
  if (bStarMapOpen) UIScale=FMath::Min(UIScale,float(FMath::Min(ViewportPixels.X/1210.,ViewportPixels.Y/488.)));
  Canvas->Canvas->PushRelativeTransform(FScaleMatrix(FVector(UIScale,UIScale,1)));
+ if(PickingShip()){
+  DrawText(PC->InputMode==EOVInputMode::BoardingTarget?TEXT("강습할 적함 선택 · Esc 취소"):TEXT("수납할 아군 소형함 선택 · Esc 취소"),FLinearColor::White,18,18,OVTypography::Font(EOVTextRole::Heading));
+  Canvas->Canvas->PopTransform();return;
+ }
+
  if(bPauseMenu) {
   const float W=ViewportPixels.X/UIScale,H=ViewportPixels.Y/UIScale;
   const float X=(W-390)*.5f,Y=(H-300)*.5f;
@@ -861,7 +876,7 @@ void AOVHUD::DrawHUD()
  DrawPlayHUD(); DrawFacilityAlerts(); DrawWorldIndicators(); DrawPhase2C(); DrawMission();
  DrawBattleNotices();
  DrawPinned();
- if(!PC->bDeveloperMode) { DrawDetails(); DrawInterior(); DrawStarMap(); }
+ if(!PC->bDeveloperMode) { DrawDetails(); DrawInterior(); if(!bStarMapOpen)DrawShipOperations(); DrawStarMap(); }
  float MouseX=0,MouseY=0;
  if(DraggedPin==INDEX_NONE && PC->GetMousePosition(MouseX,MouseY) && !IsOverAddedUI(MouseX,MouseY)) {
   const FVector2D Mouse(MouseX/UIScale,MouseY/UIScale);
@@ -1271,6 +1286,7 @@ void AOVHUD::ResetDevelopmentWindow(){DevelopmentPosition=FVector2D(-1,-1);Devel
 
 void AOVHUD::ResetPlaySessionUI()
 {
+ bChoosingTransport=bChoosingTransfer=bAircraftOnly=false;BoardingSelection.Reset();PendingBay=0;BoardingOrigin.Reset();BoardingShuttle.Reset();
  bChoosingJump=false;bPauseMenu=false;bDebriefDismissed=false;
  CloseTitleScreen();
  CancelPointerDrag();
@@ -1317,7 +1333,7 @@ void AOVHUD::SyncAddedUI()
   TitleScreenWidget->SetDesiredSizeInViewport(FVector2D(W/Dpi,H/Dpi));
   TitleScreenWidget->SetVisibility(bTitleScreenOpen?ESlateVisibility::Visible:ESlateVisibility::Collapsed);
  }
- if(bTitleScreenOpen || bPauseMenu || IsDebriefOpen()){
+ if(bTitleScreenOpen || bPauseMenu || IsDebriefOpen() || PickingShip()){
   if(DevelopmentWidget)DevelopmentWidget->SetVisibility(ESlateVisibility::Collapsed);
   if(HeroWidget)HeroWidget->SetVisibility(ESlateVisibility::Collapsed);
   return;
@@ -1375,6 +1391,8 @@ void AOVHUD::TogglePauseMenu()
 }
 bool AOVHUD::CloseTopModal()
 {
+ if(PickingShip()){CastChecked<AOVController>(PlayerOwner)->InputMode=EOVInputMode::None;return true;}
+ if(bChoosingTransport||bChoosingTransfer){bChoosingTransport=bChoosingTransfer=false;return true;}
  if(IsDebriefOpen()) { bDebriefDismissed=true; return true; }
  if (bTitleScreenOpen)
  {
