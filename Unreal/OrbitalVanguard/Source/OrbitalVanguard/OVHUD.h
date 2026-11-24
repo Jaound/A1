@@ -234,8 +234,11 @@ private:
  UPROPERTY() TObjectPtr<AOVBasePresentation> BasePresentation;
  bool bBaseViewOpen = false;
  UPROPERTY() TObjectPtr<UTexture2D> BaseBayCards[2];
- int32 BasePick = 1, BaseLayer = 0, BaseTurns = 0;
+ int32 BasePick = 0, BaseLayer = 0, BaseTurns = 0;
  int32 BaseInspect = INDEX_NONE;
+ int32 BaseTab = 0, BasePage = 0, BaseRemoval = 0;
+ bool bBaseAutoConnect = false;
+ TOptional<FIntVector> BaseRouteCell;
  FString BaseNotice;
 
  bool IsDebriefOpen() const;

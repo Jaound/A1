@@ -69,4 +69,75 @@ bool FOVBaseTrialNetwork::RunTest(const FString&)
     }
     return true;
 }
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(FOVBaseStage3,"OrbitalVanguard.Base.Stage3GrowthAndNetwork",EAutomationTestFlags::EditorContext|EAutomationTestFlags::EngineFilter)
+bool FOVBaseStage3::RunTest(const FString&)
+{
+    using namespace OVBase;
+    // 실패한 전제 뒤의 인덱스 접근을 피한다.
+#define VERIFY_RULE(...) if (!TestTrue(TEXT(#__VA_ARGS__), (__VA_ARGS__))) return false
+    VERIFY_RULE(std::size(Catalog)==19);
+    BuildState trial(false);
+    VERIFY_RULE(trial.Check({Kind::YardMedium,{1,8,0}})==OVBase::Error::Tier);
+    VERIFY_RULE(trial.Start({Kind::Corridor,{3,0,0}}));
+    VERIFY_RULE(trial.Start({Kind::Storage,{4,0,0}}));
+    VERIFY_RULE(!trial.Cancel(1));
+    trial.Advance(18);
+    VERIFY_RULE(trial.Modules()[2].Remaining==57);
+    trial.Advance(57);
+    VERIFY_RULE(trial.Capacity().Advanced==2500);
+    VERIFY_RULE(trial.UnlockTestTechnology(Technology::EngineeringII) && trial.StartUpgrade(0));
+    trial.Advance(299);
+    VERIFY_RULE(trial.CoreTier()==1);
+    trial.Advance(1);
+    VERIFY_RULE(trial.CoreTier()==2 && trial.Limits().Concurrent==2);
+    VERIFY_RULE(!trial.HasTechnology(Technology::HullMedium));
+    VERIFY_RULE(trial.UnlockTestTechnology(Technology::EngineeringIII) && trial.StartUpgrade(0));
+    VERIFY_RULE(trial.UnlockTestTechnology(Technology::StorageII) && trial.StartUpgrade(2));
+    trial.Advance(600);
+    VERIFY_RULE(trial.CoreTier()==3 && trial.Modules()[2].Level==2);
+    VERIFY_RULE(trial.UnlockTestTechnology(Technology::StorageIII) && trial.StartUpgrade(2));
+    trial.Advance(120);
+    VERIFY_RULE(trial.Capacity().Advanced==5500);
+    VERIFY_RULE(trial.UnlockTestTechnology(Technology::EngineeringIV));
+    VERIFY_RULE(trial.CheckUpgrade(0)==OVBase::Error::Capacity);
+    VERIFY_RULE(trial.Start({Kind::Corridor,{-3,0,0},2}));
+    VERIFY_RULE(trial.Start({Kind::Storage,{-4,0,0},2}));
+    trial.Advance(75);
+    VERIFY_RULE(trial.Modules()[4].Level==1 && trial.StartUpgrade(0));
+    trial.Advance(960);
+    VERIFY_RULE(trial.CoreTier()==4 && trial.Limits().Links==132);
+
+    BuildState paid;
+    VERIFY_RULE(paid.Start({Kind::Junction,{3,0,0}}));
+    VERIFY_RULE(paid.Start({Kind::Junction,{4,0,0}}));
+    VERIFY_RULE(paid.Start({Kind::Junction,{5,0,0}}));
+    VERIFY_RULE(paid.Start({Kind::Junction,{3,1,0}}));
+    VERIFY_RULE(paid.Start({Kind::Junction,{4,1,0}}));
+    VERIFY_RULE(paid.Start({Kind::Junction,{5,1,0}}));
+    VERIFY_RULE(paid.Start({Kind::Storage,{6,0,0}}));
+    paid.Advance(120);
+    VERIFY_RULE(paid.Network(false).back());
+    auto preview=paid.InspectRemoval(2,false);
+    VERIFY_RULE(preview.Result==OVBase::Error::None && preview.Disconnected.empty() && preview.Refund.Common==30);
+    VERIFY_RULE(paid.Demolish(2) && paid.Network(false).back());
+    VERIFY_RULE(paid.Demolish(3) && !paid.Network(false).back());
+    VERIFY_RULE(paid.Start({Kind::Junction,{4,0,0}}));
+    paid.Advance(4);
+    BuildState restored;
+    VERIFY_RULE(restored.Restore(paid.Modules(),paid.Available(),paid.ResearchMask(),paid.Charges(),paid.NextModuleId()));
+    VERIFY_RULE(restored.Funds()==paid.Funds() && restored.Modules().back().Remaining==11);
+    const int last=static_cast<int>(restored.Modules().size()-1);
+    const int money=restored.Funds();
+    VERIFY_RULE(restored.Cancel(last) && restored.Funds()==money+40);
+    VERIFY_RULE(restored.Start({Kind::Junction,{4,0,0}}));
+    restored.Advance(15);
+    VERIFY_RULE(restored.Network(false)[4]);
+    auto corrupt=paid.Modules();
+    corrupt.back().Id=1;
+    VERIFY_RULE(!restored.Restore(corrupt,paid.Available(),0,true,paid.NextModuleId()));
+    VERIFY_RULE(restored.Funds()==money);
+#undef VERIFY_RULE
+    return true;
+}
+
 #endif

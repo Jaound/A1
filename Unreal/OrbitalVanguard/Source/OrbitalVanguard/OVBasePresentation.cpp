@@ -8,6 +8,7 @@
 #include "Engine/StaticMesh.h"
 #include "Engine/StaticMeshSocket.h"
 #include "Engine/World.h"
+#include "Materials/MaterialInterface.h"
 
 namespace
 {
@@ -34,8 +35,22 @@ const TCHAR* const MeshesByKind[] = {
     TEXT("/Game/Presentation/Base/SM_OV_Base_CorridorHub_1x1x1.SM_OV_Base_CorridorHub_1x1x1"),
     TEXT("/Game/Presentation/Base/SM_OV_Base_StorageVault.SM_OV_Base_StorageVault"),
     TEXT("/Game/Presentation/Base/SM_OV_Base_YardSmall.SM_OV_Base_YardSmall"),
-    TEXT("/Game/Presentation/Base/SM_OV_Base_DockStandard.SM_OV_Base_DockStandard")
+    TEXT("/Game/Presentation/Base/SM_OV_Base_DockStandard.SM_OV_Base_DockStandard"),
+    TEXT("/Game/Presentation/Base/SM_OV_Base_YardMedium.SM_OV_Base_YardMedium"),
+    TEXT("/Game/Presentation/Base/SM_OV_Base_YardLarge.SM_OV_Base_YardLarge"),
+    TEXT("/Game/Presentation/Base/SM_OV_Base_YardSuperheavy.SM_OV_Base_YardSuperheavy"),
+    TEXT("/Game/Presentation/Base/SM_OV_Base_DockMedium.SM_OV_Base_DockMedium"),
+    TEXT("/Game/Presentation/Base/SM_OV_Base_DockLarge.SM_OV_Base_DockLarge"),
+    TEXT("/Game/Presentation/Base/SM_OV_Base_DockSuperheavy.SM_OV_Base_DockSuperheavy"),
+    TEXT("/Game/Presentation/Base/SM_OV_Base_LogisticsTerminal.SM_OV_Base_LogisticsTerminal"),
+    TEXT("/Game/Presentation/Base/SM_OV_Base_ResearchLab.SM_OV_Base_ResearchLab"),
+    TEXT("/Game/Presentation/Base/SM_OV_Base_HeroAcademy.SM_OV_Base_HeroAcademy"),
+    TEXT("/Game/Presentation/Base/SM_OV_Base_CrewSupport.SM_OV_Base_CrewSupport"),
+    TEXT("/Game/Presentation/Base/SM_OV_Base_DefensePlatform.SM_OV_Base_DefensePlatform"),
+    TEXT("/Game/Presentation/Base/SM_OV_Base_RadarArray.SM_OV_Base_RadarArray"),
+    TEXT("/Game/Presentation/Base/SM_OV_Base_ShieldBastion.SM_OV_Base_ShieldBastion"),
 };
+static_assert(UE_ARRAY_COUNT(MeshesByKind)==static_cast<int32>(OVBase::Kind::Count));
 
 FOrientedBox MakeBox(const FBox& local, const FTransform& transform)
 {
@@ -74,6 +89,7 @@ AOVBasePresentation::AOVBasePresentation()
 
 void AOVBasePresentation::InitializeModules()
 {
+    Assets.Reset();
     for (const TCHAR* path : MeshesByKind)
         Assets.Add(LoadObject<UStaticMesh>(nullptr,path,nullptr,LOAD_NoWarn));
     RefreshMeshes();
@@ -84,40 +100,138 @@ FVector AOVBasePresentation::CellCenter(OVBase::Cell Cell) const
     return GetActorLocation() + FVector(Cell.X,Cell.Y,Cell.Z)*OVBase::CellCm;
 }
 
-OVBase::Error AOVBasePresentation::CheckPlacement(const OVBase::Module& candidate, FString* blockingName) const
+
+FTransform AOVBasePresentation::PlacementTransform(const OVBase::Module& candidate,const OVBase::BuildState& state,
+    const TArray<FTransform>& transforms,bool& seam) const
 {
-    const auto logical=Build.Check(candidate);
-    if (logical!=OVBase::Error::None) return logical;
-    // 한쪽에 스냅한 결과가 다른 연결면과도 5cm 이내여야 고리를 닫을 수 있다.
     TOptional<FVector> anchor;
-
-    const int32 index=static_cast<int32>(candidate.Type);
-    const auto* asset=Assets.IsValidIndex(index)?Assets[index].Get():nullptr;
-
-    for (size_t i=0; i<Build.Modules().size(); ++i)
+    const auto type=static_cast<int32>(candidate.Type);
+    const auto* asset=Assets.IsValidIndex(type)?Assets[type].Get():nullptr;
+    const FRotator rotation(0,90*candidate.Turns,0);
+    for (int32 i=0; i<transforms.Num(); ++i)
     {
-        const auto& other=Build.Modules()[i];
-        if (!asset || !OVBase::Connected(other,candidate) || !Meshes.IsValidIndex(i)) continue;
+        const auto& other=state.Modules()[i];
+        const int32 otherType=static_cast<int32>(other.Type);
+        if (!asset || !OVBase::Connected(other,candidate) || !Assets.IsValidIndex(otherType) || !Assets[otherType]) continue;
         for (const auto& a:OVBase::Ports(candidate))
             for (const auto& b:OVBase::Ports(other))
             {
                 if (!(a.At+a.Direction==b.At) || !(a.Direction+b.Direction==OVBase::Cell{})) continue;
                 const auto* socket=asset->FindSocket(SocketName(a.Direction,candidate.Turns));
-                const FName otherSocket=SocketName(b.Direction,other.Turns);
-                if (!socket || !Meshes[i]->DoesSocketExist(otherSocket)) continue;
-                const FVector offset=FRotator(0,90*candidate.Turns,0).RotateVector(socket->RelativeLocation * ModuleScale(candidate.Type));
-                const FVector origin=Meshes[i]->GetSocketLocation(otherSocket)-offset;
-                if (anchor.IsSet() && FVector::DistSquared(anchor.GetValue(),origin)>25.) return OVBase::Error::Seam;
-                anchor=origin;
+                const auto* otherSocket=Assets[otherType]->FindSocket(SocketName(b.Direction,other.Turns));
+                if (!socket || !otherSocket) continue;
+                const FVector offset=rotation.RotateVector(socket->RelativeLocation * ModuleScale(candidate.Type));
+                const FVector origin=transforms[i].TransformPosition(otherSocket->RelativeLocation)-offset;
+                if (anchor.IsSet() && FVector::DistSquared(anchor.GetValue(),origin)>25.) seam=true;
+                if (!anchor.IsSet()) anchor=origin;
             }
     }
-    const FTransform transform(FRotator(0,90*candidate.Turns,0),anchor.Get(CellCenter(candidate.Origin)),ModuleScale(candidate.Type));
-    if (const auto* ship=BlockingShip(candidate,&transform))
+    return FTransform(rotation,anchor.Get(CellCenter(candidate.Origin)),ModuleScale(candidate.Type));
+}
+
+OVBase::Error AOVBasePresentation::CheckPlan(const std::vector<OVBase::Module>& plan,OVBase::BuildState* result,FString* blockingName) const
+{
+    if (plan.empty()) return OVBase::Error::NoConnection;
+    auto pending=Build;
+    TArray<FTransform> transforms;
+    for (const auto& mesh:Meshes) transforms.Add(mesh->GetComponentTransform());
+    for (const auto& candidate:plan)
     {
-        if (blockingName) *blockingName=ship->ShipName;
-        return OVBase::Error::Ship;
+        const auto logical=pending.Check(candidate);
+        if (logical!=OVBase::Error::None) return logical;
+        bool seam=false;
+        const auto transform=PlacementTransform(candidate,pending,transforms,seam);
+        if (seam) return OVBase::Error::Seam;
+        if (const auto* ship=BlockingShip(candidate,&transform))
+        {
+            if (blockingName) *blockingName=ship->ShipName;
+            return OVBase::Error::Ship;
+        }
+        if (!pending.Start(candidate)) return OVBase::Error::Outside;
+        transforms.Add(transform);
     }
-    return logical;
+    if (result) *result=std::move(pending);
+    return OVBase::Error::None;
+}
+
+OVBase::Error AOVBasePresentation::CheckPlacement(const OVBase::Module& candidate,FString* blockingName) const
+{
+    return CheckPlan({candidate},nullptr,blockingName);
+}
+
+std::vector<OVBase::Module> AOVBasePresentation::PlanConnection(const OVBase::Module& candidate) const
+{
+    using namespace OVBase;
+    if (RouteTarget.IsSet() && RouteTarget->Type==candidate.Type && RouteTarget->Origin==candidate.Origin &&
+        RouteTarget->Turns==candidate.Turns) return Route;
+    RouteTarget=candidate;
+    Route.clear();
+    if (Build.CheckSpace(candidate)!=OVBase::Error::None || IsLink(candidate.Type)) return {};
+    struct Node { Cell At, From; int32 Parent, Steps; };
+    const auto key=[](Cell at){return FIntVector(at.X,at.Y,at.Z);};
+    TMap<FIntVector,int32> visited;
+    TArray<Node> queue;
+    const auto reachable=Build.Network(true);
+    const auto targetPorts=Ports(candidate);
+    const auto add=[&](const Node& node){
+        if (visited.Contains(key(node.At)) || Contains(candidate,node.At) || InFlightLane(candidate,node.At) ||
+            Build.CheckSpace({Kind::Junction,node.At})!=OVBase::Error::None) return;
+        visited.Add(key(node.At),queue.Add(node));
+    };
+    for (size_t i=0; i<reachable.size(); ++i)
+    {
+        if (!reachable[i]) continue;
+        for (const auto& port:Ports(Build.Modules()[i]))
+        {
+            const auto at=port.At+port.Direction;
+            if (std::none_of(targetPorts.begin(),targetPorts.end(),[&](const auto& target){
+                const auto d=at-(target.At+target.Direction);
+                return std::abs(d.X)+std::abs(d.Y)+std::abs(d.Z)<16;
+            })) continue;
+            if (port.Direction.Z && Build.Modules()[i].Turns!=0) continue;
+            add({at,port.At,INDEX_NONE,1});
+        }
+    }
+    constexpr Cell directions[]={{1,0,0},{-1,0,0},{0,1,0},{0,-1,0},{0,0,1},{0,0,-1}};
+    for (int32 cursor=0; cursor<queue.Num(); ++cursor)
+    {
+        const Node node=queue[cursor];
+        for (const auto& port:targetPorts)
+        {
+            if (!(node.At==port.At+port.Direction) || node.From==port.At ||
+                (port.Direction.Z && candidate.Turns!=0)) continue;
+            std::vector<Module> path;
+            Cell next=port.At;
+            for (int32 i=cursor; i!=INDEX_NONE; i=queue[i].Parent)
+            {
+                const auto& link=queue[i];
+                const Cell incoming=link.At-link.From;
+                const Cell outgoing=next-link.At;
+                if (incoming==outgoing && !incoming.Z)
+                    path.push_back({Kind::Corridor,link.At,incoming.Y?1:0});
+                else
+                    path.push_back({Kind::Junction,link.At});
+                next=link.At;
+            }
+            std::reverse(path.begin(),path.end());
+            path.push_back(candidate);
+            Route=std::move(path);
+            return Route;
+        }
+        if (node.Steps>=16) continue;
+        for (const auto& direction:directions)
+            add({node.At+direction,node.At,cursor,node.Steps+1});
+    }
+    return {};
+}
+
+bool AOVBasePresentation::ReservePlan(const std::vector<OVBase::Module>& plan)
+{
+    OVBase::BuildState next;
+    if (CheckPlan(plan,&next)!=OVBase::Error::None) return false;
+    Build=std::move(next);
+    RefreshMeshes();
+    return true;
 }
 
 const AOVShip* AOVBasePresentation::BlockingShip(const OVBase::Module& candidate,const FTransform* transform) const
@@ -161,19 +275,50 @@ void AOVBasePresentation::AdvanceConstruction(float seconds)
     UpdateConstructionVisuals();
 }
 
+
 bool AOVBasePresentation::ReserveModule(FName id,FIntVector origin,int32 turns)
 {
-    OVBase::Kind kind;
-    if (id==TEXT("Corridor")) kind=OVBase::Kind::Corridor;
-    else if (id==TEXT("Junction")) kind=OVBase::Kind::Junction;
-    else if (id==TEXT("Storage")) kind=OVBase::Kind::Storage;
-    else if (id==TEXT("Yard")) kind=OVBase::Kind::Yard;
-    else if (id==TEXT("Dock")) kind=OVBase::Kind::Dock;
-    else return false;
-    const OVBase::Module candidate{kind,{origin.X,origin.Y,origin.Z},turns};
-    if (CheckPlacement(candidate)!=OVBase::Error::None || !Build.Start(candidate)) return false;
+    for (int32 i=1; i<static_cast<int32>(OVBase::Kind::Count); ++i)
+    {
+        const auto kind=static_cast<OVBase::Kind>(i);
+        if (id==FName(UTF8_TO_TCHAR(OVBase::Def(kind).Key)))
+            return ReservePlan({{kind,{origin.X,origin.Y,origin.Z},turns}});
+    }
+    return false;
+}
+
+bool AOVBasePresentation::DemolishModule(int32 index)
+{
+    if (index<0 || !Build.Demolish(index)) return false;
     RefreshMeshes();
     return true;
+}
+
+bool AOVBasePresentation::UpgradeModule(int32 index)
+{
+    return index>=0 && Build.StartUpgrade(index);
+}
+
+bool AOVBasePresentation::PrepareTrialTechnology(int32 id)
+{
+    return id>0 && id<static_cast<int32>(OVBase::Technology::Count) &&
+        Build.UnlockTestTechnology(static_cast<OVBase::Technology>(id));
+}
+
+void AOVBasePresentation::SetTrialAccounting(bool bCharge,bool bFill)
+{
+    Build.SetTestAccounting(bCharge);
+    if (bFill) Build.FillTestStock();
+}
+
+int32 AOVBasePresentation::ModuleLevel(int32 index) const
+{
+    return index>=0 && index<ModuleCount()?Build.Modules()[index].Level:0;
+}
+
+bool AOVBasePresentation::IsModuleConnected(int32 index) const
+{
+    return index>=0 && index<ModuleCount() && Build.Network(false)[index];
 }
 
 bool AOVBasePresentation::CancelConstruction(int32 index)
@@ -190,6 +335,8 @@ float AOVBasePresentation::RemainingSeconds(int32 index) const
 
 void AOVBasePresentation::RefreshMeshes()
 {
+    RouteTarget.Reset();
+    Route.clear();
     for (const auto& Mesh : Meshes) Mesh->DestroyComponent();
     Meshes.Reset();
     const auto& modules=Build.Modules();
@@ -211,6 +358,7 @@ void AOVBasePresentation::RefreshMeshes()
         if (!Asset)
         {
             Asset = LoadObject<UStaticMesh>(nullptr,TEXT("/Engine/BasicShapes/Cube.Cube"));
+            Mesh->SetMaterial(0,LoadObject<UMaterialInterface>(nullptr,TEXT("/Game/Presentation/Base/M_PortSteel.M_PortSteel")));
             Mesh->SetWorldScale3D(D * (Item.Remaining > 0 ? .007 : .009));
             Mesh->SetWorldLocationAndRotation(BottomCenter+FVector(0,0,D.Z*.5),Rotation);
         }
@@ -222,7 +370,7 @@ void AOVBasePresentation::RefreshMeshes()
             Mesh->SetWorldScale3D(ModuleScale(Item.Type));
         }
         Mesh->SetStaticMesh(Asset);
-        if (OVBase::HasBay(Item.Type) && Assets.IsValidIndex(index) && Assets[index])
+        if ((Item.Type==OVBase::Kind::Yard || Item.Type==OVBase::Kind::Dock) && HasOriginalModel(Item.Type))
         {
             Mesh->SetCollisionProfileName(TEXT("BlockAll"));
             Mesh->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
@@ -261,7 +409,7 @@ void AOVBasePresentation::UpdateConstructionVisuals()
     {
         auto* mesh=Meshes[i].Get();
         const auto& item=items[i];
-        if (item.Remaining<=0)
+        if (OVBase::Completed(item))
         {
             mesh->SetCustomPrimitiveDataFloat(1,0.f);
             continue;

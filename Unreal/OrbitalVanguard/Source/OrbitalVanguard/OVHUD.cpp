@@ -1299,7 +1299,8 @@ void AOVHUD::ResetPlaySessionUI()
 {
  if (bBaseViewOpen) ToggleBaseView();
  if (IsValid(BasePresentation)) BasePresentation->Destroy();
- BasePresentation=nullptr; BaseInspect=INDEX_NONE; BasePick=1; BaseLayer=BaseTurns=0; BaseNotice.Reset();
+ BasePresentation=nullptr; BaseInspect=INDEX_NONE; BasePick=0; BaseLayer=BaseTurns=0; BaseNotice.Reset();
+ BaseTab=BasePage=BaseRemoval=0; BaseRouteCell.Reset(); bBaseAutoConnect=false;
  bChoosingTransport=bChoosingTransfer=bAircraftOnly=false;BoardingSelection.Reset();PendingBay=0;BoardingOrigin.Reset();BoardingShuttle.Reset();
  bChoosingJump=false;bPauseMenu=false;bDebriefDismissed=false;
  CloseTitleScreen();
