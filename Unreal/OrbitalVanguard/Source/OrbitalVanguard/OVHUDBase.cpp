@@ -149,12 +149,12 @@ void AOVHUD::UpdateBaseView(float dt)
     auto pressed = [&](FKey key) { return pc->WasInputKeyJustPressed(key); };
     auto down = [&](FKey key) { return int(pc->IsInputKeyDown(key)); };
     if (pressed(EKeys::Escape)) { ToggleBaseView(); return; }
-    if (pressed(EKeys::F1)) pc->Action(TEXT("Pause"));
-    if (pressed(EKeys::F2)) pc->Action(TEXT("Speed1"));
-    if (pressed(EKeys::F3)) pc->Action(TEXT("Speed2"));
-    if (pressed(EKeys::F4)) pc->Action(TEXT("Speed3"));
+    if ((pressed(EKeys::SpaceBar) || pressed(EKeys::F1))) pc->Action(TEXT("Pause"));
+    if ((pressed(EKeys::One) || pressed(EKeys::F2))) pc->Action(TEXT("Speed1"));
+    if ((pressed(EKeys::Two) || pressed(EKeys::F3))) pc->Action(TEXT("Speed2"));
+    if ((pressed(EKeys::Three) || pressed(EKeys::F4))) pc->Action(TEXT("Speed3"));
     BaseTurns = (BaseTurns+4+int(pressed(EKeys::E))-int(pressed(EKeys::Q)))%4;
-    BaseLayer = FMath::Clamp(BaseLayer+int(pressed(EKeys::PageUp))-int(pressed(EKeys::PageDown)),-8,8);
+    BaseLayer = FMath::Clamp(BaseLayer+int(pressed(EKeys::R))-int(pressed(EKeys::F)),-8,8);
     BasePresentation->UpdateView(dt, down(EKeys::Right)-down(EKeys::Left),down(EKeys::Up)-down(EKeys::Down),
         int(pressed(EKeys::MouseScrollUp))-int(pressed(EKeys::MouseScrollDown)));
 
@@ -266,7 +266,7 @@ void AOVHUD::DrawBaseView()
     Button(TEXT("BaseStorage"),TEXT("창고 I · 300 / 60초"),12,191,184,BasePick==3);
     DrawText(FString::Printf(TEXT("고도 %d m · 회전 %d°"),BaseLayer*25,BaseTurns*90),
         FLinearColor::White,12,238,OVTypography::Font(EOVTextRole::Body));
-    DrawText(TEXT("Q/E 회전 · PgUp/PgDn 고도\n방향키 시점 · 휠 확대\nF1 시간 제어 · Esc 함대"),
+    DrawText(TEXT("Q/E 회전 · R/F 고도\n방향키 시점 · 휠 확대\nSpace 정지 · 1/2/3 배속 · Esc 함대"),
         FLinearColor::White,12,267,OVTypography::Font(EOVTextRole::Body));
 
     DrawText(TEXT("청록색 연결구 바로 바깥 칸에\n통로를 놓고 끝에 창고를 이으세요."),AccentColor,12,346,OVTypography::Font(EOVTextRole::Body));

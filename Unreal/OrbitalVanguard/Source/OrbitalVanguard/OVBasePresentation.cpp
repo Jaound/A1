@@ -18,6 +18,15 @@ FName SocketName(OVBase::Cell worldDirection,int turns)
     return d.Z>0?TEXT("ZP"):TEXT("ZN");
 }
 
+// 두 원본 끝면을 측정해 허브 수평 포트 외곽을 직선 통로의 약 4.3×5.3m에 맞춘다.
+FVector ModuleScale(OVBase::Kind kind)
+{
+    if (kind==OVBase::Kind::Junction) return FVector(.38,.38,.27);
+    if (kind==OVBase::Kind::Storage) return FVector(.92);
+    if (kind==OVBase::Kind::Core) return FVector(1,1,.91);
+    return FVector::OneVector;
+}
+
 const TCHAR* const MeshesByKind[] = {
     TEXT("/Game/Presentation/Base/SM_OV_Base_CoreHub_5x5x5.SM_OV_Base_CoreHub_5x5x5"),
     TEXT("/Game/Presentation/Base/SM_OV_Base_CorridorStraight_1x1x1.SM_OV_Base_CorridorStraight_1x1x1"),
@@ -88,7 +97,7 @@ OVBase::Error AOVBasePresentation::CheckPlacement(const OVBase::Module& candidat
                 const auto* socket=asset->FindSocket(SocketName(a.Direction,candidate.Turns));
                 const FName otherSocket=SocketName(b.Direction,other.Turns);
                 if (!socket || !Meshes[i]->DoesSocketExist(otherSocket)) continue;
-                const FVector offset=FRotator(0,90*candidate.Turns,0).RotateVector(socket->RelativeLocation);
+                const FVector offset=FRotator(0,90*candidate.Turns,0).RotateVector(socket->RelativeLocation * ModuleScale(candidate.Type));
                 const FVector origin=Meshes[i]->GetSocketLocation(otherSocket)-offset;
                 if (anchor.IsSet() && FVector::DistSquared(anchor.GetValue(),origin)>25.) return OVBase::Error::Seam;
                 anchor=origin;
@@ -153,8 +162,7 @@ void AOVBasePresentation::RefreshMeshes()
             Mesh->SetStaticMesh(Asset);
             const auto LocalAnchor = Item.Type == OVBase::Kind::Core ? GetActorLocation() : CellCenter(Item.Origin);
             Mesh->SetWorldLocationAndRotation(LocalAnchor,Rotation);
-            if (Item.Type==OVBase::Kind::Core) Mesh->SetWorldScale3D(FVector(1,1,.91));
-            if (Item.Type==OVBase::Kind::Storage) Mesh->SetWorldScale3D(FVector(.92));
+            Mesh->SetWorldScale3D(ModuleScale(Item.Type));
         }
         Mesh->SetStaticMesh(Asset);
     }
