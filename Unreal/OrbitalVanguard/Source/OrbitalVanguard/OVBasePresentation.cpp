@@ -9,6 +9,7 @@
 #include "Engine/StaticMeshSocket.h"
 #include "Engine/World.h"
 #include "Materials/MaterialInterface.h"
+#include "Misc/PackageName.h"
 
 namespace
 {
@@ -89,9 +90,12 @@ AOVBasePresentation::AOVBasePresentation()
 
 void AOVBasePresentation::InitializeModules()
 {
-    Assets.Reset();
+    Assets.SetNum(UE_ARRAY_COUNT(MeshesByKind));
+    OriginalModels.Reset();
     for (const TCHAR* path : MeshesByKind)
-        Assets.Add(LoadObject<UStaticMesh>(nullptr,path,nullptr,LOAD_NoWarn));
+        OriginalModels.Add(FPackageName::DoesPackageExist(FPackageName::ObjectPathToPackageName(FString(path))));
+    for (int32 i=0; i<=static_cast<int32>(OVBase::Kind::Dock); ++i)
+        if (OriginalModels[i]) Assets[i]=LoadObject<UStaticMesh>(nullptr,MeshesByKind[i],nullptr,LOAD_NoWarn);
     RefreshMeshes();
 }
 
@@ -354,6 +358,8 @@ void AOVBasePresentation::RefreshMeshes()
         Mesh->RegisterComponent();
         Meshes.Add(Mesh);
         const int32 index=static_cast<int32>(Item.Type);
+        if (HasOriginalModel(Item.Type) && !Assets[index])
+            Assets[index]=LoadObject<UStaticMesh>(nullptr,MeshesByKind[index],nullptr,LOAD_NoWarn);
         auto* Asset = Assets.IsValidIndex(index)?Assets[index].Get():nullptr;
         if (!Asset)
         {
@@ -370,7 +376,7 @@ void AOVBasePresentation::RefreshMeshes()
             Mesh->SetWorldScale3D(ModuleScale(Item.Type));
         }
         Mesh->SetStaticMesh(Asset);
-        if ((Item.Type==OVBase::Kind::Yard || Item.Type==OVBase::Kind::Dock) && HasOriginalModel(Item.Type))
+        if ((Item.Type==OVBase::Kind::Yard || Item.Type==OVBase::Kind::Dock) && Assets[index])
         {
             Mesh->SetCollisionProfileName(TEXT("BlockAll"));
             Mesh->SetCollisionEnabled(ECollisionEnabled::QueryOnly);

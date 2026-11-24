@@ -42,7 +42,7 @@ public:
     bool HasOriginalModel(OVBase::Kind Type) const
     {
         const auto Index=static_cast<int32>(Type);
-        return Assets.IsValidIndex(Index) && Assets[Index]!=nullptr;
+        return OriginalModels.IsValidIndex(Index) && OriginalModels[Index];
     }
     OVBase::BuildState Build{false}; // 건설 시험장 전용. 일반 BuildState는 비용을 청구한다.
 
@@ -53,6 +53,7 @@ private:
     const AOVShip* BlockingShip(const OVBase::Module& Module, const FTransform* Snapped) const;
     UPROPERTY() TArray<TObjectPtr<UStaticMeshComponent>> Meshes;
     UPROPERTY() TArray<TObjectPtr<UStaticMesh>> Assets;
+    TArray<bool> OriginalModels;
     mutable TOptional<OVBase::Module> RouteTarget;
     mutable std::vector<OVBase::Module> Route;
 
