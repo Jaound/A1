@@ -16,7 +16,7 @@ struct Cell
 };
 
 enum class Kind { Core, Corridor, Junction, Storage, Yard, Dock };
-enum class Error { None, Occupied, Direction, NoConnection, Funds, Limit, Busy, Outside, Seam, Clearance };
+enum class Error { None, Occupied, Direction, NoConnection, Funds, Limit, Busy, Outside, Seam, Clearance, Ship };
 
 struct Module
 {
@@ -126,6 +126,7 @@ inline bool Connected(const Module& a, const Module& b)
 class BuildState
 {
 public:
+    explicit BuildState(bool chargeResources = true) : ChargeResources(chargeResources) {}
     const std::vector<Module>& Modules() const { return Items; }
     int Funds() const { return Common; }
 
@@ -178,7 +179,7 @@ public:
         if (!IsLink(candidate.Type) && std::any_of(Items.begin(), Items.end(), [](const Module& item) {
             return item.Type != Kind::Core && !IsLink(item.Type) && item.Remaining > 0;
         })) return Error::Busy;
-        return Common < Cost(candidate.Type) ? Error::Funds : Error::None;
+        return ChargeResources && Common < Cost(candidate.Type) ? Error::Funds : Error::None;
     }
 
     bool Start(Module candidate)
@@ -186,7 +187,7 @@ public:
         if (Check(candidate) != Error::None) return false;
         candidate.Remaining = Duration(candidate.Type);
         Items.push_back(candidate);
-        Common -= Cost(candidate.Type);
+        if (ChargeResources) Common -= Cost(candidate.Type);
         return true;
     }
 
@@ -201,7 +202,7 @@ public:
             Items.insert(Items.begin()+index,removed);
             return false;
         }
-        Common += Cost(removed.Type);
+        if (ChargeResources) Common += Cost(removed.Type);
         return true;
     }
 
@@ -220,7 +221,7 @@ public:
         return found;
     }
 
-    void Advance(double delta)
+    void Advance(double delta, const std::vector<bool>& blocked = {})
     {
         if (!(delta > 0)) return;
         // A reserved downstream module may be placed early. Construction waits for completed access.
@@ -229,7 +230,7 @@ public:
             const auto network = Network(false);
             std::vector<std::size_t> active;
             for (std::size_t i=1; i<Items.size(); ++i)
-                if (Items[i].Remaining > 0)
+                if (Items[i].Remaining > 0 && (i>=blocked.size() || !blocked[i]))
                     for (std::size_t j=0; j<Items.size(); ++j)
                         if (network[j] && Connected(Items[i],Items[j]))
                         {
@@ -246,6 +247,7 @@ public:
 
 private:
     std::vector<Module> Items{{Kind::Core,{-2,-2,-2}}};
+    bool ChargeResources;
     int Common = 1200;
 };
 }

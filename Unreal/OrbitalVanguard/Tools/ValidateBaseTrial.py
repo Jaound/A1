@@ -40,16 +40,61 @@ def run():
     base,=bases()
     ship,=get(pc,'ships')
     check('아군 1척, 코어와 자원',get(ship,'friendly') and base.module_count()==1 and base.common_stock()==1200)
+    for key in ('CoreHub_5x5x5','CorridorStraight_1x1x1','CorridorHub_1x1x1','StorageVault','YardSmall','DockStandard'):
+        path='/Game/Presentation/Base/'
+        mesh=u.load_asset(path+'SM_OV_Base_'+key)
+        check(key+' 근거리·원거리 메시',mesh and mesh.get_num_lods()==2 and mesh.get_num_triangles(0)>1000000 and mesh.get_num_triangles(1)<81000)
+        mat=u.load_asset(path+key+'/M_Surface')
+        materials=[mesh.get_material(i) for i in range(len(get(mesh,'static_materials')))]
+        check(key+' 원본 표면과 건설 셰이더',mat in materials and all(m and str(m.get_path_name()).startswith(path) and
+              'BuildHeight' in map(str,u.MaterialEditingLibrary.get_scalar_parameter_names(m)) for m in materials))
+        textures=[u.load_asset(path+key+'/T_'+suffix) for suffix in ('color','normal','metallic','roughness')]
+        expected=[8192,4096,4096,4096]
+        deadline=time.monotonic()+25
+        while [t.blueprint_get_size_x() for t in textures]!=expected and time.monotonic()<deadline: yield
+        actual=[t.blueprint_get_size_x() for t in textures]
+        report.setdefault('loaded_texture_widths',{})[key]=actual
+        check(key+' 원본 텍스처 해상도 '+str(actual),actual==expected)
     view=pc.get_view_target()
-    check('기지 카메라',view!=get(pc,'range_camera'))
+    check('기지와 함대가 같은 카메라 사용',view==get(pc,'range_camera'))
+    def frame(focus,offset):
+        rot=u.MathLibrary.find_look_at_rotation(focus+offset,focus)
+        for k,v in [('camera_focus',focus),('camera_yaw',rot.yaw),('camera_pitch',rot.pitch),('camera_distance',offset.length())]:
+            pc.set_editor_property(k,v)
+        pc.update_camera()
+    original=ship.get_actor_location()
+    cell=base.get_actor_location()+u.Vector(7500,0,0)
+    ship.set_actor_location(cell,False,True)
+    check('초계함이 점유한 연결 가능 칸 예약 차단',not base.reserve_module('Corridor',u.IntVector(3,0,0),0) and base.module_count()==1)
+    ship.set_actor_location(cell+u.Vector(0,0,7000),False,True)
+    check('같은 평면 좌표에서 함선 고도 분리 후 예약',base.reserve_module('Corridor',u.IntVector(3,0,0),0))
+    check('무료 시험 예약 취소 잔액 불변',base.cancel_construction(1) and base.common_stock()==1200)
+    ship.set_actor_location(cell,False,True)
+    hud.execute_ui_action('BaseBack')
+    ship.set_destination(original)
+    pc.action('Pause')
+    for _ in range(300):
+        pc.step_simulation(.1)
+        if (ship.get_actor_location()-original).length()<75: break
+    pc.action('Pause')
+    check('함대 이동 명령으로 선체가 공사 공간을 비움',(ship.get_actor_location()-cell).length()>3000)
+    hud.execute_ui_action('BaseView')
     def reserve(name,x,y,z,turn=0):
         return base.reserve_module(name,u.IntVector(x,y,z),turn)
     check('겹침 차단',not reserve('Storage',0,0,0))
     check('방향 차단',not reserve('Corridor',3,0,0,1))
     check('공중 고립 차단',not reserve('Corridor',3,0,1))
     check('코어 통로 창고 예약',reserve('Corridor',3,0,0) and reserve('Storage',4,0,0))
+    ship.set_actor_location(cell,False,True)
+    ship.set_destination(cell)
+    pc.action('Pause')
+    pc.step_simulation(2)
+    pc.action('Pause')
+    check('예약 후 진입한 함선 때문에 실제 공사도 대기',base.remaining_seconds(1)==15 and base.remaining_seconds(2)==60)
+    ship.set_actor_location(original,False,True)
+    ship.set_destination(original)
     check('종속 공사 보호',not base.cancel_construction(1))
-    check('별도 연결 슬롯',reserve('Junction',-3,0,0) and base.common_stock()==820)
+    check('별도 연결 슬롯',reserve('Junction',-3,0,0) and base.common_stock()==1200)
     # 렌더 파생 이미지와 배치 검사는 별개다. 일시정지 상태에서 셰이더와 카메라가 적용될 프레임을 준다.
     settle=time.monotonic()+6
     while time.monotonic()<settle: yield
@@ -68,10 +113,13 @@ def run():
         align.append([left,right,d,normal,up])
         check(left+' 접합 중심·방향·상하 '+right,d<=5 and normal<-.999 and up>.999)
     report['seams_cm_dot']=align
-    check('미완공 허브 취소 전액',base.cancel_construction(3) and base.common_stock()==860)
+    check('미완공 허브 취소 잔액 유지',base.cancel_construction(3) and base.common_stock()==1200)
     pc.step_simulation(20)
     check('일시정지 공사 동결',base.remaining_seconds(1)==15 and base.remaining_seconds(2)==60)
+    pose=view.get_actor_transform()
     hud.execute_ui_action('BaseBack')
+    check('전환 시 카메라 위치 연속', (view.get_actor_location()-pose.translation).length()<.01)
+    check('두 화면 모두 기지와 함선 표시',not get(base,'hidden') and not get(ship,'hidden'))
     check('함대 카메라 복원',pc.get_view_target()==get(pc,'range_camera'))
     destination=ship.get_actor_location()+u.Vector(17000,1200,480)
     ship.set_destination(destination)
@@ -110,7 +158,10 @@ def run():
     loc,rot=cam.get_actor_location(),cam.get_actor_rotation()
     seam=bottom.get_socket_location('ZP')
     eye=seam+u.Vector(2200,1900,850)
-    cam.set_actor_location_and_rotation(eye,u.MathLibrary.find_look_at_rotation(eye,seam),False,False)
+    pc.action('Pause')
+    pc.step_simulation(31)
+    pc.action('Pause')
+    frame(seam,eye-seam)
     pc.set_view_target_with_blend(cam)
     u.SystemLibrary.execute_console_command(world,'ShowHUD',pc)
     for _ in range(16): yield
@@ -142,7 +193,7 @@ def run():
     pc.action('Pause')
     pc.step_simulation(136)
     check('도크 수평 연결',extended.reserve_module('Corridor',u.IntVector(3,0,0),0) and extended.reserve_module('Dock',u.IntVector(4,-1,0),0))
-    check('두 베이의 실제 비용',extended.common_stock()==120)
+    check('두 베이 무료 시험',extended.common_stock()==1200)
     parts=extended.get_components_by_class(u.StaticMeshComponent)
     yard,dock=part('YardSmall'),part('DockStandard')
     corridors=[c for c in parts if 'Straight' in get(c,'static_mesh').get_name()]
@@ -177,24 +228,59 @@ def run():
         floor_hit=sweep(end,wall)
         report[name+'_sweep']={'blocked':hit is not None,'floor_detected':floor_hit is not None}
         check(name+' 초계함 외곽 진입·베이 바닥 검출',not hit and floor_hit is not None)
+    pc.step_simulation(92)
+    pc.action('Pause')
+    def sample_frames(name):
+        times=[]
+        for _ in range(30): yield
+        last=time.monotonic()
+        for _ in range(120):
+            yield
+            now=time.monotonic()
+            times.append((now-last)*1000)
+            last=now
+        times.sort()
+        report.setdefault('editor_frame_interval_ms',{})[name]={'mean':round(sum(times)/len(times),2),'p95':round(times[113],2),'samples':len(times)}
+    check('촬영 전 두 베이 완공',extended.remaining_seconds(4)==0)
     shotcam=get(pc,'range_camera')
     saved_loc,saved_rot=shotcam.get_actor_location(),shotcam.get_actor_rotation()
     u.SystemLibrary.execute_console_command(world,'ShowHUD',pc)
     old=pc.get_view_target()
     pc.set_view_target_with_blend(shotcam)
     for name,focus,offset in [
+        ('Core',extended.get_actor_location(),u.Vector(13000,11000,7800)),
         ('YardBay',yard.get_world_location()+u.Vector(0,0,1600),u.Vector(-13100,-6200,4900)),
         ('DockBay',dock.get_world_location()+u.Vector(0,0,1600),u.Vector(-4300,15600,5800)),
         ('YardJoint',yard.get_socket_location('YN'),u.Vector(1700,-2300,1500)),
         ('DockJoint',dock.get_socket_location('XN'),u.Vector(-2300,1900,1400))]:
-        shotcam.set_actor_location_and_rotation(focus+offset,u.MathLibrary.find_look_at_rotation(focus+offset,focus),False,False)
+        frame(focus,offset)
         for _ in range(12): yield
         yield from capture(world,pc,name)
+        if name in ('Core','YardBay'): yield from sample_frames(name)
     pc.set_view_target_with_blend(old)
     shotcam.set_actor_location_and_rotation(saved_loc,saved_rot,False,False)
     u.SystemLibrary.execute_console_command(world,'ShowHUD',pc)
     hud.execute_ui_action('PlaySceneExit')
     check('목록 복귀 시 모듈·함선 정리',not bases() and not get(pc,'ships'))
+    check('단면 연출 시험 시작',pc.start_play_scenario('BaseTrial'))
+    instance,=bases()
+    check('단면 연출 창고 예약',instance.reserve_module('Corridor',u.IntVector(3,0,0),0) and instance.reserve_module('Storage',u.IntVector(4,0,0),0))
+    store=next(c for c in instance.get_components_by_class(u.StaticMeshComponent) if 'StorageVault' in get(c,'static_mesh').get_name())
+    focus=store.bounds.origin if hasattr(store,'bounds') else store.get_world_location()
+    hud.execute_ui_action('BaseInspect')
+    frame(focus,u.Vector(6900,6500,4100))
+    yield from capture(world,pc,'Waiting')
+    pc.action('Pause')
+    pc.step_simulation(45)
+    pc.action('Pause')
+    check('창고 절반 시점',abs(instance.remaining_seconds(2)-30)<.01)
+    yield from capture(world,pc,'Half')
+    pc.action('Pause')
+    pc.step_simulation(30)
+    pc.action('Pause')
+    yield from capture(world,pc,'Built')
+    check('창고 완공',instance.remaining_seconds(2)==0)
+    hud.execute_ui_action('PlaySceneExit')
     check('다른 임무 회귀',pc.start_play_scenario('Fleet50') and len(get(pc,'ships'))>1 and not bases())
     hud.execute_ui_action('BaseView')
     check('다른 임무에 시험장 생성 차단',not bases())

@@ -100,7 +100,8 @@ FString AOVController::GetScenarioLabel() const
 
 void AOVController::FrameEngagement()
 {
- FBox Bounds(ForceInit);
+ const auto* hud=Cast<AOVHUD>(GetHUD());
+ FBox Bounds=hud ? hud->GetBaseBounds() : FBox(ForceInit);
  for(AOVShip* Ship:Ships) if(IsValid(Ship)&&!(Combat&&Combat->bEnabled&&Combat->IsDeparted(Ship))) {
   const FVector Extent=Ship->Systems->Layout?Ship->Systems->Layout->LocalHalfExtent*Ship->GetActorScale3D():FVector(200);
   Bounds+=Ship->GetActorLocation()-Extent; Bounds+=Ship->GetActorLocation()+Extent;

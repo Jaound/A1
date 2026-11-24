@@ -1,7 +1,8 @@
 #include "OVBasePresentation.h"
 
-#include "Camera/CameraActor.h"
-#include "Camera/CameraComponent.h"
+#include "OVController.h"
+#include "OVShip.h"
+#include "Math/OrientedBox.h"
 #include "Components/SceneComponent.h"
 #include "Components/StaticMeshComponent.h"
 #include "Engine/StaticMesh.h"
@@ -35,6 +36,35 @@ const TCHAR* const MeshesByKind[] = {
     TEXT("/Game/Presentation/Base/SM_OV_Base_YardSmall.SM_OV_Base_YardSmall"),
     TEXT("/Game/Presentation/Base/SM_OV_Base_DockStandard.SM_OV_Base_DockStandard")
 };
+
+FOrientedBox MakeBox(const FBox& local, const FTransform& transform)
+{
+    FOrientedBox box;
+    box.Center=transform.TransformPosition(local.GetCenter());
+    box.AxisX=transform.GetUnitAxis(EAxis::X);
+    box.AxisY=transform.GetUnitAxis(EAxis::Y);
+    box.AxisZ=transform.GetUnitAxis(EAxis::Z);
+    const FVector extent=local.GetExtent()*transform.GetScale3D().GetAbs();
+    box.ExtentX=extent.X; box.ExtentY=extent.Y; box.ExtentZ=extent.Z;
+    return box;
+}
+
+bool BoxesOverlap(const FOrientedBox& a,const FOrientedBox& b)
+{
+    const auto separated=[&](const FVector& axis) {
+        const auto left=a.Project(axis),right=b.Project(axis);
+        return left.Max<right.Min || right.Max<left.Min;
+    };
+    const FVector axesA[]={a.AxisX,a.AxisY,a.AxisZ}, axesB[]={b.AxisX,b.AxisY,b.AxisZ};
+    for (const auto& axis:axesB) if (separated(axis)) return false;
+    for (const auto& axis:axesA)
+    {
+        if (separated(axis)) return false;
+        for (const auto& other:axesB)
+            if (separated(FVector::CrossProduct(axis,other))) return false;
+    }
+    return true;
+}
 }
 
 AOVBasePresentation::AOVBasePresentation()
@@ -42,36 +72,11 @@ AOVBasePresentation::AOVBasePresentation()
     SetRootComponent(CreateDefaultSubobject<USceneComponent>(TEXT("Root")));
 }
 
-void AOVBasePresentation::Show(bool bShow)
+void AOVBasePresentation::InitializeModules()
 {
-    if (bShow && !IsValid(Camera))
-    {
-        for (const TCHAR* path : MeshesByKind)
-            Assets.Add(LoadObject<UStaticMesh>(nullptr,path,nullptr,LOAD_NoWarn));
-        Camera = GetWorld()->SpawnActor<ACameraActor>();
-        if (!Camera) return;
-        Camera->GetCameraComponent()->bConstrainAspectRatio=false;
-        UpdateView(0,0,0,0);
-        RefreshMeshes();
-    }
-    SetActorHiddenInGame(!bShow);
-    SetActorEnableCollision(bShow);
-}
-
-void AOVBasePresentation::EndPlay(const EEndPlayReason::Type Reason)
-{
-    if (IsValid(Camera)) Camera->Destroy();
-    Super::EndPlay(Reason);
-}
-
-void AOVBasePresentation::UpdateView(float dt,float orbit,float pitch,float zoom)
-{
-    if (!IsValid(Camera)) return;
-    Yaw += orbit * dt * 85.f;
-    Pitch = FMath::Clamp(Pitch + pitch * dt * 65.f,20.f,85.f);
-    Distance = FMath::Clamp(Distance * FMath::Pow(.85f,zoom),10000.f,120000.f);
-    const FVector Offset = FRotator(Pitch,Yaw,0).Vector() * Distance;
-    Camera->SetActorLocationAndRotation(GetActorLocation()+Offset,(-Offset).Rotation());
+    for (const TCHAR* path : MeshesByKind)
+        Assets.Add(LoadObject<UStaticMesh>(nullptr,path,nullptr,LOAD_NoWarn));
+    RefreshMeshes();
 }
 
 FVector AOVBasePresentation::CellCenter(OVBase::Cell Cell) const
@@ -79,7 +84,7 @@ FVector AOVBasePresentation::CellCenter(OVBase::Cell Cell) const
     return GetActorLocation() + FVector(Cell.X,Cell.Y,Cell.Z)*OVBase::CellCm;
 }
 
-OVBase::Error AOVBasePresentation::CheckPlacement(const OVBase::Module& candidate) const
+OVBase::Error AOVBasePresentation::CheckPlacement(const OVBase::Module& candidate, FString* blockingName) const
 {
     const auto logical=Build.Check(candidate);
     if (logical!=OVBase::Error::None) return logical;
@@ -88,11 +93,11 @@ OVBase::Error AOVBasePresentation::CheckPlacement(const OVBase::Module& candidat
 
     const int32 index=static_cast<int32>(candidate.Type);
     const auto* asset=Assets.IsValidIndex(index)?Assets[index].Get():nullptr;
-    if (!asset) return logical;
+
     for (size_t i=0; i<Build.Modules().size(); ++i)
     {
         const auto& other=Build.Modules()[i];
-        if (!OVBase::Connected(other,candidate) || !Meshes.IsValidIndex(i)) continue;
+        if (!asset || !OVBase::Connected(other,candidate) || !Meshes.IsValidIndex(i)) continue;
         for (const auto& a:OVBase::Ports(candidate))
             for (const auto& b:OVBase::Ports(other))
             {
@@ -106,7 +111,54 @@ OVBase::Error AOVBasePresentation::CheckPlacement(const OVBase::Module& candidat
                 anchor=origin;
             }
     }
+    const FTransform transform(FRotator(0,90*candidate.Turns,0),anchor.Get(CellCenter(candidate.Origin)),ModuleScale(candidate.Type));
+    if (const auto* ship=BlockingShip(candidate,&transform))
+    {
+        if (blockingName) *blockingName=ship->ShipName;
+        return OVBase::Error::Ship;
+    }
     return logical;
+}
+
+const AOVShip* AOVBasePresentation::BlockingShip(const OVBase::Module& candidate,const FTransform* transform) const
+{
+    const auto* pc=Cast<AOVController>(GetWorld()->GetFirstPlayerController());
+    if (pc)
+    {
+        const auto cells=OVBase::Dimensions(candidate.Type);
+        const FVector halfCell(OVBase::CellCm*.5);
+        const FBox footprint(-halfCell,FVector(cells.X,cells.Y,cells.Z)*OVBase::CellCm-halfCell);
+        const FRotator rotation(0,90*candidate.Turns,0);
+        const auto reserved=MakeBox(footprint,FTransform(rotation,CellCenter(candidate.Origin)));
+        TOptional<FOrientedBox> snapped;
+        const int32 index=static_cast<int32>(candidate.Type);
+        if (transform && Assets.IsValidIndex(index) && Assets[index])
+            snapped=MakeBox(Assets[index]->GetBoundingBox(),*transform);
+        for (const AOVShip* ship:pc->Ships)
+        {
+            if (!IsValid(ship) || ship->IsHidden() || !ship->Hull || !ship->Hull->GetStaticMesh()) continue;
+            const auto hull=MakeBox(ship->Hull->GetStaticMesh()->GetBoundingBox(),ship->Hull->GetComponentTransform());
+            if (BoxesOverlap(reserved,hull) || (snapped.IsSet() && BoxesOverlap(*snapped,hull)))
+                return ship;
+        }
+    }
+    return nullptr;
+}
+
+const AOVShip* AOVBasePresentation::ConstructionBlocker(int32 index) const
+{
+    if (!Meshes.IsValidIndex(index) || Build.Modules()[index].Remaining<=0) return nullptr;
+    return BlockingShip(Build.Modules()[index],&Meshes[index]->GetComponentTransform());
+}
+
+void AOVBasePresentation::AdvanceConstruction(float seconds)
+{
+    const auto& items=Build.Modules();
+    if (std::none_of(items.begin(),items.end(),[](const auto& m){return m.Remaining>0;})) return;
+    std::vector<bool> blocked(items.size());
+    for (int32 i=1;i<Meshes.Num();++i) blocked[i]=ConstructionBlocker(i)!=nullptr;
+    Build.Advance(seconds,blocked);
+    UpdateConstructionVisuals();
 }
 
 bool AOVBasePresentation::ReserveModule(FName id,FIntVector origin,int32 turns)
@@ -151,7 +203,7 @@ void AOVBasePresentation::RefreshMeshes()
         auto* Mesh = NewObject<UStaticMeshComponent>(this);
         Mesh->SetupAttachment(GetRootComponent());
         Mesh->SetCollisionEnabled(ECollisionEnabled::NoCollision);
-        Mesh->SetCastShadow(false);
+        Mesh->SetCastShadow(true);
         Mesh->RegisterComponent();
         Meshes.Add(Mesh);
         const int32 index=static_cast<int32>(Item.Type);
@@ -198,5 +250,25 @@ void AOVBasePresentation::RefreshMeshes()
             queue.Add(i);
             placed.Add(i);
         }
+    }
+    UpdateConstructionVisuals();
+}
+
+void AOVBasePresentation::UpdateConstructionVisuals()
+{
+    const auto& items=Build.Modules();
+    for (int32 i=1;i<Meshes.Num();++i)
+    {
+        auto* mesh=Meshes[i].Get();
+        const auto& item=items[i];
+        if (item.Remaining<=0)
+        {
+            mesh->SetCustomPrimitiveDataFloat(1,0.f);
+            continue;
+        }
+        const double progress=1.-item.Remaining/OVBase::Duration(item.Type);
+        const auto box=mesh->Bounds.GetBox();
+        mesh->SetCustomPrimitiveDataFloat(0,FMath::Lerp(box.Min.Z,box.Max.Z,.015+.985*progress));
+        mesh->SetCustomPrimitiveDataFloat(1,1.f);
     }
 }

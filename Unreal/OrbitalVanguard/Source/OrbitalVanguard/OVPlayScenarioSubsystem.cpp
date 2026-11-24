@@ -341,7 +341,7 @@ bool UOVPlayScenarioSubsystem::Start(AOVController& Controller, FName Id)
             {
                 FOVPlayFleetEntry Actual=Entry;
                 if(bCompareShuttle && Faction==0 && I==0 && Entry.Hull==TEXT("corvette"))Actual.Hull=TEXT("assault");
-                if (!Spawn(Controller, Actual, Faction, Ordinal++))
+                if (!Spawn(Controller, Actual, Faction, Ordinal++, bBaseTrial ? TOptional<FVector>(FVector(9300,4800,2000)) : TOptional<FVector>()))
                 {
                     Controller.ResetPlayScenarioSession(false);
                     Controller.LastAction = TEXT("편성 생성 실패 · 함체 또는 격납고를 확인하세요.");

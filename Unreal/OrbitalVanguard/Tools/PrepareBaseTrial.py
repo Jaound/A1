@@ -9,7 +9,8 @@ from mathutils import Matrix, Vector
 
 root = Path.home() / 'Documents/OrbitalVanguardAssets'
 phase2 = os.environ.get('OV_BASE_STAGE') == '2'
-out = root / ('Prepared/BaseTrial2' if phase2 else 'Prepared/BaseTrial1')
+detail = os.environ.get('OV_BASE_DETAIL')
+out = Path(detail) / ('Stage2' if phase2 else 'Stage1') if detail else root / ('Prepared/BaseTrial2' if phase2 else 'Prepared/BaseTrial1')
 out.mkdir(parents=True, exist_ok=True)
 # Blender의 +Y는 UE의 -Y. 원본 투영에서 확인한 노출면의 중심(원본 월드 m).
 # 코어 상단 안테나는 연결구가 아니다. 수직 분기는 허브에서 한다.
@@ -81,7 +82,7 @@ for name, directory, scale, pivot, sockets in modules:
     bpy.context.view_layer.objects.active=obj
     bpy.ops.object.select_all(action='DESELECT')
     obj.select_set(True)
-    if len(obj.data.polygons)>80000:
+    if not detail and len(obj.data.polygons)>80000:
         modifier=obj.modifiers.new('전장용 단순화','DECIMATE')
         modifier.ratio=80000/len(obj.data.polygons)
         bpy.ops.object.modifier_apply(modifier=modifier.name)
@@ -90,7 +91,7 @@ for name, directory, scale, pivot, sockets in modules:
     bpy.context.scene.unit_settings.system='METRIC'
     bpy.ops.export_scene.fbx(filepath=str(dest/(obj.name+'.fbx')),use_selection=True,object_types={'MESH'},
         axis_forward='-Y',axis_up='Z',bake_anim=False,embed_textures=False,path_mode='STRIP')
-    for suffix in ['', '_normal', '_roughness', '_metallic']:
+    for suffix in ([] if detail else ['', '_normal', '_roughness', '_metallic']):
         img=bpy.data.images.load(str(src.with_name(src.stem+suffix+'.png')), check_existing=False)
         img.scale(1024,1024)
         img.filepath_raw=str(dest/('T_'+(suffix.lstrip('_') or 'color')+'.png'))
@@ -104,6 +105,6 @@ for name, directory, scale, pivot, sockets in modules:
         offsets[socket]=[round(p.x*100,3),round(-p.y*100,3),round(p.z*100,3)]
     with src.open('rb') as stream:
         digest=hashlib.file_digest(stream,'sha256').hexdigest()
-    report[name]={'sha256':digest,'triangles':len(obj.data.polygons),'ports':offsets}
+    report[name]={'sha256':digest,'source':str(src),'triangles':len(obj.data.polygons),'ports':offsets}
     (out/'ports.json').write_text(json.dumps(report,indent=2),encoding='utf8')
     print('BASE_PREPARED',name,flush=True)

@@ -90,6 +90,7 @@ FName AOVHUD::GetHitActionAtCanvasPoint(FVector2D Point) const
 }
 bool AOVHUD::IsOverPanel(float X,float Y) const
 {
+ if(bBaseViewOpen) return X<210*UIScale || X>ViewportPixels.X-250*UIScale || Y<52*UIScale;
  if(PickingShip())return false;
  if(bChoosingTransport||bChoosingTransfer)return true;
  if(bPauseMenu || bConsumeDebriefClick || IsDebriefOpen() || LastMapCloseFrame==GFrameCounter || bStarMapOpen || bTitleScreenOpen || IsOverAddedUI(X,Y)) return true;

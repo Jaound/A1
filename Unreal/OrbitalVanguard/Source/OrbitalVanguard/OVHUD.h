@@ -23,7 +23,8 @@ public:
  void SyncAddedUI();
  bool IsBaseViewOpen() const { return bBaseViewOpen; }
  bool BeginBaseTrial();
- void UpdateBaseView(float RealSeconds);
+ FBox GetBaseBounds() const;
+ void UpdateBaseView();
  void AdvanceBaseConstruction(float GameSeconds);
 
  bool IsOverAddedUI(float X,float Y) const;
@@ -231,8 +232,6 @@ private:
  void ToggleBaseView();
  bool HandleBaseAction(FName Action);
  UPROPERTY() TObjectPtr<AOVBasePresentation> BasePresentation;
- TArray<TWeakObjectPtr<AOVShip>> BaseHiddenShips;
- FVector FleetSkyScale=FVector::OneVector;
  bool bBaseViewOpen = false;
  UPROPERTY() TObjectPtr<UTexture2D> BaseBayCards[2];
  int32 BasePick = 1, BaseLayer = 0, BaseTurns = 0;

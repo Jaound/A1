@@ -1,8 +1,6 @@
 #include "OVHUD.h"
 
-#include "Camera/CameraActor.h"
-#include "Components/StaticMeshComponent.h"
-#include "Engine/StaticMesh.h"
+#include "Components/LineBatchComponent.h"
 #include "Engine/Canvas.h"
 #include "Engine/Texture2D.h"
 #include "Engine/World.h"
@@ -27,11 +25,12 @@ const TCHAR* ModuleName(OVBase::Kind type)
     default: return TEXT("자원 창고");
     }
 }
-const TCHAR* PlacementStatus(OVBase::Error error)
+FString PlacementStatus(OVBase::Error error, const FString& shipName)
 {
     switch (error)
     {
     case OVBase::Error::None: return TEXT("건설 가능");
+    case OVBase::Error::Ship: return FString::Printf(TEXT("%s이(가) 건설 공간에 있습니다 · 함대 화면에서 이동시키세요."),*shipName);
     case OVBase::Error::Occupied: return TEXT("공간이 이미 사용 중입니다.");
     case OVBase::Error::Seam: return TEXT("양쪽 연결면이 어긋납니다 · 다른 칸이나 방향을 선택하세요.");
     case OVBase::Error::Direction: return TEXT("연결구 방향이 맞지 않습니다 · Q/E 회전");
@@ -77,48 +76,33 @@ bool PointerCell(AOVController& pc,const AOVBasePresentation& base,int32 layer,O
 
 bool AOVHUD::BeginBaseTrial()
 {
-    BasePresentation = GetWorld()->SpawnActor<AOVBasePresentation>(FVector(20000,25000,2000),FRotator::ZeroRotator);
+    auto* pc=Cast<AOVController>(PlayerOwner);
+    if (!pc || !pc->RangeCamera) return false;
+    BasePresentation=GetWorld()->SpawnActor<AOVBasePresentation>(FVector(0,0,2000),FRotator::ZeroRotator);
+    if (!BasePresentation) return false;
+    BasePresentation->InitializeModules();
+    pc->bFollow=false;
+    pc->CameraFocus=BasePresentation->GetActorLocation();
+    pc->CameraDistance=25500;
+    pc->CameraPitch=-38;
+    pc->CameraYaw=-145;
+    pc->UpdateCamera();
     ToggleBaseView();
     return bBaseViewOpen;
 }
 
+FBox AOVHUD::GetBaseBounds() const
+{
+    return IsValid(BasePresentation) ? BasePresentation->GetComponentsBoundingBox(true) : FBox(ForceInit);
+}
+
 void AOVHUD::ToggleBaseView()
 {
-    auto* pc = Cast<AOVController>(PlayerOwner);
-    if (!pc || !pc->RangeCamera) return;
     if (!IsValid(BasePresentation)) return;
-    if (bBaseViewOpen)
-    {
-        bBaseViewOpen = false;
-        for(const auto& ship:BaseHiddenShips) pc->HiddenActors.Remove(ship.Get());
-        BaseHiddenShips.Reset();
-        if (pc->SpaceSkyboxMesh) pc->SpaceSkyboxMesh->SetWorldScale3D(FleetSkyScale);
-        BasePresentation->Show(false);
-        pc->SetViewTarget(pc->RangeCamera);
-        return;
-    }
-    BasePresentation->Show(true);
-    if (!IsValid(BasePresentation->View()))
-    {
-        BasePresentation->Show(false);
-        return;
-    }
-    bBaseViewOpen = true;
-    for(AOVShip* ship:pc->Ships)
-    {
-        if(!IsValid(ship) || pc->HiddenActors.Contains(ship)) continue;
-        pc->HiddenActors.Add(ship);
-        BaseHiddenShips.Add(ship);
-    }
-    if (pc->SpaceSkyboxMesh && pc->SpaceSkyboxMesh->GetStaticMesh())
-    {
-        FleetSkyScale=pc->SpaceSkyboxMesh->GetComponentScale();
-        const float radius=pc->SpaceSkyboxMesh->GetStaticMesh()->GetBounds().SphereRadius;
-        if (radius>0) pc->SpaceSkyboxMesh->SetWorldScale3D(FVector(450000.f/radius));
-    }
-    bStarMapOpen = false;
+    bBaseViewOpen=!bBaseViewOpen;
+    BaseNotice.Reset();
+    bStarMapOpen=false;
     CancelPointerDrag();
-    pc->SetViewTarget(BasePresentation->View());
 }
 
 bool AOVHUD::HandleBaseAction(FName action)
@@ -147,7 +131,7 @@ bool AOVHUD::HandleBaseAction(FName action)
     {
         if (BaseInspect >= 0 && BasePresentation->CancelConstruction(BaseInspect))
         {
-            BaseNotice = TEXT("건설을 취소하고 자원을 반환했습니다.");
+            BaseNotice = TEXT("건설 예약을 취소했습니다.");
             BaseInspect = INDEX_NONE;
         }
         else BaseNotice = TEXT("다른 공사가 이 연결을 사용 중입니다 · 끝쪽 공사부터 취소하세요.");
@@ -157,32 +141,24 @@ bool AOVHUD::HandleBaseAction(FName action)
 
 void AOVHUD::AdvanceBaseConstruction(float gameSeconds)
 {
-    if (!IsValid(BasePresentation)) return;
-    auto& build = BasePresentation->Build;
-    if (std::none_of(build.Modules().begin(), build.Modules().end(), [](const auto& m){return m.Remaining>0;})) return;
-    const auto before = build.Network(false);
-    build.Advance(gameSeconds);
-    if (before != build.Network(false)) BasePresentation->RefreshMeshes();
+    if (IsValid(BasePresentation)) BasePresentation->AdvanceConstruction(gameSeconds);
 }
 
-void AOVHUD::UpdateBaseView(float dt)
+void AOVHUD::UpdateBaseView()
 {
     auto* pc = Cast<AOVController>(PlayerOwner);
     if (!pc || !IsValid(BasePresentation)) return;
     auto pressed = [&](FKey key) { return pc->WasInputKeyJustPressed(key); };
-    auto down = [&](FKey key) { return int(pc->IsInputKeyDown(key)); };
     if (pressed(EKeys::Escape)) { ToggleBaseView(); return; }
     if ((pressed(EKeys::SpaceBar) || pressed(EKeys::F1))) pc->Action(TEXT("Pause"));
     if ((pressed(EKeys::One) || pressed(EKeys::F2))) pc->Action(TEXT("Speed1"));
     if ((pressed(EKeys::Two) || pressed(EKeys::F3))) pc->Action(TEXT("Speed2"));
     if ((pressed(EKeys::Three) || pressed(EKeys::F4))) pc->Action(TEXT("Speed3"));
+    if (pressed(EKeys::Home)) pc->FrameEngagement();
     BaseTurns = (BaseTurns+4+int(pressed(EKeys::E))-int(pressed(EKeys::Q)))%4;
     BaseLayer = FMath::Clamp(BaseLayer+int(pressed(EKeys::R))-int(pressed(EKeys::F)),-8,8);
-    BasePresentation->UpdateView(dt, down(EKeys::Right)-down(EKeys::Left),down(EKeys::Up)-down(EKeys::Down),
-        int(pressed(EKeys::MouseScrollUp))-int(pressed(EKeys::MouseScrollDown)));
-
     float x,y;
-    if (!pressed(EKeys::LeftMouseButton) || !pc->GetMousePosition(x,y)) return;
+    if (pc->IsInputKeyDown(EKeys::MiddleMouseButton) || !pressed(EKeys::LeftMouseButton) || !pc->GetMousePosition(x,y)) return;
     if (x/UIScale < 210 || x/UIScale > ViewportPixels.X/UIScale-250 || y/UIScale < 52) return;
     OVBase::Cell cell;
     if (!PointerCell(*pc,*BasePresentation,BaseLayer,cell)) return;
@@ -195,11 +171,13 @@ void AOVHUD::UpdateBaseView(float dt)
         return;
     }
     const auto candidate=UnderPointer(build,BasePick,cell,BaseTurns);
-    BaseNotice = PlacementStatus(BasePresentation->CheckPlacement(candidate));
+    FString blocker;
+    const auto placement=BasePresentation->CheckPlacement(candidate,&blocker);
+    BaseNotice=placement==OVBase::Error::Ship ? FString() : PlacementStatus(placement,blocker);
     const FName ids[]={NAME_None,TEXT("Corridor"),TEXT("Junction"),TEXT("Storage"),TEXT("Yard"),TEXT("Dock")};
     if (BasePresentation->ReserveModule(ids[BasePick],FIntVector(candidate.Origin.X,candidate.Origin.Y,candidate.Origin.Z),BaseTurns))
     {
-        BaseNotice = TEXT("공간과 자원을 예약했습니다.");
+        BaseNotice = TEXT("건설을 예약했습니다.");
         BaseInspect = static_cast<int32>(build.Modules().size())-1;
     }
 }
@@ -222,12 +200,18 @@ void AOVHUD::DrawBaseView()
         FVector2D p,q;
         if (project(a,p) && project(b,q)) DrawLine(p.X,p.Y,q.X,q.Y,color,thickness);
     };
-    for (int i=-12; i<=12; ++i)
+    if (auto* batch=GetWorld()->GetLineBatcher(UWorld::ELineBatcherType::World))
     {
-        const double edge = i+.5;
-        const FLinearColor grid(.08f,.21f,.27f,.5f);
-        line(plane(edge,-11.5),plane(edge,12.5),grid,1);
-        line(plane(-11.5,edge),plane(12.5,edge),grid,1);
+        TArray<FBatchedLine> grid;
+        grid.Reserve(50);
+        const FLinearColor color(.07f,.19f,.23f);
+        for (int i=-12;i<=12;++i)
+        {
+            const double edge=i+.5;
+            grid.Emplace(plane(edge,-11.5),plane(edge,12.5),color,0.f,0.f,SDPG_World);
+            grid.Emplace(plane(-11.5,edge),plane(12.5,edge),color,0.f,0.f,SDPG_World);
+        }
+        batch->DrawLines(grid);
     }
 
     // Port arrows mark outward normals on the exposed end caps.
@@ -252,7 +236,8 @@ void AOVHUD::DrawBaseView()
         const auto rotation = FRotator(0,90*BaseTurns,0);
         const auto point = [&](double bx,double by) { return center+rotation.RotateVector(FVector(bx,by,0))*OVBase::CellCm; };
         const FVector corners[]{point(-.5,-.5),point(dim.X-.5,-.5),point(dim.X-.5,dim.Y-.5),point(-.5,dim.Y-.5)};
-        const auto error = BasePresentation->CheckPlacement(candidate);
+        FString blocker;
+        const auto error = BasePresentation->CheckPlacement(candidate,&blocker);
         const FLinearColor color = error == OVBase::Error::None ? FLinearColor::Green : FLinearColor::Red;
         const FVector bottom(0,0,-.5*OVBase::CellCm), top(0,0,(dim.Z-.5)*OVBase::CellCm);
         for (int i=0; i<4; ++i)
@@ -280,32 +265,31 @@ void AOVHUD::DrawBaseView()
             for (int sign: {-1,1})
                 line(tip,tip+(-d*.42+side*.28*sign)*OVBase::CellCm,AccentColor,3);
         }
-        DrawText(PlacementStatus(error),color,220,height-35,OVTypography::Font(EOVTextRole::Body));
+        DrawText(PlacementStatus(error,blocker),color,220,height-35,OVTypography::Font(EOVTextRole::Body));
     }
 
     DrawRect(PanelColor,0,0,width,52);
     DrawRect(PanelColor,0,52,210,height-52);
     DrawRect(PanelColor,width-250,52,250,height-52);
     Button(TEXT("BaseBack"),TEXT("함대 화면"),12,11,105);
-    int links = 0, facilities = 0, queue = 0, warehouses = 0;
+    int links = 0, facilities = 0, queue = 0;
     for (const auto& item : build.Modules())
     {
         if (OVBase::IsLink(item.Type)) ++links;
         if (!OVBase::IsLink(item.Type) && item.Type!=OVBase::Kind::Core) ++facilities;
-        if (item.Type==OVBase::Kind::Storage && item.Remaining<=0) ++warehouses;
         if (item.Remaining>0) ++queue;
     }
-    DrawText(FString::Printf(TEXT("기지 시험장 · 코어 I   일반 %d/%d   기능 %d/8 · 연결 %d/24"),
-        build.Funds(),6000+warehouses*6000,facilities,links), AccentColor,130,16,OVTypography::Font(EOVTextRole::Heading));
+    DrawText(FString::Printf(TEXT("기지 시험장 · 코어 I   자원 소모 없음   기능 %d/8 · 연결 %d/24"),
+        facilities,links), AccentColor,130,16,OVTypography::Font(EOVTextRole::Heading));
     Button(TEXT("BaseInspect"),TEXT("시설 선택"),12,77,184,BasePick==0);
-    Button(TEXT("BaseCorridor"),TEXT("일자 통로 · 40 / 15초"),12,115,184,BasePick==1);
-    Button(TEXT("BaseJunction"),TEXT("분기 허브 · 40 / 15초"),12,153,184,BasePick==2);
-    Button(TEXT("BaseStorage"),TEXT("창고 I · 300 / 60초"),12,191,184,BasePick==3);
-    Button(TEXT("BaseYard"),TEXT("소형 조선소 · 650"),12,229,184,BasePick==4);
-    Button(TEXT("BaseDock"),TEXT("표준 접안 · 350"),12,267,184,BasePick==5);
+    Button(TEXT("BaseCorridor"),TEXT("일자 통로 · 15초"),12,115,184,BasePick==1);
+    Button(TEXT("BaseJunction"),TEXT("분기 허브 · 15초"),12,153,184,BasePick==2);
+    Button(TEXT("BaseStorage"),TEXT("창고 I · 60초"),12,191,184,BasePick==3);
+    Button(TEXT("BaseYard"),TEXT("소형 조선소 · 120초"),12,229,184,BasePick==4);
+    Button(TEXT("BaseDock"),TEXT("표준 접안 · 75초"),12,267,184,BasePick==5);
     DrawText(FString::Printf(TEXT("고도 %d m · 회전 %d°"),BaseLayer*25,BaseTurns*90),
         FLinearColor::White,12,306,OVTypography::Font(EOVTextRole::Body));
-    DrawText(TEXT("Q/E 회전 · R/F 고도\n방향키 시점 · 휠 확대\nSpace 정지 · 1/2/3 배속 · Esc 함대"),
+    DrawText(TEXT("Q/E 회전 · R/F 고도\nWASD 이동 · 휠 드래그 회전\n휠 확대 · Home 전체 보기\nSpace 정지 · 1/2/3 배속 · Esc 함대"),
         FLinearColor::White,12,334,OVTypography::Font(EOVTextRole::Body));
 
     DrawText(TEXT("청록색 연결구 바로 바깥 칸에\n통로를 놓고 끝에 창고를 이으세요."),AccentColor,12,410,OVTypography::Font(EOVTextRole::Body));
@@ -337,9 +321,12 @@ void AOVHUD::DrawBaseView()
         const auto network=build.Network(false);
         bool accessible=false;
         for (size_t i=0;i<network.size();++i) if (network[i] && OVBase::Connected(item,build.Modules()[i])) accessible=true;
-        DrawText(item.Remaining>0?FString::Printf(TEXT("%s · %.1f초"),accessible?TEXT("공사 중"):TEXT("연결 대기"),item.Remaining):FString(TEXT("가동 중")),
+        const AOVShip* blocker=BasePresentation->ConstructionBlocker(BaseInspect);
+        const FString phase=blocker ? FString::Printf(TEXT("%s 이동 대기"),*blocker->ShipName) :
+            (accessible ? TEXT("공사 중") : TEXT("연결 대기"));
+        DrawText(item.Remaining>0?FString::Printf(TEXT("%s · %.1f초"),*phase,item.Remaining):FString(TEXT("가동 중")),
             FLinearColor::White,right,142,OVTypography::Font(EOVTextRole::Body));
-        if (item.Remaining>0) Button(TEXT("BaseCancel"),TEXT("공사 취소 · 전액 환불"),right,180,220);
+        if (item.Remaining>0) Button(TEXT("BaseCancel"),TEXT("공사 취소"),right,180,220);
     }
     if (!BaseNotice.IsEmpty()) DrawText(BaseNotice,FLinearColor::White,220,61,OVTypography::Font(EOVTextRole::Body));
 }

@@ -35,6 +35,14 @@ bool FOVBaseTrialNetwork::RunTest(const FString&)
     }
     TestTrue(TEXT("마지막 통로"),funds.Start({Kind::Corridor,{0,-3,0},3}));
     TestTrue(TEXT("잔고 부족"),funds.Check({Kind::Storage,{0,-4,0},3})==OVBase::Error::Funds);
+    BuildState trial(false);
+    for(int side=0;side<4;++side)
+    {
+        TestTrue(TEXT("시험장 통로"),trial.Start({Kind::Corridor,Rotate({3,0,0},side),side}));
+        TestTrue(TEXT("시험장 창고"),trial.Start({Kind::Storage,Rotate({4,0,0},side),side}));
+        trial.Advance(75);
+    }
+    TestEqual(TEXT("누적 기준 비용이 재고를 넘어도 무료"),trial.Funds(),1200);
     BuildState capped;
     for(int x=3;x<15;++x)
     {

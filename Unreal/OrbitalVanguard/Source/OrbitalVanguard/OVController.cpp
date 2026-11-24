@@ -702,9 +702,7 @@ void AOVController::UpdateCombatPresentation()
  const FVector SkyCenter=RangeCamera?RangeCamera->GetActorLocation():CameraFocus;
  const float StarDistScale=CalibrationScenario>=0?12.f:1.f;
  if(IsValid(SpaceSkyboxMesh)) {
-  const auto* hud=Cast<AOVHUD>(GetHUD());
-  const auto* camera=(hud && hud->IsBaseViewOpen())?GetViewTarget():nullptr;
-  SpaceSkyboxMesh->SetWorldLocation(camera?camera->GetActorLocation():SkyCenter);
+  SpaceSkyboxMesh->SetWorldLocation(SkyCenter);
  }
  if(IsValid(DistantPlanetMesh)) {
   const uint32 SysHash=GetTypeHash(CurrentStarSystemId);
@@ -1359,7 +1357,7 @@ void AOVController::HandleRightMove(bool Pressed, FVector2D Cursor, bool InWorld
 
 bool AOVController::InputKey(const FInputKeyEventArgs& Params)
 {
- if (auto* HUD=Cast<AOVHUD>(GetHUD()); HUD && HUD->IsBaseViewOpen()) return Super::InputKey(Params);
+ if (auto* HUD=Cast<AOVHUD>(GetHUD()); HUD && HUD->IsBaseViewOpen() && Params.Key!=EKeys::MiddleMouseButton) return Super::InputKey(Params);
  if(auto* UI=Cast<AOVHUD>(GetHUD()); UI&&UI->IsAddedUIEditing())
  {
   OrbitGesture={}; CancelRightMove();
@@ -1639,8 +1637,18 @@ void AOVController::PlayerTick(float DeltaTime)
  AOVHUD* HUD=Cast<AOVHUD>(GetHUD());
  if(HUD && HUD->IsBaseViewOpen())
  {
-  OrbitGesture={}; CancelRightMove(); bFleetDrag=false;
-  if (Focused) HUD->UpdateBaseView(DeltaTime);
+  CancelRightMove(); bFleetDrag=false;
+  if (!Focused) OrbitGesture={};
+  else
+  {
+   if (Inside) UpdateOrbit(Cursor);
+   const int wheel=Inside && !HUD->IsOverPanel(MX,MY) ?
+    int(WasInputKeyJustPressed(EKeys::MouseScrollUp))-int(WasInputKeyJustPressed(EKeys::MouseScrollDown)):0;
+   const FVector pan(int(IsInputKeyDown(EKeys::W))-int(IsInputKeyDown(EKeys::S)),
+                     int(IsInputKeyDown(EKeys::D))-int(IsInputKeyDown(EKeys::A)),0);
+   ApplyCameraInput(FVector2D::ZeroVector,pan,0,wheel,FApp::GetDeltaTime());
+   HUD->UpdateBaseView();
+  }
   StepSimulation(DeltaTime); UpdateCombatPresentation(); return;
  }
  if(auto* Play=GetPlayScenario(); Play && Play->bSandboxPlacing)
