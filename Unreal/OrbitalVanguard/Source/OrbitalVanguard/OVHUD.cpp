@@ -1,4 +1,5 @@
 #include "OVHUD.h"
+#include "OVBasePresentation.h"
 #include "Misc/ConfigCacheIni.h"
 #include "UnrealClient.h"
 #include "Camera/CameraActor.h"
@@ -243,6 +244,7 @@ bool AOVHUD::HandlePointer(float X,float Y,bool Pressed,bool Down,float Wheel,bo
 }
 void AOVHUD::NotifyHitBoxClick(FName N)
 {
+ if (HandleBaseAction(N)) return;
  if(PickingShip())return;
  if(bChoosingTransport||bChoosingTransfer){
   const FString Pick=N.ToString();
@@ -859,6 +861,7 @@ void AOVHUD::DrawHUD()
  UIScale=FMath::Clamp(BaseDrawScale*UserUIScaleMultiplier,.25f,4.f);
  if (bStarMapOpen) UIScale=FMath::Min(UIScale,float(FMath::Min(ViewportPixels.X/1210.,ViewportPixels.Y/488.)));
  Canvas->Canvas->PushRelativeTransform(FScaleMatrix(FVector(UIScale,UIScale,1)));
+ if(IsBaseViewOpen()) { DrawBaseView(); Canvas->Canvas->PopTransform(); return; }
  if(PickingShip()){
   DrawText(PC->InputMode==EOVInputMode::BoardingTarget?TEXT("강습할 적함 선택 · Esc 취소"):TEXT("수납할 아군 소형함 선택 · Esc 취소"),FLinearColor::White,18,18,OVTypography::Font(EOVTextRole::Heading));
   Canvas->Canvas->PopTransform();return;
@@ -1048,6 +1051,7 @@ void AOVHUD::BeginPlay()
 }
 void AOVHUD::EndPlay(const EEndPlayReason::Type Reason)
 {
+ if (IsValid(BasePresentation)) BasePresentation->Destroy();
  if(ShipPreview)ShipPreview->Release();
  if(WeaponPreview)WeaponPreview->Release();
  for(auto Preview:PinnedPreviews)if(Preview)Preview->Release();
@@ -1332,7 +1336,7 @@ void AOVHUD::SyncAddedUI()
  const FVector2D DevPos=DevelopmentPosition;DevelopmentRect=FBox2D(DevPos,DevPos+DevSize);
  const FVector2D HeroSize(FMath::Min(400.f,W*.34f),FMath::Max(260.f,H-240.f));
  const FVector2D HeroPos(W-HeroSize.X-12.f,76.f);HeroRect=FBox2D(HeroPos,HeroPos+HeroSize);
- if(DevelopmentWidget){DevelopmentWidget->SetFrameState(bDevelopmentMinimized,bDevelopmentMaximized);DevelopmentWidget->SetPositionInViewport(DevPos/Dpi,false);DevelopmentWidget->SetDesiredSizeInViewport(DevSize/Dpi);DevelopmentWidget->SetVisibility(PC->bDeveloperMode?ESlateVisibility::Visible:ESlateVisibility::Collapsed);}
+ if(DevelopmentWidget){DevelopmentWidget->SetFrameState(bDevelopmentMinimized,bDevelopmentMaximized);DevelopmentWidget->SetPositionInViewport(DevPos/Dpi,false);DevelopmentWidget->SetDesiredSizeInViewport(DevSize/Dpi);DevelopmentWidget->SetVisibility(PC->bDeveloperMode&&!bBaseViewOpen?ESlateVisibility::Visible:ESlateVisibility::Collapsed);}
  if(TitleScreenWidget){
   TitleScreenWidget->SetPositionInViewport(FVector2D::ZeroVector,false);
   TitleScreenWidget->SetDesiredSizeInViewport(FVector2D(W/Dpi,H/Dpi));
@@ -1343,7 +1347,7 @@ void AOVHUD::SyncAddedUI()
   if(HeroWidget)HeroWidget->SetVisibility(ESlateVisibility::Collapsed);
   return;
  }
- if(HeroWidget){HeroWidget->SetPositionInViewport(HeroPos/Dpi,false);HeroWidget->SetDesiredSizeInViewport(HeroSize/Dpi);HeroWidget->SetVisibility(PC->bDeveloperMode||!bHeroPanelOpen?ESlateVisibility::Collapsed:ESlateVisibility::Visible);}
+ if(HeroWidget){HeroWidget->SetPositionInViewport(HeroPos/Dpi,false);HeroWidget->SetDesiredSizeInViewport(HeroSize/Dpi);HeroWidget->SetVisibility(PC->bDeveloperMode||!bHeroPanelOpen||bBaseViewOpen?ESlateVisibility::Collapsed:ESlateVisibility::Visible);}
 }
 void AOVHUD::OpenTitleScreen()
 {

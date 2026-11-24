@@ -1455,6 +1455,7 @@ void AOVController::StepSimulation(float DeltaTime)
 {
  if(bSimulationPaused || DeltaTime<=0 || !FMath::IsFinite(DeltaTime)) return;
  float Remaining=DeltaTime*SimulationSpeed; SimulationSeconds+=Remaining;
+ if (auto* HUD=Cast<AOVHUD>(GetHUD())) HUD->AdvanceBaseConstruction(Remaining);
  if(!bPlayScenarioSession) CampaignMiningAccum+=Remaining;
  while(CampaignMiningAccum>=4.0f) {
   CampaignMiningAccum-=4.0f;
@@ -1628,6 +1629,12 @@ void AOVController::PlayerTick(float DeltaTime)
  const float MX=Cursor.X,MY=Cursor.Y;
  const bool Inside=Focused&&Pixel.X>=0&&Pixel.Y>=0&&Pixel.X<Size.X&&Pixel.Y<Size.Y;
  AOVHUD* HUD=Cast<AOVHUD>(GetHUD());
+ if(HUD && HUD->IsBaseViewOpen())
+ {
+  OrbitGesture={}; CancelRightMove(); bFleetDrag=false;
+  HUD->UpdateBaseView(DeltaTime);
+  StepSimulation(DeltaTime); UpdateCombatPresentation(); return;
+ }
  if(auto* Play=GetPlayScenario(); Play && Play->bSandboxPlacing)
   Play->UpdateSandboxPointer(*this,Cursor,Inside && HUD && HUD->AllowsSandboxPlacement() && !HUD->IsOverPanel(MX,MY));
  if(bFleetDrag) {
