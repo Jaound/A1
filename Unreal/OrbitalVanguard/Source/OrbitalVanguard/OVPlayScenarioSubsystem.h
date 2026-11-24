@@ -83,6 +83,7 @@ public:
     UPROPERTY(BlueprintReadOnly) bool bPracticeReady = false;
     bool bPracticeHints = true;
     bool bPracticeDetail = false;
+    int32 PracticeRoleCard=0;
     static FString PracticeTitle(int32 Chapter);
     static FString PracticeSummary(int32 Chapter);
     static int32 CompletedPracticeMask();
@@ -92,6 +93,7 @@ public:
     AOVShip* PracticeFocus() const;
     int32 PracticeStepCount() const;
     bool PracticeEquipment(bool Invalid);
+    void RetryPracticeStep();
     void ConfirmPracticeNotice(FName Subject);
     FVector PracticeGoal = FVector::ZeroVector;
     bool HasPracticeMarker() const;

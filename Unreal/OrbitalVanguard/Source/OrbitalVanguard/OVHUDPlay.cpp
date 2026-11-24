@@ -401,11 +401,7 @@ void AOVHUD::DrawPlayHUD()
   for(int32 J=0;J<PerPage && FleetPage*PerPage+J<Friends.Num();++J){
    auto* S=Friends[FleetPage*PerPage+J];const float X=GX+8+(J%Cols)*Cell, CY=GridY+31+(J/Cols)*56;
    const FName Key=S->HullDefinitionId;
-   auto* Art=SelectionPortraits.FindRef(Key).Get();
-   if(!Art&&!Key.IsNone()&&FApp::CanEverRender()){
-    auto* Preview=NewObject<UOVShipPreview>(this);Preview->Update(S,UOVShipPreview::DefaultHullView(),1.12f,2.8f,INDEX_NONE,384,true);
-    Art=Preview->GetTexture();if(Art)SelectionPortraits.Add(Key,Art);Preview->Release();
-   }
+   auto* Art=HullCardImage(Key,S);
    const FName Pick(*FString::Printf(TEXT("Pick_%d"),PC->Ships.IndexOfByKey(S)));
    const float CardWidth=Cell-3;
    DrawRect(S==PC->Selected?PlayAccent:FLinearColor(.17f,.32f,.42f),X,CY,CardWidth,53);
@@ -875,4 +871,22 @@ void AOVHUD::DrawStarMap()
  Button(TEXT("Env_RadiationZone"),TEXT("방사능"),IX+18+EW*2,IY+336,EW,PC->ActiveEnvironment==EOVSpaceEnvironmentType::RadiationZone);
  Button(TEXT("Env_SolarFlare"),TEXT("플레어"),IX+21+EW*3,IY+336,EW,PC->ActiveEnvironment==EOVSpaceEnvironmentType::SolarFlare);
  Button(TEXT("Env_BlackHole"),TEXT("블랙홀"),IX+24+EW*4,IY+336,EW,PC->ActiveEnvironment==EOVSpaceEnvironmentType::BlackHole);
+}
+
+UTextureRenderTarget2D* AOVHUD::HullCardImage(FName hull,AOVShip* existing)
+{
+ if(auto* art=SelectionPortraits.FindRef(hull).Get())return art;
+ if(hull.IsNone()||!FApp::CanEverRender())return nullptr;
+ auto* pc=Cast<AOVController>(PlayerOwner);if(!pc||!pc->Combat)return nullptr;
+ AOVShip* display=existing;
+ if(!display){
+    FActorSpawnParameters params;params.ObjectFlags|=RF_Transient;
+    display=GetWorld()->SpawnActor<AOVShip>(AOVShip::StaticClass(),FVector(0,0,-900000),FRotator::ZeroRotator,params);
+    if(!display)return nullptr;
+    // Stored presentation configures meshes without registering combat, crew or cargo.
+    if(!OVCalibration::ConfigureHull(*pc->Combat,*display,hull,true,display->GetActorLocation(),OVCalibration::GetHullGeometryScale(hull),2,false,true)){display->Destroy();return nullptr;}
+ }
+ auto* mirror=NewObject<UOVShipPreview>(this);mirror->Update(display,UOVShipPreview::DefaultHullView(),1.12f,2.8f,INDEX_NONE,384,true);
+ auto* art=mirror->GetTexture();if(art)SelectionPortraits.Add(hull,art);mirror->Release();if(!existing)display->Destroy();
+ return art;
 }

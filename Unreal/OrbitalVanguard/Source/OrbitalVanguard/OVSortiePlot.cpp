@@ -19,7 +19,17 @@ int32 UOVSortiePlot::NativePaint(const FPaintArgs&,const FGeometry& g,const FSla
  for(int i=0;i<=8;++i){float k=i/8.f;line({{size.X*k,0},{size.X*k,size.Y}},i==4?cyan:FLinearColor(.1,.19,.27));line({{0,size.Y*k},{size.X,size.Y*k}},FLinearColor(.1,.19,.27));}
  if(play->Draft.Map==EOVSpaceHazardKind::BlackHole){circle({},100000,FLinearColor(.73,.45,.12));circle({},4500,red);}
  if(play->Draft.Map==EOVSpaceHazardKind::AsteroidField)for(auto a:pc->ActiveAsteroids)circle(FVector(a.X,a.Y,a.Z),a.W,FLinearColor(.75,.67,.5));
- for(int i=0;i<play->Draft.Hulls.Num();++i){auto& h=play->Draft.Hulls[i];auto p=Project(h.Position,size);auto base=Project(FVector(h.Position.X,h.Position.Y,0),size);line({base,p},FLinearColor(.35,.55,.75));bool on=i==play->SortieSelected;auto tint=on?FLinearColor::White:cyan;float s=on?6:4;line({p+FVector2D(s,0),p+FVector2D(-s,-s),p+FVector2D(-s,s),p+FVector2D(s,0)},tint,2);}
+ for(int i=0;i<play->Draft.Hulls.Num();++i){
+    const auto& h=play->Draft.Hulls[i];const auto p=Project(h.Position,size);
+    line({Project(FVector(h.Position.X,h.Position.Y,0),size),p},FLinearColor(.35,.55,.75));
+    const auto color=i==play->SortieSelected?FLinearColor::White:cyan;
+    // Project the local bow, shoulders and raised deck through the same altitude-aware view as placement.
+    FVector ext=OVCalibration::GetHullWorldHalfExtent(h.Entry.Hull);
+    const double magnify=FMath::Max(1.,2300./FMath::Max(1.,ext.X));ext*=magnify;
+    auto tip=[&](double x,double y,double z){return Project(h.Position+FRotator(0,h.Yaw,0).RotateVector(ext*FVector(x,y,z)),size);};
+    auto bow=tip(1,0,0),port=tip(-.65,-1,0),aft=tip(-1,0,0),starboard=tip(-.65,1,0),deck=tip(-.2,0,1);
+    line({bow,port,aft,starboard,bow,deck,port},color,1.6f);line({deck,starboard},color);
+ }
  return layer+2;
 }
 FReply UOVSortiePlot::NativeOnMouseButtonDown(const FGeometry& g,const FPointerEvent& ev){

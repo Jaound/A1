@@ -26,11 +26,11 @@ void UOVTitleScreenWidget::RefreshSortie()
  auto* stack=WidgetTree->ConstructWidget<UVerticalBox>();SortiePanel->SetContent(stack);
  auto label=[&](UPanelWidget* parent,const FString& s,int points=15,bool strong=false,FLinearColor tint=OVStyle::TextWhite){
   auto* text=OVStyle::MakeLabel(WidgetTree,s,points,tint,strong);text->SetAutoWrapText(true);text->SetMargin(FMargin(4,4));parent->AddChild(text);};
- auto button=[&](UPanelWidget* parent,FName action,int n,const FString& s,bool on=false,bool primary=false,UTexture2D* portrait=nullptr){
+ auto button=[&](UPanelWidget* parent,FName action,int n,const FString& s,bool on=false,bool primary=false,UTexture* portrait=nullptr){
   auto* b=WidgetTree->ConstructWidget<UOVScenarioPickButton>();b->OwnerWidget=this;b->SortieAction=action;b->Choice=n;
   b->SetStyle(primary?OVStyle::MakePrimaryButtonStyle():OVStyle::MakeSecondaryButtonStyle(on));
   auto* row=WidgetTree->ConstructWidget<UHorizontalBox>();b->AddChild(row);
-  if(portrait){auto* image=WidgetTree->ConstructWidget<UImage>();image->SetBrushFromTexture(portrait);auto* size=WidgetTree->ConstructWidget<USizeBox>();size->SetWidthOverride(40);size->SetHeightOverride(40);size->SetContent(image);row->AddChild(size);}
+  if(portrait){auto* image=WidgetTree->ConstructWidget<UImage>();image->SetBrushResourceObject(portrait);auto* size=WidgetTree->ConstructWidget<USizeBox>();size->SetWidthOverride(action=="Add"?78:40);size->SetHeightOverride(40);size->SetContent(image);row->AddChild(size);}
   auto* text=OVStyle::MakeLabel(WidgetTree,s,14,primary?OVStyle::DarkText:on?OVStyle::CyanAccent:OVStyle::TextWhite,on||primary);
   text->SetAutoWrapText(true);text->SetMargin(FMargin(6,4));row->AddChildToHorizontalBox(text)->SetSize(FSlateChildSize(ESlateSizeRule::Fill));
   b->OnClicked.AddDynamic(b,&UOVScenarioPickButton::HandleClicked);parent->AddChild(b);return b;};
@@ -69,7 +69,7 @@ void UOVTitleScreenWidget::RefreshSortie()
    auto ids=OVCalibration::GetHullIds();for(int i=0;i<ids.Num();++i){FOVHullMetadata m;if(!OVCalibration::GetHullMetadata(ids[i],m))continue;
     int role=m.bAllowAircraftOperations?2:(ids[i]=="repair"||ids[i]=="mining"||ids[i]=="transport"||ids[i]=="radar")?3:1;
     if((play->SortieSizeFilter&&play->SortieSizeFilter!=m.SizeClass)||(play->SortieRoleFilter&&play->SortieRoleFilter!=role))continue;
-    button(left,"Add",i,FString::Printf(TEXT("+ %s   %s · %d"),*OVCalibration::GetHullName(ids[i]),sizes[m.SizeClass],m.FleetCost));}
+    button(left,"Add",i,FString::Printf(TEXT("+ %s   %s · %d"),*OVCalibration::GetHullName(ids[i]),sizes[m.SizeClass],m.FleetCost),false,false,CastChecked<AOVHUD>(pc->GetHUD())->HullCardImage(ids[i]));}
    if(draft.Hulls.IsValidIndex(play->SortieSelected)){const auto id=draft.Hulls[play->SortieSelected].Entry.Hull;preview();label(mid,OVCalibration::GetHullName(id),19,true);FOVHullMetadata m;OVCalibration::GetHullMetadata(id,m);label(mid,FString::Printf(TEXT("%s · %d코스트 · 공격 %d문 / 요격 %d문"),sizes[m.SizeClass],m.FleetCost,m.AttackMountCount,m.PointDefenseCount));
     button(mid,"Detail",0,play->bSortieDetails?TEXT("상세 접기"):TEXT("장비와 시설 상세"));if(play->bSortieDetails)label(mid,m.Description);button(mid,"Remove",play->SortieSelected,TEXT("선택 함선 제외"));}
    button(right,"Recommend",0,TEXT("추천 편성 불러오기"));ships(right);

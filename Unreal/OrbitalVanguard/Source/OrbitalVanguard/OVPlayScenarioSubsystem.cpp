@@ -364,8 +364,9 @@ bool UOVPlayScenarioSubsystem::Start(AOVController& Controller, FName Id)
     if(bApplyingSortie){
         for(int i=0;i<Draft.Hulls.Num();++i){
             auto* ship=Controller.Ships[i].Get();const auto& design=Draft.Hulls[i];
+            const FVector initialAdvance=ship->Destination-ship->GetActorLocation();
             ship->SetActorLocationAndRotation(design.Position,FRotator(0,design.Yaw,0));
-            ship->StopMovement();ship->SetAutomation(false,false);
+            ship->SetDestination(design.Position+initialAdvance);
             if(!FitSortieHull(*ship,design)){Controller.ResetPlayScenarioSession(false);return false;}
         }
         ArenaRoster=Controller.GetGameInstance()->GetSubsystem<UOVHeroSubsystem>();

@@ -104,6 +104,7 @@ public:
  void OpenDetails() { PreviewSubject.Reset(); bInteriorOpen=false;bDetailsOpen=true; bMinimized=false; bHeroPanelOpen=false; SyncAddedUI(); }
  UFUNCTION(BlueprintCallable, Category="UI") bool HandlePointer(float X,float Y,bool Pressed,bool Down,float Wheel,bool Orbit,float DX,float DY);
  UFUNCTION(BlueprintCallable, Category="UI") void SetDetailsOpen(bool Open) { if(Open && !bDetailsOpen) PreviewSubject.Reset(); bDetailsOpen=Open; bMinimized=false; }
+ UTextureRenderTarget2D* HullCardImage(FName Hull,AOVShip* Existing=nullptr);
  UFUNCTION(BlueprintPure, Category="UI") FVector2D GetActionCenter(FName Action) const;
  UFUNCTION(BlueprintPure, Category="UI") FString GetFleetDisplayLabel(AOVShip* Ship) const;
  UFUNCTION(BlueprintPure, Category="UI") bool IsFleetAirOverview() const { return bFleetAirOverview; }

@@ -71,9 +71,18 @@ FString UOVPlayScenarioSubsystem::PlacementProblem(int32 i,FVector p)const{
 }
 void UOVPlayScenarioSubsystem::AutoPlaceSortie(){
  for(auto& h:Draft.Hulls)h.Position=FVector::ZeroVector;
+ int totals[4]={},used[4]={};double spacing=5500;
+ for(const auto& h:Draft.Hulls){
+    ++totals[AOVController::FormationRow("FormationScreen",h.Entry.Hull)+1];
+    spacing=FMath::Max(spacing,2.15*OVCalibration::GetHullWorldHalfExtent(h.Entry.Hull).Size()+600);
+ }
  int cell=0;for(int i=0;i<Draft.Hulls.Num();++i){
-    for(;cell<550;++cell){const int col=(cell/13)%8,row=cell%13;
-       FVector p(-58000-col*15500,(row%2?1:-1)*((row+1)/2)*21500,2000+(cell/104)*11500);
+    const int row=AOVController::FormationRow("FormationScreen",Draft.Hulls[i].Entry.Hull);
+    const double across=used[row+1]++-(totals[row+1]-1)*.5;
+    FVector balanced(-100000+row*spacing,across*spacing,2000);
+    if(PlacementProblem(i,balanced).IsEmpty()){Draft.Hulls[i].Position=balanced;continue;}
+    for(;cell<550;++cell){const int col=(cell/13)%8,gridRow=cell%13;
+       FVector p(-58000-col*15500,(gridRow%2?1:-1)*((gridRow+1)/2)*21500,2000+(cell/104)*11500);
        if(PlacementProblem(i,p).IsEmpty()){Draft.Hulls[i].Position=p;++cell;break;}
     }
  }

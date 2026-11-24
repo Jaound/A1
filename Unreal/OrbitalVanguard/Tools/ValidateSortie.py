@@ -83,6 +83,15 @@ def run():
             cmd("Auto");locations=[play.sortie_location(i) for i in range(len(ids))]
             check(prefix+"영웅 선택 이동",cmd("Next") and play.sortie_stage==4)
             check(prefix+"영웅 선택",cmd("Hero",0))
+            if budget==50 and env==0:
+                check("같은 영웅은 해제·재선택",cmd("Hero",0) and cmd("Hero",0))
+                check("시험 한도 적용",cmd("Hero",1) and cmd("Hero",2) and not cmd("Hero",3))
+                cmd("Hero",2)
+                cmd("Next");cmd("Ship",2);cmd("Room",0)
+                cmd("Person",1);check("초계함 첫 영웅 탑승",cmd("Embark"))
+                cmd("Person",0);check("초계함 영웅 정원 초과 거부",not cmd("Embark"))
+                cmd("Prev");cmd("Hero",1)
+
             check(prefix+"영웅 배치 이동",cmd("Next") and not cmd("Next"))
             cmd("Ship",0);cmd("Room",0)
             check(prefix+"영웅 시작 시설",cmd("Embark") and cmd("Next"))
@@ -116,6 +125,29 @@ def run():
                 check("실제 함선의 무장",any((str(m.mount_id),str(m.profile.profile_id))==fitted for m in pc.combat.get_ship_state(allies[0]).mounts))
             check(prefix+"환경 일치",pc.active_environment==kind)
             check(prefix+"중복 출격 차단",not play.commit_sortie())
+            if env==2 and budget==50:
+                # 같은 위치에서 엄폐물 파괴 전후를 실제 무장 발사로 대조한다.
+                for s in pc.ships:s.set_automation(False,False)
+                shooter=next(s for s in allies if str(s.hull_definition_id)=="vector")
+                target=next(s for s in enemies if str(s.hull_definition_id)=="carrier")
+                rocks=pc.combat.environment_asteroids
+                rock=rocks[0]
+                center=u.Vector(rock.x,rock.y,rock.z)
+                shooter.set_actor_location(center+u.Vector(-15000,0,0),False,True)
+                target.set_actor_location(center+u.Vector(15000,0,0),False,True)
+                shooter.set_actor_rotation(u.Rotator(0,0,0),False)
+                pc.combat.set_target(shooter,target)
+                shooter.set_automation(False,True)
+                before=len(rocks)
+                for _ in range(1200):
+                    pc.combat.simulate(.1)
+                    if len(pc.combat.environment_asteroids)<before:break
+                check("실제 발사로 엄폐 소행성 파괴",len(pc.combat.environment_asteroids)<before)
+                check("차폐된 탄은 소행성 표면에서 종료",any(str(e.attacker_id)==shooter.get_name() and abs((e.position-center).length()-rock.w)<100 for e in pc.combat.recent_events))
+                for _ in range(1200):
+                    pc.combat.simulate(.1)
+                    if any(e.attacker==shooter and str(e.hit_ship_id)==target.get_name() for e in pc.combat.recent_events):break
+                check("엄폐 파괴 후 같은 사선에서 적함 피격",any(e.attacker==shooter and str(e.hit_ship_id)==target.get_name() for e in pc.combat.recent_events))
             if env==2:check(prefix+"소행성 파괴",pc.damage_environment_asteroid(0,100000))
             if budget==50 and env==0:
                 pc.action("RestartScene")

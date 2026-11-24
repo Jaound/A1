@@ -52,7 +52,7 @@ bool UOVPlayScenarioSubsystem::StartPractice(AOVController* pc,int32 chapter)
  if(!pc||chapter<0||chapter>=UE_ARRAY_COUNT(Lessons))return false;
  TGuardValue<bool> preparing(bPreparingBoardingLesson,chapter==8);
  if(!Start(*pc,chapter==8?TEXT("HeroArena"):TEXT("Practice")))return false;
- PracticeChapter=chapter; PracticeStep=0; bPracticeDetail=false;
+ PracticeChapter=chapter; PracticeStep=0; bPracticeDetail=false;PracticeRoleCard=0;
  GConfig->GetBool(TEXT("OrbitalVanguard.Practice"),TEXT("Hints"),bPracticeHints,GGameUserSettingsIni);
  if(chapter==8){
     HandleAction(*pc,TEXT("ArenaFill")); PracticeShip=pc->Ships[0];PracticeEnemy=pc->Ships[1];
@@ -206,4 +206,16 @@ AOVShip* UOVPlayScenarioSubsystem::PracticeFocus() const{
  const auto key=Lessons[PracticeChapter].Goals[PracticeStep].Id;
  if(key=="Single"||key=="Multi")return PracticeShip.Get();
  return key=="Contact"||key=="Target"||key=="BoardTarget"?PracticeEnemy.Get():nullptr;
+}
+
+void UOVPlayScenarioSubsystem::RetryPracticeStep(){
+ if(PracticeChapter<0||PracticeStep>=PracticeStepCount()||!Owner.IsValid())return;
+ // Boarding can lose the transport; a repeat needs a fresh isolated team and ship.
+ if(PracticeChapter==8 || !PracticeShip.IsValid() || PracticeShip->Systems->bWrecked || (PracticeEnemy.IsValid() && PracticeEnemy->Systems->bWrecked)){
+    StartPractice(Owner.Get(),PracticeChapter);return;
+ }
+ const auto key=Lessons[PracticeChapter].Goals[PracticeStep].Id;
+ if(key=="Plane"||key=="Height"||key=="Escort")PracticeShip->StopMovement();
+ if(key=="Single"||key=="Multi")Owner->ClearSelection();
+ BeginPracticeStep();
 }
