@@ -15,8 +15,8 @@ struct Cell
     Cell operator+(const Cell& b) const { return {X+b.X,Y+b.Y,Z+b.Z}; }
 };
 
-enum class Kind { Core, Corridor, Junction, Storage };
-enum class Error { None, Occupied, Direction, NoConnection, Funds, Limit, Busy, Outside, Seam };
+enum class Kind { Core, Corridor, Junction, Storage, Yard, Dock };
+enum class Error { None, Occupied, Direction, NoConnection, Funds, Limit, Busy, Outside, Seam, Clearance };
 
 struct Module
 {
@@ -30,6 +30,8 @@ inline Cell Dimensions(Kind type)
 {
     if (type == Kind::Core) return {5,5,5};
     if (type == Kind::Storage) return {2,2,2};
+    if (type == Kind::Yard) return {4,3,3};
+    if (type == Kind::Dock) return {4,3,2};
     return {1,1,1};
 }
 
@@ -47,7 +49,36 @@ inline bool Contains(const Module& module, Cell cell)
 }
 
 inline bool IsLink(Kind type) { return type == Kind::Corridor || type == Kind::Junction; }
-inline int Cost(Kind type) { return IsLink(type) ? 40 : 300; }
+inline bool HasBay(Kind type) { return type == Kind::Yard || type == Kind::Dock; }
+inline int Cost(Kind type)
+{
+    if (type == Kind::Yard) return 650;
+    if (type == Kind::Dock) return 350;
+    return IsLink(type) ? 40 : 300;
+}
+inline double Duration(Kind type)
+{
+    if (type == Kind::Yard) return 120;
+    if (type == Kind::Dock) return 75;
+    return IsLink(type) ? 15 : 60;
+}
+
+// 조선소는 -X 끝, 도크는 +Y 측면의 열린 베이를 사용한다.
+inline Cell BayForward(Kind type) { return type==Kind::Yard ? Cell{-1,0,0} : Cell{0,1,0}; }
+inline Cell BayMouth(Kind type) { return type==Kind::Yard ? Cell{0,1,0} : Cell{1,2,0}; }
+inline bool InFlightLane(const Module& bay, Cell world)
+{
+    if (!HasBay(bay.Type)) return false;
+    Cell p=Rotate(world+Cell{-bay.Origin.X,-bay.Origin.Y,-bay.Origin.Z},(4-bay.Turns)%4);
+    const auto d=Dimensions(bay.Type);
+    const bool yard=bay.Type==Kind::Yard;
+    const int ahead=yard ? -p.X : p.Y-(d.Y-1);
+    if (ahead<=0 || p.Z<0 || p.Z>=d.Z) return false;
+    const int across=yard?p.Y:p.X;
+    if (ahead<=2) return across>=0 && across<(yard?d.Y:d.X);
+    // 앞 50m는 전체 개구 폭, 이후는 중앙 비행선이 시험 공간 외곽까지 열려야 한다.
+    return across==1 && p.Z==0;
+}
 
 struct Port { Cell At; Cell Direction; };
 
@@ -62,6 +93,14 @@ inline std::vector<Port> Ports(const Module& module)
         add({4,2,2},{1,0,0}); add({0,2,2},{-1,0,0});
         add({2,4,2},{0,1,0}); add({2,0,2},{0,-1,0});
         // 원본 코어의 상단 안테나를 포트로 취급하지 않는다. 수직 연결은 분기 허브가 담당한다.
+    }
+    else if (module.Type == Kind::Yard)
+    {
+        add({3,2,0},{0,1,0}); add({3,0,0},{0,-1,0});
+    }
+    else if (module.Type == Kind::Dock)
+    {
+        add({0,1,0},{-1,0,0}); add({3,1,0},{1,0,0});
     }
     else
     {
@@ -101,9 +140,25 @@ public:
                     const auto p = candidate.Origin + Rotate({x,y,z}, candidate.Turns);
                     if (p.X < -24 || p.X > 24 || p.Y < -24 || p.Y > 24 || p.Z < -8 || p.Z > 8) return Error::Outside;
                     for (const auto& item : Items)
+                    {
                         if (Contains(item,p)) return Error::Occupied;
+                        if (InFlightLane(item,p)) return Error::Clearance;
+                    }
                 }
 
+        if (HasBay(candidate.Type))
+        {
+            const Cell face=candidate.Origin+Rotate(BayMouth(candidate.Type),candidate.Turns);
+            const Cell forward=Rotate(BayForward(candidate.Type),candidate.Turns);
+            const Cell end=face+forward+forward;
+            if (end.X < -24 || end.X > 24 || end.Y < -24 || end.Y > 24) return Error::Clearance;
+            for (const auto& other:Items)
+            {
+                const auto size=Dimensions(other.Type);
+                for(int x=0;x<size.X;++x) for(int y=0;y<size.Y;++y) for(int z=0;z<size.Z;++z)
+                    if (InFlightLane(candidate,other.Origin+Rotate({x,y,z},other.Turns))) return Error::Clearance;
+            }
+        }
         bool attached = false;
         int links = 0, facilities = 0;
         for (const auto& item : Items)
@@ -129,7 +184,7 @@ public:
     bool Start(Module candidate)
     {
         if (Check(candidate) != Error::None) return false;
-        candidate.Remaining = IsLink(candidate.Type) ? 15 : 60;
+        candidate.Remaining = Duration(candidate.Type);
         Items.push_back(candidate);
         Common -= Cost(candidate.Type);
         return true;

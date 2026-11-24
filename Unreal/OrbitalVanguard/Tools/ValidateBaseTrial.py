@@ -13,6 +13,19 @@ def check(label, condition):
     if not condition: raise AssertionError(label)
     report['checks'].append(label)
 
+def capture(world,pc,name):
+    path=folder/(name+'.png')
+    previous=path.stat().st_mtime_ns if path.exists() else 0
+    for attempt in range(3):
+        settle=time.monotonic()+.7
+        while time.monotonic()<settle: yield
+        u.SystemLibrary.execute_console_command(world,'Shot filename="'+str(path)+'" -nosuffix',pc)
+        timeout=time.monotonic()+3
+        while time.monotonic()<timeout:
+            yield
+            if path.exists() and path.stat().st_mtime_ns>previous: return
+    raise RuntimeError('렌더 캡처 갱신 실패 '+name)
+
 def run():
     while editor.get_game_world() is None: yield
     world=editor.get_game_world()
@@ -90,6 +103,96 @@ def run():
     check('허브 수직 실제 메시 소켓', (bottom.get_socket_location('ZP')-top.get_socket_location('ZN')).length()<5 and
           u.MathLibrary.get_forward_vector(ra).dot(u.MathLibrary.get_forward_vector(rb))<-.999 and
           u.MathLibrary.get_up_vector(ra).dot(u.MathLibrary.get_up_vector(rb))>.999)
+    vertical=(bottom.get_socket_location('ZP')-top.get_socket_location('ZN')).length()
+    report['vertical_cm']=vertical
+    old=pc.get_view_target()
+    cam=get(pc,'range_camera')
+    loc,rot=cam.get_actor_location(),cam.get_actor_rotation()
+    seam=bottom.get_socket_location('ZP')
+    eye=seam+u.Vector(2200,1900,850)
+    cam.set_actor_location_and_rotation(eye,u.MathLibrary.find_look_at_rotation(eye,seam),False,False)
+    pc.set_view_target_with_blend(cam)
+    u.SystemLibrary.execute_console_command(world,'ShowHUD',pc)
+    for _ in range(16): yield
+    u.SystemLibrary.execute_console_command(world,'Shot filename="'+str(folder/'VerticalHub.png')+'" -nosuffix',pc)
+    for _ in range(6): yield
+    pc.set_view_target_with_blend(old)
+    cam.set_actor_location_and_rotation(loc,rot,False,False)
+    u.SystemLibrary.execute_console_command(world,'ShowHUD',pc)
+    check('25m층 90도 도크',fresh.reserve_module('Dock',u.IntVector(1,4,1),1))
+    rotated=fresh.get_components_by_class(u.StaticMeshComponent)
+    rotated_dock=next(c for c in rotated if 'DockStandard' in get(c,'static_mesh').get_name())
+    upper_hub=max((c for c in rotated if 'CorridorHub' in get(c,'static_mesh').get_name()),key=lambda c:c.get_world_location().z)
+    report['rotated_dock_cm']=(upper_hub.get_socket_location('XP')-rotated_dock.get_socket_location('XN')).length()
+    check('상층 도크 회전 후 실제 면 중심',report['rotated_dock_cm']<=5)
+    check('25m층 도크 환불',fresh.cancel_construction(3))
+    for x in range(1,6):
+        check('상층 수평 통로 '+str(x),fresh.reserve_module('Corridor',u.IntVector(x,3,1),0))
+    check('25m층 90도 조선소 반대 포트',fresh.reserve_module('Yard',u.IntVector(8,0,1),1))
+    upper=fresh.get_components_by_class(u.StaticMeshComponent)
+    yard90=next(c for c in upper if 'YardSmall' in get(c,'static_mesh').get_name())
+    links90=[c for c in upper if 'Straight' in get(c,'static_mesh').get_name()]
+    report['rotated_yard_cm']=min((yard90.get_socket_location('YP')-c.get_socket_location('XP')).length() for c in links90)
+    check('상층 조선소 회전 후 실제 면 중심',report['rotated_yard_cm']<=5)
+    # 기존 1단계 흐름 뒤에 별도 시험으로 새 모듈과 실제 모델 충돌을 검사한다.
+    hud.execute_ui_action('RestartScene')
+    extended,=bases()
+    check('조선소 측면 연결',extended.reserve_module('Corridor',u.IntVector(0,3,0),1) and extended.reserve_module('Yard',u.IntVector(-3,4,0),0))
+    check('출입 여유·외곽 차단',not extended.reserve_module('Junction',u.IntVector(-4,5,0),0) and not extended.reserve_module('Junction',u.IntVector(-12,5,0),0))
+    pc.action('Pause')
+    pc.step_simulation(136)
+    check('도크 수평 연결',extended.reserve_module('Corridor',u.IntVector(3,0,0),0) and extended.reserve_module('Dock',u.IntVector(4,-1,0),0))
+    check('두 베이의 실제 비용',extended.common_stock()==120)
+    parts=extended.get_components_by_class(u.StaticMeshComponent)
+    yard,dock=part('YardSmall'),part('DockStandard')
+    corridors=[c for c in parts if 'Straight' in get(c,'static_mesh').get_name()]
+    measurements=[]
+    for module,sock in [(yard,'YN'),(dock,'XN')]:
+        point=module.get_socket_location(sock)
+        other=min(corridors,key=lambda c:(c.get_socket_location('XP')-point).length())
+        a,b=module.get_socket_rotation(sock),other.get_socket_rotation('XP')
+        gap=(other.get_socket_location('XP')-point).length()
+        n=u.MathLibrary.get_forward_vector(a).dot(u.MathLibrary.get_forward_vector(b))
+        up=u.MathLibrary.get_up_vector(a).dot(u.MathLibrary.get_up_vector(b))
+        measurements.append([get(module,'static_mesh').get_name(),gap,n,up])
+        check(sock+' 신규 접합 중심·법선·롤',gap<5 and n<-.999 and up>.999)
+    report['new_seams_cm_dot']=measurements
+    ship,=get(pc,'ships')
+    hull=next(c for c in ship.get_components_by_class(u.StaticMeshComponent) if get(c,'static_mesh') and get(c,'static_mesh').get_name()=='SM_PC14_FullMesh')
+    bounds=get(hull,'static_mesh').get_bounding_box()
+    scale=hull.get_world_scale()
+    dims=(bounds.max-bounds.min)*scale*.5
+    # 원본 메시 축에 관계없이 긴 축을 항진 방향에 정렬한 보수적 선체 상자.
+    sizes=sorted([abs(dims.x),abs(dims.y),abs(dims.z)],reverse=True)
+    half=u.Vector(*sizes)
+    report['corvette_half_cm']=sizes
+    check('원본 초계함 외곽',sizes[0]>100 and sizes[2]>0)
+    for name,module,start,end,heading,wall in [
+        ('조선소',yard,u.Vector(-12000,0,1570),u.Vector(-500,0,1570),0,u.Vector(-500,0,-900)),
+        ('표준 도크',dock,u.Vector(0,9000,2240),u.Vector(0,0,2240),90,u.Vector(0,0,-900))]:
+        origin=module.get_world_location()
+        def sweep(a,b):
+            return u.SystemLibrary.box_trace_single(world,origin+a,origin+b,half,u.Rotator(yaw=heading),u.TraceTypeQuery.TRACE_TYPE_QUERY1,False,[],u.DrawDebugTrace.NONE,False)
+        hit=sweep(start,end)
+        floor_hit=sweep(end,wall)
+        report[name+'_sweep']={'blocked':hit is not None,'floor_detected':floor_hit is not None}
+        check(name+' 초계함 외곽 진입·베이 바닥 검출',not hit and floor_hit is not None)
+    shotcam=get(pc,'range_camera')
+    saved_loc,saved_rot=shotcam.get_actor_location(),shotcam.get_actor_rotation()
+    u.SystemLibrary.execute_console_command(world,'ShowHUD',pc)
+    old=pc.get_view_target()
+    pc.set_view_target_with_blend(shotcam)
+    for name,focus,offset in [
+        ('YardBay',yard.get_world_location()+u.Vector(0,0,1600),u.Vector(-13100,-6200,4900)),
+        ('DockBay',dock.get_world_location()+u.Vector(0,0,1600),u.Vector(-4300,15600,5800)),
+        ('YardJoint',yard.get_socket_location('YN'),u.Vector(1700,-2300,1500)),
+        ('DockJoint',dock.get_socket_location('XN'),u.Vector(-2300,1900,1400))]:
+        shotcam.set_actor_location_and_rotation(focus+offset,u.MathLibrary.find_look_at_rotation(focus+offset,focus),False,False)
+        for _ in range(12): yield
+        yield from capture(world,pc,name)
+    pc.set_view_target_with_blend(old)
+    shotcam.set_actor_location_and_rotation(saved_loc,saved_rot,False,False)
+    u.SystemLibrary.execute_console_command(world,'ShowHUD',pc)
     hud.execute_ui_action('PlaySceneExit')
     check('목록 복귀 시 모듈·함선 정리',not bases() and not get(pc,'ships'))
     check('다른 임무 회귀',pc.start_play_scenario('Fleet50') and len(get(pc,'ships'))>1 and not bases())

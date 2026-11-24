@@ -4,6 +4,7 @@
 #include "Components/StaticMeshComponent.h"
 #include "Engine/StaticMesh.h"
 #include "Engine/Canvas.h"
+#include "Engine/Texture2D.h"
 #include "Engine/World.h"
 #include "InputCoreTypes.h"
 #include "OVBasePresentation.h"
@@ -21,6 +22,8 @@ const TCHAR* ModuleName(OVBase::Kind type)
     case OVBase::Kind::Core: return TEXT("중앙 코어");
     case OVBase::Kind::Corridor: return TEXT("연결 통로");
     case OVBase::Kind::Junction: return TEXT("분기 허브");
+    case OVBase::Kind::Yard: return TEXT("소형 조선소");
+    case OVBase::Kind::Dock: return TEXT("표준 접안 모듈");
     default: return TEXT("자원 창고");
     }
 }
@@ -33,11 +36,29 @@ const TCHAR* PlacementStatus(OVBase::Error error)
     case OVBase::Error::Seam: return TEXT("양쪽 연결면이 어긋납니다 · 다른 칸이나 방향을 선택하세요.");
     case OVBase::Error::Direction: return TEXT("연결구 방향이 맞지 않습니다 · Q/E 회전");
     case OVBase::Error::NoConnection: return TEXT("맞물리는 연결 포트가 없습니다.");
+    case OVBase::Error::Clearance: return TEXT("함선 출입로가 막힙니다 · 전방 50m와 바깥 비행선을 비워 주세요.");
     case OVBase::Error::Funds: return TEXT("일반 자원이 부족합니다.");
     case OVBase::Error::Limit: return TEXT("코어 I 설치 한도에 도달했습니다.");
     case OVBase::Error::Busy: return TEXT("시설 건설 슬롯을 사용 중입니다.");
     default: return TEXT("시험 배치 범위를 벗어났습니다.");
     }
+}
+
+OVBase::Module UnderPointer(const OVBase::BuildState& build,int32 pick,OVBase::Cell cell,int turns)
+{
+    OVBase::Module candidate{static_cast<OVBase::Kind>(pick),cell,turns};
+    if (!OVBase::HasBay(candidate.Type)) return candidate;
+    const auto ports=OVBase::Ports({candidate.Type,{},turns});
+    for (const auto& module:build.Modules())
+        for (const auto& other:OVBase::Ports(module))
+            if (other.At+other.Direction==cell)
+                for (const auto& port:ports)
+                    if (port.Direction+other.Direction==OVBase::Cell{})
+                    {
+                        candidate.Origin=cell+OVBase::Cell{-port.At.X,-port.At.Y,-port.At.Z};
+                        return candidate;
+                    }
+    return candidate;
 }
 
 bool PointerCell(AOVController& pc,const AOVBasePresentation& base,int32 layer,OVBase::Cell& result)
@@ -119,6 +140,8 @@ bool AOVHUD::HandleBaseAction(FName action)
     else if (action == TEXT("BaseCorridor")) BasePick = 1;
     else if (action == TEXT("BaseJunction")) BasePick = 2;
     else if (action == TEXT("BaseStorage")) BasePick = 3;
+    else if (action == TEXT("BaseYard")) BasePick = 4;
+    else if (action == TEXT("BaseDock")) BasePick = 5;
     else if (action == TEXT("BaseInspect")) BasePick = 0;
     else if (action == TEXT("BaseCancel"))
     {
@@ -171,10 +194,10 @@ void AOVHUD::UpdateBaseView(float dt)
             if (OVBase::Contains(build.Modules()[i],cell)) { BaseInspect = static_cast<int32>(i); break; }
         return;
     }
-    const OVBase::Module candidate{static_cast<OVBase::Kind>(BasePick),cell,BaseTurns};
+    const auto candidate=UnderPointer(build,BasePick,cell,BaseTurns);
     BaseNotice = PlacementStatus(BasePresentation->CheckPlacement(candidate));
-    const FName ids[]={NAME_None,TEXT("Corridor"),TEXT("Junction"),TEXT("Storage")};
-    if (BasePresentation->ReserveModule(ids[BasePick],FIntVector(cell.X,cell.Y,cell.Z),BaseTurns))
+    const FName ids[]={NAME_None,TEXT("Corridor"),TEXT("Junction"),TEXT("Storage"),TEXT("Yard"),TEXT("Dock")};
+    if (BasePresentation->ReserveModule(ids[BasePick],FIntVector(candidate.Origin.X,candidate.Origin.Y,candidate.Origin.Z),BaseTurns))
     {
         BaseNotice = TEXT("공간과 자원을 예약했습니다.");
         BaseInspect = static_cast<int32>(build.Modules().size())-1;
@@ -223,9 +246,9 @@ void AOVHUD::DrawBaseView()
     if (BasePick != 0 && pc->GetMousePosition(x,y) && x/UIScale >= 210 &&
         x/UIScale <= width-250 && y/UIScale >= 52 && PointerCell(*pc,*BasePresentation,BaseLayer,cell))
     {
-        const OVBase::Module candidate{static_cast<OVBase::Kind>(BasePick),cell,BaseTurns};
+        const auto candidate=UnderPointer(build,BasePick,cell,BaseTurns);
         const auto dim = OVBase::Dimensions(candidate.Type);
-        const auto center = BasePresentation->CellCenter(cell);
+        const auto center = BasePresentation->CellCenter(candidate.Origin);
         const auto rotation = FRotator(0,90*BaseTurns,0);
         const auto point = [&](double bx,double by) { return center+rotation.RotateVector(FVector(bx,by,0))*OVBase::CellCm; };
         const FVector corners[]{point(-.5,-.5),point(dim.X-.5,-.5),point(dim.X-.5,dim.Y-.5),point(-.5,dim.Y-.5)};
@@ -244,6 +267,19 @@ void AOVHUD::DrawBaseView()
             const FVector face=BasePresentation->CellCenter(port.At)+d*(OVBase::CellCm*.5);
             line(face,face+d*(OVBase::CellCm*.45),color,4);
         }
+        if (OVBase::HasBay(candidate.Type))
+        {
+            const auto mouth=candidate.Origin+OVBase::Rotate(OVBase::BayMouth(candidate.Type),BaseTurns);
+            const auto forward=OVBase::Rotate(OVBase::BayForward(candidate.Type),BaseTurns);
+            const FVector start=BasePresentation->CellCenter(mouth);
+            const FVector d(forward.X,forward.Y,0), side(-forward.Y,forward.X,0);
+            for (int sign: {-1,1})
+                line(start+(d*.5+side*.5*sign)*OVBase::CellCm,start+(d*2.5+side*.5*sign)*OVBase::CellCm,AccentColor,2);
+            const FVector tip=start+d*3*OVBase::CellCm;
+            line(start,tip,AccentColor,3);
+            for (int sign: {-1,1})
+                line(tip,tip+(-d*.42+side*.28*sign)*OVBase::CellCm,AccentColor,3);
+        }
         DrawText(PlacementStatus(error),color,220,height-35,OVTypography::Font(EOVTextRole::Body));
     }
 
@@ -255,7 +291,8 @@ void AOVHUD::DrawBaseView()
     for (const auto& item : build.Modules())
     {
         if (OVBase::IsLink(item.Type)) ++links;
-        if (item.Type == OVBase::Kind::Storage) { ++facilities; if(item.Remaining<=0) ++warehouses; }
+        if (!OVBase::IsLink(item.Type) && item.Type!=OVBase::Kind::Core) ++facilities;
+        if (item.Type==OVBase::Kind::Storage && item.Remaining<=0) ++warehouses;
         if (item.Remaining>0) ++queue;
     }
     DrawText(FString::Printf(TEXT("기지 시험장 · 코어 I   일반 %d/%d   기능 %d/8 · 연결 %d/24"),
@@ -264,12 +301,25 @@ void AOVHUD::DrawBaseView()
     Button(TEXT("BaseCorridor"),TEXT("일자 통로 · 40 / 15초"),12,115,184,BasePick==1);
     Button(TEXT("BaseJunction"),TEXT("분기 허브 · 40 / 15초"),12,153,184,BasePick==2);
     Button(TEXT("BaseStorage"),TEXT("창고 I · 300 / 60초"),12,191,184,BasePick==3);
+    Button(TEXT("BaseYard"),TEXT("소형 조선소 · 650"),12,229,184,BasePick==4);
+    Button(TEXT("BaseDock"),TEXT("표준 접안 · 350"),12,267,184,BasePick==5);
     DrawText(FString::Printf(TEXT("고도 %d m · 회전 %d°"),BaseLayer*25,BaseTurns*90),
-        FLinearColor::White,12,238,OVTypography::Font(EOVTextRole::Body));
+        FLinearColor::White,12,306,OVTypography::Font(EOVTextRole::Body));
     DrawText(TEXT("Q/E 회전 · R/F 고도\n방향키 시점 · 휠 확대\nSpace 정지 · 1/2/3 배속 · Esc 함대"),
-        FLinearColor::White,12,267,OVTypography::Font(EOVTextRole::Body));
+        FLinearColor::White,12,334,OVTypography::Font(EOVTextRole::Body));
 
-    DrawText(TEXT("청록색 연결구 바로 바깥 칸에\n통로를 놓고 끝에 창고를 이으세요."),AccentColor,12,346,OVTypography::Font(EOVTextRole::Body));
+    DrawText(TEXT("청록색 연결구 바로 바깥 칸에\n통로를 놓고 끝에 창고를 이으세요."),AccentColor,12,410,OVTypography::Font(EOVTextRole::Body));
+    if (BasePick==4 || BasePick==5)
+    {
+        const bool yard=BasePick==4;
+        if (!BaseBayCards[BasePick-4])
+            BaseBayCards[BasePick-4]=LoadObject<UTexture2D>(nullptr,yard?
+                TEXT("/Game/Presentation/Base/T_YardSmall_Card.T_YardSmall_Card"):
+                TEXT("/Game/Presentation/Base/T_DockStandard_Card.T_DockStandard_Card"));
+        if (BaseBayCards[BasePick-4] && height>588)
+            DrawTexture(BaseBayCards[BasePick-4],14,448,180,89,0,0,1,1);
+        DrawText(yard?TEXT("4×3×3 · 120초"):TEXT("4×3×2 · 75초"),AccentColor,12,height-84,OVTypography::Font(EOVTextRole::Body));
+    }
     const float right = width-236;
     constexpr float top = 78;
     Button(TEXT("RestartScene"),TEXT("재시작"),width-182,11,75);

@@ -42,6 +42,23 @@ bool FOVBaseTrialNetwork::RunTest(const FString&)
         TestTrue(TEXT("서측 통로"),capped.Start({Kind::Corridor,{-x,0,0}}));
     }
     TestTrue(TEXT("연결 한도 24"),capped.Check({Kind::Corridor,{15,0,0}})==OVBase::Error::Limit);
+    for(int turn=0;turn<4;++turn)
+    {
+        BuildState staging;
+        const auto placement=[turn](Kind kind,Cell origin,int yaw) { return Module{kind,Rotate(origin,turn),(yaw+turn)%4}; };
+        TestTrue(TEXT("측면 통로"),staging.Start(placement(Kind::Corridor,{0,3,0},1)));
+        TestTrue(TEXT("조선소 예약"),staging.Start(placement(Kind::Yard,{-3,4,0},0)));
+        TestEqual(TEXT("조선소 비용"),staging.Funds(),510);
+        TestTrue(TEXT("출입구 두 칸 전체 차단"),staging.Check(placement(Kind::Junction,{-5,6,2},0))==OVBase::Error::Clearance);
+        TestTrue(TEXT("외곽 개방선 차단"),staging.Check(placement(Kind::Junction,{-18,5,0},0))==OVBase::Error::Clearance);
+        staging.Advance(135);
+        TestTrue(TEXT("동쪽 도크 통로"),staging.Start(placement(Kind::Corridor,{3,0,0},0)));
+        TestTrue(TEXT("표준 도크 예약"),staging.Start(placement(Kind::Dock,{4,-1,0},0)));
+        TestEqual(TEXT("시설 둘과 통로 둘의 잔액"),staging.Funds(),120);
+        TestTrue(TEXT("도크 측면 개방선"),staging.Check(placement(Kind::Corridor,{5,12,0},0))==OVBase::Error::Clearance);
+        staging.Advance(90);
+        TestTrue(TEXT("두 시설 가동"),staging.Network(false).back());
+    }
     return true;
 }
 #endif

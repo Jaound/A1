@@ -234,6 +234,7 @@ private:
  TArray<TWeakObjectPtr<AOVShip>> BaseHiddenShips;
  FVector FleetSkyScale=FVector::OneVector;
  bool bBaseViewOpen = false;
+ UPROPERTY() TObjectPtr<UTexture2D> BaseBayCards[2];
  int32 BasePick = 1, BaseLayer = 0, BaseTurns = 0;
  int32 BaseInspect = INDEX_NONE;
  FString BaseNotice;

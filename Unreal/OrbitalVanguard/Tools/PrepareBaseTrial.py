@@ -1,4 +1,5 @@
 """기지 네 원본의 UV를 유지한 전장용 메시와 연결면 좌표를 별도로 준비한다. Blender -b -P로 실행."""
+import os
 import hashlib
 import json
 from pathlib import Path
@@ -7,7 +8,8 @@ import numpy as np
 from mathutils import Matrix, Vector
 
 root = Path.home() / 'Documents/OrbitalVanguardAssets'
-out = root / 'Prepared/BaseTrial1'
+phase2 = os.environ.get('OV_BASE_STAGE') == '2'
+out = root / ('Prepared/BaseTrial2' if phase2 else 'Prepared/BaseTrial1')
 out.mkdir(parents=True, exist_ok=True)
 # Blender의 +Y는 UE의 -Y. 원본 투영에서 확인한 노출면의 중심(원본 월드 m).
 # 코어 상단 안테나는 연결구가 아니다. 수직 분기는 허브에서 한다.
@@ -21,6 +23,49 @@ modules = [
       'YN':(-.001,2.568,1.501),'ZP':(.014,.003,3),'ZN':(-.015,-.001,0)}),
     ('StorageVault','자원 저장소',(3.2,3.2,3.2),(-7.271,.958,1.954),
      {'XN':(-7.271,.958,1.954)})]
+if phase2:
+    # 단일 선형 배율로 외곽 한도에 맞춘다. 앞면은 조선소 -X, 접안 베이 +Y.
+    modules = [
+        ('YardSmall','소형 조선소',(16.5,)*3,(0,0,0),
+         {'YP':(2.41,-2.0198,.83),'YN':(2.41,2.0198,.83)}),
+        ('DockStandard','소형 접안 모듈',(16.65,)*3,(0,0,0),
+         {'XN':(-2.7514,0,.999),'XP':(2.7514,-.003,1.05)})]
+def fit_octagonal_collars(obj, transform, sockets, name):
+    """기존 테두리 안쪽에서 시작해 직선 통로 끝단으로 이어지는 속 빈 금속 칼라."""
+    verts, faces = [], []
+    # 팔각 단면에서 수직 모서리와 위/아래의 수평 변을 유지한다.
+    ring=[(-.55,-1),(.55,-1),(1,-.55),(1,.55),(.55,1),(-.55,1),(-1,.55),(-1,-.55)]
+    for socket,point in sockets.items():
+        normal=Vector({'XP':(1,0,0),'XN':(-1,0,0),'YP':(0,-1,0),'YN':(0,1,0)}[socket])
+        axis=Vector((0,0,1)).cross(normal)
+        center=transform@Vector(point)
+        wide=(5.4,7.0) if name=='YardSmall' else (6.0,6.5)
+        # 실제 직선 통로 외측 끝면 4.36 × 5.35m. 뒤쪽 립은 원본의 굴곡과 겹쳐 뜨지 않게 한다.
+        sections=[(-.95,*wide),(.15,*wide), (1.40,2.18,2.68),(1.85,2.18,2.68),
+                  (1.85,1.90,2.38),(1.40,1.90,2.38),(.10,wide[0]-.35,wide[1]-.35),(-.95,wide[0]-.35,wide[1]-.35)]
+        first=len(verts)
+        for depth,w,h in sections:
+            for x,z in ring:
+                verts.append(center+normal*depth+axis*x*w+Vector((0,0,z*h)))
+        for i in range(len(sections)):
+            for j in range(8):
+                a=first+i*8
+                b=first+((i+1)%len(sections))*8
+                k=(j+1)%8
+                faces.append((a+j,a+k,b+k,b+j))
+    geom=bpy.data.meshes.new('PortCollars')
+    geom.from_pydata(verts,[],faces)
+    geom.update()
+    collar=bpy.data.objects.new('PortCollars',geom)
+    bpy.context.collection.objects.link(collar)
+    mat=bpy.data.materials.new('OV_PortSteel')
+    geom.materials.append(mat)
+    bpy.ops.object.select_all(action='DESELECT')
+    collar.select_set(True)
+    obj.select_set(True)
+    bpy.context.view_layer.objects.active=obj
+    bpy.ops.object.join()
+
 report = {}
 for name, directory, scale, pivot, sockets in modules:
     src = next((root/'Source/Base'/directory).rglob('*.fbx'))
@@ -40,6 +85,8 @@ for name, directory, scale, pivot, sockets in modules:
         modifier=obj.modifiers.new('전장용 단순화','DECIMATE')
         modifier.ratio=80000/len(obj.data.polygons)
         bpy.ops.object.modifier_apply(modifier=modifier.name)
+    if phase2:
+        fit_octagonal_collars(obj,transform,sockets,name)
     bpy.context.scene.unit_settings.system='METRIC'
     bpy.ops.export_scene.fbx(filepath=str(dest/(obj.name+'.fbx')),use_selection=True,object_types={'MESH'},
         axis_forward='-Y',axis_up='Z',bake_anim=False,embed_textures=False,path_mode='STRIP')
@@ -52,6 +99,8 @@ for name, directory, scale, pivot, sockets in modules:
     offsets={}
     for socket, point in sockets.items():
         p=transform @ Vector(point)
+        if phase2:
+            p+=Vector({'XP':(1.85,0,0),'XN':(-1.85,0,0),'YP':(0,-1.85,0),'YN':(0,1.85,0)}[socket])
         offsets[socket]=[round(p.x*100,3),round(-p.y*100,3),round(p.z*100,3)]
     with src.open('rb') as stream:
         digest=hashlib.file_digest(stream,'sha256').hexdigest()

@@ -31,7 +31,9 @@ const TCHAR* const MeshesByKind[] = {
     TEXT("/Game/Presentation/Base/SM_OV_Base_CoreHub_5x5x5.SM_OV_Base_CoreHub_5x5x5"),
     TEXT("/Game/Presentation/Base/SM_OV_Base_CorridorStraight_1x1x1.SM_OV_Base_CorridorStraight_1x1x1"),
     TEXT("/Game/Presentation/Base/SM_OV_Base_CorridorHub_1x1x1.SM_OV_Base_CorridorHub_1x1x1"),
-    TEXT("/Game/Presentation/Base/SM_OV_Base_StorageVault.SM_OV_Base_StorageVault")
+    TEXT("/Game/Presentation/Base/SM_OV_Base_StorageVault.SM_OV_Base_StorageVault"),
+    TEXT("/Game/Presentation/Base/SM_OV_Base_YardSmall.SM_OV_Base_YardSmall"),
+    TEXT("/Game/Presentation/Base/SM_OV_Base_DockStandard.SM_OV_Base_DockStandard")
 };
 }
 
@@ -53,6 +55,7 @@ void AOVBasePresentation::Show(bool bShow)
         RefreshMeshes();
     }
     SetActorHiddenInGame(!bShow);
+    SetActorEnableCollision(bShow);
 }
 
 void AOVBasePresentation::EndPlay(const EEndPlayReason::Type Reason)
@@ -82,7 +85,7 @@ OVBase::Error AOVBasePresentation::CheckPlacement(const OVBase::Module& candidat
     if (logical!=OVBase::Error::None) return logical;
     // 한쪽에 스냅한 결과가 다른 연결면과도 5cm 이내여야 고리를 닫을 수 있다.
     TOptional<FVector> anchor;
-    if (!OVBase::IsLink(candidate.Type)) return logical;
+
     const int32 index=static_cast<int32>(candidate.Type);
     const auto* asset=Assets.IsValidIndex(index)?Assets[index].Get():nullptr;
     if (!asset) return logical;
@@ -112,6 +115,8 @@ bool AOVBasePresentation::ReserveModule(FName id,FIntVector origin,int32 turns)
     if (id==TEXT("Corridor")) kind=OVBase::Kind::Corridor;
     else if (id==TEXT("Junction")) kind=OVBase::Kind::Junction;
     else if (id==TEXT("Storage")) kind=OVBase::Kind::Storage;
+    else if (id==TEXT("Yard")) kind=OVBase::Kind::Yard;
+    else if (id==TEXT("Dock")) kind=OVBase::Kind::Dock;
     else return false;
     const OVBase::Module candidate{kind,{origin.X,origin.Y,origin.Z},turns};
     if (CheckPlacement(candidate)!=OVBase::Error::None || !Build.Start(candidate)) return false;
@@ -165,6 +170,11 @@ void AOVBasePresentation::RefreshMeshes()
             Mesh->SetWorldScale3D(ModuleScale(Item.Type));
         }
         Mesh->SetStaticMesh(Asset);
+        if (OVBase::HasBay(Item.Type) && Assets.IsValidIndex(index) && Assets[index])
+        {
+            Mesh->SetCollisionProfileName(TEXT("BlockAll"));
+            Mesh->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
+        }
     }
 
     // 중간 공사가 취소돼 다른 경로로 연결된 경우에도 코어에서 바깥쪽 순서로 접합한다.
