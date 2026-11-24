@@ -1,0 +1,687 @@
+{
+  "character_count": 34,
+  "image_count": 68,
+  "total_bytes": 144813155,
+  "files": [
+    {
+      "character_id": "M01",
+      "character_name": "카엘 반",
+      "variant": "standing",
+      "path": "standing/M01_카엘_반_전신.png",
+      "width": 1086,
+      "height": 1448,
+      "size_bytes": 2756264,
+      "sha256": "bde8b31a46537e0c49c8888152cfad09e1f9e281b2c1b09f852c105e775a74a0"
+    },
+    {
+      "character_id": "M02",
+      "character_name": "이리스 베인",
+      "variant": "standing",
+      "path": "standing/M02_이리스_베인_전신.png",
+      "width": 1086,
+      "height": 1448,
+      "size_bytes": 2608027,
+      "sha256": "829042dbd61fcaca826ed610dceea2427f4738cb13fb99eff15bf7429de93b1b"
+    },
+    {
+      "character_id": "M03",
+      "character_name": "도리안 크루거",
+      "variant": "standing",
+      "path": "standing/M03_도리안_크루거_전신.png",
+      "width": 1086,
+      "height": 1448,
+      "size_bytes": 2706328,
+      "sha256": "e609bbf727cf00523f4a25ddc0ac9b3221bb472a7091976ac1c055dc684a8770"
+    },
+    {
+      "character_id": "M04",
+      "character_name": "세린 카이",
+      "variant": "standing",
+      "path": "standing/M04_세린_카이_전신.png",
+      "width": 1086,
+      "height": 1448,
+      "size_bytes": 2484082,
+      "sha256": "7e5f63c1b02b45652d5355fd28cd4a275636704df5cfbfa09d1e7560dee181c6"
+    },
+    {
+      "character_id": "M01",
+      "character_name": "카엘 반",
+      "variant": "sd",
+      "path": "sd/M01_카엘_반_SD.png",
+      "width": 1254,
+      "height": 1254,
+      "size_bytes": 1836141,
+      "sha256": "e77bc141fc514a058c4a0d71755a856c35866292e5627f1e3e29b24e58eea9a5"
+    },
+    {
+      "character_id": "M02",
+      "character_name": "이리스 베인",
+      "variant": "sd",
+      "path": "sd/M02_이리스_베인_SD.png",
+      "width": 1254,
+      "height": 1254,
+      "size_bytes": 1765664,
+      "sha256": "67f63f6dc46c75dba6181551e9a332a440ddb9636417455e0c08e164f3f3cefd"
+    },
+    {
+      "character_id": "M03",
+      "character_name": "도리안 크루거",
+      "variant": "sd",
+      "path": "sd/M03_도리안_크루거_SD.png",
+      "width": 1254,
+      "height": 1254,
+      "size_bytes": 1708517,
+      "sha256": "fca11385e9a921b327313d698150e4e46c5fc723892d7b296d02df834aa69b72"
+    },
+    {
+      "character_id": "M04",
+      "character_name": "세린 카이",
+      "variant": "sd",
+      "path": "sd/M04_세린_카이_SD.png",
+      "width": 1254,
+      "height": 1254,
+      "size_bytes": 1707252,
+      "sha256": "78daf9467a1c8e72e4224c29a2bf18d1d111fa97460c09d3553f807b40c5c2bf"
+    },
+    {
+      "character_id": "M05",
+      "character_name": "볼칸 드라그",
+      "variant": "standing",
+      "path": "standing/M05_볼칸_드라그_전신.png",
+      "width": 1086,
+      "height": 1448,
+      "size_bytes": 2700045,
+      "sha256": "c467e76614a08091a13a643fa32ed2f9a9db0de278a0a13ebfae1e3ba5dc4a6a"
+    },
+    {
+      "character_id": "M06",
+      "character_name": "라일라 녹스",
+      "variant": "standing",
+      "path": "standing/M06_라일라_녹스_전신.png",
+      "width": 1086,
+      "height": 1448,
+      "size_bytes": 2567428,
+      "sha256": "a2a19d14e7d0ad9b39507144ef7653cd1f36969aa2bd97156dd89b324b926c19"
+    },
+    {
+      "character_id": "M07",
+      "character_name": "가렌 호크",
+      "variant": "standing",
+      "path": "standing/M07_가렌_호크_전신.png",
+      "width": 1086,
+      "height": 1448,
+      "size_bytes": 2690687,
+      "sha256": "90af82c2b1bc29ef6ea06a5dd6174627c64c0e48f5f96f36eb80692e91722eed"
+    },
+    {
+      "character_id": "M08",
+      "character_name": "미라 솔라리스",
+      "variant": "standing",
+      "path": "standing/M08_미라_솔라리스_전신.png",
+      "width": 1086,
+      "height": 1448,
+      "size_bytes": 2639749,
+      "sha256": "7d4b4c2db5ac4c8208cf7f90f41ce600b4ae297fd12b03175bc86e8c7495e224"
+    },
+    {
+      "character_id": "M05",
+      "character_name": "볼칸 드라그",
+      "variant": "sd",
+      "path": "sd/M05_볼칸_드라그_SD.png",
+      "width": 1254,
+      "height": 1254,
+      "size_bytes": 1882859,
+      "sha256": "ef550b4ba91b5d5042d873edf33c86788b93499f0c9858981f1c2340d8a79376"
+    },
+    {
+      "character_id": "M06",
+      "character_name": "라일라 녹스",
+      "variant": "sd",
+      "path": "sd/M06_라일라_녹스_SD.png",
+      "width": 1254,
+      "height": 1254,
+      "size_bytes": 1817707,
+      "sha256": "1fcd324c04fb07581df5f7691415510d2b286ddaada1c3745e26aad25bf89ab5"
+    },
+    {
+      "character_id": "M07",
+      "character_name": "가렌 호크",
+      "variant": "sd",
+      "path": "sd/M07_가렌_호크_SD.png",
+      "width": 1254,
+      "height": 1254,
+      "size_bytes": 1952605,
+      "sha256": "58044fe44b559a603abcdd5cb3a5a69b7a41603c9db92f96c71b2dc902519969"
+    },
+    {
+      "character_id": "M08",
+      "character_name": "미라 솔라리스",
+      "variant": "sd",
+      "path": "sd/M08_미라_솔라리스_SD.png",
+      "width": 1254,
+      "height": 1254,
+      "size_bytes": 1907052,
+      "sha256": "e8043b35429886e799c9776418a0b2f899f688600b9e6cd25de29d89e1ed2943"
+    },
+    {
+      "character_id": "M09",
+      "character_name": "타릭 오르",
+      "variant": "standing",
+      "path": "standing/M09_타릭_오르_전신.png",
+      "width": 1086,
+      "height": 1448,
+      "size_bytes": 2447694,
+      "sha256": "4690d5a9aecb562c15f2c6430494067b689b9fd6e8f3d90a4180f6ba0f519be6"
+    },
+    {
+      "character_id": "M10",
+      "character_name": "헤라 크림슨",
+      "variant": "standing",
+      "path": "standing/M10_헤라_크림슨_전신.png",
+      "width": 1086,
+      "height": 1448,
+      "size_bytes": 2734228,
+      "sha256": "b6bc9bfc32ac33b4e11bfe70472e623cc1c8fe1e0344deb4c5bdd0a4ba987f6f"
+    },
+    {
+      "character_id": "R01",
+      "character_name": "세라 린",
+      "variant": "standing",
+      "path": "standing/R01_세라_린_전신.png",
+      "width": 1086,
+      "height": 1448,
+      "size_bytes": 2616239,
+      "sha256": "13763ccbb73ea8c7ee439d8cd49fa372995dbd707958ca76f7cc7cdaab4edec4"
+    },
+    {
+      "character_id": "R02",
+      "character_name": "마커스 케인",
+      "variant": "standing",
+      "path": "standing/R02_마커스_케인_전신.png",
+      "width": 1086,
+      "height": 1448,
+      "size_bytes": 2432274,
+      "sha256": "bd75fc1c6fa5b49e7738482074b7e68d98ac29644947bf7409e12c713e81980b"
+    },
+    {
+      "character_id": "M09",
+      "character_name": "타릭 오르",
+      "variant": "sd",
+      "path": "sd/M09_타릭_오르_SD.png",
+      "width": 1254,
+      "height": 1254,
+      "size_bytes": 1683606,
+      "sha256": "71be1d24f025831e26f999c90c7613ccd577505039eed72b95f24eb2e6782b65"
+    },
+    {
+      "character_id": "M10",
+      "character_name": "헤라 크림슨",
+      "variant": "sd",
+      "path": "sd/M10_헤라_크림슨_SD.png",
+      "width": 1254,
+      "height": 1254,
+      "size_bytes": 1761682,
+      "sha256": "92ec10d4a74a263adc87c3fa49f6d175a1f34907de25d4f29bc44d0bc6387b60"
+    },
+    {
+      "character_id": "R01",
+      "character_name": "세라 린",
+      "variant": "sd",
+      "path": "sd/R01_세라_린_SD.png",
+      "width": 1254,
+      "height": 1254,
+      "size_bytes": 1698404,
+      "sha256": "aa758fe9a6e0d0b03becde50b33109cdd87bb6ad94dc454987d1fa3ace5bab0f"
+    },
+    {
+      "character_id": "R02",
+      "character_name": "마커스 케인",
+      "variant": "sd",
+      "path": "sd/R02_마커스_케인_SD.png",
+      "width": 1254,
+      "height": 1254,
+      "size_bytes": 1595175,
+      "sha256": "74207ea40d2532c002bb41dec1657b3932fd3ee5963c881d150c32a598ad5495"
+    },
+    {
+      "character_id": "R03",
+      "character_name": "엘레나 보스",
+      "variant": "standing",
+      "path": "standing/R03_엘레나_보스_전신.png",
+      "width": 1086,
+      "height": 1448,
+      "size_bytes": 2494920,
+      "sha256": "c483cb2b50a7c1b3b1b206735f548f0186b5125f146965dfe13e7838b57c74df"
+    },
+    {
+      "character_id": "R04",
+      "character_name": "제이드 하퍼",
+      "variant": "standing",
+      "path": "standing/R04_제이드_하퍼_전신.png",
+      "width": 1086,
+      "height": 1448,
+      "size_bytes": 2588782,
+      "sha256": "0f3efda59588669b1bae2e1df98080b6f7738728e50be4833231eab43adb5f88"
+    },
+    {
+      "character_id": "R05",
+      "character_name": "노아 발렌틴",
+      "variant": "standing",
+      "path": "standing/R05_노아_발렌틴_전신.png",
+      "width": 1086,
+      "height": 1448,
+      "size_bytes": 2509484,
+      "sha256": "b99d1582e77b6e68a072c0bf7462efdb4d8e8b267f8cc369c5c18cdf21d822e1"
+    },
+    {
+      "character_id": "R06",
+      "character_name": "클라라 벡",
+      "variant": "standing",
+      "path": "standing/R06_클라라_벡_전신.png",
+      "width": 1086,
+      "height": 1448,
+      "size_bytes": 2449849,
+      "sha256": "a6573c676207fcf050070a2520cf122c0eed36e579ac478e733d05b596242bb8"
+    },
+    {
+      "character_id": "R03",
+      "character_name": "엘레나 보스",
+      "variant": "sd",
+      "path": "sd/R03_엘레나_보스_SD.png",
+      "width": 1254,
+      "height": 1254,
+      "size_bytes": 1661450,
+      "sha256": "ba1bf1ccdcd6e349d1b0169c0c33d28afaded638b7355087670599ef917a4a51"
+    },
+    {
+      "character_id": "R04",
+      "character_name": "제이드 하퍼",
+      "variant": "sd",
+      "path": "sd/R04_제이드_하퍼_SD.png",
+      "width": 1254,
+      "height": 1254,
+      "size_bytes": 1620164,
+      "sha256": "0df5e48c61940533064f6f9e34968e40e243cda75d2b597b7b4b0ed9de41046d"
+    },
+    {
+      "character_id": "R05",
+      "character_name": "노아 발렌틴",
+      "variant": "sd",
+      "path": "sd/R05_노아_발렌틴_SD.png",
+      "width": 1254,
+      "height": 1254,
+      "size_bytes": 1662627,
+      "sha256": "9d5ae9dd8f3f130e4305cbe56b6a6754b902e9e27025148cda3ab29d7c322e33"
+    },
+    {
+      "character_id": "R06",
+      "character_name": "클라라 벡",
+      "variant": "sd",
+      "path": "sd/R06_클라라_벡_SD.png",
+      "width": 1254,
+      "height": 1254,
+      "size_bytes": 1651463,
+      "sha256": "bc880e9fd6cd67614d83a0e4264a8fb92f10dab33dfbe156f8fc3740444c1966"
+    },
+    {
+      "character_id": "R07",
+      "character_name": "시온 아르카",
+      "variant": "standing",
+      "path": "standing/R07_시온_아르카_전신.png",
+      "width": 1086,
+      "height": 1448,
+      "size_bytes": 2475286,
+      "sha256": "ad55f1c5171d805e613d717a998a6074594c667de2bbaddbc0bcfd0b9b2e34bf"
+    },
+    {
+      "character_id": "R08",
+      "character_name": "비비안 록",
+      "variant": "standing",
+      "path": "standing/R08_비비안_록_전신.png",
+      "width": 1086,
+      "height": 1448,
+      "size_bytes": 2390774,
+      "sha256": "925fb06baf76a0ab2e463c458429d1021eec74ba3614d7217cd98d41d030ecbc"
+    },
+    {
+      "character_id": "R09",
+      "character_name": "렉스 벤토",
+      "variant": "standing",
+      "path": "standing/R09_렉스_벤토_전신.png",
+      "width": 1086,
+      "height": 1448,
+      "size_bytes": 2742758,
+      "sha256": "45f2ff55027d58f078267ec02dcaee30c9e2f1557ba2d842a1a239b661e53455"
+    },
+    {
+      "character_id": "R10",
+      "character_name": "아리아 실바",
+      "variant": "standing",
+      "path": "standing/R10_아리아_실바_전신.png",
+      "width": 1086,
+      "height": 1448,
+      "size_bytes": 2544023,
+      "sha256": "741c987f89d0d68f4e0d1702e38914752b21c8e468b23c503538debb1027d5e8"
+    },
+    {
+      "character_id": "R07",
+      "character_name": "시온 아르카",
+      "variant": "sd",
+      "path": "sd/R07_시온_아르카_SD.png",
+      "width": 1254,
+      "height": 1254,
+      "size_bytes": 1684719,
+      "sha256": "8a62dfe913b7b222fa019e8de5a2587c25fb19597422535930a49630bb05a2a6"
+    },
+    {
+      "character_id": "R08",
+      "character_name": "비비안 록",
+      "variant": "sd",
+      "path": "sd/R08_비비안_록_SD.png",
+      "width": 1254,
+      "height": 1254,
+      "size_bytes": 1600726,
+      "sha256": "60bd387296be505211088a88b96dcb5292327c8bb5236d34b045a57a15750af4"
+    },
+    {
+      "character_id": "R09",
+      "character_name": "렉스 벤토",
+      "variant": "sd",
+      "path": "sd/R09_렉스_벤토_SD.png",
+      "width": 1254,
+      "height": 1254,
+      "size_bytes": 1890753,
+      "sha256": "ef8019bac9bfbe6c4cc3ee2f6fec735486c60e76ff498dd549ba5ecbfb718272"
+    },
+    {
+      "character_id": "R10",
+      "character_name": "아리아 실바",
+      "variant": "sd",
+      "path": "sd/R10_아리아_실바_SD.png",
+      "width": 1254,
+      "height": 1254,
+      "size_bytes": 1658662,
+      "sha256": "253efa109ae5b38086f8984d2ddbb0d5998bd4d40efdc53c7df56d1f35e2ed03"
+    },
+    {
+      "character_id": "S01",
+      "character_name": "유나 하야시",
+      "variant": "standing",
+      "path": "standing/S01_유나_하야시_전신.png",
+      "width": 1086,
+      "height": 1448,
+      "size_bytes": 2406882,
+      "sha256": "15ee3cd32317c8e0e00875b1c63caf154117dafaeb01cb6634a93074f5d9298e"
+    },
+    {
+      "character_id": "S02",
+      "character_name": "오웬 크래프트",
+      "variant": "standing",
+      "path": "standing/S02_오웬_크래프트_전신.png",
+      "width": 1086,
+      "height": 1448,
+      "size_bytes": 2737954,
+      "sha256": "fd00c422703b0729c578478e219a78ae56c1ddace0ba73d5d4c3595e1816f0a0"
+    },
+    {
+      "character_id": "S03",
+      "character_name": "셀레네 루",
+      "variant": "standing",
+      "path": "standing/S03_셀레네_루_전신.png",
+      "width": 1086,
+      "height": 1448,
+      "size_bytes": 2741839,
+      "sha256": "4f4c2e7131765fee8b138f78f404bb6b64bc3c91bacbc64778e53bde986469ae"
+    },
+    {
+      "character_id": "S04",
+      "character_name": "하준 킴",
+      "variant": "standing",
+      "path": "standing/S04_하준_킴_전신.png",
+      "width": 1086,
+      "height": 1448,
+      "size_bytes": 2518139,
+      "sha256": "0156ba9dcb60b70ad5ace493bc7915658a7b0d96155fdcd5f3837ac7b49b357b"
+    },
+    {
+      "character_id": "S01",
+      "character_name": "유나 하야시",
+      "variant": "sd",
+      "path": "sd/S01_유나_하야시_SD.png",
+      "width": 1254,
+      "height": 1254,
+      "size_bytes": 1762227,
+      "sha256": "78652de03fca389e71d4b606b790885947442f84928b3b89df6b88bc526644d4"
+    },
+    {
+      "character_id": "S02",
+      "character_name": "오웬 크래프트",
+      "variant": "sd",
+      "path": "sd/S02_오웬_크래프트_SD.png",
+      "width": 1254,
+      "height": 1254,
+      "size_bytes": 1777933,
+      "sha256": "c2ff379d8a91ef560f566d4d3ea69ac9e420ff3ef89ff92a510a46f99f6845d0"
+    },
+    {
+      "character_id": "S03",
+      "character_name": "셀레네 루",
+      "variant": "sd",
+      "path": "sd/S03_셀레네_루_SD.png",
+      "width": 1254,
+      "height": 1254,
+      "size_bytes": 1880809,
+      "sha256": "b5d9f14e640721141f7e49de84e48ebcf57886920e940f2667e05d5b920aa839"
+    },
+    {
+      "character_id": "S04",
+      "character_name": "하준 킴",
+      "variant": "sd",
+      "path": "sd/S04_하준_킴_SD.png",
+      "width": 1254,
+      "height": 1254,
+      "size_bytes": 1594947,
+      "sha256": "9df9354e5575cf17196102a70789a21168c85a973d022aefb909d55809fd6e63"
+    },
+    {
+      "character_id": "C01",
+      "character_name": "마르쿠스 솔",
+      "variant": "standing",
+      "path": "standing/C01_마르쿠스_솔_전신.png",
+      "width": 1086,
+      "height": 1448,
+      "size_bytes": 2548028,
+      "sha256": "588d97e7df500fd58c1f799775a74be294ef837ea94904513578f57927cace43"
+    },
+    {
+      "character_id": "C02",
+      "character_name": "발레리아 스턴",
+      "variant": "standing",
+      "path": "standing/C02_발레리아_스턴_전신.png",
+      "width": 1086,
+      "height": 1448,
+      "size_bytes": 2440355,
+      "sha256": "b15746938a710905285611404b42f90e15d4886d179749192335cf83594b6198"
+    },
+    {
+      "character_id": "C03",
+      "character_name": "루시안 베일",
+      "variant": "standing",
+      "path": "standing/C03_루시안_베일_전신.png",
+      "width": 1086,
+      "height": 1448,
+      "size_bytes": 2602691,
+      "sha256": "f01cc3e81453ee6b5fe6a483f3bf649f5b445643f45ed1ceb1773362bd6286f8"
+    },
+    {
+      "character_id": "S05",
+      "character_name": "나디아 벨",
+      "variant": "standing",
+      "path": "standing/S05_나디아_벨_전신.png",
+      "width": 1086,
+      "height": 1448,
+      "size_bytes": 2395467,
+      "sha256": "34400113d639dd78f2c8dcebb1acd9cc184ade9b36cc30bf16cfde2c37884993"
+    },
+    {
+      "character_id": "C01",
+      "character_name": "마르쿠스 솔",
+      "variant": "sd",
+      "path": "sd/C01_마르쿠스_솔_SD.png",
+      "width": 1254,
+      "height": 1254,
+      "size_bytes": 1607773,
+      "sha256": "20f4be2c4f9324cde27c14e686fc8166d0983d490ac9a184ce9337572e0833b4"
+    },
+    {
+      "character_id": "C02",
+      "character_name": "발레리아 스턴",
+      "variant": "sd",
+      "path": "sd/C02_발레리아_스턴_SD.png",
+      "width": 1254,
+      "height": 1254,
+      "size_bytes": 1670985,
+      "sha256": "74c3a12f5a680ad445adf79b82dbe7201b0cd5605a922cfb36ed8197b4f3cb29"
+    },
+    {
+      "character_id": "C03",
+      "character_name": "루시안 베일",
+      "variant": "sd",
+      "path": "sd/C03_루시안_베일_SD.png",
+      "width": 1254,
+      "height": 1254,
+      "size_bytes": 1876808,
+      "sha256": "e3421af257204239a585196921d4b08cdf505b5428de37752f5149ec02f0cc76"
+    },
+    {
+      "character_id": "S05",
+      "character_name": "나디아 벨",
+      "variant": "sd",
+      "path": "sd/S05_나디아_벨_SD.png",
+      "width": 1254,
+      "height": 1254,
+      "size_bytes": 1686621,
+      "sha256": "2f2856e50c72c0dc3b1f15e8c768176e38c24701967ecbc30a35b4045192c6b3"
+    },
+    {
+      "character_id": "C04",
+      "character_name": "소피아 렌",
+      "variant": "standing",
+      "path": "standing/C04_소피아_렌_전신.png",
+      "width": 1086,
+      "height": 1448,
+      "size_bytes": 2688689,
+      "sha256": "b4fab808cc2558572f44d03d76960220855e9525789630883fda6083ac868de6"
+    },
+    {
+      "character_id": "C05",
+      "character_name": "빅터 칼리온",
+      "variant": "standing",
+      "path": "standing/C05_빅터_칼리온_전신.png",
+      "width": 1086,
+      "height": 1448,
+      "size_bytes": 2553420,
+      "sha256": "eac28d6541910e84760063cb212ba0a86ed9072cc31d12552bb0d7671d424ad0"
+    },
+    {
+      "character_id": "G01",
+      "character_name": "표준 근거리 장교",
+      "variant": "standing",
+      "path": "standing/G01_표준_근거리_장교_전신.png",
+      "width": 1086,
+      "height": 1448,
+      "size_bytes": 2297097,
+      "sha256": "32ebc0ea2685d1bc53ce1597b9e6b8625f0a0c2c6eed1b910da6d4ad753ec9e8"
+    },
+    {
+      "character_id": "G02",
+      "character_name": "표준 원거리 사수",
+      "variant": "standing",
+      "path": "standing/G02_표준_원거리_사수_전신.png",
+      "width": 1086,
+      "height": 1448,
+      "size_bytes": 2471052,
+      "sha256": "498e78d6ddd02a39fcad9b49b3928bf7c6139991cf4b4cc3b6a9c8f1e860ced9"
+    },
+    {
+      "character_id": "C04",
+      "character_name": "소피아 렌",
+      "variant": "sd",
+      "path": "sd/C04_소피아_렌_SD.png",
+      "width": 1254,
+      "height": 1254,
+      "size_bytes": 1801025,
+      "sha256": "94988408fdd427a46e28ec7c71bf57ab005704fcc48aaaf33b263011b5f402cd"
+    },
+    {
+      "character_id": "C05",
+      "character_name": "빅터 칼리온",
+      "variant": "sd",
+      "path": "sd/C05_빅터_칼리온_SD.png",
+      "width": 1254,
+      "height": 1254,
+      "size_bytes": 1713530,
+      "sha256": "88a2ba96aa8b4ca46224d726d2d01e55735498e796eb26ec2d63610fdd9f1aa5"
+    },
+    {
+      "character_id": "G01",
+      "character_name": "표준 근거리 장교",
+      "variant": "sd",
+      "path": "sd/G01_표준_근거리_장교_SD.png",
+      "width": 1254,
+      "height": 1254,
+      "size_bytes": 1485989,
+      "sha256": "985bdda840d435503afa7bed75c449dd522b6e0503543a99e42434aa0ad60835"
+    },
+    {
+      "character_id": "G02",
+      "character_name": "표준 원거리 사수",
+      "variant": "sd",
+      "path": "sd/G02_표준_원거리_사수_SD.png",
+      "width": 1254,
+      "height": 1254,
+      "size_bytes": 1439848,
+      "sha256": "d0045e7ce8bcaa42fab2f8ac0777f52bf029c4a41aa16539e92f35c12546336e"
+    },
+    {
+      "character_id": "G03",
+      "character_name": "표준 지원 정비관",
+      "variant": "sd",
+      "path": "sd/G03_표준_지원_정비관_SD.png",
+      "width": 1254,
+      "height": 1254,
+      "size_bytes": 1557465,
+      "sha256": "300b36b53596967a3761b4b1e9483c843207b1c19467ec6d422d8b4b8c41fb55"
+    },
+    {
+      "character_id": "G03",
+      "character_name": "표준 지원 정비관",
+      "variant": "standing",
+      "path": "standing/G03_표준_지원_정비관_전신.png",
+      "width": 1086,
+      "height": 1448,
+      "size_bytes": 2430427,
+      "sha256": "5db2f130a65276c6808f8f55cc0a17bde3a9599265c2a42597447db69b215ed1"
+    },
+    {
+      "character_id": "G04",
+      "character_name": "표준 함교 지휘관",
+      "variant": "sd",
+      "path": "sd/G04_표준_함교_지휘관_SD.png",
+      "width": 1254,
+      "height": 1254,
+      "size_bytes": 1441855,
+      "sha256": "282e846331274bdd0550db88c686372ffda2dfa1c6881c2a85c3f37007f2e774"
+    },
+    {
+      "character_id": "G04",
+      "character_name": "표준 함교 지휘관",
+      "variant": "standing",
+      "path": "standing/G04_표준_함교_지휘관_전신.png",
+      "width": 1086,
+      "height": 1448,
+      "size_bytes": 2357151,
+      "sha256": "65750cc41546bbb9093073d68cf9e85a49418d441407f28cdd05dc867e2cf42d"
+    }
+  ]
+}
