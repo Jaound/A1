@@ -28,9 +28,9 @@ struct FOVHeroDefinition
     UPROPERTY(BlueprintReadOnly) FString Story;
     UPROPERTY(BlueprintReadOnly) FString Passive;
     UPROPERTY(BlueprintReadOnly) FString Signature;
-    UPROPERTY(Transient) TObjectPtr<UTexture2D> Portrait;
-    UPROPERTY(Transient) TObjectPtr<UTexture2D> Standing;
-    UPROPERTY(Transient) TObjectPtr<UTexture2D> SD;
+    UPROPERTY(Transient, BlueprintReadOnly) TObjectPtr<UTexture2D> Portrait;
+    UPROPERTY(Transient, BlueprintReadOnly) TObjectPtr<UTexture2D> Standing;
+    UPROPERTY(Transient, BlueprintReadOnly) TObjectPtr<UTexture2D> SD;
     UPROPERTY(Transient) TMap<FName,FOVHeroPose> Poses;
     FString ValidationNote;
     FBox2D StandingRegion=FBox2D(FVector2D::ZeroVector,FVector2D(1,1));

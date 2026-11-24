@@ -26,6 +26,13 @@ def run():
     definitions=list(p(heroes,"definitions"))
     ids=[str(p(d,"id")) for d in definitions]
     check("34종 고유 정의",len(ids)==len(set(ids))==34,ids)
+    for definition in definitions:
+        hero_id=str(p(definition,"id"))
+        for kind in ("standing","portrait","sd"):
+            tex=p(definition,kind)
+            expected=f"/Game/UI/Heroes/{hero_id}/T_{kind}.T_{kind}"
+            actual=tex.get_path_name() if tex else ""
+            check(f"{hero_id} {kind} 원화 연결", isinstance(tex,u.Texture2D) and actual==expected, actual)
     owned_before=[str(p(h,"hero_id")) for h in heroes.get_heroes(0)]
     assert pc.start_play_scenario("HeroArena")
     ships=list(p(pc,"ships"))
@@ -60,9 +67,22 @@ def run():
     check("명단 카드에서 이리스 선택",panel.select_hero(p(iris,"hero_id")),len(panel.get_card_views()))
     def capture(name):
         file=out.parent/(name+".png")
-        u.SystemLibrary.execute_console_command(w,'Shot SHOWUI filename="'+file.as_posix()+'" -nosuffix',pc)
-        for _ in range(12): yield
+        for _ in range(8): yield
+        before=file.stat().st_mtime_ns if file.exists() else 0
+        for attempt in range(3):
+            u.SystemLibrary.execute_console_command(w,'Shot SHOWUI filename="'+file.as_posix()+'" -nosuffix',pc)
+            deadline=time.monotonic()+5
+            while time.monotonic()<deadline:
+                yield
+                if file.exists() and file.stat().st_mtime_ns>before:
+                    for _ in range(3): yield
+                    return
+        raise RuntimeError("화면 저장 시간 초과 "+str(file))
     yield from capture("HeroArenaRoster")
+    generic_unit=next(x for x in units() if p(x,"faction_id")==0 and str(p(x,"definition_id"))=="G01")
+    check("새 원화 카드 선택",panel.select_hero(p(generic_unit,"hero_id")),p(generic_unit,"name"))
+    yield from capture("HeroRoster34Standing")
+    panel.select_hero(p(iris,"hero_id"))
     hud.set_hero_panel_open(False)
     hud.handle_interior_action("InteriorToggle")
     hud.handle_interior_action("InteriorSelectedShip")
@@ -79,6 +99,8 @@ def run():
     hud.handle_interior_action("InteriorMax")
     hud.set_user_ui_scale_multiplier(1.25,False)
     for _ in range(6):yield
+    deadline=time.monotonic()+8
+    while hud.get_action_center(marker).x<0 and time.monotonic()<deadline: yield
     center=hud.get_action_center(marker)
     check("확대 창과 UI 125%에서 영웅 표시",center.x>=0 and center.y>=0 and uid in list(p(hud,"interior_selected_units")),center)
     hud.handle_interior_action("InteriorDeck_"+str(1 if iris_floor!=1 else 2))

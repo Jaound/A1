@@ -9,9 +9,9 @@
       "story": "함대 아카데미 정규 근접전 과정을 수료한 표준 근거리 영웅. 일반 영입 풀 및 적군 함대 강습·수호 지휘관의 기준 템플릿으로 사용된다.",
       "passive": "",
       "signature": "",
-      "standing": "",
-      "portrait": "",
-      "sd": "",
+      "standing": "/Game/UI/Heroes/G01/T_standing.T_standing",
+      "portrait": "/Game/UI/Heroes/G01/T_portrait.T_portrait",
+      "sd": "/Game/UI/Heroes/G01/T_sd.T_sd",
       "foot": [
         0.5,
         0.95
@@ -27,9 +27,9 @@
       "story": "함대 사격 통제 및 선내 중거리 교전 교범을 이수한 표준 원거리 영웅. 일반 영입 풀 및 적군 주력함 무기제어실 보직 영웅의 기준 모델이다.",
       "passive": "",
       "signature": "",
-      "standing": "",
-      "portrait": "",
-      "sd": "",
+      "standing": "/Game/UI/Heroes/G02/T_standing.T_standing",
+      "portrait": "/Game/UI/Heroes/G02/T_portrait.T_portrait",
+      "sd": "/Game/UI/Heroes/G02/T_sd.T_sd",
       "foot": [
         0.5,
         0.95
@@ -45,9 +45,9 @@
       "story": "생체 촉매 의무 처치와 정비 노드 응급 복구 과정을 수료한 표준 지원 영웅. 일반 영입 풀 및 적군 함대 지원 영웅의 기준 템플릿이다.",
       "passive": "",
       "signature": "",
-      "standing": "",
-      "portrait": "",
-      "sd": "",
+      "standing": "/Game/UI/Heroes/G03/T_standing.T_standing",
+      "portrait": "/Game/UI/Heroes/G03/T_portrait.T_portrait",
+      "sd": "/Game/UI/Heroes/G03/T_sd.T_sd",
       "foot": [
         0.5,
         0.95
@@ -63,9 +63,9 @@
       "story": "함교 조타 지휘 및 분대 신경 공명 표준 교리를 수료한 일반 지휘 영웅. 일반 영입 풀 및 적군 기함 함교 보직 지휘관의 기준 모델이다.",
       "passive": "",
       "signature": "",
-      "standing": "",
-      "portrait": "",
-      "sd": "",
+      "standing": "/Game/UI/Heroes/G04/T_standing.T_standing",
+      "portrait": "/Game/UI/Heroes/G04/T_portrait.T_portrait",
+      "sd": "/Game/UI/Heroes/G04/T_sd.T_sd",
       "foot": [
         0.5,
         0.95
@@ -81,9 +81,9 @@
       "story": "구 제국 중장갑 공병대 출신. 척추 보조 외골격과 고밀도 충격 역장 코어를 이식받아 좁은 함선 복도 돌파에 특화되었다.",
       "passive": "강습 포드 착륙 직후 6초간 역장 엄호 반경이 3m → 4.5m로 확장 (경감률 상한 65% 준수).",
       "signature": "강화 돌입 착탄 시 2m 내 적 일반 병력 2.5초간 이동속도 -25% 감속 (영웅 대상 1.2초, OVInteriorSubsystem SlowUntil/SlowFraction 연동).",
-      "standing": "",
-      "portrait": "",
-      "sd": "",
+      "standing": "/Game/UI/Heroes/M01/T_standing.T_standing",
+      "portrait": "/Game/UI/Heroes/M01/T_portrait.T_portrait",
+      "sd": "/Game/UI/Heroes/M01/T_sd.T_sd",
       "foot": [
         0.5,
         0.95
@@ -126,9 +126,9 @@
       "story": "함내 보안대 총교관 출신의 베테랑. 좁은 복도와 격벽 출입구에서 적 강습팀의 진입을 원천 봉쇄하는 데 능숙하다.",
       "passive": "아군 함선 내부에서 방어(Defend) 명령 대기 중 같은 슬롯에 진입한 적 강습원에게 2초간 이동속도 -20% 감속 부여 (SlowUntil/SlowFraction).",
       "signature": "역장 방어 발동 중 같은 슬롯 아군 일반 분대원이 받는 선내 피해 추가 -6% (Cover 보정, 경감 상한 65% 준수).",
-      "standing": "",
-      "portrait": "",
-      "sd": "",
+      "standing": "/Game/UI/Heroes/M03/T_standing.T_standing",
+      "portrait": "/Game/UI/Heroes/M03/T_portrait.T_portrait",
+      "sd": "/Game/UI/Heroes/M03/T_sd.T_sd",
       "foot": [
         0.5,
         0.95
@@ -145,9 +145,9 @@
       "story": "국소 중력 왜곡 초능력으로 복도를 미끄러지듯 돌파하는 고속 근접 요원. 적의 후열 지원형과 원거리형을 우선 타격한다.",
       "passive": "이동속도 버프(강화 돌입·장비·오라) 적용 중 개인 회피율 +6%p 상승.",
       "signature": "강화 돌입(6~8m) 경로상에 스치는 적 최대 2명에게 기본 공격 0.65배 추가 타격.",
-      "standing": "",
-      "portrait": "",
-      "sd": "",
+      "standing": "/Game/UI/Heroes/M04/T_standing.T_standing",
+      "portrait": "/Game/UI/Heroes/M04/T_portrait.T_portrait",
+      "sd": "/Game/UI/Heroes/M04/T_sd.T_sd",
       "foot": [
         0.5,
         0.95
@@ -164,9 +164,9 @@
       "story": "중공업 해체선 출신 사이보그 공작원. 적함 나포 대신 원자로·무기제어실을 빠르게 파괴 공작해 적 주력함을 무력화한다.",
       "passive": "시설 파괴 공작(30초) 수행 중 근접 교전이 벌어져도 공작 게이지가 50% 속도로 유지 (최종 단축 50% 상한 준수).",
       "signature": "적 설비 방어·보직 중인 적 영웅 및 승조원에게 근접 공격 피해 +12%, 공작 체크포인트(1/3·2/3) 도달 시 같은 슬롯 적 2.5초간 이동속도 -25% 감속.",
-      "standing": "",
-      "portrait": "",
-      "sd": "",
+      "standing": "/Game/UI/Heroes/M05/T_standing.T_standing",
+      "portrait": "/Game/UI/Heroes/M05/T_portrait.T_portrait",
+      "sd": "/Game/UI/Heroes/M05/T_sd.T_sd",
       "foot": [
         0.5,
         0.95
@@ -183,9 +183,9 @@
       "story": "적 강습 포드의 선체 충격파를 감응해 즉각 현장에 도착하는 신속 대응 초능력자. 적의 선제 강습 템포를 무너뜨린다.",
       "passive": "아군 함선에 적 강습 포드가 착륙하면 8초간 해당 격실 방향 이동속도 +12% (총 이속 버프 20% 상한 준수).",
       "signature": "역장 방어 발동 시 반경 2.5m 내 적 원거리 사격의 명중률 -8%p (3초간, 별도 쉴드 게이지 미생성).",
-      "standing": "",
-      "portrait": "",
-      "sd": "",
+      "standing": "/Game/UI/Heroes/M06/T_standing.T_standing",
+      "portrait": "/Game/UI/Heroes/M06/T_portrait.T_portrait",
+      "sd": "/Game/UI/Heroes/M06/T_sd.T_sd",
       "foot": [
         0.5,
         0.95
@@ -202,9 +202,9 @@
       "story": "기관실과 코어 구역의 파괴 구역 재난 복구 및 방어를 겸하던 중장갑 함내 방재 요원. 시설이 피격 파손되어 재난 피해가 터지는 상황에서도 끝까지 버틴다.",
       "passive": "아군 함선 엔진실(Engine)·코어(Core) 슬롯 상주 시 해당 슬롯 파괴 구역 재난(Disasters, 20초) 지속시간 -25%(15초) 및 본인 재난 틱 피해 -25% (진공·완파 면역 불가).",
       "signature": "역장 방어(4초) 발동 중 같은 슬롯의 HP 50% 이하 아군에게 적용되는 역장 엄호(Cover) 피해 경감 효과를 1.5배로 증폭 (총 경감 상한 65% 준수).",
-      "standing": "",
-      "portrait": "",
-      "sd": "",
+      "standing": "/Game/UI/Heroes/M07/T_standing.T_standing",
+      "portrait": "/Game/UI/Heroes/M07/T_portrait.T_portrait",
+      "sd": "/Game/UI/Heroes/M07/T_sd.T_sd",
       "foot": [
         0.5,
         0.95
@@ -221,9 +221,9 @@
       "story": "초능력 과부하 억제기와 사이버네틱 심장 보조기를 동시에 장착한 고위험 결투자. 위기 순간에 폭발적인 반격 화력을 낸다.",
       "passive": "생존 한계 해방(L15, HP<25%) 발동 시 4초간 자신의 공격속도 +15% 및 공격력 +10% (경감 상한 65% 준수).",
       "signature": "단일 적 영웅을 지정해 5초간 교전 시, 대상이 받는 외부 아군 오라 효율을 50% 약화.",
-      "standing": "",
-      "portrait": "",
-      "sd": "",
+      "standing": "/Game/UI/Heroes/M08/T_standing.T_standing",
+      "portrait": "/Game/UI/Heroes/M08/T_portrait.T_portrait",
+      "sd": "/Game/UI/Heroes/M08/T_sd.T_sd",
       "foot": [
         0.5,
         0.95
@@ -240,9 +240,9 @@
       "story": "기함 함교와 무기제어실의 핵심 보직 영웅을 전담 경호하는 친위 초능력자. 적 강습팀이 보직실에 들이닥쳐도 함선 지휘가 끊기지 않게 지킨다.",
       "passive": "같은 방에 함선 보직 중인 아군 영웅(원거리/지원/지휘)이 있으면 그 보직 영웅이 받는 선내 피해 -10% (경감 상한 65%).",
       "signature": "보직 아군 영웅이 선내 교전으로 자리를 비웠다가 복귀할 때 3초 인계 지연을 1초로 단축하고 역장 엄호 적용.",
-      "standing": "",
-      "portrait": "",
-      "sd": "",
+      "standing": "/Game/UI/Heroes/M09/T_standing.T_standing",
+      "portrait": "/Game/UI/Heroes/M09/T_portrait.T_portrait",
+      "sd": "/Game/UI/Heroes/M09/T_sd.T_sd",
       "foot": [
         0.5,
         0.95
@@ -259,9 +259,9 @@
       "story": "적 방어선을 뚫고 즉각 점령 작전으로 전환하는 공격적 나포 전문가. 강습선 12인 편대의 돌파 속도를 극한으로 끌어올린다.",
       "passive": "적 영웅을 무력화하거나 분대를 전멸시킨 직후 10초간 같은 방 아군의 시설/함교 점령 속도 +12% (최종 단축 50% 상한).",
       "signature": "강화 돌입 사용 후 5초 내 적 전투원을 처치하면 강화 돌입 쿨타임 6초 단축 (1회 한정).",
-      "standing": "",
-      "portrait": "",
-      "sd": "",
+      "standing": "/Game/UI/Heroes/M10/T_standing.T_standing",
+      "portrait": "/Game/UI/Heroes/M10/T_portrait.T_portrait",
+      "sd": "/Game/UI/Heroes/M10/T_sd.T_sd",
       "foot": [
         0.5,
         0.95
@@ -278,9 +278,9 @@
       "story": "탄도 예측 초감각을 지닌 함대 사격 통제관. 교전 개시와 동시에 적 기함의 약점에 주포 초탄을 정확히 꽂아 넣는다.",
       "passive": "무기제어실 보직 시 교전 개시 첫 8초간 탑승 함선 주포 명중 분산 -12% 및 명중 +2%p 추가 보정 (영웅 합산 +8%p·빔 98% 상한).",
       "signature": "선내 전투에서 인지 가속(4초) 완료 대상에게 전자기 제압 적중 시 감속 지속시간 +1.5초.",
-      "standing": "",
-      "portrait": "",
-      "sd": "",
+      "standing": "/Game/UI/Heroes/R01/T_standing.T_standing",
+      "portrait": "/Game/UI/Heroes/R01/T_portrait.T_portrait",
+      "sd": "/Game/UI/Heroes/R01/T_sd.T_sd",
       "foot": [
         0.5,
         0.95
@@ -297,9 +297,9 @@
       "story": "대함재기 방공전 전문가. 신경 가속 사격 통제 임플란트로 방공함의 점방어(PD) 포탑이 적 함재기 편대를 쉼 없이 추적하도록 조율한다.",
       "passive": "무기제어실 보직 시 탑승 함선 점방어(PD) 포탑의 발사 간격(FOVPDProfile.Interval) -10% 단축 및 함재기·미사일 요격 명중(Accuracy) +2%p (영웅 합산 +8%p 상한).",
       "signature": "L10 보직모드(8초) 발동 시 주포 연사 버프와 함께 탑승 함선 PD 포탑의 쿨타임 회복 속도를 +15% 추가 가속 (총 연사 +30% 상한 준수).",
-      "standing": "",
-      "portrait": "",
-      "sd": "",
+      "standing": "/Game/UI/Heroes/R02/T_standing.T_standing",
+      "portrait": "/Game/UI/Heroes/R02/T_portrait.T_portrait",
+      "sd": "/Game/UI/Heroes/R02/T_sd.T_sd",
       "foot": [
         0.5,
         0.95
@@ -316,9 +316,9 @@
       "story": "사이버네틱 시신경과 초능력 공간 감각을 결합한 초장거리 포격 전문가. 사거리 끝자락에서 적 주력함을 정밀 타격한다.",
       "passive": "무기제어실 보직 시 최대 사거리 70% 이상 원거리 표적에 대한 주포 명중 +3%p (합산 +8%p·빔 98% 상한 준수).",
       "signature": "보직 중 동일 대형·초대형 적함을 10초 이상 지속 사격 시 탑승 함선 주포 연사 +6% (총 연사 +30% 상한 준수).",
-      "standing": "",
-      "portrait": "",
-      "sd": "",
+      "standing": "/Game/UI/Heroes/R03/T_standing.T_standing",
+      "portrait": "/Game/UI/Heroes/R03/T_portrait.T_portrait",
+      "sd": "/Game/UI/Heroes/R03/T_sd.T_sd",
       "foot": [
         0.5,
         0.95
@@ -335,9 +335,9 @@
       "story": "함내 긴 복도와 대형 격실의 사선 통제에 특화된 정밀 사수. 적 공작원이 설비에 접근하기 전에 원거리에서 발을 묶는다.",
       "passive": "선내 전투에서 기본 사거리 18m → 20m 확장, 12m 이상 거리에서 사격 시 명중 보정 +3%p.",
       "signature": "전자기 제압(3연사) 적중 시 대상이 진행 중인 점령·파괴 공작을 2.5초간 중단(체크포인트는 유지).",
-      "standing": "",
-      "portrait": "",
-      "sd": "",
+      "standing": "/Game/UI/Heroes/R04/T_standing.T_standing",
+      "portrait": "/Game/UI/Heroes/R04/T_portrait.T_portrait",
+      "sd": "/Game/UI/Heroes/R04/T_sd.T_sd",
       "foot": [
         0.5,
         0.95
@@ -354,9 +354,9 @@
       "story": "다중 유도탄 궤적을 동시에 연산하는 초능력 사격 통제관. 적 방공망을 뚫는 미사일·어뢰 일제사격 타이밍을 설계한다.",
       "passive": "무기제어실 보직 시 탑승 함선의 미사일 발사관(EOVWeaponType::Missile) 재장전 간격(Mount.Profile.Interval) -8% 단축 (총 연사 버프 +30% 상한 준수).",
       "signature": "L10 보직모드(8초) 동안 탑승 함선 유도 미사일의 추적 선회율(Weapon.GuidanceTurnRate) +25% 및 비빔 분산각(AimSpreadDegrees) -15% 감소.",
-      "standing": "",
-      "portrait": "",
-      "sd": "",
+      "standing": "/Game/UI/Heroes/R05/T_standing.T_standing",
+      "portrait": "/Game/UI/Heroes/R05/T_portrait.T_portrait",
+      "sd": "/Game/UI/Heroes/R05/T_sd.T_sd",
       "foot": [
         0.5,
         0.95
@@ -373,9 +373,9 @@
       "story": "강습팀 후열에서 아군 근접 영웅 너머로 적 지휘관과 지원형을 정확히 관통 사격하는 강습 전문 사수.",
       "passive": "선내 강습 중 같은 슬롯에서 아군 근접 영웅이 교전 중인 적 표적(EnemyId 일치)에게 사격 시 최종 피해 +10%.",
       "signature": "약점 감지(경감 8~16%p 무시) 적용 상태에서 초감각 조준 배율 +0.2x 증가 (2.2 / 2.45 / 2.7배).",
-      "standing": "",
-      "portrait": "",
-      "sd": "",
+      "standing": "/Game/UI/Heroes/R06/T_standing.T_standing",
+      "portrait": "/Game/UI/Heroes/R06/T_portrait.T_portrait",
+      "sd": "/Game/UI/Heroes/R06/T_sd.T_sd",
       "foot": [
         0.5,
         0.95
@@ -392,9 +392,9 @@
       "story": "초능력 신경 링크와 사이버네틱 관제 단말로 항모 함재기 편대의 표적 지정과 공격 리듬을 조율하는 관제 에이스.",
       "passive": "항공모함·전투항모 무기제어실 보직 시 아군 함재기의 볼트 투사체 속도(Profile.BoltSpeed) +12% 및 함재기 회피율(Evasion) +3%p(0.60→0.63).",
       "signature": "L10 보직모드(8초) 발동 시 탑승 항모 방어 포탑 연사 버프와 함께 출격 중인 아군 함재기의 공격 주기(Profile.Period, 1.2초) -10% 단축 (총 연사 +30% 상한).",
-      "standing": "",
-      "portrait": "",
-      "sd": "",
+      "standing": "/Game/UI/Heroes/R07/T_standing.T_standing",
+      "portrait": "/Game/UI/Heroes/R07/T_portrait.T_portrait",
+      "sd": "/Game/UI/Heroes/R07/T_sd.T_sd",
       "foot": [
         0.5,
         0.95
@@ -411,9 +411,9 @@
       "story": "적 영웅의 스킬 발동 파장을 감지해 사격으로 신경 집중을 끊어내는 방어형 초능력 사수.",
       "passive": "선내 전투에서 반경 12m 내로 돌입(강화 돌입 등)하는 적 영웅에게 선제 반응 사격을 가해 돌입 첫 타격 피해 -15%.",
       "signature": "초감각 조준 적중 시 대상 적 영웅의 대기 중인 액티브 스킬 쿨타임 +2초 지연 (보직 중에도 기본 L1/L10 보직 정상 가동).",
-      "standing": "",
-      "portrait": "",
-      "sd": "",
+      "standing": "/Game/UI/Heroes/R08/T_standing.T_standing",
+      "portrait": "/Game/UI/Heroes/R08/T_portrait.T_portrait",
+      "sd": "/Game/UI/Heroes/R08/T_sd.T_sd",
       "foot": [
         0.5,
         0.95
@@ -430,9 +430,9 @@
       "story": "근거리 함대 난전에서 포탑 회전 속도와 부포 집중 화력을 극한까지 몰아붙이는 공격형 사격 통제관.",
       "passive": "무기제어실 보직 시 최대 사거리 50% 이하 근거리 교전에서 탑승 함선 주포·부포 선회 속도 +20%.",
       "signature": "L10 보직모드(발사속도 +15~25%) 지속시간이 8초 → 10초로 연장 (쿨타임 60초·연사 상한 +30% 유지).",
-      "standing": "",
-      "portrait": "",
-      "sd": "",
+      "standing": "/Game/UI/Heroes/R09/T_standing.T_standing",
+      "portrait": "/Game/UI/Heroes/R09/T_portrait.T_portrait",
+      "sd": "/Game/UI/Heroes/R09/T_sd.T_sd",
       "foot": [
         0.5,
         0.95
@@ -449,9 +449,9 @@
       "story": "파손된 장갑 틈새와 체력이 떨어진 표적을 놓치지 않는 마무리 전문가. 함대전과 선내전 모두에서 약해진 적을 신속히 종결한다.",
       "passive": "무기제어실 보직 시 쉴드가 붕괴된 적함 대상 명중 +3%p(합산 +8%p 상한), 선내에서는 HP 40% 이하 표적에게 인지 가속 대기시간 4초 → 2.5초 단축.",
       "signature": "인지 가속이 완료된 표적에게 초감각 조준 적중 시 대상의 남은 HP 비율이 35% 이하이면 피해 +15%.",
-      "standing": "",
-      "portrait": "",
-      "sd": "",
+      "standing": "/Game/UI/Heroes/R10/T_standing.T_standing",
+      "portrait": "/Game/UI/Heroes/R10/T_portrait.T_portrait",
+      "sd": "/Game/UI/Heroes/R10/T_sd.T_sd",
       "foot": [
         0.5,
         0.95
@@ -468,9 +468,9 @@
       "story": "초능력 생체 감응과 나노 의료 주입기를 결합한 복합형 의무·정비 장교. 시설 파손으로 파괴 구역 재난이 발생한 구역에서도 아군 분대를 끝까지 유지한다.",
       "passive": "HP 30% 미만 아군에게 생체 재구성 시전 시 회복량 +10% (무자원 회복 금지, 촉매 1개 정상 소모).",
       "signature": "재생 공명장(6m, 5초) 발동 중 같은 슬롯의 파괴 구역 재난(Disasters) 틱 피해 추가 -10%p 경감 (진공·완파 면역 불가).",
-      "standing": "",
-      "portrait": "",
-      "sd": "",
+      "standing": "/Game/UI/Heroes/S01/T_standing.T_standing",
+      "portrait": "/Game/UI/Heroes/S01/T_portrait.T_portrait",
+      "sd": "/Game/UI/Heroes/S01/T_sd.T_sd",
       "foot": [
         0.5,
         0.95
@@ -487,9 +487,9 @@
       "story": "장기전 함대 교전에서 반파 직전의 주력함을 살려내는 전설적 수석 기관장. 정비 증폭기의 자원 손실을 줄이고 모듈 붕괴를 늦춘다.",
       "passive": "정비 노드 보직 시 L10 선체 복구 보직모드(최대 HP 0.5~1% 10초 복구)의 함선 예비 자원 소모 배율을 기지 견적 1.5배 → 1.25배로 절감.",
       "signature": "정비 노드 보직 중 탑승 함선의 손상된 엔진·무기제어실의 기능 저하 페널티를 12% 완화 (파괴된 모듈 복구 불가).",
-      "standing": "",
-      "portrait": "",
-      "sd": "",
+      "standing": "/Game/UI/Heroes/S02/T_standing.T_standing",
+      "portrait": "/Game/UI/Heroes/S02/T_portrait.T_portrait",
+      "sd": "/Game/UI/Heroes/S02/T_sd.T_sd",
       "foot": [
         0.5,
         0.95
@@ -506,9 +506,9 @@
       "story": "함선 방어막의 에너지 파동을 조율하는 초능력 조율사. 붕괴된 쉴드의 재충전 회전율을 끌어올리고 파손 구역 재난 피해를 억제한다.",
       "passive": "정비 노드 보직 시 비활성 쉴드 전투 회복률(ShieldRegenFraction) +15%(0.60%→0.69%/s) 및 비전투 고속 회복 전환 간격(NoHitRecoveryInterval) 15초→12초 단축.",
       "signature": "L10 보직모드(10초) 발동 중 탑승 함선 전 슬롯의 파괴 구역 재난(Disasters) 틱 피해 -25% (생존장 Protection과 합산, 진공·완파 면역 불가).",
-      "standing": "",
-      "portrait": "",
-      "sd": "",
+      "standing": "/Game/UI/Heroes/S03/T_standing.T_standing",
+      "portrait": "/Game/UI/Heroes/S03/T_portrait.T_portrait",
+      "sd": "/Game/UI/Heroes/S03/T_sd.T_sd",
       "foot": [
         0.5,
         0.95
@@ -525,9 +525,9 @@
       "story": "항공모함 자원 적재실과 격납고 생산 라인을 총괄하는 베테랑 정비 장교. 손실된 함재기를 빠르게 조립·재무장해 다음 일제 출격을 준비한다.",
       "passive": "항공모함·전투항모 정비 노드 보직 시 자원 적재실(ReplacementKits) 기반 함재기 재생산 시간(ProductionPeriod) -10% 단축 (실제 키트 정상 소모).",
       "signature": "귀환 함재기의 격납고 착함 시간(Profile.DockSeconds, 1초) -35%(0.65초) 단축 및 L10 보직모드(10초) 중 손상된 격납고(Hangar)의 승조원 효율 저하 20% 완화.",
-      "standing": "",
-      "portrait": "",
-      "sd": "",
+      "standing": "/Game/UI/Heroes/S04/T_standing.T_standing",
+      "portrait": "/Game/UI/Heroes/S04/T_portrait.T_portrait",
+      "sd": "/Game/UI/Heroes/S04/T_sd.T_sd",
       "foot": [
         0.5,
         0.95
@@ -544,9 +544,9 @@
       "story": "전선에서 중상 영웅의 생명을 붙들고 영구적 후유증(외상)을 최소화하는 최고위 의무관. 장기 원정 강습 작전의 버팀목이다.",
       "passive": "S1 생체 재구성 쿨타임 -1초(6/5.5/5초→5/4.5/4초, 촉매 1개 정상 소모) 및 S3 재생 공명장 치유 반경 6m→8m 확장.",
       "signature": "작전당 1회, 같은 슬롯 아군 영웅 1명이 HP 25% 미만(bWasCriticallyInjured) 생환 시 외상 1단계(bWounded, HP/공격 -10%) 부여를 방지.",
-      "standing": "",
-      "portrait": "",
-      "sd": "",
+      "standing": "/Game/UI/Heroes/S05/T_standing.T_standing",
+      "portrait": "/Game/UI/Heroes/S05/T_portrait.T_portrait",
+      "sd": "/Game/UI/Heroes/S05/T_sd.T_sd",
       "foot": [
         0.5,
         0.95
@@ -563,9 +563,9 @@
       "story": "집단 신경 공명으로 12인 강습팀과 함선 승조원의 리듬을 맞추는 베테랑 지휘관. 함교 나포전과 함대 기동 지휘를 겸한다.",
       "passive": "함교 점령(Capture, 36초) 수행 중 같은 슬롯 아군 일반 분대원의 선내 피해 추가 -8% 경감 (경감 상한 65%·점령 단축 상한 50% 준수).",
       "signature": "전투 동조(8초) 발동 시 14m 내 아군의 후퇴·방어 재배치 이동속도 추가 +5%p (총 이동 버프 20% 상한 준수).",
-      "standing": "",
-      "portrait": "",
-      "sd": "",
+      "standing": "/Game/UI/Heroes/C01/T_standing.T_standing",
+      "portrait": "/Game/UI/Heroes/C01/T_portrait.T_portrait",
+      "sd": "/Game/UI/Heroes/C01/T_sd.T_sd",
       "foot": [
         0.5,
         0.95
@@ -582,9 +582,9 @@
       "story": "신경 직결 조타 인터페이스로 함선을 전투기처럼 몰아붙이는 기동전 전문가. 적 주포 사각을 파고드는 측면 기동에 능하다.",
       "passive": "함교 보직 시 탑승 함선의 가속·제동(OVShip Acceleration·Braking) +12% 강화 (총 이동·선회 버프 상한 +20% 엄격 준수).",
       "signature": "L10 보직모드(선회 +10~20%, 10초) 발동 중 탑승 함선의 횡가속(LateralAcceleration) +18% 및 감속 응답성 추가 강화.",
-      "standing": "",
-      "portrait": "",
-      "sd": "",
+      "standing": "/Game/UI/Heroes/C02/T_standing.T_standing",
+      "portrait": "/Game/UI/Heroes/C02/T_portrait.T_portrait",
+      "sd": "/Game/UI/Heroes/C02/T_sd.T_sd",
       "foot": [
         0.5,
         0.95
@@ -601,9 +601,9 @@
       "story": "집단 신경 공명을 함대 단위로 확장해 호위함과 방공함의 진형 유지를 동기화하는 방어전 사령관.",
       "passive": "함교 보직 시 탑승 함선 반경 400m 내 아군 함선이 받는 일반 레이더 공유 정확도 계수(OrdinaryShareCoefficient) +20% 보강 (합산 명중 +8%p·빔 98% 상한).",
       "signature": "L10 보직모드 발동 시 10초간 반경 400m 내 가장 가까운 아군 주력함 1척에게도 선회(TurnBonus) +8% 공유 (총 +20% 상한).",
-      "standing": "",
-      "portrait": "",
-      "sd": "",
+      "standing": "/Game/UI/Heroes/C03/T_standing.T_standing",
+      "portrait": "/Game/UI/Heroes/C03/T_portrait.T_portrait",
+      "sd": "/Game/UI/Heroes/C03/T_sd.T_sd",
       "foot": [
         0.5,
         0.95
@@ -620,9 +620,9 @@
       "story": "보충된 함재기를 성급히 보내지 않고 완편 편대로 집결시켜 일제 출격시키는 항공모함 지휘 전문가.",
       "passive": "항공모함·전투항모 함교 보직 시 출격 함재기 편대의 공격 시차(ManeuverProfile.SectionDelay, 0.12초) -25% 및 재집결 시간(ReformSeconds) -12% 단축.",
       "signature": "L10 보직모드(10초) 발동 시 귀환 중인 아군 함재기의 귀환 이동속도(Profile.ReturnSpeed) +10% 가속 (총 이동 버프 +20% 상한).",
-      "standing": "",
-      "portrait": "",
-      "sd": "",
+      "standing": "/Game/UI/Heroes/C04/T_standing.T_standing",
+      "portrait": "/Game/UI/Heroes/C04/T_portrait.T_portrait",
+      "sd": "/Game/UI/Heroes/C04/T_sd.T_sd",
       "foot": [
         0.5,
         0.95
@@ -639,9 +639,9 @@
       "story": "함대 포격과 12인 강습팀 투사를 단일 작전 시계로 통합 지휘하는 최고위 사령관. 초대형 기함 함교에서 전장을 지배한다.",
       "passive": "대형·초대형함 함교 보직 시 탑승 함선에서 발진하는 강습 포드 비행속도(PodSpeed) +12% 및 소속 강습선 도킹 시간(DockingSeconds, 3초→2.4초) -20% 단축.",
       "signature": "L10 보직모드(선회 +10~20%, 10초) 발동 시 탑승 함선 내부 교전 중인 아군 전체에게 전투 동조(공속 버프) 효과의 50%를 동시 전파.",
-      "standing": "",
-      "portrait": "",
-      "sd": "",
+      "standing": "/Game/UI/Heroes/C05/T_standing.T_standing",
+      "portrait": "/Game/UI/Heroes/C05/T_portrait.T_portrait",
+      "sd": "/Game/UI/Heroes/C05/T_sd.T_sd",
       "foot": [
         0.5,
         0.95
