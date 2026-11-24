@@ -79,7 +79,7 @@ void AOVHUD::Button(FName N,const FString& L,float X,float Y,float W,bool Active
  DrawRect(Active?FLinearColor(.03f,.4f,.55f,.95f):FLinearColor(.04f,.08f,.13f,.98f),X,Y,W,27);
  UFont* LabelFont=OVTypography::Font(TextRole);
  DrawText(FitLabel(LabelFont,L,W-12),Active?FLinearColor::White:Ink,X+6,Y+5,LabelFont);
- AddHitBox(FVector2D(X,Y)*UIScale,FVector2D(W,27)*UIScale,N,true,(N.ToString().StartsWith(TEXT("OpsReady_"))||N.ToString().StartsWith(TEXT("OpsCancel_")))?230:(bDrawingStarMap || (bStarMapOpen && (N==TEXT("StarMapToggle") || N==TEXT("TitleScreen") || N==TEXT("OpenTutorialGuide"))))?310:bDrawingInterior?210:bDrawingDetails?110:10);
+ AddHitBox(FVector2D(X,Y)*UIScale,FVector2D(W,27)*UIScale,N,true,bDrawingOperationsModal?280:(N.ToString().StartsWith(TEXT("OpsReady_"))||N.ToString().StartsWith(TEXT("OpsCancel_")))?230:(bDrawingStarMap || (bStarMapOpen && (N==TEXT("StarMapToggle") || N==TEXT("TitleScreen") || N==TEXT("OpenTutorialGuide"))))?310:bDrawingInterior?210:bDrawingDetails?110:10);
 }
 FName AOVHUD::GetHitActionAtCanvasPoint(FVector2D Point) const
 {
@@ -140,6 +140,7 @@ void AOVHUD::OrbitPreview(FVector2D Delta)
 bool AOVHUD::HandlePointer(float X,float Y,bool Pressed,bool Down,float Wheel,bool Orbit,float DX,float DY)
 {
  if(PickingShip())return false;
+ if(bChoosingTransport||bChoosingTransfer)return true;
  // Canvas buttons dispatch on press. The next field can already be visible
  // when the controller polls that same press later in the frame.
  if(bConsumeDebriefClick) { bConsumeDebriefClick=Down; return true; }
@@ -243,7 +244,11 @@ bool AOVHUD::HandlePointer(float X,float Y,bool Pressed,bool Down,float Wheel,bo
 void AOVHUD::NotifyHitBoxClick(FName N)
 {
  if(PickingShip())return;
- if((bChoosingTransport||bChoosingTransfer) && !N.ToString().StartsWith(TEXT("Ops")))return;
+ if(bChoosingTransport||bChoosingTransfer){
+  const FString Pick=N.ToString();
+  if(N!=TEXT("OpsCloseRoutes") && N!=TEXT("OpsPods") && N!=TEXT("OpsSelf") &&
+     !Pick.StartsWith(TEXT("OpsVia_")) && !Pick.StartsWith(TEXT("OpsCross_")))return;
+ }
  if(!bPauseMenu && !bTitleScreenOpen && !IsDebriefOpen() && HandleShipOperations(N))return;
  if(N==TEXT("SystemMenu")){TogglePauseMenu();return;}
  if(bPauseMenu){

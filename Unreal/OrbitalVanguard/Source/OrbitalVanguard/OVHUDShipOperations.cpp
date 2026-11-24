@@ -164,7 +164,7 @@ void AOVHUD::DrawShipOperations()
     }
     if(!bChoosingTransport&&!bChoosingTransfer)return;
     const float X=ViewportPixels.X/UIScale*.5f-155,Y=100;
-    TGuardValue<bool> Layer(bDrawingInterior,true);
+    TGuardValue<bool> Layer(bDrawingOperationsModal,true);
     TArray<TPair<FName,FString>> Choices;
     if(BoardingOrigin.IsValid()){
         if(bChoosingTransport && !BoardingOrigin->HangarHost.IsValid()){
@@ -180,7 +180,7 @@ void AOVHUD::DrawShipOperations()
     }
     const float H=82+Choices.Num()*32;
     DrawRect(FLinearColor(.016f,.045f,.065f,1),X,Y,310,H);
-    AddHitBox(FVector2D(X,Y)*UIScale,FVector2D(310,H)*UIScale,TEXT("OpsBackground"),true,205);
+    AddHitBox(FVector2D(X,Y)*UIScale,FVector2D(310,H)*UIScale,TEXT("OpsBackground"),true,275);
     DrawText(Choices.IsEmpty()?TEXT("이용 가능한 연결이 없습니다"):bChoosingTransfer?TEXT("옮겨 탈 함선 선택"):TEXT("강습 수단 선택"),FLinearColor::White,X+9,Y+8,OVTypography::Font(EOVTextRole::Heading));
     float CY=Y+38;for(const auto& Choice:Choices){Button(Choice.Key,Choice.Value,X+10,CY,290);CY+=32;}
     Button(TEXT("OpsCloseRoutes"),TEXT("취소"),X+10,CY,290);

@@ -87,6 +87,8 @@ def run():
     hud.execute_ui_action("OpsInterior")
     hud.execute_ui_action("InteriorUnit_"+str(uid))
     hud.execute_ui_action("OpsAssault")
+    for _ in range(4):yield
+    check("겹친 선내 탭보다 포드 버튼 클릭 우선",str(hud.get_hit_action_at_canvas_point(hud.get_action_center("OpsPods")))=="OpsPods")
     hud.execute_ui_action("OpsPods")
     for _ in range(2):yield
     check("목표 선택 중 아군 클릭 거부",not hud.accept_ship_pick(home))
@@ -117,6 +119,12 @@ def run():
     empty=[h for h in bay_info(host) if not prop(h,"stored_small_ship")]
     check("무장 구축전함에 설치된 빈 격납고",len(empty)>0)
     bid=prop(empty[0],"hangar_id")
+    carrier_host=next(s for s in allies if "항공모함" in prop(s,"ship_name"))
+    occupied_airbay=prop(bay_info(carrier_host)[0],"hangar_id")
+    scout=next(s for s in allies if "초계함" in prop(s,"ship_name"))
+    check("함재기 배속 격납고에 소형함 수납 차단",not pc.request_small_ship_dock(occupied_airbay,scout))
+    check("적 소형함 접근 차단",not pc.request_small_ship_dock(bid,next(s for s in ships if not prop(s,"friendly") and "초계함" in prop(s,"ship_name"))))
+    check("중대형 함체 수납 차단",not pc.request_small_ship_dock(bid,carrier_host))
     for hull in ["corvette","repair"]:
         ship=next(s for s in allies if ({"corvette":"초계함","repair":"보급수리함"}[hull] in prop(s,"ship_name")))
         systems=prop(ship,"systems")
@@ -149,6 +157,20 @@ def run():
     combat.notify_ftl_departure(host)
     check("모함과 함께 이탈 처리",combat.is_departed(ship) and not pc.launch_small_ship(bid))
     check("재시작 후 이전 승선 대기 정리",start("HeroArena") and pc.last_crew_operation()==0)
+    home=prop(pc,"ships")[0]
+    left,right=bay_info(home)
+    a,b=prop(left,"stored_small_ship"),prop(right,"stored_small_ship")
+    sys=prop(home,"systems")
+    slot=prop(left,"slot_id")
+    sys.debug_set_crew(slot,0)
+    check("정지 격납고는 보관 유지·출격 차단",not pc.launch_small_ship(prop(left,"hangar_id")) and prop(bay_info(home)[0],"stored_small_ship")==a)
+    sys.debug_destroy_slot(slot,u.OVDamageCause.EXTERNAL)
+    advance(.5)
+    check("격납고 파괴 시 해당 선석의 소형함만 완파",prop(prop(a,"systems"),"wrecked") and not prop(prop(b,"systems"),"wrecked"))
+    check("다른 격납고의 독립 출격",pc.launch_small_ship(prop(right,"hangar_id")))
+    sys.debug_destroy_slot(prop(right,"slot_id"),u.OVDamageCause.EXTERNAL)
+    advance(.5)
+    check("이미 출격한 소형함은 원 선석 파괴 후 생존",not prop(prop(b,"systems"),"wrecked"))
 
 
 def tick(_):

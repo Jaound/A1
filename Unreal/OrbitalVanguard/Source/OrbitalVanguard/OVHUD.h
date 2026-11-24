@@ -29,6 +29,7 @@ public:
  bool DrawSmallBays(AOVShip* Home,float X,float Y,float W);
  int32 PendingBay=0;
  uint64 PickerOpenedFrame=MAX_uint64;
+ bool bDrawingOperationsModal=false;
  int32 BayPage=0;
  TWeakObjectPtr<AOVShip> BayPageHost;
  bool bChoosingTransport=false,bChoosingTransfer=false,bAircraftOnly=false;
