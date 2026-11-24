@@ -16,7 +16,10 @@
 
 namespace
 {
-constexpr int32 ScenarioSeed = 260112;
+#if WITH_EDITOR
+TAutoConsoleVariable<int32> FleetTrialSeed(TEXT("ov.Trial.FleetSeed"),260112,TEXT("Editor fleet encounter random seed."));
+TAutoConsoleVariable<int32> FleetTrialShuttle(TEXT("ov.Trial.Fleet200Shuttle"),0,TEXT("Editor Fleet200 comparison: embark an assault ship in place of one friendly corvette."));
+#endif
 constexpr int32 FactionCount = 2;
 
 // D126 equipment is resolved from the hull definition. Trial deployment and
@@ -299,6 +302,14 @@ bool UOVPlayScenarioSubsystem::Start(AOVController& Controller, FName Id)
     ActiveDifficulty=NextDifficulty;
     InitialCosts.Init(0, FactionCount);
     InitialAircraft.Init(0, FactionCount);
+    int32 ScenarioSeed=260112;
+    bool bCompareShuttle=false;
+#if WITH_EDITOR
+    if(Id==TEXT("Fleet200")){
+        ScenarioSeed=FleetTrialSeed.GetValueOnGameThread();
+        bCompareShuttle=FleetTrialShuttle.GetValueOnGameThread()!=0;
+    }
+#endif
     OVCalibration::BeginSession(*Controller.Combat, ScenarioSeed);
     Controller.PointDefense->Reset(ScenarioSeed);
     Controller.Transport->ResetScenario({});
@@ -324,7 +335,9 @@ bool UOVPlayScenarioSubsystem::Start(AOVController& Controller, FName Id)
         {
             for (int32 I = 0; I < Entry.Count; ++I)
             {
-                if (!Spawn(Controller, Entry, Faction, Ordinal++))
+                FOVPlayFleetEntry Actual=Entry;
+                if(bCompareShuttle && Faction==0 && I==0 && Entry.Hull==TEXT("corvette"))Actual.Hull=TEXT("assault");
+                if (!Spawn(Controller, Actual, Faction, Ordinal++))
                 {
                     Controller.ResetPlayScenarioSession(false);
                     Controller.LastAction = TEXT("편성 생성 실패 · 함체 또는 격납고를 확인하세요.");
@@ -353,6 +366,21 @@ bool UOVPlayScenarioSubsystem::Start(AOVController& Controller, FName Id)
         if(!PrepareArenaForces(Controller)){Controller.ResetPlayScenarioSession(false);Controller.LastAction=TEXT("강습 시험 편성 또는 격납고 준비 실패");return false;}
     }
     else for(int32 Side=0;Side<FactionCount;++Side) AssignScenarioHeroes(Controller,Side);
+#if WITH_EDITOR
+    if(bCompareShuttle){
+        AOVShip* Shuttle=nullptr;
+        for(AOVShip* Ship : Controller.Ships)
+            if(Ship->bFriendly && Ship->HullDefinitionId==TEXT("assault"))Shuttle=Ship;
+        auto* Bay=Controller.Carrier->Hangars.FindByPredicate([](const auto& H){
+            return H.Carrier.IsValid() && H.Carrier->bFriendly && H.Carrier->HullDefinitionId==TEXT("dreadnought");
+        });
+        if(!Bay || !Shuttle || !Controller.Carrier->StoreShuttle(Bay->Carrier.Get(),Bay->SlotId,Shuttle)){
+            Controller.ResetPlayScenarioSession(false);
+            Controller.LastAction=TEXT("Fleet200 trial hangar setup failed");
+            return false;
+        }
+    }
+#endif
     if (bEvacuation)
         for (AOVShip* Ship : Controller.Ships) RescueFleet.Add(Ship);
     for (const FOVAircraftRecord& Aircraft : Controller.Carrier->Aircraft)
@@ -476,6 +504,10 @@ void UOVPlayScenarioSubsystem::AssignScenarioHeroes(AOVController& PC,int32 Side
         FOVHullMetadata Hull;
         if(!OVCalibration::GetHullMetadata(Ship->HullDefinitionId,Hull))continue;
         CurrentCost+=Hull.FleetCost;
+#if WITH_EDITOR
+        // Match the stock defenders and embark only the chosen team in this trial.
+        if(Side==0 && ActiveId==TEXT("Fleet200") && FleetTrialShuttle.GetValueOnGameThread()!=0 && Ship->HullDefinitionId==TEXT("assault"))continue;
+#endif
         Hosts.Add(Ship);
     }
     const int32 Budget=ActiveId==TEXT("Sandbox")?CurrentCost:InitialCosts[Side];
