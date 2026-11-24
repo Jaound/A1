@@ -1,5 +1,6 @@
 #include "OVPlayScenarioSubsystem.h"
 #include "OVHeroSubsystem.h"
+#include "OVHUD.h"
 #include "OVLogisticsSubsystem.h"
 #include "OVBlackHoleHazardActor.h"
 #include "OVCalibration.h"
@@ -51,6 +52,8 @@ const FOVPlaySceneDefinition Scenes[] = {
      {TEXT("carrier"),1,20},{TEXT("dreadnought"),1}}, true, 120.f, 0.f, EOVSpaceHazardKind::None},
     {TEXT("HeroArena"), TEXT("영웅 전투 시험장"), TEXT("영웅과 일반 병력을 편성해 두 팀으로 적 함교를 점령하세요."),
      EOVPlaySceneKind::HeroArena, 0, {{TEXT("dreadnought"),1}}, true, 0.f, 0.f, EOVSpaceHazardKind::None},
+    {TEXT("BaseTrial"), TEXT("기지 건설 시험장"), TEXT("코어에 통로를 잇고 창고를 건설하세요."),
+     EOVPlaySceneKind::BaseTrial, 0, {{TEXT("corvette"),1}}, true, 0.f, 0.f, EOVSpaceHazardKind::None},
     {TEXT("Sandbox"), TEXT("자유 전투 시험장"), TEXT("양측 함선을 원하는 위치에 배치하고 교전하세요."),
      EOVPlaySceneKind::Sandbox, 0, {}, true, 120.f, 0.f, EOVSpaceHazardKind::None}
 };
@@ -316,7 +319,8 @@ bool UOVPlayScenarioSubsystem::Start(AOVController& Controller, FName Id)
     auto* Interior = GetWorld()->GetSubsystem<UOVInteriorSubsystem>();
     Interior->ResetScenario({}, ScenarioSeed);
 
-    const EOVSpaceHazardKind EffectiveHazard = (EnvironmentOverride != EOVSpaceHazardKind::None)
+    const bool bBaseTrial = Definition->Kind == EOVPlaySceneKind::BaseTrial;
+    const EOVSpaceHazardKind EffectiveHazard = !bBaseTrial && (EnvironmentOverride != EOVSpaceHazardKind::None)
         ? EnvironmentOverride
         : Definition->EnvironmentHazard;
     SyncEnvironmentHazard(Controller, EffectiveHazard, Definition->HazardLocation);
@@ -328,7 +332,7 @@ bool UOVPlayScenarioSubsystem::Start(AOVController& Controller, FName Id)
         return false;
     }
     const bool bEvacuation = Definition->Kind == EOVPlaySceneKind::Evacuation;
-    for (int32 Faction = 0; Definition->Kind != EOVPlaySceneKind::Logistics && Faction < (bEvacuation ? 1 : FactionCount); ++Faction)
+    for (int32 Faction = 0; Definition->Kind != EOVPlaySceneKind::Logistics && Faction < ((bEvacuation || bBaseTrial) ? 1 : FactionCount); ++Faction)
     {
         int32 Ordinal = 0;
         for (const FOVPlayFleetEntry& Entry : Definition->Fleet)
@@ -365,7 +369,7 @@ bool UOVPlayScenarioSubsystem::Start(AOVController& Controller, FName Id)
             }
         if(!PrepareArenaForces(Controller)){Controller.ResetPlayScenarioSession(false);Controller.LastAction=TEXT("강습 시험 편성 또는 격납고 준비 실패");return false;}
     }
-    else for(int32 Side=0;Side<FactionCount;++Side) AssignScenarioHeroes(Controller,Side);
+    else if (!bBaseTrial) for(int32 Side=0;Side<FactionCount;++Side) AssignScenarioHeroes(Controller,Side);
 #if WITH_EDITOR
     if(bCompareShuttle){
         AOVShip* Shuttle=nullptr;
@@ -389,6 +393,11 @@ bool UOVPlayScenarioSubsystem::Start(AOVController& Controller, FName Id)
     {
         Controller.SelectShip(Controller.Ships[0]);
         Controller.FrameEngagement();
+    }
+    if (bBaseTrial)
+    {
+        auto* HUD = Cast<AOVHUD>(Controller.GetHUD());
+        if (!HUD || !HUD->BeginBaseTrial()) { Controller.ResetPlayScenarioSession(false); return false; }
     }
     Controller.LastAction = FString::Printf(TEXT("%s · 준비 완료"), Definition->Title);
     return true;
@@ -551,8 +560,9 @@ AOVShip* UOVPlayScenarioSubsystem::Spawn(AOVController& Controller, const FOVPla
     Controller.Ships.Add(Ship); // The session owns even partially configured actors.
     if (!OVCalibration::ConfigureHull(*Controller.Combat, *Ship, Entry.Hull, bFriendly, Position, Scale,Entry.AircraftBays,bArena)) return nullptr;
     Ship->ShipName = FString::Printf(TEXT("%s %02d"), *OVCalibration::GetHullName(Entry.Hull), Ordinal + 1);
-    Ship->SetAutomation(!bArena, !bArena);
-    if(!bArena) Ship->SetDestination(FVector(Side * (18000 + (Ordinal / 4) * 6000), Position.Y * .48, Position.Z));
+    const bool combatOrders=!bArena && ActiveId!=TEXT("BaseTrial");
+    Ship->SetAutomation(combatOrders, combatOrders);
+    if(combatOrders) Ship->SetDestination(FVector(Side * (18000 + (Ordinal / 4) * 6000), Position.Y * .48, Position.Z));
     int32 DefenseMounts = 0;
     for (const FOVWeaponMountDefinition& Mount : Ship->Systems->Layout->WeaponMounts)
         if (Mount.Type == EOVWeaponType::Interception) ++DefenseMounts;
@@ -673,6 +683,7 @@ void UOVPlayScenarioSubsystem::Step(float Delta)
         return;
     }
     ElapsedSeconds += Delta;
+    if (Definition->Kind == EOVPlaySceneKind::BaseTrial) return;
     AdvanceJumps(*Controller);
     if (Definition->Kind!=EOVPlaySceneKind::Sandbox || bSandboxEngaged) StepCommandAI(*Controller,Delta);
     if (Definition->Kind == EOVPlaySceneKind::Evacuation)
@@ -838,6 +849,7 @@ FString UOVPlayScenarioSubsystem::GetOutcomeTitle() const
 
 FString UOVPlayScenarioSubsystem::GetStatus() const
 {
+    if (ActiveId == TEXT("BaseTrial")) return TEXT("시험 함선 1척 · 상단의 기지로 복귀");
     if (!Resolution.IsEmpty())
     {
         if (Result == EOVPlaySceneResult::PartialVictory) return FString(TEXT("부분 성공 · ")) + Resolution;

@@ -16,7 +16,7 @@ struct Cell
 };
 
 enum class Kind { Core, Corridor, Junction, Storage };
-enum class Error { None, Occupied, NoConnection, Funds, Limit, Busy, Outside };
+enum class Error { None, Occupied, Direction, NoConnection, Funds, Limit, Busy, Outside, Seam };
 
 struct Module
 {
@@ -61,7 +61,7 @@ inline std::vector<Port> Ports(const Module& module)
     {
         add({4,2,2},{1,0,0}); add({0,2,2},{-1,0,0});
         add({2,4,2},{0,1,0}); add({2,0,2},{0,-1,0});
-        add({2,2,4},{0,0,1}); add({2,2,0},{0,0,-1});
+        // 원본 코어의 상단 안테나를 포트로 취급하지 않는다. 수직 연결은 분기 허브가 담당한다.
     }
     else
     {
@@ -80,7 +80,7 @@ inline bool Connected(const Module& a, const Module& b)
     if (!IsLink(a.Type) && !IsLink(b.Type)) return false;
     for (const auto& pa : Ports(a))
         for (const auto& pb : Ports(b))
-            if (pa.At + pa.Direction == pb.At && pa.Direction + pb.Direction == Cell{}) return true;
+            if (pa.At + pa.Direction == pb.At && pa.Direction + pb.Direction == Cell{} && (!pa.Direction.Z || a.Turns == b.Turns)) return true;
     return false;
 }
 
@@ -112,7 +112,13 @@ public:
             if (IsLink(item.Type)) ++links;
             else if (item.Type != Kind::Core) ++facilities;
         }
-        if (!attached) return Error::NoConnection;
+        if (!attached)
+        {
+            for (const auto& item : Items)
+                for (const auto& port : Ports(item))
+                    if (Contains(candidate,port.At+port.Direction)) return Error::Direction;
+            return Error::NoConnection;
+        }
         if (IsLink(candidate.Type) ? links >= 24 : facilities >= 8) return Error::Limit;
         if (!IsLink(candidate.Type) && std::any_of(Items.begin(), Items.end(), [](const Module& item) {
             return item.Type != Kind::Core && !IsLink(item.Type) && item.Remaining > 0;

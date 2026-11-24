@@ -1296,6 +1296,9 @@ void AOVHUD::ResetDevelopmentWindow(){DevelopmentPosition=FVector2D(-1,-1);Devel
 
 void AOVHUD::ResetPlaySessionUI()
 {
+ if (bBaseViewOpen) ToggleBaseView();
+ if (IsValid(BasePresentation)) BasePresentation->Destroy();
+ BasePresentation=nullptr; BaseInspect=INDEX_NONE; BasePick=1; BaseLayer=BaseTurns=0; BaseNotice.Reset();
  bChoosingTransport=bChoosingTransfer=bAircraftOnly=false;BoardingSelection.Reset();PendingBay=0;BoardingOrigin.Reset();BoardingShuttle.Reset();
  bChoosingJump=false;bPauseMenu=false;bDebriefDismissed=false;
  CloseTitleScreen();

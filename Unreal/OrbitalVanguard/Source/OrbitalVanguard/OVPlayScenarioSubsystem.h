@@ -14,7 +14,7 @@ class AOVShip;
 UENUM(BlueprintType)
 enum class EOVCommandDifficulty : uint8 { Easy, Normal, Hard };
 
-enum class EOVPlaySceneKind : uint8 { Fleet, Logistics, Evacuation, Sandbox, HeroArena };
+enum class EOVPlaySceneKind : uint8 { Fleet, Logistics, Evacuation, Sandbox, HeroArena, BaseTrial };
 
 struct FOVPlayFleetEntry
 {

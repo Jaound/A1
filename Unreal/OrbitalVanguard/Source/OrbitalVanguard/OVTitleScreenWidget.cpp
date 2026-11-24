@@ -1,4 +1,5 @@
 #include "OVTitleScreenWidget.h"
+#include "Components/ScrollBox.h"
 #include "OVTypography.h"
 
 #include "OVAudioSubsystem.h"
@@ -435,7 +436,9 @@ void UOVTitleScreenWidget::BuildProgrammaticTree()
     MainSplit->AddChildToHorizontalBox(LeftListWidth);
 
     ScenarioListBox = WidgetTree->ConstructWidget<UVerticalBox>();
-    LeftListWidth->SetContent(ScenarioListBox);
+    auto* SceneScroll = WidgetTree->ConstructWidget<UScrollBox>();
+    LeftListWidth->SetContent(SceneScroll);
+    SceneScroll->AddChild(ScenarioListBox);
 
     for (const FOVPlaySceneDefinition& Def : UOVPlayScenarioSubsystem::Definitions())
     {
@@ -1096,6 +1099,7 @@ void UOVTitleScreenWidget::RefreshScenarioBriefing()
     const TCHAR* Kind = TEXT("함대전");
     if (TargetDef->Kind == EOVPlaySceneKind::Logistics) Kind = TEXT("수송 엄호");
     if (TargetDef->Kind == EOVPlaySceneKind::Evacuation) Kind = TEXT("생존 · 퇴각");
+    if (TargetDef->Kind == EOVPlaySceneKind::BaseTrial) Kind = TEXT("기지 건설");
     if (TargetDef->Kind == EOVPlaySceneKind::Sandbox) Kind = TEXT("자유 시험");
     if (TargetDef->EnvironmentHazard == EOVSpaceHazardKind::BlackHole) Kind = TEXT("중력전");
     MetricTimeVal->SetText(FText::FromString(Kind));

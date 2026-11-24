@@ -22,6 +22,7 @@ public:
  virtual void DrawHUD() override;
  void SyncAddedUI();
  bool IsBaseViewOpen() const { return bBaseViewOpen; }
+ bool BeginBaseTrial();
  void UpdateBaseView(float RealSeconds);
  void AdvanceBaseConstruction(float GameSeconds);
 
@@ -230,6 +231,8 @@ private:
  void ToggleBaseView();
  bool HandleBaseAction(FName Action);
  UPROPERTY() TObjectPtr<AOVBasePresentation> BasePresentation;
+ TArray<TWeakObjectPtr<AOVShip>> BaseHiddenShips;
+ FVector FleetSkyScale=FVector::OneVector;
  bool bBaseViewOpen = false;
  int32 BasePick = 1, BaseLayer = 0, BaseTurns = 0;
  int32 BaseInspect = INDEX_NONE;

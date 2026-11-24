@@ -190,7 +190,8 @@ void AOVHUD::DrawPlayHUD()
  }
  DrawRect(PlayPanel,10,10,W-20,46);
  const float CommandWidths[]={88,74,88,49,49,49,96,76,94,91,77,94,76};
- float TX=16;const float Step=FMath::Min(1.28f,(W-26)/1004.f);
+ const bool baseTrial=Play && Play->ActiveId==TEXT("BaseTrial");
+ float TX=16;const float Step=FMath::Min(1.28f,(W-26)/(baseTrial?1004.f:925.f));
  auto Top=[&](int32 I,FName Id,const FString& Label,bool Active=false){
   const float BW=CommandWidths[I]*Step;Button(Id,Label,TX,18,BW-4,Active);TX+=BW;
  };
@@ -199,7 +200,7 @@ void AOVHUD::DrawPlayHUD()
  Top(2,TEXT("Pause"),PC->bSimulationPaused?TEXT("시작 ▷"):TEXT("정지 Ⅱ"),PC->bSimulationPaused);
  Top(3,TEXT("Speed1"),TEXT("1배"),PC->SimulationSpeed==1);Top(4,TEXT("Speed2"),TEXT("2배"),PC->SimulationSpeed==2);Top(5,TEXT("Speed3"),TEXT("3배"),PC->SimulationSpeed==3);
  Top(6,TEXT("Overview"),TEXT("전체 보기"));Top(7,TEXT("OpenTutorialGuide"),TEXT("가이드"));Top(8,TEXT("StarMapToggle"),TEXT("은하 지도"),bStarMapOpen);
- Top(9,TEXT("BattleFeedToggle"),TEXT("전투 알림"),bBattleFeedOpen);Top(10,TEXT("HeroPanel"),TEXT("영웅"),bHeroPanelOpen);Top(11,TEXT("Developer"),TEXT("개발 도구"),PC->bDeveloperMode);Top(12,TEXT("BaseView"),TEXT("기지"));
+ Top(9,TEXT("BattleFeedToggle"),TEXT("전투 알림"),bBattleFeedOpen);Top(10,TEXT("HeroPanel"),TEXT("영웅"),bHeroPanelOpen);Top(11,TEXT("Developer"),TEXT("개발 도구"),PC->bDeveloperMode);if(baseTrial) Top(12,TEXT("BaseView"),TEXT("기지"));
  if(LastNoticeSource!=PC->LastAction) {
   LastNoticeSource=PC->LastAction;NoticeExpires=FPlatformTime::Seconds()+3;
   NoticeText=PC->LastAction;

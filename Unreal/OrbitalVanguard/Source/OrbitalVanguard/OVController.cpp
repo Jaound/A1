@@ -702,7 +702,9 @@ void AOVController::UpdateCombatPresentation()
  const FVector SkyCenter=RangeCamera?RangeCamera->GetActorLocation():CameraFocus;
  const float StarDistScale=CalibrationScenario>=0?12.f:1.f;
  if(IsValid(SpaceSkyboxMesh)) {
-  SpaceSkyboxMesh->SetWorldLocation(SkyCenter);
+  const auto* hud=Cast<AOVHUD>(GetHUD());
+  const auto* camera=(hud && hud->IsBaseViewOpen())?GetViewTarget():nullptr;
+  SpaceSkyboxMesh->SetWorldLocation(camera?camera->GetActorLocation():SkyCenter);
  }
  if(IsValid(DistantPlanetMesh)) {
   const uint32 SysHash=GetTypeHash(CurrentStarSystemId);
@@ -1357,6 +1359,7 @@ void AOVController::HandleRightMove(bool Pressed, FVector2D Cursor, bool InWorld
 
 bool AOVController::InputKey(const FInputKeyEventArgs& Params)
 {
+ if (auto* HUD=Cast<AOVHUD>(GetHUD()); HUD && HUD->IsBaseViewOpen()) return Super::InputKey(Params);
  if(auto* UI=Cast<AOVHUD>(GetHUD()); UI&&UI->IsAddedUIEditing())
  {
   OrbitGesture={}; CancelRightMove();
@@ -1637,7 +1640,7 @@ void AOVController::PlayerTick(float DeltaTime)
  if(HUD && HUD->IsBaseViewOpen())
  {
   OrbitGesture={}; CancelRightMove(); bFleetDrag=false;
-  HUD->UpdateBaseView(DeltaTime);
+  if (Focused) HUD->UpdateBaseView(DeltaTime);
   StepSimulation(DeltaTime); UpdateCombatPresentation(); return;
  }
  if(auto* Play=GetPlayScenario(); Play && Play->bSandboxPlacing)

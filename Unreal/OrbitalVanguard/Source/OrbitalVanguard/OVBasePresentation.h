@@ -7,6 +7,7 @@
 
 class ACameraActor;
 class UStaticMeshComponent;
+class UStaticMesh;
 
 UCLASS()
 class AOVBasePresentation : public AActor
@@ -20,6 +21,12 @@ public:
     void RefreshMeshes();
     ACameraActor* View() const { return Camera; }
     FVector CellCenter(OVBase::Cell Cell) const;
+    UFUNCTION(BlueprintCallable) bool ReserveModule(FName ModuleId, FIntVector Origin, int32 QuarterTurns);
+    UFUNCTION(BlueprintCallable) bool CancelConstruction(int32 Index);
+    UFUNCTION(BlueprintPure) int32 CommonStock() const { return Build.Funds(); }
+    UFUNCTION(BlueprintPure) int32 ModuleCount() const { return static_cast<int32>(Build.Modules().size()); }
+    UFUNCTION(BlueprintPure) float RemainingSeconds(int32 Index) const;
+    OVBase::Error CheckPlacement(const OVBase::Module& Candidate) const;
     OVBase::BuildState Build;
 
 protected:
@@ -28,5 +35,6 @@ protected:
 private:
     UPROPERTY() TObjectPtr<ACameraActor> Camera;
     UPROPERTY() TArray<TObjectPtr<UStaticMeshComponent>> Meshes;
+    UPROPERTY() TArray<TObjectPtr<UStaticMesh>> Assets;
     float Yaw = 35.f, Pitch = 50.f, Distance = 22500.f;
 };
