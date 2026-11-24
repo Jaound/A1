@@ -1,0 +1,3324 @@
+{
+  "baseCode": "87d014b29381919cc86aa0f65a95fd26e08dd28c",
+  "probeCode": "bb7d2cf",
+  "date": "2026-11-24",
+  "engine": "UE 5.8.4",
+  "build": "Win64 Development Editor",
+  "world": "ControlRange / PIE / Fleet200",
+  "physicalInput": false,
+  "renderMeasured": false,
+  "stepSeconds": 0.1,
+  "cases": {
+    "A": {
+      "limitSeconds": 195,
+      "logName": "Study_A.log",
+      "runs": [
+        {
+          "mode": "podhero",
+          "seed": 260112,
+          "costs": [
+            200,
+            200
+          ],
+          "heroes_at_origin": 6,
+          "team_heroes": 4,
+          "team_sent_at": 117,
+          "first_entry": 117.71,
+          "capture": 167,
+          "first_shield_down": 117,
+          "first_in_range": 27,
+          "min_range_m": 138.6,
+          "shuttle_changes": [],
+          "entered": 8,
+          "initial_defenders": 6,
+          "prepared": true,
+          "pd_shots_seen": 59,
+          "pd_hits_seen": 28,
+          "pd_kills_seen": 0,
+          "elapsed": 195.0,
+          "pod_launched": 8,
+          "pod_states": {
+            "ATTACHED": 8
+          },
+          "people": {
+            "INSIDE_TARGET": 8
+          },
+          "target_hull_pct": 99.6,
+          "origin_wrecked": false,
+          "target_wrecked": false,
+          "result": "RUNNING",
+          "defenders_killed": 3,
+          "defenders_hp_remaining": 720,
+          "salvos_or_shots": 4808,
+          "shuttle_hull": [
+            10560,
+            10560
+          ],
+          "shuttle_wrecked": false,
+          "surviving_fleet": [
+            11,
+            8
+          ]
+        },
+        {
+          "mode": "podtroop",
+          "seed": 260112,
+          "costs": [
+            200,
+            200
+          ],
+          "heroes_at_origin": 6,
+          "team_heroes": 0,
+          "team_sent_at": 117,
+          "first_entry": 117.71,
+          "capture": 190,
+          "first_shield_down": 117,
+          "first_in_range": 27,
+          "min_range_m": 138.6,
+          "shuttle_changes": [],
+          "entered": 8,
+          "initial_defenders": 6,
+          "prepared": true,
+          "pd_shots_seen": 59,
+          "pd_hits_seen": 28,
+          "pd_kills_seen": 0,
+          "elapsed": 195.0,
+          "pod_launched": 8,
+          "pod_states": {
+            "DESTROYED": 2,
+            "ATTACHED": 6
+          },
+          "people": {
+            "DEAD": 2,
+            "INSIDE_TARGET": 6
+          },
+          "target_hull_pct": 99.6,
+          "origin_wrecked": false,
+          "target_wrecked": false,
+          "result": "RUNNING",
+          "defenders_killed": 3,
+          "defenders_hp_remaining": 720,
+          "salvos_or_shots": 4903,
+          "shuttle_hull": [
+            10560,
+            10560
+          ],
+          "shuttle_wrecked": false,
+          "surviving_fleet": [
+            11,
+            8
+          ]
+        },
+        {
+          "mode": "shuttlehero",
+          "seed": 260112,
+          "costs": [
+            200,
+            200
+          ],
+          "heroes_at_origin": 6,
+          "team_heroes": 4,
+          "team_sent_at": 117,
+          "first_entry": 123.2,
+          "capture": 168,
+          "first_shield_down": 117,
+          "first_in_range": 27,
+          "min_range_m": 139.8,
+          "shuttle_changes": [
+            [
+              117,
+              "APPROACHING",
+              ""
+            ],
+            [
+              121,
+              "DOCKING",
+              ""
+            ],
+            [
+              124,
+              "DELIVERED",
+              "실제 선내 이송 완료 · 내부 아군 보호 활성"
+            ]
+          ],
+          "entered": 8,
+          "initial_defenders": 6,
+          "prepared": true,
+          "pd_shots_seen": 0,
+          "pd_hits_seen": 0,
+          "pd_kills_seen": 0,
+          "elapsed": 195.0,
+          "pod_launched": 0,
+          "pod_states": {},
+          "people": {
+            "INSIDE_TARGET": 8
+          },
+          "target_hull_pct": 99.3,
+          "origin_wrecked": false,
+          "target_wrecked": false,
+          "result": "RUNNING",
+          "defenders_killed": 3,
+          "defenders_hp_remaining": 720,
+          "salvos_or_shots": 5213,
+          "shuttle_hull": [
+            10560,
+            10560
+          ],
+          "shuttle_wrecked": false,
+          "surviving_fleet": [
+            11,
+            8
+          ]
+        },
+        {
+          "mode": "shuttletroop",
+          "seed": 260112,
+          "costs": [
+            200,
+            200
+          ],
+          "heroes_at_origin": 6,
+          "team_heroes": 0,
+          "team_sent_at": 117,
+          "first_entry": 123.2,
+          "capture": null,
+          "first_shield_down": 117,
+          "first_in_range": 27,
+          "min_range_m": 139.8,
+          "shuttle_changes": [
+            [
+              117,
+              "APPROACHING",
+              ""
+            ],
+            [
+              121,
+              "DOCKING",
+              ""
+            ],
+            [
+              124,
+              "DELIVERED",
+              "실제 선내 이송 완료 · 내부 아군 보호 활성"
+            ]
+          ],
+          "entered": 8,
+          "initial_defenders": 6,
+          "prepared": true,
+          "pd_shots_seen": 0,
+          "pd_hits_seen": 0,
+          "pd_kills_seen": 0,
+          "elapsed": 195.0,
+          "pod_launched": 0,
+          "pod_states": {},
+          "people": {
+            "DEAD": 4,
+            "INSIDE_TARGET": 4
+          },
+          "target_hull_pct": 99.3,
+          "origin_wrecked": false,
+          "target_wrecked": false,
+          "result": "RUNNING",
+          "defenders_killed": 3,
+          "defenders_hp_remaining": 720,
+          "salvos_or_shots": 5374,
+          "shuttle_hull": [
+            10560,
+            10560
+          ],
+          "shuttle_wrecked": false,
+          "surviving_fleet": [
+            10,
+            9
+          ]
+        },
+        {
+          "mode": "hold",
+          "seed": 260112,
+          "costs": [
+            200,
+            200
+          ],
+          "heroes_at_origin": 6,
+          "team_heroes": 0,
+          "team_sent_at": null,
+          "first_entry": null,
+          "capture": null,
+          "first_shield_down": 117,
+          "first_in_range": 27,
+          "min_range_m": 139.9,
+          "shuttle_changes": [],
+          "entered": 0,
+          "initial_defenders": 6,
+          "prepared": false,
+          "pd_shots_seen": 0,
+          "pd_hits_seen": 0,
+          "pd_kills_seen": 0,
+          "elapsed": 195.0,
+          "pod_launched": 0,
+          "pod_states": {},
+          "people": {
+            "ABOARD": 8
+          },
+          "target_hull_pct": 96.8,
+          "origin_wrecked": false,
+          "target_wrecked": false,
+          "result": "RUNNING",
+          "defenders_killed": 1,
+          "defenders_hp_remaining": 1072,
+          "salvos_or_shots": 5317,
+          "shuttle_hull": [
+            10560,
+            10560
+          ],
+          "shuttle_wrecked": false,
+          "surviving_fleet": [
+            10,
+            9
+          ]
+        }
+      ]
+    },
+    "B": {
+      "limitSeconds": 195,
+      "logName": "Study_B.log",
+      "runs": [
+        {
+          "mode": "shuttlehero",
+          "seed": 260113,
+          "costs": [
+            200,
+            200
+          ],
+          "heroes_at_origin": 6,
+          "team_heroes": 4,
+          "team_sent_at": 145,
+          "first_entry": 151.18,
+          "capture": null,
+          "first_shield_down": 145,
+          "first_in_range": 27,
+          "min_range_m": 83.2,
+          "shuttle_changes": [
+            [
+              145,
+              "APPROACHING",
+              ""
+            ],
+            [
+              149,
+              "DOCKING",
+              ""
+            ],
+            [
+              152,
+              "DELIVERED",
+              "실제 선내 이송 완료 · 내부 아군 보호 활성"
+            ],
+            [
+              180,
+              "LOST",
+              "수송선 완파; 내부 진입자는 영향 없음"
+            ]
+          ],
+          "entered": 8,
+          "initial_defenders": 6,
+          "prepared": true,
+          "pd_shots_seen": 0,
+          "pd_hits_seen": 0,
+          "pd_kills_seen": 0,
+          "elapsed": 195.0,
+          "pod_launched": 0,
+          "pod_states": {},
+          "people": {
+            "INSIDE_TARGET": 8
+          },
+          "target_hull_pct": 99.0,
+          "origin_wrecked": false,
+          "target_wrecked": false,
+          "result": "RUNNING",
+          "defenders_killed": 3,
+          "defenders_hp_remaining": 720,
+          "salvos_or_shots": 5182,
+          "shuttle_hull": [
+            0,
+            10560
+          ],
+          "shuttle_wrecked": true,
+          "surviving_fleet": [
+            8,
+            9
+          ]
+        },
+        {
+          "mode": "shuttletroop",
+          "seed": 260113,
+          "costs": [
+            200,
+            200
+          ],
+          "heroes_at_origin": 6,
+          "team_heroes": 0,
+          "team_sent_at": 145,
+          "first_entry": 151.18,
+          "capture": null,
+          "first_shield_down": 145,
+          "first_in_range": 27,
+          "min_range_m": 83.2,
+          "shuttle_changes": [
+            [
+              145,
+              "APPROACHING",
+              ""
+            ],
+            [
+              149,
+              "DOCKING",
+              ""
+            ],
+            [
+              152,
+              "DELIVERED",
+              "실제 선내 이송 완료 · 내부 아군 보호 활성"
+            ],
+            [
+              180,
+              "LOST",
+              "수송선 완파; 내부 진입자는 영향 없음"
+            ]
+          ],
+          "entered": 8,
+          "initial_defenders": 6,
+          "prepared": true,
+          "pd_shots_seen": 0,
+          "pd_hits_seen": 0,
+          "pd_kills_seen": 0,
+          "elapsed": 195.0,
+          "pod_launched": 0,
+          "pod_states": {},
+          "people": {
+            "DEAD": 5,
+            "INSIDE_TARGET": 3
+          },
+          "target_hull_pct": 99.0,
+          "origin_wrecked": false,
+          "target_wrecked": false,
+          "result": "RUNNING",
+          "defenders_killed": 1,
+          "defenders_hp_remaining": 1123,
+          "salvos_or_shots": 5125,
+          "shuttle_hull": [
+            0,
+            10560
+          ],
+          "shuttle_wrecked": true,
+          "surviving_fleet": [
+            8,
+            9
+          ]
+        },
+        {
+          "mode": "podtroop",
+          "seed": 260113,
+          "costs": [
+            200,
+            200
+          ],
+          "heroes_at_origin": 6,
+          "team_heroes": 0,
+          "team_sent_at": 145,
+          "first_entry": 145.71,
+          "capture": null,
+          "first_shield_down": 145,
+          "first_in_range": 27,
+          "min_range_m": 83.2,
+          "shuttle_changes": [],
+          "entered": 8,
+          "initial_defenders": 6,
+          "prepared": true,
+          "pd_shots_seen": 86,
+          "pd_hits_seen": 35,
+          "pd_kills_seen": 0,
+          "elapsed": 195.0,
+          "pod_launched": 8,
+          "pod_states": {
+            "DESTROYED": 5,
+            "ATTACHED": 3
+          },
+          "people": {
+            "DEAD": 5,
+            "INSIDE_TARGET": 3
+          },
+          "target_hull_pct": 99.7,
+          "origin_wrecked": false,
+          "target_wrecked": false,
+          "result": "RUNNING",
+          "defenders_killed": 1,
+          "defenders_hp_remaining": 1059,
+          "salvos_or_shots": 5191,
+          "shuttle_hull": [
+            10560,
+            10560
+          ],
+          "shuttle_wrecked": false,
+          "surviving_fleet": [
+            9,
+            9
+          ]
+        },
+        {
+          "mode": "podhero",
+          "seed": 260113,
+          "costs": [
+            200,
+            200
+          ],
+          "heroes_at_origin": 6,
+          "team_heroes": 4,
+          "team_sent_at": 145,
+          "first_entry": 145.71,
+          "capture": null,
+          "first_shield_down": 145,
+          "first_in_range": 27,
+          "min_range_m": 83.2,
+          "shuttle_changes": [],
+          "entered": 8,
+          "initial_defenders": 6,
+          "prepared": true,
+          "pd_shots_seen": 86,
+          "pd_hits_seen": 35,
+          "pd_kills_seen": 0,
+          "elapsed": 195.0,
+          "pod_launched": 8,
+          "pod_states": {
+            "ATTACHED": 8
+          },
+          "people": {
+            "INSIDE_TARGET": 8
+          },
+          "target_hull_pct": 99.7,
+          "origin_wrecked": false,
+          "target_wrecked": false,
+          "result": "RUNNING",
+          "defenders_killed": 3,
+          "defenders_hp_remaining": 720,
+          "salvos_or_shots": 5191,
+          "shuttle_hull": [
+            10560,
+            10560
+          ],
+          "shuttle_wrecked": false,
+          "surviving_fleet": [
+            9,
+            9
+          ]
+        },
+        {
+          "mode": "hold",
+          "seed": 260113,
+          "costs": [
+            200,
+            200
+          ],
+          "heroes_at_origin": 6,
+          "team_heroes": 0,
+          "team_sent_at": null,
+          "first_entry": null,
+          "capture": null,
+          "first_shield_down": 145,
+          "first_in_range": 27,
+          "min_range_m": 83.2,
+          "shuttle_changes": [],
+          "entered": 0,
+          "initial_defenders": 6,
+          "prepared": false,
+          "pd_shots_seen": 0,
+          "pd_hits_seen": 0,
+          "pd_kills_seen": 0,
+          "elapsed": 195.0,
+          "pod_launched": 0,
+          "pod_states": {},
+          "people": {
+            "ABOARD": 8
+          },
+          "target_hull_pct": 90.5,
+          "origin_wrecked": false,
+          "target_wrecked": false,
+          "result": "RUNNING",
+          "defenders_killed": 1,
+          "defenders_hp_remaining": 1300,
+          "salvos_or_shots": 5109,
+          "shuttle_hull": [
+            10560,
+            10560
+          ],
+          "shuttle_wrecked": false,
+          "surviving_fleet": [
+            8,
+            9
+          ]
+        }
+      ]
+    },
+    "C": {
+      "limitSeconds": 195,
+      "logName": "Study_C.log",
+      "runs": [
+        {
+          "mode": "stockhold",
+          "seed": 260114,
+          "costs": [
+            200,
+            200
+          ],
+          "heroes_at_origin": 6,
+          "team_heroes": 0,
+          "team_sent_at": null,
+          "first_entry": null,
+          "capture": null,
+          "first_shield_down": 111,
+          "first_in_range": 27,
+          "min_range_m": 139.7,
+          "shuttle_changes": [],
+          "entered": 0,
+          "initial_defenders": 6,
+          "prepared": false,
+          "pd_shots_seen": 0,
+          "pd_hits_seen": 0,
+          "pd_kills_seen": 0,
+          "elapsed": 195.0,
+          "pod_launched": 0,
+          "pod_states": {},
+          "people": {
+            "ABOARD": 8
+          },
+          "target_hull_pct": 97.1,
+          "origin_wrecked": false,
+          "target_wrecked": false,
+          "result": "RUNNING",
+          "defenders_killed": 1,
+          "defenders_hp_remaining": 1088,
+          "salvos_or_shots": 5266,
+          "surviving_fleet": [
+            10,
+            9
+          ]
+        },
+        {
+          "mode": "stockpodhero",
+          "seed": 260114,
+          "costs": [
+            200,
+            200
+          ],
+          "heroes_at_origin": 6,
+          "team_heroes": 4,
+          "team_sent_at": 111,
+          "first_entry": 111.71,
+          "capture": 161,
+          "first_shield_down": 111,
+          "first_in_range": 27,
+          "min_range_m": 139.7,
+          "shuttle_changes": [],
+          "entered": 8,
+          "initial_defenders": 6,
+          "prepared": true,
+          "pd_shots_seen": 38,
+          "pd_hits_seen": 16,
+          "pd_kills_seen": 0,
+          "elapsed": 195.0,
+          "pod_launched": 8,
+          "pod_states": {
+            "ATTACHED": 8
+          },
+          "people": {
+            "INSIDE_TARGET": 8
+          },
+          "target_hull_pct": 99.5,
+          "origin_wrecked": false,
+          "target_wrecked": false,
+          "result": "RUNNING",
+          "defenders_killed": 3,
+          "defenders_hp_remaining": 505,
+          "salvos_or_shots": 5448,
+          "surviving_fleet": [
+            11,
+            8
+          ]
+        },
+        {
+          "mode": "earlyshuttlehero",
+          "seed": 260114,
+          "costs": [
+            200,
+            200
+          ],
+          "heroes_at_origin": 6,
+          "team_heroes": 4,
+          "team_sent_at": 5,
+          "first_entry": null,
+          "capture": null,
+          "first_shield_down": null,
+          "first_in_range": 26,
+          "min_range_m": 58.5,
+          "shuttle_changes": [
+            [
+              5,
+              "APPROACHING",
+              ""
+            ]
+          ],
+          "entered": 0,
+          "initial_defenders": 6,
+          "prepared": true,
+          "last_block": "대원 집결·표적·발사 시설을 확인하세요",
+          "pd_shots_seen": 0,
+          "pd_hits_seen": 0,
+          "pd_kills_seen": 0,
+          "elapsed": 195.0,
+          "pod_launched": 0,
+          "pod_states": {},
+          "people": {
+            "IN_SHUTTLE": 8
+          },
+          "target_hull_pct": 100.0,
+          "origin_wrecked": false,
+          "target_wrecked": false,
+          "result": "RUNNING",
+          "defenders_killed": 1,
+          "defenders_hp_remaining": 1260,
+          "salvos_or_shots": 4461,
+          "shuttle_hull": [
+            8139,
+            10560
+          ],
+          "shuttle_wrecked": false,
+          "surviving_fleet": [
+            6,
+            8
+          ]
+        }
+      ]
+    },
+    "contact": {
+      "limitSeconds": 105,
+      "logName": "Study_contact.log",
+      "runs": [
+        {
+          "mode": "closepodhero",
+          "seed": 260112,
+          "costs": [
+            200,
+            200
+          ],
+          "heroes_at_origin": 6,
+          "team_heroes": 4,
+          "team_sent_at": 2,
+          "first_entry": 2.78,
+          "capture": 60,
+          "first_shield_down": 0,
+          "first_in_range": 0,
+          "min_range_m": 175.0,
+          "shuttle_changes": [],
+          "entered": 8,
+          "initial_defenders": 6,
+          "prepared": true,
+          "last_block": "대원 집결·표적·발사 시설을 확인하세요",
+          "pd_shots_seen": 78,
+          "pd_hits_seen": 34,
+          "pd_kills_seen": 0,
+          "elapsed": 60.0,
+          "pod_launched": 8,
+          "pod_states": {
+            "ATTACHED": 8
+          },
+          "people": {
+            "INSIDE_TARGET": 8
+          },
+          "target_hull_pct": 100.0,
+          "origin_wrecked": false,
+          "target_wrecked": false,
+          "result": "RUNNING",
+          "defenders_killed": 3,
+          "defenders_hp_remaining": 720,
+          "salvos_or_shots": 0,
+          "shuttle_hull": [
+            10560,
+            10560
+          ],
+          "shuttle_wrecked": false,
+          "surviving_fleet": [
+            13,
+            11
+          ]
+        },
+        {
+          "mode": "closeshuttlehero",
+          "seed": 260112,
+          "costs": [
+            200,
+            200
+          ],
+          "heroes_at_origin": 6,
+          "team_heroes": 4,
+          "team_sent_at": 5,
+          "first_entry": 11.87,
+          "capture": 44,
+          "first_shield_down": 0,
+          "first_in_range": 0,
+          "min_range_m": 175.0,
+          "shuttle_changes": [
+            [
+              5,
+              "APPROACHING",
+              ""
+            ],
+            [
+              9,
+              "DOCKING",
+              ""
+            ],
+            [
+              12,
+              "DELIVERED",
+              "실제 선내 이송 완료 · 내부 아군 보호 활성"
+            ]
+          ],
+          "entered": 8,
+          "initial_defenders": 6,
+          "prepared": true,
+          "last_block": "대원 집결·표적·발사 시설을 확인하세요",
+          "pd_shots_seen": 0,
+          "pd_hits_seen": 0,
+          "pd_kills_seen": 0,
+          "elapsed": 44.0,
+          "pod_launched": 0,
+          "pod_states": {},
+          "people": {
+            "INSIDE_TARGET": 8
+          },
+          "target_hull_pct": 100.0,
+          "origin_wrecked": false,
+          "target_wrecked": false,
+          "result": "RUNNING",
+          "defenders_killed": 3,
+          "defenders_hp_remaining": 720,
+          "salvos_or_shots": 0,
+          "shuttle_hull": [
+            10560,
+            10560
+          ],
+          "shuttle_wrecked": false,
+          "surviving_fleet": [
+            13,
+            11
+          ]
+        },
+        {
+          "mode": "closeshieldpodhero",
+          "seed": 260112,
+          "costs": [
+            200,
+            200
+          ],
+          "heroes_at_origin": 6,
+          "team_heroes": 4,
+          "team_sent_at": 2,
+          "first_entry": null,
+          "capture": null,
+          "first_shield_down": null,
+          "first_in_range": 0,
+          "min_range_m": 175.0,
+          "shuttle_changes": [],
+          "entered": 0,
+          "initial_defenders": 6,
+          "prepared": true,
+          "last_block": "대원 집결·표적·발사 시설을 확인하세요",
+          "pd_shots_seen": 78,
+          "pd_hits_seen": 34,
+          "pd_kills_seen": 0,
+          "elapsed": 105.0,
+          "pod_launched": 8,
+          "pod_states": {
+            "DESTROYED": 8
+          },
+          "people": {
+            "RESCUE_WAITING": 4,
+            "DEAD": 4
+          },
+          "target_hull_pct": 100.0,
+          "origin_wrecked": false,
+          "target_wrecked": false,
+          "result": "RUNNING",
+          "defenders_killed": 0,
+          "defenders_hp_remaining": 1600,
+          "salvos_or_shots": 0,
+          "shuttle_hull": [
+            10560,
+            10560
+          ],
+          "shuttle_wrecked": false,
+          "surviving_fleet": [
+            12,
+            12
+          ]
+        }
+      ]
+    },
+    "pressure": {
+      "limitSeconds": 110,
+      "logName": "Study_pressure.log",
+      "runs": [
+        {
+          "mode": "closefocusedshuttlehero",
+          "seed": 260112,
+          "costs": [
+            200,
+            200
+          ],
+          "heroes_at_origin": 6,
+          "team_heroes": 4,
+          "team_sent_at": 5,
+          "first_entry": null,
+          "capture": null,
+          "first_shield_down": 0,
+          "first_in_range": 0,
+          "min_range_m": 175.0,
+          "shuttle_changes": [
+            [
+              5,
+              "APPROACHING",
+              ""
+            ]
+          ],
+          "entered": 0,
+          "initial_defenders": 6,
+          "shuttle_start_hp_shield": [
+            10560,
+            6336
+          ],
+          "flight_min_hp_shield": [
+            4541,
+            11
+          ],
+          "prepared": true,
+          "last_block": "대원 집결·표적·발사 시설을 확인하세요",
+          "focus_requests": 106,
+          "last_shuttle_reason": "",
+          "pd_shots_seen": 0,
+          "pd_hits_seen": 0,
+          "pd_kills_seen": 0,
+          "elapsed": 110.0,
+          "pod_launched": 0,
+          "pod_states": {},
+          "people": {
+            "IN_SHUTTLE": 8
+          },
+          "target_hull_pct": 100.0,
+          "origin_wrecked": false,
+          "target_wrecked": false,
+          "result": "RUNNING",
+          "defenders_killed": 0,
+          "defenders_hp_remaining": 1562,
+          "salvos_or_shots": 16,
+          "shuttle_hull": [
+            4541,
+            10560
+          ],
+          "shuttle_wrecked": false,
+          "surviving_fleet": [
+            12,
+            12
+          ]
+        },
+        {
+          "mode": "closeshuttlehero",
+          "seed": 260112,
+          "costs": [
+            200,
+            200
+          ],
+          "heroes_at_origin": 6,
+          "team_heroes": 4,
+          "team_sent_at": 5,
+          "first_entry": 11.87,
+          "capture": 44,
+          "first_shield_down": 0,
+          "first_in_range": 0,
+          "min_range_m": 175.0,
+          "shuttle_changes": [
+            [
+              5,
+              "APPROACHING",
+              ""
+            ],
+            [
+              9,
+              "DOCKING",
+              ""
+            ],
+            [
+              12,
+              "DELIVERED",
+              "실제 선내 이송 완료 · 내부 아군 보호 활성"
+            ]
+          ],
+          "entered": 8,
+          "initial_defenders": 6,
+          "shuttle_start_hp_shield": [
+            10560,
+            6336
+          ],
+          "flight_min_hp_shield": [
+            10560,
+            6336
+          ],
+          "prepared": true,
+          "last_block": "대원 집결·표적·발사 시설을 확인하세요",
+          "last_shuttle_reason": "실제 선내 이송 완료 · 내부 아군 보호 활성",
+          "pd_shots_seen": 0,
+          "pd_hits_seen": 0,
+          "pd_kills_seen": 0,
+          "elapsed": 44.0,
+          "pod_launched": 0,
+          "pod_states": {},
+          "people": {
+            "INSIDE_TARGET": 8
+          },
+          "target_hull_pct": 100.0,
+          "origin_wrecked": false,
+          "target_wrecked": false,
+          "result": "RUNNING",
+          "defenders_killed": 3,
+          "defenders_hp_remaining": 720,
+          "salvos_or_shots": 0,
+          "shuttle_hull": [
+            10560,
+            10560
+          ],
+          "shuttle_wrecked": false,
+          "surviving_fleet": [
+            13,
+            11
+          ]
+        },
+        {
+          "mode": "closeshieldshuttlehero",
+          "seed": 260112,
+          "costs": [
+            200,
+            200
+          ],
+          "heroes_at_origin": 6,
+          "team_heroes": 4,
+          "team_sent_at": 5,
+          "first_entry": null,
+          "capture": null,
+          "first_shield_down": null,
+          "first_in_range": 0,
+          "min_range_m": 175.0,
+          "shuttle_changes": [
+            [
+              5,
+              "APPROACHING",
+              ""
+            ]
+          ],
+          "entered": 0,
+          "initial_defenders": 6,
+          "shuttle_start_hp_shield": [
+            10560,
+            6336
+          ],
+          "flight_min_hp_shield": [
+            10560,
+            2290
+          ],
+          "prepared": true,
+          "last_block": "대원 집결·표적·발사 시설을 확인하세요",
+          "last_shuttle_reason": "적 활성 쉴드: 진입 불가 / 강습선 쉴드 소모",
+          "pd_shots_seen": 0,
+          "pd_hits_seen": 0,
+          "pd_kills_seen": 0,
+          "elapsed": 110.0,
+          "pod_launched": 0,
+          "pod_states": {},
+          "people": {
+            "IN_SHUTTLE": 8
+          },
+          "target_hull_pct": 100.0,
+          "origin_wrecked": false,
+          "target_wrecked": false,
+          "result": "RUNNING",
+          "defenders_killed": 0,
+          "defenders_hp_remaining": 1600,
+          "salvos_or_shots": 0,
+          "shuttle_hull": [
+            10560,
+            10560
+          ],
+          "shuttle_wrecked": false,
+          "surviving_fleet": [
+            12,
+            12
+          ]
+        },
+        {
+          "mode": "closepodtroop",
+          "seed": 260112,
+          "costs": [
+            200,
+            200
+          ],
+          "heroes_at_origin": 6,
+          "team_heroes": 0,
+          "team_sent_at": 2,
+          "first_entry": 2.78,
+          "capture": null,
+          "first_shield_down": 0,
+          "first_in_range": 0,
+          "min_range_m": 175.0,
+          "shuttle_changes": [],
+          "entered": 8,
+          "initial_defenders": 6,
+          "prepared": true,
+          "last_block": "대원 집결·표적·발사 시설을 확인하세요",
+          "pd_shots_seen": 78,
+          "pd_hits_seen": 34,
+          "pd_kills_seen": 0,
+          "elapsed": 110.0,
+          "pod_launched": 8,
+          "pod_states": {
+            "DESTROYED": 5,
+            "ATTACHED": 3
+          },
+          "people": {
+            "DEAD": 5,
+            "INSIDE_TARGET": 3
+          },
+          "target_hull_pct": 100.0,
+          "origin_wrecked": false,
+          "target_wrecked": false,
+          "result": "RUNNING",
+          "defenders_killed": 3,
+          "defenders_hp_remaining": 720,
+          "salvos_or_shots": 0,
+          "shuttle_hull": [
+            10560,
+            10560
+          ],
+          "shuttle_wrecked": false,
+          "surviving_fleet": [
+            12,
+            12
+          ]
+        },
+        {
+          "mode": "closepodhero",
+          "seed": 260112,
+          "costs": [
+            200,
+            200
+          ],
+          "heroes_at_origin": 6,
+          "team_heroes": 4,
+          "team_sent_at": 2,
+          "first_entry": 2.78,
+          "capture": 60,
+          "first_shield_down": 0,
+          "first_in_range": 0,
+          "min_range_m": 175.0,
+          "shuttle_changes": [],
+          "entered": 8,
+          "initial_defenders": 6,
+          "prepared": true,
+          "last_block": "대원 집결·표적·발사 시설을 확인하세요",
+          "pd_shots_seen": 78,
+          "pd_hits_seen": 34,
+          "pd_kills_seen": 0,
+          "elapsed": 60.0,
+          "pod_launched": 8,
+          "pod_states": {
+            "ATTACHED": 8
+          },
+          "people": {
+            "INSIDE_TARGET": 8
+          },
+          "target_hull_pct": 100.0,
+          "origin_wrecked": false,
+          "target_wrecked": false,
+          "result": "RUNNING",
+          "defenders_killed": 3,
+          "defenders_hp_remaining": 720,
+          "salvos_or_shots": 0,
+          "shuttle_hull": [
+            10560,
+            10560
+          ],
+          "shuttle_wrecked": false,
+          "surviving_fleet": [
+            13,
+            11
+          ]
+        },
+        {
+          "mode": "closefocusedshuttlehero",
+          "seed": 260113,
+          "costs": [
+            200,
+            200
+          ],
+          "heroes_at_origin": 6,
+          "team_heroes": 4,
+          "team_sent_at": 5,
+          "first_entry": null,
+          "capture": null,
+          "first_shield_down": 0,
+          "first_in_range": 0,
+          "min_range_m": 175.0,
+          "shuttle_changes": [
+            [
+              5,
+              "APPROACHING",
+              ""
+            ]
+          ],
+          "entered": 0,
+          "initial_defenders": 6,
+          "shuttle_start_hp_shield": [
+            10560,
+            6336
+          ],
+          "flight_min_hp_shield": [
+            4541,
+            11
+          ],
+          "prepared": true,
+          "last_block": "대원 집결·표적·발사 시설을 확인하세요",
+          "focus_requests": 106,
+          "last_shuttle_reason": "",
+          "pd_shots_seen": 0,
+          "pd_hits_seen": 0,
+          "pd_kills_seen": 0,
+          "elapsed": 110.0,
+          "pod_launched": 0,
+          "pod_states": {},
+          "people": {
+            "IN_SHUTTLE": 8
+          },
+          "target_hull_pct": 100.0,
+          "origin_wrecked": false,
+          "target_wrecked": false,
+          "result": "RUNNING",
+          "defenders_killed": 0,
+          "defenders_hp_remaining": 1562,
+          "salvos_or_shots": 16,
+          "shuttle_hull": [
+            4541,
+            10560
+          ],
+          "shuttle_wrecked": false,
+          "surviving_fleet": [
+            12,
+            12
+          ]
+        },
+        {
+          "mode": "closeshuttlehero",
+          "seed": 260113,
+          "costs": [
+            200,
+            200
+          ],
+          "heroes_at_origin": 6,
+          "team_heroes": 4,
+          "team_sent_at": 5,
+          "first_entry": 11.87,
+          "capture": 44,
+          "first_shield_down": 0,
+          "first_in_range": 0,
+          "min_range_m": 175.0,
+          "shuttle_changes": [
+            [
+              5,
+              "APPROACHING",
+              ""
+            ],
+            [
+              9,
+              "DOCKING",
+              ""
+            ],
+            [
+              12,
+              "DELIVERED",
+              "실제 선내 이송 완료 · 내부 아군 보호 활성"
+            ]
+          ],
+          "entered": 8,
+          "initial_defenders": 6,
+          "shuttle_start_hp_shield": [
+            10560,
+            6336
+          ],
+          "flight_min_hp_shield": [
+            10560,
+            6336
+          ],
+          "prepared": true,
+          "last_block": "대원 집결·표적·발사 시설을 확인하세요",
+          "last_shuttle_reason": "실제 선내 이송 완료 · 내부 아군 보호 활성",
+          "pd_shots_seen": 0,
+          "pd_hits_seen": 0,
+          "pd_kills_seen": 0,
+          "elapsed": 44.0,
+          "pod_launched": 0,
+          "pod_states": {},
+          "people": {
+            "INSIDE_TARGET": 8
+          },
+          "target_hull_pct": 100.0,
+          "origin_wrecked": false,
+          "target_wrecked": false,
+          "result": "RUNNING",
+          "defenders_killed": 3,
+          "defenders_hp_remaining": 720,
+          "salvos_or_shots": 0,
+          "shuttle_hull": [
+            10560,
+            10560
+          ],
+          "shuttle_wrecked": false,
+          "surviving_fleet": [
+            13,
+            11
+          ]
+        },
+        {
+          "mode": "closeshieldshuttlehero",
+          "seed": 260113,
+          "costs": [
+            200,
+            200
+          ],
+          "heroes_at_origin": 6,
+          "team_heroes": 4,
+          "team_sent_at": 5,
+          "first_entry": null,
+          "capture": null,
+          "first_shield_down": null,
+          "first_in_range": 0,
+          "min_range_m": 175.0,
+          "shuttle_changes": [
+            [
+              5,
+              "APPROACHING",
+              ""
+            ]
+          ],
+          "entered": 0,
+          "initial_defenders": 6,
+          "shuttle_start_hp_shield": [
+            10560,
+            6336
+          ],
+          "flight_min_hp_shield": [
+            10560,
+            2290
+          ],
+          "prepared": true,
+          "last_block": "대원 집결·표적·발사 시설을 확인하세요",
+          "last_shuttle_reason": "적 활성 쉴드: 진입 불가 / 강습선 쉴드 소모",
+          "pd_shots_seen": 0,
+          "pd_hits_seen": 0,
+          "pd_kills_seen": 0,
+          "elapsed": 110.0,
+          "pod_launched": 0,
+          "pod_states": {},
+          "people": {
+            "IN_SHUTTLE": 8
+          },
+          "target_hull_pct": 100.0,
+          "origin_wrecked": false,
+          "target_wrecked": false,
+          "result": "RUNNING",
+          "defenders_killed": 0,
+          "defenders_hp_remaining": 1600,
+          "salvos_or_shots": 0,
+          "shuttle_hull": [
+            10560,
+            10560
+          ],
+          "shuttle_wrecked": false,
+          "surviving_fleet": [
+            12,
+            12
+          ]
+        },
+        {
+          "mode": "closepodtroop",
+          "seed": 260113,
+          "costs": [
+            200,
+            200
+          ],
+          "heroes_at_origin": 6,
+          "team_heroes": 0,
+          "team_sent_at": 2,
+          "first_entry": 2.78,
+          "capture": null,
+          "first_shield_down": 0,
+          "first_in_range": 0,
+          "min_range_m": 175.0,
+          "shuttle_changes": [],
+          "entered": 8,
+          "initial_defenders": 6,
+          "prepared": true,
+          "last_block": "대원 집결·표적·발사 시설을 확인하세요",
+          "pd_shots_seen": 78,
+          "pd_hits_seen": 24,
+          "pd_kills_seen": 0,
+          "elapsed": 110.0,
+          "pod_launched": 8,
+          "pod_states": {
+            "DESTROYED": 8
+          },
+          "people": {
+            "DEAD": 8
+          },
+          "target_hull_pct": 100.0,
+          "origin_wrecked": false,
+          "target_wrecked": false,
+          "result": "RUNNING",
+          "defenders_killed": 1,
+          "defenders_hp_remaining": 1037,
+          "salvos_or_shots": 0,
+          "shuttle_hull": [
+            10560,
+            10560
+          ],
+          "shuttle_wrecked": false,
+          "surviving_fleet": [
+            12,
+            12
+          ]
+        },
+        {
+          "mode": "closepodhero",
+          "seed": 260113,
+          "costs": [
+            200,
+            200
+          ],
+          "heroes_at_origin": 6,
+          "team_heroes": 4,
+          "team_sent_at": 2,
+          "first_entry": 2.78,
+          "capture": 60,
+          "first_shield_down": 0,
+          "first_in_range": 0,
+          "min_range_m": 175.0,
+          "shuttle_changes": [],
+          "entered": 8,
+          "initial_defenders": 6,
+          "prepared": true,
+          "last_block": "대원 집결·표적·발사 시설을 확인하세요",
+          "pd_shots_seen": 78,
+          "pd_hits_seen": 24,
+          "pd_kills_seen": 0,
+          "elapsed": 60.0,
+          "pod_launched": 8,
+          "pod_states": {
+            "ATTACHED": 8
+          },
+          "people": {
+            "INSIDE_TARGET": 8
+          },
+          "target_hull_pct": 100.0,
+          "origin_wrecked": false,
+          "target_wrecked": false,
+          "result": "RUNNING",
+          "defenders_killed": 3,
+          "defenders_hp_remaining": 720,
+          "salvos_or_shots": 0,
+          "shuttle_hull": [
+            10560,
+            10560
+          ],
+          "shuttle_wrecked": false,
+          "surviving_fleet": [
+            13,
+            11
+          ]
+        }
+      ]
+    },
+    "guard": {
+      "limitSeconds": 15,
+      "logName": "Study_guard.log",
+      "runs": [
+        {
+          "mode": "closeguard120hero",
+          "seed": 260112,
+          "costs": [
+            200,
+            200
+          ],
+          "heroes_at_origin": 6,
+          "team_heroes": 4,
+          "team_sent_at": 2,
+          "first_entry": 3.38,
+          "capture": null,
+          "first_shield_down": 0,
+          "first_in_range": 0,
+          "min_range_m": 235.0,
+          "shuttle_changes": [],
+          "entered": 7,
+          "initial_defenders": 6,
+          "prepared": true,
+          "last_block": "대원 집결·표적·발사 시설을 확인하세요",
+          "pd_shots_seen": 101,
+          "pd_hits_seen": 42,
+          "pd_kills_seen": 1,
+          "elapsed": 15.0,
+          "pod_launched": 8,
+          "pod_states": {
+            "DESTROYED": 1,
+            "ATTACHED": 7
+          },
+          "people": {
+            "RESCUE_WAITING": 1,
+            "INSIDE_TARGET": 7
+          },
+          "target_hull_pct": 100.0,
+          "origin_wrecked": false,
+          "target_wrecked": false,
+          "result": "RUNNING",
+          "defenders_killed": 0,
+          "defenders_hp_remaining": 1600,
+          "salvos_or_shots": 0,
+          "shuttle_hull": [
+            10560,
+            10560
+          ],
+          "shuttle_wrecked": false,
+          "surviving_fleet": [
+            12,
+            12
+          ],
+          "pod_hp_profile": 120.0,
+          "pod_hp_at_end": [
+            0,
+            72,
+            48,
+            84,
+            60,
+            96,
+            48,
+            48
+          ]
+        },
+        {
+          "mode": "closeguard160hero",
+          "seed": 260112,
+          "costs": [
+            200,
+            200
+          ],
+          "heroes_at_origin": 6,
+          "team_heroes": 4,
+          "team_sent_at": 2,
+          "first_entry": 3.14,
+          "capture": null,
+          "first_shield_down": 0,
+          "first_in_range": 0,
+          "min_range_m": 235.0,
+          "shuttle_changes": [],
+          "entered": 8,
+          "initial_defenders": 6,
+          "prepared": true,
+          "last_block": "대원 집결·표적·발사 시설을 확인하세요",
+          "pd_shots_seen": 101,
+          "pd_hits_seen": 41,
+          "pd_kills_seen": 0,
+          "elapsed": 15.0,
+          "pod_launched": 8,
+          "pod_states": {
+            "ATTACHED": 8
+          },
+          "people": {
+            "INSIDE_TARGET": 8
+          },
+          "target_hull_pct": 100.0,
+          "origin_wrecked": false,
+          "target_wrecked": false,
+          "result": "RUNNING",
+          "defenders_killed": 0,
+          "defenders_hp_remaining": 1600,
+          "salvos_or_shots": 0,
+          "shuttle_hull": [
+            10560,
+            10560
+          ],
+          "shuttle_wrecked": false,
+          "surviving_fleet": [
+            12,
+            12
+          ],
+          "pod_hp_profile": 160.0,
+          "pod_hp_at_end": [
+            16,
+            148,
+            88,
+            136,
+            88,
+            148,
+            40,
+            124
+          ]
+        },
+        {
+          "mode": "closeguard200hero",
+          "seed": 260112,
+          "costs": [
+            200,
+            200
+          ],
+          "heroes_at_origin": 6,
+          "team_heroes": 4,
+          "team_sent_at": 2,
+          "first_entry": 3.14,
+          "capture": null,
+          "first_shield_down": 0,
+          "first_in_range": 0,
+          "min_range_m": 235.0,
+          "shuttle_changes": [],
+          "entered": 8,
+          "initial_defenders": 6,
+          "prepared": true,
+          "last_block": "대원 집결·표적·발사 시설을 확인하세요",
+          "pd_shots_seen": 101,
+          "pd_hits_seen": 41,
+          "pd_kills_seen": 0,
+          "elapsed": 15.0,
+          "pod_launched": 8,
+          "pod_states": {
+            "ATTACHED": 8
+          },
+          "people": {
+            "INSIDE_TARGET": 8
+          },
+          "target_hull_pct": 100.0,
+          "origin_wrecked": false,
+          "target_wrecked": false,
+          "result": "RUNNING",
+          "defenders_killed": 0,
+          "defenders_hp_remaining": 1600,
+          "salvos_or_shots": 0,
+          "shuttle_hull": [
+            10560,
+            10560
+          ],
+          "shuttle_wrecked": false,
+          "surviving_fleet": [
+            12,
+            12
+          ],
+          "pod_hp_profile": 200.0,
+          "pod_hp_at_end": [
+            56,
+            188,
+            128,
+            176,
+            128,
+            188,
+            80,
+            164
+          ]
+        },
+        {
+          "mode": "closeguard80hero",
+          "seed": 260112,
+          "costs": [
+            200,
+            200
+          ],
+          "heroes_at_origin": 6,
+          "team_heroes": 4,
+          "team_sent_at": 2,
+          "first_entry": 3.38,
+          "capture": null,
+          "first_shield_down": 0,
+          "first_in_range": 0,
+          "min_range_m": 235.0,
+          "shuttle_changes": [],
+          "entered": 7,
+          "initial_defenders": 6,
+          "prepared": true,
+          "last_block": "대원 집결·표적·발사 시설을 확인하세요",
+          "pd_shots_seen": 98,
+          "pd_hits_seen": 40,
+          "pd_kills_seen": 1,
+          "elapsed": 15.0,
+          "pod_launched": 8,
+          "pod_states": {
+            "DESTROYED": 1,
+            "ATTACHED": 7
+          },
+          "people": {
+            "RESCUE_WAITING": 1,
+            "INSIDE_TARGET": 7
+          },
+          "target_hull_pct": 100.0,
+          "origin_wrecked": false,
+          "target_wrecked": false,
+          "result": "RUNNING",
+          "defenders_killed": 0,
+          "defenders_hp_remaining": 1600,
+          "salvos_or_shots": 0,
+          "shuttle_hull": [
+            10560,
+            10560
+          ],
+          "shuttle_wrecked": false,
+          "surviving_fleet": [
+            12,
+            12
+          ],
+          "pod_hp_profile": 80.0,
+          "pod_hp_at_end": [
+            0,
+            20,
+            8,
+            56,
+            20,
+            44,
+            8,
+            8
+          ]
+        },
+        {
+          "mode": "closeguard120hero",
+          "seed": 260113,
+          "costs": [
+            200,
+            200
+          ],
+          "heroes_at_origin": 6,
+          "team_heroes": 4,
+          "team_sent_at": 2,
+          "first_entry": 3.38,
+          "capture": null,
+          "first_shield_down": 0,
+          "first_in_range": 0,
+          "min_range_m": 235.0,
+          "shuttle_changes": [],
+          "entered": 7,
+          "initial_defenders": 6,
+          "prepared": true,
+          "last_block": "대원 집결·표적·발사 시설을 확인하세요",
+          "pd_shots_seen": 101,
+          "pd_hits_seen": 35,
+          "pd_kills_seen": 1,
+          "elapsed": 15.0,
+          "pod_launched": 8,
+          "pod_states": {
+            "DESTROYED": 1,
+            "ATTACHED": 7
+          },
+          "people": {
+            "RESCUE_WAITING": 1,
+            "INSIDE_TARGET": 7
+          },
+          "target_hull_pct": 100.0,
+          "origin_wrecked": false,
+          "target_wrecked": false,
+          "result": "RUNNING",
+          "defenders_killed": 0,
+          "defenders_hp_remaining": 1600,
+          "salvos_or_shots": 0,
+          "shuttle_hull": [
+            10560,
+            10560
+          ],
+          "shuttle_wrecked": false,
+          "surviving_fleet": [
+            12,
+            12
+          ],
+          "pod_hp_profile": 120.0,
+          "pod_hp_at_end": [
+            0,
+            108,
+            84,
+            120,
+            60,
+            96,
+            36,
+            36
+          ]
+        },
+        {
+          "mode": "closeguard160hero",
+          "seed": 260113,
+          "costs": [
+            200,
+            200
+          ],
+          "heroes_at_origin": 6,
+          "team_heroes": 4,
+          "team_sent_at": 2,
+          "first_entry": 3.14,
+          "capture": null,
+          "first_shield_down": 0,
+          "first_in_range": 0,
+          "min_range_m": 235.0,
+          "shuttle_changes": [],
+          "entered": 8,
+          "initial_defenders": 6,
+          "prepared": true,
+          "last_block": "대원 집결·표적·발사 시설을 확인하세요",
+          "pd_shots_seen": 101,
+          "pd_hits_seen": 35,
+          "pd_kills_seen": 0,
+          "elapsed": 15.0,
+          "pod_launched": 8,
+          "pod_states": {
+            "ATTACHED": 8
+          },
+          "people": {
+            "INSIDE_TARGET": 8
+          },
+          "target_hull_pct": 100.0,
+          "origin_wrecked": false,
+          "target_wrecked": false,
+          "result": "RUNNING",
+          "defenders_killed": 0,
+          "defenders_hp_remaining": 1600,
+          "salvos_or_shots": 0,
+          "shuttle_hull": [
+            10560,
+            10560
+          ],
+          "shuttle_wrecked": false,
+          "surviving_fleet": [
+            12,
+            12
+          ],
+          "pod_hp_profile": 160.0,
+          "pod_hp_at_end": [
+            40,
+            148,
+            124,
+            160,
+            100,
+            136,
+            76,
+            76
+          ]
+        },
+        {
+          "mode": "closeguard200hero",
+          "seed": 260113,
+          "costs": [
+            200,
+            200
+          ],
+          "heroes_at_origin": 6,
+          "team_heroes": 4,
+          "team_sent_at": 2,
+          "first_entry": 3.14,
+          "capture": null,
+          "first_shield_down": 0,
+          "first_in_range": 0,
+          "min_range_m": 235.0,
+          "shuttle_changes": [],
+          "entered": 8,
+          "initial_defenders": 6,
+          "prepared": true,
+          "last_block": "대원 집결·표적·발사 시설을 확인하세요",
+          "pd_shots_seen": 101,
+          "pd_hits_seen": 35,
+          "pd_kills_seen": 0,
+          "elapsed": 15.0,
+          "pod_launched": 8,
+          "pod_states": {
+            "ATTACHED": 8
+          },
+          "people": {
+            "INSIDE_TARGET": 8
+          },
+          "target_hull_pct": 100.0,
+          "origin_wrecked": false,
+          "target_wrecked": false,
+          "result": "RUNNING",
+          "defenders_killed": 0,
+          "defenders_hp_remaining": 1600,
+          "salvos_or_shots": 0,
+          "shuttle_hull": [
+            10560,
+            10560
+          ],
+          "shuttle_wrecked": false,
+          "surviving_fleet": [
+            12,
+            12
+          ],
+          "pod_hp_profile": 200.0,
+          "pod_hp_at_end": [
+            80,
+            188,
+            164,
+            200,
+            140,
+            176,
+            116,
+            116
+          ]
+        },
+        {
+          "mode": "closeguard80hero",
+          "seed": 260113,
+          "costs": [
+            200,
+            200
+          ],
+          "heroes_at_origin": 6,
+          "team_heroes": 4,
+          "team_sent_at": 2,
+          "first_entry": 3.38,
+          "capture": null,
+          "first_shield_down": 0,
+          "first_in_range": 0,
+          "min_range_m": 235.0,
+          "shuttle_changes": [],
+          "entered": 7,
+          "initial_defenders": 6,
+          "prepared": true,
+          "last_block": "대원 집결·표적·발사 시설을 확인하세요",
+          "pd_shots_seen": 100,
+          "pd_hits_seen": 31,
+          "pd_kills_seen": 1,
+          "elapsed": 15.0,
+          "pod_launched": 8,
+          "pod_states": {
+            "DESTROYED": 1,
+            "ATTACHED": 7
+          },
+          "people": {
+            "RESCUE_WAITING": 1,
+            "INSIDE_TARGET": 7
+          },
+          "target_hull_pct": 100.0,
+          "origin_wrecked": false,
+          "target_wrecked": false,
+          "result": "RUNNING",
+          "defenders_killed": 0,
+          "defenders_hp_remaining": 1600,
+          "salvos_or_shots": 0,
+          "shuttle_hull": [
+            10560,
+            10560
+          ],
+          "shuttle_wrecked": false,
+          "surviving_fleet": [
+            12,
+            12
+          ],
+          "pod_hp_profile": 80.0,
+          "pod_hp_at_end": [
+            0,
+            56,
+            44,
+            56,
+            32,
+            56,
+            8,
+            20
+          ]
+        },
+        {
+          "mode": "closeguard120hero",
+          "seed": 260114,
+          "costs": [
+            200,
+            200
+          ],
+          "heroes_at_origin": 6,
+          "team_heroes": 4,
+          "team_sent_at": 2,
+          "first_entry": 3.38,
+          "capture": null,
+          "first_shield_down": 0,
+          "first_in_range": 0,
+          "min_range_m": 235.0,
+          "shuttle_changes": [],
+          "entered": 7,
+          "initial_defenders": 6,
+          "prepared": true,
+          "last_block": "대원 집결·표적·발사 시설을 확인하세요",
+          "pd_shots_seen": 98,
+          "pd_hits_seen": 46,
+          "pd_kills_seen": 1,
+          "elapsed": 15.0,
+          "pod_launched": 8,
+          "pod_states": {
+            "DESTROYED": 1,
+            "ATTACHED": 7
+          },
+          "people": {
+            "RESCUE_WAITING": 1,
+            "INSIDE_TARGET": 7
+          },
+          "target_hull_pct": 100.0,
+          "origin_wrecked": false,
+          "target_wrecked": false,
+          "result": "RUNNING",
+          "defenders_killed": 0,
+          "defenders_hp_remaining": 1600,
+          "salvos_or_shots": 0,
+          "shuttle_hull": [
+            10560,
+            10560
+          ],
+          "shuttle_wrecked": false,
+          "surviving_fleet": [
+            12,
+            12
+          ],
+          "pod_hp_profile": 120.0,
+          "pod_hp_at_end": [
+            0,
+            24,
+            36,
+            96,
+            60,
+            96,
+            48,
+            48
+          ]
+        },
+        {
+          "mode": "closeguard160hero",
+          "seed": 260114,
+          "costs": [
+            200,
+            200
+          ],
+          "heroes_at_origin": 6,
+          "team_heroes": 4,
+          "team_sent_at": 2,
+          "first_entry": 3.38,
+          "capture": null,
+          "first_shield_down": 0,
+          "first_in_range": 0,
+          "min_range_m": 235.0,
+          "shuttle_changes": [],
+          "entered": 7,
+          "initial_defenders": 6,
+          "prepared": true,
+          "last_block": "대원 집결·표적·발사 시설을 확인하세요",
+          "pd_shots_seen": 101,
+          "pd_hits_seen": 47,
+          "pd_kills_seen": 1,
+          "elapsed": 15.0,
+          "pod_launched": 8,
+          "pod_states": {
+            "DESTROYED": 1,
+            "ATTACHED": 7
+          },
+          "people": {
+            "RESCUE_WAITING": 1,
+            "INSIDE_TARGET": 7
+          },
+          "target_hull_pct": 100.0,
+          "origin_wrecked": false,
+          "target_wrecked": false,
+          "result": "RUNNING",
+          "defenders_killed": 0,
+          "defenders_hp_remaining": 1600,
+          "salvos_or_shots": 0,
+          "shuttle_hull": [
+            10560,
+            10560
+          ],
+          "shuttle_wrecked": false,
+          "surviving_fleet": [
+            12,
+            12
+          ],
+          "pod_hp_profile": 160.0,
+          "pod_hp_at_end": [
+            0,
+            88,
+            88,
+            136,
+            100,
+            136,
+            100,
+            76
+          ]
+        },
+        {
+          "mode": "closeguard200hero",
+          "seed": 260114,
+          "costs": [
+            200,
+            200
+          ],
+          "heroes_at_origin": 6,
+          "team_heroes": 4,
+          "team_sent_at": 2,
+          "first_entry": 3.38,
+          "capture": null,
+          "first_shield_down": 0,
+          "first_in_range": 0,
+          "min_range_m": 235.0,
+          "shuttle_changes": [],
+          "entered": 7,
+          "initial_defenders": 6,
+          "prepared": true,
+          "last_block": "대원 집결·표적·발사 시설을 확인하세요",
+          "pd_shots_seen": 101,
+          "pd_hits_seen": 48,
+          "pd_kills_seen": 1,
+          "elapsed": 15.0,
+          "pod_launched": 8,
+          "pod_states": {
+            "DESTROYED": 1,
+            "ATTACHED": 7
+          },
+          "people": {
+            "RESCUE_WAITING": 1,
+            "INSIDE_TARGET": 7
+          },
+          "target_hull_pct": 100.0,
+          "origin_wrecked": false,
+          "target_wrecked": false,
+          "result": "RUNNING",
+          "defenders_killed": 0,
+          "defenders_hp_remaining": 1600,
+          "salvos_or_shots": 0,
+          "shuttle_hull": [
+            10560,
+            10560
+          ],
+          "shuttle_wrecked": false,
+          "surviving_fleet": [
+            12,
+            12
+          ],
+          "pod_hp_profile": 200.0,
+          "pod_hp_at_end": [
+            0,
+            164,
+            140,
+            176,
+            104,
+            188,
+            128,
+            128
+          ]
+        },
+        {
+          "mode": "closeguard80hero",
+          "seed": 260114,
+          "costs": [
+            200,
+            200
+          ],
+          "heroes_at_origin": 6,
+          "team_heroes": 4,
+          "team_sent_at": 2,
+          "first_entry": 3.88,
+          "capture": null,
+          "first_shield_down": 0,
+          "first_in_range": 0,
+          "min_range_m": 235.0,
+          "shuttle_changes": [],
+          "entered": 5,
+          "initial_defenders": 6,
+          "prepared": true,
+          "last_block": "대원 집결·표적·발사 시설을 확인하세요",
+          "pd_shots_seen": 95,
+          "pd_hits_seen": 44,
+          "pd_kills_seen": 3,
+          "elapsed": 15.0,
+          "pod_launched": 8,
+          "pod_states": {
+            "DESTROYED": 3,
+            "ATTACHED": 5
+          },
+          "people": {
+            "RESCUE_WAITING": 3,
+            "INSIDE_TARGET": 5
+          },
+          "target_hull_pct": 100.0,
+          "origin_wrecked": false,
+          "target_wrecked": false,
+          "result": "RUNNING",
+          "defenders_killed": 0,
+          "defenders_hp_remaining": 1600,
+          "salvos_or_shots": 0,
+          "shuttle_hull": [
+            10560,
+            10560
+          ],
+          "shuttle_wrecked": false,
+          "surviving_fleet": [
+            12,
+            12
+          ],
+          "pod_hp_profile": 80.0,
+          "pod_hp_at_end": [
+            0,
+            0,
+            0,
+            32,
+            8,
+            56,
+            8,
+            20
+          ]
+        }
+      ]
+    },
+    "sequence": {
+      "limitSeconds": 15,
+      "logName": "Study_sequence.log",
+      "runs": [
+        {
+          "mode": "closeguard120troopfirsthero",
+          "seed": 260112,
+          "costs": [
+            200,
+            200
+          ],
+          "heroes_at_origin": 6,
+          "team_heroes": 4,
+          "team_sent_at": 2,
+          "first_entry": 3.38,
+          "capture": null,
+          "first_shield_down": 0,
+          "first_in_range": 0,
+          "min_range_m": 235.0,
+          "shuttle_changes": [],
+          "entered": 7,
+          "initial_defenders": 6,
+          "prepared": true,
+          "last_block": "대원 집결·표적·발사 시설을 확인하세요",
+          "pd_shots_seen": 101,
+          "pd_hits_seen": 42,
+          "pd_kills_seen": 1,
+          "elapsed": 15.0,
+          "pod_launched": 8,
+          "pod_states": {
+            "DESTROYED": 1,
+            "ATTACHED": 7
+          },
+          "people": {
+            "DEAD": 1,
+            "INSIDE_TARGET": 7
+          },
+          "target_hull_pct": 100.0,
+          "origin_wrecked": false,
+          "target_wrecked": false,
+          "result": "RUNNING",
+          "defenders_killed": 0,
+          "defenders_hp_remaining": 1600,
+          "salvos_or_shots": 0,
+          "shuttle_hull": [
+            10560,
+            10560
+          ],
+          "shuttle_wrecked": false,
+          "surviving_fleet": [
+            12,
+            12
+          ],
+          "pod_hp_profile": 120.0,
+          "pod_hp_at_end": [
+            0,
+            72,
+            48,
+            84,
+            60,
+            96,
+            48,
+            48
+          ]
+        },
+        {
+          "mode": "closeguard160troopfirsthero",
+          "seed": 260112,
+          "costs": [
+            200,
+            200
+          ],
+          "heroes_at_origin": 6,
+          "team_heroes": 4,
+          "team_sent_at": 2,
+          "first_entry": 3.14,
+          "capture": null,
+          "first_shield_down": 0,
+          "first_in_range": 0,
+          "min_range_m": 235.0,
+          "shuttle_changes": [],
+          "entered": 8,
+          "initial_defenders": 6,
+          "prepared": true,
+          "last_block": "대원 집결·표적·발사 시설을 확인하세요",
+          "pd_shots_seen": 101,
+          "pd_hits_seen": 41,
+          "pd_kills_seen": 0,
+          "elapsed": 15.0,
+          "pod_launched": 8,
+          "pod_states": {
+            "ATTACHED": 8
+          },
+          "people": {
+            "INSIDE_TARGET": 8
+          },
+          "target_hull_pct": 100.0,
+          "origin_wrecked": false,
+          "target_wrecked": false,
+          "result": "RUNNING",
+          "defenders_killed": 0,
+          "defenders_hp_remaining": 1600,
+          "salvos_or_shots": 0,
+          "shuttle_hull": [
+            10560,
+            10560
+          ],
+          "shuttle_wrecked": false,
+          "surviving_fleet": [
+            12,
+            12
+          ],
+          "pod_hp_profile": 160.0,
+          "pod_hp_at_end": [
+            16,
+            148,
+            88,
+            136,
+            88,
+            148,
+            40,
+            124
+          ]
+        },
+        {
+          "mode": "closeguard120troopfirsthero",
+          "seed": 260113,
+          "costs": [
+            200,
+            200
+          ],
+          "heroes_at_origin": 6,
+          "team_heroes": 4,
+          "team_sent_at": 2,
+          "first_entry": 3.38,
+          "capture": null,
+          "first_shield_down": 0,
+          "first_in_range": 0,
+          "min_range_m": 235.0,
+          "shuttle_changes": [],
+          "entered": 7,
+          "initial_defenders": 6,
+          "prepared": true,
+          "last_block": "대원 집결·표적·발사 시설을 확인하세요",
+          "pd_shots_seen": 101,
+          "pd_hits_seen": 35,
+          "pd_kills_seen": 1,
+          "elapsed": 15.0,
+          "pod_launched": 8,
+          "pod_states": {
+            "DESTROYED": 1,
+            "ATTACHED": 7
+          },
+          "people": {
+            "DEAD": 1,
+            "INSIDE_TARGET": 7
+          },
+          "target_hull_pct": 100.0,
+          "origin_wrecked": false,
+          "target_wrecked": false,
+          "result": "RUNNING",
+          "defenders_killed": 0,
+          "defenders_hp_remaining": 1600,
+          "salvos_or_shots": 0,
+          "shuttle_hull": [
+            10560,
+            10560
+          ],
+          "shuttle_wrecked": false,
+          "surviving_fleet": [
+            12,
+            12
+          ],
+          "pod_hp_profile": 120.0,
+          "pod_hp_at_end": [
+            0,
+            108,
+            84,
+            120,
+            60,
+            96,
+            36,
+            36
+          ]
+        },
+        {
+          "mode": "closeguard160troopfirsthero",
+          "seed": 260113,
+          "costs": [
+            200,
+            200
+          ],
+          "heroes_at_origin": 6,
+          "team_heroes": 4,
+          "team_sent_at": 2,
+          "first_entry": 3.14,
+          "capture": null,
+          "first_shield_down": 0,
+          "first_in_range": 0,
+          "min_range_m": 235.0,
+          "shuttle_changes": [],
+          "entered": 8,
+          "initial_defenders": 6,
+          "prepared": true,
+          "last_block": "대원 집결·표적·발사 시설을 확인하세요",
+          "pd_shots_seen": 101,
+          "pd_hits_seen": 35,
+          "pd_kills_seen": 0,
+          "elapsed": 15.0,
+          "pod_launched": 8,
+          "pod_states": {
+            "ATTACHED": 8
+          },
+          "people": {
+            "INSIDE_TARGET": 8
+          },
+          "target_hull_pct": 100.0,
+          "origin_wrecked": false,
+          "target_wrecked": false,
+          "result": "RUNNING",
+          "defenders_killed": 0,
+          "defenders_hp_remaining": 1600,
+          "salvos_or_shots": 0,
+          "shuttle_hull": [
+            10560,
+            10560
+          ],
+          "shuttle_wrecked": false,
+          "surviving_fleet": [
+            12,
+            12
+          ],
+          "pod_hp_profile": 160.0,
+          "pod_hp_at_end": [
+            40,
+            148,
+            124,
+            160,
+            100,
+            136,
+            76,
+            76
+          ]
+        },
+        {
+          "mode": "closeguard120troopfirsthero",
+          "seed": 260114,
+          "costs": [
+            200,
+            200
+          ],
+          "heroes_at_origin": 6,
+          "team_heroes": 4,
+          "team_sent_at": 2,
+          "first_entry": 3.38,
+          "capture": null,
+          "first_shield_down": 0,
+          "first_in_range": 0,
+          "min_range_m": 235.0,
+          "shuttle_changes": [],
+          "entered": 7,
+          "initial_defenders": 6,
+          "prepared": true,
+          "last_block": "대원 집결·표적·발사 시설을 확인하세요",
+          "pd_shots_seen": 98,
+          "pd_hits_seen": 46,
+          "pd_kills_seen": 1,
+          "elapsed": 15.0,
+          "pod_launched": 8,
+          "pod_states": {
+            "DESTROYED": 1,
+            "ATTACHED": 7
+          },
+          "people": {
+            "DEAD": 1,
+            "INSIDE_TARGET": 7
+          },
+          "target_hull_pct": 100.0,
+          "origin_wrecked": false,
+          "target_wrecked": false,
+          "result": "RUNNING",
+          "defenders_killed": 0,
+          "defenders_hp_remaining": 1600,
+          "salvos_or_shots": 0,
+          "shuttle_hull": [
+            10560,
+            10560
+          ],
+          "shuttle_wrecked": false,
+          "surviving_fleet": [
+            12,
+            12
+          ],
+          "pod_hp_profile": 120.0,
+          "pod_hp_at_end": [
+            0,
+            24,
+            36,
+            96,
+            60,
+            96,
+            48,
+            48
+          ]
+        },
+        {
+          "mode": "closeguard160troopfirsthero",
+          "seed": 260114,
+          "costs": [
+            200,
+            200
+          ],
+          "heroes_at_origin": 6,
+          "team_heroes": 4,
+          "team_sent_at": 2,
+          "first_entry": 3.38,
+          "capture": null,
+          "first_shield_down": 0,
+          "first_in_range": 0,
+          "min_range_m": 235.0,
+          "shuttle_changes": [],
+          "entered": 7,
+          "initial_defenders": 6,
+          "prepared": true,
+          "last_block": "대원 집결·표적·발사 시설을 확인하세요",
+          "pd_shots_seen": 101,
+          "pd_hits_seen": 47,
+          "pd_kills_seen": 1,
+          "elapsed": 15.0,
+          "pod_launched": 8,
+          "pod_states": {
+            "DESTROYED": 1,
+            "ATTACHED": 7
+          },
+          "people": {
+            "DEAD": 1,
+            "INSIDE_TARGET": 7
+          },
+          "target_hull_pct": 100.0,
+          "origin_wrecked": false,
+          "target_wrecked": false,
+          "result": "RUNNING",
+          "defenders_killed": 0,
+          "defenders_hp_remaining": 1600,
+          "salvos_or_shots": 0,
+          "shuttle_hull": [
+            10560,
+            10560
+          ],
+          "shuttle_wrecked": false,
+          "surviving_fleet": [
+            12,
+            12
+          ],
+          "pod_hp_profile": 160.0,
+          "pod_hp_at_end": [
+            0,
+            88,
+            88,
+            136,
+            100,
+            136,
+            100,
+            76
+          ]
+        }
+      ]
+    },
+    "approach": {
+      "limitSeconds": 180,
+      "logName": "Study_approach.log",
+      "runs": [
+        {
+          "mode": "closefocusedshuttlehero",
+          "seed": 260112,
+          "costs": [
+            200,
+            200
+          ],
+          "heroes_at_origin": 6,
+          "team_heroes": 4,
+          "team_sent_at": 5,
+          "first_entry": null,
+          "capture": null,
+          "first_shield_down": 0,
+          "first_in_range": 0,
+          "min_range_m": 175.0,
+          "shuttle_changes": [
+            [
+              5,
+              "APPROACHING",
+              ""
+            ]
+          ],
+          "entered": 0,
+          "initial_defenders": 6,
+          "shuttle_start_hp_shield": [
+            10560,
+            6336
+          ],
+          "flight_min_hp_shield": [
+            4541,
+            11
+          ],
+          "prepared": true,
+          "last_block": "대원 집결·표적·발사 시설을 확인하세요",
+          "approach_samples": [
+            {
+              "second": 5,
+              "target_distance_m": 175.7,
+              "engine": 1.0,
+              "hp": 10560,
+              "shield": 6336
+            },
+            {
+              "second": 10,
+              "target_distance_m": 160.5,
+              "engine": 1.0,
+              "hp": 4541,
+              "shield": 163
+            },
+            {
+              "second": 20,
+              "target_distance_m": 160.5,
+              "engine": 1.0,
+              "hp": 4541,
+              "shield": 544
+            },
+            {
+              "second": 30,
+              "target_distance_m": 160.5,
+              "engine": 1.0,
+              "hp": 4541,
+              "shield": 1565
+            },
+            {
+              "second": 40,
+              "target_distance_m": 160.5,
+              "engine": 1.0,
+              "hp": 4541,
+              "shield": 2432
+            },
+            {
+              "second": 50,
+              "target_distance_m": 160.5,
+              "engine": 1.0,
+              "hp": 4541,
+              "shield": 2812
+            },
+            {
+              "second": 60,
+              "target_distance_m": 160.5,
+              "engine": 1.0,
+              "hp": 4541,
+              "shield": 3168
+            },
+            {
+              "second": 70,
+              "target_distance_m": 160.5,
+              "engine": 1.0,
+              "hp": 4541,
+              "shield": 3168
+            },
+            {
+              "second": 80,
+              "target_distance_m": 160.5,
+              "engine": 1.0,
+              "hp": 4541,
+              "shield": 3168
+            },
+            {
+              "second": 90,
+              "target_distance_m": 160.5,
+              "engine": 1.0,
+              "hp": 4541,
+              "shield": 3168
+            },
+            {
+              "second": 100,
+              "target_distance_m": 160.5,
+              "engine": 1.0,
+              "hp": 4541,
+              "shield": 3168
+            },
+            {
+              "second": 110,
+              "target_distance_m": 160.5,
+              "engine": 1.0,
+              "hp": 4541,
+              "shield": 3168
+            },
+            {
+              "second": 120,
+              "target_distance_m": 160.5,
+              "engine": 1.0,
+              "hp": 4541,
+              "shield": 3168
+            },
+            {
+              "second": 130,
+              "target_distance_m": 160.5,
+              "engine": 1.0,
+              "hp": 4541,
+              "shield": 3168
+            },
+            {
+              "second": 140,
+              "target_distance_m": 160.5,
+              "engine": 1.0,
+              "hp": 4541,
+              "shield": 3168
+            },
+            {
+              "second": 150,
+              "target_distance_m": 160.5,
+              "engine": 1.0,
+              "hp": 4541,
+              "shield": 3168
+            },
+            {
+              "second": 160,
+              "target_distance_m": 160.5,
+              "engine": 1.0,
+              "hp": 4541,
+              "shield": 3168
+            },
+            {
+              "second": 170,
+              "target_distance_m": 160.5,
+              "engine": 1.0,
+              "hp": 4541,
+              "shield": 3168
+            }
+          ],
+          "focus_requests": 171,
+          "last_shuttle_reason": "",
+          "pd_shots_seen": 0,
+          "pd_hits_seen": 0,
+          "pd_kills_seen": 0,
+          "elapsed": 174.5,
+          "pod_launched": 0,
+          "pod_states": {},
+          "people": {
+            "IN_SHUTTLE": 8
+          },
+          "target_hull_pct": 100.0,
+          "origin_wrecked": false,
+          "target_wrecked": false,
+          "result": "STALEMATE",
+          "defenders_killed": 0,
+          "defenders_hp_remaining": 1562,
+          "salvos_or_shots": 16,
+          "shuttle_hull": [
+            4541,
+            10560
+          ],
+          "shuttle_wrecked": false,
+          "surviving_fleet": [
+            12,
+            12
+          ],
+          "pod_hp_profile": 160.0,
+          "pod_hp_at_end": []
+        }
+      ]
+    },
+    "damage": {
+      "limitSeconds": 24,
+      "logName": "Study_damage.log",
+      "runs": [
+        {
+          "mode": "closefocusedshuttlehero",
+          "seed": 260112,
+          "costs": [
+            200,
+            200
+          ],
+          "heroes_at_origin": 6,
+          "team_heroes": 4,
+          "team_sent_at": 5,
+          "first_entry": null,
+          "capture": null,
+          "first_shield_down": 0,
+          "first_in_range": 0,
+          "min_range_m": 175.0,
+          "shuttle_changes": [
+            [
+              5,
+              "APPROACHING",
+              ""
+            ]
+          ],
+          "entered": 0,
+          "initial_defenders": 6,
+          "shuttle_start_hp_shield": [
+            10560,
+            6336
+          ],
+          "flight_min_hp_shield": [
+            4541,
+            11
+          ],
+          "prepared": true,
+          "last_block": "대원 집결·표적·발사 시설을 확인하세요",
+          "approach_samples": [
+            {
+              "second": 5,
+              "target_distance_m": 175.7,
+              "engine": 1.0,
+              "bridge": 1.0,
+              "neutral": false,
+              "can_move": true,
+              "hp": 10560,
+              "shield": 6336
+            },
+            {
+              "second": 10,
+              "target_distance_m": 160.5,
+              "engine": 1.0,
+              "bridge": 0.0,
+              "neutral": false,
+              "can_move": true,
+              "hp": 4541,
+              "shield": 163
+            },
+            {
+              "second": 20,
+              "target_distance_m": 160.5,
+              "engine": 1.0,
+              "bridge": 0.0,
+              "neutral": false,
+              "can_move": true,
+              "hp": 4541,
+              "shield": 544
+            }
+          ],
+          "focus_requests": 20,
+          "last_shuttle_reason": "",
+          "pd_shots_seen": 0,
+          "pd_hits_seen": 0,
+          "pd_kills_seen": 0,
+          "elapsed": 24.0,
+          "pod_launched": 0,
+          "pod_states": {},
+          "people": {
+            "IN_SHUTTLE": 8
+          },
+          "target_hull_pct": 100.0,
+          "origin_wrecked": false,
+          "target_wrecked": false,
+          "result": "RUNNING",
+          "defenders_killed": 0,
+          "defenders_hp_remaining": 1565,
+          "salvos_or_shots": 16,
+          "shuttle_hull": [
+            4541,
+            10560
+          ],
+          "shuttle_wrecked": false,
+          "surviving_fleet": [
+            12,
+            12
+          ],
+          "pod_hp_profile": 160.0,
+          "pod_hp_at_end": []
+        },
+        {
+          "mode": "closeshuttlehero",
+          "seed": 260112,
+          "costs": [
+            200,
+            200
+          ],
+          "heroes_at_origin": 6,
+          "team_heroes": 4,
+          "team_sent_at": 5,
+          "first_entry": 11.87,
+          "capture": null,
+          "first_shield_down": 0,
+          "first_in_range": 0,
+          "min_range_m": 175.0,
+          "shuttle_changes": [
+            [
+              5,
+              "APPROACHING",
+              ""
+            ],
+            [
+              9,
+              "DOCKING",
+              ""
+            ],
+            [
+              12,
+              "DELIVERED",
+              "실제 선내 이송 완료 · 내부 아군 보호 활성"
+            ]
+          ],
+          "entered": 8,
+          "initial_defenders": 6,
+          "shuttle_start_hp_shield": [
+            10560,
+            6336
+          ],
+          "flight_min_hp_shield": [
+            10560,
+            6336
+          ],
+          "prepared": true,
+          "last_block": "대원 집결·표적·발사 시설을 확인하세요",
+          "approach_samples": [
+            {
+              "second": 5,
+              "target_distance_m": 175.7,
+              "engine": 1.0,
+              "bridge": 1.0,
+              "neutral": false,
+              "can_move": true,
+              "hp": 10560,
+              "shield": 6336
+            },
+            {
+              "second": 10,
+              "target_distance_m": 58.3,
+              "engine": 1.0,
+              "bridge": 1.0,
+              "neutral": false,
+              "can_move": true,
+              "hp": 10560,
+              "shield": 6336
+            }
+          ],
+          "last_shuttle_reason": "실제 선내 이송 완료 · 내부 아군 보호 활성",
+          "pd_shots_seen": 0,
+          "pd_hits_seen": 0,
+          "pd_kills_seen": 0,
+          "elapsed": 24.0,
+          "pod_launched": 0,
+          "pod_states": {},
+          "people": {
+            "INSIDE_TARGET": 8
+          },
+          "target_hull_pct": 100.0,
+          "origin_wrecked": false,
+          "target_wrecked": false,
+          "result": "RUNNING",
+          "defenders_killed": 3,
+          "defenders_hp_remaining": 720,
+          "salvos_or_shots": 0,
+          "shuttle_hull": [
+            10560,
+            10560
+          ],
+          "shuttle_wrecked": false,
+          "surviving_fleet": [
+            12,
+            12
+          ],
+          "pod_hp_profile": 160.0,
+          "pod_hp_at_end": []
+        }
+      ]
+    },
+    "end_hold": {
+      "limitSeconds": 900,
+      "logName": "Study_end_hold.log",
+      "runs": [
+        {
+          "mode": "stockfullhold",
+          "seed": 260112,
+          "costs": [
+            200,
+            200
+          ],
+          "heroes_at_origin": 6,
+          "team_heroes": 0,
+          "team_sent_at": null,
+          "first_entry": null,
+          "capture": null,
+          "first_shield_down": 117,
+          "first_in_range": 27,
+          "min_range_m": 140.0,
+          "shuttle_changes": [],
+          "entered": 0,
+          "initial_defenders": 6,
+          "prepared": false,
+          "pd_shots_seen": 0,
+          "pd_hits_seen": 0,
+          "pd_kills_seen": 0,
+          "elapsed": 652.0,
+          "pod_launched": 0,
+          "pod_states": {},
+          "people": {
+            "DEAD": 8
+          },
+          "target_hull_pct": 99.6,
+          "origin_wrecked": true,
+          "target_wrecked": false,
+          "result": "DEFEAT",
+          "defenders_killed": 2,
+          "defenders_hp_remaining": 919,
+          "salvos_or_shots": 12064,
+          "surviving_fleet": [
+            1,
+            9
+          ],
+          "pod_hp_profile": 160.0,
+          "pod_hp_at_end": []
+        }
+      ]
+    },
+    "end_hero": {
+      "limitSeconds": 900,
+      "logName": "Study_end_hero.log",
+      "runs": [
+        {
+          "mode": "stockfullpodhero",
+          "seed": 260112,
+          "costs": [
+            200,
+            200
+          ],
+          "heroes_at_origin": 6,
+          "team_heroes": 4,
+          "team_sent_at": 117,
+          "first_entry": 117.57,
+          "capture": 176,
+          "first_shield_down": 117,
+          "first_in_range": 27,
+          "min_range_m": 135.0,
+          "shuttle_changes": [],
+          "entered": 8,
+          "initial_defenders": 6,
+          "prepared": true,
+          "pd_shots_seen": 55,
+          "pd_hits_seen": 17,
+          "pd_kills_seen": 0,
+          "elapsed": 900.0,
+          "pod_launched": 8,
+          "pod_states": {
+            "ATTACHED": 8
+          },
+          "people": {
+            "INSIDE_TARGET": 8
+          },
+          "target_hull_pct": 92.8,
+          "origin_wrecked": false,
+          "target_wrecked": false,
+          "result": "RUNNING",
+          "defenders_killed": 3,
+          "defenders_hp_remaining": 492,
+          "salvos_or_shots": 13551,
+          "surviving_fleet": [
+            9,
+            8
+          ],
+          "pod_hp_profile": 160.0,
+          "pod_hp_at_end": [
+            112,
+            136,
+            136,
+            160,
+            148,
+            100,
+            160,
+            124
+          ]
+        }
+      ]
+    },
+    "end2_hold": {
+      "limitSeconds": 900,
+      "logName": "Study_end2_hold.log",
+      "runs": [
+        {
+          "mode": "stockfullhold",
+          "seed": 260113,
+          "costs": [
+            200,
+            200
+          ],
+          "heroes_at_origin": 6,
+          "team_heroes": 0,
+          "team_sent_at": null,
+          "first_entry": null,
+          "capture": null,
+          "first_shield_down": 109,
+          "first_in_range": 27,
+          "min_range_m": 126.4,
+          "shuttle_changes": [],
+          "entered": 0,
+          "initial_defenders": 6,
+          "prepared": false,
+          "pd_shots_seen": 0,
+          "pd_hits_seen": 0,
+          "pd_kills_seen": 0,
+          "elapsed": 546.8,
+          "pod_launched": 0,
+          "pod_states": {},
+          "people": {
+            "ABOARD": 8
+          },
+          "target_hull_pct": 96.6,
+          "origin_wrecked": false,
+          "target_wrecked": false,
+          "result": "DEFEAT",
+          "defenders_killed": 1,
+          "defenders_hp_remaining": 1066,
+          "salvos_or_shots": 8652,
+          "surviving_fleet": [
+            2,
+            9
+          ],
+          "pod_hp_profile": 160.0,
+          "pod_hp_at_end": []
+        }
+      ]
+    },
+    "end2_hero": {
+      "limitSeconds": 900,
+      "logName": "Study_end2_hero.log",
+      "runs": [
+        {
+          "mode": "stockfullpodhero",
+          "seed": 260113,
+          "costs": [
+            200,
+            200
+          ],
+          "heroes_at_origin": 6,
+          "team_heroes": 4,
+          "team_sent_at": 109,
+          "first_entry": 109.73,
+          "capture": 160,
+          "first_shield_down": 109,
+          "first_in_range": 27,
+          "min_range_m": 126.4,
+          "shuttle_changes": [],
+          "entered": 8,
+          "initial_defenders": 6,
+          "prepared": true,
+          "pd_shots_seen": 37,
+          "pd_hits_seen": 11,
+          "pd_kills_seen": 0,
+          "elapsed": 566.5,
+          "pod_launched": 8,
+          "pod_states": {
+            "ATTACHED": 8
+          },
+          "people": {
+            "INSIDE_TARGET": 8
+          },
+          "target_hull_pct": 99.7,
+          "origin_wrecked": false,
+          "target_wrecked": false,
+          "result": "VICTORY",
+          "defenders_killed": 3,
+          "defenders_hp_remaining": 720,
+          "salvos_or_shots": 12072,
+          "surviving_fleet": [
+            11,
+            0
+          ],
+          "pod_hp_profile": 160.0,
+          "pod_hp_at_end": [
+            100,
+            160,
+            136,
+            160,
+            136,
+            160,
+            148,
+            148
+          ]
+        }
+      ]
+    },
+    "recheck": {
+      "limitSeconds": 20,
+      "logName": "Study_recheck.log",
+      "runs": [
+        {
+          "mode": "closeguard160hero",
+          "seed": 260112,
+          "costs": [
+            200,
+            200
+          ],
+          "heroes_at_origin": 6,
+          "team_heroes": 4,
+          "team_sent_at": 2,
+          "first_entry": 3.14,
+          "capture": null,
+          "first_shield_down": 0,
+          "first_in_range": 0,
+          "min_range_m": 235.0,
+          "shuttle_changes": [],
+          "entered": 8,
+          "initial_defenders": 6,
+          "prepared": true,
+          "last_block": "대원 집결·표적·발사 시설을 확인하세요",
+          "pd_shots_seen": 101,
+          "pd_hits_seen": 41,
+          "pd_kills_seen": 0,
+          "elapsed": 20.0,
+          "pod_launched": 8,
+          "pod_states": {
+            "ATTACHED": 8
+          },
+          "people": {
+            "INSIDE_TARGET": 8
+          },
+          "target_hull_pct": 100.0,
+          "origin_wrecked": false,
+          "target_wrecked": false,
+          "result": "RUNNING",
+          "defenders_killed": 0,
+          "defenders_hp_remaining": 1600,
+          "salvos_or_shots": 0,
+          "shuttle_hull": [
+            10560,
+            10560
+          ],
+          "shuttle_wrecked": false,
+          "surviving_fleet": [
+            12,
+            12
+          ],
+          "pod_hp_profile": 160.0,
+          "pod_hp_at_end": [
+            16,
+            148,
+            88,
+            136,
+            88,
+            148,
+            40,
+            124
+          ]
+        },
+        {
+          "mode": "closefocusedshuttlehero",
+          "seed": 260112,
+          "costs": [
+            200,
+            200
+          ],
+          "heroes_at_origin": 6,
+          "team_heroes": 4,
+          "team_sent_at": 5,
+          "first_entry": null,
+          "capture": null,
+          "first_shield_down": 0,
+          "first_in_range": 0,
+          "min_range_m": 175.0,
+          "shuttle_changes": [
+            [
+              5,
+              "APPROACHING",
+              ""
+            ]
+          ],
+          "entered": 0,
+          "initial_defenders": 6,
+          "shuttle_start_hp_shield": [
+            10560,
+            6336
+          ],
+          "flight_min_hp_shield": [
+            4541,
+            11
+          ],
+          "prepared": true,
+          "last_block": "대원 집결·표적·발사 시설을 확인하세요",
+          "approach_samples": [
+            {
+              "second": 5,
+              "target_distance_m": 175.7,
+              "engine": 1.0,
+              "bridge": 1.0,
+              "neutral": false,
+              "can_move": true,
+              "hp": 10560,
+              "shield": 6336
+            },
+            {
+              "second": 10,
+              "target_distance_m": 160.5,
+              "engine": 1.0,
+              "bridge": 0.0,
+              "neutral": false,
+              "can_move": true,
+              "hp": 4541,
+              "shield": 163
+            },
+            {
+              "second": 20,
+              "target_distance_m": 160.5,
+              "engine": 1.0,
+              "bridge": 0.0,
+              "neutral": false,
+              "can_move": true,
+              "hp": 4541,
+              "shield": 544
+            }
+          ],
+          "focus_requests": 16,
+          "last_shuttle_reason": "",
+          "pd_shots_seen": 0,
+          "pd_hits_seen": 0,
+          "pd_kills_seen": 0,
+          "elapsed": 20.0,
+          "pod_launched": 0,
+          "pod_states": {},
+          "people": {
+            "IN_SHUTTLE": 8
+          },
+          "target_hull_pct": 100.0,
+          "origin_wrecked": false,
+          "target_wrecked": false,
+          "result": "RUNNING",
+          "defenders_killed": 0,
+          "defenders_hp_remaining": 1573,
+          "salvos_or_shots": 16,
+          "shuttle_hull": [
+            4541,
+            10560
+          ],
+          "shuttle_wrecked": false,
+          "surviving_fleet": [
+            12,
+            12
+          ],
+          "pod_hp_profile": 160.0,
+          "pod_hp_at_end": []
+        }
+      ]
+    }
+  }
+}
