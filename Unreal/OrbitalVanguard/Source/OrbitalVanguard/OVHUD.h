@@ -25,6 +25,8 @@ public:
  bool BeginBaseTrial();
  FBox GetBaseBounds() const;
  void UpdateBaseView();
+ bool BaseWindowPointer(FVector2D Pixel, bool bPress);
+ void CancelBaseWindowDrag() { BaseDragWindow=INDEX_NONE; }
  void AdvanceBaseConstruction(float GameSeconds);
 
  bool IsOverAddedUI(float X,float Y) const;
@@ -236,7 +238,22 @@ private:
  UPROPERTY() TObjectPtr<UTexture2D> BaseBayCards[2];
  int32 BasePick = 0, BaseLayer = 0, BaseTurns = 0;
  int32 BaseInspect = INDEX_NONE;
- int32 BaseTab = 0, BasePage = 0, BaseRemoval = 0;
+ struct FBaseWindow
+ {
+  FVector2D Position = FVector2D::ZeroVector;
+  FVector2D Size = FVector2D::ZeroVector;
+  bool bPinned = false;
+  bool bMinimized = false;
+ };
+ FBaseWindow BaseWindows[4];
+ TArray<int32> BaseWindowOrder;
+ int32 BaseDragWindow = INDEX_NONE;
+ bool bResizeBaseWindow = false;
+ FVector2D BaseDragOffset = FVector2D::ZeroVector;
+ int32 BaseWindowAt(FVector2D Point) const;
+ void OpenBaseWindow(int32 Index);
+ void DrawBaseWindow(int32 Index, int32 Priority);
+ int32 BasePage = 0, BaseRemoval = 0;
  bool bBaseAutoConnect = false;
  TOptional<FIntVector> BaseRouteCell;
  FString BaseNotice;

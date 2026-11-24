@@ -1,0 +1,288 @@
+{
+  "YardMedium": {
+    "YN": {
+      "face_cm": [
+        12500.0,
+        -1250.0,
+        0.0
+      ],
+      "shell_cm": [
+        12500.0,
+        586.82,
+        2000.0
+      ],
+      "shell_depth_span_cm": 121.18
+    },
+    "YP": {
+      "face_cm": [
+        12500.0,
+        8750.0,
+        0.0
+      ],
+      "shell_cm": [
+        11300.0,
+        7448.54,
+        1400.0
+      ],
+      "shell_depth_span_cm": 142.97
+    }
+  },
+  "YardLarge": {
+    "YN": {
+      "face_cm": [
+        20000.0,
+        -1250.0,
+        0.0
+      ],
+      "shell_cm": [
+        19400.0,
+        432.08,
+        2000.0
+      ],
+      "shell_depth_span_cm": 151.55
+    },
+    "YP": {
+      "face_cm": [
+        20000.0,
+        13750.0,
+        0.0
+      ],
+      "shell_cm": [
+        19400.0,
+        12296.08,
+        2000.0
+      ],
+      "shell_depth_span_cm": 157.0
+    }
+  },
+  "YardSuperheavy": {
+    "YN": {
+      "face_cm": [
+        27500.0,
+        -1250.0,
+        0.0
+      ],
+      "shell_cm": [
+        26100.0,
+        1652.61,
+        3200.0
+      ],
+      "shell_depth_span_cm": 148.31
+    },
+    "YP": {
+      "face_cm": [
+        27500.0,
+        18750.0,
+        0.0
+      ],
+      "shell_cm": [
+        26100.0,
+        15847.94,
+        3200.0
+      ],
+      "shell_depth_span_cm": 138.55
+    }
+  },
+  "DockMedium": {
+    "XN": {
+      "face_cm": [
+        -1250.0,
+        2500.0,
+        0.0
+      ],
+      "shell_cm": [
+        -727.05,
+        2500.0,
+        1200.0
+      ],
+      "shell_depth_span_cm": 179.1
+    },
+    "XP": {
+      "face_cm": [
+        11250.0,
+        2500.0,
+        0.0
+      ],
+      "shell_cm": [
+        10219.72,
+        2500.0,
+        200.0
+      ],
+      "shell_depth_span_cm": 57.46
+    }
+  },
+  "DockLarge": {
+    "XN": {
+      "face_cm": [
+        -1250.0,
+        2500.0,
+        0.0
+      ],
+      "shell_cm": [
+        -23.76,
+        2500.0,
+        800.0
+      ],
+      "shell_depth_span_cm": 29.61
+    },
+    "XP": {
+      "face_cm": [
+        16250.0,
+        2500.0,
+        0.0
+      ],
+      "shell_cm": [
+        15029.45,
+        2500.0,
+        800.0
+      ],
+      "shell_depth_span_cm": 24.73
+    }
+  },
+  "DockSuperheavy": {
+    "XN": {
+      "face_cm": [
+        -1250.0,
+        2500.0,
+        0.0
+      ],
+      "shell_cm": [
+        745.41,
+        3500.0,
+        1400.0
+      ],
+      "shell_depth_span_cm": 151.34
+    },
+    "XP": {
+      "face_cm": [
+        23750.0,
+        2500.0,
+        0.0
+      ],
+      "shell_cm": [
+        21818.4,
+        2900.0,
+        1600.0
+      ],
+      "shell_depth_span_cm": 78.33
+    }
+  },
+  "LogisticsTerminal": {
+    "XN": {
+      "face_cm": [
+        -1250.0,
+        2500.0,
+        0.0
+      ],
+      "shell_cm": [
+        -725.91,
+        1400.0,
+        600.0
+      ],
+      "shell_depth_span_cm": 243.75
+    },
+    "XP": {
+      "face_cm": [
+        6250.0,
+        2500.0,
+        0.0
+      ],
+      "shell_cm": [
+        5660.41,
+        2000.0,
+        0.0
+      ],
+      "shell_depth_span_cm": 384.3
+    }
+  },
+  "ResearchLab": {
+    "XN": {
+      "face_cm": [
+        -1250.0,
+        -0.0,
+        0.0
+      ],
+      "shell_cm": [
+        -701.34,
+        1200.0,
+        600.0
+      ],
+      "shell_depth_span_cm": 409.91
+    }
+  },
+  "HeroAcademy": {
+    "XN": {
+      "face_cm": [
+        -1250.0,
+        -0.0,
+        0.0
+      ],
+      "shell_cm": [
+        -997.39,
+        800.0,
+        800.0
+      ],
+      "shell_depth_span_cm": 255.29
+    }
+  },
+  "CrewSupport": {
+    "XN": {
+      "face_cm": [
+        -1250.0,
+        -0.0,
+        0.0
+      ],
+      "shell_cm": [
+        -1026.33,
+        200.0,
+        600.0
+      ],
+      "shell_depth_span_cm": 145.05
+    }
+  },
+  "DefensePlatform": {
+    "XN": {
+      "face_cm": [
+        -1250.0,
+        -0.0,
+        0.0
+      ],
+      "shell_cm": [
+        -697.58,
+        1600.0,
+        1600.0
+      ],
+      "shell_depth_span_cm": 452.09
+    }
+  },
+  "RadarArray": {
+    "XN": {
+      "face_cm": [
+        -1250.0,
+        -0.0,
+        0.0
+      ],
+      "shell_cm": [
+        -852.33,
+        800.0,
+        1800.0
+      ],
+      "shell_depth_span_cm": 484.65
+    }
+  },
+  "ShieldBastion": {
+    "XN": {
+      "face_cm": [
+        -1250.0,
+        -0.0,
+        0.0
+      ],
+      "shell_cm": [
+        -228.14,
+        1700.0,
+        2800.0
+      ],
+      "shell_depth_span_cm": 135.46
+    }
+  }
+}

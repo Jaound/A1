@@ -136,6 +136,18 @@ bool FOVBaseStage3::RunTest(const FString&)
     corrupt.back().Id=1;
     VERIFY_RULE(!restored.Restore(corrupt,paid.Available(),0,true,paid.NextModuleId()));
     VERIFY_RULE(restored.Funds()==money);
+    for (int turn=0;turn<4;++turn)
+    {
+        const Module yard{Kind::YardLarge,{3,2,1},turn};
+        const Module dock{Kind::DockSuperheavy,{-2,-3,0},turn};
+        // Each opening straddles two lateral cells, beyond the full-width apron.
+        VERIFY_RULE(InFlightLane(yard,yard.Origin+Rotate({-6,2,1},turn)));
+        VERIFY_RULE(InFlightLane(yard,yard.Origin+Rotate({-6,3,1},turn)));
+        VERIFY_RULE(!InFlightLane(yard,yard.Origin+Rotate({-6,1,0},turn)));
+        VERIFY_RULE(InFlightLane(dock,dock.Origin+Rotate({4,14,1},turn)));
+        VERIFY_RULE(InFlightLane(dock,dock.Origin+Rotate({5,14,1},turn)));
+        VERIFY_RULE(!InFlightLane(dock,dock.Origin+Rotate({2,14,0},turn)));
+    }
 #undef VERIFY_RULE
     return true;
 }

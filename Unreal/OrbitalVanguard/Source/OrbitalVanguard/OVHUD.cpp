@@ -90,7 +90,11 @@ FName AOVHUD::GetHitActionAtCanvasPoint(FVector2D Point) const
 }
 bool AOVHUD::IsOverPanel(float X,float Y) const
 {
- if(bBaseViewOpen) return X<210*UIScale || X>ViewportPixels.X-250*UIScale || Y<52*UIScale;
+ if(bBaseViewOpen) {
+  const FVector2D P(X/UIScale,Y/UIScale);
+  return BaseDragWindow!=INDEX_NONE || BaseWindowAt(P)!=INDEX_NONE ||
+   P.Y<64 || (P.Y>ViewportPixels.Y/UIScale-46 && FMath::Abs(P.X-ViewportPixels.X/(2*UIScale))<212);
+ }
  if(PickingShip())return false;
  if(bChoosingTransport||bChoosingTransfer)return true;
  if(bPauseMenu || bConsumeDebriefClick || IsDebriefOpen() || LastMapCloseFrame==GFrameCounter || bStarMapOpen || bTitleScreenOpen || IsOverAddedUI(X,Y)) return true;
@@ -1300,7 +1304,9 @@ void AOVHUD::ResetPlaySessionUI()
  if (bBaseViewOpen) ToggleBaseView();
  if (IsValid(BasePresentation)) BasePresentation->Destroy();
  BasePresentation=nullptr; BaseInspect=INDEX_NONE; BasePick=0; BaseLayer=BaseTurns=0; BaseNotice.Reset();
- BaseTab=BasePage=BaseRemoval=0; BaseRouteCell.Reset(); bBaseAutoConnect=false;
+ BaseWindowOrder.Reset(); BaseDragWindow=INDEX_NONE;
+ for(auto& Window:BaseWindows) Window=FBaseWindow{};
+ BasePage=BaseRemoval=0; BaseRouteCell.Reset(); bBaseAutoConnect=false;
  bChoosingTransport=bChoosingTransfer=bAircraftOnly=false;BoardingSelection.Reset();PendingBay=0;BoardingOrigin.Reset();BoardingShuttle.Reset();
  bChoosingJump=false;bPauseMenu=false;bDebriefDismissed=false;
  CloseTitleScreen();

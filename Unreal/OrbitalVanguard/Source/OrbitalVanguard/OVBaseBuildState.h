@@ -130,7 +130,27 @@ inline bool Contains(const Module& module, Cell cell)
 }
 
 inline Cell BayForward(Kind type) { return Def(type).YardBay ? Cell{-1,0,0} : Cell{0,1,0}; }
-inline Cell BayMouth(Kind type) { return Def(type).YardBay ? Cell{0,1,0} : Cell{1,Dimensions(type).Y-1,0}; }
+struct BayApproach { int AcrossCm, HeightCm; };
+inline BayApproach Approach(Kind type)
+{
+    // Centerlines cleared by bidirectional corvette sweeps of each bay mesh.
+    switch (type)
+    {
+    case Kind::YardMedium: return {3700,1900};
+    case Kind::YardLarge: return {6200,2200};
+    case Kind::YardSuperheavy: return {10400,3700};
+    case Kind::DockMedium: return {5000,900};
+    case Kind::DockLarge: return {7500,1100};
+    case Kind::DockSuperheavy: return {11300,3400};
+    default: return {CellCm,0};
+    }
+}
+inline Cell BayMouth(Kind type)
+{
+    const auto path=Approach(type);
+    const int across=(path.AcrossCm+CellCm/2)/CellCm, height=(path.HeightCm+CellCm/2)/CellCm;
+    return Def(type).YardBay ? Cell{0,across,height} : Cell{across,Dimensions(type).Y-1,height};
+}
 inline bool InFlightLane(const Module& bay, Cell world)
 {
     if (!HasBay(bay.Type)) return false;
@@ -141,7 +161,11 @@ inline bool InFlightLane(const Module& bay, Cell world)
     if (ahead <= 0 || p.Z < 0 || p.Z >= d.Z) return false;
     const int across = yard ? p.Y : p.X;
     if (ahead <= Def(bay.Type).FlightCells) return across >= 0 && across < (yard ? d.Y : d.X);
-    return across == 1 && p.Z == 0;
+    // Keep every grid cell touched by the ship clear beyond the full-width apron.
+    const auto path=Approach(bay.Type);
+    constexpr int CorvetteHalfWidthCm=251, CorvetteHalfHeightCm=180;
+    return std::abs(across*CellCm-path.AcrossCm)<=CellCm/2+CorvetteHalfWidthCm &&
+           std::abs(p.Z*CellCm-path.HeightCm)<=CellCm/2+CorvetteHalfHeightCm;
 }
 
 struct Port { Cell At; Cell Direction; };

@@ -209,7 +209,11 @@ void AOVController::BeginPlay()
  for(int32 Index=0;Index<Ships.Num();++Index) {
   const FString Path=FString::Printf(TEXT("/Game/Layouts/DA_Test%dDeck.DA_Test%dDeck"),Index+1,Index+1);
   UShipLayoutDataAsset* Layout=LoadObject<UShipLayoutDataAsset>(nullptr,*Path);
-  if(!Layout) Layout=UShipLayoutDataAsset::MakeTestLayout(this,Index+1);
+  TArray<FString> layoutErrors;
+  if(!Layout || !Layout->ValidateLayout(layoutErrors)) {
+   if(Layout) UE_LOG(LogTemp,Warning,TEXT("ControlRange test layout %s uses an older slot arrangement: %s"),*Path,*FString::Join(layoutErrors,TEXT("; ")));
+   Layout=UShipLayoutDataAsset::MakeTestLayout(this,Index+1);
+  }
   Ships[Index]->Systems->FactionId=Ships[Index]->bFriendly?0:1;
   Ships[Index]->Systems->Initialize(Layout);
  }
@@ -1357,7 +1361,16 @@ void AOVController::HandleRightMove(bool Pressed, FVector2D Cursor, bool InWorld
 
 bool AOVController::InputKey(const FInputKeyEventArgs& Params)
 {
- if (auto* HUD=Cast<AOVHUD>(GetHUD()); HUD && HUD->IsBaseViewOpen() && Params.Key!=EKeys::MiddleMouseButton) return Super::InputKey(Params);
+ if (auto* HUD=Cast<AOVHUD>(GetHUD()); HUD && HUD->IsBaseViewOpen() && Params.Key!=EKeys::MiddleMouseButton)
+ {
+  if (Params.Viewport && Params.Key==EKeys::LeftMouseButton && (Params.Event==IE_Pressed || Params.Event==IE_Released))
+  {
+   FIntPoint pixel;
+   Params.Viewport->GetMousePos(pixel);
+   if (HUD->BaseWindowPointer(FVector2D(pixel),Params.Event==IE_Pressed)) return true;
+  }
+  return Super::InputKey(Params);
+ }
  if(auto* UI=Cast<AOVHUD>(GetHUD()); UI&&UI->IsAddedUIEditing())
  {
   OrbitGesture={}; CancelRightMove();
@@ -1638,7 +1651,7 @@ void AOVController::PlayerTick(float DeltaTime)
  if(HUD && HUD->IsBaseViewOpen())
  {
   CancelRightMove(); bFleetDrag=false;
-  if (!Focused) OrbitGesture={};
+  if (!Focused) { OrbitGesture={}; HUD->CancelBaseWindowDrag(); }
   else
   {
    if (Inside) UpdateOrbit(Cursor);

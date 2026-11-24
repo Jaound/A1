@@ -1,0 +1,1408 @@
+{
+  "seams": [
+    [
+      "YardMedium",
+      "YN",
+      0,
+      0.0,
+      0.0,
+      -1.0,
+      1.0
+    ],
+    [
+      "YardMedium",
+      "YN",
+      1,
+      0.0,
+      0.0,
+      -1.0,
+      1.0
+    ],
+    [
+      "YardMedium",
+      "YN",
+      2,
+      0.0,
+      0.0,
+      -1.0,
+      1.0
+    ],
+    [
+      "YardMedium",
+      "YN",
+      3,
+      0.0,
+      0.0,
+      -1.0,
+      1.0
+    ],
+    [
+      "YardMedium",
+      "YP",
+      0,
+      0.0,
+      0.0,
+      -1.0,
+      1.0
+    ],
+    [
+      "YardMedium",
+      "YP",
+      1,
+      0.0,
+      0.0,
+      -1.0,
+      1.0
+    ],
+    [
+      "YardMedium",
+      "YP",
+      2,
+      0.0,
+      0.0,
+      -1.0,
+      1.0
+    ],
+    [
+      "YardMedium",
+      "YP",
+      3,
+      0.0,
+      0.0,
+      -1.0,
+      1.0
+    ],
+    [
+      "YardLarge",
+      "YN",
+      0,
+      0.0,
+      0.0,
+      -1.0,
+      1.0
+    ],
+    [
+      "YardLarge",
+      "YN",
+      1,
+      0.0,
+      0.0,
+      -1.0,
+      1.0
+    ],
+    [
+      "YardLarge",
+      "YN",
+      2,
+      0.0,
+      0.0,
+      -1.0,
+      1.0
+    ],
+    [
+      "YardLarge",
+      "YN",
+      3,
+      0.0,
+      0.0,
+      -1.0,
+      1.0
+    ],
+    [
+      "YardLarge",
+      "YP",
+      0,
+      0.0,
+      0.0,
+      -1.0,
+      1.0
+    ],
+    [
+      "YardLarge",
+      "YP",
+      1,
+      0.0,
+      0.0,
+      -1.0,
+      1.0
+    ],
+    [
+      "YardLarge",
+      "YP",
+      2,
+      0.0,
+      0.0,
+      -1.0,
+      1.0
+    ],
+    [
+      "YardLarge",
+      "YP",
+      3,
+      0.0,
+      0.0,
+      -1.0,
+      1.0
+    ],
+    [
+      "YardSuperheavy",
+      "YN",
+      0,
+      0.0,
+      0.0,
+      -1.0,
+      1.0
+    ],
+    [
+      "YardSuperheavy",
+      "YN",
+      1,
+      0.0,
+      0.0,
+      -1.0,
+      1.0
+    ],
+    [
+      "YardSuperheavy",
+      "YN",
+      2,
+      0.0,
+      0.0,
+      -1.0,
+      1.0
+    ],
+    [
+      "YardSuperheavy",
+      "YN",
+      3,
+      0.0,
+      0.0,
+      -1.0,
+      1.0
+    ],
+    [
+      "YardSuperheavy",
+      "YP",
+      0,
+      0.0,
+      0.0,
+      -1.0,
+      1.0
+    ],
+    [
+      "YardSuperheavy",
+      "YP",
+      1,
+      0.0,
+      0.0,
+      -1.0,
+      1.0
+    ],
+    [
+      "YardSuperheavy",
+      "YP",
+      2,
+      0.0,
+      0.0,
+      -1.0,
+      1.0
+    ],
+    [
+      "YardSuperheavy",
+      "YP",
+      3,
+      0.0,
+      0.0,
+      -1.0,
+      1.0
+    ],
+    [
+      "DockMedium",
+      "XN",
+      0,
+      0.0,
+      0.0,
+      -1.0,
+      1.0
+    ],
+    [
+      "DockMedium",
+      "XN",
+      1,
+      0.0,
+      0.0,
+      -1.0,
+      1.0
+    ],
+    [
+      "DockMedium",
+      "XN",
+      2,
+      0.0,
+      0.0,
+      -1.0,
+      1.0
+    ],
+    [
+      "DockMedium",
+      "XN",
+      3,
+      0.0,
+      0.0,
+      -1.0,
+      1.0
+    ],
+    [
+      "DockMedium",
+      "XP",
+      0,
+      0.0,
+      0.0,
+      -1.0,
+      1.0
+    ],
+    [
+      "DockMedium",
+      "XP",
+      1,
+      0.0,
+      0.0,
+      -1.0,
+      1.0
+    ],
+    [
+      "DockMedium",
+      "XP",
+      2,
+      0.0,
+      0.0,
+      -1.0,
+      1.0
+    ],
+    [
+      "DockMedium",
+      "XP",
+      3,
+      0.0,
+      0.0,
+      -1.0,
+      1.0
+    ],
+    [
+      "DockLarge",
+      "XN",
+      0,
+      0.0,
+      0.0,
+      -1.0,
+      1.0
+    ],
+    [
+      "DockLarge",
+      "XN",
+      1,
+      0.0,
+      0.0,
+      -1.0,
+      1.0
+    ],
+    [
+      "DockLarge",
+      "XN",
+      2,
+      0.0,
+      0.0,
+      -1.0,
+      1.0
+    ],
+    [
+      "DockLarge",
+      "XN",
+      3,
+      0.0,
+      0.0,
+      -1.0,
+      1.0
+    ],
+    [
+      "DockLarge",
+      "XP",
+      0,
+      0.0,
+      0.0,
+      -1.0,
+      1.0
+    ],
+    [
+      "DockLarge",
+      "XP",
+      1,
+      0.0,
+      0.0,
+      -1.0,
+      1.0
+    ],
+    [
+      "DockLarge",
+      "XP",
+      2,
+      0.0,
+      0.0,
+      -1.0,
+      1.0
+    ],
+    [
+      "DockLarge",
+      "XP",
+      3,
+      0.0,
+      0.0,
+      -1.0,
+      1.0
+    ],
+    [
+      "DockSuperheavy",
+      "XN",
+      0,
+      0.0,
+      0.0,
+      -1.0,
+      1.0
+    ],
+    [
+      "DockSuperheavy",
+      "XN",
+      1,
+      0.0,
+      0.0,
+      -1.0,
+      1.0
+    ],
+    [
+      "DockSuperheavy",
+      "XN",
+      2,
+      0.0,
+      0.0,
+      -1.0,
+      1.0
+    ],
+    [
+      "DockSuperheavy",
+      "XN",
+      3,
+      0.0,
+      0.0,
+      -1.0,
+      1.0
+    ],
+    [
+      "DockSuperheavy",
+      "XP",
+      0,
+      0.0,
+      0.0,
+      -1.0,
+      1.0
+    ],
+    [
+      "DockSuperheavy",
+      "XP",
+      1,
+      0.0,
+      0.0,
+      -1.0,
+      1.0
+    ],
+    [
+      "DockSuperheavy",
+      "XP",
+      2,
+      0.0,
+      0.0,
+      -1.0,
+      1.0
+    ],
+    [
+      "DockSuperheavy",
+      "XP",
+      3,
+      0.0,
+      0.0,
+      -1.0,
+      1.0
+    ],
+    [
+      "LogisticsTerminal",
+      "XN",
+      0,
+      0.0,
+      0.0,
+      -1.0,
+      1.0
+    ],
+    [
+      "LogisticsTerminal",
+      "XN",
+      1,
+      0.0,
+      0.0,
+      -1.0,
+      1.0
+    ],
+    [
+      "LogisticsTerminal",
+      "XN",
+      2,
+      0.0,
+      0.0,
+      -1.0,
+      1.0
+    ],
+    [
+      "LogisticsTerminal",
+      "XN",
+      3,
+      0.0,
+      0.0,
+      -1.0,
+      1.0
+    ],
+    [
+      "LogisticsTerminal",
+      "XP",
+      0,
+      0.0,
+      0.0,
+      -1.0,
+      1.0
+    ],
+    [
+      "LogisticsTerminal",
+      "XP",
+      1,
+      0.0,
+      0.0,
+      -1.0,
+      1.0
+    ],
+    [
+      "LogisticsTerminal",
+      "XP",
+      2,
+      0.0,
+      0.0,
+      -1.0,
+      1.0
+    ],
+    [
+      "LogisticsTerminal",
+      "XP",
+      3,
+      0.0,
+      0.0,
+      -1.0,
+      1.0
+    ],
+    [
+      "ResearchLab",
+      "XN",
+      0,
+      0.0,
+      0.0,
+      -1.0,
+      1.0
+    ],
+    [
+      "ResearchLab",
+      "XN",
+      1,
+      0.0,
+      0.0,
+      -1.0,
+      1.0
+    ],
+    [
+      "ResearchLab",
+      "XN",
+      2,
+      0.0,
+      0.0,
+      -1.0,
+      1.0
+    ],
+    [
+      "ResearchLab",
+      "XN",
+      3,
+      0.0,
+      0.0,
+      -1.0,
+      1.0
+    ],
+    [
+      "HeroAcademy",
+      "XN",
+      0,
+      0.0,
+      0.0,
+      -1.0,
+      1.0
+    ],
+    [
+      "HeroAcademy",
+      "XN",
+      1,
+      0.0,
+      0.0,
+      -1.0,
+      1.0
+    ],
+    [
+      "HeroAcademy",
+      "XN",
+      2,
+      0.0,
+      0.0,
+      -1.0,
+      1.0
+    ],
+    [
+      "HeroAcademy",
+      "XN",
+      3,
+      0.0,
+      0.0,
+      -1.0,
+      1.0
+    ],
+    [
+      "CrewSupport",
+      "XN",
+      0,
+      0.0,
+      0.0,
+      -1.0,
+      1.0
+    ],
+    [
+      "CrewSupport",
+      "XN",
+      1,
+      0.0,
+      0.0,
+      -1.0,
+      1.0
+    ],
+    [
+      "CrewSupport",
+      "XN",
+      2,
+      0.0,
+      0.0,
+      -1.0,
+      1.0
+    ],
+    [
+      "CrewSupport",
+      "XN",
+      3,
+      0.0,
+      0.0,
+      -1.0,
+      1.0
+    ],
+    [
+      "DefensePlatform",
+      "XN",
+      0,
+      0.0,
+      0.0,
+      -1.0,
+      1.0
+    ],
+    [
+      "DefensePlatform",
+      "XN",
+      1,
+      0.0,
+      0.0,
+      -1.0,
+      1.0
+    ],
+    [
+      "DefensePlatform",
+      "XN",
+      2,
+      0.0,
+      0.0,
+      -1.0,
+      1.0
+    ],
+    [
+      "DefensePlatform",
+      "XN",
+      3,
+      0.0,
+      0.0,
+      -1.0,
+      1.0
+    ],
+    [
+      "RadarArray",
+      "XN",
+      0,
+      0.0,
+      0.0,
+      -1.0,
+      1.0
+    ],
+    [
+      "RadarArray",
+      "XN",
+      1,
+      0.0,
+      0.0,
+      -1.0,
+      1.0
+    ],
+    [
+      "RadarArray",
+      "XN",
+      2,
+      0.0,
+      0.0,
+      -1.0,
+      1.0
+    ],
+    [
+      "RadarArray",
+      "XN",
+      3,
+      0.0,
+      0.0,
+      -1.0,
+      1.0
+    ],
+    [
+      "ShieldBastion",
+      "XN",
+      0,
+      0.0,
+      0.0,
+      -1.0,
+      1.0
+    ],
+    [
+      "ShieldBastion",
+      "XN",
+      1,
+      0.0,
+      0.0,
+      -1.0,
+      1.0
+    ],
+    [
+      "ShieldBastion",
+      "XN",
+      2,
+      0.0,
+      0.0,
+      -1.0,
+      1.0
+    ],
+    [
+      "ShieldBastion",
+      "XN",
+      3,
+      0.0,
+      0.0,
+      -1.0,
+      1.0
+    ]
+  ],
+  "bays": [
+    {
+      "model": "YardMedium",
+      "turn": 0,
+      "path": {
+        "start": [
+          -2800.0,
+          3700.0,
+          1900.0
+        ],
+        "end": [
+          6532.0,
+          3700.0,
+          1900.0
+        ],
+        "floor": [
+          6532.0,
+          3700.0,
+          1532.16
+        ]
+      },
+      "counts": {
+        "entrance": 0,
+        "exit": 0,
+        "missing_floor": 0,
+        "other_floor": 0
+      }
+    },
+    {
+      "model": "YardMedium",
+      "turn": 1,
+      "path": {
+        "start": [
+          -2800.0,
+          3700.0,
+          1900.0
+        ],
+        "end": [
+          6532.0,
+          3700.0,
+          1900.0
+        ],
+        "floor": [
+          6532.0,
+          3700.0,
+          1532.16
+        ]
+      },
+      "counts": {
+        "entrance": 0,
+        "exit": 0,
+        "missing_floor": 0,
+        "other_floor": 0
+      }
+    },
+    {
+      "model": "YardMedium",
+      "turn": 2,
+      "path": {
+        "start": [
+          -2800.0,
+          3700.0,
+          1900.0
+        ],
+        "end": [
+          6532.0,
+          3700.0,
+          1900.0
+        ],
+        "floor": [
+          6532.0,
+          3700.0,
+          1532.16
+        ]
+      },
+      "counts": {
+        "entrance": 0,
+        "exit": 0,
+        "missing_floor": 0,
+        "other_floor": 0
+      }
+    },
+    {
+      "model": "YardMedium",
+      "turn": 3,
+      "path": {
+        "start": [
+          -2800.0,
+          3700.0,
+          1900.0
+        ],
+        "end": [
+          6532.0,
+          3700.0,
+          1900.0
+        ],
+        "floor": [
+          6532.0,
+          3700.0,
+          1532.16
+        ]
+      },
+      "counts": {
+        "entrance": 0,
+        "exit": 0,
+        "missing_floor": 0,
+        "other_floor": 0
+      }
+    },
+    {
+      "model": "YardLarge",
+      "turn": 0,
+      "path": {
+        "start": [
+          -2575.0,
+          6200.0,
+          2200.0
+        ],
+        "end": [
+          10423.0,
+          6200.0,
+          2200.0
+        ],
+        "floor": [
+          10423.0,
+          6200.0,
+          1697.58
+        ]
+      },
+      "counts": {
+        "entrance": 0,
+        "exit": 0,
+        "missing_floor": 0,
+        "other_floor": 0
+      }
+    },
+    {
+      "model": "YardLarge",
+      "turn": 1,
+      "path": {
+        "start": [
+          -2575.0,
+          6200.0,
+          2200.0
+        ],
+        "end": [
+          10423.0,
+          6200.0,
+          2200.0
+        ],
+        "floor": [
+          10423.0,
+          6200.0,
+          1697.58
+        ]
+      },
+      "counts": {
+        "entrance": 0,
+        "exit": 0,
+        "missing_floor": 0,
+        "other_floor": 0
+      }
+    },
+    {
+      "model": "YardLarge",
+      "turn": 2,
+      "path": {
+        "start": [
+          -2575.0,
+          6200.0,
+          2200.0
+        ],
+        "end": [
+          10423.0,
+          6200.0,
+          2200.0
+        ],
+        "floor": [
+          10423.0,
+          6200.0,
+          1697.58
+        ]
+      },
+      "counts": {
+        "entrance": 0,
+        "exit": 0,
+        "missing_floor": 0,
+        "other_floor": 0
+      }
+    },
+    {
+      "model": "YardLarge",
+      "turn": 3,
+      "path": {
+        "start": [
+          -2575.0,
+          6200.0,
+          2200.0
+        ],
+        "end": [
+          10423.0,
+          6200.0,
+          2200.0
+        ],
+        "floor": [
+          10423.0,
+          6200.0,
+          1697.58
+        ]
+      },
+      "counts": {
+        "entrance": 0,
+        "exit": 0,
+        "missing_floor": 0,
+        "other_floor": 0
+      }
+    },
+    {
+      "model": "YardSuperheavy",
+      "turn": 0,
+      "path": {
+        "start": [
+          -2350.0,
+          10400.0,
+          3700.0
+        ],
+        "end": [
+          14314.0,
+          10400.0,
+          3700.0
+        ],
+        "floor": [
+          14314.0,
+          10400.0,
+          3430.08
+        ]
+      },
+      "counts": {
+        "entrance": 0,
+        "exit": 0,
+        "missing_floor": 0,
+        "other_floor": 0
+      }
+    },
+    {
+      "model": "YardSuperheavy",
+      "turn": 1,
+      "path": {
+        "start": [
+          -2350.0,
+          10400.0,
+          3700.0
+        ],
+        "end": [
+          14314.0,
+          10400.0,
+          3700.0
+        ],
+        "floor": [
+          14314.0,
+          10400.0,
+          3430.08
+        ]
+      },
+      "counts": {
+        "entrance": 0,
+        "exit": 0,
+        "missing_floor": 0,
+        "other_floor": 0
+      }
+    },
+    {
+      "model": "YardSuperheavy",
+      "turn": 2,
+      "path": {
+        "start": [
+          -2350.0,
+          10400.0,
+          3700.0
+        ],
+        "end": [
+          14314.0,
+          10400.0,
+          3700.0
+        ],
+        "floor": [
+          14314.0,
+          10400.0,
+          3430.08
+        ]
+      },
+      "counts": {
+        "entrance": 0,
+        "exit": 0,
+        "missing_floor": 0,
+        "other_floor": 0
+      }
+    },
+    {
+      "model": "YardSuperheavy",
+      "turn": 3,
+      "path": {
+        "start": [
+          -2350.0,
+          10400.0,
+          3700.0
+        ],
+        "end": [
+          14314.0,
+          10400.0,
+          3700.0
+        ],
+        "floor": [
+          14314.0,
+          10400.0,
+          3430.08
+        ]
+      },
+      "counts": {
+        "entrance": 0,
+        "exit": 0,
+        "missing_floor": 0,
+        "other_floor": 0
+      }
+    },
+    {
+      "model": "DockMedium",
+      "turn": 0,
+      "path": {
+        "start": [
+          5000.0,
+          9432.73,
+          900.0
+        ],
+        "end": [
+          5000.0,
+          3602.69,
+          900.0
+        ],
+        "floor": [
+          5000.0,
+          3602.69,
+          516.72
+        ]
+      },
+      "counts": {
+        "entrance": 0,
+        "exit": 0,
+        "missing_floor": 0,
+        "other_floor": 0
+      }
+    },
+    {
+      "model": "DockMedium",
+      "turn": 1,
+      "path": {
+        "start": [
+          5000.0,
+          9432.73,
+          900.0
+        ],
+        "end": [
+          5000.0,
+          3602.69,
+          900.0
+        ],
+        "floor": [
+          5000.0,
+          3602.69,
+          516.72
+        ]
+      },
+      "counts": {
+        "entrance": 0,
+        "exit": 0,
+        "missing_floor": 0,
+        "other_floor": 0
+      }
+    },
+    {
+      "model": "DockMedium",
+      "turn": 2,
+      "path": {
+        "start": [
+          5000.0,
+          9432.73,
+          900.0
+        ],
+        "end": [
+          5000.0,
+          3602.69,
+          900.0
+        ],
+        "floor": [
+          5000.0,
+          3602.69,
+          516.72
+        ]
+      },
+      "counts": {
+        "entrance": 0,
+        "exit": 0,
+        "missing_floor": 0,
+        "other_floor": 0
+      }
+    },
+    {
+      "model": "DockMedium",
+      "turn": 3,
+      "path": {
+        "start": [
+          5000.0,
+          9432.73,
+          900.0
+        ],
+        "end": [
+          5000.0,
+          3602.69,
+          900.0
+        ],
+        "floor": [
+          5000.0,
+          3602.69,
+          516.72
+        ]
+      },
+      "counts": {
+        "entrance": 0,
+        "exit": 0,
+        "missing_floor": 0,
+        "other_floor": 0
+      }
+    },
+    {
+      "model": "DockLarge",
+      "turn": 0,
+      "path": {
+        "start": [
+          7500.0,
+          11010.36,
+          1100.0
+        ],
+        "end": [
+          7500.0,
+          4839.59,
+          1100.0
+        ],
+        "floor": [
+          7500.0,
+          4839.59,
+          796.3
+        ]
+      },
+      "counts": {
+        "entrance": 0,
+        "exit": 0,
+        "missing_floor": 0,
+        "other_floor": 0
+      }
+    },
+    {
+      "model": "DockLarge",
+      "turn": 1,
+      "path": {
+        "start": [
+          7500.0,
+          11010.36,
+          1100.0
+        ],
+        "end": [
+          7500.0,
+          4839.59,
+          1100.0
+        ],
+        "floor": [
+          7500.0,
+          4839.59,
+          796.3
+        ]
+      },
+      "counts": {
+        "entrance": 0,
+        "exit": 0,
+        "missing_floor": 0,
+        "other_floor": 0
+      }
+    },
+    {
+      "model": "DockLarge",
+      "turn": 2,
+      "path": {
+        "start": [
+          7500.0,
+          11010.36,
+          1100.0
+        ],
+        "end": [
+          7500.0,
+          4839.59,
+          1100.0
+        ],
+        "floor": [
+          7500.0,
+          4839.59,
+          796.3
+        ]
+      },
+      "counts": {
+        "entrance": 0,
+        "exit": 0,
+        "missing_floor": 0,
+        "other_floor": 0
+      }
+    },
+    {
+      "model": "DockLarge",
+      "turn": 3,
+      "path": {
+        "start": [
+          7500.0,
+          11010.36,
+          1100.0
+        ],
+        "end": [
+          7500.0,
+          4839.59,
+          1100.0
+        ],
+        "floor": [
+          7500.0,
+          4839.59,
+          796.3
+        ]
+      },
+      "counts": {
+        "entrance": 0,
+        "exit": 0,
+        "missing_floor": 0,
+        "other_floor": 0
+      }
+    },
+    {
+      "model": "DockSuperheavy",
+      "turn": 0,
+      "path": {
+        "start": [
+          11300.0,
+          15373.86,
+          3400.0
+        ],
+        "end": [
+          11300.0,
+          7265.05,
+          3400.0
+        ],
+        "floor": [
+          11300.0,
+          7265.05,
+          3028.35
+        ]
+      },
+      "counts": {
+        "entrance": 0,
+        "exit": 0,
+        "missing_floor": 0,
+        "other_floor": 0
+      }
+    },
+    {
+      "model": "DockSuperheavy",
+      "turn": 1,
+      "path": {
+        "start": [
+          11300.0,
+          15373.86,
+          3400.0
+        ],
+        "end": [
+          11300.0,
+          7265.05,
+          3400.0
+        ],
+        "floor": [
+          11300.0,
+          7265.05,
+          3028.35
+        ]
+      },
+      "counts": {
+        "entrance": 0,
+        "exit": 0,
+        "missing_floor": 0,
+        "other_floor": 0
+      }
+    },
+    {
+      "model": "DockSuperheavy",
+      "turn": 2,
+      "path": {
+        "start": [
+          11300.0,
+          15373.86,
+          3400.0
+        ],
+        "end": [
+          11300.0,
+          7265.05,
+          3400.0
+        ],
+        "floor": [
+          11300.0,
+          7265.05,
+          3028.35
+        ]
+      },
+      "counts": {
+        "entrance": 0,
+        "exit": 0,
+        "missing_floor": 0,
+        "other_floor": 0
+      }
+    },
+    {
+      "model": "DockSuperheavy",
+      "turn": 3,
+      "path": {
+        "start": [
+          11300.0,
+          15373.86,
+          3400.0
+        ],
+        "end": [
+          11300.0,
+          7265.05,
+          3400.0
+        ],
+        "floor": [
+          11300.0,
+          7265.05,
+          3028.35
+        ]
+      },
+      "counts": {
+        "entrance": 0,
+        "exit": 0,
+        "missing_floor": 0,
+        "other_floor": 0
+      }
+    }
+  ],
+  "ui": [
+    "기본 측면 창 없음",
+    "네 창 동시 열기",
+    "최소화·닫기 후 다른 창 유지"
+  ],
+  "failures": [],
+  "corvette_half_cm": [
+    810.9565930723351,
+    250.88707552086228,
+    179.99999999999994
+  ],
+  "rim_error_cm": {
+    "YardMedium.YN": 0.0012,
+    "YardMedium.YP": 0.0014,
+    "YardLarge.YN": 0.0018,
+    "YardLarge.YP": 0.0031,
+    "YardSuperheavy.YN": 0.0025,
+    "YardSuperheavy.YP": 0.0031,
+    "DockMedium.XN": 0.0003,
+    "DockMedium.XP": 0.0011,
+    "DockLarge.XN": 0.0003,
+    "DockLarge.XP": 0.0016,
+    "DockSuperheavy.XN": 0.0003,
+    "DockSuperheavy.XP": 0.0022,
+    "LogisticsTerminal.XN": 0.0003,
+    "LogisticsTerminal.XP": 0.0006,
+    "ResearchLab.XN": 0.0001,
+    "HeroAcademy.XN": 0.0001,
+    "CrewSupport.XN": 0.0001,
+    "DefensePlatform.XN": 0.0001,
+    "RadarArray.XN": 0.0001,
+    "ShieldBastion.XN": 0.0001
+  },
+  "passed": true
+}

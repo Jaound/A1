@@ -480,6 +480,10 @@ void AOVHUD::DrawPlayHUD()
   ActionCenters.Add(TEXT("CommandTargetLabel"),FVector2D(425,Y+46));
  }
  if(!Ship->bFriendly) {DrawText(TEXT("적 함선 · 관측된 외장 정보"),PlayInk,24,Y+72,OVTypography::Font(EOVTextRole::Body));return;}
+ if(!Ship->Systems || !Ship->Systems->Layout) {
+  DrawText(TEXT("함선 설비 정보를 사용할 수 없습니다."),PlayInk,24,Y+72,OVTypography::Font(EOVTextRole::Body));
+  return;
+ }
  auto* Logistics=GetWorld()->GetSubsystem<UOVLogisticsSubsystem>();
  const float ServiceY=Y+PanelHeight-55;
  if(PC->Combat && PC->Combat->bEnabled && Ship->Systems->Layout) {

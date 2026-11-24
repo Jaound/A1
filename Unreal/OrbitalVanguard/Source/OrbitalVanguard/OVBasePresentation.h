@@ -53,6 +53,8 @@ private:
     const AOVShip* BlockingShip(const OVBase::Module& Module, const FTransform* Snapped) const;
     UPROPERTY() TArray<TObjectPtr<UStaticMeshComponent>> Meshes;
     UPROPERTY() TArray<TObjectPtr<UStaticMesh>> Assets;
+    UPROPERTY() TArray<TObjectPtr<UStaticMeshComponent>> PortSleeves;
+    UPROPERTY() TArray<TObjectPtr<UStaticMesh>> SleeveAssets;
     TArray<bool> OriginalModels;
     mutable TOptional<OVBase::Module> RouteTarget;
     mutable std::vector<OVBase::Module> Route;

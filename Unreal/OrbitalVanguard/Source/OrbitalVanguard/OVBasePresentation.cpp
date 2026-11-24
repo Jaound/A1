@@ -91,6 +91,7 @@ AOVBasePresentation::AOVBasePresentation()
 void AOVBasePresentation::InitializeModules()
 {
     Assets.SetNum(UE_ARRAY_COUNT(MeshesByKind));
+    SleeveAssets.SetNum(Assets.Num());
     OriginalModels.Reset();
     for (const TCHAR* path : MeshesByKind)
         OriginalModels.Add(FPackageName::DoesPackageExist(FPackageName::ObjectPathToPackageName(FString(path))));
@@ -110,7 +111,9 @@ FTransform AOVBasePresentation::PlacementTransform(const OVBase::Module& candida
 {
     TOptional<FVector> anchor;
     const auto type=static_cast<int32>(candidate.Type);
-    const auto* asset=Assets.IsValidIndex(type)?Assets[type].Get():nullptr;
+    const UStaticMesh* asset=Assets.IsValidIndex(type)?Assets[type].Get():nullptr;
+    if (!asset && HasOriginalModel(candidate.Type))
+        asset=LoadObject<UStaticMesh>(nullptr,MeshesByKind[type],nullptr,LOAD_NoWarn);
     const FRotator rotation(0,90*candidate.Turns,0);
     // 끊어진 가지는 격자에 남고, 재연결 시 코어 쪽 소켓을 기준으로 다시 맞춘다.
     const auto anchored=state.Network(true);
@@ -126,7 +129,7 @@ FTransform AOVBasePresentation::PlacementTransform(const OVBase::Module& candida
                 if (!(a.At+a.Direction==b.At) || !(a.Direction+b.Direction==OVBase::Cell{})) continue;
                 const auto* socket=asset->FindSocket(SocketName(a.Direction,candidate.Turns));
                 const auto* otherSocket=Assets[otherType]->FindSocket(SocketName(b.Direction,other.Turns));
-                if (!socket || !otherSocket) continue;
+                if (!socket || !otherSocket) { seam=true; continue; }
                 const FVector offset=rotation.RotateVector(socket->RelativeLocation * ModuleScale(candidate.Type));
                 const FVector origin=transforms[i].TransformPosition(otherSocket->RelativeLocation)-offset;
                 if (anchor.IsSet() && FVector::DistSquared(anchor.GetValue(),origin)>25.) seam=true;
@@ -344,6 +347,8 @@ void AOVBasePresentation::RefreshMeshes()
 {
     RouteTarget.Reset();
     Route.clear();
+    for (const auto& sleeve:PortSleeves) if (sleeve) sleeve->DestroyComponent();
+    PortSleeves.Reset();
     for (const auto& Mesh : Meshes) Mesh->DestroyComponent();
     Meshes.Reset();
     const auto& modules=Build.Modules();
@@ -379,7 +384,26 @@ void AOVBasePresentation::RefreshMeshes()
             Mesh->SetWorldScale3D(ModuleScale(Item.Type));
         }
         Mesh->SetStaticMesh(Asset);
-        if ((Item.Type==OVBase::Kind::Yard || Item.Type==OVBase::Kind::Dock) && Assets[index])
+        UStaticMeshComponent* sleeve=nullptr;
+        if (index>static_cast<int32>(OVBase::Kind::Dock) && Assets[index])
+        {
+            if (!SleeveAssets[index])
+            {
+                FString path(MeshesByKind[index]);
+                path.ReplaceInline(TEXT("SM_OV_Base_"),TEXT("SM_OV_Ports_"));
+                SleeveAssets[index]=LoadObject<UStaticMesh>(nullptr,*path);
+            }
+            if (SleeveAssets[index])
+            {
+                sleeve=NewObject<UStaticMeshComponent>(this);
+                sleeve->SetupAttachment(Mesh);
+                sleeve->SetStaticMesh(SleeveAssets[index]);
+                sleeve->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+                sleeve->RegisterComponent();
+            }
+        }
+        PortSleeves.Add(sleeve);
+        if (OVBase::HasBay(Item.Type) && Assets[index])
         {
             Mesh->SetCollisionProfileName(TEXT("BlockAll"));
             Mesh->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
@@ -421,11 +445,14 @@ void AOVBasePresentation::UpdateConstructionVisuals()
         if (OVBase::Completed(item))
         {
             mesh->SetCustomPrimitiveDataFloat(1,0.f);
+            if (PortSleeves[i]) PortSleeves[i]->SetVisibility(true);
             continue;
         }
         const double progress=1.-item.Remaining/OVBase::Duration(item.Type);
         const auto box=mesh->Bounds.GetBox();
-        mesh->SetCustomPrimitiveDataFloat(0,FMath::Lerp(box.Min.Z,box.Max.Z,.015+.985*progress));
+        const double top=FMath::Lerp(box.Min.Z,box.Max.Z,.015+.985*progress);
+        mesh->SetCustomPrimitiveDataFloat(0,top);
+        if (PortSleeves[i]) PortSleeves[i]->SetVisibility(top>=PortSleeves[i]->Bounds.Origin.Z);
         mesh->SetCustomPrimitiveDataFloat(1,1.f);
     }
 }
