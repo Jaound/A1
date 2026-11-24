@@ -2,6 +2,10 @@
 
 기획 기준 `91a15dbdf5a4d75b4cf3e7be71bd6dafd1c92f8b`, 시작 코드 `85ff567`. 중앙 코어와 19종 카탈로그의 치수·비용·시간·한도를 [기지 통합 명세](https://github.com/Jaound/A1/blob/91a15dbdf5a4d75b4cf3e7be71bd6dafd1c92f8b/docs/01_design/strategy/BASE_MASTER_GDD.md)에 맞춘다. 건설 시험장은 코어 I와 아군 초계함 한 척으로 시작한다.
 
+## 패키지에서 시작하기
+
+SSD의 OrbitalVanguardTests/BaseStage3SSD/Windows/OrbitalVanguard.exe를 실행하고 **작전 개시 · 임무 선택 → 기지 건설 시험장 → 작전 출격**을 누른다. 시작은 일시정지이며 **Space**로 시간을 진행한다.
+
 ## 조작
 
 - 아래 **운영 · 건설 · 연구 · 저장**에서 모드를 바꾼다. 건설 목록은 이전·다음 버튼으로 19종을 확인한다. 중앙 코어는 운영의 **중앙 코어 보기**나 건설 첫 페이지에서 선택한다.
