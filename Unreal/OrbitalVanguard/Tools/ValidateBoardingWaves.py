@@ -103,6 +103,10 @@ def run():
         pods=list(prop(transit,"pods"))
         stats={"진입 인원":len(ids),"진입 완료 시 생존":len(interior.get_units_on_ship(target,0)),"포드":len(pods),"격납고 대기":len(docked()),"강습선 상태":[str(prop(sh,"state")) for sh in prop(transit,"shuttles")]}
         feed=hud.get_battle_notice_feed()
+        # 마지막 포드의 접촉과 선내 부대 동기화는 서로 다른 고정 주기로 처리된다.
+        for _ in range(20):
+            if sum(prop(n,"count") for n in prop(feed,"notices") if prop(n,"kind")==u.OVBattleNoticeKind.BOARDING_ENTRY)>=24:break
+            pc.step_simulation(.05)
         notices=list(prop(feed,"notices"))
         arrivals=[n for n in notices if prop(n,"kind")==u.OVBattleNoticeKind.BOARDING_ENTRY]
         check(label+" 팀별 진입 알림",sorted((str(prop(n,"subject")),prop(n,"count")) for n in arrivals)==[("A팀",12),("B팀",12)],[(str(prop(n,"subject")),prop(n,"count")) for n in arrivals])
