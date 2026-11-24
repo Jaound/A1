@@ -43,7 +43,8 @@ bool PointerCell(AOVController& pc,const AOVBasePresentation& base,int32 layer,O
     const double t = (origin.Z + layer*OVBase::CellCm - rayOrigin.Z) / rayDirection.Z;
     if (t < 0) return false;
     const auto point = (rayOrigin + rayDirection*t - origin) / OVBase::CellCm;
-    result = {FMath::RoundToInt(point.X),FMath::RoundToInt(point.Y),layer};
+    if (point.ContainsNaN() || FMath::Abs(point.X) > 30 || FMath::Abs(point.Y) > 30) return false;
+    result = {FMath::RoundToInt32(point.X),FMath::RoundToInt32(point.Y),layer};
     return true;
 }
 }
