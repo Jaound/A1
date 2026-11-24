@@ -893,6 +893,7 @@ FString UOVPlayScenarioSubsystem::GetStatus() const
             bRaidLaunched ? TEXT("습격대 출현 · 수송로 엄호") : TEXT("적 접근 중 · 호위함을 배치하세요"));
     if (InitialCosts.Num() != FactionCount || InitialCosts[0] == 0) return FString();
     const TCHAR* HazardTag = ActiveBlackHoleActor.IsValid() ? TEXT(" · 블랙홀(E1)") : TEXT("");
+    if(InitialCosts[0]!=InitialCosts[1])return FString::Printf(TEXT("아군 %d · 적 %d코스트 · 아군 함재기 %d기 · %d초%s"),InitialCosts[0],InitialCosts[1],InitialAircraft[0],FMath::FloorToInt(ElapsedSeconds),HazardTag);
     return FString::Printf(TEXT("양측 %d코스트 · 아군 함재기 %d기 · %d초%s"),
         InitialCosts[0], InitialAircraft[0], FMath::FloorToInt(ElapsedSeconds), HazardTag);
 }
