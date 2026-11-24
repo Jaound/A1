@@ -1,0 +1,229 @@
+{
+  "checks": [
+    {
+      "name": "1장 타이틀에서 진입",
+      "passed": true
+    },
+    {
+      "name": "1장 독립 편성",
+      "passed": true
+    },
+    {
+      "name": "1장 재시작",
+      "passed": true
+    },
+    {
+      "name": "1장 목록 복귀",
+      "passed": true
+    },
+    {
+      "name": "2장 타이틀에서 진입",
+      "passed": true
+    },
+    {
+      "name": "2장 독립 편성",
+      "passed": true
+    },
+    {
+      "name": "2장 재시작",
+      "passed": true
+    },
+    {
+      "name": "2장 목록 복귀",
+      "passed": true
+    },
+    {
+      "name": "3장 타이틀에서 진입",
+      "passed": true
+    },
+    {
+      "name": "3장 독립 편성",
+      "passed": true
+    },
+    {
+      "name": "3장 재시작",
+      "passed": true
+    },
+    {
+      "name": "3장 목록 복귀",
+      "passed": true
+    },
+    {
+      "name": "4장 타이틀에서 진입",
+      "passed": true
+    },
+    {
+      "name": "4장 독립 편성",
+      "passed": true
+    },
+    {
+      "name": "4장 재시작",
+      "passed": true
+    },
+    {
+      "name": "4장 목록 복귀",
+      "passed": true
+    },
+    {
+      "name": "5장 타이틀에서 진입",
+      "passed": true
+    },
+    {
+      "name": "5장 독립 편성",
+      "passed": true
+    },
+    {
+      "name": "5장 재시작",
+      "passed": true
+    },
+    {
+      "name": "5장 목록 복귀",
+      "passed": true
+    },
+    {
+      "name": "6장 타이틀에서 진입",
+      "passed": true
+    },
+    {
+      "name": "6장 독립 편성",
+      "passed": true
+    },
+    {
+      "name": "6장 재시작",
+      "passed": true
+    },
+    {
+      "name": "6장 목록 복귀",
+      "passed": true
+    },
+    {
+      "name": "7장 타이틀에서 진입",
+      "passed": true
+    },
+    {
+      "name": "7장 독립 편성",
+      "passed": true
+    },
+    {
+      "name": "7장 재시작",
+      "passed": true
+    },
+    {
+      "name": "7장 목록 복귀",
+      "passed": true
+    },
+    {
+      "name": "8장 타이틀에서 진입",
+      "passed": true
+    },
+    {
+      "name": "8장 독립 편성",
+      "passed": true
+    },
+    {
+      "name": "8장 재시작",
+      "passed": true
+    },
+    {
+      "name": "8장 목록 복귀",
+      "passed": true
+    },
+    {
+      "name": "9장 타이틀에서 진입",
+      "passed": true
+    },
+    {
+      "name": "9장 독립 편성",
+      "passed": true
+    },
+    {
+      "name": "9장 재시작",
+      "passed": true
+    },
+    {
+      "name": "9장 목록 복귀",
+      "passed": true
+    },
+    {
+      "name": "1장 타이틀에서 진입",
+      "passed": true
+    },
+    {
+      "name": "조작 전 다음 차단",
+      "passed": true
+    },
+    {
+      "name": "카메라 이동",
+      "passed": true
+    },
+    {
+      "name": "카메라 회전",
+      "passed": true
+    },
+    {
+      "name": "카메라 줌",
+      "passed": true
+    },
+    {
+      "name": "단일 선택",
+      "passed": true
+    },
+    {
+      "name": "다중 선택",
+      "passed": true
+    },
+    {
+      "name": "이동 명령만으로 완료되지 않음",
+      "passed": true
+    },
+    {
+      "name": "실제 함선 목표 도착 0",
+      "passed": true
+    },
+    {
+      "name": "이동 명령만으로 완료되지 않음",
+      "passed": true
+    },
+    {
+      "name": "실제 함선 목표 도착 4000",
+      "passed": true
+    },
+    {
+      "name": "전술 정지",
+      "passed": true
+    },
+    {
+      "name": "2배속과 장 완료",
+      "passed": true
+    },
+    {
+      "name": "7장 타이틀에서 진입",
+      "passed": true
+    },
+    {
+      "name": "실제 격납고 열림",
+      "passed": true
+    },
+    {
+      "name": "실습 항모 재고",
+      "passed": true
+    },
+    {
+      "name": "실제 출격",
+      "passed": true
+    },
+    {
+      "name": "귀환 명령",
+      "passed": true
+    },
+    {
+      "name": "같은 ID 기체 실제 재격납",
+      "passed": true
+    },
+    {
+      "name": "재고 보존",
+      "passed": true
+    }
+  ],
+  "passed": true
+}

@@ -53,6 +53,33 @@ class ORBITALVANGUARD_API UOVPlayScenarioSubsystem : public UWorldSubsystem
     GENERATED_BODY()
 public:
 
+    UFUNCTION(BlueprintCallable) bool StartPractice(AOVController* PC, int32 Chapter);
+    UFUNCTION(BlueprintCallable) bool AdvancePractice();
+    UFUNCTION(BlueprintCallable) void ObservePractice();
+    UPROPERTY(BlueprintReadOnly) int32 PracticeChapter = INDEX_NONE;
+    UPROPERTY(BlueprintReadOnly) int32 PracticeStep = 0;
+    UPROPERTY(BlueprintReadOnly) bool bPracticeReady = false;
+    bool bPracticeHints = true;
+    bool bPracticeDetail = false;
+    static FString PracticeTitle(int32 Chapter);
+    static FString PracticeSummary(int32 Chapter);
+    static int32 CompletedPracticeMask();
+    FString PracticeObjective() const;
+    FString PracticeInput() const;
+    int32 PracticeStepCount() const;
+    bool PracticeEquipment(bool Invalid);
+    void ConfirmPracticeNotice(FName Subject);
+    FVector PracticeGoal = FVector::ZeroVector;
+    bool HasPracticeMarker() const;
+private:
+    void BeginPracticeStep();
+    FVector PracticeOrigin, PracticeCamera;
+    float PracticeAngle=0, PracticePitch=0, PracticeZoom=0;
+    int32 PracticeShots=0, PracticeParticipant=INDEX_NONE;
+    bool bPracticeOrder=false;
+    TSet<int32> PracticeWing;
+    TWeakObjectPtr<AOVShip> PracticeShip, PracticeEnemy;
+public:
     static constexpr int32 ArenaHeroBerths=10;
     float MissionPanelHeight() const;
     int32 CurrentHeroBerths(const AOVShip* Ship) const;

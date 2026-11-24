@@ -60,6 +60,8 @@ const FOVPlaySceneDefinition Scenes[] = {
 
 const FOVPlaySceneDefinition* FindDefinition(FName Id)
 {
+    static const FOVPlaySceneDefinition Lesson{TEXT("Practice"),TEXT("시스템 실습"),TEXT("안내에 따라 직접 조작하세요."),EOVPlaySceneKind::Sandbox,0,{}};
+    if(Id==Lesson.Id)return &Lesson;
     return MakeArrayView(Scenes).FindByPredicate([Id](const FOVPlaySceneDefinition& Entry) { return Entry.Id == Id; });
 }
 
@@ -191,6 +193,7 @@ const FOVPlaySceneDefinition* UOVPlayScenarioSubsystem::GetActiveDefinition() co
 
 void UOVPlayScenarioSubsystem::DestroyActiveHazardActors()
 {
+    if(ActiveId==TEXT("Practice"))return;
     if (AOVBlackHoleHazardActor* BlackHole = ActiveBlackHoleActor.Get())
     {
         BlackHole->Destroy();
@@ -244,6 +247,7 @@ void UOVPlayScenarioSubsystem::Deinitialize()
 }
 void UOVPlayScenarioSubsystem::Clear()
 {
+    PracticeChapter=INDEX_NONE; PracticeStep=0; bPracticeReady=false; PracticeWing.Reset(); PracticeShip.Reset(); PracticeEnemy.Reset();
     if(Owner.IsValid())Owner->ResetShipOperations();
     for(auto& Wave:ArenaWaves){
         if(Wave.Shuttle.IsValid() && (!Owner.IsValid() || !Owner->Ships.Contains(Wave.Shuttle.Get())))Wave.Shuttle->Destroy();

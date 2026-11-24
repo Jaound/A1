@@ -21,7 +21,7 @@ enum class EOVTitleMenuPanel : uint8
     Title,
     ScenarioSelect,
     Settings,
-    Tutorial
+    Tutorial, Practice
 };
 
 UCLASS()
@@ -94,6 +94,9 @@ public:
     UFUNCTION(BlueprintPure, Category = "UI|TitleScreen")
     FName GetSelectedScenarioId() const { return SelectedScenarioId; }
 
+    UFUNCTION(BlueprintCallable) void OpenPractice();
+    UFUNCTION(BlueprintCallable) void SelectPractice(int32 Index);
+    UFUNCTION(BlueprintCallable) void LaunchPractice();
     void BackFromCurrentPanel();
     UFUNCTION(BlueprintPure, Category = "UI|TitleScreen")
     EOVTitleMenuPanel GetCurrentPanel() const { return CurrentPanel; }
@@ -102,6 +105,11 @@ public:
     UOVTitleBackdropStage* GetBackdropStage() const { return BackdropStage; }
 
 private:
+    UPROPERTY() TObjectPtr<UBorder> PracticePanel;
+    UPROPERTY() TObjectPtr<UTextBlock> PracticeBrief;
+    UPROPERTY() TArray<TObjectPtr<UOVScenarioPickButton>> PracticeRows;
+    int32 ChosenPractice=0;
+    void BuildPractice(class UOverlay* Root);
     void BuildProgrammaticTree();
     void BuildSettingsModal(class UOverlay* RootOverlay);
     void BuildTutorialModal(class UOverlay* RootOverlay);

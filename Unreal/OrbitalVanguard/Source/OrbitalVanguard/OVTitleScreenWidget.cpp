@@ -200,7 +200,9 @@ void UOVScenarioPickButton::HandleClicked()
 {
     if (OwnerWidget)
     {
-        OwnerWidget->SelectScenario(ScenarioId);
+        if(OwnerWidget->GetCurrentPanel()==EOVTitleMenuPanel::Practice)
+            OwnerWidget->SelectPractice(ScenarioId.GetNumber()-1);
+        else OwnerWidget->SelectScenario(ScenarioId);
     }
 }
 
@@ -331,6 +333,8 @@ void UOVTitleScreenWidget::BuildProgrammaticTree()
     UButton* SandboxBtn = OVStyle::MakeMenuButton(WidgetTree, LeftMenuVBox, TEXT("자유 전투 시험장"), TEXT("자유 배치"), false);
     SandboxBtn->OnClicked.AddDynamic(this, &UOVTitleScreenWidget::HandleOpenSandbox);
 
+    auto* PracticeBtn=OVStyle::MakeMenuButton(WidgetTree,LeftMenuVBox,TEXT("시스템 실습"),TEXT("직접 연습"),false);
+    PracticeBtn->OnClicked.AddDynamic(this,&UOVTitleScreenWidget::OpenPractice);
     UButton* TutorialBtn = OVStyle::MakeMenuButton(WidgetTree, LeftMenuVBox, TEXT("게임 가이드 / 튜토리얼"), TEXT("5단계 요약"), false);
     TutorialBtn->OnClicked.AddDynamic(this, &UOVTitleScreenWidget::HandleOpenTutorial);
 
@@ -595,6 +599,7 @@ void UOVTitleScreenWidget::BuildProgrammaticTree()
 
     // LAYER 5: 5-STEP BEGINNER TUTORIAL / GAME GUIDE MODAL
     BuildTutorialModal(RootOverlay);
+    BuildPractice(RootOverlay);
 
     RefreshScenarioBriefing();
     RefreshModeLabel();
@@ -985,6 +990,7 @@ void UOVTitleScreenWidget::ReleaseBackdrop()
 void UOVTitleScreenWidget::ShowPanel(EOVTitleMenuPanel Panel)
 {
     CurrentPanel = Panel;
+    if(PracticePanel)PracticePanel->SetVisibility(Panel==EOVTitleMenuPanel::Practice?ESlateVisibility::Visible:ESlateVisibility::Collapsed);
     if(DifficultyText && GetWorld()) if(auto* Play=GetWorld()->GetSubsystem<UOVPlayScenarioSubsystem>())
         DifficultyText->SetText(FText::FromString(Play->DifficultyLabel()));
     if (CardReturnLabel) CardReturnLabel->SetText(FText::FromString(bOpenedFromInGame ? TEXT("전장으로") : TEXT("타이틀로")));
@@ -1363,4 +1369,59 @@ void UOVTitleScreenWidget::HandleQuitGame()
 {
     PlayClickAudio();
     UKismetSystemLibrary::QuitGame(GetWorld(), GetWorld()->GetFirstPlayerController(), EQuitPreference::Quit, false);
+}
+
+void UOVTitleScreenWidget::BuildPractice(UOverlay* Root)
+{
+    PracticePanel=WidgetTree->ConstructWidget<UBorder>();
+    PracticePanel->SetBrush(OVStyle::MakeRoundedBoxBrush(FLinearColor(.012,.027,.05,.98),OVStyle::CyanBorder,8,1));
+    auto* frame=Root->AddChildToOverlay(PracticePanel);
+    frame->SetPadding(FMargin(32,24)); frame->SetHorizontalAlignment(HAlign_Fill); frame->SetVerticalAlignment(VAlign_Fill);
+    PracticePanel->SetPadding(FMargin(22));
+    auto* column=WidgetTree->ConstructWidget<UVerticalBox>(); PracticePanel->SetContent(column);
+    column->AddChildToVerticalBox(OVStyle::MakeLabel(WidgetTree,TEXT("시스템 실습"),24,OVStyle::TextWhite,true));
+    auto* row=WidgetTree->ConstructWidget<UHorizontalBox>();
+    column->AddChildToVerticalBox(row)->SetSize(FSlateChildSize(ESlateSizeRule::Fill));
+    auto* scroll=WidgetTree->ConstructWidget<UScrollBox>(); row->AddChildToHorizontalBox(scroll)->SetSize(FSlateChildSize(ESlateSizeRule::Fill));
+    for(int32 i=0;i<9;++i){
+        auto* button=WidgetTree->ConstructWidget<UOVScenarioPickButton>();
+        button->OwnerWidget=this; button->ScenarioId=FName(TEXT("Lesson"),i+1);
+        button->TitleText=OVStyle::MakeLabel(WidgetTree,TEXT(""),16,OVStyle::TextWhite,true);
+        button->AddChild(button->TitleText); button->SetStyle(OVStyle::MakeSecondaryButtonStyle());
+        button->TitleText->SetAutoWrapText(false);button->TitleText->SetMargin(FMargin(10)); button->OnClicked.AddDynamic(button,&UOVScenarioPickButton::HandleClicked);
+        scroll->AddChild(button); PracticeRows.Add(button);
+    }
+    PracticeBrief=OVStyle::MakeLabel(WidgetTree,TEXT(""),18,OVStyle::TextWhite,false);
+    PracticeBrief->SetAutoWrapText(true);
+    auto* brief=row->AddChildToHorizontalBox(PracticeBrief);brief->SetPadding(FMargin(22,14));brief->SetSize(FSlateChildSize(ESlateSizeRule::Fill));
+    auto* controls=WidgetTree->ConstructWidget<UHorizontalBox>();column->AddChildToVerticalBox(controls)->SetHorizontalAlignment(HAlign_Right);
+    auto* back=WidgetTree->ConstructWidget<UButton>();back->SetStyle(OVStyle::MakeSecondaryButtonStyle());back->AddChild(OVStyle::MakeLabel(WidgetTree,TEXT("타이틀로"),14,OVStyle::TextWhite,true));controls->AddChildToHorizontalBox(back);
+    back->OnClicked.AddDynamic(this,&UOVTitleScreenWidget::HandleBackToTitle);
+    auto* go=WidgetTree->ConstructWidget<UButton>();go->SetStyle(OVStyle::MakePrimaryButtonStyle());go->AddChild(OVStyle::MakeLabel(WidgetTree,TEXT("실습 시작"),16,OVStyle::DarkText,true));controls->AddChildToHorizontalBox(go);
+    go->OnClicked.AddDynamic(this,&UOVTitleScreenWidget::LaunchPractice);
+    PracticePanel->SetVisibility(ESlateVisibility::Collapsed);
+}
+void UOVTitleScreenWidget::OpenPractice()
+{
+    const int32 mask=UOVPlayScenarioSubsystem::CompletedPracticeMask();
+    int32 next=0; while(next<9 && (mask&(1<<next)))++next;
+    ShowPanel(EOVTitleMenuPanel::Practice);SelectPractice(next%9);
+}
+void UOVTitleScreenWidget::SelectPractice(int32 index)
+{
+    if(!PracticeRows.IsValidIndex(index))return;
+    ChosenPractice=index;const int32 mask=UOVPlayScenarioSubsystem::CompletedPracticeMask();
+    for(int32 i=0;i<PracticeRows.Num();++i){
+        PracticeRows[i]->SetStyle(OVStyle::MakeSecondaryButtonStyle(i==index));
+        PracticeRows[i]->TitleText->SetText(FText::FromString(FString::Printf(TEXT("%d. %s   ·   %s"),i+1,*UOVPlayScenarioSubsystem::PracticeTitle(i),(mask&(1<<i))?TEXT("완료"):TEXT("미완료"))));
+    }
+    PracticeBrief->SetText(FText::FromString(UOVPlayScenarioSubsystem::PracticeSummary(index)));
+}
+void UOVTitleScreenWidget::LaunchPractice()
+{
+    auto* pc=Cast<AOVController>(GetOwningPlayer());
+    if(pc && !pc->GetPlayScenario()->StartPractice(pc,ChosenPractice)){
+        if(auto* hud=Cast<AOVHUD>(pc->GetHUD()))hud->OpenTitleScreen();
+        OpenPractice();PracticeBrief->SetText(FText::FromString(TEXT("시험 편성을 준비할 수 없습니다. 다시 시작하세요.")));
+    }
 }

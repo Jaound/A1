@@ -101,8 +101,9 @@ bool AOVHUD::IsOverPanel(float X,float Y) const
  const auto* PC=Cast<AOVController>(PlayerOwner); if(!PC) return false;
  const FVector2D P(X/UIScale,Y/UIScale);
  const FString HitAction=GetHitActionAtCanvasPoint(P).ToString();
+ if(HitAction.StartsWith(TEXT("Practice")))return true;
  if(HitAction.StartsWith(TEXT("FacilityAlert_"))||HitAction.StartsWith(TEXT("OpsReady_"))||HitAction.StartsWith(TEXT("OpsCancel_"))||HitAction.StartsWith(TEXT("OpsCrewBG_")))return true;
- if (const auto* Play = PC->GetPlayScenario(); Play && Play->GetActiveDefinition() && !bSceneMenuOpen &&
+ if (const auto* Play = PC->GetPlayScenario(); Play && Play->GetActiveDefinition() && (Play->PracticeChapter==INDEX_NONE || Play->ActiveId==TEXT("HeroArena")) && !bSceneMenuOpen &&
      P.X >= 0 && P.X <= (Play->ActiveId==TEXT("Sandbox")?426:508) && P.Y >= 63 && P.Y <= 63+Play->MissionPanelHeight()) return true;
 
 
@@ -249,6 +250,7 @@ bool AOVHUD::HandlePointer(float X,float Y,bool Pressed,bool Down,float Wheel,bo
 }
 void AOVHUD::NotifyHitBoxClick(FName N)
 {
+ if (PracticeAction(N)) return;
  if (HandleBaseAction(N)) return;
  if(PickingShip())return;
  if(bChoosingTransport||bChoosingTransfer){
@@ -341,7 +343,7 @@ void AOVHUD::NotifyHitBoxClick(FName N)
    const auto Indices=BattleNoticeIndices();const int32 Pages=FMath::Max(1,(Indices.Num()+2)/3);
    const int32 Page=bBattleFeedOpen?FMath::Clamp(BattleFeedPage,0,Pages-1):0;
    const int32 Position=Indices.IndexOfByKey(Index);
-   if(Position!=INDEX_NONE&&Position>=Page*3&&Position<Page*3+VisibleBattleNoticeCount()) {PC->bFollow=false;PC->CameraFocus=Feed->Notices[Index].LastPosition;PC->UpdateCamera();}
+   if(Position!=INDEX_NONE&&Position>=Page*3&&Position<Page*3+VisibleBattleNoticeCount()) {PC->GetPlayScenario()->ConfirmPracticeNotice(Feed->Notices[Index].ShipId);PC->bFollow=false;PC->CameraFocus=Feed->Notices[Index].LastPosition;PC->UpdateCamera();}
   }
   return;
  }
@@ -889,6 +891,7 @@ void AOVHUD::DrawHUD()
  if(IsDebriefOpen()) { DrawDebrief(); Canvas->Canvas->PopTransform(); return; }
  DrawPlayHUD(); DrawFacilityAlerts(); DrawWorldIndicators(); DrawPhase2C(); DrawMission();
  DrawBattleNotices();
+ if(!bStarMapOpen && !bSceneMenuOpen && !bChoosingTransport && !bChoosingTransfer) DrawPractice();
  DrawPinned();
  if(!PC->bDeveloperMode) { DrawDetails(); DrawInterior(); if(!bStarMapOpen)DrawShipOperations(); DrawStarMap(); }
  float MouseX=0,MouseY=0;

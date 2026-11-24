@@ -222,7 +222,7 @@ void AOVHUD::DrawPlayHUD()
  const float NoticeWidth = W-TX-10;
  if(FPlatformTime::Seconds()<NoticeExpires && NoticeWidth > 42)
   DrawText(FitLabel(OVTypography::Font(EOVTextRole::Body),NoticeText,NoticeWidth),PlayInk,TX,26,OVTypography::Font(EOVTextRole::Body));
- if(!bSceneMenuOpen && Play && Play->GetActiveDefinition()) {
+ if(!bSceneMenuOpen && Play && Play->GetActiveDefinition() && (Play->PracticeChapter==INDEX_NONE || Play->ActiveId==TEXT("HeroArena"))) {
   const bool Evac = Play->ActiveId == TEXT("Evacuation");
   const bool Sandbox=Play->ActiveId==TEXT("Sandbox");
   DrawRect(PlayPanel,0,63,Sandbox?426:508,Play->MissionPanelHeight());

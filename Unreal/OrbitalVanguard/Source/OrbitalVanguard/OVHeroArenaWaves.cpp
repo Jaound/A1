@@ -128,7 +128,7 @@ void UOVPlayScenarioSubsystem::StepArena(AOVController& PC,float Delta)
     if(!bArenaStarted || PC.Ships.Num()<2)return;
     ElapsedSeconds+=Delta;
     AOVShip* Home=PC.Ships[0];AOVShip* Target=PC.Ships[1];
-    if(Target->Systems->FactionId==0){Finish(PC,EOVPlaySceneResult::Victory,TEXT("적 함교 점령"));return;}
+    if(PracticeChapter==INDEX_NONE && Target->Systems->FactionId==0){Finish(PC,EOVPlaySceneResult::Victory,TEXT("적 함교 점령"));return;}
     int32 Living=0,Recovered=0;
     for(auto& W:ArenaWaves){
         if(!W.Sent)continue;
@@ -161,6 +161,7 @@ void UOVPlayScenarioSubsystem::StepArena(AOVController& PC,float Delta)
             }
         }
     }
+    if(PracticeChapter!=INDEX_NONE)return;
     if(!Living && ArenaWaves[0].Sent && ArenaWaves[1].Sent)Finish(PC,EOVPlaySceneResult::Defeat,TEXT("출발한 강습대 전원 작전 불능"));
     else if(Living>0 && Recovered==Living)Finish(PC,EOVPlaySceneResult::PartialVictory,TEXT("출발한 생존 영웅·일반 병력 전원 철수"));
 }

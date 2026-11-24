@@ -96,6 +96,9 @@ public:
  bool IsOverOrbitPreview(FVector2D Cursor) const;
  void OrbitPreview(FVector2D Delta);
  UFUNCTION(BlueprintCallable, Category="UI") void CancelPointerDrag() { bInteriorScrolling=false; bDragging=false; bResizing=false; bInteriorDragging=false; bInteriorResizing=false; bDevDragging=false; bDevResizing=false; DraggedPin=INDEX_NONE; bPinResizing=false; }
+ bool IsPracticeHangarVisible() const {return bDetailsOpen && bHangarView && !bMinimized;}
+ void DrawPractice();
+ bool PracticeAction(FName Action);
  void OpenSurvey(){bHangarView=false;OpenDetails();}
  void OpenDetails() { PreviewSubject.Reset(); bInteriorOpen=false;bDetailsOpen=true; bMinimized=false; bHeroPanelOpen=false; SyncAddedUI(); }
  UFUNCTION(BlueprintCallable, Category="UI") bool HandlePointer(float X,float Y,bool Pressed,bool Down,float Wheel,bool Orbit,float DX,float DY);
