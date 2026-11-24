@@ -32,7 +32,7 @@
 
 확정 기획·미결정·시험 기준값·임시 구현·검증 결과를 구분합니다. 과거 기록과 프로토타입 코드는 현행 분야 명세를 덮어쓰지 않습니다.
 
-새로 제안한 [기지·생산·연구 밸런스v0.1](docs/02_balance/BASE_BALANCE_DRAFT.md)은 비용·시간·수입·연구 경로의 **미실측 초안**입니다. 확정 구조와 새 제안 수치를 분리해 읽습니다.
+기지 생성의 최신 기준은 [기지 통합 명세 v1.0](docs/01_design/strategy/BASE_MASTER_GDD.md)입니다. 운영 화면은 [기지 UI 검토안](docs/01_design/interface/BASE_INTERFACE_DRAFT.md)에서 협의합니다.
 
 [실제5시간 캠페인 경제·진행 분석](docs/archive/analysis/CAMPAIGN_SIMULATION.md): 비용/생산/연구·배속·가상6/10임무를 비교한360회 모형 실행입니다. 실제 전투·UE 플레이 검증과 구분합니다.
 

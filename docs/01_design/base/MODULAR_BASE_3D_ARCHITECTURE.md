@@ -1,6 +1,6 @@
 # A1 모듈형 기지 3D 구조 · 가변 체급 · 연결 통로 규격 기획서
 
-> **참조 기준 문서**: `docs/01_design/strategy/BASE_SYSTEMS.md` (D103~D108) · `docs/02_balance/BASE_BALANCE_DRAFT.md` (방안 A 확정: 1칸 = 25m 격자 정규화)
+> 2026-11-24 · 3D 에셋 계약. 모듈 규격의 기준은 [기지 통합 명세 v1.0](../strategy/BASE_MASTER_GDD.md)이다. 아래 인스턴스는 예시로 관리한다.
 > **대상 엔진**: Unreal Engine 5.8 (`OrbitalVanguard`) · **좌표계**: Z-Up / 왼손 좌표 / cm 단위
 > **설계 구성**: 코어 II (중형 확장) · 토폴로지: 방사형 (코어 5×5×5 중앙 축 4방향 가느다란 규격 통로 확장) · 검증: **PASS (유효)**
 
@@ -11,7 +11,7 @@
 | 항목 | 미터 (m) | UE 5.8 (cm) | 기획 근거 / 설계 의도 |
 | :--- | ---: | ---: | :--- |
 | 기준 3D 격자 1칸 | 25.0 m | 2500 cm | 방안 A 확정 (UE 5.8 실제 함선 실측 정합 25m 격자) |
-| 최소 연결 통로 길이 | 50 m (2칸) | 5000 cm | 1×1×1 연결 세그먼트 최소 직렬 스팬 |
+| 최소 연결 통로 길이 | 25 m (1칸) | 2500 cm | 1×1×1 연결 세그먼트 |
 | 통로 내부 유효 폭 | 6.0 m | 600 cm | 선내 영웅·강습 분대 기동용 가느다란 압력관 폭 |
 | 통로 내부 유효 높이 | 4.8 m | 480 cm | 표준 격벽 개구부 높이 (외경 6.4m) |
 | 기능 방 내부 층고 | 8.0 m | 800 cm | 모듈 내부 선내전·시설 데크 층고 |
@@ -21,7 +21,7 @@
 
 ## 2. 모듈별 가변 체급 · 3D 모델러 에셋 계약 (Asset Contracts)
 
-모든 모듈은 `BASE_BALANCE_DRAFT.md §3`의 고유 3D 격자(2×2×2 ~ 12×8×7)를 준수하며, 조선·접안 모듈은 전방 출입 여유 공간(`LaunchClearance`)을 별도 예약합니다.
+모든 모듈은 [기지 통합 명세의 모듈 표](../strategy/BASE_MASTER_GDD.md)의 고유 3D 격자(2×2×2 ~ 12×8×7)를 준수하며, 조선·접안 모듈은 전방 출입 여유 공간(`LaunchClearance`)을 별도 예약합니다.
 
 | 모듈 | 본체 격자 | StaticMesh 이름 | 최대 외곽 (X×Y×Z cm) | 전방 출입 여유 | 충돌 · 소켓 규격 |
 | :--- | :--- | :--- | :--- | ---: | :--- |
@@ -35,8 +35,8 @@
 | 전략 연구소 | 2×2×2 (25m 격자) | `SM_OV_Base_ResearchLab` | 4900 × 4900 × 5000 | — | UCX_Hull (외곽) + InteriorNav (내부 NavMesh) |
 | 영웅 아카데미 | 2×2×2 (25m 격자) | `SM_OV_Base_HeroAcademy` | 4900 × 4900 × 5000 | — | UCX_Hull (외곽) + InteriorNav (내부 NavMesh) |
 | 기지 방어 모듈 (상·하 ±Z 무장 마운트) | 2×2×2 (25m 격자) | `SM_OV_Base_DefensePlatform` | 4900 × 4900 × 5000 | — | UCX_Platform + Socket_TurretTop (±Z 상하 반전 · 로컬 장착 큐) |
-| 연결 분기 허브 | 1×1×1 (25m 격자) | `SM_OV_Base_ConnectorHub_1x1x1` | 1200 × 1200 × 1200 | — | UCX_Hull (외곽) + InteriorNav (내부 NavMesh) |
-| 일자형 연결 통로 | 1×1×1 (25m 직선 스팬) | `SM_OV_Base_CorridorStraight_1x1x1` | 2500 × 760 × 640 | — | UCX_Corridor_Outer + InteriorNav (2×1×1 직선 통로 통과 보장) |
+| 연결 분기 허브 | 1×1×1 (25m 격자) | `SM_OV_Base_CorridorHub_1x1x1` | 1200 × 1200 × 1200 | — | UCX_Hull (외곽) + InteriorNav (내부 NavMesh) |
+| 일자형 연결 통로 | 1×1×1 (25m 직선 스팬) | `SM_OV_Base_CorridorStraight_1x1x1` | 2500 × 760 × 640 | — | UCX_Corridor_Outer + InteriorNav (1×1×1 직선 통로) |
 
 ## 3. 생성된 3D 모듈 인스턴스 배치표
 

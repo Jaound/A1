@@ -1,12 +1,20 @@
 # 기획 문서 지도와 관리 원칙
 
-> 정리일: 2026-11-21(KST). 이 문서는 기획의 입구와 담당 범위를 정한다. 게임 기능 구현 완료를 뜻하지 않는다.
+> 정리일: 2026-11-24(KST). 이 문서는 기획의 입구와 담당 범위를 정한다. 게임 기능 구현 완료를 뜻하지 않는다.
 
 ## 폴더와 담당 범위
 
 [폴더 안내](README.md)는 개요/분야 명세/수치/개발/분석/참조/과거 자료의 분류 기준을 정한다. 예전 경로는 [대응표](DOCUMENT_PATHS.json)로 찾는다. 이 문서는 계속 기획의 입구로 유지한다.
 
-## 최신 기획 우선 — D126
+## 현행 기획 기준 · 2026-11-24
+
+- **기지 v1.0** · [통합 명세](01_design/strategy/BASE_MASTER_GDD.md) · [3D 에셋 계약](01_design/base/MODULAR_BASE_3D_ARCHITECTURE.md) · [기지 UI 검토안 v0.1](01_design/interface/BASE_INTERFACE_DRAFT.md)
+- **영웅 v0.6** · [성장·운용](01_design/boarding/HERO_SYSTEMS.md) · [고유 영웅 30명과 표준 4종](01_design/boarding/HERO_ROSTER_30_DETAIL.md) · [이미지 제작](01_design/boarding/HERO_IMAGE_PROMPTS_30.md)
+- **함대·시설·격납고 D126** · [통합 수치](02_balance/GRID_HULL_OUTPOST_DECISIONS.md)
+- **우주 환경 D123~D125** · [행동 규칙](01_design/strategy/SPACE_ENVIRONMENTS.md) · [E1 시험값](02_balance/SPACE_ENVIRONMENT_BALANCE.md)
+- **화면과 입력** · [기본 UI](01_design/interface/UI_SYSTEMS.md) · [시작·메뉴](01_design/interface/START_SCREEN_AND_MENU_SPEC.md)
+
+## 담당 본문 우선 원칙
 
 **사용자의 최신 확정 기획이 과거 본문·프로필·작업 프롬프트보다 우선한다.** 바뀐 항목은 담당 본문을 직접 교체하며 아래에 상충 규칙을 덧붙이지 않는다. 수정하지 않은 분야까지 자동 폐기하지 않는다. 코드 구현·검증 상태는 기획 확정과 별도다.
 
@@ -49,7 +57,7 @@
 | 문서 | 관리하는 내용 | 다른 분야에 넘기는 내용 |
 | --- | --- | --- |
 | [GDD](00_overview/GDD.md) | 정체성·핵심 순환·분야 요약 | 상세 수치·판정은 담당 명세 참조 |
-| [입체 기지](01_design/strategy/BASE_SYSTEMS.md) | 코어·입체 연결·모듈·조선/접안 기능 구분 | 성계/물류는 전략, 제안 수치는 밸런스 초안 |
+| [입체 기지](01_design/strategy/BASE_MASTER_GDD.md) | 코어·입체 연결·모듈·조선/접안 기능 구분 | 성계/물류는 전략, 제안 수치는 밸런스 초안 |
 | [전략·경제](01_design/strategy/STRATEGY_ECONOMY.md) | 성계·항로·기지·자원·물류·세력 AI | 함선 수리 대상/피해는 시설, 화면은 UI |
 | [우주 환경](01_design/strategy/SPACE_ENVIRONMENTS.md) | 운석·방사능·플레어·중력권, 환경 분포/대응 초안 | 피해/기동은 담당 명세, 효과 채택과 수치는R36 |
 | [함대 전투](01_design/fleet/FLEET_COMBAT.md) | 함급·명령·기동·무장·탐지·요격·FTL 전투 제약 | 피해 계산은 시설, 함재기 소유량은 모함 운용 |
@@ -65,7 +73,7 @@
 
 - **현행 명세:** 위 담당 문서의 확정 규칙. 반복 요약보다 원 규칙을 관리하는 문서를 따른다.
 - **미결정:** 상충하는 최신 문구나 미정 수치. 대안·추천을 자동 확정하지 않는다. `R` 번호로 관리한다.
-- **설계 초안:** [기지·생산·연구 밸런스v0.1](02_balance/BASE_BALANCE_DRAFT.md)의 새 비용/시간/운영안. 사용자 요청으로 제안했지만 채택/실측 전이며 확정 규칙을 대체하지 않는다.
+- **설계 초안:** [기지 경제·생산·연구 후보](02_balance/BASE_BALANCE_DRAFT.md)의 수입·함선 패키지·미확정 연구 수치. 채택된 건설·시설 규격은 기지 v1.0에서 관리한다.
 - **D113 운송/영웅 검토:** [개인별 포드·강습선·공방 영웅 수·코스트 원인](04_analysis/BOARDING_REVIEW.md). 초대형 화력 유지와 강습선 공격0/PD1은 확정, 새 절대 수치는 후보이며 기존v0.3 연동의PD/방어자 가정을 대체해 읽는다.
 - **이전 장기전 후보:** [v0.3](02_balance/FLEET_ENDURANCE_BALANCE.md)·[전 함종/100·200·300 결과](04_analysis/FLEET_ENDURANCE_RESULTS.md). 당시 일반전 목표는10~15분이었고 현재D126은1대1 미러 기준이며 새 수치/공간 근사는 제안이다. 이전v0.2는 비교/영웅L1 출발값으로 보존한다.
 - **이전 전투 수치 초안:** [전투 수치v0.2](archive/balance/COMBAT_BALANCE.md)의 HP/무장/영웅/가격 제안. [축소 모형 분석](archive/analysis/COMBAT_SIMULATION.md)의 표본/범위와 함께 읽으며 UE 실측·전체 전투 밸런스 확정과 구분한다.

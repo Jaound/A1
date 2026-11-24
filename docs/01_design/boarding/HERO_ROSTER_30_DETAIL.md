@@ -1,10 +1,10 @@
-# 영웅 로스터 34인 상세 기획 (고유 30인 + 기본 일반·적군 4인 · UE 5.8 C++ 실구현 검증 완료)
+# 영웅 로스터 34인 상세 기획 (고유 30인 + 기본 일반·적군 4인 · UE 5.8 C++ 연동 설계)
 
 - 기준 원본: `docs/01_design/boarding/HERO_SYSTEMS.md` (v0.5 기준안 · D114 (세력 전체 지휘 코스트), D115 (영웅 정체성·원천), D116 (4유형·스킬·성장·장비))
 - 고유 영웅 구성 (30명): 근거리 10 · 원거리 10 · 지원 5 · 지휘 5
 - 기본(일반·적군 공용) 영웅 (4명): 근거리(G01) · 원거리(G02) · 지원(G03) · 지휘(G04) — 고유 패시브·시그니처 없음
 - 전장 축 분포 (고유 30인): 함대전 특화 13명 · 함대전/선내 양면 6명 · 선내 강습/수호 11명
-- C++ 실구현 검증: `codex/phase1-playground` (`OVInteriorSubsystem`, `OVCombatSubsystem`, `OVPointDefenseSubsystem`, `OVCarrierSubsystem`, `OVShipSystemsComponent`, `OVShip`, `OVTransportSubsystem`) 실제 구현 변수 100% 정렬 (미구현 화재 확산·쉴드 개시 지연·PD 표적 전환 지연·함선 회피율·선내 경직 전량 제거).
+- C++ 연동 검토: `codex/phase1-playground` (`OVInteriorSubsystem`, `OVCombatSubsystem`, `OVPointDefenseSubsystem`, `OVCarrierSubsystem`, `OVShipSystemsComponent`, `OVShip`, `OVTransportSubsystem`) 기존 C++ 연동 후보 정리 (미구현 화재 확산·쉴드 개시 지연·PD 표적 전환 지연·함선 회피율·선내 경직 전량 제거).
 - 핵심 가드레일: 영웅 1명 = 지휘 코스트 1 (세력 한도 3/6/10/15, 로스터 30명) · 경감 상한 65% · 장비+연구 상한 40% · 명중 합산 +8%p(빔 98%) · 연사 +30% · 이속/선회 +20% · 부활/무자원 회복/순간이동/개인 대함 공격 금지
 
 ## 1. 4대 유형 기준 스탯 요약 (L1 → L20)
@@ -54,7 +54,7 @@
 - **참조 화풍**: 초능력자 · 남성 기준
 
 
-## 3. 고유 영웅 상세 기획 시트 (30명 — C++ 실구현 검증 완료)
+## 3. 고유 영웅 상세 기획 시트 (30명 — C++ 연동 설계)
 
 ### [M01] 카엘 반 — 격벽 돌파자 (Breach Vanguard)
 - **분류**: 근거리형 · 강화인간 (남성) · **주력 전장**: 선내 강습·수호 · **주 임무**: 강습
@@ -195,7 +195,7 @@ Background & Output: Isolated on a pure flat solid white background (#FFFFFF) wi
 - **배경 서사**: 중공업 해체선 출신 사이보그 공작원. 적함 나포 대신 원자로·무기제어실을 빠르게 파괴 공작해 적 주력함을 무력화한다.
 - **성격 / 화법**: 호탕하고 직설적. 함선 구조를 약점 도면처럼 읽는다.
 - **고유 패시브 (교전 중 공작 유지)**: 시설 파괴 공작(30초) 수행 중 근접 교전이 벌어져도 공작 게이지가 50% 속도로 유지 (최종 단축 50% 상한 준수).
-- **시그니처 스킬 (열압 파쇄타)**: 적 설비 방어·보직 중인 적 영웅 및 승조원에게 근접 공격 피해 +12%, 공작 체크포인트(1/3·2/3) 도달 시 같은 슬롯 적 2.5초간 이동속도 -25% 감속.
+- **시그니처 스킬 (열압 파쇄타)**: 적 설비 방어·보직 중인 적 영웅 및 선내 전투 병력에게 근접 공격 피해 +12%, 공작 체크포인트(1/3·2/3) 도달 시 같은 슬롯 적 2.5초간 이동속도 -25% 감속.
 - **권장 스킬·장비 빌드**: 역장 방어 R3 · 강화 돌입 R2 · 역장 엄호 R3 / 강화 외피 T4 + 점령/공작 보조
 - **밸런스 · C++ 연동 메모**: 미구현 경직 대신 실구현 SlowFraction(-25%)과 Sabotage Checkpoint(1/3·2/3)에 직접 연동. 대함 소총 피해 금지.
 - **참조 화풍**: 강화인간 · 남성 기준
@@ -1049,7 +1049,7 @@ Background & Output: Isolated on a pure flat solid white background (#FFFFFF) wi
 ## 4. R34 / v0.6 후속 결정 과제
 
 ### R34-A. 고유 영웅 개성 · 시그니처 스킬 (v0.6 확장) (기획 필요)
-- 일반 영입 영웅(4유형 공용 16스킬)과 네임드 고유 영웅의 차이를 고유 패시브 1종으로 둘지, L15 대체 스킬로 둘지?
+- 고유 영웅은 패시브와 시그니처를 사용한다. 구현 시 공통 스킬과의 발동 순서 및 중첩을 검증한다.
 - 고유 능력이 v0.5 상한(경감 65%, 장비/연구 40%, 지휘 코스트 1)을 우회하지 않도록 가드레일을 어떻게 둘지?
 
 ### R34-B. 원천(초능력자 · 강화인간 · 복합형) 차별화 범위 (검토 중)
@@ -1065,44 +1065,42 @@ Background & Output: Isolated on a pure flat solid white background (#FFFFFF) wi
 - 초반 L1 시작 영웅 1명 선택 시 4유형 대표 스타터 캐릭터를 고정 제공할지?
 
 
-## 5. 전투 시뮬레이션 밸런스 및 C++ 실구현 매핑 검증표
+## 5. 밸런스 추정과 C++ 연동 후보
 
-- 검증 대상: 고유 영웅 30명 + 기본(일반·적군 공용) 영웅 4명
-- 미구현/폐기 기능 참조: **0건** · v0.5 상한 위반: **0건** · 전체 밸런스 판정: **ALL PASS**
-- 고유 영웅 주력 전장 우위 범위: **+5.1% ~ +10.5%** (평균 +8.1%, 기준선 `G01`~`G04` = 0.0%)
+표의 우위는 원시 입력·실행 로그가 첨부되지 않은 설계 추정치다. 실제 UE에서 34종의 능력이 작동하거나 우위가 재현됐는지는 별도 검증한다.
 
-| 코드 | 영웅 | 유형 | 선내 우위 | 함대전 우위 | 주력 우위 | 연동 C++ 변수 | 판정 |
+| 코드 | 영웅 | 유형 | 선내 우위 | 함대전 우위 | 주력 우위 | 연동 C++ 변수 | 상태 |
 | --- | --- | --- | ---: | ---: | ---: | --- | --- |
-| `M01` | 카엘 반 | 근거리형 | +8.4% | 0% | +8.4% | `Cover (300->450cm), SlowUntil, SlowFraction (0.25)` | BALANCED |
-| `M02` | 이리스 베인 | 근거리형 | +6.2% | 0% | +6.2% | `Enemy->Armor (>=0.20), Ignore (+0.08), SkillActiveUntil` | BALANCED |
-| `M03` | 도리안 크루거 | 근거리형 | +7.6% | 0% | +7.6% | `EOVInteriorOrder::Defend, SlowFraction (0.20), Cover (+0.06)` | BALANCED |
-| `M04` | 세린 카이 | 근거리형 | +5.1% | 0% | +5.1% | `Evasion (+0.06), Skill3ActiveUntil (Path Hit 0.65x)` | BALANCED |
-| `M05` | 볼칸 드라그 | 근거리형 | +7.8% | 0% | +7.8% | `AdvanceOperations(Sabotage 50%), O.Checkpoint, SlowFraction (0.25)` | BALANCED |
-| `M06` | 라일라 녹스 | 근거리형 | +6.8% | 0% | +6.8% | `EntryEvents, Speed (+12%), HitChance (-0.08 vs Ranged)` | BALANCED |
-| `M07` | 가렌 호크 | 근거리형 | +6.7% | +4.5% | +7.3% | `Disasters (Duration -25%, Tick -25%), Cover (1.5x for <50% HP)` | BALANCED |
-| `M08` | 미라 솔라리스 | 근거리형 | +5.5% | 0% | +5.5% | `Skill4ActiveUntil (Period -15%, Damage +10%), Enemy Aura/Cover * 0.5` | BALANCED |
-| `M09` | 타릭 오르 | 근거리형 | +6.8% | +5.5% | +8% | `bDutyActive (-10% DR), DutyReadyAt (3s -> 1s)` | BALANCED |
-| `M10` | 헤라 크림슨 | 근거리형 | +8.6% | 0% | +8.6% | `AdvanceOperations (+12% Capture), Skill3ReadyAt (-6s on kill)` | BALANCED |
-| `R01` | 세라 린 | 원거리형 | +3.5% | +7.5% | +7.5% | `AimSpreadDegrees (-12%), AccuracyBonus (+2%p), TrackedSince, SlowUntil (+1.5s)` | BALANCED |
-| `R02` | 마커스 케인 | 원거리형 | +2% | +10.5% | +10.5% | `FOVPDProfile.Interval (-10%), FOVPDProfile.Accuracy (+2%p), PD Cooldown (+15% on L10)` | BALANCED |
-| `R03` | 엘레나 보스 | 원거리형 | +2% | +8.5% | +8.5% | `R.Distance >= 0.7*Range (+3%p), FireRateBonus (+6% sustained)` | BALANCED |
-| `R04` | 제이드 하퍼 | 원거리형 | +7.1% | 0% | +7.1% | `Range (1800->2000cm), Hit (+3%p @ 12m+), BurstRemaining (Interrupt 2.5s)` | BALANCED |
-| `R05` | 노아 발렌틴 | 원거리형 | +2% | +9.2% | +9.2% | `EOVWeaponType::Missile Interval (-8%), GuidanceTurnRate (+25%), AimSpreadDegrees (-15%)` | BALANCED |
-| `R06` | 클라라 벡 | 원거리형 | +5.7% | 0% | +5.7% | `Ally Melee EnemyId (+10% Damage), Weakness + RangedMultiplier (+0.2x)` | BALANCED |
-| `R07` | 시온 아르카 | 원거리형 | +2% | +8.8% | +8.8% | `Profile.BoltSpeed (+12%), Aircraft.Evasion (+3%p), Profile.Period (-10% on L10)` | BALANCED |
-| `R08` | 비비안 록 | 원거리형 | +8.1% | +2% | +8.1% | `Enemy Skill3ActiveUntil (-15% first hit), SkillReadyAt/Skill3ReadyAt (+2s)` | BALANCED |
-| `R09` | 렉스 벤토 | 원거리형 | +2% | +8.6% | +8.6% | `R.Distance <= 0.5*Range, TraverseSpeed (+20%), Skill3ActiveUntil (8s->10s)` | BALANCED |
-| `R10` | 아리아 실바 | 원거리형 | +5.5% | +5.5% | +7.2% | `!bShieldActive (+3%p), TrackedSince (4s->2.5s @ HP<40%), Finisher (+15% @ HP<35%)` | BALANCED |
-| `S01` | 유나 하야시 | 지원형 | +8% | +4% | +8% | `SupportHeal (+10% @ HP<30%), Disasters Protection (+10%p during Skill3)` | BALANCED |
-| `S02` | 오웬 크래프트 | 지원형 | +2.5% | +9% | +9% | `DevRepairBaseCost (1.5x -> 1.25x), GetEfficiency(Engine/WeaponControl +12% mitigation)` | BALANCED |
-| `S03` | 셀레네 루 | 지원형 | +3% | +9.5% | +9.5% | `ShieldRegenFraction (+15%), NoHitRecoveryInterval (15s->12s), Disasters (-25% on L10)` | BALANCED |
-| `S04` | 하준 킴 | 지원형 | +2% | +9.6% | +9.6% | `ProductionPeriod (-10%), DockSeconds (1.0s->0.65s), Hangar Crew Efficiency (+20% on L10)` | BALANCED |
-| `S05` | 나디아 벨 | 지원형 | +9.5% | 0% | +9.5% | `SupportCooldown (-1.0s), Skill3 Radius (600->800cm), bWounded Prevention (1/op)` | BALANCED |
-| `C01` | 마르쿠스 솔 | 지휘형 | +8% | +3.5% | +8% | `Capture Bridge (Trooper DR +8%p), Skill3ActiveUntil (Retreat/Defend Speed +5%p)` | BALANCED |
-| `C02` | 발레리아 스턴 | 지휘형 | +2% | +9.2% | +9.2% | `OVShip.Acceleration (+12%), OVShip.Braking (+12%), LateralAcceleration (+18% on L10)` | BALANCED |
-| `C03` | 루시안 베일 | 지휘형 | +2% | +9.3% | +9.3% | `OrdinaryShareCoefficient (+20% @ 400m), TurnBonus (+8% shared to 1 ally)` | BALANCED |
-| `C04` | 소피아 렌 | 지휘형 | +2% | +9.4% | +9.4% | `ManeuverProfile.SectionDelay (-25%), ReformSeconds (-12%), Profile.ReturnSpeed (+10% on L10)` | BALANCED |
-| `C05` | 빅터 칼리온 | 지휘형 | +5.5% | +8.5% | +8.5% | `FOVTransportProfile.PodSpeed (+12%), DockingSeconds (3.0s->2.4s), L10 Shipwide 50% Skill3 Aura` | BALANCED |
+| `M01` | 카엘 반 | 근거리형 | +8.4% | 0% | +8.4% | `Cover (300->450cm), SlowUntil, SlowFraction (0.25)` | 검증 대기 |
+| `M02` | 이리스 베인 | 근거리형 | +6.2% | 0% | +6.2% | `Enemy->Armor (>=0.20), Ignore (+0.08), SkillActiveUntil` | 검증 대기 |
+| `M03` | 도리안 크루거 | 근거리형 | +7.6% | 0% | +7.6% | `EOVInteriorOrder::Defend, SlowFraction (0.20), Cover (+0.06)` | 검증 대기 |
+| `M04` | 세린 카이 | 근거리형 | +5.1% | 0% | +5.1% | `Evasion (+0.06), Skill3ActiveUntil (Path Hit 0.65x)` | 검증 대기 |
+| `M05` | 볼칸 드라그 | 근거리형 | +7.8% | 0% | +7.8% | `AdvanceOperations(Sabotage 50%), O.Checkpoint, SlowFraction (0.25)` | 검증 대기 |
+| `M06` | 라일라 녹스 | 근거리형 | +6.8% | 0% | +6.8% | `EntryEvents, Speed (+12%), HitChance (-0.08 vs Ranged)` | 검증 대기 |
+| `M07` | 가렌 호크 | 근거리형 | +6.7% | +4.5% | +7.3% | `Disasters (Duration -25%, Tick -25%), Cover (1.5x for <50% HP)` | 검증 대기 |
+| `M08` | 미라 솔라리스 | 근거리형 | +5.5% | 0% | +5.5% | `Skill4ActiveUntil (Period -15%, Damage +10%), Enemy Aura/Cover * 0.5` | 검증 대기 |
+| `M09` | 타릭 오르 | 근거리형 | +6.8% | +5.5% | +8% | `bDutyActive (-10% DR), DutyReadyAt (3s -> 1s)` | 검증 대기 |
+| `M10` | 헤라 크림슨 | 근거리형 | +8.6% | 0% | +8.6% | `AdvanceOperations (+12% Capture), Skill3ReadyAt (-6s on kill)` | 검증 대기 |
+| `R01` | 세라 린 | 원거리형 | +3.5% | +7.5% | +7.5% | `AimSpreadDegrees (-12%), AccuracyBonus (+2%p), TrackedSince, SlowUntil (+1.5s)` | 검증 대기 |
+| `R02` | 마커스 케인 | 원거리형 | +2% | +10.5% | +10.5% | `FOVPDProfile.Interval (-10%), FOVPDProfile.Accuracy (+2%p), PD Cooldown (+15% on L10)` | 검증 대기 |
+| `R03` | 엘레나 보스 | 원거리형 | +2% | +8.5% | +8.5% | `R.Distance >= 0.7*Range (+3%p), FireRateBonus (+6% sustained)` | 검증 대기 |
+| `R04` | 제이드 하퍼 | 원거리형 | +7.1% | 0% | +7.1% | `Range (1800->2000cm), Hit (+3%p @ 12m+), BurstRemaining (Interrupt 2.5s)` | 검증 대기 |
+| `R05` | 노아 발렌틴 | 원거리형 | +2% | +9.2% | +9.2% | `EOVWeaponType::Missile Interval (-8%), GuidanceTurnRate (+25%), AimSpreadDegrees (-15%)` | 검증 대기 |
+| `R06` | 클라라 벡 | 원거리형 | +5.7% | 0% | +5.7% | `Ally Melee EnemyId (+10% Damage), Weakness + RangedMultiplier (+0.2x)` | 검증 대기 |
+| `R07` | 시온 아르카 | 원거리형 | +2% | +8.8% | +8.8% | `Profile.BoltSpeed (+12%), Aircraft.Evasion (+3%p), Profile.Period (-10% on L10)` | 검증 대기 |
+| `R08` | 비비안 록 | 원거리형 | +8.1% | +2% | +8.1% | `Enemy Skill3ActiveUntil (-15% first hit), SkillReadyAt/Skill3ReadyAt (+2s)` | 검증 대기 |
+| `R09` | 렉스 벤토 | 원거리형 | +2% | +8.6% | +8.6% | `R.Distance <= 0.5*Range, TraverseSpeed (+20%), Skill3ActiveUntil (8s->10s)` | 검증 대기 |
+| `R10` | 아리아 실바 | 원거리형 | +5.5% | +5.5% | +7.2% | `!bShieldActive (+3%p), TrackedSince (4s->2.5s @ HP<40%), Finisher (+15% @ HP<35%)` | 검증 대기 |
+| `S01` | 유나 하야시 | 지원형 | +8% | +4% | +8% | `SupportHeal (+10% @ HP<30%), Disasters Protection (+10%p during Skill3)` | 검증 대기 |
+| `S02` | 오웬 크래프트 | 지원형 | +2.5% | +9% | +9% | `DevRepairBaseCost (1.5x -> 1.25x), GetEfficiency(Engine/WeaponControl +12% mitigation)` | 검증 대기 |
+| `S03` | 셀레네 루 | 지원형 | +3% | +9.5% | +9.5% | `ShieldRegenFraction (+15%), NoHitRecoveryInterval (15s->12s), Disasters (-25% on L10)` | 검증 대기 |
+| `S04` | 하준 킴 | 지원형 | +2% | +9.6% | +9.6% | `ProductionPeriod (-10%), DockSeconds (1.0s->0.65s), Hangar Crew Efficiency (+20% on L10)` | 검증 대기 |
+| `S05` | 나디아 벨 | 지원형 | +9.5% | 0% | +9.5% | `SupportCooldown (-1.0s), Skill3 Radius (600->800cm), bWounded Prevention (1/op)` | 검증 대기 |
+| `C01` | 마르쿠스 솔 | 지휘형 | +8% | +3.5% | +8% | `Capture Bridge (Trooper DR +8%p), Skill3ActiveUntil (Retreat/Defend Speed +5%p)` | 검증 대기 |
+| `C02` | 발레리아 스턴 | 지휘형 | +2% | +9.2% | +9.2% | `OVShip.Acceleration (+12%), OVShip.Braking (+12%), LateralAcceleration (+18% on L10)` | 검증 대기 |
+| `C03` | 루시안 베일 | 지휘형 | +2% | +9.3% | +9.3% | `OrdinaryShareCoefficient (+20% @ 400m), TurnBonus (+8% shared to 1 ally)` | 검증 대기 |
+| `C04` | 소피아 렌 | 지휘형 | +2% | +9.4% | +9.4% | `ManeuverProfile.SectionDelay (-25%), ReformSeconds (-12%), Profile.ReturnSpeed (+10% on L10)` | 검증 대기 |
+| `C05` | 빅터 칼리온 | 지휘형 | +5.5% | +8.5% | +8.5% | `FOVTransportProfile.PodSpeed (+12%), DockingSeconds (3.0s->2.4s), L10 Shipwide 50% Skill3 Aura` | 검증 대기 |
 | `G01` | 표준 근거리 장교 | 근거리형 | 0% | 0% | 0% | `EOVInteriorRole::Melee, SkillReadyAt, Skill3ReadyAt, Skill4ReadyAt` | BASELINE |
 | `G02` | 표준 원거리 사수 | 원거리형 | 0% | 0% | 0% | `EOVInteriorRole::Ranged, FOVHeroDutyBonuses.AccuracyBonus, FireRateBonus` | BASELINE |
 | `G03` | 표준 지원 정비관 | 지원형 | 0% | 0% | 0% | `EOVInteriorRole::Support, Medkits, Disasters, AmplifierCharges` | BASELINE |
