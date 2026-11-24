@@ -72,7 +72,7 @@ for stage in (1,2):
     for name,data in json.loads((folder/'ports.json').read_text()).items():
         filename = 'SM_OV_Base_'+name
         mesh = library.load_asset(dest+'/'+filename)
-        old = Path.home()/'Documents/OrbitalVanguardAssets/Prepared'/('BaseTrial'+str(stage))/name/(filename+'.fbx')
+        old = Path(os.environ.get("OV_BASE_ASSET_ROOT", Path(__file__).resolve().parents[4] / "OrbitalVanguardAssets"))/'Prepared'/('BaseTrial'+str(stage))/name/(filename+'.fbx')
         sockets = list(data['ports'])
         assert all(mesh.find_socket(k) for k in sockets)
         if mesh.get_num_lods()<2:

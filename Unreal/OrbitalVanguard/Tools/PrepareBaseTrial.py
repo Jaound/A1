@@ -7,7 +7,7 @@ import bpy
 import numpy as np
 from mathutils import Matrix, Vector
 
-root = Path.home() / 'Documents/OrbitalVanguardAssets'
+root = Path(os.environ.get("OV_BASE_ASSET_ROOT", Path(__file__).resolve().parents[4] / "OrbitalVanguardAssets"))
 phase2 = os.environ.get('OV_BASE_STAGE') == '2'
 detail = os.environ.get('OV_BASE_DETAIL')
 out = Path(detail) / ('Stage2' if phase2 else 'Stage1') if detail else root / ('Prepared/BaseTrial2' if phase2 else 'Prepared/BaseTrial1')

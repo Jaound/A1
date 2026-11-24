@@ -1,9 +1,10 @@
 """반입용 FBX의 동일한 사시도에서 건설 메뉴 카드 이미지를 렌더한다. Blender -b -P로 실행."""
+import os
 from pathlib import Path
 import bpy
 from mathutils import Vector
 
-root=Path.home()/'Documents/OrbitalVanguardAssets/Prepared/BaseTrial2'
+root=Path(os.environ.get("OV_BASE_ASSET_ROOT", Path(__file__).resolve().parents[4] / "OrbitalVanguardAssets"))/'Prepared/BaseTrial2'
 for module in ('YardSmall','DockStandard'):
     bpy.ops.wm.read_factory_settings(use_empty=True)
     bpy.ops.import_scene.fbx(filepath=str(root/module/('SM_OV_Base_'+module+'.fbx')))

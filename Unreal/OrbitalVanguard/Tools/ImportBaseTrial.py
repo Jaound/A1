@@ -5,7 +5,7 @@ import json
 import unreal
 
 phase2=os.environ.get('OV_BASE_STAGE')=='2'
-root=Path.home()/'Documents/OrbitalVanguardAssets/Prepared'/('BaseTrial2' if phase2 else 'BaseTrial1')
+root=Path(os.environ.get("OV_BASE_ASSET_ROOT", Path(__file__).resolve().parents[4] / "OrbitalVanguardAssets"))/'Prepared'/('BaseTrial2' if phase2 else 'BaseTrial1')
 report=json.loads((root/'ports.json').read_text())
 assert len(report)==(2 if phase2 else 4)
 tools=unreal.AssetToolsHelpers.get_asset_tools()

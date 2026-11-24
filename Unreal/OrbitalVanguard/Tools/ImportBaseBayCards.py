@@ -1,7 +1,8 @@
 """신규 원본 두 종의 건설 카드를 반입한다."""
+import os
 from pathlib import Path
 import unreal
-root=Path.home()/'Documents/OrbitalVanguardAssets/Prepared/BaseTrial2'
+root=Path(os.environ.get("OV_BASE_ASSET_ROOT", Path(__file__).resolve().parents[4] / "OrbitalVanguardAssets"))/'Prepared/BaseTrial2'
 for name in ('T_YardSmall_Card','T_DockStandard_Card'):
     task=unreal.AssetImportTask()
     task.filename=str(root/(name+'.png'))

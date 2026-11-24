@@ -7,7 +7,7 @@ from pathlib import Path
 import bpy
 from mathutils import Matrix, Vector
 
-source=Path(os.environ["OV_BASE_ASSET_ROOT"])/"Source"/"Base"
+source=Path(os.environ.get("OV_BASE_ASSET_ROOT", Path(__file__).resolve().parents[4] / "OrbitalVanguardAssets"))/"Source"/"Base"
 output=Path(os.environ["OV_BASE_STAGE3_PREPARED"])
 output.mkdir(parents=True,exist_ok=True)
 entries=[
