@@ -8,7 +8,7 @@
 
 ## 현행 기획 기준 · 2026-11-24
 
-- **기지 v1.0** · [통합 명세](01_design/strategy/BASE_MASTER_GDD.md) · [3D 에셋 계약](01_design/base/MODULAR_BASE_3D_ARCHITECTURE.md) · [기지 UI 검토안 v0.1](01_design/interface/BASE_INTERFACE_DRAFT.md)
+- **기지 v1.0** · [통합 명세](01_design/strategy/BASE_MASTER_GDD.md) · [3D 에셋 계약](01_design/base/MODULAR_BASE_3D_ARCHITECTURE.md) · [기지 UI v0.2](01_design/interface/BASE_INTERFACE_DRAFT.md)
 - **영웅 v0.6** · [성장·운용](01_design/boarding/HERO_SYSTEMS.md) · [고유 영웅 30명과 표준 4종](01_design/boarding/HERO_ROSTER_30_DETAIL.md) · [이미지 제작](01_design/boarding/HERO_IMAGE_PROMPTS_30.md)
 - **함대·시설·격납고 D126** · [통합 수치](02_balance/GRID_HULL_OUTPOST_DECISIONS.md)
 - **우주 환경 D123~D125** · [행동 규칙](01_design/strategy/SPACE_ENVIRONMENTS.md) · [E1 시험값](02_balance/SPACE_ENVIRONMENT_BALANCE.md)
