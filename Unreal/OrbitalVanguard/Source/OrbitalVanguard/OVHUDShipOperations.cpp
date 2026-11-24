@@ -4,6 +4,7 @@
 #include "OVInteriorSubsystem.h"
 #include "OVShip.h"
 #include "OVShipPreview.h"
+#include "OVTransportSubsystem.h"
 #include "OVShipSystemsComponent.h"
 #include "Engine/Canvas.h"
 #include "Engine/TextureRenderTarget2D.h"
@@ -125,11 +126,11 @@ bool AOVHUD::DrawSmallBays(AOVShip* Home,float X,float Y,float W)
         if(auto* Guest=B.StoredSmallShip.Get()){
             auto* Art=SelectionPortraits.FindRef(Guest->HullDefinitionId).Get();
             if(!Art && FApp::CanEverRender()){
-                auto* Preview=NewObject<UOVShipPreview>(this);Preview->Update(Guest,FRotator(-18,68,-15),1.12f,2.8f,INDEX_NONE,384,true);
+                auto* Preview=NewObject<UOVShipPreview>(this);Preview->Update(Guest,UOVShipPreview::DefaultHullView(),1.12f,2.8f,INDEX_NONE,384,true);
                 Art=Preview->GetTexture();if(Art)SelectionPortraits.Add(Guest->HullDefinitionId,Art);Preview->Release();
             }
             const auto Key=CommandId(TEXT("OpsShip_"),Id);
-            if(Art)DrawTexture(Art,CX+4,CY+21,65,39,0,0,1,1,FLinearColor::White,BLEND_Opaque);
+            if(Art)DrawTexture(Art,CX+4,CY+28,65,65/2.8f,0,0,1,1,FLinearColor::White,BLEND_Opaque);
             AddHitBox(FVector2D(CX+4,CY+21)*UIScale,FVector2D(65,39)*UIScale,CommandId(TEXT("OpsImage_"),Id),true,111);
             Button(Key,Guest->ShipName,CX+71,CY+22,Width-135);
             const auto Count=PC->Interior->GetUnitsOnShip(Guest,0).Num();
@@ -153,14 +154,35 @@ void AOVHUD::DrawShipOperations()
 {
     auto* PC=CastChecked<AOVController>(PlayerOwner);
     const float Height=ViewportPixels.Y/UIScale;
-    float RowY=Height-CommandPanelHeight()-54;
+    float Bottom=Height-CommandPanelHeight()-14;
+    if(PC->Transport) for(const auto& Shuttle:PC->Transport->Shuttles){
+        if(!Shuttle.bDockBlocked || Shuttle.FactionId!=0 || !Shuttle.Ship.IsValid())continue;
+        Bottom-=32;
+        DrawRect(FLinearColor(.12f,.048f,.014f,.98f),12,Bottom,480,30);
+        DrawText(Shuttle.Ship->ShipName+TEXT(" · ")+Shuttle.Reason,FLinearColor(1,.77f,.34f),20,Bottom+5,OVTypography::Font(EOVTextRole::Button));
+    }
     for(const auto& Op:PC->CrewOperations){
         if(!Op.Origin.IsValid()||!Op.Target.IsValid())continue;
         const int32 N=PC->Mustered(Op);
-        DrawRect(FLinearColor(.015f,.045f,.06f,.98f),12,RowY,480,40);
+        const bool Pods=!Op.bTransfer && !Op.Shuttle.IsValid();
+        const int32 Lines=Pods?FMath::DivideAndRoundUp(Op.Units.Num(),3):0;
+        const float H=40+(Pods?24+Lines*18:0);
+        const float RowY=Bottom-H;
+        DrawRect(FLinearColor(.015f,.045f,.06f,.98f),12,RowY,480,H);
+        AddHitBox(FVector2D(12,RowY)*UIScale,FVector2D(480,H)*UIScale,CommandId(TEXT("OpsCrewBG_"),Op.Serial),true,225);
+        if(Pods){
+            const bool Shield=Op.Target->Systems->bShieldActive && Op.Target->Systems->Shield>0;
+            DrawText(Shield?TEXT("경고 · 적 쉴드 활성 / 접촉 시 포드 소실"):TEXT("적 쉴드 비활성 · 포드 발사 순서"),Shield?FLinearColor(1,.63f,.2f):FLinearColor(.5f,.95f,.86f),19,RowY+38,OVTypography::Font(EOVTextRole::Body));
+            for(int32 I=0;I<Op.Units.Num();++I){
+                const auto Unit=PC->Interior->GetUnit(Op.Units[I]);
+                const FString Name=Unit.Role==EOVInteriorRole::Trooper?FString::Printf(TEXT("일반병 #%d"),Unit.UnitId):Unit.Name;
+                const FString Label=FString::Printf(TEXT("%02d  %s"),I+1,*Name);
+                DrawText(FitLabel(OVTypography::Font(EOVTextRole::Body),Label,150),FLinearColor::White,19+(I%3)*156,RowY+60+(I/3)*18,OVTypography::Font(EOVTextRole::Body));
+            }
+        }
         DrawText(FString::Printf(TEXT("%s · %s%s  %d/%d"),Op.bTransfer?TEXT("승하선"):Op.Shuttle.IsValid()?TEXT("승선 준비"):TEXT("포드 탑승"),Op.bTransfer?TEXT(""):TEXT("적 "),*Op.Target->ShipName,N,Op.Units.Num()),FLinearColor::White,18,RowY+9,OVTypography::Font(EOVTextRole::Body));
         if(!Op.bTransfer && N==Op.Units.Num())Button(CommandId(TEXT("OpsReady_"),Op.Serial),Op.Shuttle.IsValid()?TEXT("출격 확인"):TEXT("발사 확인"),288,RowY+6,100);
-        Button(CommandId(TEXT("OpsCancel_"),Op.Serial),TEXT("취소"),394,RowY+6,80);RowY-=43;
+        Button(CommandId(TEXT("OpsCancel_"),Op.Serial),TEXT("취소"),394,RowY+6,80);Bottom=RowY-3;
     }
     if(!bChoosingTransport&&!bChoosingTransfer)return;
     const float X=ViewportPixels.X/UIScale*.5f-155,Y=100;

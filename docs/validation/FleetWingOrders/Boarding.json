@@ -1,0 +1,391 @@
+{
+  "runs": [
+    {
+      "mode": "closefocusedshuttlehero",
+      "seed": 260112,
+      "costs": [
+        200,
+        200
+      ],
+      "heroes_at_origin": 6,
+      "team_heroes": 4,
+      "team_sent_at": 5,
+      "first_entry": 11.87,
+      "capture": 58,
+      "first_shield_down": 0,
+      "first_in_range": 0,
+      "min_range_m": 175.0,
+      "shuttle_changes": [
+        [
+          5,
+          "APPROACHING",
+          ""
+        ],
+        [
+          9,
+          "DOCKING",
+          ""
+        ],
+        [
+          12,
+          "DELIVERED",
+          "실제 선내 이송 완료 · 내부 아군 보호 활성"
+        ],
+        [
+          46,
+          "LOST",
+          "수송선 이탈/소속 변경; 회수 불가, 포로 처리는 미지원"
+        ]
+      ],
+      "entered": 8,
+      "initial_defenders": 6,
+      "shuttle_start_hp_shield": [
+        21252,
+        6336
+      ],
+      "flight_min_hp_shield": [
+        15328,
+        11
+      ],
+      "prepared": true,
+      "last_block": "대원 집결·표적·발사 시설을 확인하세요",
+      "approach_samples": [
+        {
+          "second": 5,
+          "target_distance_m": 175.7,
+          "engine": 1.0,
+          "bridge": 1.0,
+          "neutral": false,
+          "can_move": true,
+          "hp": 21252,
+          "shield": 6336
+        },
+        {
+          "second": 10,
+          "target_distance_m": 58.3,
+          "engine": 1.0,
+          "bridge": 1.0,
+          "neutral": false,
+          "can_move": true,
+          "hp": 15328,
+          "shield": 163
+        }
+      ],
+      "focus_requests": 8,
+      "last_shuttle_reason": "수송선 이탈/소속 변경; 회수 불가, 포로 처리는 미지원",
+      "pd_shots_seen": 0,
+      "pd_hits_seen": 0,
+      "pd_kills_seen": 0,
+      "elapsed": 58.0,
+      "pod_launched": 0,
+      "pod_states": {},
+      "people": {
+        "INSIDE_TARGET": 8
+      },
+      "target_hull_pct": 100.0,
+      "origin_wrecked": false,
+      "target_wrecked": false,
+      "result": "RUNNING",
+      "defenders_killed": 2,
+      "defenders_hp_remaining": 1018,
+      "salvos_or_shots": 16,
+      "shuttle_hull": [
+        15328,
+        21252
+      ],
+      "shuttle_wrecked": false,
+      "surviving_fleet": [
+        12,
+        12
+      ],
+      "pod_hp_profile": 160.0,
+      "pod_hp_at_end": []
+    },
+    {
+      "mode": "closeshieldshuttlehero",
+      "seed": 260112,
+      "costs": [
+        200,
+        200
+      ],
+      "heroes_at_origin": 6,
+      "team_heroes": 4,
+      "team_sent_at": 5,
+      "first_entry": null,
+      "capture": null,
+      "first_shield_down": null,
+      "first_in_range": 0,
+      "min_range_m": 175.0,
+      "shuttle_changes": [
+        [
+          5,
+          "APPROACHING",
+          ""
+        ]
+      ],
+      "entered": 0,
+      "initial_defenders": 6,
+      "shuttle_start_hp_shield": [
+        21252,
+        6336
+      ],
+      "flight_min_hp_shield": [
+        21252,
+        2290
+      ],
+      "prepared": true,
+      "last_block": "대원 집결·표적·발사 시설을 확인하세요",
+      "approach_samples": [
+        {
+          "second": 5,
+          "target_distance_m": 175.7,
+          "engine": 1.0,
+          "bridge": 1.0,
+          "neutral": false,
+          "can_move": true,
+          "hp": 21252,
+          "shield": 6336
+        },
+        {
+          "second": 10,
+          "target_distance_m": 58.3,
+          "engine": 1.0,
+          "bridge": 1.0,
+          "neutral": false,
+          "can_move": true,
+          "hp": 21252,
+          "shield": 6291
+        },
+        {
+          "second": 20,
+          "target_distance_m": 58.3,
+          "engine": 1.0,
+          "bridge": 1.0,
+          "neutral": false,
+          "can_move": true,
+          "hp": 21252,
+          "shield": 5890
+        },
+        {
+          "second": 30,
+          "target_distance_m": 58.3,
+          "engine": 1.0,
+          "bridge": 1.0,
+          "neutral": false,
+          "can_move": true,
+          "hp": 21252,
+          "shield": 5490
+        },
+        {
+          "second": 40,
+          "target_distance_m": 58.3,
+          "engine": 1.0,
+          "bridge": 1.0,
+          "neutral": false,
+          "can_move": true,
+          "hp": 21252,
+          "shield": 5090
+        },
+        {
+          "second": 50,
+          "target_distance_m": 58.3,
+          "engine": 1.0,
+          "bridge": 1.0,
+          "neutral": false,
+          "can_move": true,
+          "hp": 21252,
+          "shield": 4690
+        },
+        {
+          "second": 60,
+          "target_distance_m": 58.3,
+          "engine": 1.0,
+          "bridge": 1.0,
+          "neutral": false,
+          "can_move": true,
+          "hp": 21252,
+          "shield": 4290
+        },
+        {
+          "second": 70,
+          "target_distance_m": 58.3,
+          "engine": 1.0,
+          "bridge": 1.0,
+          "neutral": false,
+          "can_move": true,
+          "hp": 21252,
+          "shield": 3890
+        },
+        {
+          "second": 80,
+          "target_distance_m": 58.3,
+          "engine": 1.0,
+          "bridge": 1.0,
+          "neutral": false,
+          "can_move": true,
+          "hp": 21252,
+          "shield": 3490
+        },
+        {
+          "second": 90,
+          "target_distance_m": 58.3,
+          "engine": 1.0,
+          "bridge": 1.0,
+          "neutral": false,
+          "can_move": true,
+          "hp": 21252,
+          "shield": 3090
+        },
+        {
+          "second": 100,
+          "target_distance_m": 58.3,
+          "engine": 1.0,
+          "bridge": 1.0,
+          "neutral": false,
+          "can_move": true,
+          "hp": 21252,
+          "shield": 2690
+        },
+        {
+          "second": 110,
+          "target_distance_m": 58.3,
+          "engine": 1.0,
+          "bridge": 1.0,
+          "neutral": false,
+          "can_move": true,
+          "hp": 21252,
+          "shield": 2290
+        }
+      ],
+      "last_shuttle_reason": "적 쉴드 활성 · 접안 대기 / 강습선 쉴드 소모",
+      "pd_shots_seen": 0,
+      "pd_hits_seen": 0,
+      "pd_kills_seen": 0,
+      "elapsed": 110.0,
+      "pod_launched": 0,
+      "pod_states": {},
+      "people": {
+        "IN_SHUTTLE": 8
+      },
+      "target_hull_pct": 100.0,
+      "origin_wrecked": false,
+      "target_wrecked": false,
+      "result": "RUNNING",
+      "defenders_killed": 0,
+      "defenders_hp_remaining": 1600,
+      "salvos_or_shots": 0,
+      "shuttle_hull": [
+        21252,
+        21252
+      ],
+      "shuttle_wrecked": false,
+      "surviving_fleet": [
+        12,
+        12
+      ],
+      "pod_hp_profile": 160.0,
+      "pod_hp_at_end": []
+    },
+    {
+      "mode": "closeshuttlehero",
+      "seed": 260112,
+      "costs": [
+        200,
+        200
+      ],
+      "heroes_at_origin": 6,
+      "team_heroes": 4,
+      "team_sent_at": 5,
+      "first_entry": 11.87,
+      "capture": 61,
+      "first_shield_down": 0,
+      "first_in_range": 0,
+      "min_range_m": 175.0,
+      "shuttle_changes": [
+        [
+          5,
+          "APPROACHING",
+          ""
+        ],
+        [
+          9,
+          "DOCKING",
+          ""
+        ],
+        [
+          12,
+          "DELIVERED",
+          "실제 선내 이송 완료 · 내부 아군 보호 활성"
+        ]
+      ],
+      "entered": 8,
+      "initial_defenders": 6,
+      "shuttle_start_hp_shield": [
+        21252,
+        6336
+      ],
+      "flight_min_hp_shield": [
+        21252,
+        6336
+      ],
+      "prepared": true,
+      "last_block": "대원 집결·표적·발사 시설을 확인하세요",
+      "approach_samples": [
+        {
+          "second": 5,
+          "target_distance_m": 175.7,
+          "engine": 1.0,
+          "bridge": 1.0,
+          "neutral": false,
+          "can_move": true,
+          "hp": 21252,
+          "shield": 6336
+        },
+        {
+          "second": 10,
+          "target_distance_m": 58.3,
+          "engine": 1.0,
+          "bridge": 1.0,
+          "neutral": false,
+          "can_move": true,
+          "hp": 21252,
+          "shield": 6336
+        }
+      ],
+      "last_shuttle_reason": "실제 선내 이송 완료 · 내부 아군 보호 활성",
+      "pd_shots_seen": 0,
+      "pd_hits_seen": 0,
+      "pd_kills_seen": 0,
+      "elapsed": 61.0,
+      "pod_launched": 0,
+      "pod_states": {},
+      "people": {
+        "INSIDE_TARGET": 8
+      },
+      "target_hull_pct": 100.0,
+      "origin_wrecked": false,
+      "target_wrecked": false,
+      "result": "RUNNING",
+      "defenders_killed": 3,
+      "defenders_hp_remaining": 720,
+      "salvos_or_shots": 0,
+      "shuttle_hull": [
+        21252,
+        21252
+      ],
+      "shuttle_wrecked": false,
+      "surviving_fleet": [
+        13,
+        11
+      ],
+      "pod_hp_profile": 160.0,
+      "pod_hp_at_end": []
+    }
+  ],
+  "step": 0.1,
+  "current": [
+    260112,
+    "closeshuttlehero"
+  ],
+  "complete": true
+}

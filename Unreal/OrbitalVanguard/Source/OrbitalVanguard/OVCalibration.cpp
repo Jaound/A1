@@ -83,6 +83,18 @@ const FHull* FindHull(FName Key)
     for (const FHull& Hull : Hulls)
         if (FName(Hull.Key) == Key)
         {
+            if (Key == TEXT("assault"))
+            {
+                static const FHull ArmoredTransport = [&Hull]() {
+                    FHull Result = Hull;
+                    const FHull& Vector = *FindHull(TEXT("vector"));
+                    Result.HP = Vector.HP;
+                    Result.Armor = Vector.Armor;
+                    Result.FrontArmor = Vector.FrontArmor;
+                    return Result;
+                }();
+                return &ArmoredTransport;
+            }
             if (Key == TEXT("corvette"))
             {
                 static const FHull Screen = [&Hull]() { FHull H=Hull; H.Mounts[1].Weapon=H.Mounts[0].Weapon; return H; }();

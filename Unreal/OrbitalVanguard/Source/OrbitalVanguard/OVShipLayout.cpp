@@ -75,7 +75,7 @@ UShipLayoutDataAsset* UShipLayoutDataAsset::MakeTestLayout(UObject* Outer, int32
                     Slot.AllowedFacilities.Add(static_cast<EOVFacilityType>(Type));
                 }
                 if (Slot.SlotId == Layout->CoreSlotId) Slot.AllowedFacilities.Add(EOVFacilityType::Core);
-                if ((Decks != 3 || Deck != 2) && (X == 0 || X == 4) && Y == 1)
+                if ((Decks != 3 || Deck != 2) && (X == 0 || (Decks > 1 && X == 1) || X == 4) && Y == 1)
                 {
                     Layout->BridgeAllowedSlots.Add(Slot.SlotId);
                     Slot.AllowedFacilities.Add(EOVFacilityType::Bridge);
@@ -92,7 +92,7 @@ UShipLayoutDataAsset* UShipLayoutDataAsset::MakeTestLayout(UObject* Outer, int32
         Slot.RequiredCrew = OVLayout::Uncrewed(Type) ? 0 : 10;
     };
     Install(Layout->GetSlotIndex(Layout->CoreSlotId), EOVFacilityType::Core);
-    Install(Layout->GetSlotIndex(OVLayout::SlotName(Decks, 4, 1)), EOVFacilityType::Bridge);
+    Install(Layout->GetSlotIndex(OVLayout::SlotName(Decks, Decks == 1 ? 0 : 1, 1)), EOVFacilityType::Bridge);
     TArray<EOVFacilityType> Facilities = {
         EOVFacilityType::LifeSupport, EOVFacilityType::Engine, EOVFacilityType::Engine, EOVFacilityType::Engine,
         EOVFacilityType::WeaponControl, EOVFacilityType::Ammo, EOVFacilityType::Capacitor,
@@ -328,7 +328,7 @@ UShipLayoutDataAsset* UShipLayoutDataAsset::MakeD126Layout(
                 }
                 const bool bOuterDeck = (Decks != 3 || Deck != 2);
                 const bool bOuterBowOrStern = (BX == 4 && FMath::IsNearlyZero(YCenter)) || (BX == 0 && FMath::IsNearlyZero(YCenter));
-                if (bOuterDeck && bOuterBowOrStern)
+                if (bOuterDeck && (bOuterBowOrStern || (Decks > 1 && BX == 1)))
                 {
                     Layout->BridgeAllowedSlots.AddUnique(Slot.SlotId);
                     Slot.AllowedFacilities.AddUnique(EOVFacilityType::Bridge);
@@ -349,7 +349,8 @@ UShipLayoutDataAsset* UShipLayoutDataAsset::MakeD126Layout(
     };
 
     InstallAt(Layout->GetSlotIndex(Layout->CoreSlotId), EOVFacilityType::Core);
-    const FName BridgeSlotId(*FString::Printf(TEXT("D%d_X4_Y1"), Decks));
+    const auto& AftBand = DeckBandSlots.Last()[Decks == 1 ? 0 : 1];
+    const FName BridgeSlotId = AftBand[AftBand.Num()/2];
     InstallAt(Layout->GetSlotIndex(BridgeSlotId), EOVFacilityType::Bridge);
 
     // Base mandatory life support + engine; caller (OVCalibration or customizer) populates remaining weapon/role rooms.

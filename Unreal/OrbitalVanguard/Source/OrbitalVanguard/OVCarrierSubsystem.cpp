@@ -428,7 +428,7 @@ void UOVCarrierSubsystem::SyncCarrierOwnership(FOVCarrierState& State)
 {
     auto* Ship=State.Carrier.Get();
     if(!IsValid(Ship)||!Ship->Systems||Ship->Systems->bWrecked||Ship->Systems->FactionId==State.LastFaction)return;
-    State.LastFaction=Ship->Systems->FactionId;State.bAbandonOutstanding=false;State.bAutoLaunch=false;
+    State.LastFaction=Ship->Systems->FactionId;State.bAirSuperiority=false;State.bAbandonOutstanding=false;State.bAutoLaunch=false;
     for(auto& H:Hangars) if(H.Carrier==Ship) H.ProductionSeconds=0;
     for(auto& Craft:Aircraft)if(Craft.Carrier==Ship&&Craft.State!=EOVAircraftState::Wrecked)
     {
@@ -579,7 +579,9 @@ void UOVCarrierSubsystem::AdvanceAircraft(FOVAircraftRecord& Craft, float Delta)
     }
 
     bool bSplit=false;
-    AOVShip* Target = SelectStrikeTarget(Craft,bSplit);
+    const auto* Wing = Carriers.FindByPredicate([Ship](const FOVCarrierState& C){ return C.Carrier==Ship; });
+    const bool bAirSuperiority = Wing && Wing->bAirSuperiority;
+    AOVShip* Target = bAirSuperiority ? nullptr : SelectStrikeTarget(Craft,bSplit);
     if (Target != Craft.StrikeTarget.Get())
     {
         Craft.StrikeTarget = Target; Craft.InterceptTargetId = 0;
@@ -587,7 +589,7 @@ void UOVCarrierSubsystem::AdvanceAircraft(FOVAircraftRecord& Craft, float Delta)
         Craft.Leg = EOVAircraftLeg::Ingress;
     }
     Craft.AttackDelay = FMath::Max(0.f, Craft.AttackDelay - Delta);
-    const auto* AirTarget = SelectAirTarget(Craft, Target, Delta);
+    const auto* AirTarget = SelectAirTarget(Craft, Target, Delta, bAirSuperiority);
     if (AirTarget) AdvanceDogfight(Craft, *AirTarget, Delta);
     else if (Target) AdvanceStrike(Craft, Target, Delta, bSplit);
     else
@@ -656,7 +658,7 @@ AOVShip* UOVCarrierSubsystem::SelectStrikeTarget(const FOVAircraftRecord& Craft,
     return Best;
 }
 
-const FOVAircraftRecord* UOVCarrierSubsystem::SelectAirTarget(FOVAircraftRecord& Craft, AOVShip* StrikeTarget, float Delta)
+const FOVAircraftRecord* UOVCarrierSubsystem::SelectAirTarget(FOVAircraftRecord& Craft, AOVShip* StrikeTarget, float Delta, bool bAirSuperiority)
 {
     CSV_SCOPED_TIMING_STAT_EXCLUSIVE(OV_CarrierTargeting);
     TRACE_CPUPROFILER_EVENT_SCOPE(OV_CarrierTargeting);
@@ -668,11 +670,14 @@ const FOVAircraftRecord* UOVCarrierSubsystem::SelectAirTarget(FOVAircraftRecord&
     const bool HadIntercept = Craft.InterceptTargetId != 0;
     const FOVAircraftRecord* Best = nullptr;
     double Distance = FMath::Square(double(Profile.AttackRange * (StrikeTarget ? ManeuverProfile.DefensiveRangeFraction : 1.5f)));
+    const double PatrolRadius = bAirSuperiority ? FMath::Max(double(Profile.AttackRange)*1.5, double(Craft.Carrier->Systems->GetRadarRange())) : 0.;
+    if (bAirSuperiority) Distance = TNumericLimits<double>::Max();
     if (!StrikeTarget || Craft.RejoinRemaining <= 0)
     {
         for (const auto& Other : Aircraft)
         {
             if (Other.AircraftId == Craft.AircraftId || Other.FactionId == Craft.FactionId || !IsAirborneState(Other.State)) continue;
+            if (bAirSuperiority && FVector::DistSquared(Other.Position,Craft.Carrier->GetActorLocation()) > PatrolRadius*PatrolRadius) continue;
             if (StrikeTarget && (FVector::DistSquared(Other.Position, StrikeTarget->GetActorLocation()) > Leash * Leash
                 || FVector::DistSquared(Craft.Position, StrikeTarget->GetActorLocation()) > Leash * Leash)) continue;
             const double D = FVector::DistSquared(Craft.Position, Other.Position);

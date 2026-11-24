@@ -13,6 +13,8 @@ class ORBITALVANGUARD_API UOVShipPreview : public UObject
 {
     GENERATED_BODY()
 public:
+    // Local +X is the bow. Present it toward the viewer and lower right, with the deck visible.
+    static FRotator DefaultHullView() { return (FRotator(20,0,0).Quaternion() * FRotator(0,145,0).Quaternion()).Rotator(); }
     void Update(AOVShip* Ship, FRotator Rotation, float Zoom, float Aspect, int32 FocusMount=INDEX_NONE, int32 PixelWidth=800, bool bPortrait=false);
     void Release();
     UTextureRenderTarget2D* GetTexture() const { return Texture; }

@@ -94,6 +94,7 @@ struct ORBITALVANGUARD_API FOVShuttleRecord
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly) FVector DockLocalPoint = FVector::ZeroVector;
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly) FVector DockLocalNormal = FVector::ForwardVector;
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly) float Progress = 0;
+    UPROPERTY(VisibleAnywhere, BlueprintReadOnly) bool bDockBlocked = false;
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly) FString Reason;
 };
 

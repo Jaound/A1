@@ -161,6 +161,7 @@ struct ORBITALVANGUARD_API FOVCarrierState
     GENERATED_BODY()
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly) TWeakObjectPtr<AOVShip> Carrier;
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly) bool bRecallOrdered = false;
+    UPROPERTY(VisibleAnywhere, BlueprintReadOnly) bool bAirSuperiority = false;
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly) bool bAbandonOutstanding = false;
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly) bool bWasFTLCharging = false;
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly) bool bAutoLaunch = false;
@@ -254,7 +255,7 @@ private:
     void AdvanceProduction(AOVShip* Ship,const FOVAircraftOverview& Wing,float Delta);
     void AdvanceAircraft(FOVAircraftRecord& Craft, float Delta);
     AOVShip* SelectStrikeTarget(const FOVAircraftRecord& Craft, bool& bSplit) const;
-    const FOVAircraftRecord* SelectAirTarget(FOVAircraftRecord& Craft, AOVShip* StrikeTarget, float Delta);
+    const FOVAircraftRecord* SelectAirTarget(FOVAircraftRecord& Craft, AOVShip* StrikeTarget, float Delta, bool bAirSuperiority);
     void AdvanceStrike(FOVAircraftRecord& Craft, AOVShip* Target, float Delta, bool bSplit);
     void AdvanceDogfight(FOVAircraftRecord& Craft, const FOVAircraftRecord& Target, float Delta);
     void FlyToward(FOVAircraftRecord& Craft, FVector Point, float Delta, bool bFiniteTurn);

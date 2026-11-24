@@ -390,7 +390,7 @@ void AOVHUD::DrawPlayHUD()
    const FName Key=S->HullDefinitionId;
    auto* Art=SelectionPortraits.FindRef(Key).Get();
    if(!Art&&!Key.IsNone()&&FApp::CanEverRender()){
-    auto* Preview=NewObject<UOVShipPreview>(this);Preview->Update(S,FRotator(-18,68,-15),1.12f,2.8f,INDEX_NONE,384,true);
+    auto* Preview=NewObject<UOVShipPreview>(this);Preview->Update(S,UOVShipPreview::DefaultHullView(),1.12f,2.8f,INDEX_NONE,384,true);
     Art=Preview->GetTexture();if(Art)SelectionPortraits.Add(Key,Art);Preview->Release();
    }
    const FName Pick(*FString::Printf(TEXT("Pick_%d"),PC->Ships.IndexOfByKey(S)));
@@ -538,6 +538,7 @@ void AOVHUD::DrawPlayHUD()
   Button(TEXT("LaunchAircraft"),TEXT("함재기 출격"),380,Y+128,108);
   Button(TEXT("RecallAircraft"),TEXT("함재기 귀환"),495,Y+128,108);
   if(auto* State=Carrier->Carriers.FindByPredicate([Ship](const auto& C){return C.Carrier==Ship;})){
+   Button(TEXT("WingAirCombat"),State->bAirSuperiority?TEXT("제공전 중"):TEXT("제공전"),287,Y+209,100,State->bAirSuperiority);
    Button(TEXT("AutoWing"),State->bRecallOrdered?TEXT("자동 재개"):State->bAutoLaunch?TEXT("자동 출격 ✓"):TEXT("자동 출격"),393,Y+209,100,State->bAutoLaunch);
    Button(TEXT("WingSupply"),TEXT("항공 보급"),499,Y+209,102);
   }

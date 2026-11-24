@@ -95,7 +95,7 @@ bool AOVHUD::IsOverPanel(float X,float Y) const
  const auto* PC=Cast<AOVController>(PlayerOwner); if(!PC) return false;
  const FVector2D P(X/UIScale,Y/UIScale);
  const FString HitAction=GetHitActionAtCanvasPoint(P).ToString();
- if(HitAction.StartsWith(TEXT("FacilityAlert_"))||HitAction.StartsWith(TEXT("OpsReady_"))||HitAction.StartsWith(TEXT("OpsCancel_")))return true;
+ if(HitAction.StartsWith(TEXT("FacilityAlert_"))||HitAction.StartsWith(TEXT("OpsReady_"))||HitAction.StartsWith(TEXT("OpsCancel_"))||HitAction.StartsWith(TEXT("OpsCrewBG_")))return true;
  if (const auto* Play = PC->GetPlayScenario(); Play && Play->GetActiveDefinition() && !bSceneMenuOpen &&
      P.X >= 0 && P.X <= (Play->ActiveId==TEXT("Sandbox")?426:508) && P.Y >= 63 && P.Y <= 63+Play->MissionPanelHeight()) return true;
 
@@ -513,6 +513,7 @@ void AOVHUD::NotifyHitBoxClick(FName N)
 void AOVHUD::DrawExternal(float X,float Y,float W)
 {
  auto* PC=Cast<AOVController>(PlayerOwner); if(!PC||!PC->Selected)return;
+ if(PreviewSubject!=PC->Selected.Get()) { PreviewSubject=PC->Selected.Get(); PreviewRotation=UOVShipPreview::DefaultHullView(); PreviewZoom=1; }
  if(!ShipPreview)ShipPreview=NewObject<UOVShipPreview>(this);
  ShipPreview->Update(PC->Selected,PreviewRotation,PreviewZoom,W/(WindowSize.Y*.5f),INDEX_NONE,FMath::CeilToInt(W*UIScale));
  DrawRect(FLinearColor(.009f,.02f,.035f),X,Y,W,WindowSize.Y*.5f);
@@ -1213,7 +1214,7 @@ void AOVHUD::DrawPinned()
   if(PinnedDecks[I]==0) {
    auto* Preview=PinnedPreviews[I].Get();
    if(Systems->bWrecked)Preview->Release();
-   else Preview->Update(Ship,FRotator(-25,35,0),1,(W-12)/FMath::Max(1.f,H-83),PinnedWeapons[I],FMath::CeilToInt((W-12)*UIScale));
+   else Preview->Update(Ship,PinnedWeapons[I]==INDEX_NONE?UOVShipPreview::DefaultHullView():FRotator(-25,35,0),1,(W-12)/FMath::Max(1.f,H-83),PinnedWeapons[I],FMath::CeilToInt((W-12)*UIScale));
    if(auto* Texture=Preview->GetTexture())DrawTexture(Texture,X+6,Y+64,W-12,H-83,0,0,1,1,FLinearColor::White,BLEND_Opaque);
    else if(Systems->bWrecked)DrawText(TEXT("함선 완파"),Ink,X+12,Y+72,OVTypography::Font(EOVTextRole::Body));
    if(Layout->WeaponMounts.Num()>0)Button(FName(*FString::Printf(TEXT("PinnedWeaponNext_%d"),I)),TEXT("무장 +"),X+W-62,Y+(HasHangar?65:35),56,PinnedWeapons[I]>=0);

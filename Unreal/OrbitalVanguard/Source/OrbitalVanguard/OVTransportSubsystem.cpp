@@ -529,6 +529,7 @@ bool UOVTransportSubsystem::RecallShuttle(AOVShip* Ship)
 void UOVTransportSubsystem::AdvanceShuttle(FOVShuttleRecord& Shuttle, float Delta)
 {
     AOVShip* Ship = Shuttle.Ship.Get();
+    if (Shuttle.bDockBlocked) { Shuttle.bDockBlocked=false; Shuttle.Reason.Reset(); }
     if (Shuttle.State == EOVShuttleState::Lost) return;
     if (!Usable(Ship) || Ship->Systems->FactionId != Shuttle.FactionId)
     {
@@ -573,6 +574,13 @@ void UOVTransportSubsystem::AdvanceShuttle(FOVShuttleRecord& Shuttle, float Delt
         return;
     }
     if (!Usable(Target)) return;
+    if (!Ship->Systems->CanCommand())
+    {
+        Shuttle.Progress=0;
+        Shuttle.bDockBlocked=true;
+        Shuttle.Reason=TEXT("함교 무력화 · 접안 중단");
+        return;
+    }
     FVector Direction = (Ship->GetActorLocation() - Target->GetActorLocation()).GetSafeNormal(SMALL_NUMBER, FVector::ForwardVector);
     if (Shuttle.State == EOVShuttleState::Recovering)
         Direction = Target->GetActorTransform().TransformVector(Shuttle.DockLocalPoint).GetSafeNormal(SMALL_NUMBER, FVector::ForwardVector);
@@ -586,7 +594,8 @@ void UOVTransportSubsystem::AdvanceShuttle(FOVShuttleRecord& Shuttle, float Delt
     if (Target->Systems->bShieldActive && Target->Systems->Shield > 0 && Target->Systems->FactionId != Shuttle.FactionId)
     {
         Ship->Systems->Shield = FMath::Max(0.f, Ship->Systems->Shield - Settings.ShieldContactDamage * Delta);
-        Ship->Systems->RefreshDerivedState(); Shuttle.Progress = 0; Shuttle.Reason = TEXT("적 활성 쉴드: 진입 불가 / 강습선 쉴드 소모"); return;
+        Ship->Systems->RefreshDerivedState(); Shuttle.Progress = 0; Shuttle.bDockBlocked=true;
+        Shuttle.Reason = TEXT("적 쉴드 활성 · 접안 대기 / 강습선 쉴드 소모"); return;
     }
     if (Shuttle.State == EOVShuttleState::Approaching) Shuttle.State = EOVShuttleState::Docking;
     if (Shuttle.State == EOVShuttleState::Recovering)

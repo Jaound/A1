@@ -2,6 +2,7 @@
 #include "CoreMinimal.h"
 #include "GameFramework/HUD.h"
 #include "OVTypography.h"
+#include "OVShipPreview.h"
 #include "OVHUD.generated.h"
 class AOVShip;
 struct FOVCombatMountState;
@@ -87,9 +88,9 @@ public:
  void OrbitPreview(FVector2D Delta);
  UFUNCTION(BlueprintCallable, Category="UI") void CancelPointerDrag() { bInteriorScrolling=false; bDragging=false; bResizing=false; bInteriorDragging=false; bInteriorResizing=false; bDevDragging=false; bDevResizing=false; DraggedPin=INDEX_NONE; bPinResizing=false; }
  void OpenSurvey(){bHangarView=false;OpenDetails();}
- void OpenDetails() { bInteriorOpen=false;bDetailsOpen=true; bMinimized=false; bHeroPanelOpen=false; SyncAddedUI(); }
+ void OpenDetails() { PreviewSubject.Reset(); bInteriorOpen=false;bDetailsOpen=true; bMinimized=false; bHeroPanelOpen=false; SyncAddedUI(); }
  UFUNCTION(BlueprintCallable, Category="UI") bool HandlePointer(float X,float Y,bool Pressed,bool Down,float Wheel,bool Orbit,float DX,float DY);
- UFUNCTION(BlueprintCallable, Category="UI") void SetDetailsOpen(bool Open) { bDetailsOpen=Open; bMinimized=false; }
+ UFUNCTION(BlueprintCallable, Category="UI") void SetDetailsOpen(bool Open) { if(Open && !bDetailsOpen) PreviewSubject.Reset(); bDetailsOpen=Open; bMinimized=false; }
  UFUNCTION(BlueprintPure, Category="UI") FVector2D GetActionCenter(FName Action) const;
  UFUNCTION(BlueprintPure, Category="UI") FString GetFleetDisplayLabel(AOVShip* Ship) const;
  UFUNCTION(BlueprintPure, Category="UI") bool IsFleetAirOverview() const { return bFleetAirOverview; }
@@ -205,7 +206,8 @@ private:
  bool bDrawingStarMap=false;
  void DrawStarMap();
  FVector2D DragOffset=FVector2D::ZeroVector;
- FRotator PreviewRotation=FRotator(-25,35,0);
+ TWeakObjectPtr<AOVShip> PreviewSubject;
+ FRotator PreviewRotation=UOVShipPreview::DefaultHullView();
  float PreviewZoom=1;
  void DrawDetails();
  void DrawFacilityAlerts();

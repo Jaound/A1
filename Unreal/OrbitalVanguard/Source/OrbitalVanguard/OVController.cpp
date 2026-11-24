@@ -532,7 +532,8 @@ void AOVController::UpdateCombatPresentation()
  // 2. 3D Missiles (Standard vs Anti-Ship), Cannon Bolts, Laser Beams, and Impact Effects
  TArray<FTransform> StdMissiles,AntiShipMissiles,CannonBolts,FriendlyBeams,EnemyBeams,Plumes,ShieldHits,HullHits;
  const float FX=CalibrationScenario>=0?14.f:1.f;
- const float MissileScale = 1.50f * (CalibrationScenario>=0 ? 1.f : .12f);
+ const float PreviousMissileScale = 1.50f * (CalibrationScenario>=0 ? 1.f : .12f);
+ const float MissileScale = PreviousMissileScale * 1.5f;
  const float StdScale = .13f * MissileScale, AntiShipScale = .30f * MissileScale;
  // Imported missiles point down -X. Use the actual lengths instead of the generic FX cylinder.
  const auto MissileLength = [](UInstancedStaticMeshComponent* Instances, float Scale)
@@ -540,7 +541,7 @@ void AOVController::UpdateCombatPresentation()
   const UStaticMesh* Mesh = Instances ? Instances->GetStaticMesh() : nullptr;
   return Mesh ? 2.0 * Mesh->GetBounds().BoxExtent.X * Scale : DBL_MAX;
  };
- const double ShellLimit = .85 * FMath::Min(MissileLength(StandardMissileMeshes,StdScale),MissileLength(AntiShipMissileMeshes,AntiShipScale));
+ const double ShellLimit = .85 * FMath::Min(MissileLength(StandardMissileMeshes,.13f*PreviousMissileScale),MissileLength(AntiShipMissileMeshes,.30f*PreviousMissileScale));
  if(Combat&&Combat->bEnabled) {
   for(const auto& Shot:Combat->Attacks) {
    if(Shot.Result!=EOVAttackResult::Flying || Shot.Weapon.Kind==EOVAttackKind::Beam || Shot.Position.ContainsNaN()||Shot.Direction.ContainsNaN()) continue;
@@ -969,10 +970,14 @@ void AOVController::Action(FName Name)
 {
  if(FormationAction(Name)) return;
  if(Name==TEXT("Move") || Name==TEXT("Stop") || Name==TEXT("Cancel") || Name==TEXT("Target")) CloseFormation();
- if(Name==TEXT("AutoWing") || Name==TEXT("WingSupply")){
+ if(Name==TEXT("WingAirCombat") || Name==TEXT("AutoWing") || Name==TEXT("WingSupply")){
   if(IsValid(Selected) && Selected->bFriendly && Selected->Systems->CanCommand() && Carrier && !Combat->IsDeparted(Selected)){
    for(auto& State:Carrier->Carriers) if(State.Carrier==Selected){
-    if(Name==TEXT("AutoWing")) {
+    if(Name==TEXT("WingAirCombat")) {
+     State.bAirSuperiority=!State.bAirSuperiority;
+     LastAction=State.bAirSuperiority?TEXT("제공전 · 적 함재기 교전 / 표적 없으면 모함 초계"):TEXT("대함 임무 복귀");
+    }
+    else if(Name==TEXT("AutoWing")) {
      State.bAutoLaunch=State.bRecallOrdered || !State.bAutoLaunch;
      if(State.bAutoLaunch)State.bRecallOrdered=false;
     }
