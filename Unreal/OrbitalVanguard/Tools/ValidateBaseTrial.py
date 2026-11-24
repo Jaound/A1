@@ -1,6 +1,7 @@
 """ControlRange의 실제 PIE 임무 수명·시간·소켓을 검사한다. 마우스 검사는 별도로 수행한다."""
 import json
 import traceback
+import time
 from pathlib import Path
 import unreal as u
 
@@ -37,7 +38,8 @@ def run():
     check('종속 공사 보호',not base.cancel_construction(1))
     check('별도 연결 슬롯',reserve('Junction',-3,0,0) and base.common_stock()==820)
     # 렌더 파생 이미지와 배치 검사는 별개다. 일시정지 상태에서 셰이더와 카메라가 적용될 프레임을 준다.
-    for _ in range(30): yield
+    settle=time.monotonic()+6
+    while time.monotonic()<settle: yield
     u.SystemLibrary.execute_console_command(world,'Shot filename="'+str(folder/'BaseTrial.png')+'" -nosuffix',pc)
     for _ in range(5): yield
     parts=base.get_components_by_class(u.StaticMeshComponent)
