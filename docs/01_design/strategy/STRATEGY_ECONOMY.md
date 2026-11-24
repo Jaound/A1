@@ -24,3 +24,17 @@
 - **사거리 안전선**: 모든 요새 무장 최대 사거리 **≤ 1,750m**로 FTL 강제 차단 외곽 안전 경계(`1,800~2,200m`) 침범 불가.
 - **초중 궤도 랜스포 제한**: 코어 III 해금 정식 5번 슬롯 — **전투 전초기지 최대 1기 / 본기지 최대 2기**.
 <!-- A1_GDD_STUDIO_END:OUTPOST_GALAXY_FORTRESS_V1 -->
+
+---
+
+<!-- A1_GDD_STUDIO_START:CAMPAIGN_TUTORIAL_SCENARIO_V1 -->
+## [확정 패치] 캠페인 개시 단계별 튜토리얼 (C01~C08) 및 5막 시나리오 연동
+
+> 상세 마스터 문서: `docs/01_design/strategy/CAMPAIGN_TUTORIAL_SCENARIO.md`
+> 본 섹션은 별도 훈련장 분리 없이 **정규 캠페인 제1막(SYS-01 솔라리스)에서 시작해 6성계 40구역 10항로 자유 전역으로 그대로 인계되는 8단계 튜토리얼 및 5종 시나리오** 규격을 반영합니다.
+
+- **캠페인 통합 온보딩**: `C01~C08` 총 **8단계 (23개 목표 · 24~35.5분)** — 건설한 25m 입체 기지·자원 창고·전초기지·요새 무장·함대·나포 전함·영웅(`M01 카엘 반` 포함)이 초기화 없이 자유 전역으로 영구 인계됩니다.
+- **숙련자 건너뛰기**: 시작 시 [튜토리얼 건너뛰기(`-OVPlayScene=CampaignSandbox`)] 선택 시 코어 II 기본 기지·전초기지 2기·구축함 편대로 즉시 자유 전역 개시.
+- **5막 캠페인 서사**: **ACT I 솔라리스 재건과 첫 방어선**(코어 I → 코어 II) → **ACT II 시그너스 광맥 쟁탈과 영웅 강습**(코어 II → 코어 III) → **ACT III 아이기스 봉쇄선 돌파와 자유 전략 개시**(코어 III) → **ACT IV 중앙 10항로 기동전 · 베가와 헬릭스**(코어 III → 코어 IV) → **ACT V 오메가 최종 결전 · 철혈 성채 함락**(코어 IV (최종))
+- **플레이 시나리오 5종 (`OVPlayScenarioSubsystem`)**: SCN-01 정규 캠페인: 솔라리스 수복 전역 (튜토리얼 통합)(`-OVPlayScene=CampaignGuided`) · SCN-02 정규 캠페인: 자유 전역 즉시 개시 (튜토리얼 건너뛰기)(`-OVPlayScene=CampaignSandbox`) · SCN-03 단독 시나리오: 아이기스 FTL 봉쇄 돌파전(`-OVPlayScene=ScenarioAegisBreach`) · SCN-04 단독 시나리오: 시그너스 블랙홀 특이점 강습 나포전(`-OVPlayScene=ScenarioCygnusBoarding`) · SCN-05 단독 시나리오: 오메가 초대형 함대 총공세(`-OVPlayScene=ScenarioOmegaFinale`)
+<!-- A1_GDD_STUDIO_END:CAMPAIGN_TUTORIAL_SCENARIO_V1 -->
