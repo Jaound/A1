@@ -45,6 +45,14 @@
       "passed": true
     },
     {
+      "name": "실제 시설 교환",
+      "passed": true
+    },
+    {
+      "name": "호환 무장 교체",
+      "passed": true
+    },
+    {
       "name": "50코스트 · 1번 환경 배치 이동",
       "passed": true
     },
@@ -62,6 +70,22 @@
     },
     {
       "name": "50코스트 · 1번 환경 영웅 선택",
+      "passed": true
+    },
+    {
+      "name": "같은 영웅은 해제·재선택",
+      "passed": true
+    },
+    {
+      "name": "시험 한도 적용",
+      "passed": true
+    },
+    {
+      "name": "초계함 첫 영웅 탑승",
+      "passed": true
+    },
+    {
+      "name": "초계함 영웅 정원 초과 거부",
       "passed": true
     },
     {
@@ -125,6 +149,14 @@
       "passed": true
     },
     {
+      "name": "실제 함선의 시설 배치",
+      "passed": true
+    },
+    {
+      "name": "실제 함선의 무장",
+      "passed": true
+    },
+    {
       "name": "50코스트 · 1번 환경 환경 일치",
       "passed": true
     },
@@ -166,6 +198,10 @@
     },
     {
       "name": "50코스트 · 2번 환경 함체 겹침",
+      "passed": true
+    },
+    {
+      "name": "50코스트 · 2번 환경 블랙홀 중심 거부",
       "passed": true
     },
     {
@@ -301,6 +337,18 @@
       "passed": true
     },
     {
+      "name": "실제 발사로 엄폐 소행성 파괴",
+      "passed": true
+    },
+    {
+      "name": "차폐된 탄은 소행성 표면에서 종료",
+      "passed": true
+    },
+    {
+      "name": "엄폐 파괴 후 같은 사선에서 적함 피격",
+      "passed": true
+    },
+    {
       "name": "50코스트 · 3번 환경 소행성 파괴",
       "passed": true
     },
@@ -414,6 +462,10 @@
     },
     {
       "name": "100코스트 · 2번 환경 함체 겹침",
+      "passed": true
+    },
+    {
+      "name": "100코스트 · 2번 환경 블랙홀 중심 거부",
       "passed": true
     },
     {
@@ -665,6 +717,10 @@
       "passed": true
     },
     {
+      "name": "200코스트 · 2번 환경 블랙홀 중심 거부",
+      "passed": true
+    },
+    {
       "name": "200코스트 · 2번 환경 영웅 선택 이동",
       "passed": true
     },
@@ -910,6 +966,10 @@
     },
     {
       "name": "300코스트 · 2번 환경 함체 겹침",
+      "passed": true
+    },
+    {
+      "name": "300코스트 · 2번 환경 블랙홀 중심 거부",
       "passed": true
     },
     {

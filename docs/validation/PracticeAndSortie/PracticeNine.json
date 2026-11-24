@@ -153,6 +153,10 @@
       "passed": true
     },
     {
+      "name": "같은 단계 재시도는 카메라 기준을 갱신",
+      "passed": true
+    },
+    {
       "name": "카메라 이동",
       "passed": true
     },

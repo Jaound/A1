@@ -1,0 +1,1023 @@
+{
+  "succeeded": 119,
+  "succeededWithWarnings": 50,
+  "failed": 0,
+  "notRun": 0,
+  "inProcess": 0,
+  "tests": [
+    {
+      "fullTestPath": "OrbitalVanguard.Audio.SafeMissingAssetHooks",
+      "state": "Success",
+      "warnings": 0,
+      "errors": 0
+    },
+    {
+      "fullTestPath": "OrbitalVanguard.Base.OperationalBerths",
+      "state": "Success",
+      "warnings": 0,
+      "errors": 0
+    },
+    {
+      "fullTestPath": "OrbitalVanguard.Base.Stage3GrowthAndNetwork",
+      "state": "Success",
+      "warnings": 0,
+      "errors": 0
+    },
+    {
+      "fullTestPath": "OrbitalVanguard.Base.TrialNetwork",
+      "state": "Success",
+      "warnings": 0,
+      "errors": 0
+    },
+    {
+      "fullTestPath": "OrbitalVanguard.Carrier.AircraftLossThresholdsAndOwnership",
+      "state": "Success",
+      "warnings": 0,
+      "errors": 0
+    },
+    {
+      "fullTestPath": "OrbitalVanguard.Carrier.AlternateHangarAndExclusiveModes",
+      "state": "Success",
+      "warnings": 0,
+      "errors": 0
+    },
+    {
+      "fullTestPath": "OrbitalVanguard.Carrier.DefenceBalanceTargets",
+      "state": "Success",
+      "warnings": 3,
+      "errors": 0
+    },
+    {
+      "fullTestPath": "OrbitalVanguard.Carrier.DogfightAndMotherLoss",
+      "state": "Success",
+      "warnings": 0,
+      "errors": 0
+    },
+    {
+      "fullTestPath": "OrbitalVanguard.Carrier.FacilityControlAndDockQueue",
+      "state": "Success",
+      "warnings": 0,
+      "errors": 0
+    },
+    {
+      "fullTestPath": "OrbitalVanguard.Carrier.FieldResupplyAndCrew",
+      "state": "Success",
+      "warnings": 0,
+      "errors": 0
+    },
+    {
+      "fullTestPath": "OrbitalVanguard.Carrier.HangarAvailabilityPresentation",
+      "state": "Success",
+      "warnings": 0,
+      "errors": 0
+    },
+    {
+      "fullTestPath": "OrbitalVanguard.Carrier.InteriorProtectionAndInFlightLifetime",
+      "state": "Success",
+      "warnings": 0,
+      "errors": 0
+    },
+    {
+      "fullTestPath": "OrbitalVanguard.Carrier.InventoryCapacityAndRecall",
+      "state": "Success",
+      "warnings": 0,
+      "errors": 0
+    },
+    {
+      "fullTestPath": "OrbitalVanguard.Carrier.MultipleCarrierSectionsAndPureDogfight",
+      "state": "Success",
+      "warnings": 0,
+      "errors": 0
+    },
+    {
+      "fullTestPath": "OrbitalVanguard.Carrier.OwnershipFTLAndLaunchAttribution",
+      "state": "Success",
+      "warnings": 0,
+      "errors": 0
+    },
+    {
+      "fullTestPath": "OrbitalVanguard.Carrier.PaidParallelReplacement",
+      "state": "Success",
+      "warnings": 0,
+      "errors": 0
+    },
+    {
+      "fullTestPath": "OrbitalVanguard.Carrier.ReadOnlyAircraftOverview",
+      "state": "Success",
+      "warnings": 0,
+      "errors": 0
+    },
+    {
+      "fullTestPath": "OrbitalVanguard.Carrier.RealProjectilesAndFixedTime",
+      "state": "Success",
+      "warnings": 0,
+      "errors": 0
+    },
+    {
+      "fullTestPath": "OrbitalVanguard.Carrier.ReplacementBatchPolicy",
+      "state": "Success",
+      "warnings": 0,
+      "errors": 0
+    },
+    {
+      "fullTestPath": "OrbitalVanguard.Carrier.StrikeCapitalHullRange",
+      "state": "Success",
+      "warnings": 2,
+      "errors": 0
+    },
+    {
+      "fullTestPath": "OrbitalVanguard.Carrier.StrikeDefensiveRejoinAndInvalidation",
+      "state": "Success",
+      "warnings": 0,
+      "errors": 0
+    },
+    {
+      "fullTestPath": "OrbitalVanguard.Carrier.StrikeMovingHullEnvelope",
+      "state": "Success",
+      "warnings": 0,
+      "errors": 0
+    },
+    {
+      "fullTestPath": "OrbitalVanguard.Combat.BlindArcPreventsHullPenetration",
+      "state": "Success",
+      "warnings": 1,
+      "errors": 0
+    },
+    {
+      "fullTestPath": "OrbitalVanguard.Combat.ConfirmedFriendlyNotices",
+      "state": "Success",
+      "warnings": 1,
+      "errors": 0
+    },
+    {
+      "fullTestPath": "OrbitalVanguard.Combat.DataProfilesAndTierLimits",
+      "state": "Success",
+      "warnings": 0,
+      "errors": 0
+    },
+    {
+      "fullTestPath": "OrbitalVanguard.Combat.DetectionLossStartsLastKnownTracking",
+      "state": "Success",
+      "warnings": 1,
+      "errors": 0
+    },
+    {
+      "fullTestPath": "OrbitalVanguard.Combat.DetectionLossWreckDepartureAndExpiry",
+      "state": "Success",
+      "warnings": 5,
+      "errors": 0
+    },
+    {
+      "fullTestPath": "OrbitalVanguard.Combat.DetectionSourcesAndInvalidation",
+      "state": "Success",
+      "warnings": 0,
+      "errors": 0
+    },
+    {
+      "fullTestPath": "OrbitalVanguard.Combat.DisarmSelectsUnoccludedMount",
+      "state": "Success",
+      "warnings": 1,
+      "errors": 0
+    },
+    {
+      "fullTestPath": "OrbitalVanguard.Combat.EvadedMissileFuseAndClosestApproach",
+      "state": "Success",
+      "warnings": 2,
+      "errors": 0
+    },
+    {
+      "fullTestPath": "OrbitalVanguard.Combat.FixedVLSPathAndContinuousSpread",
+      "state": "Success",
+      "warnings": 3,
+      "errors": 0
+    },
+    {
+      "fullTestPath": "OrbitalVanguard.Combat.IndependentMovementAndAttackAutomation",
+      "state": "Success",
+      "warnings": 10,
+      "errors": 0
+    },
+    {
+      "fullTestPath": "OrbitalVanguard.Combat.LaunchedDamageChainAndSingleImpact",
+      "state": "Success",
+      "warnings": 1,
+      "errors": 0
+    },
+    {
+      "fullTestPath": "OrbitalVanguard.Combat.LocalArcsTraverseAndManualAttitude",
+      "state": "Success",
+      "warnings": 1,
+      "errors": 0
+    },
+    {
+      "fullTestPath": "OrbitalVanguard.Combat.MarkedCandidateActualWeaponHit",
+      "state": "Success",
+      "warnings": 517,
+      "errors": 0
+    },
+    {
+      "fullTestPath": "OrbitalVanguard.Combat.MarkedCandidateHullDamage",
+      "state": "Success",
+      "warnings": 113,
+      "errors": 0
+    },
+    {
+      "fullTestPath": "OrbitalVanguard.Combat.MarkedGeneralModuleSwap",
+      "state": "Success",
+      "warnings": 1,
+      "errors": 0
+    },
+    {
+      "fullTestPath": "OrbitalVanguard.Combat.MissileGuideAndFriendlyClearance",
+      "state": "Success",
+      "warnings": 1,
+      "errors": 0
+    },
+    {
+      "fullTestPath": "OrbitalVanguard.Combat.ObservedEnemyNoticePrivacy",
+      "state": "Success",
+      "warnings": 2,
+      "errors": 0
+    },
+    {
+      "fullTestPath": "OrbitalVanguard.Combat.OrdersAndFriendlyClearance",
+      "state": "Success",
+      "warnings": 6,
+      "errors": 0
+    },
+    {
+      "fullTestPath": "OrbitalVanguard.Combat.PC14TrialBottomMountImpact",
+      "state": "Success",
+      "warnings": 2,
+      "errors": 0
+    },
+    {
+      "fullTestPath": "OrbitalVanguard.Combat.PC14TrialMountOcclusion",
+      "state": "Success",
+      "warnings": 32,
+      "errors": 0
+    },
+    {
+      "fullTestPath": "OrbitalVanguard.Combat.PC14TrialRecessArmorImpact",
+      "state": "Success",
+      "warnings": 4,
+      "errors": 0
+    },
+    {
+      "fullTestPath": "OrbitalVanguard.Combat.ReadinessAndFacilityGates",
+      "state": "Success",
+      "warnings": 1,
+      "errors": 0
+    },
+    {
+      "fullTestPath": "OrbitalVanguard.Combat.RealMountImpactShieldThenMountOnly",
+      "state": "Success",
+      "warnings": 1,
+      "errors": 0
+    },
+    {
+      "fullTestPath": "OrbitalVanguard.Combat.SalvoCancellationAndGeometricMiss",
+      "state": "Success",
+      "warnings": 3,
+      "errors": 0
+    },
+    {
+      "fullTestPath": "OrbitalVanguard.Combat.SeededTimeScalePauseAndManualControl",
+      "state": "Success",
+      "warnings": 3,
+      "errors": 0
+    },
+    {
+      "fullTestPath": "OrbitalVanguard.Combat.TrajectoryLifetimeAndLaunchOwnership",
+      "state": "Success",
+      "warnings": 3,
+      "errors": 0
+    },
+    {
+      "fullTestPath": "OrbitalVanguard.Controls.OrbitOwnerAndReset",
+      "state": "Success",
+      "warnings": 0,
+      "errors": 0
+    },
+    {
+      "fullTestPath": "OrbitalVanguard.Controls.RightMoveAnchorAndRelease",
+      "state": "Success",
+      "warnings": 0,
+      "errors": 0
+    },
+    {
+      "fullTestPath": "OrbitalVanguard.D126.GridRulesAndCapacityAudit",
+      "state": "Success",
+      "warnings": 0,
+      "errors": 0
+    },
+    {
+      "fullTestPath": "OrbitalVanguard.D126.HangarAndAircraftRestrictions",
+      "state": "Success",
+      "warnings": 0,
+      "errors": 0
+    },
+    {
+      "fullTestPath": "OrbitalVanguard.D126.HullBalanceTableSync",
+      "state": "Success",
+      "warnings": 0,
+      "errors": 0
+    },
+    {
+      "fullTestPath": "OrbitalVanguard.D126.LaunchAuditAndMountGeometry",
+      "state": "Success",
+      "warnings": 0,
+      "errors": 0
+    },
+    {
+      "fullTestPath": "OrbitalVanguard.D126.OutpostAndMediumTransportLoop",
+      "state": "Success",
+      "warnings": 0,
+      "errors": 0
+    },
+    {
+      "fullTestPath": "OrbitalVanguard.Development.CatalogueDefinitions",
+      "state": "Success",
+      "warnings": 0,
+      "errors": 0
+    },
+    {
+      "fullTestPath": "OrbitalVanguard.Development.FacilityDamageControl",
+      "state": "Success",
+      "warnings": 0,
+      "errors": 0
+    },
+    {
+      "fullTestPath": "OrbitalVanguard.Development.FiniteLogistics",
+      "state": "Success",
+      "warnings": 0,
+      "errors": 0
+    },
+    {
+      "fullTestPath": "OrbitalVanguard.Development.InteriorSurvey",
+      "state": "Success",
+      "warnings": 0,
+      "errors": 0
+    },
+    {
+      "fullTestPath": "OrbitalVanguard.Development.TimedRepair",
+      "state": "Success",
+      "warnings": 0,
+      "errors": 0
+    },
+    {
+      "fullTestPath": "OrbitalVanguard.E1.BlackHoleGravityFTLAndInstantWreck",
+      "state": "Success",
+      "warnings": 25,
+      "errors": 0
+    },
+    {
+      "fullTestPath": "OrbitalVanguard.Fleet.FormationPresetOrders",
+      "state": "Success",
+      "warnings": 0,
+      "errors": 0
+    },
+    {
+      "fullTestPath": "OrbitalVanguard.Fleet.ShiftSelection",
+      "state": "Success",
+      "warnings": 0,
+      "errors": 0
+    },
+    {
+      "fullTestPath": "OrbitalVanguard.Hero.CandidateGrowthAndDuplicateAward",
+      "state": "Success",
+      "warnings": 0,
+      "errors": 0
+    },
+    {
+      "fullTestPath": "OrbitalVanguard.Hero.IrisArcRespectsFacingDeckAndRange",
+      "state": "Success",
+      "warnings": 0,
+      "errors": 0
+    },
+    {
+      "fullTestPath": "OrbitalVanguard.Hero.IrisPhaseDuel",
+      "state": "Success",
+      "warnings": 0,
+      "errors": 0
+    },
+    {
+      "fullTestPath": "OrbitalVanguard.Hero.LegacyRosterIdentityAndLoss",
+      "state": "Success",
+      "warnings": 0,
+      "errors": 0
+    },
+    {
+      "fullTestPath": "OrbitalVanguard.Hero.NamedBoardingGuardsAndFiniteHealing",
+      "state": "Success",
+      "warnings": 0,
+      "errors": 0
+    },
+    {
+      "fullTestPath": "OrbitalVanguard.Hero.NamedDutyLifecycle",
+      "state": "Success",
+      "warnings": 0,
+      "errors": 0
+    },
+    {
+      "fullTestPath": "OrbitalVanguard.Hero.NamedFacilityOperationsAndRelay",
+      "state": "Success",
+      "warnings": 0,
+      "errors": 0
+    },
+    {
+      "fullTestPath": "OrbitalVanguard.Hero.NamedRushAndSquadActions",
+      "state": "Success",
+      "warnings": 0,
+      "errors": 0
+    },
+    {
+      "fullTestPath": "OrbitalVanguard.Hero.NamedTacticalEffects",
+      "state": "Success",
+      "warnings": 0,
+      "errors": 0
+    },
+    {
+      "fullTestPath": "OrbitalVanguard.Hero.OfficerBonusesFollowRoomAndFaction",
+      "state": "Success",
+      "warnings": 0,
+      "errors": 0
+    },
+    {
+      "fullTestPath": "OrbitalVanguard.Input.AnchoredAltitudeAndUI",
+      "state": "Success",
+      "warnings": 0,
+      "errors": 0
+    },
+    {
+      "fullTestPath": "OrbitalVanguard.Input.ProjectionGuards",
+      "state": "Success",
+      "warnings": 0,
+      "errors": 0
+    },
+    {
+      "fullTestPath": "OrbitalVanguard.Interior.ActualEntryCaptureAndOriginalPodReturn",
+      "state": "Success",
+      "warnings": 0,
+      "errors": 0
+    },
+    {
+      "fullTestPath": "OrbitalVanguard.Interior.ActualOperationContributors",
+      "state": "Success",
+      "warnings": 0,
+      "errors": 0
+    },
+    {
+      "fullTestPath": "OrbitalVanguard.Interior.BridgeCapturePhysicalRetakeAndDestruction",
+      "state": "Success",
+      "warnings": 0,
+      "errors": 0
+    },
+    {
+      "fullTestPath": "OrbitalVanguard.Interior.CommanderAdvancedSkills",
+      "state": "Success",
+      "warnings": 0,
+      "errors": 0
+    },
+    {
+      "fullTestPath": "OrbitalVanguard.Interior.FixedClockBlockedRouteAndOrders",
+      "state": "Success",
+      "warnings": 0,
+      "errors": 0
+    },
+    {
+      "fullTestPath": "OrbitalVanguard.Interior.FourRolesCombatAndFiniteHealing",
+      "state": "Success",
+      "warnings": 0,
+      "errors": 0
+    },
+    {
+      "fullTestPath": "OrbitalVanguard.Interior.GraphVersionAndFactionRoster",
+      "state": "Success",
+      "warnings": 0,
+      "errors": 0
+    },
+    {
+      "fullTestPath": "OrbitalVanguard.Interior.HeroGarrisonSeparateFromTroopCapacity",
+      "state": "Success",
+      "warnings": 0,
+      "errors": 0
+    },
+    {
+      "fullTestPath": "OrbitalVanguard.Interior.HeroHitNotice",
+      "state": "Success",
+      "warnings": 0,
+      "errors": 0
+    },
+    {
+      "fullTestPath": "OrbitalVanguard.Interior.HostileBoardingNotice",
+      "state": "Success",
+      "warnings": 0,
+      "errors": 0
+    },
+    {
+      "fullTestPath": "OrbitalVanguard.Interior.ImmediateProtectionAndMixedPresenceSources",
+      "state": "Success",
+      "warnings": 0,
+      "errors": 0
+    },
+    {
+      "fullTestPath": "OrbitalVanguard.Interior.MeleeAdvancedSkills",
+      "state": "Success",
+      "warnings": 0,
+      "errors": 0
+    },
+    {
+      "fullTestPath": "OrbitalVanguard.Interior.PassiveAuraSkills",
+      "state": "Success",
+      "warnings": 0,
+      "errors": 0
+    },
+    {
+      "fullTestPath": "OrbitalVanguard.Interior.RangedAdvancedSkills",
+      "state": "Success",
+      "warnings": 0,
+      "errors": 0
+    },
+    {
+      "fullTestPath": "OrbitalVanguard.Interior.RealPodRescueNotice",
+      "state": "Success",
+      "warnings": 0,
+      "errors": 0
+    },
+    {
+      "fullTestPath": "OrbitalVanguard.Interior.RuntimeResidentDepartureSuspendsAndPreserves",
+      "state": "Success",
+      "warnings": 0,
+      "errors": 0
+    },
+    {
+      "fullTestPath": "OrbitalVanguard.Interior.RuntimeShuttleCaptureWreckAndDeparture",
+      "state": "Success",
+      "warnings": 0,
+      "errors": 0
+    },
+    {
+      "fullTestPath": "OrbitalVanguard.Interior.SabotageCheckpointAndDamagePath",
+      "state": "Success",
+      "warnings": 0,
+      "errors": 0
+    },
+    {
+      "fullTestPath": "OrbitalVanguard.Interior.SupportDutyFiniteRepair",
+      "state": "Success",
+      "warnings": 0,
+      "errors": 0
+    },
+    {
+      "fullTestPath": "OrbitalVanguard.Interior.SupportFiniteSkills",
+      "state": "Success",
+      "warnings": 0,
+      "errors": 0
+    },
+    {
+      "fullTestPath": "OrbitalVanguard.Layout.RejectInvalidAuthoring",
+      "state": "Success",
+      "warnings": 0,
+      "errors": 0
+    },
+    {
+      "fullTestPath": "OrbitalVanguard.Layout.SixFacesAndBoundaryMapping",
+      "state": "Success",
+      "warnings": 0,
+      "errors": 0
+    },
+    {
+      "fullTestPath": "OrbitalVanguard.Mission.AutoAssaultHoldScope",
+      "state": "Success",
+      "warnings": 1,
+      "errors": 0
+    },
+    {
+      "fullTestPath": "OrbitalVanguard.Mission.PauseManualPriorityAndTimeout",
+      "state": "Success",
+      "warnings": 1,
+      "errors": 0
+    },
+    {
+      "fullTestPath": "OrbitalVanguard.Mission.PreEntryRecallIsNotInteriorExtraction",
+      "state": "Success",
+      "warnings": 0,
+      "errors": 0
+    },
+    {
+      "fullTestPath": "OrbitalVanguard.Mission.RealRosterShieldAndTransportGate",
+      "state": "Success",
+      "warnings": 0,
+      "errors": 0
+    },
+    {
+      "fullTestPath": "OrbitalVanguard.Mission.ResizedCarrierClearance",
+      "state": "Success",
+      "warnings": 3,
+      "errors": 0
+    },
+    {
+      "fullTestPath": "OrbitalVanguard.Mission.RestartDefenseAndLegacyPreservation",
+      "state": "Success",
+      "warnings": 9,
+      "errors": 0
+    },
+    {
+      "fullTestPath": "OrbitalVanguard.PointDefense.ActualAircraftKillsTriggerWarnings",
+      "state": "Success",
+      "warnings": 0,
+      "errors": 0
+    },
+    {
+      "fullTestPath": "OrbitalVanguard.PointDefense.ActualHeroPodRescueWarning",
+      "state": "Success",
+      "warnings": 0,
+      "errors": 0
+    },
+    {
+      "fullTestPath": "OrbitalVanguard.PointDefense.CIWS6TrialRealShotMuzzle",
+      "state": "Success",
+      "warnings": 1,
+      "errors": 0
+    },
+    {
+      "fullTestPath": "OrbitalVanguard.PointDefense.CIWSBTrialRealShotMuzzle",
+      "state": "Success",
+      "warnings": 1,
+      "errors": 0
+    },
+    {
+      "fullTestPath": "OrbitalVanguard.PointDefense.FacilityRangeOwnershipAndCrew",
+      "state": "Success",
+      "warnings": 1,
+      "errors": 0
+    },
+    {
+      "fullTestPath": "OrbitalVanguard.PointDefense.LaunchedMissileSingleOpportunityAndImpact",
+      "state": "Success",
+      "warnings": 1,
+      "errors": 0
+    },
+    {
+      "fullTestPath": "OrbitalVanguard.PointDefense.MarkedSideMountArc",
+      "state": "Success",
+      "warnings": 0,
+      "errors": 0
+    },
+    {
+      "fullTestPath": "OrbitalVanguard.PointDefense.PriorityAndAlliedCoverage",
+      "state": "Success",
+      "warnings": 1,
+      "errors": 0
+    },
+    {
+      "fullTestPath": "OrbitalVanguard.PointDefense.ProbabilityAndTargetBoundary",
+      "state": "Success",
+      "warnings": 0,
+      "errors": 0
+    },
+    {
+      "fullTestPath": "OrbitalVanguard.Presentation.BF120SourceTrialActualTwinShots",
+      "state": "Success",
+      "warnings": 1,
+      "errors": 0
+    },
+    {
+      "fullTestPath": "OrbitalVanguard.Presentation.BF120TrialAlternatingMuzzles",
+      "state": "Success",
+      "warnings": 1,
+      "errors": 0
+    },
+    {
+      "fullTestPath": "OrbitalVanguard.Presentation.CarrierAssaultSourceMeshes",
+      "state": "Success",
+      "warnings": 0,
+      "errors": 0
+    },
+    {
+      "fullTestPath": "OrbitalVanguard.Presentation.CIWSBTrialSurfaceMuzzle",
+      "state": "Success",
+      "warnings": 0,
+      "errors": 0
+    },
+    {
+      "fullTestPath": "OrbitalVanguard.Presentation.CriticalToastPriority",
+      "state": "Success",
+      "warnings": 0,
+      "errors": 0
+    },
+    {
+      "fullTestPath": "OrbitalVanguard.Presentation.FittedHullAndWeapons",
+      "state": "Success",
+      "warnings": 0,
+      "errors": 0
+    },
+    {
+      "fullTestPath": "OrbitalVanguard.Presentation.FrigateCruiserRadarSourceMeshes",
+      "state": "Success",
+      "warnings": 0,
+      "errors": 0
+    },
+    {
+      "fullTestPath": "OrbitalVanguard.Presentation.HeavyShipSourceMeshes",
+      "state": "Success",
+      "warnings": 0,
+      "errors": 0
+    },
+    {
+      "fullTestPath": "OrbitalVanguard.Presentation.ImportedBF120MuzzleCandidates",
+      "state": "Success",
+      "warnings": 0,
+      "errors": 0
+    },
+    {
+      "fullTestPath": "OrbitalVanguard.Presentation.ImportedPC14MountAdapter",
+      "state": "Success",
+      "warnings": 0,
+      "errors": 0
+    },
+    {
+      "fullTestPath": "OrbitalVanguard.Presentation.ImportedPC14MountSurface",
+      "state": "Success",
+      "warnings": 0,
+      "errors": 0
+    },
+    {
+      "fullTestPath": "OrbitalVanguard.Presentation.ImportedPC14SurfaceGrid",
+      "state": "Success",
+      "warnings": 0,
+      "errors": 0
+    },
+    {
+      "fullTestPath": "OrbitalVanguard.Presentation.LB30TrialActualBeam",
+      "state": "Success",
+      "warnings": 1,
+      "errors": 0
+    },
+    {
+      "fullTestPath": "OrbitalVanguard.Presentation.MarkedAllUESurfaces",
+      "state": "Success",
+      "warnings": 0,
+      "errors": 0
+    },
+    {
+      "fullTestPath": "OrbitalVanguard.Presentation.MarkedCorvetteUESurface",
+      "state": "Success",
+      "warnings": 0,
+      "errors": 0
+    },
+    {
+      "fullTestPath": "OrbitalVanguard.Presentation.MarkedSlotCandidates",
+      "state": "Success",
+      "warnings": 0,
+      "errors": 0
+    },
+    {
+      "fullTestPath": "OrbitalVanguard.Presentation.MissileDefenseSourceMeshes",
+      "state": "Success",
+      "warnings": 0,
+      "errors": 0
+    },
+    {
+      "fullTestPath": "OrbitalVanguard.Presentation.MuzzleAttackEventAndGameClock",
+      "state": "Success",
+      "warnings": 1,
+      "errors": 0
+    },
+    {
+      "fullTestPath": "OrbitalVanguard.Presentation.PC14DefaultPresentation",
+      "state": "Success",
+      "warnings": 0,
+      "errors": 0
+    },
+    {
+      "fullTestPath": "OrbitalVanguard.Presentation.PC14FullMeshMountSurface",
+      "state": "Success",
+      "warnings": 0,
+      "errors": 0
+    },
+    {
+      "fullTestPath": "OrbitalVanguard.Presentation.PDActualTargetMuzzleAndOpportunity",
+      "state": "Success",
+      "warnings": 1,
+      "errors": 0
+    },
+    {
+      "fullTestPath": "OrbitalVanguard.Presentation.PlasmaTrialActualBeam",
+      "state": "Success",
+      "warnings": 1,
+      "errors": 0
+    },
+    {
+      "fullTestPath": "OrbitalVanguard.Presentation.ProfileReplacementRechecksActualMuzzle",
+      "state": "Success",
+      "warnings": 2,
+      "errors": 0
+    },
+    {
+      "fullTestPath": "OrbitalVanguard.Presentation.PrototypeWeaponScaleBuffering",
+      "state": "Success",
+      "warnings": 0,
+      "errors": 0
+    },
+    {
+      "fullTestPath": "OrbitalVanguard.Presentation.RG200TrialActualTwinShots",
+      "state": "Success",
+      "warnings": 1,
+      "errors": 0
+    },
+    {
+      "fullTestPath": "OrbitalVanguard.Presentation.SHC400TrialActualCannon",
+      "state": "Success",
+      "warnings": 1,
+      "errors": 0
+    },
+    {
+      "fullTestPath": "OrbitalVanguard.Presentation.SideMountGeometry",
+      "state": "Success",
+      "warnings": 0,
+      "errors": 0
+    },
+    {
+      "fullTestPath": "OrbitalVanguard.Presentation.SupportShipSourceMeshes",
+      "state": "Success",
+      "warnings": 0,
+      "errors": 0
+    },
+    {
+      "fullTestPath": "OrbitalVanguard.Presentation.TurretPoseOwnershipAndLifecycle",
+      "state": "Success",
+      "warnings": 1,
+      "errors": 0
+    },
+    {
+      "fullTestPath": "OrbitalVanguard.Presentation.UpperLowerVLSAndDestroyedTracking",
+      "state": "Success",
+      "warnings": 1,
+      "errors": 0
+    },
+    {
+      "fullTestPath": "OrbitalVanguard.Revision.D116CandidateCatalog",
+      "state": "Success",
+      "warnings": 0,
+      "errors": 0
+    },
+    {
+      "fullTestPath": "OrbitalVanguard.Revision.DisableObservedWeapons",
+      "state": "Success",
+      "warnings": 1,
+      "errors": 0
+    },
+    {
+      "fullTestPath": "OrbitalVanguard.Revision.FactionProtectionAndForceScope",
+      "state": "Success",
+      "warnings": 1,
+      "errors": 0
+    },
+    {
+      "fullTestPath": "OrbitalVanguard.Revision.MarkedEquippedMounts",
+      "state": "Success",
+      "warnings": 0,
+      "errors": 0
+    },
+    {
+      "fullTestPath": "OrbitalVanguard.Revision.ProtectionSalvoAndSurvivorBoundary",
+      "state": "Success",
+      "warnings": 1,
+      "errors": 0
+    },
+    {
+      "fullTestPath": "OrbitalVanguard.Revision.VolumeRatioTrial",
+      "state": "Success",
+      "warnings": 0,
+      "errors": 0
+    },
+    {
+      "fullTestPath": "OrbitalVanguard.Ship.ClassTurnRates",
+      "state": "Success",
+      "warnings": 0,
+      "errors": 0
+    },
+    {
+      "fullTestPath": "OrbitalVanguard.Ship.FiniteTurnXYZArrival",
+      "state": "Success",
+      "warnings": 0,
+      "errors": 0
+    },
+    {
+      "fullTestPath": "OrbitalVanguard.Ship.InertialRetargetAtLowFPS",
+      "state": "Success",
+      "warnings": 0,
+      "errors": 0
+    },
+    {
+      "fullTestPath": "OrbitalVanguard.Ship.TimeScaleAndStoppedArrival",
+      "state": "Success",
+      "warnings": 0,
+      "errors": 0
+    },
+    {
+      "fullTestPath": "OrbitalVanguard.Systems.ArmorCausesAndSingleHullDamage",
+      "state": "Success",
+      "warnings": 0,
+      "errors": 0
+    },
+    {
+      "fullTestPath": "OrbitalVanguard.Systems.D116NoDelayCrewAndDamage",
+      "state": "Success",
+      "warnings": 0,
+      "errors": 0
+    },
+    {
+      "fullTestPath": "OrbitalVanguard.Systems.ExplosionQueueAndWeaponIndependence",
+      "state": "Success",
+      "warnings": 0,
+      "errors": 0
+    },
+    {
+      "fullTestPath": "OrbitalVanguard.Systems.IndependentInstancesAndCrew",
+      "state": "Success",
+      "warnings": 0,
+      "errors": 0
+    },
+    {
+      "fullTestPath": "OrbitalVanguard.Systems.PartialShieldCapacityTransition",
+      "state": "Success",
+      "warnings": 0,
+      "errors": 0
+    },
+    {
+      "fullTestPath": "OrbitalVanguard.Systems.RejectInvalidRuntimeLayout",
+      "state": "Success",
+      "warnings": 0,
+      "errors": 0
+    },
+    {
+      "fullTestPath": "OrbitalVanguard.Systems.ShieldStateAndTime",
+      "state": "Success",
+      "warnings": 0,
+      "errors": 0
+    },
+    {
+      "fullTestPath": "OrbitalVanguard.Systems.ThreeDeckDestructionFaces",
+      "state": "Success",
+      "warnings": 0,
+      "errors": 0
+    },
+    {
+      "fullTestPath": "OrbitalVanguard.Systems.VerticalPenetrationAndEmptySlots",
+      "state": "Success",
+      "warnings": 0,
+      "errors": 0
+    },
+    {
+      "fullTestPath": "OrbitalVanguard.Transport.FixedTimePauseAndLowFps",
+      "state": "Success",
+      "warnings": 0,
+      "errors": 0
+    },
+    {
+      "fullTestPath": "OrbitalVanguard.Transport.InterceptionShieldAndSingleCasualty",
+      "state": "Success",
+      "warnings": 0,
+      "errors": 0
+    },
+    {
+      "fullTestPath": "OrbitalVanguard.Transport.LocalEntryOriginalPodAndProtection",
+      "state": "Success",
+      "warnings": 0,
+      "errors": 0
+    },
+    {
+      "fullTestPath": "OrbitalVanguard.Transport.PersonalLaunchScheduleAndFacilityRecheck",
+      "state": "Success",
+      "warnings": 0,
+      "errors": 0
+    },
+    {
+      "fullTestPath": "OrbitalVanguard.Transport.ShuttleDeliveryRecoveryAndLoss",
+      "state": "Success",
+      "warnings": 0,
+      "errors": 0
+    },
+    {
+      "fullTestPath": "OrbitalVanguard.Transport.TargetDepartureReturnFallbackAndResidentDeath",
+      "state": "Success",
+      "warnings": 0,
+      "errors": 0
+    },
+    {
+      "fullTestPath": "OrbitalVanguard.Transport.TeamsPerTargetAndPersonnel",
+      "state": "Success",
+      "warnings": 0,
+      "errors": 0
+    },
+    {
+      "fullTestPath": "OrbitalVanguard.UI.Typography",
+      "state": "Success",
+      "warnings": 0,
+      "errors": 0
+    }
+  ]
+}
