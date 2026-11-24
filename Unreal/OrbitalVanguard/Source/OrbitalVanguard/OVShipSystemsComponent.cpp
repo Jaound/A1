@@ -506,7 +506,7 @@ void UOVShipSystemsComponent::DebugRepairWeapon(FName WeaponMountId)
 {
     if (bWrecked || !Layout) return;
     for (int32 Index = 0; Index < WeaponMountStates.Num(); ++Index)
-        if (WeaponMountStates[Index].WeaponMountId == WeaponMountId) WeaponMountStates[Index].HP = Layout->WeaponMounts[Index].MaxHP;
+        if (WeaponMountStates[Index].WeaponMountId == WeaponMountId) { WeaponMountStates[Index].HP = Layout->WeaponMounts[Index].MaxHP; WeaponMountStates[Index].RebuildHP = 0; }
 }
 
 bool UOVShipSystemsComponent::IsWeaponAvailable(FName WeaponMountId) const

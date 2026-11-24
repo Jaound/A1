@@ -1,0 +1,35 @@
+{
+  "runs": [
+    {
+      "gap_m": 200,
+      "first_enemy_loss_s": 4.5,
+      "enemy_losses_at_40s": 73,
+      "friendly_losses_at_40s": 8,
+      "timed_losses": 73,
+      "median_lock_to_loss_s": 13.0,
+      "max_sampled_pursuers": 3,
+      "distinct_targets": 80
+    },
+    {
+      "gap_m": 220,
+      "first_enemy_loss_s": 7.0,
+      "enemy_losses_at_40s": 64,
+      "friendly_losses_at_40s": 11,
+      "timed_losses": 64,
+      "median_lock_to_loss_s": 13.5,
+      "max_sampled_pursuers": 3,
+      "distinct_targets": 80
+    },
+    {
+      "gap_m": 240,
+      "first_enemy_loss_s": 3.5,
+      "enemy_losses_at_40s": 61,
+      "friendly_losses_at_40s": 8,
+      "timed_losses": 61,
+      "median_lock_to_loss_s": 17.5,
+      "max_sampled_pursuers": 3,
+      "distinct_targets": 80
+    }
+  ],
+  "passed": true
+}

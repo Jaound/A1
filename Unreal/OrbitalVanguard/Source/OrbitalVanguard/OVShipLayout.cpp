@@ -72,10 +72,10 @@ UShipLayoutDataAsset* UShipLayoutDataAsset::MakeTestLayout(UObject* Outer, int32
                 for (int32 Type = static_cast<int32>(EOVFacilityType::LifeSupport); Type <= static_cast<int32>(EOVFacilityType::Security); ++Type)
                 {
                     if (Layout->bSmallHull && Type == static_cast<int32>(EOVFacilityType::Hangar)) continue;
-                    Slot.AllowedFacilities.Add(static_cast<EOVFacilityType>(Type));
+                    if (Type != static_cast<int32>(EOVFacilityType::Engine)) Slot.AllowedFacilities.Add(static_cast<EOVFacilityType>(Type));
                 }
                 if (Slot.SlotId == Layout->CoreSlotId) Slot.AllowedFacilities.Add(EOVFacilityType::Core);
-                if ((Decks != 3 || Deck != 2) && (X == 0 || (Decks > 1 && X == 1) || X == 4) && Y == 1)
+                if ((Decks != 3 || Deck != 2) && (X == 1 || X == 4) && Y == 1)
                 {
                     Layout->BridgeAllowedSlots.Add(Slot.SlotId);
                     Slot.AllowedFacilities.Add(EOVFacilityType::Bridge);
@@ -92,11 +92,20 @@ UShipLayoutDataAsset* UShipLayoutDataAsset::MakeTestLayout(UObject* Outer, int32
         Slot.RequiredCrew = OVLayout::Uncrewed(Type) ? 0 : 10;
     };
     Install(Layout->GetSlotIndex(Layout->CoreSlotId), EOVFacilityType::Core);
-    Install(Layout->GetSlotIndex(OVLayout::SlotName(Decks, Decks == 1 ? 0 : 1, 1)), EOVFacilityType::Bridge);
+    Install(Layout->GetSlotIndex(OVLayout::SlotName(Decks, 1, 1)), EOVFacilityType::Bridge);
+    for (int32 Row = 0; Row < 3; ++Row)
+    {
+        const int32 Index = Layout->GetSlotIndex(OVLayout::SlotName(1, 0, Row));
+        Install(Index, EOVFacilityType::Engine);
+        Layout->Slots[Index].AllowedFacilities = { EOVFacilityType::Engine };
+    }
+    // This range exercises propagation through three adjacent magazines.
+    Install(Layout->GetSlotIndex(OVLayout::SlotName(1, 1, 0)), EOVFacilityType::Ammo);
+    Install(Layout->GetSlotIndex(OVLayout::SlotName(1, 2, 0)), EOVFacilityType::Capacitor);
+    Install(Layout->GetSlotIndex(OVLayout::SlotName(1, 3, 0)), EOVFacilityType::MissileStorage);
     TArray<EOVFacilityType> Facilities = {
-        EOVFacilityType::LifeSupport, EOVFacilityType::Engine, EOVFacilityType::Engine, EOVFacilityType::Engine,
-        EOVFacilityType::WeaponControl, EOVFacilityType::Ammo, EOVFacilityType::Capacitor,
-        EOVFacilityType::MissileStorage, EOVFacilityType::ShieldControl, EOVFacilityType::Radar, EOVFacilityType::Security
+        EOVFacilityType::LifeSupport, EOVFacilityType::WeaponControl,
+        EOVFacilityType::ShieldControl, EOVFacilityType::Radar, EOVFacilityType::Security
     };
     if (Decks > 1)
     {
@@ -320,15 +329,14 @@ UShipLayoutDataAsset* UShipLayoutDataAsset::MakeD126Layout(
                     const EOVFacilityType Fac = static_cast<EOVFacilityType>(Type);
                     if (Fac == EOVFacilityType::Hangar && (!bCanHaveHangars || Layout->MaxHangarInstallations <= 0)) continue;
                     if (Fac == EOVFacilityType::FighterControl && !Layout->bAllowAircraftOperations) continue;
-                    Slot.AllowedFacilities.Add(Fac);
+                    if (Fac != EOVFacilityType::Engine) Slot.AllowedFacilities.Add(Fac);
                 }
                 if (Slot.SlotId == Layout->CoreSlotId)
                 {
                     Slot.AllowedFacilities.Add(EOVFacilityType::Core);
                 }
                 const bool bOuterDeck = (Decks != 3 || Deck != 2);
-                const bool bOuterBowOrStern = (BX == 4 && FMath::IsNearlyZero(YCenter)) || (BX == 0 && FMath::IsNearlyZero(YCenter));
-                if (bOuterDeck && (bOuterBowOrStern || (Decks > 1 && BX == 1)))
+                if (bOuterDeck && ((BX == 4 && FMath::IsNearlyZero(YCenter)) || BX == 1))
                 {
                     Layout->BridgeAllowedSlots.AddUnique(Slot.SlotId);
                     Slot.AllowedFacilities.AddUnique(EOVFacilityType::Bridge);
@@ -349,12 +357,16 @@ UShipLayoutDataAsset* UShipLayoutDataAsset::MakeD126Layout(
     };
 
     InstallAt(Layout->GetSlotIndex(Layout->CoreSlotId), EOVFacilityType::Core);
-    const auto& AftBand = DeckBandSlots.Last()[Decks == 1 ? 0 : 1];
+    const auto& Stern = DeckBandSlots[0][0];
+    const int32 EngineIndex = Layout->GetSlotIndex(Stern[Stern.Num()/2]);
+    InstallAt(EngineIndex, EOVFacilityType::Engine);
+    Layout->Slots[EngineIndex].AllowedFacilities = { EOVFacilityType::Engine };
+    const auto& AftBand = DeckBandSlots.Last()[1];
     const FName BridgeSlotId = AftBand[AftBand.Num()/2];
     InstallAt(Layout->GetSlotIndex(BridgeSlotId), EOVFacilityType::Bridge);
 
     // Base mandatory life support + engine; caller (OVCalibration or customizer) populates remaining weapon/role rooms.
-    TArray<EOVFacilityType> BaseMandatory = { EOVFacilityType::LifeSupport, EOVFacilityType::Engine };
+    TArray<EOVFacilityType> BaseMandatory = { EOVFacilityType::LifeSupport };
     int32 Next = 0;
     for (int32 Index = 0; Index < Layout->Slots.Num() && Next < BaseMandatory.Num(); ++Index)
     {
@@ -659,6 +671,8 @@ bool UShipLayoutDataAsset::ValidateLayout(TArray<FString>& Errors) const
         else ColumnCenters.Add(Slot.ColumnId, XY);
         Require(OVLayout::Finite(Slot.LocalCenter) && OVLayout::Finite(Slot.HalfExtent) && Slot.HalfExtent.GetMin() > 0, TEXT("Invalid slot bounds"));
         Require(Slot.AllowedFacilities.Contains(Slot.Facility), TEXT("Facility violates slot placement constraint"));
+        if (Slot.Facility == EOVFacilityType::Engine)
+            Require(FMath::IsNearlyEqual(Slot.LocalCenter.X - Slot.HalfExtent.X, -LocalHalfExtent.X, .01), TEXT("Engine must occupy the stern"));
         Require(static_cast<uint8>(Slot.Facility) <= static_cast<uint8>(EOVFacilityType::Security), TEXT("Unknown facility type"));
         ++Counts.FindOrAdd(Slot.Facility);
         Require(FMath::IsFinite(Slot.MaxArmor) && Slot.MaxArmor >= 0, TEXT("Invalid legacy armor authoring value"));
@@ -730,7 +744,7 @@ bool UShipLayoutDataAsset::ValidateLayout(TArray<FString>& Errors) const
         if (Slots.IsValidIndex(Index))
         {
             const FOVSlotDefinition& Slot = Slots[Index];
-            Require((DeckCount != 3 || Slot.DeckId != 2) && (DeckCount != 1 || FMath::IsNearlyEqual(FMath::Abs(Slot.LocalCenter.X) + Slot.HalfExtent.X, LocalHalfExtent.X, .01)), TEXT("Bridge slot must satisfy outer placement"));
+            Require((DeckCount != 3 || Slot.DeckId != 2) && (DeckCount != 1 || Slot.LocalCenter.X < 0 || FMath::IsNearlyEqual(Slot.LocalCenter.X + Slot.HalfExtent.X, LocalHalfExtent.X, .01)), TEXT("Bridge slot must satisfy aft or outer placement"));
         }
     }
     Require(CannonSlots >= 0 && BeamSlots >= 0 && MissileSlots >= 0, TEXT("Weapon counts cannot be negative"));

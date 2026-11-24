@@ -113,7 +113,7 @@ bool FOVOuterFaceDestructionTest::RunTest(const FString&)
             const FName RoomId(*FString::Printf(TEXT("D%d_X4_Y0"), Deck));
             const int32 Room = Layout->GetSlotIndex(RoomId);
             // A non-explosive edge room overlaps an end face, a side, and (on outer decks) top/bottom.
-            Layout->Slots[Room].Facility = EOVFacilityType::Engine;
+            Layout->Slots[Room].Facility = EOVFacilityType::LifeSupport;
             Layout->Slots[Room].MaxFacilityHP = 100;
             Layout->Slots[Room].RequiredCrew = 10;
             auto* Systems = NewObject<UOVShipSystemsComponent>();

@@ -54,6 +54,13 @@ def run():
     for ship in ships:
         room=facility(ship,u.OVFacilityType.BRIDGE)
         check(get(ship,"ship_name")+" 함교 후방",get(room,"local_center").x<0)
+        layout = get(get(ship,"systems"),"layout")
+        engines = [s for s in get(layout,"slots") if get(s,"facility")==u.OVFacilityType.ENGINE]
+        stern = min(get(s,"local_center").x for s in get(layout,"slots"))
+        check(get(ship,"ship_name")+" 엔진 선미 고정", engines and all(
+            abs(get(s,"local_center").x-stern)<.01 and
+            list(get(s,"allowed_facilities"))==[u.OVFacilityType.ENGINE] for s in engines))
+        check(get(ship,"ship_name")+" 함교와 엔진 분리", get(room,"local_center").x>stern)
     gs,vs=get(guest,"systems"),get(vector,"systems")
     check("백터급 선체, 강습선 고유 쉴드",get(gs,"max_hull_hp")==get(vs,"max_hull_hp")==21252 and get(gs,"max_shield")==6336)
     def armor(systems):

@@ -1,0 +1,26 @@
+{
+  "runs": [
+    {
+      "gap_m": 200,
+      "first_enemy_loss_s": 1.0,
+      "enemy_losses_at_40s": 2,
+      "max_sampled_pursuers": 80,
+      "distinct_targets": 5
+    },
+    {
+      "gap_m": 220,
+      "first_enemy_loss_s": 1.0,
+      "enemy_losses_at_40s": 2,
+      "max_sampled_pursuers": 80,
+      "distinct_targets": 4
+    },
+    {
+      "gap_m": 240,
+      "first_enemy_loss_s": 1.0,
+      "enemy_losses_at_40s": 2,
+      "max_sampled_pursuers": 80,
+      "distinct_targets": 5
+    }
+  ],
+  "passed": true
+}

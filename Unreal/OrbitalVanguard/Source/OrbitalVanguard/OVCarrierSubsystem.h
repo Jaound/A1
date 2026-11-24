@@ -72,6 +72,8 @@ struct ORBITALVANGUARD_API FOVAircraftManeuverProfile
     UPROPERTY(EditAnywhere, BlueprintReadWrite) float SectionDelay = .12f;
     UPROPERTY(EditAnywhere, BlueprintReadWrite) float DefensiveRangeFraction = .55f;
     UPROPERTY(EditAnywhere, BlueprintReadWrite) float DefensiveSeconds = 2.5f;
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, meta=(ClampMin="1")) int32 AirPatrolPursuers = 3;
+    UPROPERTY(EditAnywhere, BlueprintReadWrite) float FighterHitMultiplier = 1.8f;
     UPROPERTY(EditAnywhere, BlueprintReadWrite) float RejoinSeconds = 3;
 };
 
@@ -142,6 +144,8 @@ struct ORBITALVANGUARD_API FOVAircraftBolt
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly) TWeakObjectPtr<AOVShip> SourceCarrier;
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly) FName TargetId;
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly) FName HitId;
+    UPROPERTY(VisibleAnywhere, BlueprintReadOnly) bool bHitShield = false;
+    float FighterDamageScale = 1.f;
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly) FName ProfileId;
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly) FVector Origin = FVector::ZeroVector;
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly) FVector Position = FVector::ZeroVector;
@@ -245,6 +249,7 @@ private:
     // Rebuilt every fixed step; retained capacity avoids per-aircraft detection allocations.
     TArray<FStrikeCandidateCache> StrikeCandidateCache;
     void RebuildStrikeCandidates();
+    TMap<int32,int32> AirPatrolClaims;
 
     bool HasControl(AOVShip* Ship) const;
 

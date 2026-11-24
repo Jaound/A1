@@ -26,10 +26,36 @@ void AOVHUD::DrawPhase2C()
  const FLinearColor Ink(.8f,.9f,1),Cyan(.2f,.9f,1),Gold(1,.75f,.2f);
  auto Project=[&](FVector V,FVector2D& P) { if(!PC->ProjectWorldLocationToScreen(V,P)||IsOverPanel(P.X,P.Y))return false;P/=UIScale;return true; };
  TSet<FName> ShownStrikeZones;
+ struct FFlightMarker { FVector2D Center=FVector2D::ZeroVector, Heading=FVector2D::ZeroVector; int32 Count=0; bool Friendly=false; };
+ TMap<FIntVector,FFlightMarker> Flights;
+ FVector CameraPosition; FRotator CameraRotation;
+ PC->GetPlayerViewPoint(CameraPosition, CameraRotation);
+ const FVector CameraRight = FRotationMatrix(CameraRotation).GetUnitAxis(EAxis::Y);
+ const auto WingColor = [&](bool Friendly){ return Friendly ? Cyan : FLinearColor(1,.56f,.22f); };
  for(const auto& A:Carrier->Aircraft) if(UOVCarrierSubsystem::IsAirborneState(A.State)) {
   FVector2D P;if(!Project(A.Position,P))continue;
-  const auto Color=A.FactionId==0?Cyan:FLinearColor(1,.3f,.15f);
-  DrawLine(P.X-4,P.Y+3,P.X,P.Y-5,Color,2);DrawLine(P.X,P.Y-5,P.X+4,P.Y+3,Color,2);DrawLine(P.X-4,P.Y+3,P.X+4,P.Y+3,Color,2);
+  const bool Friendly = A.FactionId == 0;
+  const auto Color = WingColor(Friendly);
+  FVector2D Edge, Nose;
+  if (!PC->ProjectWorldLocationToScreen(A.Position+CameraRight*Carrier->Profile.CollisionRadius, Edge) ||
+      !PC->ProjectWorldLocationToScreen(A.Position+A.Direction*Carrier->Profile.CollisionRadius, Nose)) continue;
+  const double Radius = FVector2D::Distance(P, Edge/UIScale);
+  const FVector2D Heading = (Nose/UIScale-P).GetSafeNormal();
+  if (Radius < 3.)
+  {
+   // At strategic zoom several sections share a few pixels. Count visible airborne craft by side and region.
+   const FIntVector Key = Radius < 1.5
+       ? FIntVector(A.FactionId,-1-FMath::FloorToInt(P.X/72.),FMath::FloorToInt(P.Y/48.))
+       : FIntVector(A.FactionId,A.HangarId,(A.AircraftId-1)/FMath::Max(1,Carrier->ManeuverProfile.SectionSize));
+   auto& Flight = Flights.FindOrAdd(Key);
+   Flight.Center+=P; Flight.Heading+=Heading; ++Flight.Count; Flight.Friendly=Friendly;
+  }
+  else if (!A.Velocity.IsNearlyZero())
+  {
+   const FVector2D Exhaust = P - Heading * Radius;
+   const FVector2D Tail = Exhaust - Heading * FMath::Clamp(Radius*1.3,3.,12.);
+   DrawLine(Exhaust.X,Exhaust.Y,Tail.X,Tail.Y,Color.CopyWithNewOpacity(.65f),1.6f);
+  }
   // 기체별 내부 상태는 아군 DEV에만 표시한다. 기본 화면은 선택 모함 한 줄로 요약한다.
   if(PC->bDeveloperMode&&A.FactionId==0) {
    if(A.State==EOVAircraftState::Returning)DrawText(TEXT("귀환"),Color,P.X+5,P.Y,OVTypography::Font(EOVTextRole::Body));
@@ -54,8 +80,53 @@ void AOVHUD::DrawPhase2C()
    }
   }
  }
- for(const auto& B:Carrier->Bolts) { FVector2D P,Q;if(Project(B.Position,P)&&Project(B.Position-B.Direction*600,Q))DrawLine(P.X,P.Y,Q.X,Q.Y,B.FactionId==0?Cyan:FLinearColor::Red,2); }
- for(const auto& E:Carrier->RecentEvents) if(Carrier->GameTime-E.ResolvedAt<.3&&E.bHit) { FVector2D P;if(Project(E.Position,P)){DrawLine(P.X-7,P.Y-7,P.X+7,P.Y+7,Gold,2);DrawLine(P.X+7,P.Y-7,P.X-7,P.Y+7,Gold,2);} }
+ for (const auto& Pair : Flights)
+ {
+  const auto& F=Pair.Value;
+  FVector2D P=F.Center/F.Count;
+  if (Pair.Key.Y < 0) P.Y += F.Friendly ? -7. : 7.;
+  if (IsOverPanel(P.X*UIScale,P.Y*UIScale)) continue;
+  const auto D=F.Heading.IsNearlyZero()?FVector2D(0,-1):F.Heading.GetSafeNormal();
+  const FVector2D Side(-D.Y,D.X), Tip=P+D*6, Left=P-D*3+Side*4, Right=P-D*3-Side*4;
+  const auto Color=WingColor(F.Friendly);
+  DrawLine(Left.X,Left.Y,Tip.X,Tip.Y,Color,1.5f);
+  DrawLine(Right.X,Right.Y,Tip.X,Tip.Y,Color,1.5f);
+  if (!F.Friendly) {
+   const auto Back=P-D*7;
+   DrawLine(Left.X,Left.Y,Back.X,Back.Y,Color,1.5f);
+   DrawLine(Right.X,Right.Y,Back.X,Back.Y,Color,1.5f);
+  }
+  DrawText(FString::FromInt(F.Count),Color,P.X+8,P.Y-7,OVTypography::Font(EOVTextRole::Numeric));
+ }
+ for (const auto& B:Carrier->Bolts)
+ {
+  FVector2D P,Q;
+  if (!Project(B.Position,P) || !Project(B.Position-B.Direction*FMath::Min(160.f,B.Speed*B.Age),Q)) continue;
+  if (FVector2D::DistSquared(P,Q)<2.25) continue;
+  Q=P+(Q-P).GetClampedToMaxSize(8);
+  DrawLine(P.X,P.Y,Q.X,Q.Y,WingColor(B.FactionId==0),1.3f);
+ }
+ for (const auto& E:Carrier->RecentEvents)
+ {
+  const float Age=Carrier->GameTime-E.ResolvedAt;
+  FVector2D P;
+  if (!E.bHit || Age<0 || Age>=.22f || !Project(E.Position,P)) continue;
+  FVector2D SizeRef;
+  if (!PC->ProjectWorldLocationToScreen(E.Position+CameraRight*Carrier->Profile.CollisionRadius,SizeRef) ||
+      FVector2D::DistSquared(P,SizeRef/UIScale)<2.25) continue;
+  const float T=Age/.22f;
+  const auto Color=(E.bHitShield?Cyan:Gold).CopyWithNewOpacity(1-T);
+  const int32 Segments=E.bHitShield?12:3;
+  for(int32 I=0;I<Segments;++I)
+  {
+   const double Angle=UE_TWO_PI*I/Segments + (E.BoltId%17);
+   const FVector2D Dir(FMath::Cos(Angle),FMath::Sin(Angle));
+   const FVector2D Start=P+Dir*(E.bHitShield?2+5*T:1+4*T);
+   const double EndAngle=Angle+UE_TWO_PI/Segments;
+   const FVector2D End=E.bHitShield?P+FVector2D(FMath::Cos(EndAngle),FMath::Sin(EndAngle))*(2+5*T):P+Dir*(3+6*T);
+   DrawLine(Start.X,Start.Y,End.X,End.Y,Color,1.2f);
+  }
+ }
  for(const auto& P:Transport->Pods) if(P.State==EOVPodFlightState::Outbound||P.State==EOVPodFlightState::Returning) {
   FVector2D V;if(!Project(P.Position,V))continue;
   DrawRect(Gold,V.X-3,V.Y-3,6,6);

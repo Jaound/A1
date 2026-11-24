@@ -108,6 +108,24 @@ bool FOVDamageControlTest::RunTest(const FString&)
     TestEqual(TEXT("시설 최대 HP까지 재건"),Room.HP,Def.MaxFacilityHP);
     TestTrue(TEXT("엔진 가동 및 미확인 알림 유지"),S.CanMove() && Room.bUnreadLoss);
     TestTrue(TEXT("완료 상태 표시"),Service->RepairStatus(Tender).Contains(TEXT("수리 완료")));
+    auto& Mount = S.WeaponMountStates[0];
+    const auto MountId = Mount.WeaponMountId;
+    S.DebugHitWeapon(MountId,100000);
+    Service->ToggleInternalRepair(Target); Service->Simulate(15);
+    TestTrue(TEXT("자가 수리에서 파괴 무장 제외"),Mount.HP==0 && Mount.RebuildHP==0);
+    Service->ToggleInternalRepair(Target);
+    Service->SetDevMaterials(Tender,FVector(2000,1000,200));
+    const float StartingMaterial = Service->FindCargo(Tender)->Amount;
+    TestTrue(TEXT("무장만 파괴된 아군 수리 접수"),Service->OrderRepair(Tender,Target));
+    Service->Simulate(3); Service->Simulate(.25f);
+    TestTrue(TEXT("유상 재건 중 무장 비활성"),Mount.HP==0 && Mount.RebuildHP>0 &&
+        Service->FindCargo(Tender)->Amount<StartingMaterial && !S.IsWeaponAvailable(MountId));
+    const float PaidProgress = Mount.RebuildHP;
+    Service->CancelFieldOrder(Tender); Service->Simulate(2);
+    TestEqual(TEXT("취소 시 지불한 작업 보존"),Mount.RebuildHP,PaidProgress);
+    TestTrue(TEXT("재건 재개"),Service->OrderRepair(Tender,Target));
+    Service->Simulate(50);
+    TestTrue(TEXT("무장 기능 복구"),Mount.HP==S.Layout->WeaponMounts[0].MaxHP && Mount.RebuildHP==0 && S.IsWeaponAvailable(MountId));
     S.DebugDestroySlot(Def.SlotId,EOVDamageCause::Sabotage);
     Service->SetDevMaterials(Target,FVector::ZeroVector);Service->ToggleInternalRepair(Target);Service->Simulate(20);
     TestEqual(TEXT("자원 고갈 시 복구 없음"),Room.RebuildHP,0.f);

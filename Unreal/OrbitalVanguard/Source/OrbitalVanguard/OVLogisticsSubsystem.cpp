@@ -191,9 +191,16 @@ int32 DamagedRoom(const UOVShipSystemsComponent& S,bool OnlyWrecked)
     }
     return Best;
 }
+int32 DamagedMount(const UOVShipSystemsComponent& S)
+{
+    if (!S.Layout) return INDEX_NONE;
+    for (int32 I=0; I<S.WeaponMountStates.Num() && I<S.Layout->WeaponMounts.Num(); ++I)
+        if (S.WeaponMountStates[I].HP < S.Layout->WeaponMounts[I].MaxHP) return I;
+    return INDEX_NONE;
+}
 bool NeedsService(const UOVShipSystemsComponent& S)
 {
-    return S.HullHP<S.MaxHullHP || DamagedRoom(S,false)!=INDEX_NONE;
+    return S.HullHP<S.MaxHullHP || DamagedRoom(S,false)!=INDEX_NONE || DamagedMount(S)!=INDEX_NONE;
 }
 float FieldRate(const UOVShipSystemsComponent& S){ return .5f*FMath::Max(64.f,.001f*S.MaxHullHP); }
 FVector RoomCost(FVector HullCost)
@@ -311,6 +318,18 @@ void UOVLogisticsSubsystem::Simulate(float GameDelta)
         const float Budget=FMath::Min3(L.Rate*Time,L.HPRemaining,ResourceLimit(*C,Cost));
         float HP=0;
         if(Room!=INDEX_NONE){ L.State=TEXT("시설 수리 중"); HP=RepairRoom(S,Room,Budget); }
+        else if (!L.bHero && S.HullHP>=S.MaxHullHP && DamagedMount(S)!=INDEX_NONE)
+        {
+            const int32 Index = DamagedMount(S);
+            auto& Mount = S.WeaponMountStates[Index];
+            const float Maximum = S.Layout->WeaponMounts[Index].MaxHP;
+            const bool Rebuild = Mount.HP <= 0;
+            float& Progress = Rebuild ? Mount.RebuildHP : Mount.HP;
+            HP = FMath::Min(Budget, Maximum - Progress);
+            Progress += HP;
+            if (Rebuild && Progress >= Maximum) { Mount.HP = Maximum; Mount.RebuildHP = 0; }
+            L.State = Rebuild ? TEXT("파괴 무장 재건 중") : TEXT("무장 수리 중");
+        }
         else { L.State=TEXT("선체 수리 중"); HP=FMath::Min(Budget,S.MaxHullHP-S.HullHP); S.HullHP+=HP; }
         Spend(*C,Cost*HP); L.HPRemaining-=HP; L.TimeRemaining-=Time;
         const bool Finished=L.bHero ? S.HullHP>=S.MaxHullHP : !NeedsService(S);

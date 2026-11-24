@@ -65,6 +65,7 @@ struct ORBITALVANGUARD_API FOVWeaponMountState
 {
     GENERATED_BODY()
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="State") FName WeaponMountId;
+    UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="State") float RebuildHP = 0;
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="State") float HP = 0;
 };
 

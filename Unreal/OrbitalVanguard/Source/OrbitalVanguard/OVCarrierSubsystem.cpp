@@ -525,6 +525,7 @@ void UOVCarrierSubsystem::Step(float Delta)
     // Crew/ownership/interior protection have already advanced for this fixed step.
     // No projectile resolves until all aircraft have moved, so this is a shared current-step observation.
     RebuildStrikeCandidates();
+    AirPatrolClaims.Reset();
     // All craft expose the same start-of-step positions to relative projectile sweeps.
     for (auto& Craft : Aircraft) Craft.PreviousPosition = Craft.Position;
     for (auto& Craft : Aircraft)
@@ -672,6 +673,7 @@ const FOVAircraftRecord* UOVCarrierSubsystem::SelectAirTarget(FOVAircraftRecord&
     double Distance = FMath::Square(double(Profile.AttackRange * (StrikeTarget ? ManeuverProfile.DefensiveRangeFraction : 1.5f)));
     const double PatrolRadius = bAirSuperiority ? FMath::Max(double(Profile.AttackRange)*1.5, double(Craft.Carrier->Systems->GetRadarRange())) : 0.;
     if (bAirSuperiority) Distance = TNumericLimits<double>::Max();
+    const int32 MaxPursuers = FMath::Max(1, ManeuverProfile.AirPatrolPursuers);
     if (!StrikeTarget || Craft.RejoinRemaining <= 0)
     {
         for (const auto& Other : Aircraft)
@@ -681,11 +683,19 @@ const FOVAircraftRecord* UOVCarrierSubsystem::SelectAirTarget(FOVAircraftRecord&
             if (StrikeTarget && (FVector::DistSquared(Other.Position, StrikeTarget->GetActorLocation()) > Leash * Leash
                 || FVector::DistSquared(Craft.Position, StrikeTarget->GetActorLocation()) > Leash * Leash)) continue;
             const double D = FVector::DistSquared(Craft.Position, Other.Position);
+            if (bAirSuperiority)
+            {
+                if (AirPatrolClaims.FindRef(Other.AircraftId) >= MaxPursuers) continue;
+                if (Other.AircraftId == Craft.InterceptTargetId) { Best = &Other; break; }
+                if (D < Distance) { Best = &Other; Distance = D; }
+                continue;
+            }
             if (Other.AircraftId == Craft.InterceptTargetId && (!StrikeTarget || Craft.DefensiveRemaining > 0)) return &Other;
             if (!HadIntercept && D < Distance) { Best = &Other; Distance = D; }
         }
     }
-    if (HadIntercept)
+    if (bAirSuperiority && Best) ++AirPatrolClaims.FindOrAdd(Best->AircraftId);
+    if (HadIntercept && !(bAirSuperiority && Best))
     {
         Craft.InterceptTargetId = 0;
         if (StrikeTarget)
@@ -823,9 +833,12 @@ void UOVCarrierSubsystem::AdvanceDogfight(FOVAircraftRecord& Craft, const FOVAir
     const FVector Aim = LeadPoint(Craft.Position, Target.Position, Target.Velocity, Profile.BoltSpeed*WingDuty.FindRef(Craft.Carrier).BoltSpeedScale, Profile.BoltLifetime);
     if (Craft.Cooldown <= 0 && FVector::DistSquared(Craft.Position, Target.Position) <= FMath::Square(double(Profile.AttackRange)))
         Fire(Craft, Aim, FName(*FString::Printf(TEXT("Aircraft_%d"), Target.AircraftId)));
-    const double Side = Craft.AircraftId % 2 ? -1 : 1;
-    const FVector Offset(0, Side * Profile.CollisionRadius * 3, ((Craft.AircraftId % 3)-1) * Profile.CollisionRadius * 2);
-    FlyToward(Craft, Aim + Offset, Delta, false);
+    const FVector Forward = Target.Direction.GetSafeNormal(UE_SMALL_NUMBER, FVector::ForwardVector);
+    FVector Right, Up;
+    Forward.FindBestAxisVectors(Right, Up);
+    const double Lane = Craft.AircraftId * 2.39996323;
+    const FVector Offset = (Right * FMath::Cos(Lane) + Up * FMath::Sin(Lane)) * Profile.AttackRange * .18;
+    FlyToward(Craft, Aim - Forward * (.42 * Profile.AttackRange) + Offset, Delta, false);
 }
 
 bool UOVCarrierSubsystem::Fire(FOVAircraftRecord& Craft, FVector AimPoint, FName TargetId)
@@ -851,6 +864,8 @@ bool UOVCarrierSubsystem::Fire(FOVAircraftRecord& Craft, FVector AimPoint, FName
     Bolt.SourceCarrier = Craft.Carrier;
     Bolt.SourceId = FName(*FString::Printf(TEXT("Aircraft_%d"), Craft.AircraftId)); Bolt.ProfileId = Profile.ProfileId;
     Bolt.TargetId = TargetId;
+    if (Craft.Maneuver == EOVAircraftManeuver::Dogfight)
+        Bolt.FighterDamageScale = FMath::Max(0.f, ManeuverProfile.FighterHitMultiplier);
     Bolt.Origin = Bolt.Position = Craft.Position; Bolt.Direction = (AimPoint - Craft.Position).GetSafeNormal();
     Bolt.Damage = Profile.Damage; Bolt.Speed = Profile.BoltSpeed*WingDuty.FindRef(Craft.Carrier).BoltSpeedScale; Bolt.Lifetime = Profile.BoltLifetime;
     Craft.Cooldown = FMath::Max(.01f, Profile.Period*WingDuty.FindRef(Craft.Carrier).WingPeriodScale); ++Craft.ShotsFired; ++ShotCount;
@@ -871,6 +886,7 @@ void UOVCarrierSubsystem::AdvanceBolts(float Delta)
         float First = 2;
         AOVShip* HitShip = nullptr;
         int32 HitAircraft = INDEX_NONE;
+        bool bAircraftShield = false;
         FVector HitNormal = -Bolt.Direction;
         for (const auto& S : Combat->Ships)
         {
@@ -884,7 +900,7 @@ void UOVCarrierSubsystem::AdvanceBolts(float Delta)
             if (Other.AircraftId == Bolt.AircraftId || !IsAirborneState(Other.State)) continue;
             float T;
             if (SegmentSphere(Bolt.Position - Other.PreviousPosition, End - Other.Position, FVector::ZeroVector, Profile.CollisionRadius, T) && T < First)
-            { First = T; HitAircraft = Other.AircraftId; HitShip = nullptr; }
+            { First = T; HitAircraft = Other.AircraftId; HitShip = nullptr; bAircraftShield = Other.Shield > 0; }
         }
         if (First <= 1)
         {
@@ -894,6 +910,7 @@ void UOVCarrierSubsystem::AdvanceBolts(float Delta)
             {
                 Bolt.HitId = FName(*HitShip->ShipName);
                 auto* Systems = HitShip->Systems.Get();
+                Bolt.bHitShield = Systems->bShieldActive && Systems->Shield > 0;
                 Systems->IncomingSourceId = Bolt.SourceId; Systems->IncomingWeaponId = Bolt.ProfileId;
                 Systems->IncomingFactionId = Bolt.FactionId;
                 Systems->ApplyWorldHit(Bolt.Position, HitNormal, Bolt.Damage, EOVDamageCause::External, true);
@@ -901,7 +918,8 @@ void UOVCarrierSubsystem::AdvanceBolts(float Delta)
             else
             {
                 Bolt.HitId = FName(*FString::Printf(TEXT("Aircraft_%d"), HitAircraft));
-                ApplyAircraftDamage(HitAircraft, Bolt.Damage);
+                Bolt.bHitShield = bAircraftShield;
+                ApplyAircraftDamage(HitAircraft, Bolt.Damage * Bolt.FighterDamageScale);
             }
         }
         else
