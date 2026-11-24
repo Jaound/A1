@@ -5,6 +5,7 @@
 #include "OVShipPreview.h"
 #include "OVHUD.generated.h"
 class AOVShip;
+class AOVBasePresentation;
 struct FOVCombatMountState;
 struct FOVWeaponMountDefinition;
 class UOVDevelopmentWidget;
@@ -20,6 +21,10 @@ public:
  virtual void EndPlay(const EEndPlayReason::Type Reason) override;
  virtual void DrawHUD() override;
  void SyncAddedUI();
+ bool IsBaseViewOpen() const { return bBaseViewOpen; }
+ void UpdateBaseView(float RealSeconds);
+ void AdvanceBaseConstruction(float GameSeconds);
+
  bool IsOverAddedUI(float X,float Y) const;
  bool IsAddedUIEditing() const;
  bool CloseTopModal();
@@ -221,6 +226,15 @@ private:
  float PinnedPanelY() const;
  void DrawCombat();
  void DrawPlayHUD();
+ void DrawBaseView();
+ void ToggleBaseView();
+ bool HandleBaseAction(FName Action);
+ UPROPERTY() TObjectPtr<AOVBasePresentation> BasePresentation;
+ bool bBaseViewOpen = false;
+ int32 BasePick = 1, BaseLayer = 0, BaseTurns = 0;
+ int32 BaseInspect = INDEX_NONE;
+ FString BaseNotice;
+
  bool IsDebriefOpen() const;
  void DrawDebrief();
  bool bDebriefDismissed=false;
