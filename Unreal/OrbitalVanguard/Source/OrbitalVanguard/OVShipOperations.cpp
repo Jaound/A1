@@ -2,6 +2,7 @@
 #include "OVCarrierSubsystem.h"
 #include "OVCombatSubsystem.h"
 #include "OVInteriorSubsystem.h"
+#include "OVLogisticsSubsystem.h"
 #include "OVPlayScenarioSubsystem.h"
 #include "OVPointDefenseSubsystem.h"
 #include "OVShip.h"
@@ -51,6 +52,8 @@ bool AOVController::RequestSmallShipDock(int32 Id,AOVShip* Guest)
     }
     if(!Carrier->SetHangarMode(Id,EOVHangarMode::SmallShip)){LastAction=TEXT("이 격납고에 배속된 함재기가 있습니다");return false;}
     Bay->InboundShip=Guest;
+    Bay->DockProgressSeconds=0;
+    GetWorld()->GetSubsystem<UOVLogisticsSubsystem>()->CancelFieldOrder(Guest);
     Bay->ApproachDestination=ExitPoint(*Home,*Guest);
     Guest->SetDestination(Bay->ApproachDestination);
     LastAction=TEXT("격납고 접근 중 · ")+Guest->ShipName;return true;
@@ -78,6 +81,7 @@ bool AOVController::LaunchSmallShip(int32 Id)
     }
     if(!Clear){LastAction=TEXT("출구 주변 공간이 부족합니다");return false;}
     Ship->HangarHost.Reset();Bay->StoredSmallShip.Reset();
+    Ship->EarliestHangarReturn=Combat->GameTime+Carrier->SmallShipReturnDelay;
     Ship->SetActorLocationAndRotation(Location,Home->GetActorRotation());Ship->Velocity=Home->Velocity;
     Ship->SetActorHiddenInGame(false);Ship->SetActorEnableCollision(true);Ship->SetActorTickEnabled(true);
     Ship->StopMovement();Ships.AddUnique(Ship);
@@ -211,7 +215,16 @@ bool AOVController::ConfirmBoarding(int32 Serial)
     }else if(Transport->LaunchPodTeam(Home,Target,People)!=People.Num()){Undo();LastAction=Transport->LastMessage;return false;}
     auto* Play=GetPlayScenario();
     if(Play && Play->ActiveId==TEXT("HeroArena")){
-        for(auto& Wave:Play->ArenaWaves)if(!Wave.Sent){Wave.Units=Op.Units;Wave.Sent=true;Wave.ActualShuttle=Shuttle;Wave.UsedShuttle=Shuttle!=nullptr;Wave.PlayerDirected=true;break;}
+        int32 Preferred=0;
+        for(int32 Group:Play->ArenaGroups[1]){
+            const auto* Members=Play->ArenaMembers.Find(Group);
+            if(Members && Op.Units.ContainsByPredicate([Members](int32 Unit){return Members->Contains(Unit);})){Preferred=1;break;}
+        }
+        auto& Wave=Play->ArenaWaves[Play->ArenaWaves[Preferred].Sent?1-Preferred:Preferred];
+        if(!Wave.Sent){
+            Wave.Units=Op.Units;Wave.Sent=true;Wave.ActualShuttle=Shuttle;
+            Wave.UsedShuttle=Shuttle!=nullptr;Wave.PlayerDirected=true;
+        }
         Play->bArenaStarted=true;
     }
     for(auto& U:Interior->Units)if(Op.Units.Contains(U.UnitId))U.bEmbarkedForDeparture=false;
@@ -220,10 +233,11 @@ bool AOVController::ConfirmBoarding(int32 Serial)
 
 void AOVController::ResetShipOperations()
 {
+    if(Interior)for(auto& U:Interior->Units)U.bEmbarkedForDeparture=false;
     CrewOperations.Reset();
 }
 
-void AOVController::AdvanceShipOperations()
+void AOVController::AdvanceShipOperations(float GameDelta)
 {
     if(!Carrier||!Interior||!Transport)return;
     for(auto& Bay:Carrier->Hangars){
@@ -231,7 +245,9 @@ void AOVController::AdvanceShipOperations()
         if(Guest && Carrier->IsHangarDestroyed(Bay)){
             Guest->Systems->ForceWreckInstant();Bay.StoredSmallShip.Reset();Guest->HangarHost.Reset();
         }else if(Guest && Home){
-            Guest->SetActorLocation(Home->GetActorLocation());
+            Guest->SetActorLocationAndRotation(Home->GetActorLocation(),Home->GetActorRotation());
+            if(!Combat->IsDeparted(Home) && Carrier->IsHangarOperational(Bay) && Guest->Systems->HullHP<Guest->Systems->MaxHullHP)
+                GetWorld()->GetSubsystem<UOVLogisticsSubsystem>()->RepairBerthedHull(Home,Guest,GameDelta,Carrier->SmallShipRepairRateScale);
             if(Bay.StoredHostFaction!=Home->Systems->FactionId){
                 Bay.StoredHostFaction=Home->Systems->FactionId;
                 if(Guest->HullDefinitionId==TEXT("repair") || Guest->HullDefinitionId==TEXT("mining")){
@@ -251,9 +267,13 @@ void AOVController::AdvanceShipOperations()
         }
         const FVector Gate=ExitPoint(*Home,*In);
         if(FVector::Dist(In->GetActorLocation(),Gate)>FMath::Max(300.,In->Systems->Layout->LocalHalfExtent.Size()*.18)){
+            Bay.DockProgressSeconds=0;
             if(!In->bHasDestination||FVector::DistSquared(In->Destination,Gate)>10000){Bay.ApproachDestination=Gate;In->SetDestination(Gate);}
             continue;
         }
+        if(Combat->GameTime < In->EarliestHangarReturn)continue;
+        Bay.DockProgressSeconds+=GameDelta;
+        if(Bay.DockProgressSeconds<Carrier->SmallShipDockSeconds)continue;
         if(Carrier->StoreShuttle(Home,Bay.SlotId,In)){if(Selection.Contains(In))SelectShip(Home);LastAction=TEXT("수납 완료 · ")+In->ShipName;}
     }
     for(int32 I=CrewOperations.Num()-1;I>=0;--I){

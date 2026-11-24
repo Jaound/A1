@@ -269,7 +269,7 @@ void AOVHUD::DrawPlayHUD()
    Button(TEXT("ArenaLevel"),TEXT("생성 레벨"),423,122,76);
   }
   if(Play->ActiveId==TEXT("HeroArena") && Play->Result==EOVPlaySceneResult::Running){
-   Button(TEXT("OpsInterior"),TEXT("선내 지휘"),12,154,110);
+   Button(TEXT("OpsArenaInterior"),TEXT("선내 지휘"),12,154,110);
    if(!Play->bArenaStarted)Button(TEXT("ArenaFormation"),Play->bArenaFormationOpen?TEXT("편성 닫기"):TEXT("팀 편성"),408,154,90,Play->bArenaFormationOpen);
    const float Wait=PC->Ships.Num()>=2?PC->Transport->NextTeamDelay(PC->Ships[1]):0;
    DrawText(Play->ArenaWaves[0].Sent && Play->ArenaWaves[1].Sent?FString(TEXT("두 팀 출발 완료")):Wait>.001f?FString::Printf(TEXT("다음 팀까지 %d초"),FMath::CeilToInt(Wait)):TEXT("목표당 두 팀 · 출발 간격 30초"),PlayInk,210,161,OVTypography::Font(EOVTextRole::Numeric));

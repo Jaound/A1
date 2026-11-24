@@ -91,6 +91,7 @@ public:
     UFUNCTION(BlueprintCallable, Category="Debug") void DebugResetMotion();
     UFUNCTION(BlueprintCallable, Category="Debug") void DebugSetFTLCharging(bool bCharging);
     TWeakObjectPtr<AOVShip> HangarHost;
+    double EarliestHangarReturn=0;
     void Simulate(float SimDelta);
     FVector GetLocalShieldRadii() const;
     void SetCalibrationHull(const FVector* LocalHalfExtent);

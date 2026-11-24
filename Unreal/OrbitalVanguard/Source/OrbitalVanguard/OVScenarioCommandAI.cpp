@@ -1,6 +1,7 @@
 #include "OVPlayScenarioSubsystem.h"
 #include "OVCombatSubsystem.h"
 #include "OVController.h"
+#include "OVCarrierSubsystem.h"
 #include "OVInteriorSubsystem.h"
 #include "OVTransportSubsystem.h"
 #include "OVShip.h"
@@ -87,7 +88,7 @@ void UOVPlayScenarioSubsystem::StepCommandAI(AOVController& PC,float Delta)
         for (AOVShip* Ship : PC.Ships)
         {
             if (!IsValid(Ship) || !Ship->Systems || Ship->Systems->FactionId!=Side) continue;
-            if (!Ship->IsMovementAutomatic() || Ship->bPlayerHold || Ship->bManualAttitude || Ship->bFTLCharging ||
+            if (Ship->HangarHost.IsValid() || PC.Carrier->Hangars.ContainsByPredicate([Ship](const auto& Bay){return Bay.InboundShip==Ship;}) || !Ship->IsMovementAutomatic() || Ship->bPlayerHold || Ship->bManualAttitude || Ship->bFTLCharging ||
                 !Ship->Systems->CanMove() || PC.Combat->IsDeparted(Ship))
             { Evasions.Remove(Ship); continue; }
             if (auto* Evading=Evasions.Find(Ship))

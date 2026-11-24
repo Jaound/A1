@@ -264,6 +264,7 @@ FOVCombatShipState UOVCombatSubsystem::GetShipState(AOVShip* Ship) const
 
 bool UOVCombatSubsystem::IsDeparted(AOVShip* Ship) const
 {
+    if(IsValid(Ship) && Ship->HangarHost.IsValid())Ship=Ship->HangarHost.Get();
     const int32 Index = FindShip(Ship);
     return Ships.IsValidIndex(Index) && Ships[Index].bDeparted;
 }

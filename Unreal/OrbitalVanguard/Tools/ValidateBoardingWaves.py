@@ -29,16 +29,19 @@ def run():
         for _ in range(4): yield
         width,height=pc.get_viewport_size()
         scale=max(.25,min(4,max(.25,min(width/1280,height/740))*hud.get_user_ui_scale_multiplier()))
-        for button in ("ArenaFight","ArenaWaveB"):
+        for removed in ("ArenaFight","ArenaWaveB"):
+            check(label+" 임무창 출발 명령 제거 "+removed,hud.get_action_center(removed).x<0,removed)
+        def hit(button):
             point=hud.get_action_center(button)
-            check(label+" 패널 입력 "+button,str(hud.get_hit_action_at_canvas_point(point))==button and hud.is_over_panel(point.x*scale,point.y*scale),str(point))
+            return str(hud.get_hit_action_at_canvas_point(point))==button and hud.is_over_panel(point.x*scale,point.y*scale)
+        check(label+" 선내 지휘 진입 버튼",hit("OpsArenaInterior"),"OpsArenaInterior")
         home, target = list(prop(pc, "ships"))
         carrier, transit, interior = [prop(pc, k) for k in ("carrier","transport","interior")]
         bays = lambda: [h for h in prop(carrier,"hangars") if prop(h,"carrier")==home]
         docked = lambda: [prop(h,"stored_small_ship") for h in bays() if prop(h,"stored_small_ship")]
         originals = set(docked())
         check(label+" 실제 모함 격납고",len(originals)==2,len(originals))
-        for _ in range(route): pc.action("ArenaRoute")
+
         for _ in range(4): pc.action("ArenaLevel")
         pc.action("ArenaFill")
         own=[x for x in prop(interior,"units") if prop(x,"ship")==home and prop(x,"faction_id")==0]
@@ -57,15 +60,35 @@ def run():
             move(heroes[4],2)
             move(heroes[0],1)
             pc.action("ArenaFormation")
-        pc.action("ArenaFight")
+        if prop(pc,"simulation_paused"):pc.action("Pause")
+        def prepare(number):
+            hud.execute_ui_action("OpsArenaInterior")
+            hud.handle_interior_action("InteriorFilter_"+str(number+1))
+            hud.handle_interior_action("InteriorAll")
+            for _ in range(4):yield
+            check(label+" 패널 입력 "+("ArenaFight","ArenaWaveB")[number],hit("OpsAssault"),"선내 작전 / 강습")
+            hud.execute_ui_action("OpsAssault")
+            use_shuttle=route==1 or (route==2 and number==1)
+            route_id="OpsVia_"+str(prop(bays()[number],"hangar_id")) if use_shuttle else "OpsPods"
+            hud.execute_ui_action(route_id)
+            for _ in range(2):yield
+            check(label+" 목표 선택 "+str(number),hud.accept_ship_pick(target),route_id)
+            for _ in range(800):
+                pc.step_simulation(.05)
+                if _%20==0:
+                    yield
+                    if hud.get_action_center("OpsReady_"+str(pc.last_crew_operation())).x>=0:break
+            return pc.last_crew_operation()
+        first=yield from prepare(0)
+        second=yield from prepare(1)
+        check(label+" 첫 팀 확인",pc.confirm_boarding(first),str(prop(pc,"last_action")))
         if route==0:
             actual={prop(transit.get_person(prop(pod,"person_id")),"runtime_unit_id") for pod in prop(transit,"pods")}
             expected=set(heroes[1:4]+[heroes[9]]+soldiers[4:8]+soldiers[16:20])
             check("지정 영웅·분대만 A팀 출발",actual==expected,sorted(actual))
-        pc.action("ArenaWaveB")
-        check(label+" 조기 후속 출발 차단",transit.active_teams_at(target)==1,transit.next_team_delay(target))
+        check(label+" 조기 후속 출발 차단",not pc.confirm_boarding(second) and transit.active_teams_at(target)==1,transit.next_team_delay(target))
         for _ in range(610): pc.step_simulation(.05)
-        pc.action("ArenaWaveB")
+        check(label+" 후속 팀 확인",pc.confirm_boarding(second),str(prop(pc,"last_action")))
         observation={"활동팀":transit.active_teams_at(target),"명령":str(prop(pc,"last_action")),"강습선":[(str(prop(sh,"state")),str(prop(sh,"reason")),str(prop(sh,"ship").get_actor_location())) for sh in prop(transit,"shuttles")],"승객":{}}
         for person in prop(transit,"persons"):
             key=str(prop(person,"state"))
@@ -114,6 +137,7 @@ def run():
         stats["복귀 결과"]=str(prop(pc.get_play_scenario(),"result"))
         stats["귀환 강습선"]=len(docked())
         at_home=set(interior.get_units_on_ship(home,0))
+        for guest in docked():at_home.update(interior.get_units_on_ship(guest,0))
         stats["실제 귀환 인원"]=len(at_home.intersection(ids))
         stats["사망"]=sum(prop(transit.get_person(i),"state")==u.OVPassengerState.DEAD for i in people)
         check(label+" 생존자 원함 귀환",stats["실제 귀환 인원"]>0 and stats["실제 귀환 인원"]+stats["사망"]==24 and set(docked())==originals and prop(pc.get_play_scenario(),"result")==u.OVPlaySceneResult.PARTIAL_VICTORY,stats)

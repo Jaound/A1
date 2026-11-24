@@ -198,7 +198,7 @@ public:
  int32 NextCrewOperation=1;
  UFUNCTION(BlueprintPure) int32 LastCrewOperation() const { return CrewOperations.IsEmpty()?0:CrewOperations.Last().Serial; }
  int32 Mustered(const FCrewOperation& Op) const;
- void AdvanceShipOperations();
+ void AdvanceShipOperations(float GameDelta);
  void ResetShipOperations();
  bool BeginCrewOperation(FCrewOperation Op);
 

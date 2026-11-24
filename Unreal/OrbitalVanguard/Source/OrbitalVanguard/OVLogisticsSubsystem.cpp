@@ -216,6 +216,19 @@ void Spend(FOVDevCargo& C,FVector Bill)
     C.Amount=FMath::Max(0.f,float(C.Amount-Bill.X)); C.Advanced=FMath::Max(0.f,float(C.Advanced-Bill.Y)); C.Rare=FMath::Max(0.f,float(C.Rare-Bill.Z));
 }
 }
+void UOVLogisticsSubsystem::RepairBerthedHull(AOVShip* Host,AOVShip* Guest,float GameDelta,float RateScale)
+{
+    if(!Active(Host)||!IsValid(Guest)||Guest->HangarHost!=Host||!Guest->Systems||Guest->Systems->bWrecked||
+       Guest->Systems->bNeutral||Guest->Systems->FactionId!=Host->Systems->FactionId)return;
+    auto& S=*Guest->Systems;
+    auto* Stock=Cargo.FindByPredicate([Host](const auto& C){return C.Ship==Host;});
+    if(!Stock||S.MaxHullHP<=0||GameDelta<=0||RateScale<=0)return;
+    const FVector Cost=PackageCost(Guest->HullDefinitionId)*(.45/S.MaxHullHP);
+    if(Cost.IsNearlyZero())return;
+    const float HP=FMath::Min3(S.MaxHullHP-S.HullHP,FieldRate(S)*RateScale*GameDelta,ResourceLimit(*Stock,Cost));
+    if(HP>0){Spend(*Stock,Cost*HP);S.HullHP+=HP;}
+}
+
 void UOVLogisticsSubsystem::CancelFieldOrder(AOVShip* Source)
 {
     RepairOutcome.Remove(Source); Approaches.Remove(Source);

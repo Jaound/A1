@@ -25,7 +25,7 @@ bool AOVHUD::PickingShip() const
 bool AOVHUD::AcceptShipPick(AOVShip* Ship)
 {
     auto* PC=Cast<AOVController>(PlayerOwner);
-    if(!PC||!PickingShip())return false;
+    if(!PC||!PickingShip()||PickerOpenedFrame==GFrameCounter)return false;
     const bool Dock=PC->InputMode==EOVInputMode::DockingTarget;
     if(!IsValid(Ship)||Ship->IsHidden() || !Ship->Systems || Ship->bFriendly!=Dock)return false;
     PC->InputMode=EOVInputMode::None;
@@ -48,7 +48,8 @@ bool AOVHUD::HandleShipOperations(FName Action)
         InteriorShip=Ship;bDetailsOpen=false;bHeroPanelOpen=false;bInteriorOpen=true;bInteriorMinimized=false;
         if(Ship->bFriendly)PC->Interior->AddShip(Ship);
     };
-    if(Action==TEXT("OpsInterior"))EnterInterior(PC->Selected);
+    if(Action==TEXT("OpsArenaInterior") && !PC->Ships.IsEmpty())EnterInterior(PC->Ships[0]);
+    else if(Action==TEXT("OpsInterior"))EnterInterior(PC->Selected);
     else if(Action==TEXT("OpsExterior")||Action==TEXT("OpsBays")){
         if(InteriorShip.IsValid())PC->SelectShip(InteriorShip.Get());
         OpenDetails();bHangarView=Action==TEXT("OpsBays");bAircraftOnly=false;
@@ -56,6 +57,8 @@ bool AOVHUD::HandleShipOperations(FName Action)
         PC->SelectShip(PC->Selected->HangarHost.Get());OpenDetails();bHangarView=true;bAircraftOnly=false;
     }else if(Name.StartsWith(TEXT("OpsAircraftList_")))bAircraftOnly=true;
     else if(Action==TEXT("OpsAllBays"))bAircraftOnly=false;
+    else if(Action==TEXT("OpsPrevBays"))BayPage=FMath::Max(0,BayPage-1);
+    else if(Action==TEXT("OpsNextBays"))++BayPage;
     else if(Action==TEXT("OpsCloseRoutes"))bChoosingTransfer=bChoosingTransport=false;
     else if(Action==TEXT("OpsAssault")||Action==TEXT("OpsTransfer")){
         BoardingSelection=InteriorSelectedUnits;BoardingOrigin=InteriorShip;BoardingShuttle.Reset();
@@ -68,13 +71,13 @@ bool AOVHUD::HandleShipOperations(FName Action)
             if(BoardingOrigin->HullDefinitionId==TEXT("assault")&&!BoardingOrigin->HangarHost.IsValid())Routes.Add(BoardingOrigin.Get());
             for(const auto& H:PC->Carrier->Hangars)if(H.Carrier==BoardingOrigin&&H.StoredSmallShip.IsValid()&&H.StoredSmallShip->HullDefinitionId==TEXT("assault")&&PC->Carrier->IsHangarOperational(H))Routes.Add(H.StoredSmallShip.Get());
             if(Routes.Num()+int32(Pod)==1){
-                bChoosingTransport=false;BoardingShuttle=Routes.IsEmpty()?nullptr:Routes[0];PC->InputMode=EOVInputMode::BoardingTarget;
+                bChoosingTransport=false;BoardingShuttle=Routes.IsEmpty()?nullptr:Routes[0];PC->InputMode=EOVInputMode::BoardingTarget;PickerOpenedFrame=GFrameCounter;
             }
         }
     }else if(Action==TEXT("OpsPods")||Action==TEXT("OpsSelf")||Name.StartsWith(TEXT("OpsVia_"))){
         if(!bChoosingTransport)return true;
         BoardingShuttle=Action==TEXT("OpsSelf")?BoardingOrigin.Get():Bay?Bay->StoredSmallShip.Get():nullptr;
-        bChoosingTransport=false;PC->InputMode=EOVInputMode::BoardingTarget;
+        bChoosingTransport=false;PC->InputMode=EOVInputMode::BoardingTarget;PickerOpenedFrame=GFrameCounter;
     }else if(Name.StartsWith(TEXT("OpsCross_")) && bChoosingTransfer && Bay){
         auto* To=Bay->Carrier==BoardingOrigin?Bay->StoredSmallShip.Get():Bay->Carrier.Get();
         PC->TransferDockedCrew(BoardingOrigin.Get(),To,BoardingSelection);bChoosingTransfer=false;InteriorFeedback=PC->LastAction;
@@ -86,7 +89,7 @@ bool AOVHUD::HandleShipOperations(FName Action)
         }else if(Name.StartsWith(TEXT("OpsLaunch_"))){
             if(PC->LaunchSmallShip(Id)){OpenDetails();bHangarView=false;}
         }else if(Name.StartsWith(TEXT("OpsDock_"))){
-            PendingBay=Id;PC->InputMode=EOVInputMode::DockingTarget;
+            PendingBay=Id;PC->InputMode=EOVInputMode::DockingTarget;PickerOpenedFrame=GFrameCounter;
         }else if(Name.StartsWith(TEXT("OpsAbortDock_"))) {if(auto* In=Bay->InboundShip.Get())In->StopMovement();Bay->InboundShip.Reset();}
         else if(Name.StartsWith(TEXT("OpsWingMode_")))PC->Carrier->SetHangarMode(Id,EOVHangarMode::Aircraft);
     }
@@ -107,9 +110,15 @@ bool AOVHUD::DrawSmallBays(AOVShip* Home,float X,float Y,float W)
     DrawText(TEXT("격납고 · 보관 중인 전력"),Accent,X+12,Y+77,OVTypography::Font(EOVTextRole::Heading));
     const int32 Cols=W>=580?2:1;
     const float Width=(W-24)/Cols-5;
-    for(int32 I=0;I<Bays.Num();++I){
+    if(BayPageHost!=Home){BayPageHost=Home;BayPage=0;}
+    const int32 Capacity=Cols*FMath::Max(1,FMath::FloorToInt((WindowSize.Y-117)/74));
+    const int32 Pages=FMath::DivideAndRoundUp(Bays.Num(),Capacity);
+    BayPage=FMath::Clamp(BayPage,0,Pages-1);
+    if(BayPage>0)Button(TEXT("OpsPrevBays"),TEXT("이전"),X+W-126,Y+72,54);
+    if(BayPage+1<Pages)Button(TEXT("OpsNextBays"),TEXT("다음"),X+W-68,Y+72,54);
+    for(int32 I=BayPage*Capacity;I<FMath::Min(Bays.Num(),(BayPage+1)*Capacity);++I){
         const auto& B=Bays[I];const int32 Id=B.HangarId;
-        const float CX=X+10+(I%Cols)*(Width+5),CY=Y+108+(I/Cols)*74;
+        const float CX=X+10+(I%Cols)*(Width+5),CY=Y+108+((I%Capacity)/Cols)*74;
         DrawRect(FLinearColor(.032f,.071f,.1f),CX,CY,Width,70);
         const bool Ready=PC->Carrier->IsHangarOperational(B);
         DrawText(FString::Printf(TEXT("격납고 %d · %s"),I+1,Ready?TEXT("가동"):TEXT("정지")),Ink,CX+5,CY+2,OVTypography::Font(EOVTextRole::Body));
@@ -149,7 +158,7 @@ void AOVHUD::DrawShipOperations()
         if(!Op.Origin.IsValid()||!Op.Target.IsValid())continue;
         const int32 N=PC->Mustered(Op);
         DrawRect(FLinearColor(.015f,.045f,.06f,.98f),12,RowY,480,40);
-        DrawText(FString::Printf(TEXT("%s · %s  %d/%d"),Op.bTransfer?TEXT("승하선"):Op.Shuttle.IsValid()?TEXT("승선 준비"):TEXT("포드 탑승"),*Op.Target->ShipName,N,Op.Units.Num()),FLinearColor::White,18,RowY+9,OVTypography::Font(EOVTextRole::Body));
+        DrawText(FString::Printf(TEXT("%s · %s%s  %d/%d"),Op.bTransfer?TEXT("승하선"):Op.Shuttle.IsValid()?TEXT("승선 준비"):TEXT("포드 탑승"),Op.bTransfer?TEXT(""):TEXT("적 "),*Op.Target->ShipName,N,Op.Units.Num()),FLinearColor::White,18,RowY+9,OVTypography::Font(EOVTextRole::Body));
         if(!Op.bTransfer && N==Op.Units.Num())Button(CommandId(TEXT("OpsReady_"),Op.Serial),Op.Shuttle.IsValid()?TEXT("출격 확인"):TEXT("발사 확인"),288,RowY+6,100);
         Button(CommandId(TEXT("OpsCancel_"),Op.Serial),TEXT("취소"),394,RowY+6,80);RowY-=43;
     }

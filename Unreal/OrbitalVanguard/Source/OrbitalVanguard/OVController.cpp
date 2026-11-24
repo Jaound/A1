@@ -1471,7 +1471,7 @@ void AOVController::StepSimulation(float DeltaTime)
   while(EnvironmentTickAccum>=1.0f) {
    EnvironmentTickAccum-=1.0f;
    for(AOVShip* Ship:Ships) {
-    if(!IsValid(Ship)||!Ship->Systems||Ship->Systems->bWrecked||Ship->Systems->bNeutral) continue;
+    if(!IsValid(Ship)||Ship->HangarHost.IsValid()||!Ship->Systems||Ship->Systems->bWrecked||Ship->Systems->bNeutral) continue;
     if(Combat&&Combat->bEnabled&&Combat->IsDeparted(Ship)) continue;
     for(const FVector4& RZ:ActiveRadiationZones) {
      if(FVector::Dist(Ship->GetActorLocation(),FVector(RZ.X,RZ.Y,RZ.Z))<=RZ.W) {
@@ -1489,7 +1489,7 @@ void AOVController::StepSimulation(float DeltaTime)
    bSolarFlareWaveApplied=true;
    bool bAnyUnsheltered=false;
    for(AOVShip* Ship:Ships) {
-    if(!IsValid(Ship)||!Ship->Systems||Ship->Systems->bWrecked||Ship->Systems->bNeutral) continue;
+    if(!IsValid(Ship)||Ship->HangarHost.IsValid()||!Ship->Systems||Ship->Systems->bWrecked||Ship->Systems->bNeutral) continue;
     if(Combat&&Combat->bEnabled&&Combat->IsDeparted(Ship)) continue;
     const bool bSheltered=IsShipShelteredFromSolarFlare(Ship);
     const float SurgeDamage=bSheltered?15.f:65.f;
@@ -1500,7 +1500,7 @@ void AOVController::StepSimulation(float DeltaTime)
    LastAction=bAnyUnsheltered?TEXT("태양 플레어 파동 통과 · 비엄폐 함선 쉴드 과부하 및 레이더 일시 교란"):TEXT("태양 플레어 파동 통과 · 운석 엄폐로 피해 완화");
   }
  }
- if(Combat && Combat->bEnabled) { Combat->Simulate(Remaining); AdvanceShipOperations(); for(int32 I=Selection.Num()-1;I>=0;--I) {
+ if(Combat && Combat->bEnabled) { Combat->Simulate(Remaining); AdvanceShipOperations(Remaining); for(int32 I=Selection.Num()-1;I>=0;--I) {
   AOVShip* Ship=Selection[I];
   if(!IsValid(Ship) || Combat->IsDeparted(Ship)) {
    if(Ship) Ship->bSelected=false;

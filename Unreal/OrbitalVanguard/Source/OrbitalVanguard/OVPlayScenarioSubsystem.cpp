@@ -680,7 +680,7 @@ void UOVPlayScenarioSubsystem::CheckFleetResult(AOVController& Controller, const
         const int32 Faction = Systems.FactionId;
         if (Faction < 0 || Faction >= FactionCount || Systems.bNeutral) continue;
         if (Systems.bWrecked) { ++Wrecked[Faction]; continue; }
-        if (Controller.Combat->IsDeparted(Ship)) continue;
+        if (Controller.Combat->IsDeparted(Ship) || Ship->HangarHost.IsValid()) continue;
         ++Active[Faction];
         Potential[Faction] |= HasAttackPotential(Systems);
         Integrity += Systems.HullHP + Systems.Shield;
@@ -855,7 +855,7 @@ bool UOVPlayScenarioSubsystem::EvacuationOrder(AOVController& Controller, FName 
     int32 Accepted = 0;
     for (AOVShip* Ship : Controller.Selection)
     {
-        if (!RescueFleet.Contains(Ship) || !IsValid(Ship) || Ship->Systems->FactionId != 0 ||
+        if (!RescueFleet.Contains(Ship) || !IsValid(Ship) || Ship->HangarHost.IsValid() || Ship->Systems->FactionId != 0 ||
             Ship->Systems->bWrecked || Controller.Combat->IsDeparted(Ship)) continue;
         if (Action == TEXT("EvacAbandon"))
         {
@@ -891,7 +891,7 @@ bool UOVPlayScenarioSubsystem::OrderJump(AOVController& PC,FName Destination)
     if(ActiveId==TEXT("Evacuation") && ElapsedSeconds<CorridorOpens){PC.LastAction=TEXT("퇴로가 아직 열리지 않았습니다");return false;}
     bool Accepted=false;
     for(AOVShip* Ship:PC.Selection){
-        if(!IsValid(Ship)|| !Ship->bFriendly || Ship->Systems->FactionId!=0 || Ship->Systems->bWrecked || PC.Combat->IsDeparted(Ship) ||
+        if(!IsValid(Ship)||Ship->HangarHost.IsValid()|| !Ship->bFriendly || Ship->Systems->FactionId!=0 || Ship->Systems->bWrecked || PC.Combat->IsDeparted(Ship) ||
             ChargeSeconds.Contains(Ship) || !Ship->Systems->CanCommand() || Ship->Systems->GetEfficiency(EOVFacilityType::Engine)<=0)continue;
         Ship->StopMovement();Ship->bFTLCharging=true;
         ChargeSeconds.Add(Ship,ElapsedSeconds+ChargeDuration);JumpDestinations.Add(Ship,Destination);PC.Carrier->Recall(Ship);Accepted=true;
@@ -912,6 +912,10 @@ void UOVPlayScenarioSubsystem::AdvanceJumps(AOVController& PC)
             if(Craft.Carrier==Ship && Craft.State!=EOVAircraftState::Stored && Craft.State!=EOVAircraftState::Wrecked)++AbandonedAircraft;
         const FVector P=Ship->GetActorLocation();
         JumpTrails.Add({P,P+Ship->GetActorForwardVector()*48000,ElapsedSeconds});
+        if(ActiveId==TEXT("Evacuation"))
+            for(const auto& Bay:PC.Carrier->Hangars)
+                if(Bay.Carrier==Ship && Bay.StoredSmallShip.IsValid() && RescueFleet.Contains(Bay.StoredSmallShip) &&
+                   Bay.StoredSmallShip->Systems->FactionId==0 && !Bay.StoredSmallShip->Systems->bWrecked && !Bay.StoredSmallShip->Systems->bNeutral)++EscapedShips;
         PC.Combat->NotifyFTLDeparture(Ship);Ship->bFTLCharging=false;++EscapedShips;It.RemoveCurrent();
     }
 }

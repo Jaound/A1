@@ -42,6 +42,11 @@ def run():
             pc.action("Pause")
         for _ in range(round(seconds*20)):
             pc.step_simulation(.05)
+    def picture(name):
+        image=out.parent / "ShipOpsScreens" / (name+".png")
+        image.parent.mkdir(parents=True,exist_ok=True)
+        u.SystemLibrary.execute_console_command(editor.get_game_world(),'Shot SHOWUI filename="'+image.as_posix()+'" -nosuffix',pc)
+        for _ in range(12):yield
     def bay_info(host):
         return [h for h in prop(carrier,"hangars") if prop(h,"carrier")==host]
     def occupants(host):
@@ -55,6 +60,7 @@ def run():
     hud.execute_ui_action("HangarView")
     for _ in range(12):yield
     check("기본 격납고에 강습선 카드",hud.get_action_center("OpsShip_"+str(bid)).x>=0)
+    yield from picture("Hangar")
     hud.execute_ui_action("OpsShip_"+str(bid))
     check("카드로 동일 함선 상세 열기",prop(pc,"selected")==guest)
     hud.execute_ui_action("OpsHost")
@@ -82,6 +88,7 @@ def run():
     hud.execute_ui_action("InteriorUnit_"+str(uid))
     hud.execute_ui_action("OpsAssault")
     hud.execute_ui_action("OpsPods")
+    for _ in range(2):yield
     check("목표 선택 중 아군 클릭 거부",not hud.accept_ship_pick(home))
     check("적함 선택 후 복귀",hud.accept_ship_pick(enemy))
     serial=pc.last_crew_operation()
@@ -89,6 +96,7 @@ def run():
     advance(25)
     check("집결 후에도 자동 발사 없음",len(prop(transit,"pods"))==0)
     check("발사 전 실제 포드 탑승 대기",prop(interior.get_unit(uid),"embarked_for_departure"))
+    yield from picture("PodReady")
     check("유효한 발사 확인",pc.confirm_boarding(serial))
     check("중복 확인 차단",not pc.confirm_boarding(serial))
     check("실제 개인 포드 생성",len(prop(transit,"pods"))>0)
@@ -112,6 +120,8 @@ def run():
     for hull in ["corvette","repair"]:
         ship=next(s for s in allies if ({"corvette":"초계함","repair":"보급수리함"}[hull] in prop(s,"ship_name")))
         systems=prop(ship,"systems")
+        if hull=="corvette":
+            systems.apply_world_hit(ship.get_actor_location(),u.Vector(0,0,1),prop(systems,"shield")+prop(systems,"max_hull_hp")*.05,u.OVDamageCause.EXTERNAL,True)
         actual_hp=prop(systems,"hull_hp")
         total=len(prop(carrier,"aircraft"))
         people=sorted(prop(v,"unit_id") for v in occupants(ship))
@@ -123,9 +133,21 @@ def run():
         result[hull]={"distance":(ship.get_actor_location()-host.get_actor_location()).length(),"message":str(prop(pc,"last_action"))}
         record=next(h for h in bay_info(host) if prop(h,"hangar_id")==bid)
         check(hull+" 빈 격납고 수용",prop(record,"stored_small_ship")==ship)
+        pos=host.get_actor_location()
+        host.set_destination(pos+u.Vector(8000,0,0))
+        advance(3)
+        check(hull+" 모함 이동에 동행",(pos-host.get_actor_location()).length()>1 and (ship.get_actor_location()-host.get_actor_location()).length()<1)
+        host.stop_movement()
+        check(hull+" 정박 중 외부 공격 표적 차단",not prop(prop(pc,"combat").get_detection(ships[-1],ship),"detected"))
         check(hull+" 같은 함선 출격·선택",pc.launch_small_ship(bid) and prop(pc,"selected")==ship)
         check(hull+" 실제 승조·함재기 재고 보존",people==sorted(prop(v,"unit_id") for v in occupants(ship)) and len(prop(carrier,"aircraft"))==total)
         check(hull+" 출격으로 무료 수리 없음",prop(systems,"hull_hp")<=actual_hp)
+    check("이탈 전 재수납 예약",pc.request_small_ship_dock(bid,ship))
+    advance(10)
+    check("퇴각할 모함 내부에 실제 수납",prop(next(h for h in bay_info(host) if prop(h,"hangar_id")==bid),"stored_small_ship")==ship)
+    combat=prop(pc,"combat")
+    combat.notify_ftl_departure(host)
+    check("모함과 함께 이탈 처리",combat.is_departed(ship) and not pc.launch_small_ship(bid))
     check("재시작 후 이전 승선 대기 정리",start("HeroArena") and pc.last_crew_operation()==0)
 
 

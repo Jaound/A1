@@ -87,6 +87,7 @@ struct ORBITALVANGUARD_API FOVHangarState
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly) int32 ExtraAircraftCapacity = 0;
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly) TWeakObjectPtr<AOVShip> StoredSmallShip;
     TWeakObjectPtr<AOVShip> InboundShip;
+    float DockProgressSeconds=0;
     FVector ApproachDestination=FVector::ZeroVector;
     int32 StoredHostFaction=INDEX_NONE;
 };
@@ -174,6 +175,10 @@ class ORBITALVANGUARD_API UOVCarrierSubsystem : public UWorldSubsystem
 {
     GENERATED_BODY()
 public:
+    // 소형함 시험값. 함재기 프로필과 독립적이며 게임 시간 기준이다.
+    UPROPERTY(EditAnywhere, BlueprintReadWrite) float SmallShipDockSeconds=2;
+    UPROPERTY(EditAnywhere, BlueprintReadWrite) float SmallShipReturnDelay=3;
+    UPROPERTY(EditAnywhere, BlueprintReadWrite) float SmallShipRepairRateScale=.3f;
     UPROPERTY(EditAnywhere, BlueprintReadWrite) FOVAircraftProfile Profile;
     UPROPERTY(EditAnywhere, BlueprintReadWrite) FOVAircraftManeuverProfile ManeuverProfile;
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly) TArray<FOVHangarState> Hangars;

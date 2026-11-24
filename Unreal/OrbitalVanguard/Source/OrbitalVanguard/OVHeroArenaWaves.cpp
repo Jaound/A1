@@ -109,7 +109,7 @@ FString UOVPlayScenarioSubsystem::ArenaWaveStatus(int32 Index) const
     if(!W.Sent){
         int32 Heroes=0;
         for(int32 Group:ArenaGroups[Index])Heroes+=ArenaMembers.FindChecked(Group).Num()==1;
-        return FString::Printf(TEXT("%s · 영웅 %d / 병력 %d"),Route,Heroes,ArenaGroupHeadcount(Index)-Heroes);
+        return FString::Printf(TEXT("대기 · 영웅 %d / 병력 %d"),Heroes,ArenaGroupHeadcount(Index)-Heroes);
     }
     int32 Inside=0,Transit=0,Aboard=0,Loss=0;
     for(int32 Id:W.Units){
