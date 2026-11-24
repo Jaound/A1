@@ -21,17 +21,7 @@
 
 namespace {
 const FLinearColor PlayInk(.8f,.9f,1), PlayAccent(.2f,.9f,1), PlayPanel(.008f,.02f,.04f,.94f);
-FString FitCommandLabel(const AOVHUD* Hud,UFont* Font,const FString& Text,float MaxWidth)
-{
- float W=0,H=0;Hud->GetTextSize(Text,W,H,Font);
- if(W<=MaxWidth)return Text;
- int32 Low=0,High=Text.Len();
- while(Low<High) {
-  const int32 Mid=(Low+High+1)/2;Hud->GetTextSize(Text.Left(Mid)+TEXT("…"),W,H,Font);
-  if(W<=MaxWidth)Low=Mid;else High=Mid-1;
- }
- return Text.Left(Low)+TEXT("…");
-}
+
 }
 const TCHAR* AOVHUD::AttackWeaponName(const FOVCombatMountState& Mount,const FOVWeaponMountDefinition* Def)
 {
@@ -148,27 +138,27 @@ void AOVHUD::DrawDebrief()
  DrawRect(FLinearColor(.006f,.015f,.029f,.98f),X,Y,Width,Height);
  const auto Tint=Play->Result==EOVPlaySceneResult::Defeat ? FLinearColor(1,.46f,.32f) : PlayAccent;
  DrawRect(Tint,X,Y,Width,3);
- DrawText(Play->GetActiveDefinition()->Title,PlayInk,X+24,Y+18,GEngine->GetSmallFont());
- DrawText(TEXT("작전 ")+Play->GetOutcomeTitle(),FLinearColor::White,X+24,Y+39,GEngine->GetLargeFont(),2.05f);
+ DrawText(Play->GetActiveDefinition()->Title,PlayInk,X+24,Y+18,OVTypography::Font(EOVTextRole::Heading));
+ DrawText(TEXT("작전 ")+Play->GetOutcomeTitle(),FLinearColor::White,X+24,Y+39,OVTypography::Font(EOVTextRole::Heading),2.05f);
  const int32 Seconds=FMath::FloorToInt(Play->ElapsedSeconds);
- DrawText(TEXT("작전 결과 보고"),PlayInk,X+Width-135,Y+25,GEngine->GetSmallFont());
+ DrawText(TEXT("작전 결과 보고"),PlayInk,X+Width-135,Y+25,OVTypography::Font(EOVTextRole::Heading));
  const FString Reason = Play->ActiveId == TEXT("Evacuation") && Play->Result != EOVPlaySceneResult::NoCombatCapability
   ? (Play->Result==EOVPlaySceneResult::Victory ? TEXT("함대 이탈 목표 달성") :
      Play->Result==EOVPlaySceneResult::PartialVictory ? TEXT("일부 함선이 퇴각에 성공했습니다") : TEXT("이탈에 성공한 아군 함선이 없습니다"))
   : Play->GetResolution();
- DrawText(Reason,PlayInk,X+24,Y+90,GEngine->GetSmallFont());
+ DrawText(Reason,PlayInk,X+24,Y+90,OVTypography::Font(EOVTextRole::Body));
  const FString Values[]={FString::Printf(TEXT("%02d:%02d"),Seconds/60,Seconds%60),FString::Printf(TEXT("%d / %d"),Play->SurvivingCost,Play->InitialCosts.IsValidIndex(0)?Play->InitialCosts[0]:0),FString::Printf(TEXT("%d기"),Play->SurvivingAircraft),FString::Printf(TEXT("%d척"),Play->DepartedCount)};
  const TCHAR* Captions[]={TEXT("작전 시간"),TEXT("아군 잔존 코스트"),TEXT("함재기 생존"),TEXT("초광속 이탈")};
  for(int32 I=0;I<4;++I){
   const float CW=(Width-48)/4,CX=X+24+I*CW;
   DrawRect(FLinearColor(.017f,.037f,.061f),CX,Y+118,CW-5,62);
   DrawRect(Tint,CX,Y+118,22,2);
-  DrawText(Captions[I],PlayInk,CX+9,Y+124,GEngine->GetSmallFont());
-  DrawText(Values[I],FLinearColor::White,CX+9,Y+146,GEngine->GetMediumFont(),1.27f);
+  DrawText(Captions[I],PlayInk,CX+9,Y+124,OVTypography::Font(EOVTextRole::Body));
+  DrawNumberRight(Values[I],FLinearColor::White,CX+CW-14,Y+146,1.27f);
  }
  float LineY=Y+192;
  for(const FString& Line : Play->DebriefLines) {
-  DrawText(Line,PlayInk,X+24,LineY,GEngine->GetSmallFont());
+  DrawText(Line,PlayInk,X+24,LineY,OVTypography::Font(EOVTextRole::Body));
   LineY+=24;
  }
  Button(TEXT("ResultField"),TEXT("전장 보기"),X+24,Y+Height-48,88);
@@ -195,8 +185,8 @@ void AOVHUD::DrawPlayHUD()
   if (bMine) Mine /= UIScale;
   if (bDepot) Depot /= UIScale;
   if (bMine && bDepot) DrawLine(Mine.X, Mine.Y, Depot.X, Depot.Y, FLinearColor(.3f,.8f,.7f,.35f), 1);
-  if (bMine) DrawText(TEXT("◇ 채굴 · 인계"), PlayAccent, Mine.X, Mine.Y - 27, GEngine->GetSmallFont());
-  if (bDepot) DrawText(TEXT("◇ 납품지"), PlayAccent, Depot.X, Depot.Y - 27, GEngine->GetSmallFont());
+  if (bMine) DrawText(TEXT("◇ 채굴 · 인계"), PlayAccent, Mine.X, Mine.Y - 27, OVTypography::Font(EOVTextRole::Body));
+  if (bDepot) DrawText(TEXT("◇ 납품지"), PlayAccent, Depot.X, Depot.Y - 27, OVTypography::Font(EOVTextRole::Body));
  }
  DrawRect(PlayPanel,10,10,W-20,46);
  const float CommandWidths[]={88,74,88,49,49,49,96,76,94,91,77,94};
@@ -220,7 +210,7 @@ void AOVHUD::DrawPlayHUD()
  }
  const float NoticeWidth = W-TX-10;
  if(FPlatformTime::Seconds()<NoticeExpires && NoticeWidth > 42)
-  DrawText(FitCommandLabel(this,GEngine->GetSmallFont(),NoticeText,NoticeWidth),PlayInk,TX,26,GEngine->GetSmallFont());
+  DrawText(FitLabel(OVTypography::Font(EOVTextRole::Body),NoticeText,NoticeWidth),PlayInk,TX,26,OVTypography::Font(EOVTextRole::Body));
  if(!bSceneMenuOpen && Play && Play->GetActiveDefinition()) {
   const bool Evac = Play->ActiveId == TEXT("Evacuation");
   const bool Sandbox=Play->ActiveId==TEXT("Sandbox");
@@ -230,18 +220,18 @@ void AOVHUD::DrawPlayHUD()
    const FLinearColor Sig=Evac?FLinearColor(1,.70f,.32f):PlayAccent;
    DrawLine(14,83,23,74,Sig,2);DrawLine(23,74,32,83,Sig,2);DrawLine(32,83,23,92,Sig,2);DrawLine(23,92,14,83,Sig,2);
   }
-  DrawText(Play->GetActiveDefinition()->Title,PlayAccent,Sandbox?13:39,68,GEngine->GetMediumFont(),1.36f);
+  DrawText(Play->GetActiveDefinition()->Title,PlayAccent,Sandbox?13:39,68,OVTypography::Font(EOVTextRole::Heading),1.36f);
   if(Sandbox) {
    const bool Active=Play->bSandboxEngaged;
    const FString Tip=Play->SandboxHint.IsEmpty()?FString(TEXT("진영과 함종을 고른 뒤 위치 배치를 누르세요")):Play->SandboxHint;
-   DrawText(FitCommandLabel(this,GEngine->GetSmallFont(),Tip,404),PlayInk,10,98,GEngine->GetSmallFont());
+   DrawText(FitLabel(OVTypography::Font(EOVTextRole::Body),Tip,404),PlayInk,10,98,OVTypography::Font(EOVTextRole::Body));
    if(!Active) {
     Button(TEXT("SBAlly"),TEXT("아군"),10,122,49,Play->SandboxFaction==0);
     Button(TEXT("SBEnemy"),TEXT("적군"),62,122,49,Play->SandboxFaction==1);
     Button(TEXT("SBMenu"),FString(TEXT("함종  "))+OVCalibration::GetHullName(Play->SandboxHull),116,122,124,Play->bSandboxHullMenu);
     Button(TEXT("SBCount"),FString::Printf(TEXT("%d척씩"),Play->SandboxCount),244,122,55);
     Button(TEXT("SBDown"),TEXT("−"),304,122,26);
-    DrawText(FString::Printf(TEXT("%dm"),FMath::RoundToInt(Play->SandboxAltitude/100)),PlayInk,333,129,GEngine->GetSmallFont());
+    DrawText(FString::Printf(TEXT("%dm"),FMath::RoundToInt(Play->SandboxAltitude/100)),PlayInk,333,129,OVTypography::Font(EOVTextRole::Numeric));
     Button(TEXT("SBUp"),TEXT("+"),390,122,26);
     Button(TEXT("SBPlace"),Play->bSandboxPlacing?TEXT("배치 마침"):TEXT("위치 배치"),10,158,93,Play->bSandboxPlacing);
     Button(TEXT("SBRemove"),TEXT("선택 제거"),108,158,92);
@@ -258,17 +248,17 @@ void AOVHUD::DrawPlayHUD()
       P/=UIScale;
       const auto Tint=!Play->bSandboxPointValid?FLinearColor(1,.22f,.12f):Play->SandboxFaction?FLinearColor(1,.64f,.24f):PlayAccent;
       DrawLine(P.X-12,P.Y,P.X+12,P.Y,Tint,2);DrawLine(P.X,P.Y-12,P.X,P.Y+12,Tint,2);
-      DrawText(Play->bSandboxPointValid?(Play->SandboxFaction?TEXT("적군 배치"):TEXT("아군 배치")):TEXT("배치 불가"),Tint,P.X+16,P.Y+10,GEngine->GetSmallFont());
+      DrawText(Play->bSandboxPointValid?(Play->SandboxFaction?TEXT("적군 배치"):TEXT("아군 배치")):TEXT("배치 불가"),Tint,P.X+16,P.Y+10,OVTypography::Font(EOVTextRole::Body));
      }
     }
    } else {
-    DrawText(TEXT("중단하면 이동·사격·함재기·비행 중 탄이 멈춥니다"),PlayInk,10,129,GEngine->GetSmallFont());
+    DrawText(TEXT("중단하면 이동·사격·함재기·비행 중 탄이 멈춥니다"),PlayInk,10,129,OVTypography::Font(EOVTextRole::Body));
     Button(TEXT("SBStop"),TEXT("교전 중단 Ⅱ"),278,158,138,true);
    }
   } else {
-   DrawText(Play->GetStatus(),PlayInk,14,100,GEngine->GetMediumFont());
+   DrawText(Play->GetStatus(),PlayInk,14,100,OVTypography::Font(EOVTextRole::Body));
    if(Play->ActiveId!=TEXT("HeroArena"))DrawRect(FLinearColor(.12f,.21f,.29f),14,Evac?180:151,475,1);
-   if(Play->ActiveId!=TEXT("HeroArena"))DrawText(FitCommandLabel(this,GEngine->GetSmallFont(),Play->GetActiveDefinition()->Objective,470),PlayAccent,14,Evac?190:160,GEngine->GetSmallFont());
+   if(Play->ActiveId!=TEXT("HeroArena"))DrawText(FitLabel(OVTypography::Font(EOVTextRole::Body),Play->GetActiveDefinition()->Objective,470),PlayAccent,14,Evac?190:160,OVTypography::Font(EOVTextRole::Body));
   }
   if(Play->ActiveId==TEXT("HeroArena") && !Play->bArenaStarted) {
    Button(TEXT("ArenaPrev"),TEXT("◀"),12,122,30);
@@ -281,14 +271,14 @@ void AOVHUD::DrawPlayHUD()
   if(Play->ActiveId==TEXT("HeroArena") && Play->Result==EOVPlaySceneResult::Running){
    const TCHAR* Modes[]={TEXT("개인 포드만"),TEXT("강습선만"),TEXT("혼합 · A 포드 / B 강습선")};
    if(!Play->bArenaStarted)Button(TEXT("ArenaRoute"),Modes[Play->ArenaRoute],12,154,186);
-   else DrawText(Modes[Play->ArenaRoute],PlayAccent,12,156,GEngine->GetSmallFont());
+   else DrawText(Modes[Play->ArenaRoute],PlayAccent,12,156,OVTypography::Font(EOVTextRole::Body));
    if(!Play->bArenaStarted)Button(TEXT("ArenaFormation"),Play->bArenaFormationOpen?TEXT("편성 닫기"):TEXT("팀 편성"),408,154,90,Play->bArenaFormationOpen);
    const float Wait=PC->Ships.Num()>=2?PC->Transport->NextTeamDelay(PC->Ships[1]):0;
-   DrawText(Play->ArenaWaves[0].Sent && Play->ArenaWaves[1].Sent?FString(TEXT("두 팀 출발 완료")):Wait>.001f?FString::Printf(TEXT("다음 팀까지 %d초"),FMath::CeilToInt(Wait)):TEXT("목표당 두 팀 · 출발 간격 30초"),PlayInk,210,161,GEngine->GetSmallFont());
+   DrawText(Play->ArenaWaves[0].Sent && Play->ArenaWaves[1].Sent?FString(TEXT("두 팀 출발 완료")):Wait>.001f?FString::Printf(TEXT("다음 팀까지 %d초"),FMath::CeilToInt(Wait)):TEXT("목표당 두 팀 · 출발 간격 30초"),PlayInk,210,161,OVTypography::Font(EOVTextRole::Numeric));
    for(int32 I=0;I<2;++I){
     const auto& Team=Play->ArenaWaves[I];
     const float Row=188+I*35;
-    DrawText(FString(I?TEXT("B팀  "):TEXT("A팀  "))+Play->ArenaWaveStatus(I),PlayInk,12,Row+5,GEngine->GetSmallFont());
+    DrawText(FString(I?TEXT("B팀  "):TEXT("A팀  "))+Play->ArenaWaveStatus(I),PlayInk,12,Row+5,OVTypography::Font(EOVTextRole::Body));
     if(!Team.Sent)Button(I?TEXT("ArenaWaveB"):TEXT("ArenaFight"),TEXT("출발"),354,Row,66,Wait<=.001f);
     else{
      Button(I?TEXT("ArenaViewB"):TEXT("ArenaViewA"),TEXT("지휘"),354,Row,66);
@@ -298,7 +288,7 @@ void AOVHUD::DrawPlayHUD()
   }
   if(Play->bArenaFormationOpen && Play->ActiveId==TEXT("HeroArena") && !Play->bArenaStarted){
    const int32 Page=Play->ArenaFormationPage;
-   DrawText(Play->ArenaSelectedGroup?Play->ArenaGroupLabel(Play->ArenaSelectedGroup)+TEXT(" → 목적지 선택"):TEXT("영웅 또는 분대 선택 → 배치할 열 선택"),PlayAccent,12,267,GEngine->GetSmallFont());
+   DrawText(Play->ArenaSelectedGroup?Play->ArenaGroupLabel(Play->ArenaSelectedGroup)+TEXT(" → 목적지 선택"):TEXT("영웅 또는 분대 선택 → 배치할 열 선택"),PlayAccent,12,267,OVTypography::Font(EOVTextRole::Body));
    const TCHAR* Titles[]={TEXT("A팀"),TEXT("B팀"),TEXT("예비")};
    for(int32 Column=0;Column<3;++Column){
     const float X=12+Column*164;
@@ -308,23 +298,23 @@ void AOVHUD::DrawPlayHUD()
     Button(FName(*FString::Printf(TEXT("ArenaAssign_%d"),Column)),Header,X,292,155,Play->ArenaSelectedGroup!=0);
     for(int32 Row=0;Row<4 && Groups.IsValidIndex(Page*4+Row);++Row){
      const int32 Key=Groups[Page*4+Row];
-     Button(FName(*FString::Printf(TEXT("ArenaPick_%d"),Key)),FitCommandLabel(this,GEngine->GetSmallFont(),Play->ArenaGroupLabel(Key),143),
+     Button(FName(*FString::Printf(TEXT("ArenaPick_%d"),Key)),FitLabel(OVTypography::Font(EOVTextRole::Button),Play->ArenaGroupLabel(Key),143),
             X,325+Row*30,155,Key==Play->ArenaSelectedGroup);
     }
    }
    Button(TEXT("ArenaPagePrev"),TEXT("이전"),12,451,64);
-   DrawText(FString::Printf(TEXT("%d쪽"),Page+1),PlayInk,84,455,GEngine->GetSmallFont());
+   DrawText(FString::Printf(TEXT("%d쪽"),Page+1),PlayInk,84,455,OVTypography::Font(EOVTextRole::Numeric));
    Button(TEXT("ArenaPageNext"),TEXT("다음"),128,451,64);
   }
   if (Play->ActiveId == TEXT("Logistics")) {
-   DrawText(Play->GetConvoyStatus(), PlayInk, 10, 127, GEngine->GetSmallFont());
+   DrawText(Play->GetConvoyStatus(), PlayInk, 10, 127, OVTypography::Font(EOVTextRole::Numeric));
    if (Play->Result == EOVPlaySceneResult::Running)
     Button(TEXT("ResumeConvoy"), TEXT("항로 복귀"), 336, 109, 82);
 
   }
   if(Evac && Play->Result == EOVPlaySceneResult::Running) {
-   DrawText(PC->Selected ? Play->GetEvacuationStatus(PC->Selected) : FString(TEXT("아군 함대를 드래그해 선택하세요")),PlayInk,10,124,GEngine->GetSmallFont());
-   DrawText(TEXT("퇴로 개방 후 함선 명령에서 도약"),PlayInk,10,144,GEngine->GetSmallFont());
+   DrawText(PC->Selected ? Play->GetEvacuationStatus(PC->Selected) : FString(TEXT("아군 함대를 드래그해 선택하세요")),PlayInk,10,124,OVTypography::Font(EOVTextRole::Body));
+   DrawText(TEXT("퇴로 개방 후 함선 명령에서 도약"),PlayInk,10,144,OVTypography::Font(EOVTextRole::Body));
    Button(TEXT("EvacAbandon"),TEXT("잔여기 포기"),246,142,90);
    if(Play->EscapedShips>0) Button(TEXT("EvacFinish"),TEXT("철수 종료"),338,142,80);
   }
@@ -335,16 +325,16 @@ void AOVHUD::DrawPlayHUD()
  if(bSceneMenuOpen) {
   const float ListWidth=FMath::Min(684.f,W-226);
   DrawRect(PlayPanel,216,63,ListWidth,47+UOVPlayScenarioSubsystem::Definitions().Num()*36);
-  DrawText(TEXT("임무 선택"),PlayAccent,226,71,GEngine->GetSmallFont());
+  DrawText(TEXT("임무 선택"),PlayAccent,226,71,OVTypography::Font(EOVTextRole::Heading));
   if(Play)Button(TEXT("CycleDifficulty"),Play->DifficultyLabel(),309,70,110);
   Button(TEXT("MissionCards"),TEXT("임무 카드 보기"),424,70,126);
   Button(TEXT("SceneMenuClose"),TEXT("닫기"),558,70,72,true);
   float Y=106;
   for(const auto& Definition:UOVPlayScenarioSubsystem::Definitions()) {
    if(Definition.bAvailable) Button(Definition.Id,Definition.Title,226,Y,157,Play&&Play->ActiveId==Definition.Id);
-   else DrawText(Definition.Title,PlayInk,226,Y+6,GEngine->GetSmallFont());
+   else DrawText(Definition.Title,PlayInk,226,Y+6,OVTypography::Font(EOVTextRole::Body));
    const FString Description=Definition.bAvailable?FString(Definition.Objective):TEXT("준비 중");
-   DrawText(FitCommandLabel(this,GEngine->GetSmallFont(),Description,ListWidth-190),PlayInk,393,Y+6,GEngine->GetSmallFont());
+   DrawText(FitLabel(OVTypography::Font(EOVTextRole::Body),Description,ListWidth-190),PlayInk,393,Y+6,OVTypography::Font(EOVTextRole::Body));
    Y+=36;
   }
  } else if(!bStarMapOpen && PC->ActiveEnvironment!=EOVSpaceEnvironmentType::None) {
@@ -371,7 +361,7 @@ void AOVHUD::DrawPlayHUD()
    EnvStatus=TEXT("소규모 블랙홀(E1) · 중력권 1,000m(0.8m/s²) · FTL 중에도 적용 · 45m 즉사");
    EnvColor=FLinearColor(0.95f,0.72f,1.f);
   }
-  DrawText(EnvStatus,EnvColor,BX+10,BY+4,GEngine->GetSmallFont());
+  DrawText(EnvStatus,EnvColor,BX+10,BY+4,OVTypography::Font(EOVTextRole::Body));
  }
  const float PanelHeight=CommandPanelHeight();
  const float Y=H-PanelHeight-10;
@@ -384,13 +374,13 @@ void AOVHUD::DrawPlayHUD()
   const int32 Pages=FMath::DivideAndRoundUp(Friends.Num(),PerPage);
   FleetPage=FMath::Clamp(FleetPage,0,Pages-1);
   DrawRect(PlayPanel,GX,GridY,GridWidth,208);
-  DrawText(FString::Printf(TEXT("선택 함대   %d척"),Friends.Num()),PlayAccent,GX+9,GridY+6,GEngine->GetMediumFont());
+  DrawText(FString::Printf(TEXT("선택 함대   %d척"),Friends.Num()),PlayAccent,GX+9,GridY+6,OVTypography::Font(EOVTextRole::Numeric));
   if(Pages>1){Button(TEXT("FleetPrevious"),TEXT("◀"),GX+GridWidth-72,GridY+2,30);Button(TEXT("FleetNext"),TEXT("▶"),GX+GridWidth-38,GridY+2,30);}
   if(Friends.Num()>1)Button(TEXT("FormationMenu"),TEXT("진형"),GX+GridWidth-126,GridY+2,48,PC->bFormationMenu);
   if(PC->bFormationMenu){
    const float FY=GridY-92, BW=(GridWidth-12)/3;
    DrawRect(PlayPanel,GX,FY,GridWidth,90);
-   DrawText(TEXT("진형 미리보기"),PlayAccent,GX+6,FY+4,GEngine->GetSmallFont());
+   DrawText(TEXT("진형 미리보기"),PlayAccent,GX+6,FY+4,OVTypography::Font(EOVTextRole::Body));
    const FName Keys[]={TEXT("FormationScreen"),TEXT("FormationCarrier"),TEXT("FormationConvoy")};
    const TCHAR* Labels[]={TEXT("균형 전열"),TEXT("항모 호위"),TEXT("수송 호위")};
    for(int32 I=0;I<3;++I)Button(Keys[I],Labels[I],GX+4+I*BW,FY+26,BW-2,PC->FormationKind==Keys[I]);
@@ -417,19 +407,19 @@ void AOVHUD::DrawPlayHUD()
     const bool Limited=Play && Play->GetActiveDefinition();
     const FString Berths=Limited?FString::Printf(TEXT("%d/%d"),Count,Play->CurrentHeroBerths(S)):FString::FromInt(Count);
     const FLinearColor Gold=Count?FLinearColor(1,.83f,.40f):FLinearColor(.64f,.69f,.73f);
-    float TW,TH; GetTextSize(Berths,TW,TH,GEngine->GetSmallFont());
+    float TW,TH; GetTextSize(Berths,TW,TH,OVTypography::Font(EOVTextRole::Body));
     const float BX=X+CardWidth-TW-20;
     DrawRect(FLinearColor(.035f,.055f,.078f,.95f),BX,CY+1,TW+18,16);
-    DrawText(TEXT("★"),Gold,BX+2,CY+1,GEngine->GetSmallFont(),.87f);
-    DrawText(Berths,Gold,BX+15,CY+1,GEngine->GetSmallFont());
+    DrawText(TEXT("★"),Gold,BX+2,CY+1,OVTypography::Font(EOVTextRole::Body),.87f);
+    DrawText(Berths,Gold,BX+15,CY+1,OVTypography::Font(EOVTextRole::Body));
    }
    if(S->bFTLCharging&&Play){
     DrawRect(FLinearColor(.19f,.11f,.35f),X+2,CY+17,CardWidth-4,13);
     DrawRect(FLinearColor(.57f,.38f,1.f),X+2,CY+17,(CardWidth-4)*Play->ChargeFraction(S),13);
-    DrawText(TEXT("도약"),FLinearColor::White,X+4,CY+17,GEngine->GetSmallFont(),.83f);
+    DrawText(TEXT("도약"),FLinearColor::White,X+4,CY+17,OVTypography::Font(EOVTextRole::Body),.83f);
    }
-   UFont* Font=GEngine->GetSmallFont();
    FString Label=GetFleetDisplayLabel(S);
+   UFont* Font=OVTypography::ShipNameFont(Label);
    float LabelWidth=0,LabelHeight=0; GetTextSize(Label,LabelWidth,LabelHeight,Font);
    const float LabelScale=FMath::Clamp((CardWidth-10)/FMath::Max(1.f,LabelWidth),.9f,1.f);
    const float LabelRoom=(CardWidth-10)/LabelScale;
@@ -437,8 +427,8 @@ void AOVHUD::DrawPlayHUD()
    if(Label.FindLastChar(' ',LastSpace) && Label.Mid(LastSpace+1).IsNumeric()){
     const FString Number=Label.Mid(LastSpace);
     float NumberWidth=0,Height=0; GetTextSize(Number,NumberWidth,Height,Font);
-    Label=FitCommandLabel(this,Font,Label.Left(LastSpace),LabelRoom-NumberWidth)+Number;
-   } else Label=FitCommandLabel(this,Font,Label,LabelRoom);
+    Label=FitLabel(Font,Label.Left(LastSpace),LabelRoom-NumberWidth)+Number;
+   } else Label=FitLabel(Font,Label,LabelRoom);
    DrawText(Label,PlayInk,X+4,CY+31,Font,LabelScale);
    DrawRect(FLinearColor(.05f,.08f,.12f),X+2,CY+48,CardWidth-4,3);
    DrawRect(FLinearColor(.27f,.92f,.51f),X+2,CY+48,(CardWidth-4)*S->Systems->HullHP/FMath::Max(1.f,S->Systems->MaxHullHP),3);
@@ -449,22 +439,31 @@ void AOVHUD::DrawPlayHUD()
   if(PC->Selected && PC->Selected->bFriendly && Store && Store->Capacity>0) {
    const float CY=GridY+146, Width=GridWidth-22;
    const float Used=Store->Amount+3*Store->Advanced+8*Store->Rare;
-   DrawText(FString::Printf(TEXT("화물   %.0f / %.0f    %.0f%%"),Used,Store->Capacity,100*Used/Store->Capacity),PlayInk,GX+10,CY,GEngine->GetMediumFont());
+   DrawText(TEXT("화물"),PlayInk,GX+10,CY,OVTypography::Font(EOVTextRole::Heading));
+   const FString Total=OVTypography::Integer(FMath::RoundToInt(Used))+TEXT(" / ")+OVTypography::Integer(FMath::RoundToInt(Store->Capacity));
+   DrawNumberRight(Total,PlayInk,GX+Width-44,CY);
+   DrawNumberRight(FString::Printf(TEXT("%.0f%%"),100*Used/Store->Capacity),PlayInk,GX+10+Width,CY);
    DrawRect(FLinearColor(.10f,.17f,.22f),GX+10,CY+23,Width,10);
    float Offset=GX+10;
    const float Weights[]={Store->Amount,Store->Advanced*3,Store->Rare*8};
    const FLinearColor Colors[]={PlayAccent,FLinearColor(.45f,.65f,1),FLinearColor(.94f,.65f,.22f)};
    for(int32 K=0;K<3;++K){const float Seg=Width*Weights[K]/Store->Capacity;DrawRect(Colors[K],Offset,CY+23,Seg,10);Offset+=Seg;}
-   DrawText(FString::Printf(TEXT("일반 %.0f    고급 %.0f    희귀 %.0f"),Store->Amount,Store->Advanced,Store->Rare),PlayInk,GX+10,CY+39,GEngine->GetSmallFont());
+   const TCHAR* ResourceNames[]={TEXT("일반"),TEXT("고급"),TEXT("희귀")};
+   const float Amounts[]={Store->Amount,Store->Advanced,Store->Rare};
+   for(int32 Index=0; Index<3; ++Index){
+    const float Left=GX+10+Index*Width/3;
+    DrawText(ResourceNames[Index],PlayInk,Left,CY+39,OVTypography::Font(EOVTextRole::Body));
+    DrawNumberRight(OVTypography::Integer(FMath::RoundToInt(Amounts[Index])),PlayInk,Left+Width/3-5,CY+39);
+   }
   }
  }
  bCommandShipClipped=bCommandTargetClipped=false;
  DrawRect(PlayPanel,10,Y,610,PanelHeight);
- if(!PC->Selected) {DrawText(TEXT("함선을 선택하세요"),PlayInk,24,Y+20,GEngine->GetMediumFont());return;}
+ if(!PC->Selected) {DrawText(TEXT("함선을 선택하세요"),PlayInk,24,Y+20,OVTypography::Font(EOVTextRole::Body));return;}
  auto* Ship=PC->Selected.Get();
- const FString ShipLabel=FitCommandLabel(this,GEngine->GetMediumFont(),Ship->ShipName,280);
+ const FString ShipLabel=FitLabel(OVTypography::Font(EOVTextRole::Body),Ship->ShipName,280);
  bCommandShipClipped=ShipLabel!=Ship->ShipName;
- DrawText(ShipLabel,PlayAccent,24,Y+12,GEngine->GetMediumFont());
+ DrawText(ShipLabel,PlayAccent,24,Y+12,OVTypography::Font(EOVTextRole::Body));
  AddHitBox(FVector2D(24,Y+8)*UIScale,FVector2D(280,26)*UIScale,TEXT("CommandShipLabel"),true,8);
  ActionCenters.Add(TEXT("CommandShipLabel"),FVector2D(164,Y+21));
  Button(TEXT("Focus"),TEXT("추적"),315,Y+8,60,PC->bFollow);
@@ -475,47 +474,47 @@ void AOVHUD::DrawPlayHUD()
  DrawRect(FLinearColor(.08f,.13f,.19f),24,Y+38,210,10);DrawRect(PlayAccent,24,Y+38,210*Hull,4);
  DrawRect(FLinearColor(.3f,.48f,1),24,Y+45,210*FMath::Clamp(Ship->Systems->Shield/FMath::Max(1.f,Ship->Systems->MaxShield),0.f,1.f),3);
  const FString TargetLabel=TEXT("표적: ")+(Ship->AttackTarget?Ship->AttackTarget->ShipName:TEXT("없음"));
- const FString VisibleTarget=FitCommandLabel(this,GEngine->GetSmallFont(),TargetLabel,350);
+ const FString VisibleTarget=FitLabel(OVTypography::Font(EOVTextRole::Body),TargetLabel,350);
  bCommandTargetClipped=VisibleTarget!=TargetLabel;
- DrawText(VisibleTarget,PlayInk,250,Y+40,GEngine->GetSmallFont());
+ DrawText(VisibleTarget,PlayInk,250,Y+40,OVTypography::Font(EOVTextRole::Body));
  if(Ship->AttackTarget) {
   AddHitBox(FVector2D(250,Y+38)*UIScale,FVector2D(350,16)*UIScale,TEXT("CommandTargetLabel"),true,8);
   ActionCenters.Add(TEXT("CommandTargetLabel"),FVector2D(425,Y+46));
  }
- if(!Ship->bFriendly) {DrawText(TEXT("적 함선 · 관측된 외장 정보"),PlayInk,24,Y+72,GEngine->GetSmallFont());return;}
+ if(!Ship->bFriendly) {DrawText(TEXT("적 함선 · 관측된 외장 정보"),PlayInk,24,Y+72,OVTypography::Font(EOVTextRole::Body));return;}
  auto* Logistics=GetWorld()->GetSubsystem<UOVLogisticsSubsystem>();
  const float ServiceY=Y+PanelHeight-55;
  if(PC->Combat && PC->Combat->bEnabled && Ship->Systems->Layout) {
   const auto State=PC->Combat->GetShipState(Ship);
   const float OwnRange=Ship->Systems->GetRadarRange()/100.f;
   FString Line;
-  if(OwnRange>0)Line=FString::Printf(TEXT("자체 레이더 %.0fm"),OwnRange);
+  if(OwnRange>0)Line=FString::Printf(TEXT("자체 레이더 %s"),*OVTypography::Metres(OwnRange));
   else Line=Ship->Systems->Layout->Slots.ContainsByPredicate([](const auto& D){return D.Facility==EOVFacilityType::Radar;})
    ?TEXT("자체 레이더 정지"):TEXT("자체 레이더 없음");
   if(State.Mounts.IsValidIndex(PC->SelectedWeapon))
-   Line+=FString::Printf(TEXT("   ·   무장 %.0fm"),State.Mounts[PC->SelectedWeapon].Profile.Range/100.f);
+   Line+=FString::Printf(TEXT("   ·   무장 %s"),*OVTypography::Metres(State.Mounts[PC->SelectedWeapon].Profile.Range/100.f));
   if(IsValid(Ship->AttackTarget)) {
    const auto D=PC->Combat->GetDetection(Ship,Ship->AttackTarget);
    const TCHAR* Source=!D.bDetected?TEXT("미탐지"):D.Source==TEXT("SUPPORT RADAR")?TEXT("레이더함 공유"):
     D.Source==TEXT("SHARED RADAR")?TEXT("아군 공유"):D.Source==TEXT("OWN RADAR")?TEXT("자체 탐지"):
     D.Source==TEXT("GUARANTEED NEAR")?TEXT("근거리 탐지"):TEXT("시험 탐지");
-   Line+=FString::Printf(TEXT("   ·   표적 %.0fm (%s)"),FVector::Dist(Ship->GetActorLocation(),Ship->AttackTarget->GetActorLocation())/100.,Source);
+   Line+=FString::Printf(TEXT("   ·   표적 %s (%s)"),*OVTypography::Metres(FVector::Dist(Ship->GetActorLocation(),Ship->AttackTarget->GetActorLocation())/100.),Source);
   }
-  DrawText(Line,PlayInk,24,Y+PanelHeight-21,GEngine->GetSmallFont());
+  DrawText(FitLabel(OVTypography::Font(EOVTextRole::Numeric),Line,578),PlayInk,24,Y+PanelHeight-21,OVTypography::Font(EOVTextRole::Numeric));
  }
  if(Ship->Systems->Layout->Slots.ContainsByPredicate([](const auto& D){return D.Facility==EOVFacilityType::ResourceStorage;})){
   const bool Enabled=Logistics->InternalRepairEnabled(Ship);
   Button(TEXT("InternalRepair"),Enabled?TEXT("자가 수리 켜짐"):TEXT("자가 수리 꺼짐"),24,ServiceY,110,Enabled);
-  DrawText(Logistics->InternalRepairStatus(Ship),PlayInk,143,ServiceY+5,GEngine->GetSmallFont());
+  DrawText(Logistics->InternalRepairStatus(Ship),PlayInk,143,ServiceY+5,OVTypography::Font(EOVTextRole::Body));
  }
  if(Ship->HullDefinitionId==TEXT("repair"))
-  DrawText(Logistics->RepairStatus(Ship),PlayAccent,321,ServiceY+5,GEngine->GetMediumFont());
+  DrawText(Logistics->RepairStatus(Ship),PlayAccent,321,ServiceY+5,OVTypography::Font(EOVTextRole::Body));
  if(Ship->HullDefinitionId==TEXT("radar") && PC->Combat){
   const int32 Wait=FMath::Max(0,FMath::CeilToInt(Ship->ScanReadyAt-PC->Combat->GameTime));
   const bool Offline=!Ship->Systems->CanCommand() || !Ship->Systems->HasRadar() || Ship->bFTLCharging || PC->Combat->EnvironmentRadarDisruptRemaining>0;
   Button(TEXT("RadarSurvey"),Offline?FString(TEXT("정찰 불가")):Wait?FString::Printf(TEXT("정찰 충전 · %d초"),Wait):PC->InputMode==EOVInputMode::Survey?TEXT("적 함선을 선택"):TEXT("적 내부 정찰"),344,ServiceY,156,PC->InputMode==EOVInputMode::Survey);
  }
- if(Ship->HullDefinitionId==TEXT("repair") && PC->InputMode==EOVInputMode::Repair)DrawText(TEXT("수리할 아군을 클릭하세요"),PlayAccent,212,Y+181,GEngine->GetMediumFont());
+ if(Ship->HullDefinitionId==TEXT("repair") && PC->InputMode==EOVInputMode::Repair)DrawText(TEXT("수리할 아군을 클릭하세요"),PlayAccent,212,Y+181,OVTypography::Font(EOVTextRole::Body));
  if(Ship->HullDefinitionId==TEXT("repair")) Button(TEXT("RepairOrder"),TEXT("아군 수리"),198,Y+128,112,PC->InputMode==EOVInputMode::Repair);
  if(Ship->bFTLCharging && PC->Carrier && !PC->Carrier->CanDepart(Ship))Button(TEXT("AbandonJumpWing"),TEXT("잔여기 포기"),377,Y+164,108);
  if(Play && !Play->ActiveId.IsNone())Button(TEXT("PlotJump"),TEXT("초광속 이동"),492,Y+164,110,Ship->bFTLCharging);
@@ -534,8 +533,8 @@ void AOVHUD::DrawPlayHUD()
    const auto& M=State.Mounts[PC->SelectedWeapon];const auto R=PC->Combat->GetReadiness(Ship,M.MountId);
    const auto* Def=Ship->Systems->Layout->WeaponMounts.FindByPredicate([&M](const auto& Slot){return Slot.WeaponId==M.MountId;});
    const TCHAR* Kind=AttackWeaponName(M,Def);
-   const FString Status=R.Reason==TEXT("COOLDOWN")?FString::Printf(TEXT("재사용 %.1f초"),R.Cooldown):ReadinessKorean(R.Reason);
-   DrawText(FString::Printf(TEXT("%s %d  ·  %s%s"),Kind,PC->SelectedWeapon+1,*Status,M.bFireRequested?TEXT(" · 발사 접수"):TEXT("")),R.bReady?PlayAccent:FLinearColor(1,.8f,.25f),24,Y+166,GEngine->GetSmallFont());
+   const FString Status=R.Reason==TEXT("COOLDOWN")?FString::Printf(TEXT("재사용 %.1f 초"),R.Cooldown):ReadinessKorean(R.Reason);
+   DrawText(FString::Printf(TEXT("%s %d  ·  %s%s"),Kind,PC->SelectedWeapon+1,*Status,M.bFireRequested?TEXT(" · 발사 접수"):TEXT("")),R.bReady?PlayAccent:FLinearColor(1,.8f,.25f),24,Y+166,OVTypography::Font(EOVTextRole::Numeric));
   }
  }
  if(auto* Carrier=GetWorld()->GetSubsystem<UOVCarrierSubsystem>();Carrier&&Carrier->Carriers.ContainsByPredicate([&](const auto& C){return C.Carrier.IsValid() && PC->Selection.Contains(C.Carrier.Get());})) {
@@ -557,7 +556,7 @@ void AOVHUD::DrawPlayHUD()
   }
   Button(TEXT("AirScope"),bFleetAirOverview?TEXT("함대 전체"):TEXT("선택 모함"),24,Y+178,75,bFleetAirOverview);
   DrawText(FString::Printf(TEXT("대기 %d/%d · 생산 %.0f%% · 보충 %d대분"),
-      Air.Stored,Air.Capacity,100*Air.ProductionFraction,Air.ReplacementKits),PlayInk,105,Y+184,GEngine->GetSmallFont());
+      Air.Stored,Air.Capacity,100*Air.ProductionFraction,Air.ReplacementKits),PlayInk,105,Y+184,OVTypography::Font(EOVTextRole::Body));
   DrawRect(FLinearColor(.08f,.15f,.20f),106,Y+202,280,4);
   DrawRect(PlayAccent,106,Y+202,280*Air.ProductionFraction,4);
  }
@@ -638,13 +637,14 @@ void AOVHUD::DrawBattleNotices()
   const int32 Seconds=FMath::Max(0,FMath::FloorToInt(N.GameTime));
   const FString Label=FString::Printf(TEXT("%02d:%02d %s · %s%s"),Seconds/60,Seconds%60,*(N.Subject.IsEmpty()?N.ShipName.Left(6):N.Subject),Names[FMath::Clamp(int32(N.Kind),0,int32(UE_ARRAY_COUNT(Names))-1)],*Suffix);
   const float RowY=BattleNoticeTop()+I*36;
-  Button(FName(*FString::Printf(TEXT("BattleNotice_%lld"),N.Serial)),Label,X,RowY,340,N.bCritical);
+  const bool bComms=!bBattleFeedOpen && (N.Kind==EOVBattleNoticeKind::BoardingEntry || N.Kind==EOVBattleNoticeKind::HostileBoarding || N.Kind==EOVBattleNoticeKind::BoardingReturn);
+  Button(FName(*FString::Printf(TEXT("BattleNotice_%lld"),N.Serial)),Label,X,RowY,340,N.bCritical,bComms?EOVTextRole::Comms:EOVTextRole::Body);
   if(!N.FriendlyHeroDefinition.IsNone()){
    const auto* Definition=GetGameInstance()->GetSubsystem<UOVHeroSubsystem>()->Definition(N.FriendlyHeroDefinition);
    if(Definition && Definition->Portrait)DrawTexture(Definition->Portrait,X+307,RowY+1,26,26,0,0,1,1);
   }
  }
- if(Count==0)DrawText(TEXT("표시할 기록 없음"),PlayInk,X+8,BattleNoticeTop()+6,GEngine->GetSmallFont());
+ if(Count==0)DrawText(TEXT("표시할 기록 없음"),PlayInk,X+8,BattleNoticeTop()+6,OVTypography::Font(EOVTextRole::Body));
  if(bBattleFeedOpen) {
   const float Y=BattleNoticeTop()+Rows*36;
   Button(TEXT("BattleFeedOlder"),TEXT("이전"),X,Y,64);
@@ -661,7 +661,7 @@ void AOVHUD::DrawBattleNotices()
     Button(FName(*FString::Printf(TEXT("ToastKind%d"),K)),(Enabled?FString(TEXT("✓ ")):FString(TEXT("□ ")))+Names[K],X+(K%3)*112,Y+66+(K/3)*29,108,Enabled);
    }
   }
-  if(Feed->DroppedCount>0)DrawText(FString::Printf(TEXT("이전 알림 %d건 생략"),Feed->DroppedCount),PlayInk,X,Y+(bNoticeSettings?242:66),GEngine->GetSmallFont());
+  if(Feed->DroppedCount>0)DrawText(FString::Printf(TEXT("이전 알림 %d건 생략"),Feed->DroppedCount),PlayInk,X,Y+(bNoticeSettings?242:66),OVTypography::Font(EOVTextRole::Numeric));
  }
 }
 
@@ -716,45 +716,45 @@ void AOVHUD::DrawWorldIndicators()
   }
   if(!PC->FormationPreview.Contains(Ship) && (Selected||Target||bInThroe||PC->CameraDistance<45000)) {
    const FString Name=(Target?TEXT("공격 ▶ "):Selected?TEXT("선택 ▶ "):TEXT(""))+Ship->ShipName;
-   DrawText(FitCommandLabel(this,GEngine->GetSmallFont(),Name,180),Color,Label.X,Label.Y,GEngine->GetSmallFont());
+   DrawText(FitLabel(OVTypography::Font(EOVTextRole::Body),Name,180),Color,Label.X,Label.Y,OVTypography::Font(EOVTextRole::Body));
   }
   const float Hull=FMath::Clamp(Ship->Systems->HullHP/FMath::Max(1.f,Ship->Systems->MaxHullHP),0.f,1.f);
   DrawRect(FLinearColor(.06f,.08f,.12f),Label.X,Label.Y+17,86,8);
   DrawRect(Color,Label.X,Label.Y+17,86*Hull,3);
   DrawRect(FLinearColor(.25f,.4f,1),Label.X,Label.Y+22,86*Ship->Systems->Shield/FMath::Max(1.f,Ship->Systems->MaxShield),3);
-  if(bInThroe)DrawText(FString::Printf(TEXT("★ 침몰 붕괴 (%.1fs)"),ThroeRemaining),FLinearColor(1.f,0.45f,0.2f),Label.X,Label.Y+29,GEngine->GetSmallFont());
-  else if((Selected||Target) && !PC->FormationPreview.Contains(Ship))DrawText(FString::Printf(TEXT("고도 %.0fm"),Ship->GetActorLocation().Z/100),PlayInk,Label.X,Label.Y+29,GEngine->GetSmallFont());
+  if(bInThroe)DrawText(FString::Printf(TEXT("★ 침몰 붕괴 (%.1fs)"),ThroeRemaining),FLinearColor(1.f,0.45f,0.2f),Label.X,Label.Y+29,OVTypography::Font(EOVTextRole::Numeric));
+  else if((Selected||Target) && !PC->FormationPreview.Contains(Ship))DrawText(FString::Printf(TEXT("고도 %s"),*OVTypography::Metres(Ship->GetActorLocation().Z/100)),PlayInk,Label.X,Label.Y+29,OVTypography::Font(EOVTextRole::Numeric));
   if(const double* ETA=PC->SelectedMissileApproach.Find(Ship)) {
    const FString Warning=FString::Printf(TEXT("미사일 최근접 %.1f초"),*ETA);
-   float TW,TH;GetTextSize(Warning,TW,TH,GEngine->GetSmallFont());
+   float TW,TH;GetTextSize(Warning,TW,TH,OVTypography::Font(EOVTextRole::Body));
    const float WY=Label.Y-TH-7;
    DrawRect(FLinearColor(.075f,.042f,.024f,.98f),Label.X,WY,TW+14,TH+5);
    DrawRect(FLinearColor(1,.52f,.16f),Label.X,WY,3,TH+5);
-   DrawText(Warning,FLinearColor(1,.80f,.48f),Label.X+7,WY+2,GEngine->GetSmallFont());
+   DrawText(Warning,FLinearColor(1,.80f,.48f),Label.X+7,WY+2,OVTypography::Font(EOVTextRole::Body));
   }
   const FName Marker(*FString::Printf(TEXT("WorldPick_%d"),I));
   AddHitBox((P-FVector2D(Radius+6,Radius+6))*UIScale,FVector2D(2*Radius+12,2*Radius+12)*UIScale,Marker,true,5);
   ActionCenters.Add(Marker,P);
-  if(Selected&&Ship->bHasDestination && PC->FormationPreview.IsEmpty()) { FVector2D D;if(Project(Ship->Destination,D))DrawText(FString::Printf(TEXT("이동 목적지  고도 %.0fm"),Ship->Destination.Z/100),FLinearColor::Green,D.X,D.Y,GEngine->GetSmallFont()); }
+  if(Selected&&Ship->bHasDestination && PC->FormationPreview.IsEmpty()) { FVector2D D;if(Project(Ship->Destination,D))DrawText(FString::Printf(TEXT("이동 목적지  고도 %s"),*OVTypography::Metres(Ship->Destination.Z/100)),FLinearColor::Green,D.X,D.Y,OVTypography::Font(EOVTextRole::Numeric)); }
  }
  for(const auto& Slot:PC->FormationPreview){
   FVector2D P;
   if(auto* Ship=Slot.Key.Get();Ship && Project(Slot.Value,P)){
    float Width=0,Height=0;
-   GetTextSize(Ship->ShipName,Width,Height,GEngine->GetSmallFont());
+   GetTextSize(Ship->ShipName,Width,Height,OVTypography::Font(EOVTextRole::Body));
    Ring(P,10,6,PlayAccent,2);
    DrawRect(PlayPanel,P.X+11,P.Y+3,Width+6,Height+2);
-   DrawText(Ship->ShipName,PlayInk,P.X+14,P.Y+4,GEngine->GetSmallFont());
+   DrawText(Ship->ShipName,PlayInk,P.X+14,P.Y+4,OVTypography::Font(EOVTextRole::Body));
   }
  }
- if(PC->bPlacing) { FVector2D P;if(Project(PC->Preview,P))DrawText(FString::Printf(TEXT("고도 %.0fm · 해제/Enter 확정"),PC->Preview.Z/100),FLinearColor::Yellow,P.X+14,P.Y-20,GEngine->GetSmallFont()); }
+ if(PC->bPlacing) { FVector2D P;if(Project(PC->Preview,P))DrawText(FString::Printf(TEXT("고도 %s · 해제/Enter 확정"),*OVTypography::Metres(PC->Preview.Z/100)),FLinearColor::Yellow,P.X+14,P.Y-20,OVTypography::Font(EOVTextRole::Numeric)); }
  TSet<FName> ShownImpacts;
  if(PC->Combat) for(int32 I=PC->Combat->RecentEvents.Num()-1;I>=0;--I) {
   const auto& E=PC->Combat->RecentEvents[I];
   if(ShownImpacts.Contains(E.HitShipId))continue;
   if(PC->Combat->GameTime-E.ResolvedAt>.65 || E.Result!=EOVAttackResult::Hit)continue;
   ShownImpacts.Add(E.HitShipId);
-  FVector2D P;if(Project(E.Position,P))DrawText(E.HullDamage>0?TEXT("선체 명중"):TEXT("쉴드 / 장갑 명중"),FLinearColor(1,.8f,.2f),P.X,P.Y-45,GEngine->GetSmallFont());
+  FVector2D P;if(Project(E.Position,P))DrawText(E.HullDamage>0?TEXT("선체 명중"):TEXT("쉴드 / 장갑 명중"),FLinearColor(1,.8f,.2f),P.X,P.Y-45,OVTypography::Font(EOVTextRole::Body));
  }
 }
 
@@ -777,9 +777,9 @@ void AOVHUD::DrawStarMap()
  TGuardValue<bool> MapLayer(bDrawingStarMap,true);
  DrawRect(FLinearColor(0.006f,0.016f,0.032f,0.97f),MX,MY,MW,MH);
  AddHitBox(FVector2D::ZeroVector,ViewportPixels,TEXT("StarMapBackground"),true,300);
- DrawText(bChoosingJump?TEXT("초광속 이동 · 목적지 선택"):TEXT("은하 지도 · 성계 캠페인 및 우주 환경"),PlayAccent,MX+14,MY+10,GEngine->GetMediumFont());
+ DrawText(bChoosingJump?TEXT("초광속 이동 · 목적지 선택"):TEXT("은하 지도 · 성계 캠페인 및 우주 환경"),PlayAccent,MX+14,MY+10,OVTypography::Font(EOVTextRole::Body));
  if(!bChoosingJump)DrawText(FString::Printf(TEXT("보유 자원 · 일반 %d  |  고급 %d  |  최고급 %d"),PC->ResourceCommon,PC->ResourceAdvanced,PC->ResourceSupreme),
-  FLinearColor(0.65f,0.95f,0.85f),MX+280,MY+12,GEngine->GetSmallFont());
+  FLinearColor(0.65f,0.95f,0.85f),MX+280,MY+12,OVTypography::Font(EOVTextRole::Body));
  Button(TEXT("StarMapClose"),TEXT("닫기 X"),MX+MW-78,MY+6,68,true);
  const float MapX=MX+12.f,MapY=MY+40.f,MapW=MW*0.56f,MapH=MH-52.f;
  DrawRect(FLinearColor(0.01f,0.025f,0.05f,0.96f),MapX,MapY,MapW,MapH);
@@ -813,7 +813,7 @@ void AOVHUD::DrawStarMap()
    Node.Environment==EOVSpaceEnvironmentType::RadiationZone?TEXT("[방사능]"):
    Node.Environment==EOVSpaceEnvironmentType::SolarFlare?TEXT("[플레어]"):
    Node.Environment==EOVSpaceEnvironmentType::BlackHole?TEXT("[블랙홀]"):TEXT("[안정]");
-  DrawText(FString::Printf(TEXT("%s%s"),bIsCurrent?TEXT("★현재 "):TEXT(""),EnvTag),FactionCol,P.X-36,P.Y+14,GEngine->GetSmallFont());
+  DrawText(FString::Printf(TEXT("%s%s"),bIsCurrent?TEXT("★현재 "):TEXT(""),EnvTag),FactionCol,P.X-36,P.Y+14,OVTypography::Font(EOVTextRole::Body));
  }
  // Right Inspector Panel
  const float IX=MapX+MapW+12.f,IY=MapY,IW=MW-MapW-36.f,IH=MapH;
@@ -823,37 +823,37 @@ void AOVHUD::DrawStarMap()
  const FLinearColor OwnerColor=Sel->OwnerFaction==TEXT("player")?PlayAccent:(Sel->OwnerFaction==TEXT("enemy")?FLinearColor(1.f,0.4f,0.3f):FLinearColor(1.f,0.85f,0.35f));
  const FString OwnerLabel=Sel->OwnerFaction==TEXT("player")?TEXT("선봉 함대 (아군 통제)"):
   (Sel->OwnerFaction==TEXT("enemy")?FString::Printf(TEXT("적 통제 (%s)"),*Sel->EnemyFactionName):TEXT("중립 성계 (개척 가능)"));
- DrawText(Sel->DisplayName,PlayAccent,IX+12,IY+10,GEngine->GetMediumFont());
- DrawText(FString::Printf(TEXT("통제 세력: %s  ·  위험도 %d단계"),*OwnerLabel,Sel->DangerLevel),OwnerColor,IX+12,IY+36,GEngine->GetSmallFont());
- DrawText(FString::Printf(TEXT("우주 환경: %s"),*AOVController::GetEnvironmentDisplayName(Sel->Environment)),FLinearColor(0.5f,0.95f,1.f),IX+12,IY+58,GEngine->GetSmallFont());
+ DrawText(Sel->DisplayName,PlayAccent,IX+12,IY+10,OVTypography::Font(EOVTextRole::Body));
+ DrawText(FString::Printf(TEXT("통제 세력: %s  ·  위험도 %d단계"),*OwnerLabel,Sel->DangerLevel),OwnerColor,IX+12,IY+36,OVTypography::Font(EOVTextRole::Numeric));
+ DrawText(FString::Printf(TEXT("우주 환경: %s"),*AOVController::GetEnvironmentDisplayName(Sel->Environment)),FLinearColor(0.5f,0.95f,1.f),IX+12,IY+58,OVTypography::Font(EOVTextRole::Body));
  const TCHAR* EnvDesc=Sel->Environment==EOVSpaceEnvironmentType::AsteroidField?TEXT("• 3D 운석이 직사/투사체를 물리 차폐하고 항로 폭을 제한"):
   Sel->Environment==EOVSpaceEnvironmentType::RadiationZone?TEXT("• 경계 구역 내 지속 방사능 하중 (활성 쉴드가 우선 흡수)"):
   Sel->Environment==EOVSpaceEnvironmentType::SolarFlare?TEXT("• 예고→파동 통과 주기 사건 · 비엄폐 시 쉴드 부하 및 레이더 교란"):
   Sel->Environment==EOVSpaceEnvironmentType::BlackHole?TEXT("• 중력권 1,000m(0.8m/s²) · FTL 충전 중에도 중력 변위 · 중심 45m 즉시 완파"):
   TEXT("• 환경 제약 없는 표준 우주 전장");
- DrawText(EnvDesc,PlayInk,IX+12,IY+78,GEngine->GetSmallFont());
+ DrawText(EnvDesc,PlayInk,IX+12,IY+78,OVTypography::Font(EOVTextRole::Body));
  if(bChoosingJump){
   const auto* From=PC->StarSystems.FindByPredicate([PC](const auto& N){return N.SystemId==PC->CurrentStarSystemId;});
   const bool Linked=From && From->Links.Contains(Sel->SystemId);
-  DrawText(FString::Printf(TEXT("도약 함대   %d척"),PC->Selection.Num()),PlayAccent,IX+12,IY+115,GEngine->GetMediumFont());
-  DrawText(Linked?TEXT("충전 후 함재기 회수를 기다립니다"):TEXT("연결선이 닿는 이웃 성계를 고르세요"),PlayInk,IX+12,IY+146,GEngine->GetSmallFont());
+  DrawText(FString::Printf(TEXT("도약 함대   %d척"),PC->Selection.Num()),PlayAccent,IX+12,IY+115,OVTypography::Font(EOVTextRole::Numeric));
+  DrawText(Linked?TEXT("충전 후 함재기 회수를 기다립니다"):TEXT("연결선이 닿는 이웃 성계를 고르세요"),PlayInk,IX+12,IY+146,OVTypography::Font(EOVTextRole::Body));
   if(Linked)Button(FName(*FString::Printf(TEXT("StarSystem_FTL_%s"),*Sel->SystemId.ToString())),TEXT("이 성계로 도약"),IX+12,IY+184,IW-24,true);
-  if(!PC->LastAction.IsEmpty())DrawText(FitCommandLabel(this,GEngine->GetSmallFont(),PC->LastAction,IW-24),PlayInk,IX+12,IY+224,GEngine->GetSmallFont());
+  if(!PC->LastAction.IsEmpty())DrawText(FitLabel(OVTypography::Font(EOVTextRole::Body),PC->LastAction,IW-24),PlayInk,IX+12,IY+224,OVTypography::Font(EOVTextRole::Body));
   return;
  }
  DrawText(FString::Printf(TEXT("자원 산출 (주기당): 일반 +%d  ·  고급 +%d  ·  최고급 +%d"),Sel->CommonYield,Sel->AdvancedYield,Sel->SupremeYield),
-  FLinearColor(0.7f,0.95f,0.8f),IX+12,IY+102,GEngine->GetSmallFont());
+  FLinearColor(0.7f,0.95f,0.8f),IX+12,IY+102,OVTypography::Font(EOVTextRole::Body));
  DrawText(FString::Printf(TEXT("설치 기지: %s %s"),*AOVController::GetOutpostDisplayName(Sel->Outpost),
-  Sel->OutpostMaxHP>0?*FString::Printf(TEXT("(내구 %d/%d)"),Sel->OutpostHP,Sel->OutpostMaxHP):TEXT("")),PlayInk,IX+12,IY+124,GEngine->GetSmallFont());
+  Sel->OutpostMaxHP>0?*FString::Printf(TEXT("(내구 %d/%d)"),Sel->OutpostHP,Sel->OutpostMaxHP):TEXT("")),PlayInk,IX+12,IY+124,OVTypography::Font(EOVTextRole::Body));
  const FString IdStr=Sel->SystemId.ToString();
  const float BtnW=(IW-30.f)*0.5f;
  Button(FName(*FString::Printf(TEXT("StarSystem_Enter_%s"),*IdStr)),TEXT("전장 전환 (성계 진입)"),IX+12,IY+154,BtnW,Sel->SystemId==PC->CurrentStarSystemId);
  Button(FName(*FString::Printf(TEXT("StarSystem_FTL_%s"),*IdStr)),TEXT("이 성계로 도약"),IX+18+BtnW,IY+154,BtnW);
- DrawText(TEXT("전초기지 건설 / 업그레이드 (중립·아군 성계)"),PlayAccent,IX+12,IY+192,GEngine->GetSmallFont());
+ DrawText(TEXT("전초기지 건설 / 업그레이드 (중립·아군 성계)"),PlayAccent,IX+12,IY+192,OVTypography::Font(EOVTextRole::Body));
  Button(FName(*FString::Printf(TEXT("StarSystem_BuildBasic_%s"),*IdStr)),TEXT("기본 기지 (80/20/0)"),IX+12,IY+214,IW-24,Sel->Outpost==EOVOutpostKind::Basic);
  Button(FName(*FString::Printf(TEXT("StarSystem_BuildMine_%s"),*IdStr)),TEXT("자원 채굴 기지 (110/45/5 · 산출+45%)"),IX+12,IY+246,IW-24,Sel->Outpost==EOVOutpostKind::MiningHub);
  Button(FName(*FString::Printf(TEXT("StarSystem_BuildCombat_%s"),*IdStr)),TEXT("전투 요새 기지 (140/65/12)"),IX+12,IY+278,IW-24,Sel->Outpost==EOVOutpostKind::CombatBase);
- DrawText(TEXT("현재 전장 우주 환경 즉시 전환"),PlayAccent,IX+12,IY+316,GEngine->GetSmallFont());
+ DrawText(TEXT("현재 전장 우주 환경 즉시 전환"),PlayAccent,IX+12,IY+316,OVTypography::Font(EOVTextRole::Body));
  const float EW=(IW-36.f)/5.f;
  Button(TEXT("Env_None"),TEXT("안정"),IX+12,IY+336,EW,PC->ActiveEnvironment==EOVSpaceEnvironmentType::None);
  Button(TEXT("Env_AsteroidField"),TEXT("운석"),IX+15+EW,IY+336,EW,PC->ActiveEnvironment==EOVSpaceEnvironmentType::AsteroidField);

@@ -1,4 +1,5 @@
 #include "OVHeroWidget.h"
+#include "OVTypography.h"
 #include "OVPortraitWidget.h"
 #include "OVDevelopmentWidget.h"
 #include "OVHeroSubsystem.h"
@@ -33,10 +34,10 @@
 
 namespace OVHeroUI
 {
-UTextBlock* Text(UWidgetTree* Tree, const FString& Value, int32 Size = 15)
+UTextBlock* Text(UWidgetTree* Tree, const FString& Value, int32 Size = 0, EOVTextRole Role=EOVTextRole::Body)
 {
     auto* Label = Tree->ConstructWidget<UTextBlock>();
-    auto Font = Label->GetFont(); Font.Size = Size; Label->SetFont(Font);
+    Label->SetFont(OVTypography::Style(Role,Size));
     Label->SetColorAndOpacity(FSlateColor(FLinearColor(.88f,.94f,1)));
     Label->SetText(FText::FromString(Value)); Label->SetAutoWrapText(true);
     return Label;
@@ -49,14 +50,14 @@ void StyleButton(UButton* Button)
 UButton* Button(UWidgetTree* Tree, UVerticalBox* Parent, const TCHAR* Label)
 {
     auto* Result = Tree->ConstructWidget<UButton>(); StyleButton(Result);
-    Result->AddChild(Text(Tree,Label));
+    Result->AddChild(Text(Tree,Label,0,EOVTextRole::Button));
     Parent->AddChildToVerticalBox(Result)->SetPadding(FMargin(0,3));
     return Result;
 }
 UButton* RowButton(UWidgetTree* Tree, UHorizontalBox* Parent, const TCHAR* Label)
 {
     auto* Result = Tree->ConstructWidget<UButton>(); StyleButton(Result);
-    Result->AddChild(Text(Tree,Label));
+    Result->AddChild(Text(Tree,Label,0,EOVTextRole::Button));
     auto* Slot = Parent->AddChildToHorizontalBox(Result);
     Slot->SetSize(FSlateChildSize(ESlateSizeRule::Fill)); Slot->SetPadding(FMargin(2,3));
     return Result;
@@ -119,7 +120,7 @@ void UOVHeroCard::Update(const FOVHeroCardView& View)
     Health->SetPercent(View.bHPKnown ? FMath::Clamp(View.HP/FMath::Max(1.f,View.MaxHP),0.f,1.f) : 0.f);
     Health->SetFillColorAndOpacity(View.bLost ? FLinearColor(.4f,.4f,.45f) : FLinearColor(.25f,.85f,.6f));
     SetBackgroundColor(View.bSelected ? FLinearColor(.1f,.34f,.44f) : FLinearColor(.04f,.09f,.15f));
-    SetToolTipText(FText::FromString(View.Name+TEXT("\n")+View.Location + (View.bHPKnown ? FString::Printf(TEXT("\nHP %.0f / %.0f"),View.HP,View.MaxHP) : TEXT(""))));
+    OVTypography::Tooltip(this,FText::FromString(View.Name+TEXT("\n")+View.Location + (View.bHPKnown ? FString::Printf(TEXT("\nHP %.0f / %.0f"),View.HP,View.MaxHP) : TEXT(""))));
 }
 
 void UOVHeroWidget::NativeOnInitialized()
@@ -132,7 +133,7 @@ void UOVHeroWidget::NativeOnInitialized()
     auto* Outer = WidgetTree->ConstructWidget<UScrollBox>();
     auto* Box = WidgetTree->ConstructWidget<UVerticalBox>(); Outer->AddChild(Box);
     auto* Top = WidgetTree->ConstructWidget<UHorizontalBox>(); Frame->AddChildToVerticalBox(Top);
-    Header = Text(WidgetTree,TEXT("영웅"),19); Top->AddChildToHorizontalBox(Header)->SetSize(FSlateChildSize(ESlateSizeRule::Fill));
+    Header = Text(WidgetTree,TEXT("영웅"),0,EOVTextRole::Heading); Top->AddChildToHorizontalBox(Header)->SetSize(FSlateChildSize(ESlateSizeRule::Fill));
     auto* CloseButton=RowButton(WidgetTree,Top,TEXT("닫기"));
     CloseButton->OnClicked.AddDynamic(this,&UOVHeroWidget::Close);
     if(auto* CloseSlot=Cast<UHorizontalBoxSlot>(CloseButton->Slot))CloseSlot->SetSize(FSlateChildSize(ESlateSizeRule::Automatic));
@@ -141,24 +142,29 @@ void UOVHeroWidget::NativeOnInitialized()
     Box->AddChildToVerticalBox(StandingBox);
     auto* ArtFit=WidgetTree->ConstructWidget<UScaleBox>();ArtFit->SetStretch(EStretch::ScaleToFit);
     StandingBox->AddChild(ArtFit); Standing=WidgetTree->ConstructWidget<UImage>();ArtFit->AddChild(Standing);
-    Detail = Text(WidgetTree,TEXT("초상화를 선택하세요.")); Frame->AddChildToVerticalBox(Detail)->SetPadding(FMargin(0,6,0,4));
+    Detail = Text(WidgetTree,TEXT("초상화를 선택하세요.")); Frame->AddChildToVerticalBox(Detail)->SetPadding(FMargin(0,6,0,0));
+    DetailNumbers = Text(WidgetTree,TEXT(""),0,EOVTextRole::Numeric);
+    Frame->AddChildToVerticalBox(DetailNumbers)->SetPadding(FMargin(0,0,0,4));
     auto* Actions = WidgetTree->ConstructWidget<UHorizontalBox>(); Frame->AddChildToVerticalBox(Actions);
     LocateButton = RowButton(WidgetTree,Actions,TEXT("위치 찾기")); LocateButton->OnClicked.AddDynamic(this,&UOVHeroWidget::Locate);
     InteriorButton = RowButton(WidgetTree,Actions,TEXT("선내 지도")); InteriorButton->OnClicked.AddDynamic(this,&UOVHeroWidget::OpenInterior);
     RetreatButton = RowButton(WidgetTree,Actions,TEXT("철수")); RetreatButton->OnClicked.AddDynamic(this,&UOVHeroWidget::Retreat);
-    RetreatButton->SetToolTipText(FText::FromString(TEXT("원 진입점까지 이동해 원래 운송수단으로 회수합니다.")));
+    OVTypography::Tooltip(RetreatButton,FText::FromString(TEXT("원 진입점까지 이동해 원래 운송수단으로 회수합니다.")));
     Feedback = Text(WidgetTree,TEXT("")); Feedback->SetColorAndOpacity(FSlateColor(FLinearColor(1,.78f,.3f)));
     Feedback->SetVisibility(ESlateVisibility::Collapsed); Frame->AddChildToVerticalBox(Feedback);
     Frame->AddChildToVerticalBox(Outer)->SetSize(FSlateChildSize(ESlateSizeRule::Fill));
     EmptyHelp = Text(WidgetTree,TEXT("보유 영웅 없음")); Box->AddChildToVerticalBox(EmptyHelp);
     Search=WidgetTree->ConstructWidget<UEditableTextBox>();
+    OVTypography::StyleInput(Search);
     Search->SetHintText(FText::FromString(TEXT("이름 · 유형 · 위치 · 상태 검색")));
     Search->SetForegroundColor(FLinearColor(.05f,.10f,.15f));
     Box->AddChildToVerticalBox(Search);
     auto* Filters=WidgetTree->ConstructWidget<UHorizontalBox>();
     Box->AddChildToVerticalBox(Filters);
-    FilterCategory=WidgetTree->ConstructWidget<UComboBoxString>();
-    FilterValue=WidgetTree->ConstructWidget<UComboBoxString>();
+    FilterCategory=WidgetTree->ConstructWidget<UOVCompactCombo>();
+    CastChecked<UOVCompactCombo>(FilterCategory)->SetCompactFont();
+    FilterValue=WidgetTree->ConstructWidget<UOVCompactCombo>();
+    CastChecked<UOVCompactCombo>(FilterValue)->SetCompactFont();
     for(const TCHAR* Label:{TEXT("유형"),TEXT("임무"),TEXT("위치"),TEXT("상태")})FilterCategory->AddOption(Label);
     FilterCategory->SetSelectedIndex(0);
     Filters->AddChildToHorizontalBox(FilterCategory);
@@ -179,7 +185,8 @@ void UOVHeroWidget::NativeOnInitialized()
     SkillButtons[2]->OnClicked.AddDynamic(this,&UOVHeroWidget::Skill2); SkillButtons[3]->OnClicked.AddDynamic(this,&UOVHeroWidget::Skill3);
     Button(WidgetTree,Box,TEXT("편성 · 보직 설정"))->OnClicked.AddDynamic(this,&UOVHeroWidget::ToggleFormation);
     FormationBox = WidgetTree->ConstructWidget<UVerticalBox>(); Box->AddChildToVerticalBox(FormationBox); FormationBox->SetVisibility(ESlateVisibility::Collapsed);
-    TemplateChoice=WidgetTree->ConstructWidget<UComboBoxString>();
+    TemplateChoice=WidgetTree->ConstructWidget<UOVCompactCombo>();
+    CastChecked<UOVCompactCombo>(TemplateChoice)->SetCompactFont();
     for(const auto& D:GetGameInstance()->GetSubsystem<UOVHeroSubsystem>()->Definitions)
         TemplateChoice->AddOption(D.Name);
     TemplateChoice->SetSelectedIndex(0); FormationBox->AddChildToVerticalBox(TemplateChoice);
@@ -203,7 +210,7 @@ void UOVHeroWidget::NativeOnInitialized()
     Button(WidgetTree,FormationBox,TEXT("편성실 이동"))->OnClicked.AddDynamic(this,&UOVHeroWidget::RosterRoom);
     Button(WidgetTree,FormationBox,TEXT("보유 편제로 출전"))->OnClicked.AddDynamic(this,&UOVHeroWidget::StartMission);
     auto* Trial = Button(WidgetTree,Box,TEXT("영웅 시험 장면")); Trial->OnClicked.AddDynamic(this,&UOVHeroWidget::StartTrial);
-    Trial->SetToolTipText(FText::FromString(TEXT("무장 없는 구축전함에서 10명씩 편성합니다. 보유 명단은 시험 후 복원됩니다.")));
+    OVTypography::Tooltip(Trial,FText::FromString(TEXT("무장 없는 구축전함에서 10명씩 편성합니다. 보유 명단은 시험 후 복원됩니다.")));
     Refresh();
 }
 
@@ -241,7 +248,7 @@ void UOVHeroWidget::RebuildCards()
         else {
         Card->Portrait = WidgetTree->ConstructWidget<UOVPortraitWidget>(); Card->Portrait->SetVisibility(ESlateVisibility::HitTestInvisible); PictureSize->AddChild(Card->Portrait);
         }
-        Card->NameLabel = OVHeroUI::Text(WidgetTree,View.Name,17); Stack->AddChildToVerticalBox(Card->NameLabel);
+        Card->NameLabel = OVHeroUI::Text(WidgetTree,View.Name,0,EOVTextRole::HeroName); Stack->AddChildToVerticalBox(Card->NameLabel);
         Card->RoleLabel = OVHeroUI::Text(WidgetTree,TEXT(""),14); Stack->AddChildToVerticalBox(Card->RoleLabel);
         auto* BarSize = WidgetTree->ConstructWidget<USizeBox>(); BarSize->SetHeightOverride(5); Stack->AddChildToVerticalBox(BarSize)->SetPadding(FMargin(0,3));
         Card->Health = WidgetTree->ConstructWidget<UProgressBar>(); BarSize->AddChild(Card->Health);
@@ -361,6 +368,7 @@ void UOVHeroWidget::Refresh()
     if (!Selected)
     {
         Detail->SetText(FText::FromString(TEXT("시험 장면에서 대표 영웅을 만나보세요.")));
+        DetailNumbers->SetVisibility(ESlateVisibility::Collapsed);
         SkillsLabel->SetVisibility(ESlateVisibility::Collapsed);
         for (const auto& Skill:SkillButtons) Skill->SetVisibility(ESlateVisibility::Collapsed);
         return;
@@ -368,13 +376,17 @@ void UOVHeroWidget::Refresh()
     const auto Hero=Heroes->GetHero(Selected->HeroId);
     const auto Unit=PC->Interior&&bUnit?PC->Interior->GetUnit(Selected->UnitId):FOVInteriorUnitRecord();
     FString Summary=Selected->Name+TEXT(" · ")+Selected->State+TEXT("\n")+Selected->Location;
-    if (Selected->bHPKnown) Summary+=FString::Printf(TEXT("\nHP %.0f / %.0f"),Selected->HP,Selected->MaxHP);
-    if (bOwned) Summary+=FString::Printf(TEXT("  ·  경험치 %d"),Hero.XP);
-    if (Selected->RoleIndex==int32(EOVInteriorRole::Support)) Summary+=FString::Printf(TEXT("  ·  촉매 %d"),bUnit?Unit.Medkits:Hero.Catalysts);
+    TArray<FString, TInlineAllocator<3>> Stats;
+    if (Selected->bHPKnown)
+        Stats.Add(FString::Printf(TEXT("HP %s / %s"),*OVTypography::Integer(FMath::RoundToInt(Selected->HP)),*OVTypography::Integer(FMath::RoundToInt(Selected->MaxHP))));
+    if (bOwned) Stats.Add(TEXT("경험치 ") + OVTypography::Integer(Hero.XP));
+    if (Selected->RoleIndex==int32(EOVInteriorRole::Support)) Stats.Add(TEXT("촉매 ") + OVTypography::Integer(bUnit ? Unit.Medkits : Hero.Catalysts));
+    DetailNumbers->SetText(FText::FromString(FString::Join(Stats,TEXT("  ·  "))));
+    DetailNumbers->SetVisibility(Stats.IsEmpty() ? ESlateVisibility::Collapsed : ESlateVisibility::HitTestInvisible);
     if(bOwned && (Hero.ArmorTier || Hero.FocusTier || Hero.TacticalTier))
         Summary+=FString::Printf(TEXT("\n초점 T%d · 외피 T%d · 증폭 T%d"),Hero.FocusTier,Hero.ArmorTier,Hero.TacticalTier);
     if(Def && !Def->Passive.IsEmpty())Summary+=Def->Id==TEXT("M02")?TEXT("\n고경감 파쇄 · 역장 종료 시 잔영 베기"):TEXT("\n고유 능력 · 마우스를 올려 설명 확인");
-    Detail->SetText(FText::FromString(Summary)); Detail->SetToolTipText(FText::FromString(Def ? Def->Story+TEXT("\n")+Def->Passive+TEXT("\n")+Def->Signature+TEXT("\n")+Unit.Reason : Unit.Reason));
+    Detail->SetText(FText::FromString(Summary)); OVTypography::Tooltip(Detail,FText::FromString(Def ? Def->Story+TEXT("\n")+Def->Passive+TEXT("\n")+Def->Signature+TEXT("\n")+Unit.Reason : Unit.Reason));
     AOVShip* UnitShip=Unit.Ship.Get();
     if (DutyHero!=SelectedHeroId || DutyShip.Get()!=UnitShip)
     {
@@ -403,7 +415,7 @@ void UOVHeroWidget::Refresh()
         SkillLabels[I]->SetText(FText::FromString(FString::Printf(TEXT("%s\n%d등급 · %s"),*OVHeroUI::SkillName(Selected->RoleIndex,I),Rank,*Status)));
         const bool CanSpend=bOwned&&Heroes->CanChangeRoster()&&Hero.SkillPoints>0&&Rank>0&&Rank<3;
         SkillButtons[I]->SetIsEnabled(CanSpend);
-        SkillButtons[I]->SetToolTipText(FText::FromString(bOwned?Heroes->GetSkillDescription(SelectedHeroId,I)+(CanSpend?TEXT("\n클릭: 성장 포인트 1점 투자"):TEXT("\n전투 중 자동 사용")):TEXT("임무 전용 인원 · 전투 조건에 따라 자동 사용")));
+        OVTypography::Tooltip(SkillButtons[I],FText::FromString(bOwned?Heroes->GetSkillDescription(SelectedHeroId,I)+(CanSpend?TEXT("\n클릭: 성장 포인트 1점 투자"):TEXT("\n전투 중 자동 사용")):TEXT("임무 전용 인원 · 전투 조건에 따라 자동 사용")));
     }
 }
 
@@ -435,7 +447,7 @@ void UOVHeroWidget::SetFeedback(const FString& Message)
 {
     if (!Feedback) return;
     FString Short=Message; Short.ReplaceInline(TEXT("\r"),TEXT(" ")); Short.ReplaceInline(TEXT("\n"),TEXT(" "));
-    Feedback->SetText(FText::FromString(Short.Left(36))); Feedback->SetToolTipText(FText::FromString(Message));
+    Feedback->SetText(FText::FromString(Short.Left(36))); OVTypography::Tooltip(Feedback,FText::FromString(Message));
     Feedback->SetVisibility(Message.IsEmpty()?ESlateVisibility::Collapsed:ESlateVisibility::Visible);
 }
 bool UOVHeroWidget::LocateSelectedHero()

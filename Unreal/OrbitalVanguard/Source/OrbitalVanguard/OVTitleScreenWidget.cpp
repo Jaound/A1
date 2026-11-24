@@ -1,4 +1,5 @@
 #include "OVTitleScreenWidget.h"
+#include "OVTypography.h"
 
 #include "OVAudioSubsystem.h"
 #include "OVCalibration.h"
@@ -75,35 +76,6 @@ static const TCHAR* QualityLabels[] = {
     TEXT("에픽")
 };
 
-inline UFont* GetFontRegular()
-{
-    static TWeakObjectPtr<UFont> Cached;
-    if (!Cached.IsValid())
-    {
-        Cached = LoadObject<UFont>(nullptr, TEXT("/Game/UI/Fonts/Font_Malgun.Font_Malgun"), nullptr, LOAD_NoWarn);
-    }
-    return Cached.Get();
-}
-
-inline UFont* GetFontBold()
-{
-    static TWeakObjectPtr<UFont> Cached;
-    if (!Cached.IsValid())
-    {
-        Cached = LoadObject<UFont>(nullptr, TEXT("/Game/UI/Fonts/Font_MalgunBold.Font_MalgunBold"), nullptr, LOAD_NoWarn);
-    }
-    return Cached.Get();
-}
-
-inline FSlateFontInfo MakeFont(int32 Size, bool bBold)
-{
-    if (UFont* FontObj = bBold ? GetFontBold() : GetFontRegular())
-    {
-        return FSlateFontInfo(FontObj, (float)Size);
-    }
-    return FCoreStyle::GetDefaultFontStyle(bBold ? "Bold" : "Regular", (float)Size);
-}
-
 inline FSlateBrush MakeRoundedBoxBrush(
     const FLinearColor& FillColor,
     const FLinearColor& OutlineColor,
@@ -139,10 +111,10 @@ inline FButtonStyle MakeSecondaryButtonStyle(bool bSelected = false)
     return Style;
 }
 
-UTextBlock* MakeLabel(UWidgetTree* Tree, const FString& Text, int32 Size, const FLinearColor& Color, bool bBold = false)
+UTextBlock* MakeLabel(UWidgetTree* Tree, const FString& Text, int32 Size, const FLinearColor& Color, bool bBold = false, EOVTextRole Role = EOVTextRole::Body)
 {
     UTextBlock* Label = Tree->ConstructWidget<UTextBlock>();
-    Label->SetFont(MakeFont(Size, bBold));
+    Label->SetFont(OVTypography::Style(bBold ? EOVTextRole::Heading : Role, Size));
     Label->SetColorAndOpacity(FSlateColor(Color));
     Label->SetText(FText::FromString(Text));
     Label->SetAutoWrapText(true);
@@ -343,7 +315,7 @@ void UOVTitleScreenWidget::BuildProgrammaticTree()
     }
 
     UTextBlock* TitleLabel = OVStyle::MakeLabel(
-        WidgetTree, TEXT("ORBITAL VANGUARD"), 40, OVStyle::TextWhite, true);
+        WidgetTree, TEXT("ORBITAL VANGUARD"), 0, OVStyle::TextWhite, false, EOVTextRole::Logo);
     LeftMenuVBox->AddChildToVerticalBox(TitleLabel)->SetPadding(FMargin(0.f, 6.f, 0.f, 10.f));
 
     LeftMenuVBox->AddChildToVerticalBox(OVStyle::MakeLabel(
@@ -379,7 +351,7 @@ void UOVTitleScreenWidget::BuildProgrammaticTree()
         WidgetTree, TEXT("F5 · F6 · F7  빠른 함대전"), 11, OVStyle::TextDim, false));
     USpacer* FootSpacer = WidgetTree->ConstructWidget<USpacer>();
     LeftFooter->AddChildToHorizontalBox(FootSpacer)->SetSize(FSlateChildSize(ESlateSizeRule::Fill));
-    FooterUIScaleText = OVStyle::MakeLabel(WidgetTree, TEXT("UI 배율: 100%"), 11, OVStyle::TextDim, false);
+    FooterUIScaleText = OVStyle::MakeLabel(WidgetTree, TEXT("UI 배율: 100%"), 11, OVStyle::TextDim, false, EOVTextRole::Numeric);
     LeftFooter->AddChildToHorizontalBox(FooterUIScaleText);
 
     TitlePanelContainer = WidgetTree->ConstructWidget<UBorder>();
@@ -557,11 +529,12 @@ void UOVTitleScreenWidget::BuildProgrammaticTree()
     UHorizontalBox* MetricsHBox = WidgetTree->ConstructWidget<UHorizontalBox>();
     MetricsCard->SetContent(MetricsHBox);
 
-    auto AddMetricCol = [this, &MetricsHBox](const FString& Label, TObjectPtr<UTextBlock>& ValPtr)
+    auto AddMetricCol = [this, &MetricsHBox](const FString& Label, TObjectPtr<UTextBlock>& ValPtr, EOVTextRole Role=EOVTextRole::Numeric)
     {
         UVerticalBox* Col = WidgetTree->ConstructWidget<UVerticalBox>();
         Col->AddChildToVerticalBox(OVStyle::MakeLabel(WidgetTree, Label, 11, OVStyle::TextDim, false));
-        ValPtr = OVStyle::MakeLabel(WidgetTree, TEXT("-"), 17, OVStyle::TextWhite, true);
+        ValPtr = OVStyle::MakeLabel(WidgetTree, TEXT("-"), 17, OVStyle::TextWhite, false, Role);
+        ValPtr->SetJustification(ETextJustify::Right);
         Col->AddChildToVerticalBox(ValPtr)->SetPadding(FMargin(0.f, 2.f, 0.f, 0.f));
         if (UHorizontalBoxSlot* ColSlot = MetricsHBox->AddChildToHorizontalBox(Col))
         {
@@ -570,7 +543,7 @@ void UOVTitleScreenWidget::BuildProgrammaticTree()
     };
     AddMetricCol(TEXT("편성 비용"), MetricBudgetVal);
     AddMetricCol(TEXT("아군 함선"), MetricHangarVal);
-    AddMetricCol(TEXT("임무 유형"), MetricTimeVal);
+    AddMetricCol(TEXT("임무 유형"), MetricTimeVal, EOVTextRole::Body);
 
     BriefingBox->AddChildToVerticalBox(OVStyle::MakeLabel(
         WidgetTree, TEXT("아군 출격 편성"), 12, OVStyle::CyanAccent, true))
@@ -717,7 +690,8 @@ void UOVTitleScreenWidget::BuildSettingsModal(UOverlay* RootOverlay)
 
         USizeBox* ValBox = WidgetTree->ConstructWidget<USizeBox>();
         ValBox->SetWidthOverride(64.f);
-        OutValText = OVStyle::MakeLabel(WidgetTree, TEXT("100%"), 13, OVStyle::TextWhite, true);
+        OutValText = OVStyle::MakeLabel(WidgetTree, TEXT("100%"), 13, OVStyle::TextWhite, false, EOVTextRole::Numeric);
+        OutValText->SetJustification(ETextJustify::Right);
         OutValText->SetAutoWrapText(false);
         ValBox->SetContent(OutValText);
         Row->AddChildToHorizontalBox(ValBox)->SetVerticalAlignment(VAlign_Center);

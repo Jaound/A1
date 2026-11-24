@@ -1,4 +1,5 @@
 #include "OVDevelopmentWidget.h"
+#include "OVTypography.h"
 #include "OVCatalogCardWidget.h"
 #include "OVPortraitWidget.h"
 #include "OVCalibration.h"
@@ -34,22 +35,27 @@
 #include "Engine/GameInstance.h"
 #include "Engine/World.h"
 
+void UOVCompactCombo::SetCompactFont()
+{
+ InitFont(OVTypography::Style(EOVTextRole::Button));
+}
+
 namespace {
-UTextBlock* Label(UWidgetTree* T,const FString& S) { auto* W=T->ConstructWidget<UTextBlock>();auto Font=W->GetFont();Font.Size=14;W->SetFont(Font);W->SetColorAndOpacity(FSlateColor(FLinearColor(.88f,.94f,1.f)));W->SetText(FText::FromString(S));W->SetAutoWrapText(true);return W; }
+UTextBlock* Label(UWidgetTree* T,const FString& S,EOVTextRole Role=EOVTextRole::Body) { auto* W=T->ConstructWidget<UTextBlock>();W->SetFont(OVTypography::Style(Role,14));W->SetColorAndOpacity(FSlateColor(FLinearColor(.88f,.94f,1.f)));W->SetText(FText::FromString(S));W->SetAutoWrapText(true);return W; }
 void StyleButton(UButton* Button) { Button->SetBackgroundColor(FLinearColor(.045f,.15f,.23f,1));Button->SetColorAndOpacity(FLinearColor(.95f,.98f,1.f)); }
 UComboBoxString* Combo(UWidgetTree* T) { auto* C=T->ConstructWidget<UOVCompactCombo>();C->SetCompactFont();return C; }
-UButton* AddButton(UWidgetTree* T,UPanelWidget* P,const TCHAR* S) { auto* B=T->ConstructWidget<UButton>();StyleButton(B);B->AddChild(Label(T,S));P->AddChild(B);if(auto* Slot=Cast<UHorizontalBoxSlot>(B->Slot)){Slot->SetSize(FSlateChildSize(ESlateSizeRule::Fill));Slot->SetPadding(FMargin(3,4));}else if(auto* VerticalSlot=Cast<UVerticalBoxSlot>(B->Slot))VerticalSlot->SetPadding(FMargin(0,3));return B; }
+UButton* AddButton(UWidgetTree* T,UPanelWidget* P,const TCHAR* S) { auto* B=T->ConstructWidget<UButton>();StyleButton(B);B->AddChild(Label(T,S,EOVTextRole::Button));P->AddChild(B);if(auto* Slot=Cast<UHorizontalBoxSlot>(B->Slot)){Slot->SetSize(FSlateChildSize(ESlateSizeRule::Fill));Slot->SetPadding(FMargin(3,4));}else if(auto* VerticalSlot=Cast<UVerticalBoxSlot>(B->Slot))VerticalSlot->SetPadding(FMargin(0,3));return B; }
 FString ShortShipName(const AOVShip* Ship){if(!Ship)return TEXT("없음");FString Name=Ship->ShipName;int32 At=INDEX_NONE;if(Name.FindChar(TCHAR(0x00b7),At))Name=Name.Left(At).TrimEnd();return Name;}
 const TCHAR* SizeName(int32 Size){const TCHAR* Names[]={TEXT("초소형"),TEXT("소형"),TEXT("중형"),TEXT("대형"),TEXT("초대형")};return Names[FMath::Clamp(Size,0,4)];}
 const TCHAR* WeaponName(EOVWeaponType Type){switch(Type){case EOVWeaponType::Beam:return TEXT("빔");case EOVWeaponType::Cannon:return TEXT("함포");case EOVWeaponType::Missile:return TEXT("미사일");case EOVWeaponType::Interception:return TEXT("요격");default:return TEXT("무장");}}
 UHorizontalBox* Row(UWidgetTree* T,UVerticalBox* Parent){auto* R=T->ConstructWidget<UHorizontalBox>();Parent->AddChildToVerticalBox(R)->SetPadding(FMargin(0,3));return R;}
-UVerticalBox* Section(UWidgetTree* T,UVerticalBox* Parent,const FString& Title){auto* B=T->ConstructWidget<UBorder>();B->SetBrushColor(FLinearColor(.025f,.055f,.085f));B->SetPadding(FMargin(8));Parent->AddChildToVerticalBox(B)->SetPadding(FMargin(0,5));auto* V=T->ConstructWidget<UVerticalBox>();B->AddChild(V);if(!Title.IsEmpty())V->AddChildToVerticalBox(Label(T,Title))->SetPadding(FMargin(0,0,0,5));return V;}
+UVerticalBox* Section(UWidgetTree* T,UVerticalBox* Parent,const FString& Title){auto* B=T->ConstructWidget<UBorder>();B->SetBrushColor(FLinearColor(.025f,.055f,.085f));B->SetPadding(FMargin(8));Parent->AddChildToVerticalBox(B)->SetPadding(FMargin(0,5));auto* V=T->ConstructWidget<UVerticalBox>();B->AddChild(V);if(!Title.IsEmpty())V->AddChildToVerticalBox(Label(T,Title,EOVTextRole::Heading))->SetPadding(FMargin(0,0,0,5));return V;}
 const TCHAR* AircraftState(EOVAircraftState State){const TCHAR* V[]={TEXT("보관"),TEXT("출격"),TEXT("귀환"),TEXT("착함 대기"),TEXT("관제 상실"),TEXT("파괴")};return V[FMath::Clamp(int32(State),0,5)];}
 const TCHAR* PassengerState(EOVPassengerState State){const TCHAR* V[]={TEXT("탑승"),TEXT("포드 비행"),TEXT("목표함 내부"),TEXT("강습선"),TEXT("회수 대기"),TEXT("구조 대기"),TEXT("사망")};return V[FMath::Clamp(int32(State),0,6)];}
 const TCHAR* PodState(EOVPodFlightState State){const TCHAR* V[]={TEXT("발사 대기"),TEXT("접근"),TEXT("접촉"),TEXT("귀환"),TEXT("회수"),TEXT("파괴"),TEXT("고립"),TEXT("취소")};return V[FMath::Clamp(int32(State),0,7)];}
 FString ReadyLabel(const FString& Key) { static const TMap<FString,FString> L={{TEXT("READY"),TEXT("발사 가능")},{TEXT("NO VALID TARGET"),TEXT("표적 없음")},{TEXT("OUT OF RANGE"),TEXT("사거리 밖")},{TEXT("NO DETECTION"),TEXT("탐지 없음")},{TEXT("MOUNT BLIND ARC"),TEXT("사각")},{TEXT("TURRET ALIGNING"),TEXT("조준 중")},{TEXT("FRIENDLY IN FLIGHT PATH"),TEXT("아군 비행 경로 차단")},{TEXT("FRIENDLY IN LINE"),TEXT("아군 사선 차단")},{TEXT("COOLDOWN"),TEXT("재사용 대기")},{TEXT("WEAPON CONTROL OFF"),TEXT("무기제어실 정지")},{TEXT("SUPPLY OFF"),TEXT("공급 정지")},{TEXT("MOUNT DESTROYED"),TEXT("무장 파괴")},{TEXT("COMBAT OFF"),TEXT("전투 비활성")},{TEXT("PD OFF"),TEXT("요격 비활성")},{TEXT("SHIP LOST"),TEXT("함선 상실")},{TEXT("NO OWNER"),TEXT("소유 세력 없음")},{TEXT("DEPARTED"),TEXT("함선 이탈")},{TEXT("NO PD MOUNTS"),TEXT("요격 장착점 없음")},{TEXT("PD CONTROL OFFLINE"),TEXT("요격 제어 정지")},{TEXT("PD MOUNTS DISABLED"),TEXT("요격 장착점 정지")},{TEXT("DEFENDING"),TEXT("자동 방어 중")}};if(const auto* V=L.Find(Key))return *V;return TEXT("발사 조건 확인"); }
 FString Evidence(const TCHAR* Name,const FOVCatalogEvidence& E) { const TCHAR* States[]={TEXT("미확인"),TEXT("있음"),TEXT("부분"),TEXT("없음"),TEXT("해당 없음")}; return FString::Printf(TEXT("%s: %s · %s"),Name,States[FMath::Clamp(int32(E.Status),0,4)],*E.Reason); }
-UEditableTextBox* AddInput(UWidgetTree* T,UVerticalBox* P,const TCHAR* Hint,const TCHAR* Default) { P->AddChildToVerticalBox(Label(T,Hint));auto* W=T->ConstructWidget<UEditableTextBox>();auto Style=W->GetWidgetStyle();Style.TextStyle.Font.Size=14;Style.TextStyle.ColorAndOpacity=FSlateColor(FLinearColor(.02f,.025f,.035f,1));Style.ForegroundColor=FSlateColor(FLinearColor(.02f,.025f,.035f,1));W->SetWidgetStyle(Style);W->SetForegroundColor(FLinearColor(.02f,.025f,.035f,1));W->SetHintText(FText::FromString(Hint));W->SetText(FText::FromString(Default));P->AddChildToVerticalBox(W);return W; }
+UEditableTextBox* AddInput(UWidgetTree* T,UVerticalBox* P,const TCHAR* Hint,const TCHAR* Default) { P->AddChildToVerticalBox(Label(T,Hint));auto* W=T->ConstructWidget<UEditableTextBox>();auto Style=W->GetWidgetStyle();Style.TextStyle.Font=OVTypography::Style(EOVTextRole::Body,14);Style.TextStyle.ColorAndOpacity=FSlateColor(FLinearColor(.02f,.025f,.035f,1));Style.ForegroundColor=FSlateColor(FLinearColor(.02f,.025f,.035f,1));W->SetWidgetStyle(Style);W->SetForegroundColor(FLinearColor(.02f,.025f,.035f,1));W->SetHintText(FText::FromString(Hint));W->SetText(FText::FromString(Default));P->AddChildToVerticalBox(W);return W; }
 }
 void UOVDevelopmentItem::Pick() { if(Owner)Owner->SelectItem(Id); }
 FReply UOVDevelopmentWidget::NativeOnMouseButtonDown(const FGeometry& Geometry,const FPointerEvent& Event)
@@ -175,7 +181,7 @@ void UOVDevelopmentWidget::ResetFrame(){if(auto* PC=GetOwningPlayer())if(auto* H
 void UOVDevelopmentWidget::Reply(const FString& Message)
 {
  if(!Feedback)return;
- Feedback->SetToolTipText(FText::FromString(Message));
+ OVTypography::Tooltip(Feedback,FText::FromString(Message));
  FString Brief=Message;Brief.ReplaceInline(TEXT("READY"),TEXT("발사 가능"));
  int32 Break=INDEX_NONE;if(Brief.FindChar('\n',Break))Brief=Brief.Left(Break);
  if(Brief.Len()>64)Brief=Brief.Left(61)+TEXT("…");
@@ -252,7 +258,7 @@ void UOVDevelopmentWidget::SelectItem(FName Id)
  {
   const bool bSupported=OVCalibration::GetWeaponProfileIds().Contains(Id);
   EquipButton->SetIsEnabled(bSupported&&WeaponSubject.IsValid()&&MountIds.Num()>0);
-  EquipButton->SetToolTipText(FText::FromString(bSupported?TEXT("장착 계열·티어·시설 조건을 검사합니다"):TEXT("이 종류의 직접 교체는 미지원입니다")));
+  OVTypography::Tooltip(EquipButton,FText::FromString(bSupported?TEXT("장착 계열·티어·시설 조건을 검사합니다"):TEXT("이 종류의 직접 교체는 미지원입니다")));
  }
  if(!Detail)return;
  if(!bAdvanced)
@@ -398,7 +404,7 @@ void UOVDevelopmentWidget::Rebuild()
    auto* Placement=Advanced(Body,TEXT("직접 배치 · cm 단위"));auto* XYZ=Row(WidgetTree,Placement);
    X=InputColumn(XYZ,TEXT("X"),TEXT("0"));Y=InputColumn(XYZ,TEXT("Y"),TEXT("0"));Z=InputColumn(XYZ,TEXT("Z"),TEXT("0"));
    auto* Stock=Row(WidgetTree,Placement);Spacing=InputColumn(Stock,TEXT("배치 간격"),TEXT("12000"));Inventory=InputColumn(Stock,TEXT("격납고당 기체"),TEXT("0"));Troops=InputColumn(Stock,TEXT("병력"),TEXT("0"));
-   Faction=WidgetTree->ConstructWidget<UEditableTextBox>();Faction->SetText(FText::FromString(TEXT("0")));
+   Faction=WidgetTree->ConstructWidget<UEditableTextBox>();OVTypography::StyleInput(Faction,EOVTextRole::Numeric);Faction->SetText(FText::FromString(TEXT("0")));
    SideChoice->OnSelectionChanged.AddDynamic(this,&UOVDevelopmentWidget::SideChanged);PresetChoice->OnSelectionChanged.AddDynamic(this,&UOVDevelopmentWidget::PresetChanged);
    auto* Runtime=Section(WidgetTree,Body,TEXT("배치된 함선"));
    RuntimeShips=Combo(WidgetTree);Runtime->AddChildToVerticalBox(RuntimeShips);LogisticsTarget=Combo(WidgetTree);RefreshShips();

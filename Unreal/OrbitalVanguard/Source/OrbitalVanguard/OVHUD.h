@@ -1,6 +1,7 @@
 #pragma once
 #include "CoreMinimal.h"
 #include "GameFramework/HUD.h"
+#include "OVTypography.h"
 #include "OVHUD.generated.h"
 class AOVShip;
 struct FOVCombatMountState;
@@ -115,6 +116,8 @@ public:
  bool IsOverStarMapPanel(float X,float Y) const;
 private:
  // Rasterize Canvas labels at the display size while preserving logical HUD coordinates.
+ FString FitLabel(UFont* Font,const FString& Text,float MaxWidth) const;
+ void DrawNumberRight(const FString& Number,FLinearColor Color,float Right,float Top,float Scale=1.f);
  void DrawText(const FString& Text, FLinearColor Color, float X, float Y, UFont* Font, float Scale=1.f);
  UPROPERTY() TObjectPtr<UOVDevelopmentWidget> DevelopmentWidget;
  UPROPERTY() TObjectPtr<UOVHeroWidget> HeroWidget;
@@ -212,5 +215,5 @@ private:
  void DrawPhase2C();
  static float FleetPanelWidth(float ScreenWidth) { return FMath::Clamp(ScreenWidth-640.f,210.f,450.f); }
  void DrawExternal(float X,float Y,float W);
- void Button(FName Name,const FString& Label,float X,float Y,float W,bool Active=false);
+ void Button(FName Name,const FString& Label,float X,float Y,float W,bool Active=false,EOVTextRole TextRole=EOVTextRole::Button);
 };

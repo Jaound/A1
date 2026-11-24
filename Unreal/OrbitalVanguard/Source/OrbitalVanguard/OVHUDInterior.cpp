@@ -201,7 +201,7 @@ void AOVHUD::DrawInterior()
  DrawRect(Panel,X,Y,W,H);
  if(!bInteriorMinimized)DrawLine(X+W-14,Y+H-2,X+W-2,Y+H-14,Accent,2);
  AOVShip* Ship=InteriorShip.Get();
- DrawText(TEXT("선내 작전 · ")+(Ship?Ship->ShipName:TEXT("함선 선택")),Accent,X+12,Y+10,GEngine->GetSmallFont());
+ DrawText(TEXT("선내 작전 · ")+(Ship?Ship->ShipName:TEXT("함선 선택")),Accent,X+12,Y+10,OVTypography::Font(EOVTextRole::Heading));
  Button(TEXT("InteriorClose"),TEXT("X"),X+W-30,Y+2,26);
  Button(TEXT("InteriorMin"),bInteriorMinimized?TEXT("+"):TEXT("_"),X+W-60,Y+2,26);
  Button(TEXT("InteriorMax"),TEXT("[]"),X+W-90,Y+2,26);
@@ -213,7 +213,7 @@ void AOVHUD::DrawInterior()
  Button(TEXT("InteriorShipNext"),TEXT("다음 알려진 함선"),X+160,Y+37,150);
  if(!IsValid(Ship)||!Ship->Systems||!Ship->Systems->Layout||!Interior->IsStructureKnown(0,Ship))
  {
-  DrawText(TEXT("내부 구조 미관측 · 아군의 실제 진입 후 표시됩니다."),Ink,X+24,Y+110,GEngine->GetSmallFont());
+  DrawText(TEXT("내부 구조 미관측 · 아군의 실제 진입 후 표시됩니다."),Ink,X+24,Y+110,OVTypography::Font(EOVTextRole::Body));
   return;
  }
  const auto* L=Ship->Systems->Layout.Get();InteriorDeck=FMath::Clamp(InteriorDeck,1,L->DeckCount);
@@ -244,13 +244,13 @@ void AOVHUD::DrawInterior()
   const bool HeroA=A.Role!=EOVInteriorRole::Trooper,HeroB=B.Role!=EOVInteriorRole::Trooper;
   return HeroA!=HeroB?HeroA:A.UnitId<B.UnitId;
  });
- auto Text=[&](const FString& Value,FLinearColor Color,float TX,float TY){DrawText(Value,Color,TX,TY,GEngine->GetSmallFont());};
+ auto Text=[&](const FString& Value,FLinearColor Color,float TX,float TY,EOVTextRole TextRole=EOVTextRole::Body){DrawText(Value,Color,TX,TY,OVTypography::Font(TextRole));};
  Text(FString::Printf(TEXT("선택  %d명"),InteriorSelectedUnits.Num()),Soft,X+18,Footer+10);
  if(Focus && InteriorSelectedUnits.Num()==1){
   const auto* Definition=GetGameInstance()->GetSubsystem<UOVHeroSubsystem>()->Definition(Focus->DefinitionId);
   if(Definition && Definition->Portrait)DrawTexture(Definition->Portrait,X+119,Footer+31,34,34,0,0,1,1);
-  Text(CardName(*Focus),Accent,X+18,Footer+34);
-  Text(FString::Printf(TEXT("HP %.0f / %.0f"),Focus->HP,Focus->MaxHP),Ink,X+18,Footer+60);
+  Text(CardName(*Focus),Accent,X+18,Footer+34,EOVTextRole::HeroName);
+  Text(FString::Printf(TEXT("HP %.0f / %.0f"),Focus->HP,Focus->MaxHP),Ink,X+18,Footer+60,EOVTextRole::Numeric);
   Text(OVInteriorUI::Role(Focus->Role)+TEXT(" · ")+OVInteriorUI::State(Focus->State),Ink,X+18,Footer+80);
   if(const int32 Node=L->GetSlotIndex(Focus->NodeId);L->Slots.IsValidIndex(Node)){
    const auto& Slot=L->Slots[Node];
@@ -297,17 +297,9 @@ void AOVHUD::DrawInterior()
    DrawLine(CX+26,CY+21,CX+32,CY+27,Badge,3);
   }
   const float Bar=CW-46;
-  FString Label=CardName(U);
-  float TW=0,TH=0;
-  GetTextSize(Label,TW,TH,GEngine->GetSmallFont());
-  if(TW>Bar){
-   do{
-    Label.LeftChopInline(1);
-    GetTextSize(Label+TEXT("…"),TW,TH,GEngine->GetSmallFont());
-   }while(TW>Bar && !Label.IsEmpty());
-   Label+=TEXT("…");
-  }
-  Text(Label,Ink,CX+40,CY+2);
+  const auto NameRole=U.Role==EOVInteriorRole::Trooper?EOVTextRole::Body:EOVTextRole::HeroName;
+  const FString Label=FitLabel(OVTypography::Font(NameRole),CardName(U),Bar);
+  Text(Label,Ink,CX+40,CY+2,NameRole);
   Text(OVInteriorUI::State(U.State),Soft,CX+40,CY+18);
   const float HP=FMath::Clamp(U.HP/FMath::Max(1.f,U.MaxHP),0.f,1.f);
   DrawRect(Panel,CX+40,CY+36,Bar,4);
@@ -348,7 +340,7 @@ void AOVHUD::DrawInterior()
   if(A.DeckId!=InteriorDeck&&B.DeckId!=InteriorDeck)continue;
   const FVector2D P=Project(A.LocalCenter),Q=Project(B.LocalCenter);
   if(A.DeckId==B.DeckId)DrawLine(P.X,P.Y,Q.X,Q.Y,FLinearColor(.25f,.4f,.5f),2);
-  else DrawText(FString::Printf(TEXT("↕%d층"),A.DeckId==InteriorDeck?B.DeckId:A.DeckId),Accent,P.X+15,P.Y-18,GEngine->GetSmallFont());
+  else DrawText(FString::Printf(TEXT("↕%d층"),A.DeckId==InteriorDeck?B.DeckId:A.DeckId),Accent,P.X+15,P.Y-18,OVTypography::Font(EOVTextRole::Numeric));
  }
  if(Focus)for(int32 I=1;I<Focus->Path.Num();++I)
  {
@@ -545,7 +537,7 @@ void AOVHUD::DrawInterior()
     Labelled.Add(Entry.SlotId);
     DrawLine(Point.X,Point.Y,Label.X,Label.Y+7,Color,1);
     DrawRect(Panel,Label.X,Label.Y,61,17);
-    DrawText(I==0?TEXT("A팀 진입점"):TEXT("B팀 진입점"),Color,Label.X+2,Label.Y,GEngine->GetSmallFont());
+    DrawText(I==0?TEXT("A팀 진입점"):TEXT("B팀 진입점"),Color,Label.X+2,Label.Y,OVTypography::Font(EOVTextRole::Body));
    }
    if(HasEntry)Button(I==0?TEXT("InteriorEntryA"):TEXT("InteriorEntryB"),I==0?TEXT("A 진입층"):TEXT("B 진입층"),X+318+I*84,Y+37,80);
   }
@@ -558,7 +550,7 @@ void AOVHUD::DrawInterior()
   Text(Facility(Slot.Facility)+FString::Printf(TEXT(" · %d층"),Slot.DeckId),Accent,X+18,Footer+131);
   const bool Observed=Ship->Systems->FactionId==0||Own.ContainsByPredicate([&](const auto* U){return Living(*U)&&U->State!=EOVInteriorState::InTransit&&U->State!=EOVInteriorState::RescueWaiting&&U->NodeId==Slot.SlotId;});
   if(Observed){
-   Text(FString::Printf(TEXT("시설 HP %.0f/%.0f"),S.HP,Slot.MaxFacilityHP),Ink,X+18,Footer+150);
+   Text(FString::Printf(TEXT("시설 HP %.0f/%.0f"),S.HP,Slot.MaxFacilityHP),Ink,X+18,Footer+150,EOVTextRole::Numeric);
    Text(FString::Printf(TEXT("운영 %.0f/%.0f · %s"),S.Crew,Slot.RequiredCrew,S.OccupyingFaction<0?TEXT("미점령"):S.OccupyingFaction==0?TEXT("아군"):TEXT("적군")),Ink,X+18,Footer+169);
   }else Text(TEXT("시설 상태 미관측"),Soft,X+18,Footer+151);
  }

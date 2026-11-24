@@ -1,0 +1,22 @@
+Orbital Vanguard 배포 글꼴 고지
+
+나눔스퀘어 네오 Regular / ExtraBold
+Copyright © 2022 NAVER Corp. All rights reserved. Font Designed by Sandoll Inc.
+배포처 https://campaign.naver.com/nanumsquare_neo/
+공식 저작권 고지 및 라이선스 전문 https://help.naver.com/service/30016/contents/18088?osType=PC
+동봉 원문 NanumSquareNeo-License.txt
+
+Orbitron Bold
+Copyright (c) 2009, Matt McInerney. Reserved Font Name: Orbitron.
+동봉 원문 Orbitron-OFL.md (배포 ZIP의 orbitron-master/Open Font License.markdown)
+
+D2Coding 1.4.0
+Copyright (c) 2015, NAVER Corporation. Reserved Font Name: D2Coding.
+동봉 원문 D2Coding-OFL.txt (배포 ZIP의 OFL.txt)
+
+Orbit Regular
+Copyright 2022 The Orbit Project Authors (https://github.com/JAMO-TYPEFACE/Orbit)
+공식 배포 고지 https://github.com/google/fonts/blob/main/ofl/orbit/OFL.txt
+동봉 원문 Orbit-OFL.txt
+
+게임에는 배포본 그대로의 정적 TTF를 Unreal FontFace로 수록했습니다.

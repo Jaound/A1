@@ -1,0 +1,141 @@
+{
+  "기준 코드": "48963d0",
+  "환경": "Windows 10, UE 5.8.4, Win64 Development, D3D11, RTX 5070",
+  "날짜": "2026-11-24",
+  "배포검증": {
+    "UE 자산": [
+      "Face_Body",
+      "Face_Comms",
+      "Face_Heading",
+      "Face_Logo",
+      "Face_Numeric",
+      "Font_Body",
+      "Font_Comms",
+      "Font_Heading",
+      "Font_Logo",
+      "Font_Numeric"
+    ],
+    "패키지에서 복원한 TTF SHA256": {
+      "Body": "864de849b9d0af7efbd9e855044f5ab3bbf44cc88ddff6b9873ee830b9d3a61f",
+      "Heading": "3cedb3ee07aabd894f2c1ad4f0434739ecf28a870674ba73cff016057c764750",
+      "Logo": "ed4acd72c6ef9ff4d1a2558ba72f2b85b411830a8aa2eb59f1c20b3a1127990c",
+      "Numeric": "d5f2b6bf5b1826cfbf3734c70582f0cd42ea2e1d6c2636ae681b612bc9c5682f",
+      "Comms": "5d0206fb0a9e3eeac51aff8d4a6dbb7613d63fc435f1a51f96dc35cefb5f9f87"
+    },
+    "구 맑은고딕 파일 수": 0,
+    "배포 고지 SHA256": {
+      "D2Coding-OFL.txt": "1807e8dec4d65f474cbf9be39f5e2254ecb81702babc320749e272ea66ffcc69",
+      "NanumSquareNeo-License.txt": "0956d5e017931eb6aaf7493fbea25367fa66b2a10b26aa91be82f30b462d68bf",
+      "Orbit-OFL.txt": "00f1783a4e7a52d945c0c4de689571b2db896493362651db2706b40c6fc1c330",
+      "Orbitron-OFL.md": "e0dcb396bc35a553c0d7bd8e471434444834f2d3afe91cf40aab1dffe6a75ac1",
+      "SOURCES.txt": "a5fcd6e2699db630837caa38ba0898e81f31a1e2b875ae22bc388a301a7d43d4"
+    },
+    "영웅 이미지 경로": 102
+  },
+  "검사": {
+    "Win64 Development Editor": "성공",
+    "Windows Development 전체 쿠킹·패키징": "성공",
+    "글꼴 자동화": {
+      "성공": 1,
+      "실패": 0
+    },
+    "영웅 시험장 PIE": 157,
+    "선내 카드 PIE": 17,
+    "결과 화면 PIE": 26,
+    "검수용 PIE 장면": {
+      "screens": [
+        "Pause",
+        "Galaxy",
+        "Ship",
+        "Battle",
+        "HeroTooltip"
+      ],
+      "sizes": {
+        "Pause": [
+          1956,
+          1100
+        ],
+        "Galaxy": [
+          1956,
+          1100
+        ],
+        "Ship": [
+          1956,
+          1100
+        ],
+        "Battle": [
+          1956,
+          1100
+        ],
+        "HeroTooltip": [
+          1956,
+          1100
+        ]
+      },
+      "combatEvents": 12,
+      "tooltipChars": 168,
+      "tooltipWrap": 360.0,
+      "passed": true
+    }
+  },
+  "화면": [
+    {
+      "파일": "Fleet-1280x720-0.8.png",
+      "너비": 1280,
+      "높이": 720,
+      "UI 배율": 0.8
+    },
+    {
+      "파일": "Fleet-1920x1080-0.8.png",
+      "너비": 1920,
+      "높이": 1080,
+      "UI 배율": 0.8
+    },
+    {
+      "파일": "Fleet-1280x720-1.0.png",
+      "너비": 1280,
+      "높이": 720,
+      "UI 배율": 1.0
+    },
+    {
+      "파일": "Fleet-1920x1080-1.0.png",
+      "너비": 1920,
+      "높이": 1080,
+      "UI 배율": 1.0
+    },
+    {
+      "파일": "Fleet-1280x720-1.5.png",
+      "너비": 1280,
+      "높이": 720,
+      "UI 배율": 1.5
+    },
+    {
+      "파일": "Fleet-1920x1080-1.5.png",
+      "너비": 1920,
+      "높이": 1080,
+      "UI 배율": 1.5
+    }
+  ],
+  "개발 에디터 기동 로그": {
+    "Condition failed": 15,
+    "참고": "검사 실행 전 엔진 로그. 위 글꼴 자동화 보고서에는 실패 0건."
+  },
+  "미검증": [
+    "물리 마우스·키보드 입력 및 툴팁 자동 표시 위치",
+    "다른 PC나 그래픽 백엔드",
+    "모든 화면을 6개 배율·해상도 조합으로 교차 검사",
+    "전투 전체 회귀·성능 벤치마크"
+  ],
+  "로그": [
+    "Saved/Logs/TypographyBuild.log",
+    "Saved/Logs/TypographyRules.log",
+    "Saved/Logs/TypographyCleanPackage.log",
+    "Saved/Logs/TypographyContent.log",
+    "Saved/Logs/TypographyPakList.log",
+    "Saved/Logs/TypographyValidateHeroArena.log",
+    "Saved/Logs/TypographyValidateInteriorCards.log",
+    "Saved/Logs/TypographyVerifyMissionDebrief.log",
+    "Saved/Logs/TypographyFrames.log",
+    "Saved/Logs/TypographyCaptureTypographyPanels.log"
+  ]
+}

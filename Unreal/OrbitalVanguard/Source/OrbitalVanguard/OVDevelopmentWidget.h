@@ -10,7 +10,7 @@ class ORBITALVANGUARD_API UOVCompactCombo : public UComboBoxString
 {
  GENERATED_BODY()
 public:
- void SetCompactFont() { auto CompactFont=GetFont();CompactFont.Size=14;InitFont(CompactFont); }
+ void SetCompactFont();
 };
 UCLASS()
 class ORBITALVANGUARD_API UOVDevelopmentItem : public UButton

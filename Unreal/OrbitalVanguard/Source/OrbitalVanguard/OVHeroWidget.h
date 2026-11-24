@@ -85,6 +85,7 @@ private:
     UFUNCTION() void ToggleCatalogue();
     UPROPERTY() TObjectPtr<UTextBlock> Header;
     UPROPERTY() TObjectPtr<UTextBlock> Detail;
+    UPROPERTY() TObjectPtr<UTextBlock> DetailNumbers;
     UPROPERTY() TObjectPtr<class UImage> Standing;
     UPROPERTY() TObjectPtr<class USizeBox> StandingBox;
     UPROPERTY() TObjectPtr<UTextBlock> EmptyHelp;

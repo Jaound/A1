@@ -24,7 +24,7 @@ void AOVHUD::DrawMission()
  AddHitBox(FVector2D(X,Y)*UIScale,FVector2D(302,226)*UIScale,TEXT("MissionBackground"),true,9);
  DrawRect(FLinearColor(.008f,.02f,.04f,.94f),X,Y,302,226);
  const TCHAR* Phases[]={TEXT("적 쉴드 돌파"),TEXT("강습 투입 가능"),TEXT("강습 인원 이동 중"),TEXT("선내 목표를 지시하세요"),TEXT("생존 인원 회수 중"),TEXT("작전 종료")};
- DrawText(Phases[FMath::Clamp(int32(Mission->Phase),0,5)],Accent,X+12,Y+10,GEngine->GetMediumFont());
+ DrawText(Phases[FMath::Clamp(int32(Mission->Phase),0,5)],Accent,X+12,Y+10,OVTypography::Font(EOVTextRole::Body));
  for(int32 I=0;I<6;++I)DrawRect(I<=int32(Mission->Phase)?Accent:FLinearColor(.07f,.13f,.2f),X+12+I*46,Y+38,40,3);
  auto Pair=[&](FName A,const TCHAR* AL,FName B,const TCHAR* BL,float Row)
  {Button(A,AL,X+12,Y+Row,134);Button(B,BL,X+154,Y+Row,134);};
@@ -35,12 +35,12 @@ void AOVHUD::DrawMission()
  } else if(Mission->Mode==EOVMissionMode::Defense) {
   Pair(TEXT("MissionDefendShield"),TEXT("쉴드실 수호"),TEXT("MissionDefendBridge"),TEXT("함교 수호"),54);
   Pair(TEXT("MissionShield"),TEXT("쉴드실 탈환"),TEXT("MissionBridge"),TEXT("함교 탈환"),88);
- } else DrawText(TEXT("함대만 교전 중"),Ink,X+12,Y+64,GEngine->GetSmallFont());
+ } else DrawText(TEXT("함대만 교전 중"),Ink,X+12,Y+64,OVTypography::Font(EOVTextRole::Body));
  Pair(TEXT("InteriorMissionToggle"),TEXT("선내 지도"),TEXT("MissionHeroPanel"),TEXT("영웅 위치"),158);
  const auto Score=Mission->GetScore();
- DrawText(FString::Printf(TEXT("진입 %d  ·  회수 %d"),Score.Entered,Score.Returned),Ink,X+12,Y+194,GEngine->GetSmallFont());
+ DrawText(FString::Printf(TEXT("진입 %d  ·  회수 %d"),Score.Entered,Score.Returned),Ink,X+12,Y+194,OVTypography::Font(EOVTextRole::Numeric));
  if(Mission->Result!=EOVMissionResult::Ongoing) {
   const TCHAR* Results[]={TEXT("진행"),TEXT("성공"),TEXT("실패"),TEXT("철수 완료"),TEXT("미해결")};
-  DrawText(Results[FMath::Clamp(int32(Mission->Result),0,4)],Warning,X+216,Y+194,GEngine->GetSmallFont());
+  DrawText(Results[FMath::Clamp(int32(Mission->Result),0,4)],Warning,X+216,Y+194,OVTypography::Font(EOVTextRole::Body));
  }
 }
