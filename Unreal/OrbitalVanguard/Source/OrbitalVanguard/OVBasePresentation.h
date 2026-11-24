@@ -50,6 +50,9 @@ public:
     void AdvanceOperations(float Seconds);
     int32 ModuleIndex(int32 StableId) const;
     int32 UsedPoints(int32 Index) const;
+    int32 MaxPoints(int32 Index) const;
+    TArray<FName> YardHulls(int32 Index) const;
+    UFUNCTION(BlueprintPure) int32 StoredEquipmentCount() const;
     FString ShipOffer(FName Hull) const;
     FString ServiceQuote(const FOVBayOrder& Order) const;
     static OVBase::Resources ResearchPrice(int32 Tech);

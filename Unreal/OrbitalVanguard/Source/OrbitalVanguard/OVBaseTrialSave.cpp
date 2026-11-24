@@ -67,7 +67,8 @@ bool HasManifest(AOVShip* s)
     if(!s)return false;
     auto* w=s->GetWorld();
     const auto* carrier=w->GetSubsystem<UOVCarrierSubsystem>();
-    return !w->GetSubsystem<UOVInteriorSubsystem>()->GetUnitsOnShip(s,0).IsEmpty() ||
+    const auto* interior=w->GetSubsystem<UOVInteriorSubsystem>();
+    return interior->Units.ContainsByPredicate([s](const auto& unit){return unit.Ship==s;}) ||
         carrier->Aircraft.ContainsByPredicate([s](const auto& a){return a.Carrier==s;}) ||
         carrier->Hangars.ContainsByPredicate([s](const auto& a){return a.Carrier==s && a.StoredSmallShip.IsValid();});
 }
@@ -103,6 +104,15 @@ bool AOVBasePresentation::SaveTrial(FString& message) const
     Stock(data,stock);
     for (auto item:Build.Modules()) Record(data,item);
     auto orders=Orders;auto science=Science;TArray<VesselSnapshot> vessels;
+    auto* controller=Cast<AOVController>(GetWorld()->GetFirstPlayerController());
+    if(controller){
+        for(AOVShip* field:controller->Ships){
+            if(!IsValid(field)||field->TrialStation!=this||!field->BaseVesselId.IsValid())continue;
+            if(orders.ContainsByPredicate([field](const auto& order){return order.Id==field->BaseVesselId;}))continue;
+            auto& order=orders.AddDefaulted_GetRef();order.Id=field->BaseVesselId;
+            order.Ship=field;order.Hull=field->HullDefinitionId;order.Phase=EOVBayPhase::Field;
+        }
+    }
     for(const auto& o:orders){
         auto& v=vessels.AddDefaulted_GetRef();auto* s=o.Ship.Get();v.Present=s!=nullptr;
         if(!s)continue;

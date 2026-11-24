@@ -56,9 +56,18 @@ def run():
     stock=station.common_stock()
     verify("연구 예약",station.queue_research(1))
     verify("동일 연구 이중 예약 차단",not station.queue_research(1) and station.common_stock()==stock-800)
-    advance(240)
+    advance(40)
+    check("진행 중 연구 저장·복원",ok(station.save_trial()) and ok(station.load_trial()))
+    verify("복원된 연구 중복 청구 차단",not station.queue_research(1) and station.common_stock()==stock-800)
+    advance(201)
     check("연구 효과로 코어 승급 가능",station.upgrade_module(0))
     advance(300)
+    verify("코어 II와 연구소 II를 별도 검사",not station.queue_research(4))
+    check("연구소 II 증설",station.upgrade_module(6))
+    advance(61)
+    verify("중형 함체 정상 연구",station.queue_research(4))
+    advance(301)
+    check("중형 함체 효과로 중형 조선소 해금",station.reserve_module("Corridor",u.IntVector(0,-3,0),3) and station.reserve_module("YardMedium",u.IntVector(-5,-7,0),0))
     funds=station.common_stock()
     check("시험 연구 즉시 해금",station.prepare_trial_technology(7) and station.common_stock()==funds)
     verify("초계함 주문",station.order_hull(2,"corvette"))
@@ -102,6 +111,10 @@ def run():
     verify("장비 교체 주문",station.service_vessel(guid,True))
     advance(16)
     check("교체 장비 적용",station.vessel_phase(guid)==6 and station.refit_offer(guid)!=quote)
+    check("탈거 장비 기지에 귀속",station.stored_equipment_count()==1)
+    verify("보관 장비 재장착 주문",station.service_vessel(guid,True))
+    advance(16)
+    check("기존 장비 회수·재장착으로 장비 수 보존",station.refit_offer(guid)==quote and station.stored_equipment_count()==1)
     def rooms():
         return [str(x.get_editor_property("facility")) for x in systems.get_editor_property("layout").get_editor_property("slots")]
     original=rooms()
@@ -114,6 +127,12 @@ def run():
     check("정박함 재출항",station.launch_vessel(guid))
     advance(6)
     check("재출항 후 같은 현물·ID",station.find_vessel(guid)==vessel and station.vessel_phase(guid)==3 and len(pc.get_editor_property("ships"))==2)
+
+    check("재출항한 함대 저장",ok(station.save_trial()))
+    check("새 임무 인스턴스로 재시작",pc.start_play_scenario("BaseTrial"))
+    station=base()
+    verify("새 인스턴스에서 온라인 함선 복원",ok(station.load_trial()) and station.find_vessel(guid) and station.vessel_phase(guid)==3)
+    check("재호출로 물량 증가 없음",ok(station.load_trial()) and len(pc.get_editor_property("ships"))==2)
 
     check("경계 검사 초기화",pc.start_play_scenario("BaseTrial"))
     station=base()
@@ -179,6 +198,35 @@ def run():
     check("작업칸 사용량과 개별 시간 분리",station.vessel_phase(ids[0])==0 and all(station.vessel_phase(g)==1 for g in ids[1:]))
     advance(76)
     check("혼합 편성 실제 세 척",all(station.vessel_phase(g)==1 for g in ids) and len(pc.get_editor_property("ships"))==4)
+
+    check("도크 설치 부지 마련",station.demolish_module(2))
+    check("대형 도크 예약",reserve("DockLarge",4,-1))
+    fast(720)
+    dock_index=station.module_count()-1
+    dev=pc.get_editor_property("development")
+    pc.set_editor_property("developer_mode",True)
+    test_carriers=dev.spawn_ships("carrier",0,1,u.Vector(80000,80000,18000),0,2,0,False,False)
+    check("실제 함재기 재고를 가진 항모 준비",len(test_carriers)==1)
+    carrier=test_carriers[0]
+    wing=pc.get_editor_property("carrier")
+    interior=pc.get_editor_property("interior")
+    party=list(interior.register_boarding_team(carrier,0,1,4))
+    def manifest():
+        return sorted((c.aircraft_id,c.hp,c.shield,str(c.state)) for c in wing.aircraft if c.carrier==carrier)
+    air=manifest()
+    check("영웅 1명·분대원 4명·함재기 실물 준비",len(party)==5 and len(air)>0)
+    verify("탑재 항모 대형 도크 예약",station.dock_vessel(dock_index,carrier))
+    guid=station.vessel_id(carrier)
+    for _ in range(200):
+        advance(5)
+        if station.vessel_phase(guid)==6:break
+    verify("탑재 상태로 항모 접안",station.vessel_phase(guid)==6 and station.find_vessel(guid)==carrier)
+    check("정박 중 인원·기체 보존",sorted(party)==sorted(interior.get_units_on_ship(carrier,0)) and air==manifest())
+    check("탑재 명단 저장 제한 안내",not ok(station.save_trial()))
+    check("탑재 항모 재출항",station.launch_vessel(guid))
+    advance(15)
+    check("재출항 후 동일 영웅·병력·함재기",station.vessel_phase(guid)==3 and sorted(party)==sorted(interior.get_units_on_ship(carrier,0)) and air==manifest())
+    report["manifest"]={"personnel":len(party),"aircraft":len(air)}
 
     for speed in (1,2,3):
         check("배속 시험 초기화 "+str(speed),pc.start_play_scenario("BaseTrial"))

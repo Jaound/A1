@@ -52,6 +52,29 @@ bool AOVBasePresentation::InService(int32 i) const
     return Orders.ContainsByPredicate([id](const auto& o){return o.Facility==id || o.RefitYard==id;}) ||
            Science.ContainsByPredicate([id](const auto& o){return o.Lab==id;});
 }
+int32 AOVBasePresentation::MaxPoints(int32 i) const
+{
+    return i>=0 && i<ModuleCount() && Grade(Build.Modules()[i].Type)>0?Capacity(Build.Modules()[i].Type):0;
+}
+TArray<FName> AOVBasePresentation::YardHulls(int32 i) const
+{
+    TArray<FName> hulls;
+    if(i<0||i>=ModuleCount())return hulls;
+    const auto type=Build.Modules()[i].Type;
+    if(!Yard(type))return hulls;
+    const int grade=Grade(type);
+    for(const auto hull:OVCalibration::GetHullIds()){
+        const int size=Size(hull);
+        if(size>0&&size<=grade&&(grade!=4||size>=3))hulls.Add(hull);
+    }
+    return hulls;
+}
+int32 AOVBasePresentation::StoredEquipmentCount() const
+{
+    int32 count=0;
+    for(const auto& lot:Orders)count+=lot.RemovedGear.Num();
+    return count;
+}
 int32 AOVBasePresentation::UsedPoints(int32 i) const
 {
     if(i<0||i>=ModuleCount())return 0;
@@ -430,7 +453,7 @@ void AOVBasePresentation::AdvanceOperations(float seconds)
                 const auto shape=FCollisionShape::MakeBox(OVCalibration::GetHullWorldHalfExtent(o.Hull));
                 blocked=Meshes[i]->SweepComponent(wall,s->GetActorLocation(),pos,dir.Rotation().Quaternion(),shape,true);
             }
-            if(blocked){o.Wait=TEXT("입구 점유 · 앞 함선을 이동하세요");continue;}
+            if(blocked){o.Wait=TEXT("출입 공간 차단 · 입구와 앞 함선 확인");continue;}
             s->SetActorHiddenInGame(false);s->SetActorLocationAndRotation(pos,dir.Rotation());
             o.Time=next;if(next>0)continue;
             s->SetActorHiddenInGame(!depart);s->SetActorEnableCollision(depart);s->bUnderBaseControl=!depart;
@@ -452,7 +475,12 @@ void AOVBasePresentation::AdvanceOperations(float seconds)
             }
             auto* combat=GetWorld()->GetSubsystem<UOVCombatSubsystem>();const auto st=combat->GetShipState(s);
             const auto* old=st.Mounts.FindByPredicate([&](const auto& m){return m.MountId==o.Mount;});
-            if(old&&combat->SetWeaponProfile(s,o.Mount,o.Equipment)){o.RemovedGear.Add(old->Profile.ProfileId);o.RefitYard=0;o.Phase=EOVBayPhase::Berthed;}
+            if(old&&combat->SetWeaponProfile(s,o.Mount,o.Equipment)){
+                // Keep the donor order as provenance, but issue recovered parts station-wide.
+                for(auto& lot:Orders)if(lot.RemovedGear.RemoveSingle(o.Equipment)>0)break;
+                o.RemovedGear.Add(old->Profile.ProfileId);
+                o.RefitYard=0;o.Phase=EOVBayPhase::Berthed;
+            }
             else o.Wait=TEXT("장착 조건 미충족");
         }
     }

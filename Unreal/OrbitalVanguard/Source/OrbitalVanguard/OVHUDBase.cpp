@@ -188,7 +188,7 @@ bool AOVHUD::HandleBaseAction(FName action)
         if (action==TEXT("Frame")) return true;
     }
     auto& build=BasePresentation->Build;
-    const auto hulls=OVCalibration::GetHullIds();
+    const auto hulls=BasePresentation->YardHulls(BaseInspect);
     auto* pc=Cast<AOVController>(PlayerOwner);
     auto selectedOrder=[&]() -> FOVBayOrder* {
         TArray<FOVBayOrder*> found;
@@ -667,7 +667,7 @@ void AOVHUD::DrawBaseWindow(int32 id,int32 priority)
         label(TEXT("시험장 저장"),AccentColor,12,66,heading);
         button(TEXT("BaseSave"),TEXT("현재 기지 저장"),12,99,190);
         button(TEXT("BaseLoad"),TEXT("저장한 기지 불러오기"),12,137,190);
-        label(TEXT("배치 · 자원 · 진행 중 공사"),FLinearColor::White,12,179,body);
+        label(TEXT("배치 · 자원 · 함선 · 진행 중 작업"),FLinearColor::White,12,179,body);
     }
     else
     {
@@ -745,7 +745,7 @@ void AOVHUD::DrawBaseWindow(int32 id,int32 priority)
         if(!BaseRemoval && OVBase::HasBay(item.Type) && item.Type!=OVBase::Kind::Logistics && !item.Remaining){
             const bool yard=OVBase::Def(item.Type).YardBay;
             if(yard){
-                auto hulls=OVCalibration::GetHullIds();if(!hulls.IsEmpty()){
+                auto hulls=BasePresentation->YardHulls(BaseInspect);if(!hulls.IsEmpty()){
                     auto hull=hulls[BaseHullChoice%hulls.Num()];
                     label(BasePresentation->ShipOffer(hull),AccentColor,right,64,body);
                     button(TEXT("BaseHullNext"),TEXT("다음 함체"),right,115,110);
@@ -754,11 +754,13 @@ void AOVHUD::DrawBaseWindow(int32 id,int32 priority)
             }else button(TEXT("BaseBerthSelected"),TEXT("선택함 복귀·접안"),right,115,230);
             TArray<const FOVBayOrder*> here;
             for(const auto& o:BasePresentation->Orders)if(o.Facility==item.Id)here.Add(&o);
-            label(FString::Printf(TEXT("점유 %d · 함선 %d척"),BasePresentation->UsedPoints(BaseInspect),here.Num()),AccentColor,right,259,body);
+            label(FString::Printf(TEXT("점유 %d/%d · 함선 %d척"),BasePresentation->UsedPoints(BaseInspect),BasePresentation->MaxPoints(BaseInspect),here.Num()),AccentColor,right,259,body);
             if(!here.IsEmpty()){
                 const auto& o=*here[BaseBerthChoice%here.Num()];
                 const TCHAR* phases[]={TEXT("건조"),TEXT("출항 대기"),TEXT("출항"),TEXT("함대"),TEXT("접근"),TEXT("진입"),TEXT("정박"),TEXT("수리"),TEXT("개조")};
-                label(FString::Printf(TEXT("%s · %s %.0f초"),*OVCalibration::GetHullName(o.Hull),phases[int(o.Phase)],o.Time),FLinearColor::White,right,283,body);
+                FString status=OVCalibration::GetHullName(o.Hull)+TEXT(" · ")+phases[int(o.Phase)];
+                if(o.Time>0)status+=FString::Printf(TEXT(" %.0f초"),o.Time);
+                label(status,FLinearColor::White,right,283,body);
                 label(o.Wait.IsEmpty()?BasePresentation->ServiceQuote(o):o.Wait,FLinearColor::Yellow,right,308,body);
                 button(TEXT("BaseBerthNext"),TEXT("다음 함선"),right,338,106);
                 if(o.Phase==EOVBayPhase::Ready||o.Phase==EOVBayPhase::Berthed)button(TEXT("BaseBayLaunch"),TEXT("출격"),right+114,338,110);
@@ -766,6 +768,7 @@ void AOVHUD::DrawBaseWindow(int32 id,int32 priority)
                     button(TEXT("BaseDamageExercise"),TEXT("시험 · 손상 부여"),12,434,190);
                     button(TEXT("BaseRoomsRefit"),TEXT("시설 재배치 · 40"),right,434,220);
                     label(BasePresentation->FacilityOffer(o.Id),FLinearColor::White,right,464,body);
+                    label(FString::Printf(TEXT("기지 보관 장비 %d개"),BasePresentation->StoredEquipmentCount()),AccentColor,12,464,body);
                     label(BasePresentation->RefitOffer(o.Id),AccentColor,right,407,body);
                     button(TEXT("BaseBayRepair"),TEXT("견적 수리"),right,373,106);
                     button(TEXT("BaseBayRefit"),TEXT("무장 교체 · 40"),right+114,373,114);
