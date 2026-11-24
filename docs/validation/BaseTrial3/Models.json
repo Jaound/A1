@@ -1,0 +1,184 @@
+{
+  "YardMedium": {
+    "asset": "/Game/Presentation/Base/SM_OV_Base_YardMedium.SM_OV_Base_YardMedium",
+    "triangles": 1953639,
+    "port_status": "unmeasured_exterior",
+    "source_sha256": "215a2d313fa0135b64954f141075f7b0334b5d7b2b8f9cc3ba6dff5618203e25",
+    "source_file": "Meshy_AI_model_20261124_texture.fbx",
+    "exterior_size_m": [
+      141.0,
+      79.75914764404297,
+      53.16512680053711
+    ],
+    "dock_collision_validated": false,
+    "socket_validated": false
+  },
+  "YardLarge": {
+    "asset": "/Game/Presentation/Base/SM_OV_Base_YardLarge.SM_OV_Base_YardLarge",
+    "triangles": 2252755,
+    "port_status": "unmeasured_exterior",
+    "source_sha256": "00da0818719f54262045640bb3c5fa06e98457e742ea91f7d36384726597febf",
+    "source_file": "Meshy_AI_model_20261124_texture.fbx",
+    "exterior_size_m": [
+      211.50001525878906,
+      134.4817352294922,
+      79.52455139160156
+    ],
+    "dock_collision_validated": false,
+    "socket_validated": false
+  },
+  "YardSuperheavy": {
+    "asset": "/Game/Presentation/Base/SM_OV_Base_YardSuperheavy.SM_OV_Base_YardSuperheavy",
+    "triangles": 3035024,
+    "port_status": "unmeasured_exterior",
+    "source_sha256": "a24203d7a7d96155727e545f53c09d7d102523f6af433c4947ebb53bd13b2981",
+    "source_file": "Meshy_AI_model_20261124_texture.fbx",
+    "exterior_size_m": [
+      282.0,
+      144.70553588867188,
+      93.94903564453125
+    ],
+    "dock_collision_validated": false,
+    "socket_validated": false
+  },
+  "DockMedium": {
+    "asset": "/Game/Presentation/Base/SM_OV_Base_DockMedium.SM_OV_Base_DockMedium",
+    "triangles": 1828175,
+    "port_status": "unmeasured_exterior",
+    "source_sha256": "bd4f4a8966870d44b783a9148378d9185cdefa12c1ce5d4a367a62f490cfe86d",
+    "source_file": "Meshy_AI_model_20261124_texture.fbx",
+    "exterior_size_m": [
+      117.5,
+      73.65463256835938,
+      63.87664031982422
+    ],
+    "dock_collision_validated": false,
+    "socket_validated": false
+  },
+  "DockLarge": {
+    "asset": "/Game/Presentation/Base/SM_OV_Base_DockLarge.SM_OV_Base_DockLarge",
+    "triangles": 1902604,
+    "port_status": "unmeasured_exterior",
+    "source_sha256": "5bd61c78d2b621b2f3860b785c7d0d8a463b0d74be6f72c2083739f644c48906",
+    "source_file": "Meshy_AI_model_20261124_texture.fbx",
+    "exterior_size_m": [
+      164.5,
+      80.20714569091797,
+      89.78021240234375
+    ],
+    "dock_collision_validated": false,
+    "socket_validated": false
+  },
+  "DockSuperheavy": {
+    "asset": "/Game/Presentation/Base/SM_OV_Base_DockSuperheavy.SM_OV_Base_DockSuperheavy",
+    "triangles": 1689228,
+    "port_status": "unmeasured_exterior",
+    "source_sha256": "d50d4b36512c5d87eba50bacdd9f356ecf8086333dc73324a1cf02873331c3fd",
+    "source_file": "Meshy_AI_model_20261124_texture.fbx",
+    "exterior_size_m": [
+      235.00001525878906,
+      117.47718811035156,
+      109.2437515258789
+    ],
+    "dock_collision_validated": false,
+    "socket_validated": false
+  },
+  "LogisticsTerminal": {
+    "asset": "/Game/Presentation/Base/SM_OV_Base_LogisticsTerminal.SM_OV_Base_LogisticsTerminal",
+    "triangles": 2506546,
+    "port_status": "unmeasured_exterior",
+    "source_sha256": "4678dc164362d775ccc0f63dd1703ee815288e9b9655bc69f0e26484a6dd8159",
+    "source_file": "Meshy_AI_model_20261124_texture.fbx",
+    "exterior_size_m": [
+      68.19295501708984,
+      47.0,
+      32.592376708984375
+    ],
+    "dock_collision_validated": false,
+    "socket_validated": false
+  },
+  "ResearchLab": {
+    "asset": "/Game/Presentation/Base/SM_OV_Base_ResearchLab.SM_OV_Base_ResearchLab",
+    "triangles": 1758629,
+    "port_status": "unmeasured_exterior",
+    "source_sha256": "b677c65c6cacdf372b1e2a892e41461a810503fb79b9d9b97bde591eda125b5d",
+    "source_file": "Meshy_AI_model_20261124_texture.fbx",
+    "exterior_size_m": [
+      47.0,
+      24.536815643310547,
+      29.927156448364258
+    ],
+    "dock_collision_validated": false,
+    "socket_validated": false
+  },
+  "HeroAcademy": {
+    "asset": "/Game/Presentation/Base/SM_OV_Base_HeroAcademy.SM_OV_Base_HeroAcademy",
+    "triangles": 990978,
+    "port_status": "unmeasured_exterior",
+    "source_sha256": "9dd4ba1d3bd417cba682129b8fe8e872a7a6433aec577a37d2e56b4e03b9d2ed",
+    "source_file": "Meshy_AI_model_20261124_texture.fbx",
+    "exterior_size_m": [
+      47.0,
+      18.171815872192383,
+      16.615097045898438
+    ],
+    "dock_collision_validated": false,
+    "socket_validated": false
+  },
+  "CrewSupport": {
+    "asset": "/Game/Presentation/Base/SM_OV_Base_CrewSupport.SM_OV_Base_CrewSupport",
+    "triangles": 967060,
+    "port_status": "unmeasured_exterior",
+    "source_sha256": "9dd164503448b61a3f42dfa47bd619f08edbea76153b6dd3ae3cd38161d159e4",
+    "source_file": "Meshy_AI_scifi_personnel_support_station_20261124_image-to-3d-texture.fbx",
+    "exterior_size_m": [
+      47.0,
+      39.079437255859375,
+      20.443307876586914
+    ],
+    "dock_collision_validated": false,
+    "socket_validated": false
+  },
+  "DefensePlatform": {
+    "asset": "/Game/Presentation/Base/SM_OV_Base_DefensePlatform.SM_OV_Base_DefensePlatform",
+    "triangles": 2448023,
+    "port_status": "unmeasured_exterior",
+    "source_sha256": "dda47048e4ad93618903502c59f8033973d49382c5e2605c19778233ab2c1f5b",
+    "source_file": "Meshy_AI_model_20261124_texture.fbx",
+    "exterior_size_m": [
+      43.447994232177734,
+      47.0,
+      18.452688217163086
+    ],
+    "dock_collision_validated": false,
+    "socket_validated": false
+  },
+  "RadarArray": {
+    "asset": "/Game/Presentation/Base/SM_OV_Base_RadarArray.SM_OV_Base_RadarArray",
+    "triangles": 2649475,
+    "port_status": "unmeasured_exterior",
+    "source_sha256": "53ee221a7d59b3e2eadb7b4f700ade130bf7c350d1d50bf99c4b28720085a52f",
+    "source_file": "Meshy_AI_model_20261124_texture.fbx",
+    "exterior_size_m": [
+      47.0,
+      33.50114440917969,
+      22.624385833740234
+    ],
+    "dock_collision_validated": false,
+    "socket_validated": false
+  },
+  "ShieldBastion": {
+    "asset": "/Game/Presentation/Base/SM_OV_Base_ShieldBastion.SM_OV_Base_ShieldBastion",
+    "triangles": 2316224,
+    "port_status": "unmeasured_exterior",
+    "source_sha256": "a16c6486d741c119917a85fd69c9927dd3942560f3d586c034741f9be6c3ca44",
+    "source_file": "Meshy_AI_model_20261124_texture.fbx",
+    "exterior_size_m": [
+      59.67743682861328,
+      70.5,
+      43.856727600097656
+    ],
+    "dock_collision_validated": false,
+    "socket_validated": false
+  }
+}

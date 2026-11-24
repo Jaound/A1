@@ -1,0 +1,169 @@
+{
+  "checks": [
+    {
+      "name": "start BaseTrial",
+      "passed": true
+    },
+    {
+      "name": "19-entry definition recognized at runtime",
+      "passed": true
+    },
+    {
+      "name": "first workshop starts at Core I",
+      "passed": true
+    },
+    {
+      "name": "cannot upgrade without Engineering II",
+      "passed": true
+    },
+    {
+      "name": "trial Engineering II",
+      "passed": true
+    },
+    {
+      "name": "charge Core II once",
+      "passed": true
+    },
+    {
+      "name": "Core II completes",
+      "passed": true
+    },
+    {
+      "name": "power tier and technology gates independent",
+      "passed": true
+    },
+    {
+      "name": "prepare first extension technology",
+      "passed": true
+    },
+    {
+      "name": "construction chain held",
+      "passed": true
+    },
+    {
+      "name": "reserved dependency protected",
+      "passed": true
+    },
+    {
+      "name": "Warehouse I connected",
+      "passed": true
+    },
+    {
+      "name": "Warehouse II reservation",
+      "passed": true
+    },
+    {
+      "name": "Core III reservation",
+      "passed": true
+    },
+    {
+      "name": "individual Warehouse II completion",
+      "passed": true
+    },
+    {
+      "name": "warehouse III technology",
+      "passed": true
+    },
+    {
+      "name": "single Warehouse III supplies 5500 advanced",
+      "passed": true
+    },
+    {
+      "name": "Core IV held by storage",
+      "passed": true
+    },
+    {
+      "name": "second store",
+      "passed": true
+    },
+    {
+      "name": "second storage is tier I",
+      "passed": true
+    },
+    {
+      "name": "Core IV starts with enlarged storage",
+      "passed": true
+    },
+    {
+      "name": "Core IV completes",
+      "passed": true
+    },
+    {
+      "name": "new scene for ring",
+      "passed": true
+    },
+    {
+      "name": "build hub at 3/0",
+      "passed": true
+    },
+    {
+      "name": "build hub at 4/0",
+      "passed": true
+    },
+    {
+      "name": "build hub at 5/0",
+      "passed": true
+    },
+    {
+      "name": "build hub at 3/1",
+      "passed": true
+    },
+    {
+      "name": "build hub at 4/1",
+      "passed": true
+    },
+    {
+      "name": "build hub at 5/1",
+      "passed": true
+    },
+    {
+      "name": "build ring warehouse",
+      "passed": true
+    },
+    {
+      "name": "storage online",
+      "passed": true
+    },
+    {
+      "name": "demolition pays 75 percent once",
+      "passed": true
+    },
+    {
+      "name": "ring preserves path",
+      "passed": true
+    },
+    {
+      "name": "last path disconnects",
+      "passed": true
+    },
+    {
+      "name": "reconnect with new hub",
+      "passed": true
+    },
+    {
+      "name": "save pending construction",
+      "passed": true
+    },
+    {
+      "name": "restart is separate",
+      "passed": true
+    },
+    {
+      "name": "restore pending work",
+      "passed": true
+    },
+    {
+      "name": "restored construction reconnects",
+      "passed": true
+    },
+    {
+      "name": "truncated data keeps live session",
+      "passed": true
+    },
+    {
+      "name": "shared camera and base survive toggling",
+      "passed": true
+    }
+  ],
+  "passed": true
+}

@@ -1,6 +1,6 @@
 ## 현재 · 기지 건설 3단계
 
-기획 `91a15db`, 시작 코드 `85ff567`. D의 A1 원본 일치 확인 후 19종·코어·창고·철거·연결망·저장을 통합했다. 격리 D 작업본 Win64 Development Editor 빌드 및 독립 C++ 규칙 검증 성공. [실행 안내](BASE_TRIAL3_GUIDE.md) · [3단계 검증과 재개](validation/BaseTrial3/README.md).
+기획 `91a15db`, 시작 코드 `85ff567`. D의 A1 원본 일치 확인 후 19종·코어·창고·철거·연결망·저장을 통합했다. D에서 Win64 Development Editor·Game 빌드 성공. 자동 168/168, 재접합 수정 뒤 신규 PIE 41/41. 원본 외형 13종을 별도 접합 검증 상태로 반입했다. [실행 안내](BASE_TRIAL3_GUIDE.md) · [3단계 검증과 재개](validation/BaseTrial3/README.md).
 
 ## 현재 · 기지 건설 시험장 공유 전장
 
