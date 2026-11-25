@@ -880,7 +880,7 @@ void AOVHUD::DrawStarMap()
 
 UTextureRenderTarget2D* AOVHUD::HullCardImage(FName hull,AOVShip* existing)
 {
- if(auto* art=SelectionPortraits.FindRef(hull).Get())return art;
+ if(auto* portrait=SelectionPortraits.FindRef(hull).Get())return portrait->GetTexture();
  if(hull.IsNone()||!FApp::CanEverRender())return nullptr;
  auto* pc=Cast<AOVController>(PlayerOwner);if(!pc||!pc->Combat)return nullptr;
  AOVShip* display=existing;
@@ -892,6 +892,7 @@ UTextureRenderTarget2D* AOVHUD::HullCardImage(FName hull,AOVShip* existing)
     if(!OVCalibration::ConfigureHull(*pc->Combat,*display,hull,true,display->GetActorLocation(),OVCalibration::GetHullGeometryScale(hull),2,false,true)){display->Destroy();return nullptr;}
  }
  auto* mirror=NewObject<UOVShipPreview>(this);mirror->Update(display,UOVShipPreview::DefaultHullView(),1.12f,2.8f,INDEX_NONE,384,true);
- auto* art=mirror->GetTexture();if(art)SelectionPortraits.Add(hull,art);mirror->Release();if(!existing)display->Destroy();
+ auto* art=mirror->GetTexture();if(art)SelectionPortraits.Add(hull,mirror);else mirror->Release();
+ if(!existing)display->Destroy();
  return art;
 }

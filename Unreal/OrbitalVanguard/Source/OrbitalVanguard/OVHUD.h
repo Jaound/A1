@@ -170,7 +170,7 @@ private:
  bool bNoticeSettings=false;
  bool PausedBeforeMenu=false;
  int32 NoticeMask=0x3fffe & ~(1<<11);
- UPROPERTY(Transient) TMap<FName,TObjectPtr<UTextureRenderTarget2D>> SelectionPortraits;
+ UPROPERTY(Transient) TMap<FName,TObjectPtr<UOVShipPreview>> SelectionPortraits;
  bool bHangarView=false;
  int32 DetailsSlotPage=0,DetailsPageDeck=INDEX_NONE;
  TWeakObjectPtr<AOVShip> DetailsPageShip;

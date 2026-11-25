@@ -1086,6 +1086,8 @@ void AOVHUD::BeginPlay()
 void AOVHUD::EndPlay(const EEndPlayReason::Type Reason)
 {
  if (IsValid(BasePresentation)) BasePresentation->Destroy();
+ for (auto& Pair : SelectionPortraits) if (Pair.Value) Pair.Value->Release();
+ SelectionPortraits.Reset();
  if(ShipPreview)ShipPreview->Release();
  if(WeaponPreview)WeaponPreview->Release();
  for(auto Preview:PinnedPreviews)if(Preview)Preview->Release();

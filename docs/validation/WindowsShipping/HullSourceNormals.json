@@ -1,0 +1,194 @@
+{
+  "air_defense": {
+    "asset": "/Game/Presentation/Ships/Air_DefenseFull/T_Normal",
+    "source": "방공함/Meshy_AI_model_20261112_texture_fbx/Meshy_AI_model_20261112_texture_normal.png",
+    "sha256": "98ac3e3ebf35269b638ae0f7019bfce7cd6c040765956315f1dbe8a79347fe75",
+    "size": [
+      4096,
+      4096
+    ],
+    "flip_green": false,
+    "sRGB": false,
+    "compression": "BC5 normal map"
+  },
+  "assault": {
+    "asset": "/Game/Presentation/Ships/AssaultFull/T_Normal",
+    "source": "강습선/Meshy_AI_scifi_assault_ship_20261117_image-to-3d-texture_fbx/Meshy_AI_scifi_assault_ship_20261117_image-to-3d-texture_normal.png",
+    "sha256": "3c063caf2c6e5ff01439fd66b2b7563dba69eda20eb5338afab18d6a2665c69f",
+    "size": [
+      4096,
+      4096
+    ],
+    "flip_green": false,
+    "sRGB": false,
+    "compression": "BC5 normal map"
+  },
+  "bastion": {
+    "asset": "/Game/Presentation/Ships/BastionFull/T_Normal",
+    "source": "바스티온급 구축함/Meshy_AI_model_20261112_texture_fbx/Meshy_AI_model_20261112_texture_normal.png",
+    "sha256": "7ea3e81d954148a882233af1fee4fdc3e41fa50c4a3663853c90a324afd268e5",
+    "size": [
+      4096,
+      4096
+    ],
+    "flip_green": false,
+    "sRGB": false,
+    "compression": "BC5 normal map"
+  },
+  "battlecarrier": {
+    "asset": "/Game/Presentation/Ships/BattlecarrierFull/T_Normal",
+    "source": "항공순양함/Meshy_AI_model_20261117_texture_fbx/Meshy_AI_model_20261117_texture_normal.png",
+    "sha256": "f0e4dccb68182be98fde816ac4d801fc27b8dc1922bc1143db5f161658bcb4fb",
+    "size": [
+      4096,
+      4096
+    ],
+    "flip_green": false,
+    "sRGB": false,
+    "compression": "BC5 normal map"
+  },
+  "battleship": {
+    "asset": "/Game/Presentation/Ships/BattleshipFull/T_Normal",
+    "source": "전함/Meshy_AI_model_20261112_texture_fbx/Meshy_AI_model_20261112_texture_normal.png",
+    "sha256": "0e98b41b01b780289daa516cf85e97f40e2b8ea3336fae630a951cab09e4fc60",
+    "size": [
+      4096,
+      4096
+    ],
+    "flip_green": false,
+    "sRGB": false,
+    "compression": "BC5 normal map"
+  },
+  "carrier": {
+    "asset": "/Game/Presentation/Ships/CarrierFull/T_Normal",
+    "source": "항공모함/Meshy_AI_model_20261112_texture_normal.png",
+    "sha256": "66a84c38b9bfc13e62fd203828273fea2e7160e1607b495f793fbdcb8d8cbb6a",
+    "size": [
+      4096,
+      4096
+    ],
+    "flip_green": false,
+    "sRGB": false,
+    "compression": "BC5 normal map"
+  },
+  "cruiser": {
+    "asset": "/Game/Presentation/Ships/CruiserFull/T_Normal",
+    "source": "순양함/Meshy_AI_SciFi_Cruiser_Spaceship_20261112_image-to-3d-texture_normal.png",
+    "sha256": "284637c07a6bb8bab0ab2699fdd983067f796d55ccd05457586b5b0e80c60570",
+    "size": [
+      4096,
+      4096
+    ],
+    "flip_green": false,
+    "sRGB": false,
+    "compression": "BC5 normal map"
+  },
+  "dreadnought": {
+    "asset": "/Game/Presentation/Ships/DreadnoughtFull/T_Normal",
+    "source": "구축전함/Meshy_AI_scifi_battlecruiser_bc300_20261117_image-to-3d-texture_normal.png",
+    "sha256": "fad34cdafdc9fbab2b5ef097c37d71ab5afe39646ebc1973706bde3a84b3f5f2",
+    "size": [
+      4096,
+      4096
+    ],
+    "flip_green": false,
+    "sRGB": false,
+    "compression": "BC5 normal map"
+  },
+  "fighter": {
+    "asset": "/Game/Presentation/Ships/FighterFull/T_Normal",
+    "source": "함재기/Meshy_AI_scifi_fighter_interceptor_20261117_image-to-3d-texture_fbx/Meshy_AI_scifi_fighter_interceptor_20261117_image-to-3d-texture_normal.png",
+    "sha256": "fd05d53d20bf232c1ec22f0d616c1819ad075acf9a7fc068fc53f982d11b03cb",
+    "size": [
+      4096,
+      4096
+    ],
+    "flip_green": false,
+    "sRGB": false,
+    "compression": "BC5 normal map"
+  },
+  "frigate": {
+    "asset": "/Game/Presentation/Ships/FrigateFull/T_Normal",
+    "source": "호위함/Meshy_AI_model_20261112_texture_fbx/Meshy_AI_model_20261112_texture_normal.png",
+    "sha256": "ae3988fb4c5184d93160e2d8108088d55857eb47ef45e189cac24a044a8bd082",
+    "size": [
+      4096,
+      4096
+    ],
+    "flip_green": false,
+    "sRGB": false,
+    "compression": "BC5 normal map"
+  },
+  "mining": {
+    "asset": "/Game/Presentation/Ships/MiningFull/T_Normal",
+    "source": "채굴선/Meshy_AI_scifi_mining_ship_20261117_image-to-3d-texture_fbx/Meshy_AI_scifi_mining_ship_20261117_image-to-3d-texture_normal.png",
+    "sha256": "8b1c3c1a3216463c92eaa8591d48e1f97291a219da15c930d4f8c4f2b0fdb037",
+    "size": [
+      4096,
+      4096
+    ],
+    "flip_green": false,
+    "sRGB": false,
+    "compression": "BC5 normal map"
+  },
+  "missile_ship": {
+    "asset": "/Game/Presentation/Ships/Missile_ShipFull/T_Normal",
+    "source": "전략미사일함/Meshy_AI_scifi_missile_cruiser_20261117_image-to-3d-texture_fbx/Meshy_AI_scifi_missile_cruiser_20261117_image-to-3d-texture_normal.png",
+    "sha256": "b6b4e00f5a4b3233cd0a2c44be6ea4275eae2c9af17d185250aa39c8fc99b2c4",
+    "size": [
+      4096,
+      4096
+    ],
+    "flip_green": false,
+    "sRGB": false,
+    "compression": "BC5 normal map"
+  },
+  "radar": {
+    "asset": "/Game/Presentation/Ships/RadarFull/T_Normal",
+    "source": "레이더 함/Meshy_AI_model_20261112_texture_fbx/Meshy_AI_model_20261112_texture_normal.png",
+    "sha256": "b1d3a7f230b1d7333825a7283a1210ba22f3816189db4b9f19556b9da6652b94",
+    "size": [
+      4096,
+      4096
+    ],
+    "flip_green": false,
+    "sRGB": false,
+    "compression": "BC5 normal map"
+  },
+  "repair": {
+    "asset": "/Game/Presentation/Ships/RepairFull/T_Normal",
+    "source": "보급수리선/Meshy_AI_scifi_support_repair_ship_20261117_image-to-3d-texture_fbx/Meshy_AI_scifi_support_repair_ship_20261117_image-to-3d-texture_normal.png",
+    "sha256": "4b8e371e0a602f0d7c89886c63bad4180b4d7945876edd7533cebff107abc618",
+    "size": [
+      4096,
+      4096
+    ],
+    "flip_green": false,
+    "sRGB": false,
+    "compression": "BC5 normal map"
+  },
+  "transport": {
+    "asset": "/Game/Presentation/Ships/TransportFull/T_Normal",
+    "source": "수송선/Meshy_AI_scifi_medium_transport_ship_20261117_image-to-3d-texture_fbx/Meshy_AI_scifi_medium_transport_ship_20261117_image-to-3d-texture_normal.png",
+    "sha256": "a7e661ccb80c07caeb6473e79ae8c0fe51fc2de4ec2b60fc8f3cf66b508d86f6",
+    "size": [
+      4096,
+      4096
+    ],
+    "flip_green": false,
+    "sRGB": false,
+    "compression": "BC5 normal map"
+  },
+  "vector": {
+    "asset": "/Game/Presentation/Ships/VectorFull/T_Normal",
+    "source": "백터급 구축함/Meshy_AI_model_20261112_texture_fbx/Meshy_AI_model_20261112_texture_normal.png",
+    "sha256": "4d0d3dc59cceefbcff487cb92f99b75ed93925551db2ec602e6429cdebc52207",
+    "size": [
+      4096,
+      4096
+    ],
+    "flip_green": false,
+    "sRGB": false,
+    "compression": "BC5 normal map"
+  }
+}

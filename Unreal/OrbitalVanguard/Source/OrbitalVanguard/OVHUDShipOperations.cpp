@@ -124,11 +124,7 @@ bool AOVHUD::DrawSmallBays(AOVShip* Home,float X,float Y,float W)
         const bool Ready=PC->Carrier->IsHangarOperational(B);
         DrawText(FString::Printf(TEXT("격납고 %d · %s"),I+1,Ready?TEXT("가동"):TEXT("정지")),Ink,CX+5,CY+2,OVTypography::Font(EOVTextRole::Body));
         if(auto* Guest=B.StoredSmallShip.Get()){
-            auto* Art=SelectionPortraits.FindRef(Guest->HullDefinitionId).Get();
-            if(!Art && FApp::CanEverRender()){
-                auto* Preview=NewObject<UOVShipPreview>(this);Preview->Update(Guest,UOVShipPreview::DefaultHullView(),1.12f,2.8f,INDEX_NONE,384,true);
-                Art=Preview->GetTexture();if(Art)SelectionPortraits.Add(Guest->HullDefinitionId,Art);Preview->Release();
-            }
+            auto* Art=HullCardImage(Guest->HullDefinitionId,Guest);
             const auto Key=CommandId(TEXT("OpsShip_"),Id);
             if(Art)DrawTexture(Art,CX+4,CY+28,65,65/2.8f,0,0,1,1,FLinearColor::White,BLEND_Opaque);
             AddHitBox(FVector2D(CX+4,CY+21)*UIScale,FVector2D(65,39)*UIScale,CommandId(TEXT("OpsImage_"),Id),true,111);

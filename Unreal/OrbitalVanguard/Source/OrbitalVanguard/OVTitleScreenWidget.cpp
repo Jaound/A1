@@ -71,7 +71,8 @@ static const FIntPoint ResolutionPresets[] = {
     FIntPoint(1280, 720),
     FIntPoint(1600, 900),
     FIntPoint(1920, 1080),
-    FIntPoint(2560, 1440)
+    FIntPoint(2560, 1440),
+    FIntPoint(3840, 2160)
 };
 
 static const TCHAR* WindowModeLabels[] = {
@@ -84,7 +85,8 @@ static const TCHAR* QualityLabels[] = {
     TEXT("낮음"),
     TEXT("보통"),
     TEXT("높음"),
-    TEXT("에픽")
+    TEXT("에픽"),
+    TEXT("최상 · 시네마틱")
 };
 
 inline FSlateBrush MakeRoundedBoxBrush(
@@ -844,7 +846,8 @@ void UOVTitleScreenWidget::SyncSettingsWidgetsFromSystem()
         WindowModeIndex = (Mode == EWindowMode::Fullscreen) ? 0 : (Mode == EWindowMode::Windowed ? 2 : 1);
 
         const FIntPoint CurRes = GUS->GetScreenResolution();
-        ResolutionIndex = 2;
+        ResolutionIndex = INDEX_NONE;
+        CurrentResolution = CurRes;
         for (int32 I = 0; I < UE_ARRAY_COUNT(OVStyle::ResolutionPresets); ++I)
         {
             if (OVStyle::ResolutionPresets[I] == CurRes)
@@ -855,7 +858,7 @@ void UOVTitleScreenWidget::SyncSettingsWidgetsFromSystem()
         }
 
         const int32 Quality = GUS->GetOverallScalabilityLevel();
-        GraphicsQualityIndex = FMath::Clamp(Quality >= 0 ? Quality : 2, 0, 3);
+        GraphicsQualityIndex = Quality;
     }
 
     if (UOVAudioSubsystem* Audio = UOVAudioSubsystem::Get(this))
@@ -894,13 +897,14 @@ void UOVTitleScreenWidget::RefreshSettingsLabels()
     }
     if (SettingsResolutionValueText)
     {
-        const FIntPoint Res = OVStyle::ResolutionPresets[FMath::Clamp(ResolutionIndex, 0, UE_ARRAY_COUNT(OVStyle::ResolutionPresets) - 1)];
+        const FIntPoint Res = ResolutionIndex == INDEX_NONE ? CurrentResolution : OVStyle::ResolutionPresets[ResolutionIndex];
         SettingsResolutionValueText->SetText(FText::FromString(FString::Printf(TEXT("%d × %d"), Res.X, Res.Y)));
     }
     if (SettingsQualityValueText)
     {
         SettingsQualityValueText->SetText(FText::FromString(
-            OVStyle::QualityLabels[FMath::Clamp(GraphicsQualityIndex, 0, 3)]));
+            GraphicsQualityIndex >= 0 && GraphicsQualityIndex < UE_ARRAY_COUNT(OVStyle::QualityLabels)
+                ? OVStyle::QualityLabels[GraphicsQualityIndex] : TEXT("개별 설정")));
     }
     if (SettingsMasterVolText)
     {
@@ -1303,7 +1307,7 @@ void UOVTitleScreenWidget::HandleCycleResolution()
 void UOVTitleScreenWidget::HandleCycleGraphicsQuality()
 {
     PlayClickAudio();
-    GraphicsQualityIndex = (GraphicsQualityIndex + 1) % 4;
+    GraphicsQualityIndex = (GraphicsQualityIndex + 1) % UE_ARRAY_COUNT(OVStyle::QualityLabels);
     RefreshSettingsLabels();
 }
 
@@ -1364,10 +1368,13 @@ void UOVTitleScreenWidget::HandleApplyAndSaveSettings()
     {
         const EWindowMode::Type Mode = WindowModeIndex == 0 ? EWindowMode::Fullscreen
             : (WindowModeIndex == 2 ? EWindowMode::Windowed : EWindowMode::WindowedFullscreen);
-        const FIntPoint Res = OVStyle::ResolutionPresets[FMath::Clamp(ResolutionIndex, 0, UE_ARRAY_COUNT(OVStyle::ResolutionPresets) - 1)];
+        const FIntPoint Res = ResolutionIndex == INDEX_NONE ? CurrentResolution : OVStyle::ResolutionPresets[ResolutionIndex];
         GUS->SetFullscreenMode(Mode);
         GUS->SetScreenResolution(Res);
-        GUS->SetOverallScalabilityLevel(FMath::Clamp(GraphicsQualityIndex, 0, 3));
+        if (GraphicsQualityIndex >= 0 && GraphicsQualityIndex < UE_ARRAY_COUNT(OVStyle::QualityLabels))
+        {
+            GUS->SetOverallScalabilityLevel(GraphicsQualityIndex);
+        }
         GUS->ApplySettings(false);
         GUS->SaveSettings();
     }

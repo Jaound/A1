@@ -9,6 +9,7 @@ struct FOVWeaponMountDefinition;
 class USceneCaptureComponent2D;
 class UStaticMeshComponent;
 class UTextureRenderTarget2D;
+class UTexture2D;
 
 /** A display-only mesh mirror. Never spawns a ship or owns combat components. */
 UCLASS()
@@ -26,6 +27,13 @@ public:
     int32 GetVisibleMeshCount() const;
     int32 GetFocusMount() const { return LastFocusMount; }
 private:
+    void RequestSurfaceDetail(bool bPortrait);
+    void FinishSurfaceCapture();
+    void ReleaseProxy();
+    TArray<TWeakObjectPtr<UTexture2D>> SurfaceTextures;
+    FTimerHandle SurfaceTimer;
+    double SurfaceDeadline=0;
+    bool bReleaseAfterCapture=false;
     UPROPERTY() TObjectPtr<AActor> Proxy;
     UPROPERTY() TObjectPtr<USceneComponent> DesignRoot;
     UPROPERTY() TArray<TObjectPtr<UOVWeaponVisualComponent>> EquippedModels;

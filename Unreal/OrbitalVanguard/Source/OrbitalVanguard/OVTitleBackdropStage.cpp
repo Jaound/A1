@@ -5,7 +5,6 @@
 #include "Components/DirectionalLightComponent.h"
 #include "Components/SkyLightComponent.h"
 #include "Components/StaticMeshComponent.h"
-#include "Engine/Engine.h"
 #include "Engine/StaticMesh.h"
 #include "Engine/Texture2D.h"
 #include "Engine/World.h"
@@ -221,15 +220,6 @@ void UOVTitleBackdropStage::RebuildLiveProxyStage(const FOVTitleBackdropFormatio
         {
             PC->SetViewTarget(TitleCameraActor);
         }
-
-        // Activate localized Hardware Ray Tracing CVars for Title Screen
-        if (GEngine)
-        {
-            GEngine->Exec(World, TEXT("r.Lumen.HardwareRayTracing 1"));
-            GEngine->Exec(World, TEXT("r.RayTracing.Shadows 1"));
-            GEngine->Exec(World, TEXT("r.Shadow.Virtual.Enable 1"));
-            GEngine->Exec(World, TEXT("r.Lumen.Reflections.HardwareRayTracing 1"));
-        }
     }
 
     // 3. Directional Key Light (Far-side Sun shining back towards camera; near hulls in dramatic shadow, razor-sharp rim highlights)
@@ -241,6 +231,7 @@ void UOVTitleBackdropStage::RebuildLiveProxyStage(const FOVTitleBackdropFormatio
     KeyLightComponent->SetAtmosphereSunLight(true);
     KeyLightComponent->SetAtmosphereSunLightIndex(0);
     KeyLightComponent->SetCastShadows(true);
+    KeyLightComponent->SetCastRaytracedShadows(ECastRayTracedShadow::Enabled);
     KeyLightComponent->SetDynamicShadowDistanceMovableLight(60000.f);
     KeyLightComponent->SetDynamicShadowCascades(4);
     KeyLightComponent->RegisterComponent();
@@ -524,12 +515,6 @@ void UOVTitleBackdropStage::Release()
 {
     if (UWorld* World = CachedWorld.Get())
     {
-        if (GEngine)
-        {
-            GEngine->Exec(World, TEXT("r.Lumen.HardwareRayTracing 0"));
-            GEngine->Exec(World, TEXT("r.RayTracing.Shadows 0"));
-        }
-
         if (APlayerController* PC = World->GetFirstPlayerController())
         {
             if (PC->GetViewTarget() == TitleCameraActor)

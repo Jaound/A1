@@ -318,8 +318,9 @@ private:
 
     // Pending settings state
     int32 WindowModeIndex = 1;       // 0=Fullscreen, 1=WindowedFullscreen, 2=Windowed
-    int32 ResolutionIndex = 2;       // 0=1280x720, 1=1600x900, 2=1920x1080, 3=2560x1440
-    int32 GraphicsQualityIndex = 2;  // 0=Low, 1=Medium, 2=High, 3=Epic
+    int32 ResolutionIndex = INDEX_NONE;
+    FIntPoint CurrentResolution = FIntPoint(1920, 1080);
+    int32 GraphicsQualityIndex = INDEX_NONE;
     float PendingMasterVolume = 0.85f;
     float PendingBGMVolume = 0.70f;
     float PendingSFXVolume = 0.85f;

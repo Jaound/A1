@@ -81,7 +81,9 @@ void UOVPerformanceProbe::BeginRun(AOVController& PC, double Now)
     if (bMissionRun)
         FFileHelper::SaveStringToFile(TEXT("벽시계초,게임초,임무단계,임무결과,유닛,작전,이벤트,승객,포드,유닛ID해시,개인ID해시,포드ID해시,개인포드연결해시,중복유닛ID,중복개인ID,중복포드ID,초기유닛누락,초기개인누락,누적유닛ID,누적개인ID,누적포드ID,사망,점령,파괴,발사인원,진입인원,진입후회수,경로노드합,실내이동거리합,완료공격ID집합\n"),
             *FPaths::Combine(OutputDirectory, TEXT("선내시계열.csv")), FFileHelper::EEncodingOptions::ForceUTF8WithoutBOM);
+#if CSV_PROFILER
     FCsvProfiler::Get()->BeginCapture(-1, OutputDirectory, TEXT("프로파일.csv"));
+#endif
     BeginCase(PC, Now);
     UE_LOG(LogTemp, Display, TEXT("OV PERF 시작: %s, 측정 %.0f초 + 사례별 준비 %.0f초"), *Label, RequestedSeconds, WarmupSeconds);
 }
@@ -253,7 +255,9 @@ void UOVPerformanceProbe::Finish(AOVController& PC)
     PC.bSimulationPaused = true;
     bFinished = true;
     SaveReport(Failure.IsEmpty());
+#if CSV_PROFILER
     FCsvProfiler::Get()->EndCapture();
+#endif
     FinishAt = FPlatformTime::Seconds();
     UE_LOG(LogTemp, Display, TEXT("OV PERF 완료: %s / 오류: %s"), *OutputDirectory, *Failure);
 }
@@ -265,7 +269,10 @@ void UOVPerformanceProbe::Tick(float DeltaTime)
     if (bFinished)
     {
         // CSV 비동기 저장이 끝난 뒤 종료한다. UI 조작 검증과 구분되는 자동 진단 실행이다.
-        if (Now-FinishAt > 3 && !FCsvProfiler::Get()->IsEndCapturePending()) FPlatformMisc::RequestExit(false);
+#if CSV_PROFILER
+        if (FCsvProfiler::Get()->IsEndCapturePending()) return;
+#endif
+        if (Now-FinishAt > 3) FPlatformMisc::RequestExit(false);
         return;
     }
     AOVController* PC = Cast<AOVController>(GetWorld()->GetFirstPlayerController());
@@ -303,7 +310,9 @@ void UOVPerformanceProbe::Deinitialize()
     {
         Failure = TEXT("요청 시간이 끝나기 전에 월드 종료");
         SaveReport(false);
+#if CSV_PROFILER
         FCsvProfiler::Get()->EndCapture();
+#endif
     }
     Super::Deinitialize();
 }
