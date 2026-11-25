@@ -632,7 +632,7 @@ void AOVHUD::DrawBaseWindow(int32 id,int32 priority)
         button(TEXT("BaseAutoConnect"),bBaseAutoConnect?TEXT("자동 연결 켜짐"):TEXT("자동 연결 꺼짐"),12,tools+34,190,bBaseAutoConnect);
         label(FString::Printf(TEXT("고도 %d m · 방향 %d°"),BaseLayer*25,BaseTurns*90),FLinearColor::White,12,tools+72,body);
         if (height>tools+160)
-            label(TEXT("Q/E 회전 · R/F 고도\nWASD 이동 · 휠 드래그 회전\nSpace 정지 · Home 전체 보기"),FLinearColor::White,12,tools+94,body);
+            label(TEXT("Q/E 회전 · R/F 고도\nWASD 이동 · 휠 버튼 누르고 마우스로 회전\nSpace 정지 · Home 전체 보기"),FLinearColor::White,12,tools+94,body);
     }
     else if (id==2)
     {

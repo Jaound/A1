@@ -1042,9 +1042,10 @@ void AOVController::Action(FName Name)
   CancelRightMove();
  }
  if(Name==TEXT("Pause")) { bSimulationPaused=!bSimulationPaused; LastAction=bSimulationPaused?TEXT("일시정지 · 카메라와 명령 입력 가능"):TEXT("전투 진행"); }
- if(Name==TEXT("Speed1")) SimulationSpeed=1;
- if(Name==TEXT("Speed2")) SimulationSpeed=2;
- if(Name==TEXT("Speed3")) SimulationSpeed=3;
+ if(Name=="Speed1" || Name=="Speed2" || Name=="Speed3") {
+  SimulationSpeed=Name=="Speed1"?1.f:(Name=="Speed2"?2.f:3.f);
+  bSimulationPaused=false;
+ }
  if(Name==TEXT("Ship1") && Ships.IsValidIndex(0)) SelectShip(Ships[0]);
  if(Name==TEXT("Ship2") && Ships.IsValidIndex(1)) SelectShip(Ships[1]);
  if(Name==TEXT("Ship3") && Ships.IsValidIndex(2)) SelectShip(Ships[2]);
@@ -1748,9 +1749,12 @@ void AOVController::PlayerTick(float DeltaTime)
  if(Focused && ActionPressed(TEXT("OVCombatRange"))) Action(bDeveloperMode?TEXT("CombatRange"):TEXT("Fleet100"));
  if(WasInputKeyJustPressed(EKeys::F9)) UE_LOG(LogTemp,Display,TEXT("OV VERIFY: camera=%s yaw=%.1f pitch=%.1f distance=%.1f ship=%s pos=%s manual=%d moving=%d paused=%d speed=%.0f sim=%.3f"),*CameraFocus.ToString(),CameraYaw,CameraPitch,CameraDistance,Selected?*Selected->ShipName:TEXT("none"),Selected?*Selected->GetActorLocation().ToString():TEXT("none"),Selected?Selected->bManual:0,Selected?Selected->bHasDestination:0,bSimulationPaused,SimulationSpeed,SimulationSeconds);
  if(ActionPressed(TEXT("OVPause"))) Action(TEXT("Pause"));
- if(ActionPressed(TEXT("OVSpeed1"))) Action(TEXT("Speed1"));
- if(ActionPressed(TEXT("OVSpeed2"))) Action(TEXT("Speed2"));
- if(ActionPressed(TEXT("OVSpeed3"))) Action(TEXT("Speed3"));
+ const bool Alt=IsInputKeyDown(EKeys::LeftAlt)||IsInputKeyDown(EKeys::RightAlt);
+ if(!Ctrl&&!Alt&&!Shift) {
+  if(ActionPressed(TEXT("OVSpeed1"))) Action(TEXT("Speed1"));
+  if(ActionPressed(TEXT("OVSpeed2"))) Action(TEXT("Speed2"));
+  if(ActionPressed(TEXT("OVSpeed3"))) Action(TEXT("Speed3"));
+ }
  if(ActionPressed(TEXT("OVCancel")))Action(TEXT("Cancel"));
  if(WasInputKeyJustPressed(EKeys::Escape)) {
   if(HUD && HUD->CloseTopModal()) {}
@@ -1770,7 +1774,7 @@ void AOVController::PlayerTick(float DeltaTime)
   if(ActionPressed(TEXT("OVFire"))) Action(TEXT("Fire"));
   if(ActionPressed(TEXT("OVFireAll"))) Action(TEXT("FireAll"));
   if(ActionPressed(TEXT("OVNextWeapon"))) Action(TEXT("NextWeapon"));
-  for(int32 I=0;I<9;++I) if(ActionPressed(FName(*FString::Printf(TEXT("OVGroup%d"),I+1)))) {
+  for(int32 I=0;I<9;++I) if((I>=3||Ctrl||Alt) && ActionPressed(FName(*FString::Printf(TEXT("OVGroup%d"),I+1)))) {
    if(Ctrl) { auto& Group=Groups.FindOrAdd(I); Group.Reset(); for(AOVShip* S:Selection) if(S->bFriendly) Group.Add(S); }
    else if(const auto* Group=Groups.Find(I)) { ClearSelection(); for(const auto& S:*Group) if(S.IsValid()&&!S->Systems->bWrecked) SelectAdditional(S.Get()); }
   }

@@ -161,6 +161,7 @@ public:
  TMap<TWeakObjectPtr<AOVShip>,FVector> FormationPreview;
  FName FormationKind;
  static int32 FormationRow(FName Preset,FName Hull);
+ static FVector2D FormationOffset(FName Preset,int32 Row,int32 Index,int32 Count);
  bool FormationAction(FName Action);
  void CloseFormation();
  bool CanForm(AOVShip* Ship) const;

@@ -10,6 +10,7 @@
 #include "Components/CanvasPanel.h"
 #include "Components/CanvasPanelSlot.h"
 #include "OVSortiePlot.h"
+#include "OVSortieDesignWidget.h"
 
 #include "OVAudioSubsystem.h"
 #include "OVCalibration.h"
@@ -468,11 +469,14 @@ void UOVTitleScreenWidget::BuildProgrammaticTree()
         UTexture2D* Photo = LoadObject<UTexture2D>(nullptr, *AssetPath);
         ScenarioPhotos.Add(Def.Id, Photo);
         UImage* Thumbnail = WidgetTree->ConstructWidget<UImage>();
-        Thumbnail->SetBrushFromTexture(Photo);
+        Thumbnail->SetBrushFromTexture(Photo,true);
+        auto* thumbnailFit=WidgetTree->ConstructWidget<UScaleBox>();
+        thumbnailFit->SetStretch(EStretch::ScaleToFit);
+        thumbnailFit->SetContent(Thumbnail);
         USizeBox* Tile = WidgetTree->ConstructWidget<USizeBox>();
         Tile->SetWidthOverride(104);
         Tile->SetHeightOverride(52);
-        Tile->SetContent(Thumbnail);
+        Tile->SetContent(thumbnailFit);
         CastChecked<UButtonSlot>(BtnContent->Slot)->SetHorizontalAlignment(HAlign_Fill);
         BtnContent->AddChildToHorizontalBox(Tile)->SetVerticalAlignment(VAlign_Center);
 
@@ -513,12 +517,11 @@ void UOVTitleScreenWidget::BuildProgrammaticTree()
 
     ScenarioPhoto = WidgetTree->ConstructWidget<UImage>();
     USizeBox* PhotoFrame = WidgetTree->ConstructWidget<USizeBox>();
-    PhotoFrame->SetHeightOverride(155);
-    UScaleBox* Crop = WidgetTree->ConstructWidget<UScaleBox>();
-    Crop->SetStretch(EStretch::ScaleToFill);
-    Crop->SetClipping(EWidgetClipping::ClipToBoundsAlways);
-    Crop->SetContent(ScenarioPhoto);
-    PhotoFrame->SetContent(Crop);
+    PhotoFrame->SetHeightOverride(185);
+    UScaleBox* PhotoFit = WidgetTree->ConstructWidget<UScaleBox>();
+    PhotoFit->SetStretch(EStretch::ScaleToFit);
+    PhotoFit->SetContent(ScenarioPhoto);
+    PhotoFrame->SetContent(PhotoFit);
     BriefingBox->AddChildToVerticalBox(PhotoFrame)->SetPadding(FMargin(0,0,0,10));
 
     UHorizontalBox* BriefHeader = WidgetTree->ConstructWidget<UHorizontalBox>();
@@ -549,7 +552,8 @@ void UOVTitleScreenWidget::BuildProgrammaticTree()
     auto AddMetricCol = [this, &MetricsHBox](const FString& Label, TObjectPtr<UTextBlock>& ValPtr, EOVTextRole Role=EOVTextRole::Numeric)
     {
         UVerticalBox* Col = WidgetTree->ConstructWidget<UVerticalBox>();
-        Col->AddChildToVerticalBox(OVStyle::MakeLabel(WidgetTree, Label, 11, OVStyle::TextDim, false));
+        UTextBlock* MetricTitle=OVStyle::MakeLabel(WidgetTree, Label, 11, OVStyle::TextDim, false);
+        Col->AddChildToVerticalBox(MetricTitle);
         ValPtr = OVStyle::MakeLabel(WidgetTree, TEXT("-"), 17, OVStyle::TextWhite, false, Role);
         ValPtr->SetJustification(ETextJustify::Right);
         Col->AddChildToVerticalBox(ValPtr)->SetPadding(FMargin(0.f, 2.f, 0.f, 0.f));
@@ -557,13 +561,14 @@ void UOVTitleScreenWidget::BuildProgrammaticTree()
         {
             ColSlot->SetSize(FSlateChildSize(ESlateSizeRule::Fill));
         }
+        return MetricTitle;
     };
     AddMetricCol(TEXT("편성 비용"), MetricBudgetVal);
-    AddMetricCol(TEXT("아군 함선"), MetricHangarVal);
+    ScenarioHullCountTitle = AddMetricCol(TEXT("아군 함선"), MetricHangarVal);
     AddMetricCol(TEXT("임무 유형"), MetricTimeVal, EOVTextRole::Body);
 
-    BriefingBox->AddChildToVerticalBox(OVStyle::MakeLabel(
-        WidgetTree, TEXT("아군 출격 편성"), 12, OVStyle::CyanAccent, true))
+    ScenarioRosterTitle=OVStyle::MakeLabel(WidgetTree, TEXT("아군 출격 편성"), 12, OVStyle::CyanAccent, true);
+    BriefingBox->AddChildToVerticalBox(ScenarioRosterTitle)
         ->SetPadding(FMargin(0.f, 0.f, 0.f, 8.f));
 
     UHorizontalBox* RosterSplit = WidgetTree->ConstructWidget<UHorizontalBox>();
@@ -781,11 +786,11 @@ void UOVTitleScreenWidget::BuildTutorialModal(UOverlay* RootOverlay)
     };
     const FGuideStep Steps[] = {
         { TEXT("STEP 01"), TEXT("① 어떤 게임인가 — 실시간 + 언제든 일시정지 우주 함대전 RTS"),
-          TEXT("Space 일시정지 및 1~3배속으로 전황을 정밀 통제합니다. 3D 우주 공간의 기동·화력전과 함선 내부 2D 강습이 단일 시뮬레이션으로 동시 진행됩니다.") },
-        { TEXT("STEP 02"), TEXT("② 기지 & 자원 전초기지 확장 — 원거리 채굴과 중형 수송선(R37) 물류"),
+          TEXT("Space로 시간을 멈추거나 재개하세요. 숫자 1·2·3은 해당 배속으로 진행합니다. Ctrl+숫자로 선택 함대를 등록하고 Alt+1·2·3으로 앞 세 부대를 다시 선택할 수 있습니다.") },
+        { TEXT("STEP 02"), TEXT("② 기지와 보급 · 채굴한 자원 운송"),
           TEXT("은하 지도에서 인접 성계로 FTL 확장하세요. [자원 전초기지]는 채굴선 하역·창고·중형 수송선 왕복 보급 허브 역할을 하며, [전투 전초기지]는 방어 거점으로 분리 운용됩니다.") },
-        { TEXT("STEP 03"), TEXT("③ 함선 1~3층 내부 배치 — D126 단조 감산(-3) 그리드와 격납고 규칙"),
-          TEXT("소형(7) · 중형(9 / 9-6) · 대형(12-9 / 12-9-6) · 초대형(15-12-9) 슬롯에 코어·함교·엔진·무기제어실·탄약고를 배치합니다. 함재기는 항공모함(최대 4)·항공순양함(최대 6) 전용입니다.") },
+        { TEXT("STEP 03"), TEXT("③ 함선 설계 · 선내 시설과 외장 무장"),
+          TEXT("출격 준비의 층별 도면에 시설 카드를 놓고, 외장 무장 화면에서 함선을 돌려 장착점을 찾으세요. 함포는 탄약고, 빔은 축전실, 미사일은 미사일 적재실이 필요합니다.") },
         { TEXT("STEP 04"), TEXT("④ 영웅 선내 강습 · 나포 — 내부 핵심 시설 제압과 방어"),
           TEXT("포드 발사실·강습선으로 영웅과 승무원을 적함 내부에 투입해 코어·함교·무기제어실을 점령하거나, 아군 함선 내부에서 침투 방어·긴급 수리를 지휘합니다.") },
         { TEXT("STEP 05"), TEXT("⑤ 함대전 & 승리 조건 — F5/F6/F7 및 블랙홀(E1) 전술 운용"),
@@ -975,6 +980,8 @@ void UOVTitleScreenWidget::ActivateFieldPanel(EOVTitleMenuPanel Panel)
 
 void UOVTitleScreenWidget::DeactivateTitleScreen()
 {
+    SortieViewHull=INDEX_NONE;
+    SortieScrollStage=INDEX_NONE;
     if(SortieMirror)SortieMirror->Release();
     bBackdropActive = false;
     bOpenedFromInGame = false;
@@ -1104,7 +1111,14 @@ void UOVTitleScreenWidget::RefreshScenarioBriefing()
         ScenarioObjectiveText->SetText(FText::FromString(TargetDef->Objective));
     }
 
-    if (ScenarioPhoto) ScenarioPhoto->SetBrushFromTexture(ScenarioPhotos.FindRef(SelectedScenarioId), true);
+    if (ScenarioPhoto){
+        UTexture2D* Photo=ScenarioPhotos.FindRef(SelectedScenarioId);
+        ScenarioPhoto->SetBrushFromTexture(Photo,true);
+        if(Photo)ScenarioPhoto->SetDesiredSizeOverride(FVector2D(Photo->GetSizeX(),Photo->GetSizeY()));
+    }
+    const bool bPlayerPicks=UOVPlayScenarioSubsystem::IsBudgetMission(SelectedScenarioId);
+    ScenarioRosterTitle->SetText(FText::FromString(bPlayerPicks?TEXT("추천 편성"):TEXT("아군 출격 편성")));
+    ScenarioHullCountTitle->SetText(FText::FromString(bPlayerPicks?TEXT("추천 함선"):TEXT("아군 함선")));
     LaunchScenarioButton->SetIsEnabled(TargetDef->bAvailable);
     int32 Ships = 0, Cost = 0;
     for (const auto& Entry : TargetDef->Fleet)

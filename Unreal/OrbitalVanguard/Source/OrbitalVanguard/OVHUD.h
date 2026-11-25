@@ -207,6 +207,14 @@ private:
  bool bInteriorMaximized=false;
  FVector2D InteriorRestorePosition=FVector2D(-1,-1),InteriorRestoreSize=FVector2D(780,550);
  bool bDrawingDetails=false;
+ static FLinearColor ShipNameColor(const AOVShip* Ship);
+ static FString ShipDisplayName(const AOVShip* Ship);
+ TMap<FName,float> PracticeButtonWidths;
+ FString LastPracticeTip;
+ float LastPracticeWidth=0;
+ TArray<FString> PracticeTipLines;
+ bool bDrawingPractice=false;
+ bool bTrackPracticeButtons=false;
  bool bDrawingInterior=false;
  // The two card rows share one horizontally scrollable column index.
  int32 InteriorCardColumn=0, InteriorLastColumn=0, InteriorTeamFilter=INDEX_NONE;
@@ -275,5 +283,5 @@ private:
  void DrawPhase2C();
  static float FleetPanelWidth(float ScreenWidth) { return FMath::Clamp(ScreenWidth-640.f,210.f,450.f); }
  void DrawExternal(float X,float Y,float W);
- void Button(FName Name,const FString& Label,float X,float Y,float W,bool Active=false,EOVTextRole TextRole=EOVTextRole::Button);
+ void Button(FName Name,const FString& Label,float X,float Y,float W,bool Active=false,EOVTextRole TextRole=EOVTextRole::Button,FLinearColor Tint=FLinearColor::Transparent);
 };

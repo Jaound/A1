@@ -112,6 +112,10 @@ bool UOVPointDefenseSubsystem::RegisterShip(AOVShip* Ship, int32 MountCount, flo
         {
             Mount.bLayoutMount = true;
             Mount.MountId = LayoutMounts[I]->WeaponId;
+            if (LayoutMounts[I]->PresentationProfile == TEXT("PD_Beam"))
+                Mount.Profile = DefaultProfile(EOVPDWeaponKind::Beam);
+            else if (LayoutMounts[I]->PresentationProfile == TEXT("PD_Kinetic"))
+                Mount.Profile = DefaultProfile(EOVPDWeaponKind::Kinetic);
             Mount.LocalPosition = LayoutMounts[I]->LocalPosition;
             Mount.HP = LayoutMounts[I]->MaxHP;
         }

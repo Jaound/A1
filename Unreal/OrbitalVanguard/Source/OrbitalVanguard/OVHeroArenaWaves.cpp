@@ -149,7 +149,7 @@ void UOVPlayScenarioSubsystem::StepArena(AOVController& PC,float Delta)
         if(W.Recalled && Record && Record->State==EOVShuttleState::Ready && PC.Ships.Contains(W.ActualShuttle.Get())){
             auto* Ship=W.ActualShuttle.Get();
             if(W.PlayerDirected){
-                if(!Ship->HangarHost.IsValid()){
+                if(PracticeChapter!=8 && !Ship->HangarHost.IsValid()){
                     auto* Bay=PC.Carrier->Hangars.FindByPredicate([&](const auto& H){return H.Carrier==Home && H.Mode==EOVHangarMode::SmallShip && !H.StoredSmallShip.IsValid() && !H.InboundShip.IsValid() && PC.Carrier->IsHangarOperational(H);});
                     if(Bay && !PC.Carrier->Hangars.ContainsByPredicate([Ship](const auto& H){return H.InboundShip==Ship;}))PC.RequestSmallShipDock(Bay->HangarId,Ship);
                 }

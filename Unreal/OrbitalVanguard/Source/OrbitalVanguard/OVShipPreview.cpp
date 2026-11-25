@@ -17,22 +17,29 @@ int32 UOVShipPreview::GetVisibleMeshCount() const
 void UOVShipPreview::Release()
 {
     if (IsValid(Proxy)) Proxy->Destroy();
-    Proxy=nullptr; Capture=nullptr; Texture=nullptr;
+    Proxy=nullptr; Capture=nullptr; Texture=nullptr; DesignRoot=nullptr; EquippedModels.Reset();
     Mirrors.Reset(); Sources.Reset(); Subject.Reset(); LastCapture=-1; LastFocusMount=INDEX_NONE;
 }
 
-void UOVShipPreview::Update(AOVShip* Ship, FRotator Rotation, float Zoom, float Aspect, int32 FocusMount, int32 PixelWidth, bool bPortrait)
+void UOVShipPreview::Update(AOVShip* Ship, FRotator Rotation, float Zoom, float Aspect, int32 FocusMount, int32 PixelWidth, bool bPortrait, const TArray<FOVWeaponMountDefinition>* DesignWeapons)
 {
     TRACE_CPUPROFILER_EVENT_SCOPE(OV_ShipPreview);
     CSV_SCOPED_TIMING_STAT_EXCLUSIVE(OV_Preview);
     if (!IsValid(Ship) || !Ship->Systems || !Ship->Systems->Layout) { Release(); return; }
     if (Subject!=Ship) Release();
-    Aspect=FMath::Max(.5f,Aspect);
+    Aspect=FMath::Max(DesignWeapons?.05f:.5f,Aspect);
     const int32 WidthPx=FMath::Clamp(PixelWidth,1,FMath::FloorToInt(4096.f*FMath::Min(1.f,Aspect)));
     const int32 HeightPx=FMath::Max(1,FMath::RoundToInt(WidthPx/Aspect));
     const bool bSameResolution=Texture && Texture->SizeX==WidthPx && Texture->SizeY==HeightPx;
     const double Now=FPlatformTime::Seconds();
-    if (bSameResolution && Now-LastCapture<.05 && Rotation.Equals(ViewRotation) && FMath::IsNearlyEqual(ViewAspect,Aspect) && LastFocusMount==FocusMount) return;
+    bool bEquipmentChanged=(DesignWeapons!=nullptr)!=(DesignRoot!=nullptr);
+    if(DesignWeapons && !bEquipmentChanged)
+    {
+        bEquipmentChanged=DesignWeapons->Num()!=EquippedModels.Num();
+        for(int32 I=0;!bEquipmentChanged && I<EquippedModels.Num();++I)
+            bEquipmentChanged=!EquippedModels[I]->Matches((*DesignWeapons)[I],Ship->Systems->Layout->LocalHalfExtent);
+    }
+    if (!bEquipmentChanged && bSameResolution && Now-LastCapture<.05 && FMath::IsNearlyEqual(Zoom,LastZoom) && Rotation.Equals(ViewRotation) && FMath::IsNearlyEqual(ViewAspect,Aspect) && LastFocusMount==FocusMount) return;
     LastCapture=Now;LastFocusMount=FocusMount;
     if (!Proxy)
     {
@@ -72,7 +79,34 @@ void UOVShipPreview::Update(AOVShip* Ship, FRotator Rotation, float Zoom, float 
             Capture->ShowOnlyComponent(Mesh); Sources.Add(Source); Mirrors.Add(Mesh);
         }
     }
-    ViewRotation=Rotation; ViewAspect=FMath::Max(.5f,Aspect);
+    if(bEquipmentChanged || (Rebuild && DesignWeapons))
+    {
+        for(auto Model:EquippedModels)if(Model)Model->DestroyComponent();
+        EquippedModels.Reset();
+        Capture->ShowOnlyComponents.Reset();
+        for(auto Part:Mirrors)Capture->ShowOnlyComponent(Part);
+        if(DesignRoot){DesignRoot->DestroyComponent();DesignRoot=nullptr;}
+        if(DesignWeapons)
+        {
+            DesignRoot=NewObject<USceneComponent>(Proxy);
+            DesignRoot->SetupAttachment(Proxy->GetRootComponent());
+            DesignRoot->RegisterComponent();
+            for(const auto& Def:*DesignWeapons)
+            {
+                auto* Model=NewObject<UOVWeaponVisualComponent>(Proxy);
+                Model->SetupAttachment(DesignRoot);
+                Model->RegisterComponent();
+                Model->Initialize(Def,Ship->Systems->Layout->LocalHalfExtent);
+                Model->Synchronize(FRotator::ZeroRotator,Def.PresentationProfile==TEXT("StandardMissilePod"),false,true,0,-1,0);
+                EquippedModels.Add(Model);
+                TArray<USceneComponent*> Parts;
+                Model->GetChildrenComponents(true,Parts);
+                for(auto* Part:Parts)if(auto* Mesh=Cast<UStaticMeshComponent>(Part))Capture->ShowOnlyComponent(Mesh);
+            }
+        }
+    }
+    if(DesignRoot)DesignRoot->SetRelativeRotation(Rotation);
+    LastZoom=Zoom; ViewRotation=Rotation; ViewAspect=Aspect;
     FVector Extent=Ship->Systems->Layout->LocalHalfExtent;
     double Width=1,Height=1;
     for (int I=0;I<8;++I)
@@ -99,11 +133,11 @@ void UOVShipPreview::Update(AOVShip* Ship, FRotator Rotation, float Zoom, float 
         const FTransform Local=Source->GetComponentTransform().GetRelativeTransform(Ship->GetActorTransform());
         Mirror->SetRelativeTransform(Local*FTransform(Rotation));
         bool bIncluded=true;
-        if(Ship->Systems->Layout->WeaponMounts.IsValidIndex(FocusMount)) {
-            bIncluded=false;
+        if(DesignWeapons || Ship->Systems->Layout->WeaponMounts.IsValidIndex(FocusMount)) {
+            bIncluded=DesignWeapons!=nullptr;
             for(const USceneComponent* Parent=Source->GetAttachParent();Parent;Parent=Parent->GetAttachParent())
                 if(const auto* Weapon=Cast<UOVWeaponVisualComponent>(Parent)) {
-                    bIncluded=Weapon->ReadState().MountId==Ship->Systems->Layout->WeaponMounts[FocusMount].WeaponId;
+                    bIncluded=!DesignWeapons && Weapon->GetMountId()==Ship->Systems->Layout->WeaponMounts[FocusMount].WeaponId;
                     break;
                 }
         }

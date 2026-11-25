@@ -18,6 +18,29 @@ FString Facility(EOVFacilityType Type)
  const TCHAR* Names[]={TEXT("빈 방"),TEXT("코어"),TEXT("함교"),TEXT("생명 유지"),TEXT("엔진"),TEXT("무기 제어"),TEXT("탄약고"),TEXT("축전실"),TEXT("미사일"),TEXT("쉴드 제어"),TEXT("레이더"),TEXT("요격 제어"),TEXT("포드 발사"),TEXT("격납고"),TEXT("기체 관제"),TEXT("저장소"),TEXT("보안실")};
  return Names[FMath::Clamp(int32(Type),0,16)];
 }
+// Generic room properties may be inspected on any known deck. Current enemy HP still requires a witness.
+const TCHAR* RoomFunction(EOVFacilityType type)
+{
+ switch(type){
+ case EOVFacilityType::Core:return TEXT("코어는 선체의 동력원입니다. 공작으로 파괴하면 함선 전체가 완파됩니다.");
+ case EOVFacilityType::Bridge:return TEXT("함교에서 명령을 전달합니다. 적 함교를 점령하면 함선의 소속이 바뀝니다. 함교 파괴 시 지휘가 중단됩니다.");
+ case EOVFacilityType::LifeSupport:return TEXT("승조원의 생명 유지 설비입니다. 파괴되면 이 방의 생명 유지 기능이 정지합니다.");
+ case EOVFacilityType::Engine:return TEXT("추진력을 제공합니다. 가동 엔진을 모두 잃으면 이동할 수 없습니다.");
+ case EOVFacilityType::WeaponControl:return TEXT("함포·빔·미사일의 발사를 통제합니다. 마지막 제어실을 잃으면 세 무장 계열이 정지합니다.");
+ case EOVFacilityType::Ammo:return TEXT("함포에 포탄을 공급합니다. 파괴 시 유폭 위험이 있으며 마지막 탄약고를 잃으면 함포가 멎습니다.");
+ case EOVFacilityType::Capacitor:return TEXT("빔에 에너지를 공급합니다. 파괴 시 유폭 위험이 있으며 마지막 축전실을 잃으면 빔이 멎습니다.");
+ case EOVFacilityType::MissileStorage:return TEXT("발사기에 미사일을 공급합니다. 파괴 시 유폭 위험이 있으며 마지막 적재실을 잃으면 발사가 멎습니다.");
+ case EOVFacilityType::ShieldControl:return TEXT("쉴드 용량과 재충전을 담당합니다. 가동 중인 제어실을 잃으면 방호력이 떨어집니다.");
+ case EOVFacilityType::Radar:return TEXT("적함 탐지와 사격 지원을 담당합니다. 가동 레이더를 모두 잃으면 이 함선의 레이더 지원이 끊깁니다.");
+ case EOVFacilityType::Interception:return TEXT("요격 무장을 통제합니다. 가동 제어실을 모두 잃으면 적 미사일과 함재기 요격이 멎습니다.");
+ case EOVFacilityType::Boarding:return TEXT("개인 강습 포드의 발사 시설입니다. 파괴되면 이 방에서는 대원을 발사할 수 없습니다.");
+ case EOVFacilityType::Hangar:return TEXT("함재기나 소형함을 수용합니다. 파괴되면 해당 베이의 운용과 보충 생산이 멎습니다.");
+ case EOVFacilityType::FighterControl:return TEXT("함재기의 출격과 편대 지휘를 담당합니다. 가동 관제실을 모두 잃으면 신규 출격이 막힙니다.");
+ case EOVFacilityType::ResourceStorage:return TEXT("수리와 함재기 보충용 자원을 저장합니다. 마지막 저장소가 파괴되면 함내 재고를 잃습니다.");
+ case EOVFacilityType::Security:return TEXT("승무원 없이 가동되는 보안 시설입니다. 파괴되면 해당 방이 정지합니다.");
+ default:return TEXT("빈 방에는 작동하는 시설이 없습니다.");
+ }
+}
 FString Role(EOVInteriorRole Type)
 {
  const TCHAR* Names[]={TEXT("병력"),TEXT("근거리"),TEXT("원거리"),TEXT("지원"),TEXT("지휘")};
@@ -201,7 +224,7 @@ void AOVHUD::DrawInterior()
  DrawRect(Panel,X,Y,W,H);
  if(!bInteriorMinimized)DrawLine(X+W-14,Y+H-2,X+W-2,Y+H-14,Accent,2);
  AOVShip* Ship=InteriorShip.Get();
- DrawText(TEXT("선내 작전 · ")+(Ship?Ship->ShipName:TEXT("함선 선택")),Accent,X+12,Y+10,OVTypography::Font(EOVTextRole::Heading));
+ DrawText(TEXT("선내 작전 · ")+ShipDisplayName(Ship),ShipNameColor(Ship),X+12,Y+10,OVTypography::Font(EOVTextRole::Heading));
  Button(TEXT("InteriorClose"),TEXT("X"),X+W-30,Y+2,26);
  Button(TEXT("InteriorMin"),bInteriorMinimized?TEXT("+"):TEXT("_"),X+W-60,Y+2,26);
  Button(TEXT("InteriorMax"),TEXT("[]"),X+W-90,Y+2,26);
@@ -321,7 +344,9 @@ void AOVHUD::DrawInterior()
   Button(TEXT("InteriorPrev"),TEXT("◀"),CardsX,TrackY-3,29);
   Button(TEXT("InteriorNext"),TEXT("▶"),Right-29,TrackY-3,29);
  }
- const float MapTop=Y+104,MapBottom=Footer-5;
+ const int32 SlotIndex=L->GetSlotIndex(InteriorTargetSlot);
+ const bool roomSelected=L->Slots.IsValidIndex(SlotIndex);
+ const float MapTop=Y+104,MapBottom=Footer-(roomSelected?46.f:5.f);
  // Fit this deck's room centers to the available map, leaving room for labels and occupants.
  FBox2D Rooms(ForceInit);
  for(const auto& Slot:L->Slots)if(Slot.DeckId==InteriorDeck)Rooms+=FVector2D(Slot.LocalCenter.X,Slot.LocalCenter.Y);
@@ -550,10 +575,13 @@ void AOVHUD::DrawInterior()
   }
  }
  if(PC->bDeveloperMode)Text(L->LayoutVersion.ToString(),Soft,X+W-165,Y+77);
- const int32 SlotIndex=L->GetSlotIndex(InteriorTargetSlot);
- if(L->Slots.IsValidIndex(SlotIndex)&&Ship->Systems->Slots.IsValidIndex(SlotIndex))
+ if(roomSelected&&Ship->Systems->Slots.IsValidIndex(SlotIndex))
  {
   const auto& Slot=L->Slots[SlotIndex];const auto& S=Ship->Systems->Slots[SlotIndex];
+  DrawRect(Surface,X+12,Footer-44,W-24,41);
+  Text(RoomFunction(Slot.Facility),Ink,X+18,Footer-42);
+  const TCHAR* effect=Slot.Facility==EOVFacilityType::Bridge?TEXT("함교를 빼앗은 직후에는 기존 이동·공격 명령이 취소됩니다."):Slot.Facility==EOVFacilityType::None?TEXT("점령과 공작은 시설이 있는 방에서 명령할 수 있습니다."):TEXT("점령하면 상대가 이 방을 쓸 수 없습니다. 공작은 시설 HP를 0으로 만듭니다.");
+  Text(effect,Soft,X+18,Footer-23);
   Text(Facility(Slot.Facility)+FString::Printf(TEXT(" · %d층"),Slot.DeckId),Accent,X+18,Footer+131);
   const bool Observed=Ship->Systems->FactionId==0||Own.ContainsByPredicate([&](const auto* U){return Living(*U)&&U->State!=EOVInteriorState::InTransit&&U->State!=EOVInteriorState::RescueWaiting&&U->NodeId==Slot.SlotId;});
   if(Observed){

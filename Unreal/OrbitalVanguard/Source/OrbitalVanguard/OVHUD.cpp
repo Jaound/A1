@@ -74,13 +74,25 @@ void AOVHUD::DrawNumberRight(const FString& Number,FLinearColor Color,float Righ
  DrawText(Number,Color,Right-Width,Top,Font,Scale);
 }
 
-void AOVHUD::Button(FName N,const FString& L,float X,float Y,float W,bool Active,EOVTextRole TextRole)
+FLinearColor AOVHUD::ShipNameColor(const AOVShip* Ship)
+{
+ if(Ship && Ship->Systems && Ship->Systems->FactionId<0)return FLinearColor(.68f,.73f,.77f);
+ return Ship && !Ship->bFriendly ? FLinearColor(1.f,.32f,.24f) : Accent;
+}
+FString AOVHUD::ShipDisplayName(const AOVShip* Ship)
+{
+ if(!Ship)return TEXT("함선 선택");
+ if(Ship->Systems && Ship->Systems->FactionId<0)return TEXT("중립 · ")+Ship->ShipName;
+ return Ship->bFriendly?Ship->ShipName:TEXT("적 · ")+Ship->ShipName;
+}
+void AOVHUD::Button(FName N,const FString& L,float X,float Y,float W,bool Active,EOVTextRole TextRole,FLinearColor Tint)
 {
  ActionCenters.Add(N,FVector2D(X+W*.5f,Y+13.5f));
+ if(bTrackPracticeButtons)PracticeButtonWidths.Add(N,W);
  DrawRect(Active?FLinearColor(.03f,.4f,.55f,.95f):FLinearColor(.04f,.08f,.13f,.98f),X,Y,W,27);
  UFont* LabelFont=OVTypography::Font(TextRole);
- DrawText(FitLabel(LabelFont,L,W-12),Active?FLinearColor::White:Ink,X+6,Y+5,LabelFont);
- AddHitBox(FVector2D(X,Y)*UIScale,FVector2D(W,27)*UIScale,N,true,bDrawingOperationsModal?280:(N.ToString().StartsWith(TEXT("OpsReady_"))||N.ToString().StartsWith(TEXT("OpsCancel_")))?230:(bDrawingStarMap || (bStarMapOpen && (N==TEXT("StarMapToggle") || N==TEXT("TitleScreen") || N==TEXT("OpenTutorialGuide"))))?310:bDrawingInterior?210:bDrawingDetails?110:10);
+ DrawText(FitLabel(LabelFont,L,W-12),Tint!=FLinearColor::Transparent?Tint:(Active?FLinearColor::White:Ink),X+6,Y+5,LabelFont);
+ AddHitBox(FVector2D(X,Y)*UIScale,FVector2D(W,27)*UIScale,N,true,bDrawingOperationsModal?280:(N.ToString().StartsWith(TEXT("OpsReady_"))||N.ToString().StartsWith(TEXT("OpsCancel_")))?230:(bDrawingStarMap || (bStarMapOpen && (N==TEXT("StarMapToggle") || N==TEXT("TitleScreen") || N==TEXT("OpenTutorialGuide"))))?310:bDrawingPractice?220:bDrawingInterior?210:bDrawingDetails?110:10);
 }
 FName AOVHUD::GetHitActionAtCanvasPoint(FVector2D Point) const
 {
@@ -103,7 +115,7 @@ bool AOVHUD::IsOverPanel(float X,float Y) const
  const FString HitAction=GetHitActionAtCanvasPoint(P).ToString();
  if(HitAction.StartsWith(TEXT("Practice")))return true;
  if(HitAction.StartsWith(TEXT("FacilityAlert_"))||HitAction.StartsWith(TEXT("OpsReady_"))||HitAction.StartsWith(TEXT("OpsCancel_"))||HitAction.StartsWith(TEXT("OpsCrewBG_")))return true;
- if (const auto* Play = PC->GetPlayScenario(); Play && Play->GetActiveDefinition() && (Play->PracticeChapter==INDEX_NONE || Play->ActiveId==TEXT("HeroArena")) && !bSceneMenuOpen &&
+ if (const auto* Play = PC->GetPlayScenario(); Play && Play->GetActiveDefinition() && Play->PracticeChapter==INDEX_NONE && !bSceneMenuOpen &&
      P.X >= 0 && P.X <= (Play->ActiveId==TEXT("Sandbox")?426:508) && P.Y >= 63 && P.Y <= 63+Play->MissionPanelHeight()) return true;
 
 
@@ -121,7 +133,7 @@ bool AOVHUD::IsOverPanel(float X,float Y) const
  const auto* Feed=GetBattleNoticeFeed();const int32 Footer=bBattleFeedOpen?(bNoticeSettings?242:66)+(Feed&&Feed->DroppedCount>0?20:0):0;
  if(Notices>0&&P.X>=NoticeX&&P.X<=NoticeX+340&&P.Y>=BattleNoticeTop()&&P.Y<=BattleNoticeTop()+Notices*36+Footer)return true;
  // The basic HUD remains visible under the separate developer window.
- if(P.Y<62 || (P.X<620 && P.Y>ViewportPixels.Y/UIScale-CommandPanelHeight()-10) || (!PC->Selection.IsEmpty() && P.X>=ViewportPixels.X/UIScale-FleetPanelWidth(ViewportPixels.X/UIScale)-10 && P.Y>=ViewportPixels.Y/UIScale-(PC->bFormationMenu?310:218)) || (bSceneMenuOpen && P.X>=216 && P.X<=FMath::Min(900.,ViewportPixels.X/UIScale-10) && P.Y<=110+UOVPlayScenarioSubsystem::Definitions().Num()*36)) return true;
+ if(P.Y<62 || (PC->Selected && P.X<620 && P.Y>ViewportPixels.Y/UIScale-CommandPanelHeight()-10) || (!PC->Selection.IsEmpty() && P.X>=ViewportPixels.X/UIScale-FleetPanelWidth(ViewportPixels.X/UIScale)-10 && P.Y>=ViewportPixels.Y/UIScale-(PC->bFormationMenu?310:218)) || (bSceneMenuOpen && P.X>=216 && P.X<=FMath::Min(900.,ViewportPixels.X/UIScale-10) && P.Y<=110+UOVPlayScenarioSubsystem::Definitions().Num()*36)) return true;
  return !PC->bDeveloperMode&&PC->Selected&&bDetailsOpen&&P.X>=WindowPosition.X&&P.X<=WindowPosition.X+WindowSize.X&&P.Y>=WindowPosition.Y&&P.Y<=WindowPosition.Y+(bMinimized?32:WindowSize.Y);
 }
 bool AOVHUD::HasOrbitPreview() const
@@ -675,9 +687,9 @@ void AOVHUD::DrawDetails()
  AddHitBox(WindowPosition*UIScale,FVector2D(W,bMinimized?32:WindowSize.Y)*UIScale,TEXT("WindowBackground"),true,100);
  DrawRect(Panel,X,Y,W,bMinimized?32:WindowSize.Y);
  const int32 TitleLimit=FMath::Clamp(FMath::FloorToInt((W-150)/12.f),4,24);
- const FString& FullTitle=PC->Selected->ShipName;
+ const FString FullTitle=ShipDisplayName(PC->Selected);
  const FString ShortTitle=FullTitle.Len()>TitleLimit?FullTitle.Left(TitleLimit-1)+TEXT("…"):FullTitle;
- DrawText(ShortTitle,Accent,X+10,Y+8,OVTypography::Font(EOVTextRole::Heading));
+ DrawText(ShortTitle,ShipNameColor(PC->Selected),X+10,Y+8,OVTypography::Font(EOVTextRole::Heading));
  AddHitBox(FVector2D(X+10,Y+2)*UIScale,FVector2D(W-150,28)*UIScale,TEXT("DetailsTitle"),true,110);
  Button(TEXT("WindowMin"),bMinimized?TEXT("+"):TEXT("_"),X+W-90,Y+2,26);Button(TEXT("WindowMax"),TEXT("[]"),X+W-60,Y+2,26);Button(TEXT("WindowClose"),TEXT("X"),X+W-30,Y+2,26);
  if(bMinimized)return;
@@ -732,7 +744,7 @@ void AOVHUD::DrawDetails()
     Button(TEXT("HangarRecallAircraft"),TEXT("귀환"),X+W-96,Y+250,78);
    } else {
     const auto Overview=Carrier->GetAircraftOverview(PC->Selected);
-    DrawText(FString::Printf(TEXT("격납고 %d · 기체 생존 %d · 손실 %d"),Row,Overview.Surviving,Overview.Wrecked),Ink,X+16,Y+80,OVTypography::Font(EOVTextRole::Numeric));
+    DrawText(FString::Printf(TEXT("격납고 %d · 기체 생존 %d · 손실 %d"),Row,Overview.Surviving,Overview.Wrecked),Ink,X+16,Y+103,OVTypography::Font(EOVTextRole::Numeric));
     Button(TEXT("HangarDisplayMode"),TEXT("시설 보기"),X+W-105,Y+72,90);
     const TCHAR* Filters[]={TEXT("전체"),TEXT("생존"),TEXT("손상"),TEXT("손실")};
     Button(TEXT("AircraftFilter"),Filters[AircraftFilter],X+W-175,Y+72,65);
@@ -748,7 +760,7 @@ void AOVHUD::DrawDetails()
     AircraftPage=FMath::Clamp(AircraftPage,0,Pages-1);
     const float CW=(W-38)/5;
     for(int32 I=0;I<15&&AircraftPage*15+I<Records.Num();++I) {
-     const auto& A=*Records[AircraftPage*15+I];const float CX=X+12+(I%5)*(CW+3),CY=Y+105+(I/5)*37;
+     const auto& A=*Records[AircraftPage*15+I];const float CX=X+12+(I%5)*(CW+3),CY=Y+126+(I/5)*37;
      const TCHAR* ShortStates[]={TEXT("보관"),TEXT("출격"),TEXT("귀환"),TEXT("대기"),TEXT("상실"),TEXT("완파")};
      Button(FName(*FString::Printf(TEXT("AircraftCard_%d"),A.AircraftId)),FString::Printf(TEXT("%d %s"),AircraftPage*15+I+1,ShortStates[FMath::Clamp(int32(A.State),0,5)]),CX,CY,CW,A.AircraftId==SelectedAircraftId);
      const float Ratio=FMath::Clamp(A.HP/FMath::Max(1.f,Carrier->Profile.Hull),0.f,1.f);
@@ -761,15 +773,15 @@ void AOVHUD::DrawDetails()
      DrawRect(FLinearColor(.12f,.14f,.17f),CX,CY+28,CW,3);
      DrawRect(Health(A.State==EOVAircraftState::Wrecked?0:Ratio),CX,CY+28,CW*Ratio,3);
     }
-    Button(TEXT("AircraftPrevious"),TEXT("이전"),X+12,Y+220,62);
-    DrawText(FString::Printf(TEXT("%d / %d"),AircraftPage+1,Pages),Ink,X+80,Y+226,OVTypography::Font(EOVTextRole::Numeric));
-    Button(TEXT("AircraftNext"),TEXT("다음"),X+125,Y+220,62);
-    Button(TEXT("HangarLaunchAircraft"),TEXT("출격"),X+W-180,Y+220,78);
-    Button(TEXT("HangarRecallAircraft"),TEXT("귀환"),X+W-96,Y+220,78);
+    Button(TEXT("AircraftPrevious"),TEXT("이전"),X+12,Y+239,62);
+    DrawText(FString::Printf(TEXT("%d / %d"),AircraftPage+1,Pages),Ink,X+80,Y+245,OVTypography::Font(EOVTextRole::Numeric));
+    Button(TEXT("AircraftNext"),TEXT("다음"),X+125,Y+239,62);
+    Button(TEXT("HangarLaunchAircraft"),TEXT("출격"),X+W*.5f-80,Y+271,78);
+    Button(TEXT("HangarRecallAircraft"),TEXT("귀환"),X+W*.5f+2,Y+271,78);
     if(const auto* A=Carrier->Aircraft.FindByPredicate([&](const FOVAircraftRecord& Item){return Item.AircraftId==SelectedAircraftId&&Item.Carrier==PC->Selected&&Item.FactionId==S->FactionId;})) {
      const TCHAR* Labels[]={TEXT("보관"),TEXT("출격"),TEXT("귀환"),TEXT("도킹 대기"),TEXT("관제 상실"),TEXT("완파")};
-     DrawText(FString::Printf(TEXT("선택 기체 · %s · 내구 %.0f"),Labels[FMath::Clamp(int32(A->State),0,5)],A->HP),Ink,X+16,Y+258,OVTypography::Font(EOVTextRole::Numeric));
-     if(PC->Selected->bFriendly&&A->State!=EOVAircraftState::Wrecked)Button(TEXT("AircraftLocate"),TEXT("위치 찾기"),X+W-105,Y+250,90);
+     DrawText(FString::Printf(TEXT("선택 기체 · %s · 내구 %.0f"),Labels[FMath::Clamp(int32(A->State),0,5)],A->HP),Ink,X+16,Y+310,OVTypography::Font(EOVTextRole::Numeric));
+     if(PC->Selected->bFriendly&&A->State!=EOVAircraftState::Wrecked)Button(TEXT("AircraftLocate"),TEXT("위치 찾기"),X+W-105,Y+303,90);
     }
    }
   }
@@ -792,8 +804,17 @@ void AOVHUD::DrawDetails()
    Button(TEXT("DetailsPageNext"),TEXT("다음"),X+135,Y+246,60);
   }
  }
- const float InfoY=Y+(!bHangarView&&PC->ViewedDeck==0 ? WindowSize.Y*.5f-192.f : 0.f);
- DrawText(FString::Printf(TEXT("선체 %s/%s | 쉴드 %s/%s %s"),*OVTypography::Integer(FMath::RoundToInt(S->HullHP)),*OVTypography::Integer(FMath::RoundToInt(S->MaxHullHP)),*OVTypography::Integer(FMath::RoundToInt(S->Shield)),*OVTypography::Integer(FMath::RoundToInt(S->MaxShield)),S->bShieldActive?TEXT("활성"):TEXT("비활성")),Ink,X+10,InfoY+280,OVTypography::Font(EOVTextRole::Numeric));
+ const float InfoY=Y+(bHangarView&&bAircraftGrid?55.f:0.f)+(!bHangarView&&PC->ViewedDeck==0 ? WindowSize.Y*.5f-192.f : 0.f);
+ const float gaugeWidth=(W-32)*.5f;
+ auto gauge=[&](const TCHAR* label,float current,float maxValue,float left,FLinearColor color){
+  const FString value=FString::Printf(TEXT("%s  %s / %s"),label,*OVTypography::Integer(FMath::RoundToInt(current)),*OVTypography::Integer(FMath::RoundToInt(maxValue)));
+  const auto font=OVTypography::Font(EOVTextRole::Numeric);
+  DrawText(FitLabel(font,value,gaugeWidth),Ink,left,InfoY+277,font);
+  DrawRect(FLinearColor(.1f,.16f,.22f),left,InfoY+295,gaugeWidth,4);
+  DrawRect(color,left,InfoY+295,gaugeWidth*FMath::Clamp(current/FMath::Max(1.f,maxValue),0.f,1.f),4);
+ };
+ gauge(TEXT("선체"),S->HullHP,S->MaxHullHP,X+10,Accent);
+ gauge(S->bShieldActive?TEXT("쉴드"):TEXT("쉴드 정지"),S->Shield,S->MaxShield,X+22+gaugeWidth,FLinearColor(.3f,.48f,1));
  if(S->ArmorSections.IsValidIndex(PC->SelectedArmor)) {
   const auto& A=S->ArmorSections[PC->SelectedArmor];
   DrawText(FString::Printf(TEXT("장갑 %s %.0f/%.0f"),*(PC->bDeveloperMode?A.ArmorSectionId.ToString():FString(TEXT("선택 구역"))),A.HP,L->ArmorSections[PC->SelectedArmor].MaxArmor),Accent,X+10,InfoY+301,OVTypography::Font(EOVTextRole::Numeric));
@@ -863,8 +884,10 @@ void AOVHUD::DrawHUD()
     TRACE_CPUPROFILER_EVENT_SCOPE(OV_HUD);
  SyncAddedUI();
  ActionCenters.Reset();
+ PracticeButtonWidths.Reset();
  if(bTitleScreenOpen){ Super::DrawHUD(); return; }
  Super::DrawHUD();auto* PC=Cast<AOVController>(PlayerOwner);if(!PC||!Canvas)return;
+ bTrackPracticeButtons=PC->GetPlayScenario() && PC->GetPlayScenario()->PracticeChapter>=0;
  if(WeaponPreview&&(!HasOrbitPreview()||!IsValid(PC->Selected)||PC->Selected->IsHidden()||PC->Selected->Systems->bWrecked||(PC->Combat&&PC->Combat->IsDeparted(PC->Selected))))WeaponPreview->Release();
  ViewportPixels=FVector2D(Canvas->SizeX,Canvas->SizeY);
  const float BaseDrawScale=FMath::Max(.25f,FMath::Min(Canvas->SizeX/1280.f,Canvas->SizeY/740.f));
@@ -893,9 +916,9 @@ void AOVHUD::DrawHUD()
  if(IsDebriefOpen()) { DrawDebrief(); Canvas->Canvas->PopTransform(); return; }
  DrawPlayHUD(); DrawFacilityAlerts(); DrawWorldIndicators(); DrawPhase2C(); DrawMission();
  DrawBattleNotices();
- if(!bStarMapOpen && !bSceneMenuOpen && !bChoosingTransport && !bChoosingTransfer) DrawPractice();
  DrawPinned();
  if(!PC->bDeveloperMode) { DrawDetails(); DrawInterior(); if(!bStarMapOpen)DrawShipOperations(); DrawStarMap(); }
+ if(!bStarMapOpen && !bSceneMenuOpen && !bChoosingTransport && !bChoosingTransfer) DrawPractice();
  float MouseX=0,MouseY=0;
  if(DraggedPin==INDEX_NONE && PC->GetMousePosition(MouseX,MouseY) && !IsOverAddedUI(MouseX,MouseY)) {
   const FVector2D Mouse(MouseX/UIScale,MouseY/UIScale);
@@ -1211,9 +1234,8 @@ void AOVHUD::DrawPinned()
   DrawRect(Panel,X,Y,W,H);
   AddHitBox(FVector2D(X,Y)*UIScale,Size*UIScale,FName(*FString::Printf(TEXT("PinnedBackground_%d"),I)),true,5);
   Button(FName(*FString::Printf(TEXT("PinnedGrip_%d"),I)),TEXT("이동"),X+4,Y+4,38);
-  const int32 TitleLimit=FMath::Clamp(FMath::FloorToInt((W-180)/12.f),2,20);
-  const FString Title=Ship->ShipName.Len()>TitleLimit?Ship->ShipName.Left(TitleLimit-1)+TEXT("…"):Ship->ShipName;
-  Button(FName(*FString::Printf(TEXT("Pinned_%d"),I)),Title,X+46,Y+4,W-158);
+  const FString Title=FitLabel(OVTypography::Font(EOVTextRole::Button),ShipDisplayName(Ship),W-172);
+  Button(FName(*FString::Printf(TEXT("Pinned_%d"),I)),Title,X+46,Y+4,W-158,false,EOVTextRole::Button,ShipNameColor(Ship));
   Button(FName(*FString::Printf(TEXT("PinnedClose_%d"),I)),TEXT("X"),X+W-38,Y+4,32);
   const auto* Systems=Ship->Systems.Get();const auto* Layout=Systems?Systems->Layout.Get():nullptr;
   if(!Layout)continue;

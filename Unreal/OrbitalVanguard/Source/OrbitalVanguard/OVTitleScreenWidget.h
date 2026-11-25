@@ -10,6 +10,7 @@ class UBorder;
 class UImage;
 class UOVTitleBackdropStage;
 class USlider;
+class UScrollBox;
 class UTextBlock;
 class UVerticalBox;
 class UTexture2D;
@@ -102,6 +103,11 @@ public:
     void BackFromCurrentPanel();
     UFUNCTION(BlueprintCallable) void SortieClick(FName Action,int32 Index=0);
     void RefreshSortie();
+    FRotator SortieViewRotation;
+    float SortieViewZoom = 1.12f;
+    int32 SortieViewHull = INDEX_NONE;
+    UTexture* SortiePartImage(int32 Model);
+
     UFUNCTION(BlueprintPure, Category = "UI|TitleScreen")
     EOVTitleMenuPanel GetCurrentPanel() const { return CurrentPanel; }
 
@@ -112,6 +118,10 @@ private:
     UPROPERTY() TObjectPtr<UBorder> PracticePanel;
     UPROPERTY() TObjectPtr<UTextBlock> PracticeBrief;
     UPROPERTY() TArray<TObjectPtr<UOVScenarioPickButton>> PracticeRows;
+    int32 SortieScrollStage=INDEX_NONE;
+    bool bSortieScrollExternal=false;
+    TWeakObjectPtr<UScrollBox> SortieColumns[3];
+    UPROPERTY() TMap<int32,TObjectPtr<UTexture2D>> SortiePartImages;
     UPROPERTY() TObjectPtr<UBorder> SortiePanel;
     UPROPERTY() TObjectPtr<class UOVShipPreview> SortieMirror;
     void BuildSortie(class UOverlay* Root);
@@ -208,6 +218,9 @@ private:
 
     UPROPERTY()
     TArray<TObjectPtr<UOVScenarioPickButton>> ScenarioButtons;
+
+    UPROPERTY() TObjectPtr<UTextBlock> ScenarioRosterTitle;
+    UPROPERTY() TObjectPtr<UTextBlock> ScenarioHullCountTitle;
 
     // Briefing Card
     UPROPERTY()

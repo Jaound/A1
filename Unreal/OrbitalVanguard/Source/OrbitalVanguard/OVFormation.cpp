@@ -31,6 +31,18 @@ int32 AOVController::FormationRow(FName Preset,FName Hull)
     if(Hull==TEXT("transport") || Hull==TEXT("mining"))return 0;
     return Support(Hull)?-1:1;
 }
+FVector2D AOVController::FormationOffset(FName Preset,int32 Row,int32 Index,int32 Count)
+{
+    if (Preset==TEXT("FormationCarrier") && Row==1 && Count>0)
+    {
+        const double Angle=HALF_PI+2.*PI*Index/Count;
+        const double Radius=FMath::Max(1.,Count/(2.*PI));
+        return FVector2D(FMath::Cos(Angle),FMath::Sin(Angle))*Radius;
+    }
+    if (Preset==TEXT("FormationConvoy") && Row==1)
+        return FVector2D((Index%2==0?1.:-1.)*(1.+Index/4),Index%4<2?-1.4:1.4);
+    return FVector2D(Row,Index-(Count-1)*.5);
+}
 void AOVController::CloseFormation()
 {
     bFormationMenu=false;
@@ -81,16 +93,8 @@ bool AOVController::FormationAction(FName ActionName)
     for(auto* S:Group)++Totals[FormationRow(ActionName,S->HullDefinitionId)+1];
     for(auto* S:Group){
         const int32 R=FormationRow(ActionName,S->HullDefinitionId),Idx=Used[R+1]++;
-        FVector Point=Center+Spacing*(R*Forward+(Idx-(Totals[R+1]-1)*.5)*Right);
-        if(ActionName==TEXT("FormationCarrier") && R==1){
-            const double Angle=HALF_PI+2.*PI*Idx/Totals[R+1];
-            const double Ring=Spacing*FMath::Max(1.,Totals[R+1]/(2.*PI));
-            Point=Center+Ring*(FMath::Cos(Angle)*Forward+FMath::Sin(Angle)*Right);
-        }
-        if(ActionName==TEXT("FormationConvoy") && R==1){
-            const double Ahead=(Idx%2==0?1.:-1.)*(1.+Idx/4);
-            Point=Center+Spacing*(Ahead*Forward+(Idx%4<2?-1.:1.)*Right*1.4);
-        }
+        const FVector2D Offset=FormationOffset(ActionName,R,Idx,Totals[R+1]);
+        const FVector Point=Center+Spacing*(Offset.X*Forward+Offset.Y*Right);
         bool Placed=false;
         for(int32 Attempt=0;Attempt<=Group.Num()+Ships.Num();++Attempt){
             const FVector Candidate=Point+Right*(Spacing*Attempt);

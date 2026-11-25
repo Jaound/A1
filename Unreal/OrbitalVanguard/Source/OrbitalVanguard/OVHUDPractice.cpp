@@ -15,15 +15,77 @@ void AOVHUD::DrawPractice()
  if(!play||play->PracticeChapter<0)return;
  play->ObservePractice();
  const bool done=play->PracticeStep>=play->PracticeStepCount();
- const float width=FMath::Min(380.f,float(ViewportPixels.X/UIScale)-12);
- const float x=ViewportPixels.X/UIScale-width-6,y=66;
+ TGuardValue<bool> layer(bDrawingPractice,true);
+ const float width=FMath::Min(412.f,float(ViewportPixels.X/UIScale));
  const FLinearColor accent(.18,.82,.95),paper(.018,.038,.067,.96);
  const auto body=OVTypography::Font(EOVTextRole::Body);
- DrawRect(paper,x,y,width,play->bPracticeHints?158:58);
- DrawRect(accent,x,y,3,play->bPracticeHints?158:58);
+ const FString tip=play->PracticeInput();
+ if(tip!=LastPracticeTip || width!=LastPracticeWidth){
+    LastPracticeTip=tip;LastPracticeWidth=width;PracticeTipLines.Reset();
+    TArray<FString> paragraphs;tip.ParseIntoArrayLines(paragraphs,false);
+    for(const FString& paragraph:paragraphs){
+       FString rest=paragraph.TrimStartAndEnd();
+       while(!rest.IsEmpty()){
+          int32 lo=1,hi=rest.Len();
+          while(lo<hi){
+             const int32 mid=(lo+hi+1)/2;float w=0,h=0;GetTextSize(rest.Left(mid),w,h,body);
+             if(w<=width-24)lo=mid;else hi=mid-1;
+          }
+          int32 cut=lo;
+          if(lo<rest.Len()){
+             int32 space=INDEX_NONE;
+             if(rest.Left(lo+1).FindLastChar(' ',space) && space>0)cut=space;
+          }
+          PracticeTipLines.Add(rest.Left(cut));rest=rest.Mid(cut).TrimStart();
+       }
+    }
+ }
+ const float status=54.f+PracticeTipLines.Num()*17.f;
+ const float footer=status+33.f;
+ const bool more=!done&&(play->PracticeChapter==3||play->PracticeChapter==4);
+ const float height=play->bPracticeHints?footer+34.f+(more?32.f:0.f)+(more&&play->bPracticeDetail?112.f:0.f):55.f;
+ const float x=0;
+ float y=63;
+ const FName goal=play->PracticeGoalId();
+ FName action=play->PracticeControl();
+ auto firstVisible=[&](const TCHAR* prefix){
+    FName best;int32 bestId=MAX_int32;
+    for(const auto& pair:PracticeButtonWidths){
+       const FString name=pair.Key.ToString();
+       if(name.StartsWith(prefix)){
+          const int id=FCString::Atoi(*name.Mid(FCString::Strlen(prefix)));
+          if(id<bestId){best=pair.Key;bestId=id;}
+       }
+    }
+    return best;
+ };
+ if(goal=="Launch"){
+    if(!bDetailsOpen)action="Details";
+    else if(!bHangarView)action="HangarView";
+    else if(!bAircraftOnly)action=firstVisible(TEXT("OpsAircraftList_"));
+    else if(!bAircraftGrid)action="HangarDisplayMode";
+    else if(!SelectedAircraftId)action=firstVisible(TEXT("AircraftCard_"));
+ }
+ if(goal=="Hangar" && !bDetailsOpen)action="Details";
+ if(goal=="Reject")action="PracticeEquip";
+ FVector2D focus=GetActionCenter(action);
+ FVector2D half(24,15);
+ if(const float* w=PracticeButtonWidths.Find(action))half.X=*w*.5f+2;
+ if(focus.X<0){
+    if(auto* ship=play->PracticeFocus()){
+       FVector2D p;if(pc->ProjectWorldLocationToScreen(ship->GetActorLocation(),p,true))focus=p/UIScale;
+    }
+ }
+ // Leave the target visible when a movable window places its control under the lesson.
+ if(!play->bPracticeReady && focus.X>=0 && focus.X-half.X<width && focus.Y+half.Y>y && focus.Y-half.Y<y+height){
+    const float below=focus.Y+half.Y+5;
+    if(below+height<ViewportPixels.Y/UIScale)y=below;
+ }
+ DrawRect(paper,x,y,width,height);
+ DrawRect(accent,x,y,3,height);
  DrawText(FString::Printf(TEXT("%d장  %s    %d / %d"),play->PracticeChapter+1,*play->PracticeTitle(play->PracticeChapter),FMath::Min(play->PracticeStep+1,play->PracticeStepCount()),play->PracticeStepCount()),accent,x+10,y+3,body);
  DrawText(play->PracticeObjective(),FLinearColor::White,x+10,y+25,OVTypography::Font(EOVTextRole::Heading));
- Button("PracticeHints",play->bPracticeHints?TEXT("접기"):TEXT("힌트"),x+width-52,y+7,46);
+ Button("PracticeHints",play->bPracticeHints?TEXT("접기"):TEXT("힌트"),x+width-52,y+4,46);
  if(play->HasPracticeMarker()){
     FVector2D p;
     if(pc->ProjectWorldLocationToScreen(play->PracticeGoal,p,true)){
@@ -32,48 +94,53 @@ void AOVHUD::DrawPractice()
     }
  }
  if(!play->bPracticeHints)return;
- if(!play->bPracticeReady && !done){
-    FVector2D focus=GetActionCenter(play->PracticeControl());float span=29;
-    if(auto* s=play->PracticeFocus()){FVector2D pixels;if(pc->ProjectWorldLocationToScreen(s->GetActorLocation(),pixels,true)){focus=pixels/UIScale;span=22;}}
-    if(focus.X>=0 && focus.Y>=0){
-       for(int side:{-1,1})for(int vertical:{-1,1}){
-          const FVector2D corner=focus+FVector2D(side*span,vertical*13);
-          DrawLine(corner.X,corner.Y,corner.X-side*8,corner.Y,accent,1.4f);
-          DrawLine(corner.X,corner.Y,corner.X,corner.Y-vertical*6,accent,1.4f);
-       }
+ if(!play->bPracticeReady && !done && focus.X>=0 && focus.Y>=0){
+    for(int side:{-1,1})for(int vertical:{-1,1}){
+       const FVector2D corner=focus+FVector2D(side*half.X,vertical*half.Y);
+       DrawLine(corner.X,corner.Y,corner.X-side*10,corner.Y,accent,2);
+       DrawLine(corner.X,corner.Y,corner.X,corner.Y-vertical*8,accent,2);
     }
  }
- const FString tip=play->PracticeInput();int32 start=0;
- for(int line=0;line<3 && start<tip.Len();++line){
-    int end=start+1;float w=0,h=0;
-    while(end<=tip.Len()){GetTextSize(tip.Mid(start,end-start),w,h,body);if(w>width-26)break;++end;}
-    end=FMath::Max(start+1,end-1);DrawText(tip.Mid(start,end-start),FLinearColor::White,x+10,y+49+line*16,body);start=end;
- }
- if(play->PracticeChapter==5 && (play->PracticeStep==4||play->PracticeStep==5))
-    Button("PracticeEquip",play->PracticeStep==4?TEXT("호환 장비 장착"):TEXT("상위 티어 시험"),x+10,y+91,145);
- else DrawText(play->bPracticeReady?TEXT("✓ 목표 달성"):done?TEXT("✓ 완료 기록됨"):pc->bSimulationPaused?TEXT("일시정지 · Space로 재개"):TEXT("실습 중"),accent,x+10,y+95,body);
- Button("PracticeIndex",TEXT("장 목록"),x+8,y+122,68);
- Button(done?"PracticeReset":"PracticeRetry",done?TEXT("장 다시 실습"):play->PracticeChapter==8?TEXT("강습 다시 실습"):TEXT("단계 다시 시도"),x+80,y+122,116);
- if(done&&play->PracticeChapter<8)Button("PracticeFollowing",TEXT("다음 장"),x+width-95,y+122,88,true);
- else if(!done&&play->bPracticeReady)Button("PracticeAdvance",TEXT("다음"),x+width-95,y+122,88,true);
- if(!done && (play->PracticeChapter==4||play->PracticeChapter==3)){
-   Button("PracticeMore",play->bPracticeDetail?TEXT("상세 접기"):play->PracticeChapter==4?TEXT("함종 카드"):TEXT("무장 비교"),x+width-110,y+160,100);
+ for(int32 i=0;i<PracticeTipLines.Num();++i)
+    DrawText(PracticeTipLines[i],FLinearColor::White,x+10,y+50+i*17,body);
+ if(!play->bPracticeReady && (goal=="Equip"||goal=="Reject"))
+    Button("PracticeEquip",goal=="Equip"?TEXT("호환 장비 장착"):TEXT("상위 티어 시험"),x+10,y+status,145);
+ else if(play->bPracticeReady||done){
+    DrawLine(x+11,y+status+12,x+15,y+status+16,accent,2.f);
+    DrawLine(x+15,y+status+16,x+22,y+status+7,accent,2.f);
+    DrawText(done?TEXT("완료 기록됨"):TEXT("목표 달성"),accent,x+28,y+status+3,body);
+ }else DrawText(pc->bSimulationPaused?TEXT("일시정지 · Space로 재개"):TEXT("실습 중"),accent,x+10,y+status+3,body);
+ Button("PracticeIndex",TEXT("장 목록"),x+8,y+footer,68);
+ Button(done?"PracticeReset":"PracticeRetry",done?TEXT("장 다시 실습"):play->PracticeChapter==8?TEXT("강습 다시 실습"):TEXT("단계 다시 시도"),x+80,y+footer,116);
+ if(done&&play->PracticeChapter<8)Button("PracticeFollowing",TEXT("다음 장"),x+width-95,y+footer,88,true);
+ else if(!done&&play->bPracticeReady)Button("PracticeAdvance",TEXT("다음"),x+width-95,y+footer,88,true);
+ if(more){
+   const float details=y+footer+33;
+   Button("PracticeMore",play->bPracticeDetail?TEXT("상세 접기"):play->PracticeChapter==4?TEXT("함종 카드"):TEXT("무장 비교"),x+width-110,details,100);
    if(play->bPracticeDetail){
-    DrawRect(paper,x,y+190,width,112);
+    DrawRect(paper,x,details+32,width,112);
     if(play->PracticeChapter==4){
-     const FName ids[]={"corvette","air_defense","radar","battleship","carrier","dreadnought"};const int n=play->PracticeRoleCard;
-     const TCHAR* notes[]={TEXT("전방 차폐와 정찰 · 동일 계열 무장"),TEXT("주력함 호위 · 빔 및 실탄 요격"),TEXT("공유 탐지 · 장거리 표적 지원"),TEXT("지속 화력 · 다수의 주포"),TEXT("항공 작전 · 격납고와 관제실"),TEXT("결전 전력 · 전용 주포")};
-     if(auto* picture=HullCardImage(ids[n]))DrawTexture(picture,x+8,y+198,112,40,0,0,1,1);
-     FOVHullMetadata info;OVCalibration::GetHullMetadata(ids[n],info);
+     static const TArray<FName> hulls=OVCalibration::GetHullIds();
+     if(!hulls.IsValidIndex(play->PracticeRoleCard))return;
+     const FName hull=hulls[play->PracticeRoleCard];
+     FOVHullMetadata info;OVCalibration::GetHullMetadata(hull,info);
      const TCHAR* sizes[]={TEXT(""),TEXT("소형"),TEXT("중형"),TEXT("대형"),TEXT("초대형")};
-     DrawText(OVCalibration::GetHullName(ids[n])+TEXT(" · ")+sizes[info.SizeClass],accent,x+125,y+197,body);
-     DrawText(notes[n],FLinearColor::White,x+12,y+240,body);Button("PracticeRole",TEXT("다른 함종"),x+width-110,y+267,100);
+     if(auto* picture=HullCardImage(hull)){
+        const float aspect=float(picture->SizeX)/FMath::Max(1,picture->SizeY);
+        const float h=FMath::Min(64.f,112.f/aspect);
+        DrawTexture(picture,x+8+(112-h*aspect)*.5f,details+36,h*aspect,h,0,0,1,1);
+     }
+     DrawText(OVCalibration::GetHullName(hull)+TEXT(" · ")+sizes[FMath::Clamp(info.SizeClass,0,4)],accent,x+125,details+38,body);
+     const FString roles=FString::JoinBy(info.RoleTags,TEXT(" · "),[](const FName& tag){return tag.ToString();});
+     DrawText(FitLabel(body,roles,width-133),FLinearColor::White,x+125,details+59,body);
+     DrawText(FString::Printf(TEXT("공격 %d문 · 요격 %d문 · 격납고 최대 %d"),info.AttackMountCount,info.PointDefenseCount,info.MaxHangarInstallations),FLinearColor::White,x+12,details+105,body);
+     Button("PracticeRole",TEXT("다음 함종"),x+width-110,details+108,100);
     }else{
-     DrawText(TEXT("빔  즉시 판정     함포  직선 탄도     미사일  곡선 접근"),accent,x+8,y+196,body);
+     DrawText(TEXT("빔  즉시 판정     함포  직선 탄도     미사일  곡선 접근"),accent,x+8,details+38,body);
      auto* ship=pc->Selected.Get();if(ship){
       int blind=0,ready=0;for(const auto& m:pc->Combat->GetShipState(ship).Mounts){const auto r=pc->Combat->GetReadiness(ship,m.MountId);blind+=r.Reason==TEXT("MOUNT BLIND ARC");ready+=r.bReady;}
-      DrawText(FString::Printf(TEXT("선택함   사격 가능 %d문   ·   장착면 사각 %d문"),ready,blind),FLinearColor::White,x+8,y+230,body);
-     }DrawText(TEXT("표적의 고도를 바꾸면 상·하부 포탑의 사각이 달라집니다."),FLinearColor::White,x+8,y+256,body);
+      DrawText(FString::Printf(TEXT("선택함   사격 가능 %d문   ·   장착면 사각 %d문"),ready,blind),FLinearColor::White,x+8,details+72,body);
+     }DrawText(TEXT("표적의 고도를 바꾸면 상·하부 포탑의 사각이 달라집니다."),FLinearColor::White,x+8,details+98,body);
     }
    }
  }
@@ -88,9 +155,9 @@ bool AOVHUD::PracticeAction(FName action)
  else if(action=="PracticeReset")p->StartPractice(pc,p->PracticeChapter);
  else if(action=="PracticeFollowing"&&p->PracticeStep==p->PracticeStepCount())p->StartPractice(pc,p->PracticeChapter+1);
  else if(action=="PracticeAdvance")p->AdvancePractice();
- else if(action=="PracticeEquip")p->PracticeEquipment(p->PracticeStep==5);
+ else if(action=="PracticeEquip")p->PracticeEquipment(p->PracticeGoalId()=="Reject");
  else if(action=="PracticeMore")p->bPracticeDetail=!p->bPracticeDetail;
- else if(action=="PracticeRole")p->PracticeRoleCard=(p->PracticeRoleCard+1)%6;
+ else if(action=="PracticeRole")p->PracticeRoleCard=(p->PracticeRoleCard+1)%FMath::Max(1,OVCalibration::GetHullIds().Num());
  else if(action=="PracticeHints"){
     p->bPracticeHints=!p->bPracticeHints;
     GConfig->SetBool(TEXT("OrbitalVanguard.Practice"),TEXT("Hints"),p->bPracticeHints,GGameUserSettingsIni);GConfig->Flush(false,GGameUserSettingsIni);

@@ -3,6 +3,7 @@
 #include "CoreMinimal.h"
 #include "OVSpaceEnvironmentTypes.h"
 #include "OVHeroSubsystem.h"
+#include "OVShipLayout.h"
 #include "Subsystems/WorldSubsystem.h"
 #include "OVPlayScenarioSubsystem.generated.h"
 
@@ -31,7 +32,8 @@ struct FOVSortieHull
     int32 Key=0;
     FVector Position=FVector::ZeroVector;
     float Yaw=0;
-    TArray<FIntPoint> RoomSwaps;
+    TMap<FName,EOVFacilityType> Rooms;
+    FString DesignIssue=TEXT("선내 지도에서 필수 시설을 배치하거나 추천 시설을 선택하세요.");
     TMap<FName,FName> Weapons;
 };
 struct FOVSortieHero
@@ -42,6 +44,7 @@ struct FOVSortieHero
 struct FOVSortieDraft
 {
     FName Mission;
+    FName Formation=TEXT("FormationScreen");
     EOVSpaceHazardKind Map=EOVSpaceHazardKind::None;
     TArray<FOVSortieHull> Hulls;
     TArray<FOVSortieHero> Heroes;
@@ -89,6 +92,7 @@ public:
     static int32 CompletedPracticeMask();
     FString PracticeObjective() const;
     FString PracticeInput() const;
+    UFUNCTION(BlueprintPure) FName PracticeGoalId() const;
     FName PracticeControl() const;
     AOVShip* PracticeFocus() const;
     int32 PracticeStepCount() const;
@@ -102,6 +106,8 @@ private:
     FVector PracticeOrigin, PracticeCamera;
     float PracticeAngle=0, PracticePitch=0, PracticeZoom=0;
     int32 PracticeShots=0, PracticeParticipant=INDEX_NONE;
+    double PracticeStepTime=0;
+    int32 PracticeStockBefore=0, PracticeInventoryBefore=0, PracticeLaunchesBefore=0;
     bool bPracticeOrder=false;
     TSet<int32> PracticeWing;
     bool bPreparingBoardingLesson=false;
@@ -111,6 +117,8 @@ public:
     UFUNCTION(BlueprintCallable) bool OpenSortie(AOVController* PC,FName Mission,bool Edit=false);
     UFUNCTION(BlueprintCallable) bool SortieCommand(FName Action,int32 Index=0);
     UFUNCTION(BlueprintCallable) bool SetSortiePosition(FVector Point,float Yaw);
+    UFUNCTION(BlueprintPure) EOVFacilityType SortieRoomAt(int32 Index) const;
+    UFUNCTION(BlueprintPure) FName SortieWeaponAt(int32 Index) const;
     UFUNCTION(BlueprintPure) int32 SortieCost() const;
     UFUNCTION(BlueprintPure) int32 SortieBudget() const;
     UFUNCTION(BlueprintPure) int32 SortieHeroLimit() const;

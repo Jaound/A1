@@ -224,7 +224,7 @@ void AOVHUD::DrawPlayHUD()
  const float NoticeWidth = W-TX-10;
  if(FPlatformTime::Seconds()<NoticeExpires && NoticeWidth > 42)
   DrawText(FitLabel(OVTypography::Font(EOVTextRole::Body),NoticeText,NoticeWidth),PlayInk,TX,26,OVTypography::Font(EOVTextRole::Body));
- if(!bSceneMenuOpen && Play && Play->GetActiveDefinition() && (Play->PracticeChapter==INDEX_NONE || Play->ActiveId==TEXT("HeroArena"))) {
+ if(!bSceneMenuOpen && Play && Play->GetActiveDefinition() && Play->PracticeChapter==INDEX_NONE) {
   const bool Evac = Play->ActiveId == TEXT("Evacuation");
   const bool Sandbox=Play->ActiveId==TEXT("Sandbox");
   DrawRect(PlayPanel,0,63,Sandbox?426:508,Play->MissionPanelHeight());
@@ -464,12 +464,16 @@ void AOVHUD::DrawPlayHUD()
   }
  }
  bCommandShipClipped=bCommandTargetClipped=false;
+ if(!PC->Selected) {
+  DrawRect(PlayPanel,10,Y,134,PanelHeight);
+  DrawText(TEXT("함선을 선택하세요"),PlayInk,18,Y+5,OVTypography::Font(EOVTextRole::Body));
+  return;
+ }
  DrawRect(PlayPanel,10,Y,610,PanelHeight);
- if(!PC->Selected) {DrawText(TEXT("함선을 선택하세요"),PlayInk,24,Y+20,OVTypography::Font(EOVTextRole::Body));return;}
  auto* Ship=PC->Selected.Get();
- const FString ShipLabel=FitLabel(OVTypography::Font(EOVTextRole::Body),Ship->ShipName,280);
- bCommandShipClipped=ShipLabel!=Ship->ShipName;
- DrawText(ShipLabel,PlayAccent,24,Y+12,OVTypography::Font(EOVTextRole::Body));
+ const FString ShipLabel=FitLabel(OVTypography::Font(EOVTextRole::Body),ShipDisplayName(Ship),280);
+ bCommandShipClipped=ShipLabel!=ShipDisplayName(Ship);
+ DrawText(ShipLabel,ShipNameColor(Ship),24,Y+12,OVTypography::Font(EOVTextRole::Body));
  AddHitBox(FVector2D(24,Y+8)*UIScale,FVector2D(280,26)*UIScale,TEXT("CommandShipLabel"),true,8);
  ActionCenters.Add(TEXT("CommandShipLabel"),FVector2D(164,Y+21));
  Button(TEXT("Focus"),TEXT("추적"),315,Y+8,60,PC->bFollow);
@@ -479,10 +483,10 @@ void AOVHUD::DrawPlayHUD()
  const float Hull=FMath::Clamp(Ship->Systems->HullHP/FMath::Max(1.f,Ship->Systems->MaxHullHP),0.f,1.f);
  DrawRect(FLinearColor(.08f,.13f,.19f),24,Y+38,210,10);DrawRect(PlayAccent,24,Y+38,210*Hull,4);
  DrawRect(FLinearColor(.3f,.48f,1),24,Y+45,210*FMath::Clamp(Ship->Systems->Shield/FMath::Max(1.f,Ship->Systems->MaxShield),0.f,1.f),3);
- const FString TargetLabel=TEXT("표적: ")+(Ship->AttackTarget?Ship->AttackTarget->ShipName:TEXT("없음"));
+ const FString TargetLabel=TEXT("표적: ")+(Ship->AttackTarget?ShipDisplayName(Ship->AttackTarget):TEXT("없음"));
  const FString VisibleTarget=FitLabel(OVTypography::Font(EOVTextRole::Body),TargetLabel,350);
  bCommandTargetClipped=VisibleTarget!=TargetLabel;
- DrawText(VisibleTarget,PlayInk,250,Y+40,OVTypography::Font(EOVTextRole::Body));
+ DrawText(VisibleTarget,Ship->AttackTarget?ShipNameColor(Ship->AttackTarget):PlayInk,250,Y+40,OVTypography::Font(EOVTextRole::Body));
  if(Ship->AttackTarget) {
   AddHitBox(FVector2D(250,Y+38)*UIScale,FVector2D(350,16)*UIScale,TEXT("CommandTargetLabel"),true,8);
   ActionCenters.Add(TEXT("CommandTargetLabel"),FVector2D(425,Y+46));
@@ -618,7 +622,8 @@ float AOVHUD::CommandPanelHeight() const
 {
  const auto* PC=Cast<AOVController>(PlayerOwner);
  const auto* Ship=PC?PC->Selected.Get():nullptr;
- if(!Ship || !Ship->bFriendly || !Ship->Systems || !Ship->Systems->Layout)return 210.f;
+ if(!Ship)return 27.f;
+ if(!Ship->bFriendly || !Ship->Systems || !Ship->Systems->Layout)return 210.f;
  const bool HasServiceRow=Ship->HullDefinitionId==TEXT("radar") || Ship->HullDefinitionId==TEXT("repair") ||
      Ship->Systems->Layout->Slots.ContainsByPredicate([](const auto& D){return D.Facility==EOVFacilityType::ResourceStorage;});
  return (Ship->Systems->Layout->bAllowAircraftOperations?242.f:210.f)+(HasServiceRow?36.f:0.f)+22.f;

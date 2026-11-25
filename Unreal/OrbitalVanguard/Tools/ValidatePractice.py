@@ -31,6 +31,17 @@ def run():
     pc=u.GameplayStatics.get_player_controller(world,0)
     hud=pc.get_hud()
     play=pc.get_play_scenario()
+    def capture(name):
+        if "-OVPracticeScreens" not in u.SystemLibrary.get_command_line():
+            return
+        path=output/(name+".png")
+        for _ in range(4):
+            yield
+        u.SystemLibrary.execute_console_command(world,f'Shot showui -nosuffix filename="{path.as_posix()}"')
+        for _ in range(30):
+            yield
+            if path.is_file():
+                break
     def begin(chapter):
         hud.open_title_screen()
         title=hud.get_title_screen()
@@ -41,6 +52,8 @@ def run():
         return list(pc.get_editor_property("ships"))
     def advance(label):
         play.observe_practice()
+        if not play.practice_ready:
+            report["unmet_objective"]={"chapter":play.practice_chapter+1,"goal":str(play.practice_goal_id()),"command":pc.last_action}
         check(label,play.advance_practice())
     def time_steps(n):
         for i in range(n):
@@ -80,6 +93,12 @@ def run():
     pc.action("Speed2")
     if pc.simulation_paused:pc.action("Pause")
     advance("2배속과 장 완료")
+    def reach(label,limit=1400):
+        for _ in range(limit):
+            play.observe_practice()
+            if play.practice_ready:break
+            pc.step_simulation(.25)
+        advance(label)
     ships=begin(6)
     pc.select_ship(ships[0]);hud.set_details_open(True);hud.execute_ui_action("HangarView")
     advance("실제 격납고 열림")
@@ -92,19 +111,27 @@ def run():
     time_steps(800)
     advance("같은 ID 기체 실제 재격납")
     check("재고 보존",ids==[a.aircraft_id for a in wing.aircraft])
-    def reach(label,limit=1400):
-        for _ in range(limit):
-            play.observe_practice()
-            if play.practice_ready:break
-            pc.step_simulation(.25)
-        advance(label)
+    target=next(t for t in pc.ships if not t.friendly)
+    pc.select_ship(ships[0]);pc.set_target(target);pc.action("LaunchAircraft")
+    reach("실제 편대 공격으로 손상 표적 파괴")
+    check("제공전 명령 없이 완료 차단",not play.advance_practice())
+    pc.action("WingAirCombat");reach("제공전으로 적 기체 실제 추적")
+    stock=wing.get_aircraft_overview(ships[0]).replacement_kits
+    pc.action("WingSupply");advance("수리함 재고에서 항공 보급")
+    check("실제 보충 자원 증가",wing.get_aircraft_overview(ships[0]).replacement_kits>stock)
+    reach("실제 생산 후 보관")
+    check("새 기체 추가",len(wing.aircraft)>len(ids))
+    pc.set_target(next(t for t in pc.ships if not t.friendly and t.hull_definition_id=="carrier"))
+    pc.action("AutoWing");reach("실제 자동 일제 출격")
     def slot(ship,kind):
         return next(s.slot_id for s in ship.systems.layout.slots if s.facility==kind)
     def room(ship,kind):
         hud.execute_ui_action("InteriorSlot_"+str(slot(ship,kind)))
     ships=begin(1);ship=ships[0]
     pc.select_ship(ship);advance("항모 선택")
-    hud.set_details_open(True);advance("선체 상세")
+    hud.set_details_open(True)
+    yield from capture("ship-gauges")
+    advance("선체 상세")
     hud.execute_ui_action("InteriorToggle");room(ship,u.OVFacilityType.CORE);advance("선내 방 선택")
     hud.execute_ui_action("HeroPanel");advance("탑승 영웅 명단")
     hud.set_hero_panel_open(False);hud.set_details_open(True);hud.execute_ui_action("HangarView");advance("기체 현황")
@@ -124,30 +151,50 @@ def run():
     reach("무장 발사 가능")
     ship.set_automation(False,True)
     reach("실제 쉴드 피격");reach("장갑 이후 선체 피격",4000);reach("요격으로 격추",3000)
-    ship,main=begin(4)
+    ship,main,scout,radar,carrier,flagship,enemy=begin(4)
     pc.select_ship(ship);advance("방공함 선택")
     ship.set_destination(main.get_actor_location()+u.Vector(10500,0,0));reach("호위 표식 도착")
-    ship=begin(5)[0];hud.execute_ui_action("InteriorToggle")
-    for kind in [u.OVFacilityType.CORE,u.OVFacilityType.BRIDGE,u.OVFacilityType.ENGINE,u.OVFacilityType.WEAPON_CONTROL]:
+    pc.select_ship(scout);scout.set_destination(u.Vector(12000,-9500,2000));reach("초계함 전방 배치")
+    pc.select_ship(radar);pc.action("RadarSurvey");pc.action("WorldPick_"+str(list(pc.ships).index(enemy)))
+    reach("레이더함 적 내부 정찰")
+    pc.select_ship(main);pc.set_target(enemy);pc.combat.request_fire(main);reach("전함 함포 발사")
+    pc.select_ship(carrier);pc.set_target(enemy);pc.action("LaunchAircraft");reach("항모 편대 공격")
+    pc.select_ship(flagship);hud.set_details_open(True);advance("초대형 구축전함 상세")
+    ship,gunship,missileship,scout,beamship,enemy=begin(5);hud.execute_ui_action("InteriorToggle")
+    yield from capture("facility-lesson")
+    for kind in [getattr(u.OVFacilityType,key) for key in ("CORE","BRIDGE","ENGINE","WEAPON_CONTROL","LIFE_SUPPORT","AMMO","CAPACITOR","MISSILE_STORAGE","SHIELD_CONTROL","RADAR","INTERCEPTION","BOARDING","HANGAR","FIGHTER_CONTROL","RESOURCE_STORAGE","SECURITY")]:
         room(ship,kind);advance("시설 확인 "+str(kind))
+    for vessel,weapon in [(gunship,"함포"),(beamship,"빔"),(missileship,"미사일")]:
+        pc.select_ship(vessel);pc.set_target(enemy);vessel.set_automation(False,True)
+        reach(weapon+" 계열의 실제 사격")
+        vessel.set_automation(False,False)
     for label in ("호환 무장 실제 장착","상위 티어 장착 거부"):
         hud.execute_ui_action("PracticeEquip");advance(label)
     ship=begin(7)[0];hud.execute_ui_action("HeroPanel");advance("영웅 명단")
     interior=pc.interior
     hero=next(a for a in interior.units if a.faction_id==0 and a.role!=u.OVInteriorRole.TROOPER)
+    hud.set_hero_panel_open(False)
+    hud.execute_ui_action("InteriorToggle");hud.execute_ui_action("InteriorCard_"+str(hero.unit_id));advance("영웅과 탑승 함선을 선내 지도에서 확인")
     duty=slot(ship,u.OVFacilityType.WEAPON_CONTROL if hero.role==u.OVInteriorRole.RANGED else u.OVFacilityType.BRIDGE)
-    check("지원 보직 지시",interior.set_hero_duty(hero.unit_id,True,duty));reach("영웅 보직 활성")
-    check("수호로 변경",interior.set_hero_duty(hero.unit_id,False,duty));advance("지원 효과 해제")
-    check("지원 복귀",interior.set_hero_duty(hero.unit_id,True,duty));reach("동일 영웅 복귀")
+    check("시설 보직 지시",interior.set_hero_duty(hero.unit_id,True,duty));reach("영웅 보직 활성")
+    check("수호로 변경",interior.issue_order([hero.unit_id],u.OVInteriorOrder.DEFEND,slot(ship,u.OVFacilityType.BRIDGE)));reach("함교 수호 위치에 도착하고 보직 효과 해제")
+    check("보직 복귀",interior.set_hero_duty(hero.unit_id,True,duty));reach("동일 영웅 복귀")
     home,target,*_=begin(8)
-    troops=[a for a in pc.interior.units if a.ship==home and a.faction_id==0]
-    ids=[a.unit_id for a in troops if a.role!=u.OVInteriorRole.TROOPER][:4]+[a.unit_id for a in troops if a.role==u.OVInteriorRole.TROOPER][:8]
-    check("실제 강습 편성 및 적함 지정",len(ids)==12 and pc.prepare_boarding(home,target,None,ids))
+    pc.select_ship(home);hud.execute_ui_action("InteriorToggle")
+    hud.execute_ui_action("InteriorFilter_1");hud.execute_ui_action("InteriorAll")
+    ids=list(hud.interior_selected_units)
+    yield from capture("assault-team")
+    bay=next(h for h in pc.carrier.hangars if h.carrier==home and h.stored_small_ship and h.stored_small_ship.ship_name=="A팀 강습선")
+    shuttle=bay.stored_small_ship
+    check("개인 포드 준비 가능",bool(ids) and pc.prepare_boarding(home,target,None,ids))
+    check("개인 포드로 강습선 연습 통과 차단",not play.advance_practice())
+    pc.cancel_crew_operation(pc.last_crew_operation())
+    check("실제 A팀 필터·전체 선택·강습선 준비",pc.prepare_boarding(home,target,shuttle,ids))
     advance("강습 목표 접수")
     for _ in range(1200):
         pc.step_simulation(.05)
         if pc.confirm_boarding(pc.last_crew_operation()):break
-    reach("탑승 후 포드 발사");reach("적함에 실제 진입")
+    reach("A팀 탑승 후 강습선 출발");reach("적함에 실제 진입")
     objective=slot(target,u.OVFacilityType.BRIDGE)
     ordered=set()
     for _ in range(6000):
@@ -161,7 +208,13 @@ def run():
     advance("실제 시설 점령")
     survivors=list(pc.interior.get_units_on_ship(target,0))
     check("생존자 철수 명령",survivors and pc.interior.issue_order(survivors,u.OVInteriorOrder.RETREAT,""))
-    reach("원 수송수단으로 회수",2400)
+    reach("생존 대원이 강습선에 승선",2400)
+    for _ in range(2400):
+        pc.step_simulation(.25)
+        if any(x.ship==shuttle and x.state==u.OVShuttleState.READY for x in pc.transport.shuttles):break
+    check("실습 자동 수납 금지",not any(h.stored_small_ship==shuttle for h in pc.carrier.hangars))
+    check("아군 모함 수납 명령",pc.request_small_ship_dock(bay.hangar_id,shuttle))
+    reach("직접 명령 후 강습선의 실제 재격납",2400)
     hud.execute_ui_action("PracticeIndex")
 def tick(_):
     try:

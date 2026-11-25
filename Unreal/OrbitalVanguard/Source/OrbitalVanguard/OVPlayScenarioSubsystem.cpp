@@ -367,7 +367,6 @@ bool UOVPlayScenarioSubsystem::Start(AOVController& Controller, FName Id)
             const FVector initialAdvance=ship->Destination-ship->GetActorLocation();
             ship->SetActorLocationAndRotation(design.Position,FRotator(0,design.Yaw,0));
             ship->SetDestination(design.Position+initialAdvance);
-            if(!FitSortieHull(*ship,design)){Controller.ResetPlayScenarioSession(false);return false;}
         }
         ArenaRoster=Controller.GetGameInstance()->GetSubsystem<UOVHeroSubsystem>();
         ArenaSavedRoster=MoveTemp(ArenaRoster->Heroes);ArenaSavedTiers=MoveTemp(ArenaRoster->CommandTiers);
@@ -582,6 +581,7 @@ AOVShip* UOVPlayScenarioSubsystem::Spawn(AOVController& Controller, const FOVPla
     if (!Ship) return nullptr;
     Controller.Ships.Add(Ship); // The session owns even partially configured actors.
     if (!OVCalibration::ConfigureHull(*Controller.Combat, *Ship, Entry.Hull, bFriendly, Position, Scale,Entry.AircraftBays,bArena)) return nullptr;
+    if (bApplyingSortie && bFriendly && (!Draft.Hulls.IsValidIndex(Ordinal) || !FitSortieHull(*Ship,Draft.Hulls[Ordinal]))) return nullptr;
     Ship->ShipName = FString::Printf(TEXT("%s %02d"), *OVCalibration::GetHullName(Entry.Hull), Ordinal + 1);
     const bool combatOrders=!bArena && ActiveId!=TEXT("BaseTrial");
     Ship->SetAutomation(combatOrders, combatOrders);
@@ -635,7 +635,7 @@ bool UOVPlayScenarioSubsystem::HandleAction(AOVController& Controller, FName Act
     {
         if(LastSortie.Mission==ActiveId && !ActiveId.IsNone()){
             Draft=LastSortie;TGuardValue<bool> applying(bApplyingSortie,true);
-            Start(Controller,ActiveId);
+            if(Start(Controller,ActiveId)) Controller.bSimulationPaused=true;
         }else Start(Controller, ActiveId);
         return true;
     }
