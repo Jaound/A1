@@ -1,0 +1,2633 @@
+{
+  "checks": [
+    {
+      "name": "무장 카드 반입 anti_ship_module",
+      "passed": true
+    },
+    {
+      "name": "무장 카드 반입 ciws_beam_b",
+      "passed": true
+    },
+    {
+      "name": "무장 카드 반입 ciws_gatling_6",
+      "passed": true
+    },
+    {
+      "name": "무장 카드 반입 heavy_cannon_shc400",
+      "passed": true
+    },
+    {
+      "name": "무장 카드 반입 laser_turret_lb30",
+      "passed": true
+    },
+    {
+      "name": "무장 카드 반입 missile_pod_mm24",
+      "passed": true
+    },
+    {
+      "name": "무장 카드 반입 missile_pod_mm48",
+      "passed": true
+    },
+    {
+      "name": "무장 카드 반입 naval_gun_bf120",
+      "passed": true
+    },
+    {
+      "name": "무장 카드 반입 plasma_heavy_cannon",
+      "passed": true
+    },
+    {
+      "name": "무장 카드 반입 railgun_rg200",
+      "passed": true
+    },
+    {
+      "name": "50코스트 · 1번 환경 일반 출격 창",
+      "passed": true
+    },
+    {
+      "name": "50코스트 · 1번 환경 전투 격리",
+      "passed": true
+    },
+    {
+      "name": "50코스트 · 1번 환경 빈 편성에서 시작",
+      "passed": true
+    },
+    {
+      "name": "50코스트 · 1번 환경 사용자가 불러온 예산 추천",
+      "passed": true
+    },
+    {
+      "name": "예산 초과 거부",
+      "passed": true
+    },
+    {
+      "name": "빈 함대 출격 거부",
+      "passed": true
+    },
+    {
+      "name": "혼성 편성 battleship",
+      "passed": true
+    },
+    {
+      "name": "혼성 편성 vector",
+      "passed": true
+    },
+    {
+      "name": "혼성 편성 corvette",
+      "passed": true
+    },
+    {
+      "name": "50코스트 · 1번 환경 설계 이동",
+      "passed": true
+    },
+    {
+      "name": "50코스트 · 1번 환경 빈 설계 출격 차단",
+      "passed": true
+    },
+    {
+      "name": "50코스트 · 1번 환경 1번 함선 빈 시설·무장",
+      "passed": true
+    },
+    {
+      "name": "50코스트 · 1번 환경 1번 독립 추천",
+      "passed": true
+    },
+    {
+      "name": "50코스트 · 1번 환경 2번 함선 빈 시설·무장",
+      "passed": true
+    },
+    {
+      "name": "50코스트 · 1번 환경 2번 독립 추천",
+      "passed": true
+    },
+    {
+      "name": "50코스트 · 1번 환경 3번 함선 빈 시설·무장",
+      "passed": true
+    },
+    {
+      "name": "50코스트 · 1번 환경 3번 독립 추천",
+      "passed": true
+    },
+    {
+      "name": "50코스트 · 1번 환경 추천 설계 유효",
+      "passed": true
+    },
+    {
+      "name": "새 층에서 보이는 방에 즉시 배치",
+      "passed": true
+    },
+    {
+      "name": "코어 해제와 직접 재배치",
+      "passed": true
+    },
+    {
+      "name": "잘못된 교환 거부",
+      "passed": true
+    },
+    {
+      "name": "다른 방에 코어 장착 거부",
+      "passed": true
+    },
+    {
+      "name": "함포 탄약고 누락 차단",
+      "passed": true
+    },
+    {
+      "name": "탄약고 직접 보충",
+      "passed": true
+    },
+    {
+      "name": "불법 장착 거부",
+      "passed": true
+    },
+    {
+      "name": "존재하지 않는 층 거부",
+      "passed": true
+    },
+    {
+      "name": "실제 시설 교환",
+      "passed": true
+    },
+    {
+      "name": "호환 무장 교체",
+      "passed": true
+    },
+    {
+      "name": "외장 슬롯 한 곳 비워 두기",
+      "passed": true
+    },
+    {
+      "name": "실탄 요격포 직접 장착",
+      "passed": true
+    },
+    {
+      "name": "50코스트 · 1번 환경 배치 이동",
+      "passed": true
+    },
+    {
+      "name": "50코스트 · 1번 환경 아군 영역 경계",
+      "passed": true
+    },
+    {
+      "name": "50코스트 · 1번 환경 함체 겹침",
+      "passed": true
+    },
+    {
+      "name": "50코스트 · 1번 환경 세 진형 프리셋",
+      "passed": true
+    },
+    {
+      "name": "50코스트 · 1번 환경 균형 전열 앞쪽 초계함",
+      "passed": true
+    },
+    {
+      "name": "50코스트 · 1번 환경 영웅 선택 이동",
+      "passed": true
+    },
+    {
+      "name": "50코스트 · 1번 환경 영웅 선택",
+      "passed": true
+    },
+    {
+      "name": "같은 영웅은 해제·재선택",
+      "passed": true
+    },
+    {
+      "name": "시험 한도 적용",
+      "passed": true
+    },
+    {
+      "name": "초계함 첫 영웅 탑승",
+      "passed": true
+    },
+    {
+      "name": "초계함 영웅 정원 초과 거부",
+      "passed": true
+    },
+    {
+      "name": "50코스트 · 1번 환경 영웅 배치 이동",
+      "passed": true
+    },
+    {
+      "name": "50코스트 · 1번 환경 영웅 시작 시설",
+      "passed": true
+    },
+    {
+      "name": "50코스트 · 1번 환경 최종 브리핑",
+      "passed": true
+    },
+    {
+      "name": "최종에서 편성 수정",
+      "passed": true
+    },
+    {
+      "name": "수정 후 다음 단계",
+      "passed": true
+    },
+    {
+      "name": "수정 후 다음 단계",
+      "passed": true
+    },
+    {
+      "name": "수정 후 다음 단계",
+      "passed": true
+    },
+    {
+      "name": "수정 후 다음 단계",
+      "passed": true
+    },
+    {
+      "name": "삭제된 함선의 영웅 재배치 요구",
+      "passed": true
+    },
+    {
+      "name": "남은 함선에 재배치",
+      "passed": true
+    },
+    {
+      "name": "50코스트 · 1번 환경 출격",
+      "passed": true
+    },
+    {
+      "name": "50코스트 · 1번 환경 출격 직후 일시정지",
+      "passed": true
+    },
+    {
+      "name": "50코스트 · 1번 환경 실제 아군 함종",
+      "passed": true
+    },
+    {
+      "name": "50코스트 · 1번 환경 실제 적 공개 편성",
+      "passed": true
+    },
+    {
+      "name": "50코스트 · 1번 환경 위치와 고도",
+      "passed": true
+    },
+    {
+      "name": "50코스트 · 1번 환경 실제 탑승 영웅",
+      "passed": true
+    },
+    {
+      "name": "실제 함선의 시설 배치",
+      "passed": true
+    },
+    {
+      "name": "실제 함선의 무장",
+      "passed": true
+    },
+    {
+      "name": "비워 둔 무장은 전장에 생성되지 않음",
+      "passed": true
+    },
+    {
+      "name": "실전에서 선택한 실탄 요격포",
+      "passed": true
+    },
+    {
+      "name": "50코스트 · 1번 환경 환경 일치",
+      "passed": true
+    },
+    {
+      "name": "50코스트 · 1번 환경 중복 출격 차단",
+      "passed": true
+    },
+    {
+      "name": "같은 편성으로 일시정지 재시작",
+      "passed": true
+    },
+    {
+      "name": "50코스트 · 1번 환경 환경 정리",
+      "passed": true
+    },
+    {
+      "name": "50코스트 · 2번 환경 일반 출격 창",
+      "passed": true
+    },
+    {
+      "name": "50코스트 · 2번 환경 전투 격리",
+      "passed": true
+    },
+    {
+      "name": "50코스트 · 2번 환경 빈 편성에서 시작",
+      "passed": true
+    },
+    {
+      "name": "50코스트 · 2번 환경 사용자가 불러온 예산 추천",
+      "passed": true
+    },
+    {
+      "name": "50코스트 · 2번 환경 설계 이동",
+      "passed": true
+    },
+    {
+      "name": "50코스트 · 2번 환경 빈 설계 출격 차단",
+      "passed": true
+    },
+    {
+      "name": "50코스트 · 2번 환경 1번 함선 빈 시설·무장",
+      "passed": true
+    },
+    {
+      "name": "50코스트 · 2번 환경 1번 독립 추천",
+      "passed": true
+    },
+    {
+      "name": "50코스트 · 2번 환경 2번 함선 빈 시설·무장",
+      "passed": true
+    },
+    {
+      "name": "50코스트 · 2번 환경 2번 독립 추천",
+      "passed": true
+    },
+    {
+      "name": "50코스트 · 2번 환경 3번 함선 빈 시설·무장",
+      "passed": true
+    },
+    {
+      "name": "50코스트 · 2번 환경 3번 독립 추천",
+      "passed": true
+    },
+    {
+      "name": "50코스트 · 2번 환경 4번 함선 빈 시설·무장",
+      "passed": true
+    },
+    {
+      "name": "50코스트 · 2번 환경 4번 독립 추천",
+      "passed": true
+    },
+    {
+      "name": "50코스트 · 2번 환경 5번 함선 빈 시설·무장",
+      "passed": true
+    },
+    {
+      "name": "50코스트 · 2번 환경 5번 독립 추천",
+      "passed": true
+    },
+    {
+      "name": "50코스트 · 2번 환경 6번 함선 빈 시설·무장",
+      "passed": true
+    },
+    {
+      "name": "50코스트 · 2번 환경 6번 독립 추천",
+      "passed": true
+    },
+    {
+      "name": "50코스트 · 2번 환경 7번 함선 빈 시설·무장",
+      "passed": true
+    },
+    {
+      "name": "50코스트 · 2번 환경 7번 독립 추천",
+      "passed": true
+    },
+    {
+      "name": "50코스트 · 2번 환경 8번 함선 빈 시설·무장",
+      "passed": true
+    },
+    {
+      "name": "50코스트 · 2번 환경 8번 독립 추천",
+      "passed": true
+    },
+    {
+      "name": "50코스트 · 2번 환경 9번 함선 빈 시설·무장",
+      "passed": true
+    },
+    {
+      "name": "50코스트 · 2번 환경 9번 독립 추천",
+      "passed": true
+    },
+    {
+      "name": "50코스트 · 2번 환경 10번 함선 빈 시설·무장",
+      "passed": true
+    },
+    {
+      "name": "50코스트 · 2번 환경 10번 독립 추천",
+      "passed": true
+    },
+    {
+      "name": "50코스트 · 2번 환경 추천 설계 유효",
+      "passed": true
+    },
+    {
+      "name": "50코스트 · 2번 환경 배치 이동",
+      "passed": true
+    },
+    {
+      "name": "50코스트 · 2번 환경 아군 영역 경계",
+      "passed": true
+    },
+    {
+      "name": "50코스트 · 2번 환경 함체 겹침",
+      "passed": true
+    },
+    {
+      "name": "50코스트 · 2번 환경 블랙홀 중심 거부",
+      "passed": true
+    },
+    {
+      "name": "50코스트 · 2번 환경 세 진형 프리셋",
+      "passed": true
+    },
+    {
+      "name": "50코스트 · 2번 환경 균형 전열 앞쪽 초계함",
+      "passed": true
+    },
+    {
+      "name": "50코스트 · 2번 환경 영웅 선택 이동",
+      "passed": true
+    },
+    {
+      "name": "50코스트 · 2번 환경 영웅 선택",
+      "passed": true
+    },
+    {
+      "name": "50코스트 · 2번 환경 영웅 배치 이동",
+      "passed": true
+    },
+    {
+      "name": "50코스트 · 2번 환경 영웅 시작 시설",
+      "passed": true
+    },
+    {
+      "name": "50코스트 · 2번 환경 최종 브리핑",
+      "passed": true
+    },
+    {
+      "name": "50코스트 · 2번 환경 출격",
+      "passed": true
+    },
+    {
+      "name": "50코스트 · 2번 환경 출격 직후 일시정지",
+      "passed": true
+    },
+    {
+      "name": "50코스트 · 2번 환경 실제 아군 함종",
+      "passed": true
+    },
+    {
+      "name": "50코스트 · 2번 환경 실제 적 공개 편성",
+      "passed": true
+    },
+    {
+      "name": "50코스트 · 2번 환경 위치와 고도",
+      "passed": true
+    },
+    {
+      "name": "50코스트 · 2번 환경 실제 탑승 영웅",
+      "passed": true
+    },
+    {
+      "name": "50코스트 · 2번 환경 환경 일치",
+      "passed": true
+    },
+    {
+      "name": "50코스트 · 2번 환경 중복 출격 차단",
+      "passed": true
+    },
+    {
+      "name": "50코스트 · 2번 환경 환경 정리",
+      "passed": true
+    },
+    {
+      "name": "50코스트 · 3번 환경 일반 출격 창",
+      "passed": true
+    },
+    {
+      "name": "50코스트 · 3번 환경 전투 격리",
+      "passed": true
+    },
+    {
+      "name": "50코스트 · 3번 환경 빈 편성에서 시작",
+      "passed": true
+    },
+    {
+      "name": "50코스트 · 3번 환경 사용자가 불러온 예산 추천",
+      "passed": true
+    },
+    {
+      "name": "50코스트 · 3번 환경 설계 이동",
+      "passed": true
+    },
+    {
+      "name": "50코스트 · 3번 환경 빈 설계 출격 차단",
+      "passed": true
+    },
+    {
+      "name": "50코스트 · 3번 환경 1번 함선 빈 시설·무장",
+      "passed": true
+    },
+    {
+      "name": "50코스트 · 3번 환경 1번 독립 추천",
+      "passed": true
+    },
+    {
+      "name": "50코스트 · 3번 환경 2번 함선 빈 시설·무장",
+      "passed": true
+    },
+    {
+      "name": "50코스트 · 3번 환경 2번 독립 추천",
+      "passed": true
+    },
+    {
+      "name": "50코스트 · 3번 환경 3번 함선 빈 시설·무장",
+      "passed": true
+    },
+    {
+      "name": "50코스트 · 3번 환경 3번 독립 추천",
+      "passed": true
+    },
+    {
+      "name": "50코스트 · 3번 환경 4번 함선 빈 시설·무장",
+      "passed": true
+    },
+    {
+      "name": "50코스트 · 3번 환경 4번 독립 추천",
+      "passed": true
+    },
+    {
+      "name": "50코스트 · 3번 환경 5번 함선 빈 시설·무장",
+      "passed": true
+    },
+    {
+      "name": "50코스트 · 3번 환경 5번 독립 추천",
+      "passed": true
+    },
+    {
+      "name": "50코스트 · 3번 환경 6번 함선 빈 시설·무장",
+      "passed": true
+    },
+    {
+      "name": "50코스트 · 3번 환경 6번 독립 추천",
+      "passed": true
+    },
+    {
+      "name": "50코스트 · 3번 환경 7번 함선 빈 시설·무장",
+      "passed": true
+    },
+    {
+      "name": "50코스트 · 3번 환경 7번 독립 추천",
+      "passed": true
+    },
+    {
+      "name": "50코스트 · 3번 환경 8번 함선 빈 시설·무장",
+      "passed": true
+    },
+    {
+      "name": "50코스트 · 3번 환경 8번 독립 추천",
+      "passed": true
+    },
+    {
+      "name": "50코스트 · 3번 환경 9번 함선 빈 시설·무장",
+      "passed": true
+    },
+    {
+      "name": "50코스트 · 3번 환경 9번 독립 추천",
+      "passed": true
+    },
+    {
+      "name": "50코스트 · 3번 환경 10번 함선 빈 시설·무장",
+      "passed": true
+    },
+    {
+      "name": "50코스트 · 3번 환경 10번 독립 추천",
+      "passed": true
+    },
+    {
+      "name": "50코스트 · 3번 환경 추천 설계 유효",
+      "passed": true
+    },
+    {
+      "name": "50코스트 · 3번 환경 배치 이동",
+      "passed": true
+    },
+    {
+      "name": "50코스트 · 3번 환경 아군 영역 경계",
+      "passed": true
+    },
+    {
+      "name": "50코스트 · 3번 환경 함체 겹침",
+      "passed": true
+    },
+    {
+      "name": "50코스트 · 3번 환경 실체 겹침 차단",
+      "passed": true
+    },
+    {
+      "name": "50코스트 · 3번 환경 세 진형 프리셋",
+      "passed": true
+    },
+    {
+      "name": "50코스트 · 3번 환경 균형 전열 앞쪽 초계함",
+      "passed": true
+    },
+    {
+      "name": "50코스트 · 3번 환경 영웅 선택 이동",
+      "passed": true
+    },
+    {
+      "name": "50코스트 · 3번 환경 영웅 선택",
+      "passed": true
+    },
+    {
+      "name": "50코스트 · 3번 환경 영웅 배치 이동",
+      "passed": true
+    },
+    {
+      "name": "50코스트 · 3번 환경 영웅 시작 시설",
+      "passed": true
+    },
+    {
+      "name": "50코스트 · 3번 환경 최종 브리핑",
+      "passed": true
+    },
+    {
+      "name": "50코스트 · 3번 환경 출격",
+      "passed": true
+    },
+    {
+      "name": "50코스트 · 3번 환경 출격 직후 일시정지",
+      "passed": true
+    },
+    {
+      "name": "50코스트 · 3번 환경 실제 아군 함종",
+      "passed": true
+    },
+    {
+      "name": "50코스트 · 3번 환경 실제 적 공개 편성",
+      "passed": true
+    },
+    {
+      "name": "50코스트 · 3번 환경 위치와 고도",
+      "passed": true
+    },
+    {
+      "name": "50코스트 · 3번 환경 실제 탑승 영웅",
+      "passed": true
+    },
+    {
+      "name": "50코스트 · 3번 환경 환경 일치",
+      "passed": true
+    },
+    {
+      "name": "50코스트 · 3번 환경 중복 출격 차단",
+      "passed": true
+    },
+    {
+      "name": "실제 발사로 엄폐 소행성 파괴",
+      "passed": true
+    },
+    {
+      "name": "차폐된 탄은 소행성 표면에서 종료",
+      "passed": true
+    },
+    {
+      "name": "엄폐 파괴 후 같은 사선에서 적함 피격",
+      "passed": true
+    },
+    {
+      "name": "50코스트 · 3번 환경 소행성 파괴",
+      "passed": true
+    },
+    {
+      "name": "50코스트 · 3번 환경 환경 정리",
+      "passed": true
+    },
+    {
+      "name": "100코스트 · 1번 환경 일반 출격 창",
+      "passed": true
+    },
+    {
+      "name": "100코스트 · 1번 환경 전투 격리",
+      "passed": true
+    },
+    {
+      "name": "100코스트 · 1번 환경 빈 편성에서 시작",
+      "passed": true
+    },
+    {
+      "name": "100코스트 · 1번 환경 사용자가 불러온 예산 추천",
+      "passed": true
+    },
+    {
+      "name": "100코스트 · 1번 환경 설계 이동",
+      "passed": true
+    },
+    {
+      "name": "100코스트 · 1번 환경 빈 설계 출격 차단",
+      "passed": true
+    },
+    {
+      "name": "100코스트 · 1번 환경 1번 함선 빈 시설·무장",
+      "passed": true
+    },
+    {
+      "name": "100코스트 · 1번 환경 1번 독립 추천",
+      "passed": true
+    },
+    {
+      "name": "100코스트 · 1번 환경 2번 함선 빈 시설·무장",
+      "passed": true
+    },
+    {
+      "name": "100코스트 · 1번 환경 2번 독립 추천",
+      "passed": true
+    },
+    {
+      "name": "100코스트 · 1번 환경 3번 함선 빈 시설·무장",
+      "passed": true
+    },
+    {
+      "name": "100코스트 · 1번 환경 3번 독립 추천",
+      "passed": true
+    },
+    {
+      "name": "100코스트 · 1번 환경 4번 함선 빈 시설·무장",
+      "passed": true
+    },
+    {
+      "name": "100코스트 · 1번 환경 4번 독립 추천",
+      "passed": true
+    },
+    {
+      "name": "100코스트 · 1번 환경 5번 함선 빈 시설·무장",
+      "passed": true
+    },
+    {
+      "name": "100코스트 · 1번 환경 5번 독립 추천",
+      "passed": true
+    },
+    {
+      "name": "100코스트 · 1번 환경 6번 함선 빈 시설·무장",
+      "passed": true
+    },
+    {
+      "name": "100코스트 · 1번 환경 6번 독립 추천",
+      "passed": true
+    },
+    {
+      "name": "100코스트 · 1번 환경 7번 함선 빈 시설·무장",
+      "passed": true
+    },
+    {
+      "name": "100코스트 · 1번 환경 7번 독립 추천",
+      "passed": true
+    },
+    {
+      "name": "100코스트 · 1번 환경 8번 함선 빈 시설·무장",
+      "passed": true
+    },
+    {
+      "name": "100코스트 · 1번 환경 8번 독립 추천",
+      "passed": true
+    },
+    {
+      "name": "100코스트 · 1번 환경 9번 함선 빈 시설·무장",
+      "passed": true
+    },
+    {
+      "name": "100코스트 · 1번 환경 9번 독립 추천",
+      "passed": true
+    },
+    {
+      "name": "100코스트 · 1번 환경 10번 함선 빈 시설·무장",
+      "passed": true
+    },
+    {
+      "name": "100코스트 · 1번 환경 10번 독립 추천",
+      "passed": true
+    },
+    {
+      "name": "100코스트 · 1번 환경 11번 함선 빈 시설·무장",
+      "passed": true
+    },
+    {
+      "name": "100코스트 · 1번 환경 11번 독립 추천",
+      "passed": true
+    },
+    {
+      "name": "100코스트 · 1번 환경 12번 함선 빈 시설·무장",
+      "passed": true
+    },
+    {
+      "name": "100코스트 · 1번 환경 12번 독립 추천",
+      "passed": true
+    },
+    {
+      "name": "100코스트 · 1번 환경 추천 설계 유효",
+      "passed": true
+    },
+    {
+      "name": "100코스트 · 1번 환경 배치 이동",
+      "passed": true
+    },
+    {
+      "name": "100코스트 · 1번 환경 아군 영역 경계",
+      "passed": true
+    },
+    {
+      "name": "100코스트 · 1번 환경 함체 겹침",
+      "passed": true
+    },
+    {
+      "name": "100코스트 · 1번 환경 세 진형 프리셋",
+      "passed": true
+    },
+    {
+      "name": "100코스트 · 1번 환경 균형 전열 앞쪽 초계함",
+      "passed": true
+    },
+    {
+      "name": "100코스트 · 1번 환경 영웅 선택 이동",
+      "passed": true
+    },
+    {
+      "name": "100코스트 · 1번 환경 영웅 선택",
+      "passed": true
+    },
+    {
+      "name": "100코스트 · 1번 환경 영웅 배치 이동",
+      "passed": true
+    },
+    {
+      "name": "100코스트 · 1번 환경 영웅 시작 시설",
+      "passed": true
+    },
+    {
+      "name": "100코스트 · 1번 환경 최종 브리핑",
+      "passed": true
+    },
+    {
+      "name": "100코스트 · 1번 환경 출격",
+      "passed": true
+    },
+    {
+      "name": "100코스트 · 1번 환경 출격 직후 일시정지",
+      "passed": true
+    },
+    {
+      "name": "100코스트 · 1번 환경 실제 아군 함종",
+      "passed": true
+    },
+    {
+      "name": "100코스트 · 1번 환경 실제 적 공개 편성",
+      "passed": true
+    },
+    {
+      "name": "100코스트 · 1번 환경 위치와 고도",
+      "passed": true
+    },
+    {
+      "name": "100코스트 · 1번 환경 실제 탑승 영웅",
+      "passed": true
+    },
+    {
+      "name": "100코스트 · 1번 환경 환경 일치",
+      "passed": true
+    },
+    {
+      "name": "100코스트 · 1번 환경 중복 출격 차단",
+      "passed": true
+    },
+    {
+      "name": "100코스트 · 1번 환경 환경 정리",
+      "passed": true
+    },
+    {
+      "name": "100코스트 · 2번 환경 일반 출격 창",
+      "passed": true
+    },
+    {
+      "name": "100코스트 · 2번 환경 전투 격리",
+      "passed": true
+    },
+    {
+      "name": "100코스트 · 2번 환경 빈 편성에서 시작",
+      "passed": true
+    },
+    {
+      "name": "100코스트 · 2번 환경 사용자가 불러온 예산 추천",
+      "passed": true
+    },
+    {
+      "name": "100코스트 · 2번 환경 설계 이동",
+      "passed": true
+    },
+    {
+      "name": "100코스트 · 2번 환경 빈 설계 출격 차단",
+      "passed": true
+    },
+    {
+      "name": "100코스트 · 2번 환경 1번 함선 빈 시설·무장",
+      "passed": true
+    },
+    {
+      "name": "100코스트 · 2번 환경 1번 독립 추천",
+      "passed": true
+    },
+    {
+      "name": "100코스트 · 2번 환경 2번 함선 빈 시설·무장",
+      "passed": true
+    },
+    {
+      "name": "100코스트 · 2번 환경 2번 독립 추천",
+      "passed": true
+    },
+    {
+      "name": "100코스트 · 2번 환경 3번 함선 빈 시설·무장",
+      "passed": true
+    },
+    {
+      "name": "100코스트 · 2번 환경 3번 독립 추천",
+      "passed": true
+    },
+    {
+      "name": "100코스트 · 2번 환경 4번 함선 빈 시설·무장",
+      "passed": true
+    },
+    {
+      "name": "100코스트 · 2번 환경 4번 독립 추천",
+      "passed": true
+    },
+    {
+      "name": "100코스트 · 2번 환경 5번 함선 빈 시설·무장",
+      "passed": true
+    },
+    {
+      "name": "100코스트 · 2번 환경 5번 독립 추천",
+      "passed": true
+    },
+    {
+      "name": "100코스트 · 2번 환경 6번 함선 빈 시설·무장",
+      "passed": true
+    },
+    {
+      "name": "100코스트 · 2번 환경 6번 독립 추천",
+      "passed": true
+    },
+    {
+      "name": "100코스트 · 2번 환경 7번 함선 빈 시설·무장",
+      "passed": true
+    },
+    {
+      "name": "100코스트 · 2번 환경 7번 독립 추천",
+      "passed": true
+    },
+    {
+      "name": "100코스트 · 2번 환경 8번 함선 빈 시설·무장",
+      "passed": true
+    },
+    {
+      "name": "100코스트 · 2번 환경 8번 독립 추천",
+      "passed": true
+    },
+    {
+      "name": "100코스트 · 2번 환경 9번 함선 빈 시설·무장",
+      "passed": true
+    },
+    {
+      "name": "100코스트 · 2번 환경 9번 독립 추천",
+      "passed": true
+    },
+    {
+      "name": "100코스트 · 2번 환경 10번 함선 빈 시설·무장",
+      "passed": true
+    },
+    {
+      "name": "100코스트 · 2번 환경 10번 독립 추천",
+      "passed": true
+    },
+    {
+      "name": "100코스트 · 2번 환경 11번 함선 빈 시설·무장",
+      "passed": true
+    },
+    {
+      "name": "100코스트 · 2번 환경 11번 독립 추천",
+      "passed": true
+    },
+    {
+      "name": "100코스트 · 2번 환경 12번 함선 빈 시설·무장",
+      "passed": true
+    },
+    {
+      "name": "100코스트 · 2번 환경 12번 독립 추천",
+      "passed": true
+    },
+    {
+      "name": "100코스트 · 2번 환경 추천 설계 유효",
+      "passed": true
+    },
+    {
+      "name": "100코스트 · 2번 환경 배치 이동",
+      "passed": true
+    },
+    {
+      "name": "100코스트 · 2번 환경 아군 영역 경계",
+      "passed": true
+    },
+    {
+      "name": "100코스트 · 2번 환경 함체 겹침",
+      "passed": true
+    },
+    {
+      "name": "100코스트 · 2번 환경 블랙홀 중심 거부",
+      "passed": true
+    },
+    {
+      "name": "100코스트 · 2번 환경 세 진형 프리셋",
+      "passed": true
+    },
+    {
+      "name": "100코스트 · 2번 환경 균형 전열 앞쪽 초계함",
+      "passed": true
+    },
+    {
+      "name": "100코스트 · 2번 환경 영웅 선택 이동",
+      "passed": true
+    },
+    {
+      "name": "100코스트 · 2번 환경 영웅 선택",
+      "passed": true
+    },
+    {
+      "name": "100코스트 · 2번 환경 영웅 배치 이동",
+      "passed": true
+    },
+    {
+      "name": "100코스트 · 2번 환경 영웅 시작 시설",
+      "passed": true
+    },
+    {
+      "name": "100코스트 · 2번 환경 최종 브리핑",
+      "passed": true
+    },
+    {
+      "name": "100코스트 · 2번 환경 출격",
+      "passed": true
+    },
+    {
+      "name": "100코스트 · 2번 환경 출격 직후 일시정지",
+      "passed": true
+    },
+    {
+      "name": "100코스트 · 2번 환경 실제 아군 함종",
+      "passed": true
+    },
+    {
+      "name": "100코스트 · 2번 환경 실제 적 공개 편성",
+      "passed": true
+    },
+    {
+      "name": "100코스트 · 2번 환경 위치와 고도",
+      "passed": true
+    },
+    {
+      "name": "100코스트 · 2번 환경 실제 탑승 영웅",
+      "passed": true
+    },
+    {
+      "name": "100코스트 · 2번 환경 환경 일치",
+      "passed": true
+    },
+    {
+      "name": "100코스트 · 2번 환경 중복 출격 차단",
+      "passed": true
+    },
+    {
+      "name": "100코스트 · 2번 환경 환경 정리",
+      "passed": true
+    },
+    {
+      "name": "100코스트 · 3번 환경 일반 출격 창",
+      "passed": true
+    },
+    {
+      "name": "100코스트 · 3번 환경 전투 격리",
+      "passed": true
+    },
+    {
+      "name": "100코스트 · 3번 환경 빈 편성에서 시작",
+      "passed": true
+    },
+    {
+      "name": "100코스트 · 3번 환경 사용자가 불러온 예산 추천",
+      "passed": true
+    },
+    {
+      "name": "100코스트 · 3번 환경 설계 이동",
+      "passed": true
+    },
+    {
+      "name": "100코스트 · 3번 환경 빈 설계 출격 차단",
+      "passed": true
+    },
+    {
+      "name": "100코스트 · 3번 환경 1번 함선 빈 시설·무장",
+      "passed": true
+    },
+    {
+      "name": "100코스트 · 3번 환경 1번 독립 추천",
+      "passed": true
+    },
+    {
+      "name": "100코스트 · 3번 환경 2번 함선 빈 시설·무장",
+      "passed": true
+    },
+    {
+      "name": "100코스트 · 3번 환경 2번 독립 추천",
+      "passed": true
+    },
+    {
+      "name": "100코스트 · 3번 환경 3번 함선 빈 시설·무장",
+      "passed": true
+    },
+    {
+      "name": "100코스트 · 3번 환경 3번 독립 추천",
+      "passed": true
+    },
+    {
+      "name": "100코스트 · 3번 환경 4번 함선 빈 시설·무장",
+      "passed": true
+    },
+    {
+      "name": "100코스트 · 3번 환경 4번 독립 추천",
+      "passed": true
+    },
+    {
+      "name": "100코스트 · 3번 환경 5번 함선 빈 시설·무장",
+      "passed": true
+    },
+    {
+      "name": "100코스트 · 3번 환경 5번 독립 추천",
+      "passed": true
+    },
+    {
+      "name": "100코스트 · 3번 환경 6번 함선 빈 시설·무장",
+      "passed": true
+    },
+    {
+      "name": "100코스트 · 3번 환경 6번 독립 추천",
+      "passed": true
+    },
+    {
+      "name": "100코스트 · 3번 환경 7번 함선 빈 시설·무장",
+      "passed": true
+    },
+    {
+      "name": "100코스트 · 3번 환경 7번 독립 추천",
+      "passed": true
+    },
+    {
+      "name": "100코스트 · 3번 환경 8번 함선 빈 시설·무장",
+      "passed": true
+    },
+    {
+      "name": "100코스트 · 3번 환경 8번 독립 추천",
+      "passed": true
+    },
+    {
+      "name": "100코스트 · 3번 환경 9번 함선 빈 시설·무장",
+      "passed": true
+    },
+    {
+      "name": "100코스트 · 3번 환경 9번 독립 추천",
+      "passed": true
+    },
+    {
+      "name": "100코스트 · 3번 환경 10번 함선 빈 시설·무장",
+      "passed": true
+    },
+    {
+      "name": "100코스트 · 3번 환경 10번 독립 추천",
+      "passed": true
+    },
+    {
+      "name": "100코스트 · 3번 환경 11번 함선 빈 시설·무장",
+      "passed": true
+    },
+    {
+      "name": "100코스트 · 3번 환경 11번 독립 추천",
+      "passed": true
+    },
+    {
+      "name": "100코스트 · 3번 환경 12번 함선 빈 시설·무장",
+      "passed": true
+    },
+    {
+      "name": "100코스트 · 3번 환경 12번 독립 추천",
+      "passed": true
+    },
+    {
+      "name": "100코스트 · 3번 환경 추천 설계 유효",
+      "passed": true
+    },
+    {
+      "name": "100코스트 · 3번 환경 배치 이동",
+      "passed": true
+    },
+    {
+      "name": "100코스트 · 3번 환경 아군 영역 경계",
+      "passed": true
+    },
+    {
+      "name": "100코스트 · 3번 환경 함체 겹침",
+      "passed": true
+    },
+    {
+      "name": "100코스트 · 3번 환경 실체 겹침 차단",
+      "passed": true
+    },
+    {
+      "name": "100코스트 · 3번 환경 세 진형 프리셋",
+      "passed": true
+    },
+    {
+      "name": "100코스트 · 3번 환경 균형 전열 앞쪽 초계함",
+      "passed": true
+    },
+    {
+      "name": "100코스트 · 3번 환경 영웅 선택 이동",
+      "passed": true
+    },
+    {
+      "name": "100코스트 · 3번 환경 영웅 선택",
+      "passed": true
+    },
+    {
+      "name": "100코스트 · 3번 환경 영웅 배치 이동",
+      "passed": true
+    },
+    {
+      "name": "100코스트 · 3번 환경 영웅 시작 시설",
+      "passed": true
+    },
+    {
+      "name": "100코스트 · 3번 환경 최종 브리핑",
+      "passed": true
+    },
+    {
+      "name": "100코스트 · 3번 환경 출격",
+      "passed": true
+    },
+    {
+      "name": "100코스트 · 3번 환경 출격 직후 일시정지",
+      "passed": true
+    },
+    {
+      "name": "100코스트 · 3번 환경 실제 아군 함종",
+      "passed": true
+    },
+    {
+      "name": "100코스트 · 3번 환경 실제 적 공개 편성",
+      "passed": true
+    },
+    {
+      "name": "100코스트 · 3번 환경 위치와 고도",
+      "passed": true
+    },
+    {
+      "name": "100코스트 · 3번 환경 실제 탑승 영웅",
+      "passed": true
+    },
+    {
+      "name": "100코스트 · 3번 환경 환경 일치",
+      "passed": true
+    },
+    {
+      "name": "100코스트 · 3번 환경 중복 출격 차단",
+      "passed": true
+    },
+    {
+      "name": "100코스트 · 3번 환경 소행성 파괴",
+      "passed": true
+    },
+    {
+      "name": "100코스트 · 3번 환경 환경 정리",
+      "passed": true
+    },
+    {
+      "name": "200코스트 · 1번 환경 일반 출격 창",
+      "passed": true
+    },
+    {
+      "name": "200코스트 · 1번 환경 전투 격리",
+      "passed": true
+    },
+    {
+      "name": "200코스트 · 1번 환경 빈 편성에서 시작",
+      "passed": true
+    },
+    {
+      "name": "200코스트 · 1번 환경 사용자가 불러온 예산 추천",
+      "passed": true
+    },
+    {
+      "name": "200코스트 · 1번 환경 설계 이동",
+      "passed": true
+    },
+    {
+      "name": "200코스트 · 1번 환경 빈 설계 출격 차단",
+      "passed": true
+    },
+    {
+      "name": "200코스트 · 1번 환경 1번 함선 빈 시설·무장",
+      "passed": true
+    },
+    {
+      "name": "200코스트 · 1번 환경 1번 독립 추천",
+      "passed": true
+    },
+    {
+      "name": "200코스트 · 1번 환경 2번 함선 빈 시설·무장",
+      "passed": true
+    },
+    {
+      "name": "200코스트 · 1번 환경 2번 독립 추천",
+      "passed": true
+    },
+    {
+      "name": "200코스트 · 1번 환경 3번 함선 빈 시설·무장",
+      "passed": true
+    },
+    {
+      "name": "200코스트 · 1번 환경 3번 독립 추천",
+      "passed": true
+    },
+    {
+      "name": "200코스트 · 1번 환경 4번 함선 빈 시설·무장",
+      "passed": true
+    },
+    {
+      "name": "200코스트 · 1번 환경 4번 독립 추천",
+      "passed": true
+    },
+    {
+      "name": "200코스트 · 1번 환경 5번 함선 빈 시설·무장",
+      "passed": true
+    },
+    {
+      "name": "200코스트 · 1번 환경 5번 독립 추천",
+      "passed": true
+    },
+    {
+      "name": "200코스트 · 1번 환경 6번 함선 빈 시설·무장",
+      "passed": true
+    },
+    {
+      "name": "200코스트 · 1번 환경 6번 독립 추천",
+      "passed": true
+    },
+    {
+      "name": "200코스트 · 1번 환경 7번 함선 빈 시설·무장",
+      "passed": true
+    },
+    {
+      "name": "200코스트 · 1번 환경 7번 독립 추천",
+      "passed": true
+    },
+    {
+      "name": "전용 무장 유지·교차 장착 거부",
+      "passed": true
+    },
+    {
+      "name": "전용 무장 유지·교차 장착 거부",
+      "passed": true
+    },
+    {
+      "name": "전용 무장 유지·교차 장착 거부",
+      "passed": true
+    },
+    {
+      "name": "전용 무장 유지·교차 장착 거부",
+      "passed": true
+    },
+    {
+      "name": "200코스트 · 1번 환경 8번 함선 빈 시설·무장",
+      "passed": true
+    },
+    {
+      "name": "200코스트 · 1번 환경 8번 독립 추천",
+      "passed": true
+    },
+    {
+      "name": "200코스트 · 1번 환경 9번 함선 빈 시설·무장",
+      "passed": true
+    },
+    {
+      "name": "200코스트 · 1번 환경 9번 독립 추천",
+      "passed": true
+    },
+    {
+      "name": "200코스트 · 1번 환경 10번 함선 빈 시설·무장",
+      "passed": true
+    },
+    {
+      "name": "200코스트 · 1번 환경 10번 독립 추천",
+      "passed": true
+    },
+    {
+      "name": "200코스트 · 1번 환경 11번 함선 빈 시설·무장",
+      "passed": true
+    },
+    {
+      "name": "200코스트 · 1번 환경 11번 독립 추천",
+      "passed": true
+    },
+    {
+      "name": "200코스트 · 1번 환경 12번 함선 빈 시설·무장",
+      "passed": true
+    },
+    {
+      "name": "200코스트 · 1번 환경 12번 독립 추천",
+      "passed": true
+    },
+    {
+      "name": "200코스트 · 1번 환경 추천 설계 유효",
+      "passed": true
+    },
+    {
+      "name": "200코스트 · 1번 환경 배치 이동",
+      "passed": true
+    },
+    {
+      "name": "200코스트 · 1번 환경 아군 영역 경계",
+      "passed": true
+    },
+    {
+      "name": "200코스트 · 1번 환경 함체 겹침",
+      "passed": true
+    },
+    {
+      "name": "200코스트 · 1번 환경 세 진형 프리셋",
+      "passed": true
+    },
+    {
+      "name": "200코스트 · 1번 환경 균형 전열 앞쪽 초계함",
+      "passed": true
+    },
+    {
+      "name": "200코스트 · 1번 환경 영웅 선택 이동",
+      "passed": true
+    },
+    {
+      "name": "200코스트 · 1번 환경 영웅 선택",
+      "passed": true
+    },
+    {
+      "name": "200코스트 · 1번 환경 영웅 배치 이동",
+      "passed": true
+    },
+    {
+      "name": "200코스트 · 1번 환경 영웅 시작 시설",
+      "passed": true
+    },
+    {
+      "name": "200코스트 · 1번 환경 최종 브리핑",
+      "passed": true
+    },
+    {
+      "name": "200코스트 · 1번 환경 출격",
+      "passed": true
+    },
+    {
+      "name": "200코스트 · 1번 환경 출격 직후 일시정지",
+      "passed": true
+    },
+    {
+      "name": "200코스트 · 1번 환경 실제 아군 함종",
+      "passed": true
+    },
+    {
+      "name": "200코스트 · 1번 환경 실제 적 공개 편성",
+      "passed": true
+    },
+    {
+      "name": "200코스트 · 1번 환경 위치와 고도",
+      "passed": true
+    },
+    {
+      "name": "200코스트 · 1번 환경 실제 탑승 영웅",
+      "passed": true
+    },
+    {
+      "name": "전용 장착점 실전 적용",
+      "passed": true
+    },
+    {
+      "name": "전용 장착점 실전 적용",
+      "passed": true
+    },
+    {
+      "name": "전용 장착점 실전 적용",
+      "passed": true
+    },
+    {
+      "name": "전용 장착점 실전 적용",
+      "passed": true
+    },
+    {
+      "name": "200코스트 · 1번 환경 환경 일치",
+      "passed": true
+    },
+    {
+      "name": "200코스트 · 1번 환경 중복 출격 차단",
+      "passed": true
+    },
+    {
+      "name": "200코스트 · 1번 환경 환경 정리",
+      "passed": true
+    },
+    {
+      "name": "200코스트 · 2번 환경 일반 출격 창",
+      "passed": true
+    },
+    {
+      "name": "200코스트 · 2번 환경 전투 격리",
+      "passed": true
+    },
+    {
+      "name": "200코스트 · 2번 환경 빈 편성에서 시작",
+      "passed": true
+    },
+    {
+      "name": "200코스트 · 2번 환경 사용자가 불러온 예산 추천",
+      "passed": true
+    },
+    {
+      "name": "200코스트 · 2번 환경 설계 이동",
+      "passed": true
+    },
+    {
+      "name": "200코스트 · 2번 환경 빈 설계 출격 차단",
+      "passed": true
+    },
+    {
+      "name": "200코스트 · 2번 환경 1번 함선 빈 시설·무장",
+      "passed": true
+    },
+    {
+      "name": "200코스트 · 2번 환경 1번 독립 추천",
+      "passed": true
+    },
+    {
+      "name": "200코스트 · 2번 환경 2번 함선 빈 시설·무장",
+      "passed": true
+    },
+    {
+      "name": "200코스트 · 2번 환경 2번 독립 추천",
+      "passed": true
+    },
+    {
+      "name": "200코스트 · 2번 환경 3번 함선 빈 시설·무장",
+      "passed": true
+    },
+    {
+      "name": "200코스트 · 2번 환경 3번 독립 추천",
+      "passed": true
+    },
+    {
+      "name": "200코스트 · 2번 환경 4번 함선 빈 시설·무장",
+      "passed": true
+    },
+    {
+      "name": "200코스트 · 2번 환경 4번 독립 추천",
+      "passed": true
+    },
+    {
+      "name": "200코스트 · 2번 환경 5번 함선 빈 시설·무장",
+      "passed": true
+    },
+    {
+      "name": "200코스트 · 2번 환경 5번 독립 추천",
+      "passed": true
+    },
+    {
+      "name": "200코스트 · 2번 환경 6번 함선 빈 시설·무장",
+      "passed": true
+    },
+    {
+      "name": "200코스트 · 2번 환경 6번 독립 추천",
+      "passed": true
+    },
+    {
+      "name": "200코스트 · 2번 환경 7번 함선 빈 시설·무장",
+      "passed": true
+    },
+    {
+      "name": "200코스트 · 2번 환경 7번 독립 추천",
+      "passed": true
+    },
+    {
+      "name": "200코스트 · 2번 환경 8번 함선 빈 시설·무장",
+      "passed": true
+    },
+    {
+      "name": "200코스트 · 2번 환경 8번 독립 추천",
+      "passed": true
+    },
+    {
+      "name": "200코스트 · 2번 환경 9번 함선 빈 시설·무장",
+      "passed": true
+    },
+    {
+      "name": "200코스트 · 2번 환경 9번 독립 추천",
+      "passed": true
+    },
+    {
+      "name": "200코스트 · 2번 환경 10번 함선 빈 시설·무장",
+      "passed": true
+    },
+    {
+      "name": "200코스트 · 2번 환경 10번 독립 추천",
+      "passed": true
+    },
+    {
+      "name": "200코스트 · 2번 환경 11번 함선 빈 시설·무장",
+      "passed": true
+    },
+    {
+      "name": "200코스트 · 2번 환경 11번 독립 추천",
+      "passed": true
+    },
+    {
+      "name": "200코스트 · 2번 환경 12번 함선 빈 시설·무장",
+      "passed": true
+    },
+    {
+      "name": "200코스트 · 2번 환경 12번 독립 추천",
+      "passed": true
+    },
+    {
+      "name": "200코스트 · 2번 환경 추천 설계 유효",
+      "passed": true
+    },
+    {
+      "name": "200코스트 · 2번 환경 배치 이동",
+      "passed": true
+    },
+    {
+      "name": "200코스트 · 2번 환경 아군 영역 경계",
+      "passed": true
+    },
+    {
+      "name": "200코스트 · 2번 환경 함체 겹침",
+      "passed": true
+    },
+    {
+      "name": "200코스트 · 2번 환경 블랙홀 중심 거부",
+      "passed": true
+    },
+    {
+      "name": "200코스트 · 2번 환경 세 진형 프리셋",
+      "passed": true
+    },
+    {
+      "name": "200코스트 · 2번 환경 균형 전열 앞쪽 초계함",
+      "passed": true
+    },
+    {
+      "name": "200코스트 · 2번 환경 영웅 선택 이동",
+      "passed": true
+    },
+    {
+      "name": "200코스트 · 2번 환경 영웅 선택",
+      "passed": true
+    },
+    {
+      "name": "200코스트 · 2번 환경 영웅 배치 이동",
+      "passed": true
+    },
+    {
+      "name": "200코스트 · 2번 환경 영웅 시작 시설",
+      "passed": true
+    },
+    {
+      "name": "200코스트 · 2번 환경 최종 브리핑",
+      "passed": true
+    },
+    {
+      "name": "200코스트 · 2번 환경 출격",
+      "passed": true
+    },
+    {
+      "name": "200코스트 · 2번 환경 출격 직후 일시정지",
+      "passed": true
+    },
+    {
+      "name": "200코스트 · 2번 환경 실제 아군 함종",
+      "passed": true
+    },
+    {
+      "name": "200코스트 · 2번 환경 실제 적 공개 편성",
+      "passed": true
+    },
+    {
+      "name": "200코스트 · 2번 환경 위치와 고도",
+      "passed": true
+    },
+    {
+      "name": "200코스트 · 2번 환경 실제 탑승 영웅",
+      "passed": true
+    },
+    {
+      "name": "200코스트 · 2번 환경 환경 일치",
+      "passed": true
+    },
+    {
+      "name": "200코스트 · 2번 환경 중복 출격 차단",
+      "passed": true
+    },
+    {
+      "name": "200코스트 · 2번 환경 환경 정리",
+      "passed": true
+    },
+    {
+      "name": "200코스트 · 3번 환경 일반 출격 창",
+      "passed": true
+    },
+    {
+      "name": "200코스트 · 3번 환경 전투 격리",
+      "passed": true
+    },
+    {
+      "name": "200코스트 · 3번 환경 빈 편성에서 시작",
+      "passed": true
+    },
+    {
+      "name": "200코스트 · 3번 환경 사용자가 불러온 예산 추천",
+      "passed": true
+    },
+    {
+      "name": "200코스트 · 3번 환경 설계 이동",
+      "passed": true
+    },
+    {
+      "name": "200코스트 · 3번 환경 빈 설계 출격 차단",
+      "passed": true
+    },
+    {
+      "name": "200코스트 · 3번 환경 1번 함선 빈 시설·무장",
+      "passed": true
+    },
+    {
+      "name": "200코스트 · 3번 환경 1번 독립 추천",
+      "passed": true
+    },
+    {
+      "name": "200코스트 · 3번 환경 2번 함선 빈 시설·무장",
+      "passed": true
+    },
+    {
+      "name": "200코스트 · 3번 환경 2번 독립 추천",
+      "passed": true
+    },
+    {
+      "name": "200코스트 · 3번 환경 3번 함선 빈 시설·무장",
+      "passed": true
+    },
+    {
+      "name": "200코스트 · 3번 환경 3번 독립 추천",
+      "passed": true
+    },
+    {
+      "name": "200코스트 · 3번 환경 4번 함선 빈 시설·무장",
+      "passed": true
+    },
+    {
+      "name": "200코스트 · 3번 환경 4번 독립 추천",
+      "passed": true
+    },
+    {
+      "name": "200코스트 · 3번 환경 5번 함선 빈 시설·무장",
+      "passed": true
+    },
+    {
+      "name": "200코스트 · 3번 환경 5번 독립 추천",
+      "passed": true
+    },
+    {
+      "name": "200코스트 · 3번 환경 6번 함선 빈 시설·무장",
+      "passed": true
+    },
+    {
+      "name": "200코스트 · 3번 환경 6번 독립 추천",
+      "passed": true
+    },
+    {
+      "name": "200코스트 · 3번 환경 7번 함선 빈 시설·무장",
+      "passed": true
+    },
+    {
+      "name": "200코스트 · 3번 환경 7번 독립 추천",
+      "passed": true
+    },
+    {
+      "name": "200코스트 · 3번 환경 8번 함선 빈 시설·무장",
+      "passed": true
+    },
+    {
+      "name": "200코스트 · 3번 환경 8번 독립 추천",
+      "passed": true
+    },
+    {
+      "name": "200코스트 · 3번 환경 9번 함선 빈 시설·무장",
+      "passed": true
+    },
+    {
+      "name": "200코스트 · 3번 환경 9번 독립 추천",
+      "passed": true
+    },
+    {
+      "name": "200코스트 · 3번 환경 10번 함선 빈 시설·무장",
+      "passed": true
+    },
+    {
+      "name": "200코스트 · 3번 환경 10번 독립 추천",
+      "passed": true
+    },
+    {
+      "name": "200코스트 · 3번 환경 11번 함선 빈 시설·무장",
+      "passed": true
+    },
+    {
+      "name": "200코스트 · 3번 환경 11번 독립 추천",
+      "passed": true
+    },
+    {
+      "name": "200코스트 · 3번 환경 12번 함선 빈 시설·무장",
+      "passed": true
+    },
+    {
+      "name": "200코스트 · 3번 환경 12번 독립 추천",
+      "passed": true
+    },
+    {
+      "name": "200코스트 · 3번 환경 추천 설계 유효",
+      "passed": true
+    },
+    {
+      "name": "200코스트 · 3번 환경 배치 이동",
+      "passed": true
+    },
+    {
+      "name": "200코스트 · 3번 환경 아군 영역 경계",
+      "passed": true
+    },
+    {
+      "name": "200코스트 · 3번 환경 함체 겹침",
+      "passed": true
+    },
+    {
+      "name": "200코스트 · 3번 환경 실체 겹침 차단",
+      "passed": true
+    },
+    {
+      "name": "200코스트 · 3번 환경 세 진형 프리셋",
+      "passed": true
+    },
+    {
+      "name": "200코스트 · 3번 환경 균형 전열 앞쪽 초계함",
+      "passed": true
+    },
+    {
+      "name": "200코스트 · 3번 환경 영웅 선택 이동",
+      "passed": true
+    },
+    {
+      "name": "200코스트 · 3번 환경 영웅 선택",
+      "passed": true
+    },
+    {
+      "name": "200코스트 · 3번 환경 영웅 배치 이동",
+      "passed": true
+    },
+    {
+      "name": "200코스트 · 3번 환경 영웅 시작 시설",
+      "passed": true
+    },
+    {
+      "name": "200코스트 · 3번 환경 최종 브리핑",
+      "passed": true
+    },
+    {
+      "name": "200코스트 · 3번 환경 출격",
+      "passed": true
+    },
+    {
+      "name": "200코스트 · 3번 환경 출격 직후 일시정지",
+      "passed": true
+    },
+    {
+      "name": "200코스트 · 3번 환경 실제 아군 함종",
+      "passed": true
+    },
+    {
+      "name": "200코스트 · 3번 환경 실제 적 공개 편성",
+      "passed": true
+    },
+    {
+      "name": "200코스트 · 3번 환경 위치와 고도",
+      "passed": true
+    },
+    {
+      "name": "200코스트 · 3번 환경 실제 탑승 영웅",
+      "passed": true
+    },
+    {
+      "name": "200코스트 · 3번 환경 환경 일치",
+      "passed": true
+    },
+    {
+      "name": "200코스트 · 3번 환경 중복 출격 차단",
+      "passed": true
+    },
+    {
+      "name": "200코스트 · 3번 환경 소행성 파괴",
+      "passed": true
+    },
+    {
+      "name": "200코스트 · 3번 환경 환경 정리",
+      "passed": true
+    },
+    {
+      "name": "300코스트 · 1번 환경 일반 출격 창",
+      "passed": true
+    },
+    {
+      "name": "300코스트 · 1번 환경 전투 격리",
+      "passed": true
+    },
+    {
+      "name": "300코스트 · 1번 환경 빈 편성에서 시작",
+      "passed": true
+    },
+    {
+      "name": "300코스트 · 1번 환경 사용자가 불러온 예산 추천",
+      "passed": true
+    },
+    {
+      "name": "300코스트 · 1번 환경 설계 이동",
+      "passed": true
+    },
+    {
+      "name": "300코스트 · 1번 환경 빈 설계 출격 차단",
+      "passed": true
+    },
+    {
+      "name": "300코스트 · 1번 환경 1번 함선 빈 시설·무장",
+      "passed": true
+    },
+    {
+      "name": "300코스트 · 1번 환경 1번 독립 추천",
+      "passed": true
+    },
+    {
+      "name": "300코스트 · 1번 환경 2번 함선 빈 시설·무장",
+      "passed": true
+    },
+    {
+      "name": "300코스트 · 1번 환경 2번 독립 추천",
+      "passed": true
+    },
+    {
+      "name": "300코스트 · 1번 환경 3번 함선 빈 시설·무장",
+      "passed": true
+    },
+    {
+      "name": "300코스트 · 1번 환경 3번 독립 추천",
+      "passed": true
+    },
+    {
+      "name": "300코스트 · 1번 환경 4번 함선 빈 시설·무장",
+      "passed": true
+    },
+    {
+      "name": "300코스트 · 1번 환경 4번 독립 추천",
+      "passed": true
+    },
+    {
+      "name": "300코스트 · 1번 환경 5번 함선 빈 시설·무장",
+      "passed": true
+    },
+    {
+      "name": "300코스트 · 1번 환경 5번 독립 추천",
+      "passed": true
+    },
+    {
+      "name": "300코스트 · 1번 환경 6번 함선 빈 시설·무장",
+      "passed": true
+    },
+    {
+      "name": "300코스트 · 1번 환경 6번 독립 추천",
+      "passed": true
+    },
+    {
+      "name": "300코스트 · 1번 환경 7번 함선 빈 시설·무장",
+      "passed": true
+    },
+    {
+      "name": "300코스트 · 1번 환경 7번 독립 추천",
+      "passed": true
+    },
+    {
+      "name": "전용 무장 유지·교차 장착 거부",
+      "passed": true
+    },
+    {
+      "name": "전용 무장 유지·교차 장착 거부",
+      "passed": true
+    },
+    {
+      "name": "전용 무장 유지·교차 장착 거부",
+      "passed": true
+    },
+    {
+      "name": "전용 무장 유지·교차 장착 거부",
+      "passed": true
+    },
+    {
+      "name": "300코스트 · 1번 환경 8번 함선 빈 시설·무장",
+      "passed": true
+    },
+    {
+      "name": "300코스트 · 1번 환경 8번 독립 추천",
+      "passed": true
+    },
+    {
+      "name": "300코스트 · 1번 환경 9번 함선 빈 시설·무장",
+      "passed": true
+    },
+    {
+      "name": "300코스트 · 1번 환경 9번 독립 추천",
+      "passed": true
+    },
+    {
+      "name": "300코스트 · 1번 환경 10번 함선 빈 시설·무장",
+      "passed": true
+    },
+    {
+      "name": "300코스트 · 1번 환경 10번 독립 추천",
+      "passed": true
+    },
+    {
+      "name": "300코스트 · 1번 환경 11번 함선 빈 시설·무장",
+      "passed": true
+    },
+    {
+      "name": "300코스트 · 1번 환경 11번 독립 추천",
+      "passed": true
+    },
+    {
+      "name": "전용 무장 유지·교차 장착 거부",
+      "passed": true
+    },
+    {
+      "name": "전용 무장 유지·교차 장착 거부",
+      "passed": true
+    },
+    {
+      "name": "전용 무장 유지·교차 장착 거부",
+      "passed": true
+    },
+    {
+      "name": "전용 무장 유지·교차 장착 거부",
+      "passed": true
+    },
+    {
+      "name": "전용 무장 유지·교차 장착 거부",
+      "passed": true
+    },
+    {
+      "name": "전용 무장 유지·교차 장착 거부",
+      "passed": true
+    },
+    {
+      "name": "300코스트 · 1번 환경 12번 함선 빈 시설·무장",
+      "passed": true
+    },
+    {
+      "name": "300코스트 · 1번 환경 12번 독립 추천",
+      "passed": true
+    },
+    {
+      "name": "300코스트 · 1번 환경 추천 설계 유효",
+      "passed": true
+    },
+    {
+      "name": "300코스트 · 1번 환경 배치 이동",
+      "passed": true
+    },
+    {
+      "name": "300코스트 · 1번 환경 아군 영역 경계",
+      "passed": true
+    },
+    {
+      "name": "300코스트 · 1번 환경 함체 겹침",
+      "passed": true
+    },
+    {
+      "name": "300코스트 · 1번 환경 세 진형 프리셋",
+      "passed": true
+    },
+    {
+      "name": "300코스트 · 1번 환경 영웅 선택 이동",
+      "passed": true
+    },
+    {
+      "name": "300코스트 · 1번 환경 영웅 선택",
+      "passed": true
+    },
+    {
+      "name": "300코스트 · 1번 환경 영웅 배치 이동",
+      "passed": true
+    },
+    {
+      "name": "300코스트 · 1번 환경 영웅 시작 시설",
+      "passed": true
+    },
+    {
+      "name": "300코스트 · 1번 환경 최종 브리핑",
+      "passed": true
+    },
+    {
+      "name": "300코스트 · 1번 환경 출격",
+      "passed": true
+    },
+    {
+      "name": "300코스트 · 1번 환경 출격 직후 일시정지",
+      "passed": true
+    },
+    {
+      "name": "300코스트 · 1번 환경 실제 아군 함종",
+      "passed": true
+    },
+    {
+      "name": "300코스트 · 1번 환경 실제 적 공개 편성",
+      "passed": true
+    },
+    {
+      "name": "300코스트 · 1번 환경 위치와 고도",
+      "passed": true
+    },
+    {
+      "name": "300코스트 · 1번 환경 실제 탑승 영웅",
+      "passed": true
+    },
+    {
+      "name": "전용 장착점 실전 적용",
+      "passed": true
+    },
+    {
+      "name": "전용 장착점 실전 적용",
+      "passed": true
+    },
+    {
+      "name": "전용 장착점 실전 적용",
+      "passed": true
+    },
+    {
+      "name": "전용 장착점 실전 적용",
+      "passed": true
+    },
+    {
+      "name": "전용 장착점 실전 적용",
+      "passed": true
+    },
+    {
+      "name": "전용 장착점 실전 적용",
+      "passed": true
+    },
+    {
+      "name": "전용 장착점 실전 적용",
+      "passed": true
+    },
+    {
+      "name": "전용 장착점 실전 적용",
+      "passed": true
+    },
+    {
+      "name": "전용 장착점 실전 적용",
+      "passed": true
+    },
+    {
+      "name": "전용 장착점 실전 적용",
+      "passed": true
+    },
+    {
+      "name": "300코스트 · 1번 환경 환경 일치",
+      "passed": true
+    },
+    {
+      "name": "300코스트 · 1번 환경 중복 출격 차단",
+      "passed": true
+    },
+    {
+      "name": "300코스트 · 1번 환경 환경 정리",
+      "passed": true
+    },
+    {
+      "name": "300코스트 · 2번 환경 일반 출격 창",
+      "passed": true
+    },
+    {
+      "name": "300코스트 · 2번 환경 전투 격리",
+      "passed": true
+    },
+    {
+      "name": "300코스트 · 2번 환경 빈 편성에서 시작",
+      "passed": true
+    },
+    {
+      "name": "300코스트 · 2번 환경 사용자가 불러온 예산 추천",
+      "passed": true
+    },
+    {
+      "name": "300코스트 · 2번 환경 설계 이동",
+      "passed": true
+    },
+    {
+      "name": "300코스트 · 2번 환경 빈 설계 출격 차단",
+      "passed": true
+    },
+    {
+      "name": "300코스트 · 2번 환경 1번 함선 빈 시설·무장",
+      "passed": true
+    },
+    {
+      "name": "300코스트 · 2번 환경 1번 독립 추천",
+      "passed": true
+    },
+    {
+      "name": "300코스트 · 2번 환경 2번 함선 빈 시설·무장",
+      "passed": true
+    },
+    {
+      "name": "300코스트 · 2번 환경 2번 독립 추천",
+      "passed": true
+    },
+    {
+      "name": "300코스트 · 2번 환경 3번 함선 빈 시설·무장",
+      "passed": true
+    },
+    {
+      "name": "300코스트 · 2번 환경 3번 독립 추천",
+      "passed": true
+    },
+    {
+      "name": "300코스트 · 2번 환경 4번 함선 빈 시설·무장",
+      "passed": true
+    },
+    {
+      "name": "300코스트 · 2번 환경 4번 독립 추천",
+      "passed": true
+    },
+    {
+      "name": "300코스트 · 2번 환경 5번 함선 빈 시설·무장",
+      "passed": true
+    },
+    {
+      "name": "300코스트 · 2번 환경 5번 독립 추천",
+      "passed": true
+    },
+    {
+      "name": "300코스트 · 2번 환경 6번 함선 빈 시설·무장",
+      "passed": true
+    },
+    {
+      "name": "300코스트 · 2번 환경 6번 독립 추천",
+      "passed": true
+    },
+    {
+      "name": "300코스트 · 2번 환경 7번 함선 빈 시설·무장",
+      "passed": true
+    },
+    {
+      "name": "300코스트 · 2번 환경 7번 독립 추천",
+      "passed": true
+    },
+    {
+      "name": "300코스트 · 2번 환경 8번 함선 빈 시설·무장",
+      "passed": true
+    },
+    {
+      "name": "300코스트 · 2번 환경 8번 독립 추천",
+      "passed": true
+    },
+    {
+      "name": "300코스트 · 2번 환경 9번 함선 빈 시설·무장",
+      "passed": true
+    },
+    {
+      "name": "300코스트 · 2번 환경 9번 독립 추천",
+      "passed": true
+    },
+    {
+      "name": "300코스트 · 2번 환경 10번 함선 빈 시설·무장",
+      "passed": true
+    },
+    {
+      "name": "300코스트 · 2번 환경 10번 독립 추천",
+      "passed": true
+    },
+    {
+      "name": "300코스트 · 2번 환경 11번 함선 빈 시설·무장",
+      "passed": true
+    },
+    {
+      "name": "300코스트 · 2번 환경 11번 독립 추천",
+      "passed": true
+    },
+    {
+      "name": "300코스트 · 2번 환경 12번 함선 빈 시설·무장",
+      "passed": true
+    },
+    {
+      "name": "300코스트 · 2번 환경 12번 독립 추천",
+      "passed": true
+    },
+    {
+      "name": "300코스트 · 2번 환경 추천 설계 유효",
+      "passed": true
+    },
+    {
+      "name": "300코스트 · 2번 환경 배치 이동",
+      "passed": true
+    },
+    {
+      "name": "300코스트 · 2번 환경 아군 영역 경계",
+      "passed": true
+    },
+    {
+      "name": "300코스트 · 2번 환경 함체 겹침",
+      "passed": true
+    },
+    {
+      "name": "300코스트 · 2번 환경 블랙홀 중심 거부",
+      "passed": true
+    },
+    {
+      "name": "300코스트 · 2번 환경 세 진형 프리셋",
+      "passed": true
+    },
+    {
+      "name": "300코스트 · 2번 환경 영웅 선택 이동",
+      "passed": true
+    },
+    {
+      "name": "300코스트 · 2번 환경 영웅 선택",
+      "passed": true
+    },
+    {
+      "name": "300코스트 · 2번 환경 영웅 배치 이동",
+      "passed": true
+    },
+    {
+      "name": "300코스트 · 2번 환경 영웅 시작 시설",
+      "passed": true
+    },
+    {
+      "name": "300코스트 · 2번 환경 최종 브리핑",
+      "passed": true
+    },
+    {
+      "name": "300코스트 · 2번 환경 출격",
+      "passed": true
+    },
+    {
+      "name": "300코스트 · 2번 환경 출격 직후 일시정지",
+      "passed": true
+    },
+    {
+      "name": "300코스트 · 2번 환경 실제 아군 함종",
+      "passed": true
+    },
+    {
+      "name": "300코스트 · 2번 환경 실제 적 공개 편성",
+      "passed": true
+    },
+    {
+      "name": "300코스트 · 2번 환경 위치와 고도",
+      "passed": true
+    },
+    {
+      "name": "300코스트 · 2번 환경 실제 탑승 영웅",
+      "passed": true
+    },
+    {
+      "name": "300코스트 · 2번 환경 환경 일치",
+      "passed": true
+    },
+    {
+      "name": "300코스트 · 2번 환경 중복 출격 차단",
+      "passed": true
+    },
+    {
+      "name": "300코스트 · 2번 환경 환경 정리",
+      "passed": true
+    },
+    {
+      "name": "300코스트 · 3번 환경 일반 출격 창",
+      "passed": true
+    },
+    {
+      "name": "300코스트 · 3번 환경 전투 격리",
+      "passed": true
+    },
+    {
+      "name": "300코스트 · 3번 환경 빈 편성에서 시작",
+      "passed": true
+    },
+    {
+      "name": "300코스트 · 3번 환경 사용자가 불러온 예산 추천",
+      "passed": true
+    },
+    {
+      "name": "300코스트 · 3번 환경 설계 이동",
+      "passed": true
+    },
+    {
+      "name": "300코스트 · 3번 환경 빈 설계 출격 차단",
+      "passed": true
+    },
+    {
+      "name": "300코스트 · 3번 환경 1번 함선 빈 시설·무장",
+      "passed": true
+    },
+    {
+      "name": "300코스트 · 3번 환경 1번 독립 추천",
+      "passed": true
+    },
+    {
+      "name": "300코스트 · 3번 환경 2번 함선 빈 시설·무장",
+      "passed": true
+    },
+    {
+      "name": "300코스트 · 3번 환경 2번 독립 추천",
+      "passed": true
+    },
+    {
+      "name": "300코스트 · 3번 환경 3번 함선 빈 시설·무장",
+      "passed": true
+    },
+    {
+      "name": "300코스트 · 3번 환경 3번 독립 추천",
+      "passed": true
+    },
+    {
+      "name": "300코스트 · 3번 환경 4번 함선 빈 시설·무장",
+      "passed": true
+    },
+    {
+      "name": "300코스트 · 3번 환경 4번 독립 추천",
+      "passed": true
+    },
+    {
+      "name": "300코스트 · 3번 환경 5번 함선 빈 시설·무장",
+      "passed": true
+    },
+    {
+      "name": "300코스트 · 3번 환경 5번 독립 추천",
+      "passed": true
+    },
+    {
+      "name": "300코스트 · 3번 환경 6번 함선 빈 시설·무장",
+      "passed": true
+    },
+    {
+      "name": "300코스트 · 3번 환경 6번 독립 추천",
+      "passed": true
+    },
+    {
+      "name": "300코스트 · 3번 환경 7번 함선 빈 시설·무장",
+      "passed": true
+    },
+    {
+      "name": "300코스트 · 3번 환경 7번 독립 추천",
+      "passed": true
+    },
+    {
+      "name": "300코스트 · 3번 환경 8번 함선 빈 시설·무장",
+      "passed": true
+    },
+    {
+      "name": "300코스트 · 3번 환경 8번 독립 추천",
+      "passed": true
+    },
+    {
+      "name": "300코스트 · 3번 환경 9번 함선 빈 시설·무장",
+      "passed": true
+    },
+    {
+      "name": "300코스트 · 3번 환경 9번 독립 추천",
+      "passed": true
+    },
+    {
+      "name": "300코스트 · 3번 환경 10번 함선 빈 시설·무장",
+      "passed": true
+    },
+    {
+      "name": "300코스트 · 3번 환경 10번 독립 추천",
+      "passed": true
+    },
+    {
+      "name": "300코스트 · 3번 환경 11번 함선 빈 시설·무장",
+      "passed": true
+    },
+    {
+      "name": "300코스트 · 3번 환경 11번 독립 추천",
+      "passed": true
+    },
+    {
+      "name": "300코스트 · 3번 환경 12번 함선 빈 시설·무장",
+      "passed": true
+    },
+    {
+      "name": "300코스트 · 3번 환경 12번 독립 추천",
+      "passed": true
+    },
+    {
+      "name": "300코스트 · 3번 환경 추천 설계 유효",
+      "passed": true
+    },
+    {
+      "name": "300코스트 · 3번 환경 배치 이동",
+      "passed": true
+    },
+    {
+      "name": "300코스트 · 3번 환경 아군 영역 경계",
+      "passed": true
+    },
+    {
+      "name": "300코스트 · 3번 환경 함체 겹침",
+      "passed": true
+    },
+    {
+      "name": "300코스트 · 3번 환경 실체 겹침 차단",
+      "passed": true
+    },
+    {
+      "name": "300코스트 · 3번 환경 세 진형 프리셋",
+      "passed": true
+    },
+    {
+      "name": "300코스트 · 3번 환경 영웅 선택 이동",
+      "passed": true
+    },
+    {
+      "name": "300코스트 · 3번 환경 영웅 선택",
+      "passed": true
+    },
+    {
+      "name": "300코스트 · 3번 환경 영웅 배치 이동",
+      "passed": true
+    },
+    {
+      "name": "300코스트 · 3번 환경 영웅 시작 시설",
+      "passed": true
+    },
+    {
+      "name": "300코스트 · 3번 환경 최종 브리핑",
+      "passed": true
+    },
+    {
+      "name": "300코스트 · 3번 환경 출격",
+      "passed": true
+    },
+    {
+      "name": "300코스트 · 3번 환경 출격 직후 일시정지",
+      "passed": true
+    },
+    {
+      "name": "300코스트 · 3번 환경 실제 아군 함종",
+      "passed": true
+    },
+    {
+      "name": "300코스트 · 3번 환경 실제 적 공개 편성",
+      "passed": true
+    },
+    {
+      "name": "300코스트 · 3번 환경 위치와 고도",
+      "passed": true
+    },
+    {
+      "name": "300코스트 · 3번 환경 실제 탑승 영웅",
+      "passed": true
+    },
+    {
+      "name": "300코스트 · 3번 환경 환경 일치",
+      "passed": true
+    },
+    {
+      "name": "300코스트 · 3번 환경 중복 출격 차단",
+      "passed": true
+    },
+    {
+      "name": "300코스트 · 3번 환경 소행성 파괴",
+      "passed": true
+    },
+    {
+      "name": "300코스트 · 3번 환경 환경 정리",
+      "passed": true
+    }
+  ],
+  "passed": true
+}

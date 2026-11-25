@@ -1,0 +1,458 @@
+{
+  "checks": [
+    {
+      "name": "기지 시험장 시작",
+      "passed": true
+    },
+    {
+      "name": "시험 조선소·도크·연구소 배치",
+      "passed": true
+    },
+    {
+      "name": "세 운영 시설 코어 연결",
+      "passed": true
+    },
+    {
+      "name": "연구 예약",
+      "passed": true
+    },
+    {
+      "name": "동일 연구 이중 예약 차단",
+      "passed": true
+    },
+    {
+      "name": "진행 중 연구 저장·복원",
+      "passed": true
+    },
+    {
+      "name": "복원된 연구 중복 청구 차단",
+      "passed": true
+    },
+    {
+      "name": "연구 효과로 코어 승급 가능",
+      "passed": true
+    },
+    {
+      "name": "코어 II와 연구소 II를 별도 검사",
+      "passed": true
+    },
+    {
+      "name": "연구소 II 증설",
+      "passed": true
+    },
+    {
+      "name": "중형 함체 정상 연구",
+      "passed": true
+    },
+    {
+      "name": "중형 함체 효과로 중형 조선소 해금",
+      "passed": true
+    },
+    {
+      "name": "시험 연구 즉시 해금",
+      "passed": true
+    },
+    {
+      "name": "초계함 주문",
+      "passed": true
+    },
+    {
+      "name": "작업칸 이중 예약 차단",
+      "passed": true
+    },
+    {
+      "name": "준공 전 함선 미생성",
+      "passed": true
+    },
+    {
+      "name": "건조 중 저장",
+      "passed": true
+    },
+    {
+      "name": "건조 중 복원",
+      "passed": true
+    },
+    {
+      "name": "같은 주문으로 한 척 준공",
+      "passed": true
+    },
+    {
+      "name": "첫 출항",
+      "passed": true
+    },
+    {
+      "name": "출항 중 중복 명령 차단",
+      "passed": true
+    },
+    {
+      "name": "전장에 원래 함선 출현",
+      "passed": true
+    },
+    {
+      "name": "표준 도크 복귀 명령",
+      "passed": true
+    },
+    {
+      "name": "동일 함선 이중 접안 차단",
+      "passed": true
+    },
+    {
+      "name": "전장에서 입구 접근 후 정박",
+      "passed": true
+    },
+    {
+      "name": "손상 견적 확인 후 수리",
+      "passed": true
+    },
+    {
+      "name": "수리 중 저장",
+      "passed": true
+    },
+    {
+      "name": "수리 중 복원 및 이중 청구 차단",
+      "passed": true
+    },
+    {
+      "name": "장갑 복구",
+      "passed": true
+    },
+    {
+      "name": "장비 교체 주문",
+      "passed": true
+    },
+    {
+      "name": "교체 장비 적용",
+      "passed": true
+    },
+    {
+      "name": "탈거 장비 기지에 귀속",
+      "passed": true
+    },
+    {
+      "name": "보관 장비 재장착 주문",
+      "passed": true
+    },
+    {
+      "name": "기존 장비 회수·재장착으로 장비 수 보존",
+      "passed": true
+    },
+    {
+      "name": "시설 재배치 주문",
+      "passed": true
+    },
+    {
+      "name": "개조 도중 조선소 중복 예약 차단",
+      "passed": true
+    },
+    {
+      "name": "시설 교환 실제 적용",
+      "passed": true
+    },
+    {
+      "name": "시설 개조 저장·복원",
+      "passed": true
+    },
+    {
+      "name": "정박함 재출항",
+      "passed": true
+    },
+    {
+      "name": "재출항 후 같은 현물·ID",
+      "passed": true
+    },
+    {
+      "name": "재출항한 함대 저장",
+      "passed": true
+    },
+    {
+      "name": "새 임무 인스턴스로 재시작",
+      "passed": true
+    },
+    {
+      "name": "새 인스턴스에서 온라인 함선 복원",
+      "passed": true
+    },
+    {
+      "name": "재호출로 물량 증가 없음",
+      "passed": true
+    },
+    {
+      "name": "두 척의 서로 다른 정박 위치 동시 예약",
+      "passed": true
+    },
+    {
+      "name": "예약 선박 ID 분리",
+      "passed": true
+    },
+    {
+      "name": "두 척을 실제 다른 위치에 정박",
+      "passed": true
+    },
+    {
+      "name": "경계 검사 초기화",
+      "passed": true
+    },
+    {
+      "name": "경계 검사 편성",
+      "passed": true
+    },
+    {
+      "name": "중복 편성 차단",
+      "passed": true
+    },
+    {
+      "name": "기지를 가로지르는 이동 명령에서 코어 앞 정지",
+      "passed": true
+    },
+    {
+      "name": "단절 전 건조 예약",
+      "passed": true
+    },
+    {
+      "name": "조선소 진입 통로 철거",
+      "passed": true
+    },
+    {
+      "name": "단절 중 건조 중지",
+      "passed": true
+    },
+    {
+      "name": "통로 복구",
+      "passed": true
+    },
+    {
+      "name": "재연결 후 건조 재개",
+      "passed": true
+    },
+    {
+      "name": "차단 출항 명령",
+      "passed": true
+    },
+    {
+      "name": "입구 차단 시 중복 출격 없음",
+      "passed": true
+    },
+    {
+      "name": "입구가 열리면 출항",
+      "passed": true
+    },
+    {
+      "name": "고등급 시험장 초기화",
+      "passed": true
+    },
+    {
+      "name": "저장 용량 준비 0",
+      "passed": true
+    },
+    {
+      "name": "저장 용량 준비 1",
+      "passed": true
+    },
+    {
+      "name": "저장 용량 준비 2",
+      "passed": true
+    },
+    {
+      "name": "저장 용량 준비 3",
+      "passed": true
+    },
+    {
+      "name": "코어 등급 2",
+      "passed": true
+    },
+    {
+      "name": "코어 등급 3",
+      "passed": true
+    },
+    {
+      "name": "코어 등급 4",
+      "passed": true
+    },
+    {
+      "name": "조선 기술 해금 4",
+      "passed": true
+    },
+    {
+      "name": "조선 기술 해금 5",
+      "passed": true
+    },
+    {
+      "name": "조선 기술 해금 6",
+      "passed": true
+    },
+    {
+      "name": "조선소 부지 정리 8",
+      "passed": true
+    },
+    {
+      "name": "조선소 부지 정리 7",
+      "passed": true
+    },
+    {
+      "name": "조선소 부지 정리 6",
+      "passed": true
+    },
+    {
+      "name": "조선소 부지 정리 5",
+      "passed": true
+    },
+    {
+      "name": "조선소 부지 정리 4",
+      "passed": true
+    },
+    {
+      "name": "조선소 부지 정리 3",
+      "passed": true
+    },
+    {
+      "name": "대형 조선소 건설",
+      "passed": true
+    },
+    {
+      "name": "초대형 조선소 건설",
+      "passed": true
+    },
+    {
+      "name": "초대형 조선소 중형 거절",
+      "passed": true
+    },
+    {
+      "name": "대형 조선소 혼합 주문 vector",
+      "passed": true
+    },
+    {
+      "name": "대형 조선소 혼합 주문 corvette",
+      "passed": true
+    },
+    {
+      "name": "대형 조선소 혼합 주문 frigate",
+      "passed": true
+    },
+    {
+      "name": "혼합 작업칸 한도",
+      "passed": true
+    },
+    {
+      "name": "작업칸 사용량과 개별 시간 분리",
+      "passed": true
+    },
+    {
+      "name": "혼합 편성 실제 세 척",
+      "passed": true
+    },
+    {
+      "name": "도크 설치 부지 마련",
+      "passed": true
+    },
+    {
+      "name": "대형 도크 예약",
+      "passed": true
+    },
+    {
+      "name": "실제 함재기 재고를 가진 항모 준비",
+      "passed": true
+    },
+    {
+      "name": "영웅 1명·분대원 4명·함재기 실물 준비",
+      "passed": true
+    },
+    {
+      "name": "탑재 항모 대형 도크 예약",
+      "passed": true
+    },
+    {
+      "name": "탑재 상태로 항모 접안",
+      "passed": true
+    },
+    {
+      "name": "정박 중 인원·기체 보존",
+      "passed": true
+    },
+    {
+      "name": "탑재 명단 저장 제한 안내",
+      "passed": true
+    },
+    {
+      "name": "탑재 항모 재출항",
+      "passed": true
+    },
+    {
+      "name": "재출항 후 동일 영웅·병력·함재기",
+      "passed": true
+    },
+    {
+      "name": "배속 시험 초기화 1",
+      "passed": true
+    },
+    {
+      "name": "배속 시험 준비 1",
+      "passed": true
+    },
+    {
+      "name": "정지 동안 건조 동결 1",
+      "passed": true
+    },
+    {
+      "name": "42게임초 준공 전 1",
+      "passed": true
+    },
+    {
+      "name": "화면 왕복 후 47게임초 준공 1",
+      "passed": true
+    },
+    {
+      "name": "배속 시험 초기화 2",
+      "passed": true
+    },
+    {
+      "name": "배속 시험 준비 2",
+      "passed": true
+    },
+    {
+      "name": "정지 동안 건조 동결 2",
+      "passed": true
+    },
+    {
+      "name": "42게임초 준공 전 2",
+      "passed": true
+    },
+    {
+      "name": "화면 왕복 후 47게임초 준공 2",
+      "passed": true
+    },
+    {
+      "name": "배속 시험 초기화 3",
+      "passed": true
+    },
+    {
+      "name": "배속 시험 준비 3",
+      "passed": true
+    },
+    {
+      "name": "정지 동안 건조 동결 3",
+      "passed": true
+    },
+    {
+      "name": "42게임초 준공 전 3",
+      "passed": true
+    },
+    {
+      "name": "화면 왕복 후 47게임초 준공 3",
+      "passed": true
+    }
+  ],
+  "last_status": "건조 시작",
+  "approach": {
+    "phase": 6,
+    "berth_cm": [
+      13517.02,
+      -6.61,
+      2576.3
+    ]
+  },
+  "manifest": {
+    "personnel": 5,
+    "aircraft": 4
+  },
+  "passed": true
+}

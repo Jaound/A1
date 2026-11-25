@@ -1,0 +1,728 @@
+{
+  "checks": [
+    {
+      "name": "1장 타이틀에서 진입",
+      "passed": true
+    },
+    {
+      "name": "1장 독립 편성",
+      "passed": true
+    },
+    {
+      "name": "1장 재시작",
+      "passed": true
+    },
+    {
+      "name": "1장 목록 복귀",
+      "passed": true
+    },
+    {
+      "name": "2장 타이틀에서 진입",
+      "passed": true
+    },
+    {
+      "name": "2장 독립 편성",
+      "passed": true
+    },
+    {
+      "name": "2장 재시작",
+      "passed": true
+    },
+    {
+      "name": "2장 목록 복귀",
+      "passed": true
+    },
+    {
+      "name": "3장 타이틀에서 진입",
+      "passed": true
+    },
+    {
+      "name": "3장 독립 편성",
+      "passed": true
+    },
+    {
+      "name": "3장 재시작",
+      "passed": true
+    },
+    {
+      "name": "3장 목록 복귀",
+      "passed": true
+    },
+    {
+      "name": "4장 타이틀에서 진입",
+      "passed": true
+    },
+    {
+      "name": "4장 독립 편성",
+      "passed": true
+    },
+    {
+      "name": "4장 재시작",
+      "passed": true
+    },
+    {
+      "name": "4장 목록 복귀",
+      "passed": true
+    },
+    {
+      "name": "5장 타이틀에서 진입",
+      "passed": true
+    },
+    {
+      "name": "5장 독립 편성",
+      "passed": true
+    },
+    {
+      "name": "5장 재시작",
+      "passed": true
+    },
+    {
+      "name": "5장 목록 복귀",
+      "passed": true
+    },
+    {
+      "name": "6장 타이틀에서 진입",
+      "passed": true
+    },
+    {
+      "name": "6장 독립 편성",
+      "passed": true
+    },
+    {
+      "name": "6장 재시작",
+      "passed": true
+    },
+    {
+      "name": "6장 목록 복귀",
+      "passed": true
+    },
+    {
+      "name": "7장 타이틀에서 진입",
+      "passed": true
+    },
+    {
+      "name": "7장 독립 편성",
+      "passed": true
+    },
+    {
+      "name": "7장 재시작",
+      "passed": true
+    },
+    {
+      "name": "7장 목록 복귀",
+      "passed": true
+    },
+    {
+      "name": "8장 타이틀에서 진입",
+      "passed": true
+    },
+    {
+      "name": "8장 독립 편성",
+      "passed": true
+    },
+    {
+      "name": "8장 재시작",
+      "passed": true
+    },
+    {
+      "name": "8장 목록 복귀",
+      "passed": true
+    },
+    {
+      "name": "9장 타이틀에서 진입",
+      "passed": true
+    },
+    {
+      "name": "9장 독립 편성",
+      "passed": true
+    },
+    {
+      "name": "9장 재시작",
+      "passed": true
+    },
+    {
+      "name": "9장 목록 복귀",
+      "passed": true
+    },
+    {
+      "name": "1장 타이틀에서 진입",
+      "passed": true
+    },
+    {
+      "name": "조작 전 다음 차단",
+      "passed": true
+    },
+    {
+      "name": "같은 단계 재시도는 카메라 기준을 갱신",
+      "passed": true
+    },
+    {
+      "name": "카메라 이동",
+      "passed": true
+    },
+    {
+      "name": "카메라 회전",
+      "passed": true
+    },
+    {
+      "name": "카메라 줌",
+      "passed": true
+    },
+    {
+      "name": "단일 선택",
+      "passed": true
+    },
+    {
+      "name": "다중 선택",
+      "passed": true
+    },
+    {
+      "name": "이동 명령만으로 완료되지 않음",
+      "passed": true
+    },
+    {
+      "name": "실제 함선 목표 도착 0",
+      "passed": true
+    },
+    {
+      "name": "이동 명령만으로 완료되지 않음",
+      "passed": true
+    },
+    {
+      "name": "실제 함선 목표 도착 4000",
+      "passed": true
+    },
+    {
+      "name": "전술 정지",
+      "passed": true
+    },
+    {
+      "name": "2배속과 장 완료",
+      "passed": true
+    },
+    {
+      "name": "7장 타이틀에서 진입",
+      "passed": true
+    },
+    {
+      "name": "실제 격납고 열림",
+      "passed": true
+    },
+    {
+      "name": "실습 항모 재고",
+      "passed": true
+    },
+    {
+      "name": "실제 출격",
+      "passed": true
+    },
+    {
+      "name": "귀환 명령",
+      "passed": true
+    },
+    {
+      "name": "같은 ID 기체 실제 재격납",
+      "passed": true
+    },
+    {
+      "name": "재고 보존",
+      "passed": true
+    },
+    {
+      "name": "실제 편대 공격으로 손상 표적 파괴",
+      "passed": true
+    },
+    {
+      "name": "제공전 명령 없이 완료 차단",
+      "passed": true
+    },
+    {
+      "name": "제공전으로 적 기체 실제 추적",
+      "passed": true
+    },
+    {
+      "name": "수리함 재고에서 항공 보급",
+      "passed": true
+    },
+    {
+      "name": "실제 보충 자원 증가",
+      "passed": true
+    },
+    {
+      "name": "실제 생산 후 보관",
+      "passed": true
+    },
+    {
+      "name": "새 기체 추가",
+      "passed": true
+    },
+    {
+      "name": "실제 자동 일제 출격",
+      "passed": true
+    },
+    {
+      "name": "2장 타이틀에서 진입",
+      "passed": true
+    },
+    {
+      "name": "항모 선택",
+      "passed": true
+    },
+    {
+      "name": "선체 상세",
+      "passed": true
+    },
+    {
+      "name": "선내 방 선택",
+      "passed": true
+    },
+    {
+      "name": "탑승 영웅 명단",
+      "passed": true
+    },
+    {
+      "name": "기체 현황",
+      "passed": true
+    },
+    {
+      "name": "항모 알림 확인",
+      "passed": true
+    },
+    {
+      "name": "3장 타이틀에서 진입",
+      "passed": true
+    },
+    {
+      "name": "이동 접수",
+      "passed": true
+    },
+    {
+      "name": "정지",
+      "passed": true
+    },
+    {
+      "name": "수동 표적 지정",
+      "passed": true
+    },
+    {
+      "name": "발사 요청",
+      "passed": true
+    },
+    {
+      "name": "수동 실제 발사",
+      "passed": true
+    },
+    {
+      "name": "자동 사격 발사",
+      "passed": true
+    },
+    {
+      "name": "사격 중지",
+      "passed": true
+    },
+    {
+      "name": "4장 타이틀에서 진입",
+      "passed": true
+    },
+    {
+      "name": "적함 탐지",
+      "passed": true
+    },
+    {
+      "name": "무장 발사 가능",
+      "passed": true
+    },
+    {
+      "name": "실제 쉴드 피격",
+      "passed": true
+    },
+    {
+      "name": "장갑 이후 선체 피격",
+      "passed": true
+    },
+    {
+      "name": "요격으로 격추",
+      "passed": true
+    },
+    {
+      "name": "5장 타이틀에서 진입",
+      "passed": true
+    },
+    {
+      "name": "방공함 선택",
+      "passed": true
+    },
+    {
+      "name": "호위 표식 도착",
+      "passed": true
+    },
+    {
+      "name": "초계함 전방 배치",
+      "passed": true
+    },
+    {
+      "name": "레이더함 적 내부 정찰",
+      "passed": true
+    },
+    {
+      "name": "전함 함포 발사",
+      "passed": true
+    },
+    {
+      "name": "항모 편대 공격",
+      "passed": true
+    },
+    {
+      "name": "초대형 구축전함 상세",
+      "passed": true
+    },
+    {
+      "name": "함종 카드 재선택·중복 방지 corvette",
+      "passed": true
+    },
+    {
+      "name": "함종 카드 재선택·중복 방지 frigate",
+      "passed": true
+    },
+    {
+      "name": "함종 카드 재선택·중복 방지 vector",
+      "passed": true
+    },
+    {
+      "name": "함종 카드 재선택·중복 방지 bastion",
+      "passed": true
+    },
+    {
+      "name": "함종 카드 재선택·중복 방지 cruiser",
+      "passed": true
+    },
+    {
+      "name": "함종 카드 재선택·중복 방지 air_defense",
+      "passed": true
+    },
+    {
+      "name": "함종 카드 재선택·중복 방지 radar",
+      "passed": true
+    },
+    {
+      "name": "함종 카드 재선택·중복 방지 battleship",
+      "passed": true
+    },
+    {
+      "name": "함종 카드 재선택·중복 방지 carrier",
+      "passed": true
+    },
+    {
+      "name": "함종 카드 재선택·중복 방지 missile_ship",
+      "passed": true
+    },
+    {
+      "name": "함종 카드 재선택·중복 방지 dreadnought",
+      "passed": true
+    },
+    {
+      "name": "함종 카드 재선택·중복 방지 battlecarrier",
+      "passed": true
+    },
+    {
+      "name": "함종 카드 재선택·중복 방지 repair",
+      "passed": true
+    },
+    {
+      "name": "함종 카드 재선택·중복 방지 mining",
+      "passed": true
+    },
+    {
+      "name": "함종 카드 재선택·중복 방지 transport",
+      "passed": true
+    },
+    {
+      "name": "함종 카드 재선택·중복 방지 assault",
+      "passed": true
+    },
+    {
+      "name": "함종 카드 한 바퀴 후 같은 함선 재선택",
+      "passed": true
+    },
+    {
+      "name": "전체 16개 함종 카드에서 직접 지휘",
+      "passed": true
+    },
+    {
+      "name": "필수 편성 보존",
+      "passed": true
+    },
+    {
+      "name": "모든 추가 실습 함선의 배치 여유",
+      "passed": true
+    },
+    {
+      "name": "직접 조종한 수송선 이동 명령",
+      "passed": true
+    },
+    {
+      "name": "직접 조종한 수송선 정지 명령",
+      "passed": true
+    },
+    {
+      "name": "장 재시작 후 추가 함선 정리",
+      "passed": true
+    },
+    {
+      "name": "목록 복귀 후 카드 함선 정리",
+      "passed": true
+    },
+    {
+      "name": "6장 타이틀에서 진입",
+      "passed": true
+    },
+    {
+      "name": "시설 확인 <OVFacilityType.CORE: 1>",
+      "passed": true
+    },
+    {
+      "name": "시설 확인 <OVFacilityType.BRIDGE: 2>",
+      "passed": true
+    },
+    {
+      "name": "시설 확인 <OVFacilityType.ENGINE: 4>",
+      "passed": true
+    },
+    {
+      "name": "시설 확인 <OVFacilityType.WEAPON_CONTROL: 5>",
+      "passed": true
+    },
+    {
+      "name": "시설 확인 <OVFacilityType.LIFE_SUPPORT: 3>",
+      "passed": true
+    },
+    {
+      "name": "시설 확인 <OVFacilityType.AMMO: 6>",
+      "passed": true
+    },
+    {
+      "name": "시설 확인 <OVFacilityType.CAPACITOR: 7>",
+      "passed": true
+    },
+    {
+      "name": "시설 확인 <OVFacilityType.MISSILE_STORAGE: 8>",
+      "passed": true
+    },
+    {
+      "name": "시설 확인 <OVFacilityType.SHIELD_CONTROL: 9>",
+      "passed": true
+    },
+    {
+      "name": "시설 확인 <OVFacilityType.RADAR: 10>",
+      "passed": true
+    },
+    {
+      "name": "시설 확인 <OVFacilityType.INTERCEPTION: 11>",
+      "passed": true
+    },
+    {
+      "name": "시설 확인 <OVFacilityType.BOARDING: 12>",
+      "passed": true
+    },
+    {
+      "name": "시설 확인 <OVFacilityType.HANGAR: 13>",
+      "passed": true
+    },
+    {
+      "name": "시설 확인 <OVFacilityType.FIGHTER_CONTROL: 14>",
+      "passed": true
+    },
+    {
+      "name": "시설 확인 <OVFacilityType.RESOURCE_STORAGE: 15>",
+      "passed": true
+    },
+    {
+      "name": "시설 확인 <OVFacilityType.SECURITY: 16>",
+      "passed": true
+    },
+    {
+      "name": "함포 계열의 실제 사격",
+      "passed": true
+    },
+    {
+      "name": "빔 계열의 실제 사격",
+      "passed": true
+    },
+    {
+      "name": "미사일 계열의 실제 사격",
+      "passed": true
+    },
+    {
+      "name": "호환 무장 실제 장착",
+      "passed": true
+    },
+    {
+      "name": "상위 티어 장착 거부",
+      "passed": true
+    },
+    {
+      "name": "8장 타이틀에서 진입",
+      "passed": true
+    },
+    {
+      "name": "영웅 명단",
+      "passed": true
+    },
+    {
+      "name": "영웅과 탑승 함선을 선내 지도에서 확인",
+      "passed": true
+    },
+    {
+      "name": "시설 보직 지시",
+      "passed": true
+    },
+    {
+      "name": "영웅 보직 활성",
+      "passed": true
+    },
+    {
+      "name": "수호로 변경",
+      "passed": true
+    },
+    {
+      "name": "함교 수호 위치에 도착하고 보직 효과 해제",
+      "passed": true
+    },
+    {
+      "name": "보직 복귀",
+      "passed": true
+    },
+    {
+      "name": "동일 영웅 복귀",
+      "passed": true
+    },
+    {
+      "name": "9장 타이틀에서 진입",
+      "passed": true
+    },
+    {
+      "name": "개인 포드 준비 가능",
+      "passed": true
+    },
+    {
+      "name": "개인 포드로 강습선 연습 통과 차단",
+      "passed": true
+    },
+    {
+      "name": "실제 A팀 필터·전체 선택·강습선 준비",
+      "passed": true
+    },
+    {
+      "name": "강습 목표 접수",
+      "passed": true
+    },
+    {
+      "name": "A팀 탑승 후 강습선 출발",
+      "passed": true
+    },
+    {
+      "name": "적함에 실제 진입",
+      "passed": true
+    },
+    {
+      "name": "실제 시설 점령",
+      "passed": true
+    },
+    {
+      "name": "생존자 철수 명령",
+      "passed": true
+    },
+    {
+      "name": "생존 대원이 강습선에 승선",
+      "passed": true
+    },
+    {
+      "name": "실습 자동 수납 금지",
+      "passed": true
+    },
+    {
+      "name": "아군 모함 수납 명령",
+      "passed": true
+    },
+    {
+      "name": "직접 명령 후 강습선의 실제 재격납",
+      "passed": true
+    }
+  ],
+  "optional_ship_minimum_surface_gap_cm": 9214.3,
+  "강습 시설 상태": [
+    [
+      92,
+      "<OVInteriorState.DEFENDING: 4>",
+      "목표 방 도착 · 제어점 확보 확인",
+      "D3_X1_H1"
+    ],
+    [
+      93,
+      "<OVInteriorState.DEFENDING: 4>",
+      "목표 방 도착 · 제어점 확보 확인",
+      "D3_X1_H1"
+    ],
+    [
+      94,
+      "<OVInteriorState.DEFENDING: 4>",
+      "목표 방 도착 · 제어점 확보 확인",
+      "D3_X1_H1"
+    ],
+    [
+      95,
+      "<OVInteriorState.DEFENDING: 4>",
+      "목표 방 도착 · 제어점 확보 확인",
+      "D3_X1_H1"
+    ],
+    [
+      96,
+      "<OVInteriorState.DEFENDING: 4>",
+      "목표 방 도착 · 제어점 확보 확인",
+      "D3_X1_H1"
+    ],
+    [
+      97,
+      "<OVInteriorState.DEFENDING: 4>",
+      "목표 방 도착 · 제어점 확보 확인",
+      "D3_X1_H1"
+    ],
+    [
+      98,
+      "<OVInteriorState.DEFENDING: 4>",
+      "목표 방 도착 · 제어점 확보 확인",
+      "D3_X1_H1"
+    ],
+    [
+      99,
+      "<OVInteriorState.DEFENDING: 4>",
+      "목표 방 도착 · 제어점 확보 확인",
+      "D3_X1_H1"
+    ],
+    [
+      120,
+      "<OVInteriorState.DEFENDING: 4>",
+      "목표 방 도착 · 제어점 확보 확인",
+      "D3_X1_H1"
+    ],
+    [
+      121,
+      "<OVInteriorState.DEFENDING: 4>",
+      "목표 방 도착 · 제어점 확보 확인",
+      "D3_X1_H1"
+    ],
+    [
+      122,
+      "<OVInteriorState.DEFENDING: 4>",
+      "목표 방 도착 · 제어점 확보 확인",
+      "D3_X1_H1"
+    ],
+    [
+      123,
+      "<OVInteriorState.DEFENDING: 4>",
+      "목표 방 도착 · 제어점 확보 확인",
+      "D3_X1_H1"
+    ]
+  ],
+  "passed": true
+}

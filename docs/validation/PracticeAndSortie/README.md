@@ -1,5 +1,7 @@
 # 시스템 실습과 함대전 출격 준비
 
+현재 빌드의 실행 방법과 실습별 판정은 [실습·함대전 플레이테스트 수정 기록](../PracticeRevision/README.md)에서 확인할 수 있다. 아래는 당시 빌드를 재현하기 위한 기록이다.
+
 ## 실행
 
 Windows 배포 폴더의 `Windows/OrbitalVanguard.exe`를 실행한다. SSD의 배포 위치는 `I:/2026_2/GDD/OrbitalVanguardTests/PracticeAndSortieRelease`다. 게임과 에셋이 들어 있는 Windows 폴더 전체가 필요하다.

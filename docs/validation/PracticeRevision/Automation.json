@@ -1,0 +1,689 @@
+{
+  "succeeded": 120,
+  "succeededWithWarnings": 50,
+  "failed": 0,
+  "notRun": 0,
+  "inProcess": 0,
+  "tests": [
+    {
+      "name": "OrbitalVanguard.Audio.SafeMissingAssetHooks",
+      "state": "Success"
+    },
+    {
+      "name": "OrbitalVanguard.Base.OperationalBerths",
+      "state": "Success"
+    },
+    {
+      "name": "OrbitalVanguard.Base.Stage3GrowthAndNetwork",
+      "state": "Success"
+    },
+    {
+      "name": "OrbitalVanguard.Base.TrialNetwork",
+      "state": "Success"
+    },
+    {
+      "name": "OrbitalVanguard.Carrier.AircraftLossThresholdsAndOwnership",
+      "state": "Success"
+    },
+    {
+      "name": "OrbitalVanguard.Carrier.AlternateHangarAndExclusiveModes",
+      "state": "Success"
+    },
+    {
+      "name": "OrbitalVanguard.Carrier.DefenceBalanceTargets",
+      "state": "Success"
+    },
+    {
+      "name": "OrbitalVanguard.Carrier.DogfightAndMotherLoss",
+      "state": "Success"
+    },
+    {
+      "name": "OrbitalVanguard.Carrier.FacilityControlAndDockQueue",
+      "state": "Success"
+    },
+    {
+      "name": "OrbitalVanguard.Carrier.FieldResupplyAndCrew",
+      "state": "Success"
+    },
+    {
+      "name": "OrbitalVanguard.Carrier.HangarAvailabilityPresentation",
+      "state": "Success"
+    },
+    {
+      "name": "OrbitalVanguard.Carrier.InteriorProtectionAndInFlightLifetime",
+      "state": "Success"
+    },
+    {
+      "name": "OrbitalVanguard.Carrier.InventoryCapacityAndRecall",
+      "state": "Success"
+    },
+    {
+      "name": "OrbitalVanguard.Carrier.MultipleCarrierSectionsAndPureDogfight",
+      "state": "Success"
+    },
+    {
+      "name": "OrbitalVanguard.Carrier.OwnershipFTLAndLaunchAttribution",
+      "state": "Success"
+    },
+    {
+      "name": "OrbitalVanguard.Carrier.PaidParallelReplacement",
+      "state": "Success"
+    },
+    {
+      "name": "OrbitalVanguard.Carrier.ReadOnlyAircraftOverview",
+      "state": "Success"
+    },
+    {
+      "name": "OrbitalVanguard.Carrier.RealProjectilesAndFixedTime",
+      "state": "Success"
+    },
+    {
+      "name": "OrbitalVanguard.Carrier.ReplacementBatchPolicy",
+      "state": "Success"
+    },
+    {
+      "name": "OrbitalVanguard.Carrier.StrikeCapitalHullRange",
+      "state": "Success"
+    },
+    {
+      "name": "OrbitalVanguard.Carrier.StrikeDefensiveRejoinAndInvalidation",
+      "state": "Success"
+    },
+    {
+      "name": "OrbitalVanguard.Carrier.StrikeMovingHullEnvelope",
+      "state": "Success"
+    },
+    {
+      "name": "OrbitalVanguard.Combat.BlindArcPreventsHullPenetration",
+      "state": "Success"
+    },
+    {
+      "name": "OrbitalVanguard.Combat.ConfirmedFriendlyNotices",
+      "state": "Success"
+    },
+    {
+      "name": "OrbitalVanguard.Combat.DataProfilesAndTierLimits",
+      "state": "Success"
+    },
+    {
+      "name": "OrbitalVanguard.Combat.DetectionLossStartsLastKnownTracking",
+      "state": "Success"
+    },
+    {
+      "name": "OrbitalVanguard.Combat.DetectionLossWreckDepartureAndExpiry",
+      "state": "Success"
+    },
+    {
+      "name": "OrbitalVanguard.Combat.DetectionSourcesAndInvalidation",
+      "state": "Success"
+    },
+    {
+      "name": "OrbitalVanguard.Combat.DisarmSelectsUnoccludedMount",
+      "state": "Success"
+    },
+    {
+      "name": "OrbitalVanguard.Combat.EvadedMissileFuseAndClosestApproach",
+      "state": "Success"
+    },
+    {
+      "name": "OrbitalVanguard.Combat.FixedVLSPathAndContinuousSpread",
+      "state": "Success"
+    },
+    {
+      "name": "OrbitalVanguard.Combat.IndependentMovementAndAttackAutomation",
+      "state": "Success"
+    },
+    {
+      "name": "OrbitalVanguard.Combat.LaunchedDamageChainAndSingleImpact",
+      "state": "Success"
+    },
+    {
+      "name": "OrbitalVanguard.Combat.LocalArcsTraverseAndManualAttitude",
+      "state": "Success"
+    },
+    {
+      "name": "OrbitalVanguard.Combat.MarkedCandidateActualWeaponHit",
+      "state": "Success"
+    },
+    {
+      "name": "OrbitalVanguard.Combat.MarkedCandidateHullDamage",
+      "state": "Success"
+    },
+    {
+      "name": "OrbitalVanguard.Combat.MarkedGeneralModuleSwap",
+      "state": "Success"
+    },
+    {
+      "name": "OrbitalVanguard.Combat.MissileGuideAndFriendlyClearance",
+      "state": "Success"
+    },
+    {
+      "name": "OrbitalVanguard.Combat.ObservedEnemyNoticePrivacy",
+      "state": "Success"
+    },
+    {
+      "name": "OrbitalVanguard.Combat.OrdersAndFriendlyClearance",
+      "state": "Success"
+    },
+    {
+      "name": "OrbitalVanguard.Combat.PC14TrialBottomMountImpact",
+      "state": "Success"
+    },
+    {
+      "name": "OrbitalVanguard.Combat.PC14TrialMountOcclusion",
+      "state": "Success"
+    },
+    {
+      "name": "OrbitalVanguard.Combat.PC14TrialRecessArmorImpact",
+      "state": "Success"
+    },
+    {
+      "name": "OrbitalVanguard.Combat.ReadinessAndFacilityGates",
+      "state": "Success"
+    },
+    {
+      "name": "OrbitalVanguard.Combat.RealMountImpactShieldThenMountOnly",
+      "state": "Success"
+    },
+    {
+      "name": "OrbitalVanguard.Combat.SalvoCancellationAndGeometricMiss",
+      "state": "Success"
+    },
+    {
+      "name": "OrbitalVanguard.Combat.SeededTimeScalePauseAndManualControl",
+      "state": "Success"
+    },
+    {
+      "name": "OrbitalVanguard.Combat.TrajectoryLifetimeAndLaunchOwnership",
+      "state": "Success"
+    },
+    {
+      "name": "OrbitalVanguard.Controls.OrbitOwnerAndReset",
+      "state": "Success"
+    },
+    {
+      "name": "OrbitalVanguard.Controls.RightMoveAnchorAndRelease",
+      "state": "Success"
+    },
+    {
+      "name": "OrbitalVanguard.D126.GridRulesAndCapacityAudit",
+      "state": "Success"
+    },
+    {
+      "name": "OrbitalVanguard.D126.HangarAndAircraftRestrictions",
+      "state": "Success"
+    },
+    {
+      "name": "OrbitalVanguard.D126.HullBalanceTableSync",
+      "state": "Success"
+    },
+    {
+      "name": "OrbitalVanguard.D126.LaunchAuditAndMountGeometry",
+      "state": "Success"
+    },
+    {
+      "name": "OrbitalVanguard.D126.OutpostAndMediumTransportLoop",
+      "state": "Success"
+    },
+    {
+      "name": "OrbitalVanguard.Development.CatalogueDefinitions",
+      "state": "Success"
+    },
+    {
+      "name": "OrbitalVanguard.Development.FacilityDamageControl",
+      "state": "Success"
+    },
+    {
+      "name": "OrbitalVanguard.Development.FiniteLogistics",
+      "state": "Success"
+    },
+    {
+      "name": "OrbitalVanguard.Development.InteriorSurvey",
+      "state": "Success"
+    },
+    {
+      "name": "OrbitalVanguard.Development.TimedRepair",
+      "state": "Success"
+    },
+    {
+      "name": "OrbitalVanguard.E1.BlackHoleGravityFTLAndInstantWreck",
+      "state": "Success"
+    },
+    {
+      "name": "OrbitalVanguard.Fleet.FormationPresetOrders",
+      "state": "Success"
+    },
+    {
+      "name": "OrbitalVanguard.Fleet.ShiftSelection",
+      "state": "Success"
+    },
+    {
+      "name": "OrbitalVanguard.Hero.CandidateGrowthAndDuplicateAward",
+      "state": "Success"
+    },
+    {
+      "name": "OrbitalVanguard.Hero.IrisArcRespectsFacingDeckAndRange",
+      "state": "Success"
+    },
+    {
+      "name": "OrbitalVanguard.Hero.IrisPhaseDuel",
+      "state": "Success"
+    },
+    {
+      "name": "OrbitalVanguard.Hero.LegacyRosterIdentityAndLoss",
+      "state": "Success"
+    },
+    {
+      "name": "OrbitalVanguard.Hero.NamedBoardingGuardsAndFiniteHealing",
+      "state": "Success"
+    },
+    {
+      "name": "OrbitalVanguard.Hero.NamedDutyLifecycle",
+      "state": "Success"
+    },
+    {
+      "name": "OrbitalVanguard.Hero.NamedFacilityOperationsAndRelay",
+      "state": "Success"
+    },
+    {
+      "name": "OrbitalVanguard.Hero.NamedRushAndSquadActions",
+      "state": "Success"
+    },
+    {
+      "name": "OrbitalVanguard.Hero.NamedTacticalEffects",
+      "state": "Success"
+    },
+    {
+      "name": "OrbitalVanguard.Hero.OfficerBonusesFollowRoomAndFaction",
+      "state": "Success"
+    },
+    {
+      "name": "OrbitalVanguard.Input.AnchoredAltitudeAndUI",
+      "state": "Success"
+    },
+    {
+      "name": "OrbitalVanguard.Input.ProjectionGuards",
+      "state": "Success"
+    },
+    {
+      "name": "OrbitalVanguard.Interior.ActualEntryCaptureAndOriginalPodReturn",
+      "state": "Success"
+    },
+    {
+      "name": "OrbitalVanguard.Interior.ActualOperationContributors",
+      "state": "Success"
+    },
+    {
+      "name": "OrbitalVanguard.Interior.BridgeCapturePhysicalRetakeAndDestruction",
+      "state": "Success"
+    },
+    {
+      "name": "OrbitalVanguard.Interior.CommanderAdvancedSkills",
+      "state": "Success"
+    },
+    {
+      "name": "OrbitalVanguard.Interior.FixedClockBlockedRouteAndOrders",
+      "state": "Success"
+    },
+    {
+      "name": "OrbitalVanguard.Interior.FourRolesCombatAndFiniteHealing",
+      "state": "Success"
+    },
+    {
+      "name": "OrbitalVanguard.Interior.GraphVersionAndFactionRoster",
+      "state": "Success"
+    },
+    {
+      "name": "OrbitalVanguard.Interior.HeroGarrisonSeparateFromTroopCapacity",
+      "state": "Success"
+    },
+    {
+      "name": "OrbitalVanguard.Interior.HeroHitNotice",
+      "state": "Success"
+    },
+    {
+      "name": "OrbitalVanguard.Interior.HostileBoardingNotice",
+      "state": "Success"
+    },
+    {
+      "name": "OrbitalVanguard.Interior.ImmediateProtectionAndMixedPresenceSources",
+      "state": "Success"
+    },
+    {
+      "name": "OrbitalVanguard.Interior.MeleeAdvancedSkills",
+      "state": "Success"
+    },
+    {
+      "name": "OrbitalVanguard.Interior.PassiveAuraSkills",
+      "state": "Success"
+    },
+    {
+      "name": "OrbitalVanguard.Interior.RangedAdvancedSkills",
+      "state": "Success"
+    },
+    {
+      "name": "OrbitalVanguard.Interior.RealPodRescueNotice",
+      "state": "Success"
+    },
+    {
+      "name": "OrbitalVanguard.Interior.RuntimeResidentDepartureSuspendsAndPreserves",
+      "state": "Success"
+    },
+    {
+      "name": "OrbitalVanguard.Interior.RuntimeShuttleCaptureWreckAndDeparture",
+      "state": "Success"
+    },
+    {
+      "name": "OrbitalVanguard.Interior.SabotageCheckpointAndDamagePath",
+      "state": "Success"
+    },
+    {
+      "name": "OrbitalVanguard.Interior.SupportDutyFiniteRepair",
+      "state": "Success"
+    },
+    {
+      "name": "OrbitalVanguard.Interior.SupportFiniteSkills",
+      "state": "Success"
+    },
+    {
+      "name": "OrbitalVanguard.Layout.RejectInvalidAuthoring",
+      "state": "Success"
+    },
+    {
+      "name": "OrbitalVanguard.Layout.SixFacesAndBoundaryMapping",
+      "state": "Success"
+    },
+    {
+      "name": "OrbitalVanguard.Mission.AutoAssaultHoldScope",
+      "state": "Success"
+    },
+    {
+      "name": "OrbitalVanguard.Mission.PauseManualPriorityAndTimeout",
+      "state": "Success"
+    },
+    {
+      "name": "OrbitalVanguard.Mission.PreEntryRecallIsNotInteriorExtraction",
+      "state": "Success"
+    },
+    {
+      "name": "OrbitalVanguard.Mission.RealRosterShieldAndTransportGate",
+      "state": "Success"
+    },
+    {
+      "name": "OrbitalVanguard.Mission.ResizedCarrierClearance",
+      "state": "Success"
+    },
+    {
+      "name": "OrbitalVanguard.Mission.RestartDefenseAndLegacyPreservation",
+      "state": "Success"
+    },
+    {
+      "name": "OrbitalVanguard.PointDefense.ActualAircraftKillsTriggerWarnings",
+      "state": "Success"
+    },
+    {
+      "name": "OrbitalVanguard.PointDefense.ActualHeroPodRescueWarning",
+      "state": "Success"
+    },
+    {
+      "name": "OrbitalVanguard.PointDefense.CIWS6TrialRealShotMuzzle",
+      "state": "Success"
+    },
+    {
+      "name": "OrbitalVanguard.PointDefense.CIWSBTrialRealShotMuzzle",
+      "state": "Success"
+    },
+    {
+      "name": "OrbitalVanguard.PointDefense.FacilityRangeOwnershipAndCrew",
+      "state": "Success"
+    },
+    {
+      "name": "OrbitalVanguard.PointDefense.LaunchedMissileSingleOpportunityAndImpact",
+      "state": "Success"
+    },
+    {
+      "name": "OrbitalVanguard.PointDefense.MarkedSideMountArc",
+      "state": "Success"
+    },
+    {
+      "name": "OrbitalVanguard.PointDefense.PriorityAndAlliedCoverage",
+      "state": "Success"
+    },
+    {
+      "name": "OrbitalVanguard.PointDefense.ProbabilityAndTargetBoundary",
+      "state": "Success"
+    },
+    {
+      "name": "OrbitalVanguard.Presentation.BF120SourceTrialActualTwinShots",
+      "state": "Success"
+    },
+    {
+      "name": "OrbitalVanguard.Presentation.BF120TrialAlternatingMuzzles",
+      "state": "Success"
+    },
+    {
+      "name": "OrbitalVanguard.Presentation.CarrierAssaultSourceMeshes",
+      "state": "Success"
+    },
+    {
+      "name": "OrbitalVanguard.Presentation.CIWSBTrialSurfaceMuzzle",
+      "state": "Success"
+    },
+    {
+      "name": "OrbitalVanguard.Presentation.CriticalToastPriority",
+      "state": "Success"
+    },
+    {
+      "name": "OrbitalVanguard.Presentation.FittedHullAndWeapons",
+      "state": "Success"
+    },
+    {
+      "name": "OrbitalVanguard.Presentation.FrigateCruiserRadarSourceMeshes",
+      "state": "Success"
+    },
+    {
+      "name": "OrbitalVanguard.Presentation.HeavyShipSourceMeshes",
+      "state": "Success"
+    },
+    {
+      "name": "OrbitalVanguard.Presentation.ImportedBF120MuzzleCandidates",
+      "state": "Success"
+    },
+    {
+      "name": "OrbitalVanguard.Presentation.ImportedPC14MountAdapter",
+      "state": "Success"
+    },
+    {
+      "name": "OrbitalVanguard.Presentation.ImportedPC14MountSurface",
+      "state": "Success"
+    },
+    {
+      "name": "OrbitalVanguard.Presentation.ImportedPC14SurfaceGrid",
+      "state": "Success"
+    },
+    {
+      "name": "OrbitalVanguard.Presentation.LB30TrialActualBeam",
+      "state": "Success"
+    },
+    {
+      "name": "OrbitalVanguard.Presentation.MarkedAllUESurfaces",
+      "state": "Success"
+    },
+    {
+      "name": "OrbitalVanguard.Presentation.MarkedCorvetteUESurface",
+      "state": "Success"
+    },
+    {
+      "name": "OrbitalVanguard.Presentation.MarkedSlotCandidates",
+      "state": "Success"
+    },
+    {
+      "name": "OrbitalVanguard.Presentation.MissileDefenseSourceMeshes",
+      "state": "Success"
+    },
+    {
+      "name": "OrbitalVanguard.Presentation.MuzzleAttackEventAndGameClock",
+      "state": "Success"
+    },
+    {
+      "name": "OrbitalVanguard.Presentation.PC14DefaultPresentation",
+      "state": "Success"
+    },
+    {
+      "name": "OrbitalVanguard.Presentation.PC14FullMeshMountSurface",
+      "state": "Success"
+    },
+    {
+      "name": "OrbitalVanguard.Presentation.PDActualTargetMuzzleAndOpportunity",
+      "state": "Success"
+    },
+    {
+      "name": "OrbitalVanguard.Presentation.PlasmaTrialActualBeam",
+      "state": "Success"
+    },
+    {
+      "name": "OrbitalVanguard.Presentation.ProfileReplacementRechecksActualMuzzle",
+      "state": "Success"
+    },
+    {
+      "name": "OrbitalVanguard.Presentation.PrototypeWeaponScaleBuffering",
+      "state": "Success"
+    },
+    {
+      "name": "OrbitalVanguard.Presentation.RG200TrialActualTwinShots",
+      "state": "Success"
+    },
+    {
+      "name": "OrbitalVanguard.Presentation.SHC400TrialActualCannon",
+      "state": "Success"
+    },
+    {
+      "name": "OrbitalVanguard.Presentation.SideMountGeometry",
+      "state": "Success"
+    },
+    {
+      "name": "OrbitalVanguard.Presentation.SupportShipSourceMeshes",
+      "state": "Success"
+    },
+    {
+      "name": "OrbitalVanguard.Presentation.TurretPoseOwnershipAndLifecycle",
+      "state": "Success"
+    },
+    {
+      "name": "OrbitalVanguard.Presentation.UpperLowerVLSAndDestroyedTracking",
+      "state": "Success"
+    },
+    {
+      "name": "OrbitalVanguard.Revision.D116CandidateCatalog",
+      "state": "Success"
+    },
+    {
+      "name": "OrbitalVanguard.Revision.DisableObservedWeapons",
+      "state": "Success"
+    },
+    {
+      "name": "OrbitalVanguard.Revision.FactionProtectionAndForceScope",
+      "state": "Success"
+    },
+    {
+      "name": "OrbitalVanguard.Revision.MarkedEquippedMounts",
+      "state": "Success"
+    },
+    {
+      "name": "OrbitalVanguard.Revision.ProtectionSalvoAndSurvivorBoundary",
+      "state": "Success"
+    },
+    {
+      "name": "OrbitalVanguard.Revision.VolumeRatioTrial",
+      "state": "Success"
+    },
+    {
+      "name": "OrbitalVanguard.Ship.ClassTurnRates",
+      "state": "Success"
+    },
+    {
+      "name": "OrbitalVanguard.Ship.FiniteTurnXYZArrival",
+      "state": "Success"
+    },
+    {
+      "name": "OrbitalVanguard.Ship.InertialRetargetAtLowFPS",
+      "state": "Success"
+    },
+    {
+      "name": "OrbitalVanguard.Ship.TimeScaleAndStoppedArrival",
+      "state": "Success"
+    },
+    {
+      "name": "OrbitalVanguard.Sortie.DesignBoard.DenseMounts",
+      "state": "Success"
+    },
+    {
+      "name": "OrbitalVanguard.Systems.ArmorCausesAndSingleHullDamage",
+      "state": "Success"
+    },
+    {
+      "name": "OrbitalVanguard.Systems.D116NoDelayCrewAndDamage",
+      "state": "Success"
+    },
+    {
+      "name": "OrbitalVanguard.Systems.ExplosionQueueAndWeaponIndependence",
+      "state": "Success"
+    },
+    {
+      "name": "OrbitalVanguard.Systems.IndependentInstancesAndCrew",
+      "state": "Success"
+    },
+    {
+      "name": "OrbitalVanguard.Systems.PartialShieldCapacityTransition",
+      "state": "Success"
+    },
+    {
+      "name": "OrbitalVanguard.Systems.RejectInvalidRuntimeLayout",
+      "state": "Success"
+    },
+    {
+      "name": "OrbitalVanguard.Systems.ShieldStateAndTime",
+      "state": "Success"
+    },
+    {
+      "name": "OrbitalVanguard.Systems.ThreeDeckDestructionFaces",
+      "state": "Success"
+    },
+    {
+      "name": "OrbitalVanguard.Systems.VerticalPenetrationAndEmptySlots",
+      "state": "Success"
+    },
+    {
+      "name": "OrbitalVanguard.Transport.FixedTimePauseAndLowFps",
+      "state": "Success"
+    },
+    {
+      "name": "OrbitalVanguard.Transport.InterceptionShieldAndSingleCasualty",
+      "state": "Success"
+    },
+    {
+      "name": "OrbitalVanguard.Transport.LocalEntryOriginalPodAndProtection",
+      "state": "Success"
+    },
+    {
+      "name": "OrbitalVanguard.Transport.PersonalLaunchScheduleAndFacilityRecheck",
+      "state": "Success"
+    },
+    {
+      "name": "OrbitalVanguard.Transport.ShuttleDeliveryRecoveryAndLoss",
+      "state": "Success"
+    },
+    {
+      "name": "OrbitalVanguard.Transport.TargetDepartureReturnFallbackAndResidentDeath",
+      "state": "Success"
+    },
+    {
+      "name": "OrbitalVanguard.Transport.TeamsPerTargetAndPersonnel",
+      "state": "Success"
+    },
+    {
+      "name": "OrbitalVanguard.UI.Typography",
+      "state": "Success"
+    }
+  ]
+}

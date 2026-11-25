@@ -1,0 +1,15 @@
+{
+  "name": "OrbitalVanguard.Sortie.DesignBoard.SlatePointer",
+  "state": "Success",
+  "passed": true,
+  "rendered_projections": [
+    "Actual mount projection before drag X=0.761 Y=0.636, after drag X=0.554 Y=0.756",
+    "Actual mount projection after wheel X=0.558 Y=0.778; rotation P=-29.116675 Y=172.368774 R=13.568509; zoom 1.22"
+  ],
+  "warnings": [
+    "LogTemp: ControlRange test layout /Game/Layouts/DA_Test1Deck.DA_Test1Deck uses an older slot arrangement: Engine must occupy the stern; Engine must occupy the stern; Engine must occupy the stern",
+    "LogTemp: ControlRange test layout /Game/Layouts/DA_Test2Deck.DA_Test2Deck uses an older slot arrangement: Engine must occupy the stern; Engine must occupy the stern; Engine must occupy the stern",
+    "LogTemp: ControlRange test layout /Game/Layouts/DA_Test3Deck.DA_Test3Deck uses an older slot arrangement: Engine must occupy the stern; Engine must occupy the stern; Engine must occupy the stern",
+    "LogUObjectGlobals: 오브젝트 'OVTitleBackdropDataAsset /Game/UI/Title/DA_OVTitleBackdrop.DA_OVTitleBackdrop'을(를) 찾지 못했습니다."
+  ]
+}
