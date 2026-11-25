@@ -537,7 +537,7 @@ void UOVTitleScreenWidget::BuildProgrammaticTree()
     BriefHeader->AddChildToHorizontalBox(ScenarioBadgeText)->SetVerticalAlignment(VAlign_Center);
 
     ScenarioObjectiveText = OVStyle::MakeLabel(
-        WidgetTree, TEXT("초대형 주력함과 호위 함대로 상대를 무력화하세요."), 13, OVStyle::TextSlate, false);
+        WidgetTree, TEXT(""), 13, OVStyle::TextSlate, false);
     BriefingBox->AddChildToVerticalBox(ScenarioObjectiveText)->SetPadding(FMargin(0.f, 0.f, 0.f, 16.f));
 
     UBorder* MetricsCard = WidgetTree->ConstructWidget<UBorder>();

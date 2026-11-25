@@ -42,8 +42,9 @@ void AOVHUD::DrawPractice()
  }
  const float status=54.f+PracticeTipLines.Num()*17.f;
  const float footer=status+33.f;
- const bool more=!done&&(play->PracticeChapter==3||play->PracticeChapter==4);
- const float height=play->bPracticeHints?footer+34.f+(more?32.f:0.f)+(more&&play->bPracticeDetail?112.f:0.f):55.f;
+ const bool more=play->PracticeChapter==4||(!done&&play->PracticeChapter==3);
+ const float detailHeight=play->PracticeChapter==4?132.f:112.f;
+ const float height=play->bPracticeHints?footer+34.f+(more?32.f:0.f)+(more&&play->bPracticeDetail?detailHeight:0.f):55.f;
  const float x=0;
  float y=63;
  const FName goal=play->PracticeGoalId();
@@ -118,7 +119,7 @@ void AOVHUD::DrawPractice()
    const float details=y+footer+33;
    Button("PracticeMore",play->bPracticeDetail?TEXT("상세 접기"):play->PracticeChapter==4?TEXT("함종 카드"):TEXT("무장 비교"),x+width-110,details,100);
    if(play->bPracticeDetail){
-    DrawRect(paper,x,details+32,width,112);
+    DrawRect(paper,x,details+32,width,detailHeight);
     if(play->PracticeChapter==4){
      static const TArray<FName> hulls=OVCalibration::GetHullIds();
      if(!hulls.IsValidIndex(play->PracticeRoleCard))return;
@@ -133,8 +134,9 @@ void AOVHUD::DrawPractice()
      DrawText(OVCalibration::GetHullName(hull)+TEXT(" · ")+sizes[FMath::Clamp(info.SizeClass,0,4)],accent,x+125,details+38,body);
      const FString roles=FString::JoinBy(info.RoleTags,TEXT(" · "),[](const FName& tag){return tag.ToString();});
      DrawText(FitLabel(body,roles,width-133),FLinearColor::White,x+125,details+59,body);
-     DrawText(FString::Printf(TEXT("공격 %d문 · 요격 %d문 · 격납고 최대 %d"),info.AttackMountCount,info.PointDefenseCount,info.MaxHangarInstallations),FLinearColor::White,x+12,details+105,body);
-     Button("PracticeRole",TEXT("다음 함종"),x+width-110,details+108,100);
+     DrawText(FString::Printf(TEXT("공격 %d문 · 요격 %d문 · 격납고 최대 %d"),info.AttackMountCount,info.PointDefenseCount,info.MaxHangarInstallations),FLinearColor::White,x+12,details+101,body);
+     Button("PracticeRole",TEXT("다음 함종"),x+8,details+131,90);
+     Button("PracticePilot",TEXT("직접 조종"),x+width-108,details+131,100,true);
     }else{
      DrawText(TEXT("빔  즉시 판정     함포  직선 탄도     미사일  곡선 접근"),accent,x+8,details+38,body);
      auto* ship=pc->Selected.Get();if(ship){
@@ -157,6 +159,7 @@ bool AOVHUD::PracticeAction(FName action)
  else if(action=="PracticeAdvance")p->AdvancePractice();
  else if(action=="PracticeEquip")p->PracticeEquipment(p->PracticeGoalId()=="Reject");
  else if(action=="PracticeMore")p->bPracticeDetail=!p->bPracticeDetail;
+ else if(action=="PracticePilot")p->PilotPracticeRole();
  else if(action=="PracticeRole")p->PracticeRoleCard=(p->PracticeRoleCard+1)%FMath::Max(1,OVCalibration::GetHullIds().Num());
  else if(action=="PracticeHints"){
     p->bPracticeHints=!p->bPracticeHints;

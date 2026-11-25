@@ -160,6 +160,45 @@ def run():
     pc.select_ship(main);pc.set_target(enemy);pc.combat.request_fire(main);reach("전함 함포 발사")
     pc.select_ship(carrier);pc.set_target(enemy);pc.action("LaunchAircraft");reach("항모 편대 공격")
     pc.select_ship(flagship);hud.set_details_open(True);advance("초대형 구축전함 상세")
+    # Pilot cards remain available after the required objectives; they use the normal selection and command path.
+    initial=list(pc.ships)
+    hud.execute_ui_action("PracticeMore")
+    piloted={}
+    for _ in range(32):
+        hud.execute_ui_action("PracticePilot")
+        vessel=pc.selected
+        hull=str(vessel.hull_definition_id)
+        if hull in piloted:
+            check("함종 카드 한 바퀴 후 같은 함선 재선택",piloted[hull]==vessel)
+            break
+        piloted[hull]=vessel
+        if hull=="repair":
+            yield from capture("pilot-card")
+        before=len(pc.ships);hud.execute_ui_action("PracticePilot")
+        check("함종 카드 재선택·중복 방지 "+hull,len(pc.ships)==before and pc.selected==vessel)
+        hud.execute_ui_action("PracticeRole")
+    check("전체 16개 함종 카드에서 직접 지휘",len(piloted)==16 and len(pc.ships)==len(piloted)+1)
+    check("필수 편성 보존",all(t in list(pc.ships) for t in initial))
+    extra=[s for s in pc.ships if s not in initial]
+    def hull_radius(vessel):
+        half=vessel.systems.layout.local_half_extent
+        scale=vessel.get_actor_scale3d()
+        return u.Vector(half.x*scale.x,half.y*scale.y,half.z*scale.z).length()
+    min_gap=min((a.get_actor_location()-b.get_actor_location()).length()-hull_radius(a)-hull_radius(b)
+                for a in extra for b in pc.ships if a!=b)
+    report["optional_ship_minimum_surface_gap_cm"]=round(min_gap,1)
+    check("모든 추가 실습 함선의 배치 여유",min_gap>=195)
+    pc.select_ship(piloted["transport"])
+    pc.selected.set_destination(pc.selected.get_actor_location()+u.Vector(0,3000,0))
+    check("직접 조종한 수송선 이동 명령",pc.selected.has_destination)
+    pc.action("Stop")
+    check("직접 조종한 수송선 정지 명령",pc.selected.hold and not pc.selected.has_destination)
+    hud.execute_ui_action("PracticeReset")
+    check("장 재시작 후 추가 함선 정리",len(pc.ships)==len(initial) and all(not u.SystemLibrary.is_valid(s) for s in extra))
+    hud.execute_ui_action("PracticeMore");hud.execute_ui_action("PracticeRole");hud.execute_ui_action("PracticePilot")
+    guest=pc.selected
+    hud.execute_ui_action("PracticeIndex")
+    check("목록 복귀 후 카드 함선 정리",not u.SystemLibrary.is_valid(guest))
     ship,gunship,missileship,scout,beamship,enemy=begin(5);hud.execute_ui_action("InteriorToggle")
     yield from capture("facility-lesson")
     for kind in [getattr(u.OVFacilityType,key) for key in ("CORE","BRIDGE","ENGINE","WEAPON_CONTROL","LIFE_SUPPORT","AMMO","CAPACITOR","MISSILE_STORAGE","SHIELD_CONTROL","RADAR","INTERCEPTION","BOARDING","HANGAR","FIGHTER_CONTROL","RESOURCE_STORAGE","SECURITY")]:

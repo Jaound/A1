@@ -87,6 +87,7 @@ public:
     bool bPracticeHints = true;
     bool bPracticeDetail = false;
     int32 PracticeRoleCard=0;
+    bool PilotPracticeRole();
     static FString PracticeTitle(int32 Chapter);
     static FString PracticeSummary(int32 Chapter);
     static int32 CompletedPracticeMask();
@@ -110,6 +111,7 @@ private:
     int32 PracticeStockBefore=0, PracticeInventoryBefore=0, PracticeLaunchesBefore=0;
     bool bPracticeOrder=false;
     TSet<int32> PracticeWing;
+    TMap<FName,TWeakObjectPtr<AOVShip>> PracticeRoleShips;
     bool bPreparingBoardingLesson=false;
     TWeakObjectPtr<AOVShip> PracticeShip, PracticeEnemy;
 public:

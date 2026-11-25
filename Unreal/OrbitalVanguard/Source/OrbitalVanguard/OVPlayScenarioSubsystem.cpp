@@ -26,18 +26,19 @@ constexpr int32 FactionCount = 2;
 // D126 equipment is resolved from the hull definition. Trial deployment and
 // starting stocks are authored here independently of its combat statistics.
 // LimitSeconds defaults to 0 (disabled) to respect D126 18~26.9 min fleet battle duration.
+constexpr const TCHAR* FleetBattleObjective = TEXT("편성한 함대로 적 함대의 전투 능력을 무력화하세요.");
 const FOVPlaySceneDefinition Scenes[] = {
-    {TEXT("Fleet50"), TEXT("50코스트 함대전"), TEXT("호위 전력과 항공대로 적 함대를 무력화하세요."),
+    {TEXT("Fleet50"), TEXT("50코스트 함대전"), FleetBattleObjective,
      EOVPlaySceneKind::Fleet, 50, {{TEXT("carrier"),1,20},{TEXT("vector"),1},{TEXT("air_defense"),1},{TEXT("bastion"),2},{TEXT("corvette"),3},{TEXT("frigate"),1},{TEXT("repair"),1}}, true, 120.f, 0.f, EOVSpaceHazardKind::None},
-    {TEXT("Fleet100"), TEXT("100코스트 함대전"), TEXT("혼성 함대로 상대의 전투 능력을 무력화하세요."),
+    {TEXT("Fleet100"), TEXT("100코스트 함대전"), FleetBattleObjective,
      EOVPlaySceneKind::Fleet, 100, {{TEXT("corvette"),3}, {TEXT("frigate"),1}, {TEXT("vector"),1},
      {TEXT("bastion"),1}, {TEXT("battleship"),2}, {TEXT("air_defense"),1}, {TEXT("radar"),1},
      {TEXT("carrier"),1,20}, {TEXT("repair"),1}}, true, 120.f, 0.f, EOVSpaceHazardKind::None},
-    {TEXT("Fleet200"), TEXT("200코스트 함대전"), TEXT("초대형 주력함과 호위 함대로 상대를 무력화하세요."),
+    {TEXT("Fleet200"), TEXT("200코스트 함대전"), FleetBattleObjective,
      EOVPlaySceneKind::Fleet, 200, {{TEXT("corvette"),3}, {TEXT("frigate"),1}, {TEXT("vector"),1},
      {TEXT("bastion"),1}, {TEXT("dreadnought"),1}, {TEXT("air_defense"),1}, {TEXT("radar"),1},
      {TEXT("battleship"),1}, {TEXT("carrier"),1,20,4,100}, {TEXT("repair"),1}}, true, 120.f, 0.f, EOVSpaceHazardKind::None},
-    {TEXT("Fleet300"), TEXT("300코스트 함대전"), TEXT("두 초대형함과 혼성 호위 전력을 운용하세요."),
+    {TEXT("Fleet300"), TEXT("300코스트 함대전"), FleetBattleObjective,
      EOVPlaySceneKind::Fleet, 300, {{TEXT("corvette"),3}, {TEXT("frigate"),1}, {TEXT("vector"),1},
      {TEXT("bastion"),1}, {TEXT("dreadnought"),1}, {TEXT("battlecarrier"),1,20}, {TEXT("air_defense"),1},
      {TEXT("radar"),1}, {TEXT("missile_ship"),1}, {TEXT("repair"),1}}, true, 120.f, 0.f, EOVSpaceHazardKind::None},
@@ -250,7 +251,7 @@ void UOVPlayScenarioSubsystem::Clear()
 {
     ReleaseSortiePreview();
     if(!bApplyingSortie){Draft={};LastSortie={};}
-    PracticeChapter=INDEX_NONE; PracticeStep=0; bPracticeReady=false; PracticeWing.Reset(); PracticeShip.Reset(); PracticeEnemy.Reset();
+    PracticeChapter=INDEX_NONE; PracticeStep=0; bPracticeReady=false; PracticeWing.Reset(); PracticeRoleShips.Reset(); PracticeShip.Reset(); PracticeEnemy.Reset();
     if(Owner.IsValid())Owner->ResetShipOperations();
     for(auto& Wave:ArenaWaves){
         if(Wave.Shuttle.IsValid() && (!Owner.IsValid() || !Owner->Ships.Contains(Wave.Shuttle.Get())))Wave.Shuttle->Destroy();

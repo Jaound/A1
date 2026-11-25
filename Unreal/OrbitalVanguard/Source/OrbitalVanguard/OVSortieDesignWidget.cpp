@@ -139,6 +139,9 @@ int32 OVSortieParts::WeaponIllustration(FName Profile,bool bAntiShip)
 }
 FString OVSortieParts::WeaponName(FName Profile,bool bAntiShip)
 {
+    if(bAntiShip && !Profile.IsNone()){
+        return Profile.ToString().StartsWith(TEXT("D116_guided_"))?TEXT("대함 미사일 모듈 · 유도탄"):TEXT("대함 미사일 모듈 · 일반탄");
+    }
     const int32 Art=WeaponIllustration(Profile,bAntiShip);
     return Art==INDEX_NONE?TEXT("빈 장착점"):WeaponArt[Art].Label;
 }

@@ -1,5 +1,7 @@
 #include "OVPlayScenarioSubsystem.h"
 #include "OVController.h"
+#include "OVCalibration.h"
+#include "OVDevelopmentSubsystem.h"
 #include "OVHUD.h"
 #include "OVShip.h"
 #include "OVShipSystemsComponent.h"
@@ -175,12 +177,45 @@ bool UOVPlayScenarioSubsystem::StartPractice(AOVController* pc,int32 chapter)
        auto* tender=add("repair",0,{-6800,6500,2000});
        if(!tender||!GetWorld()->GetSubsystem<UOVLogisticsSubsystem>()->SetDevMaterials(tender,FVector(70,10,0))){pc->LeavePlayScenario();return false;}
     }
+    if(chapter==4)for(AOVShip* trial:pc->Ships)if(trial&&trial->bFriendly)PracticeRoleShips.Add(trial->HullDefinitionId,trial);
     if(chapter==1||chapter==7)AssignScenarioHeroes(*pc,0);
  }
  pc->SelectShip(PracticeShip.Get());pc->FrameEngagement();pc->bFollow=false;
  if(chapter==0||chapter==1||chapter==4)pc->ClearSelection();
  pc->bSimulationPaused=false;
  BeginPracticeStep();return true;
+}
+bool UOVPlayScenarioSubsystem::PilotPracticeRole(){
+ auto* pc=Owner.Get();
+ if(!pc||PracticeChapter!=4||!bPracticeDetail||!bPracticeHints)return false;
+ static const TArray<FName> hulls=OVCalibration::GetHullIds();
+ if(!hulls.IsValidIndex(PracticeRoleCard))return false;
+ const FName hull=hulls[PracticeRoleCard];
+ AOVShip* pilot=nullptr;
+ if(const auto* previous=PracticeRoleShips.Find(hull)){
+    pilot=previous->Get();
+    if(!IsValid(pilot)||!pilot->bFriendly||pilot->Systems->bWrecked||pilot->Systems->bNeutral||pc->Combat->IsDeparted(pilot)){
+       pc->LastAction=TEXT("이 실습 함선은 조종할 수 없습니다. 장을 다시 시작하면 복구됩니다.");return false;
+    }
+ }else{
+    // Keep the original escort, its marker and the firing lanes clear. Every candidate uses the same hull clearance as the sandbox.
+    const double radius=OVCalibration::GetHullWorldHalfExtent(hull).Size();
+    TOptional<FVector> freeStation;
+    for(int32 row=0;row<5&&!freeStation.IsSet();++row){
+       for(int32 lane=0;lane<7;++lane){
+           const int32 side=(lane+1)/2*(lane%2?-1:1);
+           const FVector site(-46000-row*15000,side*15000,2000);
+           if(UOVDevelopmentSubsystem::HasPlacementClearance(*pc,site,radius)){freeStation=site;break;}
+       }
+    }
+    if(!freeStation.IsSet()){pc->LastAction=TEXT("실습 함선 배치 공간이 막혔습니다. 아군 후방의 함선을 옮겨 주세요.");return false;}
+    pilot=Spawn(*pc,{hull,1,8,2,2},0,pc->Ships.Num(),freeStation);
+    if(!pilot){pc->LastAction=TEXT("실습 함선을 준비할 수 없습니다.");return false;}
+    pilot->SetAutomation(false,false);pilot->StopMovement();
+    PracticeRoleShips.Add(hull,pilot);
+ }
+ pc->SelectShip(pilot);pc->CameraFocus=pilot->GetActorLocation();pc->UpdateCamera();
+ return true;
 }
 void UOVPlayScenarioSubsystem::BeginPracticeStep(){
  auto* pc=Owner.Get();if(!pc||!PracticeShip.IsValid()||PracticeStep>=PracticeStepCount())return;
