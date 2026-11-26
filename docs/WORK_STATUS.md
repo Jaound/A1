@@ -1,4 +1,13 @@
-## 현재 · 기지 건설 2단계
+## 현재 · 기지 운영 4단계 검증 완료 · 2026-11-26
+
+개발 브랜치 `codex/phase1-playground`(기준 `5405851` 이후), 기획 `work@d07deb5`. 기지 운영 4단계(연구·건조·출격·복귀·접안·수리·호환 무장/시설 개조·재출항·동시 접안·저장/복원)와 공유 전장 회귀 검증을 SSD 원본 `I:/2026_2/GDD/A1`에서 마무리했다.
+
+- **이번 실행 수치**: Win64 Development Editor 빌드 성공, C++ 자동 검사 `170/170`(경고 포함 50, 실패 0), 기지 PIE `ValidateBaseStage4` `110/110` · `ValidateBaseStage3` `41/41` · `ValidateBaseTrial` `83/83`, 1280×800 UI 인수 흐름 PIE `20/20`(초계함 건조→출격→함대 선택→표준 도크 복귀·정박→시험 손상 20%→선체 수리 `27`→무장 교체 `40`→재출항까지 동일 Actor·`BaseVesselId` 유지, 공유 전장 `(3,0,0)` 차단→이동→같은 칸 15초 통로 예약). 과거 복사본 `164/169`(5건 실패)는 `PlayUIR2` 자료 누락에 따른 환경 차이였으며, 이전 SSD 원본(`ca07e0f`) `170/170`·`110/110` 기록과 일치한다.
+- **신규 Windows 패키지**: `I:/2026_2/GDD/OrbitalVanguardTests/BaseStage4Final/Windows/OrbitalVanguard.exe` (`-UserDir=I:/2026_2/GDD/OrbitalVanguardTests/BaseStage4Final_UserData`, 바로 실행 배치 `I:/2026_2/GDD/PlayBaseStage4Final.bat`). DX11 1280×800 `BaseTrial` 단독 부팅 0오류·0VFX경고 확인.
+- **알려진 제한·미확인 항목**: 탑승 병력·함재기를 보유한 운영 함선의 시험 저장 제한은 알려진 제약이며(저장 거부·사유 안내·기존 슬롯 보존), 실제 접안·재출항 중 영웅·병력·함재기 보존은 정상 동작한다. 인원 지원소는 정박함 결원 운영 승무원 충원(1인당 일반 10), 아카데미는 세력 영웅 명단 연결까지 구현됐다. 자동화 셸 창 격리로 신규 `BaseStage4Final` 독립 창에서의 물리 마우스·키보드 직접 조작, 전체 함종별 도크 통과, 인원 지원소·아카데미 실물 마우스 조작은 사용자 직접 확인 대상으로 남겼다. [실행·검증·제한 상세](validation/BaseTrial4/README.md) · [진행 기록](CODEX_PROGRESS.md)
+- **다음 재개 지점**: 기지 쉴드, 방어전, 도크 피격 비상 출항, 성계 간 수송, 캠페인 연동.
+
+## 완료 이력 · 기지 건설 2단계
 
 기획 `40bba6e`, 시작 `08fbd9d`. 시간·고도 입력과 허브 단면을 교정하고 조선소·표준 도크에 원본 메시, 통로 연결면, 50m 출입 여유와 외곽 경로 판정을 연결했다. [조작법](BASE_BUILD_CHECKPOINT.md) · [소켓·출입로·배포 검증](validation/BaseTrial2/README.md). 다음 운영 작업은 소형함 조선 주문과 도크 실제 접안이다.
 

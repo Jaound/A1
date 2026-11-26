@@ -1,5 +1,7 @@
 # 기지 건설 시험장 · 3단계
 
+조선소·도크·연구소를 운용하려면 [4단계 운영 시험](validation/BaseTrial4/README.md)을 참고한다.
+
 기획 기준 `91a15dbdf5a4d75b4cf3e7be71bd6dafd1c92f8b`, 시작 코드 `85ff567`. 중앙 코어와 19종 카탈로그의 치수·비용·시간·한도를 [기지 통합 명세](https://github.com/Jaound/A1/blob/91a15dbdf5a4d75b4cf3e7be71bd6dafd1c92f8b/docs/01_design/strategy/BASE_MASTER_GDD.md)에 맞춘다. 건설 시험장은 코어 I와 아군 초계함 한 척으로 시작한다.
 
 ## 시험장 시작하기

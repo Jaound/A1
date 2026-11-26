@@ -134,6 +134,16 @@ def run():
     verify("새 인스턴스에서 온라인 함선 복원",ok(station.load_trial()) and station.find_vessel(guid) and station.vessel_phase(guid)==3)
     check("재호출로 물량 증가 없음",ok(station.load_trial()) and len(pc.get_editor_property("ships"))==2)
 
+    scout=ship()
+    other=station.find_vessel(guid)
+    check("두 척의 서로 다른 정박 위치 동시 예약",station.dock_vessel(4,other) and station.dock_vessel(4,scout))
+    second=station.vessel_id(scout)
+    check("예약 선박 ID 분리",station.vessel_phase(guid)==4 and station.vessel_phase(second)==4)
+    for _ in range(160):
+        advance(4)
+        if all(station.vessel_phase(g)==6 for g in (guid,second)):break
+    check("두 척을 실제 다른 위치에 정박",all(station.vessel_phase(g)==6 for g in (guid,second)) and (other.get_actor_location()-scout.get_actor_location()).length()>100)
+
     check("경계 검사 초기화",pc.start_play_scenario("BaseTrial"))
     station=base()
     verify("경계 검사 편성",station.prepare_operations_trial())

@@ -12,12 +12,40 @@
 
 ## 운영 수치와 적용 경계
 
-- 함체 가격은 기존 물류 함가 데이터를 참조한다. 체급별 건조 45/120/240/480게임초와 출입 5/8/12/20초는 시험 수치다. 같은 주문이 작업칸을 여러 개 차지해도 건조 시간은 동일하다.
+- 함체 가격은 기존 물류 함가 데이터를 참조한다. 체급별 건조 45/120/240/480게임초는 시험 수치다. 출입 5/8/12/20초는 기지 통합 명세 6.2의 접안 초안이다. 같은 주문이 작업칸을 여러 개 차지해도 건조 시간은 동일하다.
 - 작은 조선소부터 작업칸 1/2/4개를 사용하며 초대형 조선소는 초대형 1척 또는 대형 2척을 받는다. 철거·단절 시 진행 중인 작업과 베이 예약을 확인한다.
-- 수리 항목은 선체·장갑·시설·무장이다. 인원 지원소의 충원은 별도 주문으로 운영 승무원 1인당 일반 자원 10을 쓰는 시험 단가다. 아카데미는 기존 세력 영웅 명단으로 연결한다. 영입·훈련 경제는 후속이다.
-- 무장 교체는 일반 장착점에 있는 무장과 같은 티어·계열의 호환 장비를 제안한다. 일반 40, 15게임초는 시험 수치다. 기존 함체의 손상과 탈거 장비를 유지한다.
-- 연구소 등급 증설 비용·시간과 저장고/미사일 일부 연구 단가는 시험 수치다. 방어전, 도크 피격 시 비상 출항, 성계 간 수송은 후속이다.
+- 수리 항목은 선체·장갑·시설·무장이다. 인원 지원소의 충원은 별도 주문으로 정박함의 결원 시설 운영 승무원을 1명씩 채우며(시험 단가 일반 자원 10), 일반 강습·경비 분대 신규 보충은 후속이다. 아카데미는 기존 세력 영웅 명단 패널로 연결하며 영입·훈련 경제는 후속이다.
+- 무장 교체는 일반 장착점에 있는 무장과 같은 티어·계열의 호환 장비를 제안한다. 일반 40, 15게임초는 시험 수치다. 탈거 장비는 기지 재고에 남고 같은 장비를 나중에 장착하면 보관분부터 꺼낸다. 교체 후 무장의 현재 HP는 기존 장착 규칙을 따르므로 더 큰 최대 HP의 장비를 달면 별도 수리 여지가 생긴다. 시설 재배치는 슬롯 허용 조건을 만족하는 두 시설을 교환한다. 코어·엔진·함교는 고정하고, 시설 HP·재건 상태·운영 인원과 새 배치를 저장한다. 두 개조 모두 대응 체급의 조선소 작업칸을 작업 완료까지 차지한다.
+- 연구소 등급 증설 비용·시간과 저장고/미사일 일부 연구 단가는 시험 수치다. 기지 쉴드, 방어전, 도크 피격 시 비상 출항, 성계 간 수송, 캠페인 연동은 후속이다.
 
 ## 검증 기록
 
-Win64 Development Editor 빌드 성공. 기존 실행 중인 게임을 보존하기 위해 같은 SSD의 소스 복사본에서 링크했다. 새 통합 검사 도구는 `Unreal/OrbitalVanguard/Tools/ValidateBaseStage4.py`다. 각 실행 결과는 지정한 시험 사용자 폴더의 `Saved/Validation/BaseTrial4/PIE.json`에 저장한다.
+### 이번 실행 (2026-11-26 · SSD 원본 `I:/2026_2/GDD/A1`)
+
+- **기준**: 개발 브랜치 `codex/phase1-playground` (`5405851` 이후), 기획 `work@d07deb5`. `docs/validation/PlayUIR2` 자료가 포함된 SSD 원본 프로젝트에서 Win64 Development Editor 빌드를 확인했다.
+- **C++ 자동 검사 (`Automation RunTests OrbitalVanguard`, `-NullRHI`)**: **170/170 통과** (`succeeded=120`, `succeededWithWarnings=50`, `failed=0`, `notRun=0`). `OrbitalVanguard.Base` 3종(`OperationalBerths`, `Stage3GrowthAndNetwork`, `TrialNetwork`)과 `PlayUIR2` 5종 모두 통과했다.
+- **기지 PIE 검사**: `Unreal/OrbitalVanguard/Tools/ValidateBaseStage4.py` **110/110**, `ValidateBaseStage3.py` **41/41**, `ValidateBaseTrial.py` **83/83** 통과. 결과는 `Saved/Validation/BaseTrial4/PIE.json`·`BaseTrial3/PIE.json`·`BaseTrial/PIE.json`에 저장됐다. 동시 접안(두 척의 서로 다른 정박 위치 및 분리된 `BaseVesselId`), 출입구 차단, 시설 단절 후 복구 재개, 공사·운영 작업 저장/복원, 영웅 1명·병력 4명·함재기 4기의 접안·재출항 보존을 재확인했다.
+- **1280×800 UI 인수 흐름 PIE 검사**: **20/20 통과** (캡처 7장 시각 검수 완료). 타이틀 **임무 선택 → 기지 건설 시험장 → 운영 → 시험 · 운영 편성 준비** 진입, 기지공학 II 정상 연구(`6000→5200`, 고급 `1000→900`, 240초 완료)와 자원 저장고 II 시험 즉시 해금(`5200` 유지) 구분, 소형 조선소 초계함 주문(`5200→4750`)→준공→출격→함대 직접 선택(`초계함 02`), 표준 도크 복귀·정박→시험 손상 20%→선체 수리 견적 `27`(`4750→4723`)→호환 무장 교체 `40`(`4723→4683`, 피해 `30→80`, 주기 `1.8→3.8초`, 기지 보관 장비 `1개`)→재출항까지 **동일 Actor와 동일 `BaseVesselId`(`85275A94446778CA4A36CB9B8FF477A4`) 유지**를 확인했다. 이어 공유 전장 회귀에서 코어 앞 `(3,0,0)` `초계함 01` 배치 시 건설 차단 → 함대 이동 → 같은 `(3,0,0)` 칸 15초 통로 예약을 확인했다.
+- **신규 Windows Development 패키지**: `I:/2026_2/GDD/OrbitalVanguardTests/BaseStage4Final/Windows/OrbitalVanguard.exe` (별도 `-UserDir=I:/2026_2/GDD/OrbitalVanguardTests/BaseStage4Final_UserData`, 1,078패키지 쿠킹). DX11 `1280×800` `BaseTrial` 단독 부팅 로그에서 `ControlRange` 로드(7.68초), 치명 오류 0건, 선택적 VFX 누락 경고 0건을 확인했다.
+
+### 과거 검증 기록 대조
+
+- 4단계 중단 시점(`4ff7f56`)의 복사본 자동 검사 `164/169`(5건 실패)는 복사본에 `docs/validation/PlayUIR2` 자료가 빠져 발생한 환경 차이였으며, 이후 SSD 원본(`ca07e0f`)에서 C++ `170/170`, 기지 회귀 PIE `110/110` 통과 기록이 확인됐다.
+- 과거 검증 패키지(`I:/2026_2/GDD/OrbitalVanguardTests/BaseStage4Verified/Windows/OrbitalVanguard.exe`)의 PIE 상세 기록은 `I:/2026_2/GDD/Archived-Artifacts/검증 기록/기지 4단계/Stage4Combined/Saved/Validation/BaseTrial4/PIE.json`에 보존돼 있다.
+
+## 재현
+
+SSD 프로젝트 루트(`I:/2026_2/GDD/A1/Unreal/OrbitalVanguard`)에서 UE 5.8.4의 `Build.bat OrbitalVanguardEditor Win64 Development -Project=<프로젝트>/OrbitalVanguard.uproject -NoUBTMakefiles -WaitMutex`로 빌드한다. 에디터에서 `Automation RunTests OrbitalVanguard`로 전체 규칙(또는 `OrbitalVanguard.Base`로 기지 규칙)을 검사한다. `ControlRange`에서 에디터 콘솔 `py <프로젝트>/Tools/ValidateBaseStage4.py`를 실행하면 실제 PIE 월드에서 시나리오를 새로 시작한다. 비교를 위해 `ValidateBaseStage3.py`, `ValidateBaseTrial.py`를 각각 새 에디터 프로세스에서 실행한다.
+
+최신 Windows 패키지는 `I:/2026_2/GDD/OrbitalVanguardTests/BaseStage4Final/Windows/OrbitalVanguard.exe`다. 타이틀의 임무 목록을 사용하거나 실행 인수 `-OVPlayScene=BaseTrial -dx11 -windowed -ResX=1280 -ResY=800 -UserDir="I:/2026_2/GDD/OrbitalVanguardTests/BaseStage4Final_UserData"`(또는 바로 실행 배치 `I:/2026_2/GDD/PlayBaseStage4Final.bat`)로 시험장을 바로 연다.
+
+## 직접 플레이 및 미확인 범위
+
+- **과거 검증본(`BaseStage4Verified` 이전 패키지) 직접 플레이 이력**: 1280×800 DX11 패키지에서 운영 편성 준비, 기지공학 II 정상 연구 예약(일반 800·고급 100 차감), 3배속 진행과 연구 완료, 소형 조선소의 초계함 주문(일반 450), 건조 대기와 출항, 표준 도크 복귀·정박, 시험 손상 20%, 선체 수리 견적 27(`4,750→4,723`), 무장 교체(`4,683`, 피해 `30→80`, 주기 `1.8→3.8초`), 같은 함선 재출항, `Space` 정지 후 기지 저장을 마우스·키보드로 확인한 기록이 있다.
+- **신규 `BaseStage4Final` 미확인 항목**: 자동화 실행 셸의 데스크톱 창 격리 특성상 신규 `BaseStage4Final` 독립 패키지 창에서의 **물리 마우스·키보드 직접 클릭/조작**은 별도 실행하지 못했으며(PIE 1280×800 UI 흐름 20/20 + 독립 패키지 DX11 부팅 로그 검증으로 대체), 사용자 데스크톱에서 `I:/2026_2/GDD/PlayBaseStage4Final.bat`으로 바로 직접 확인할 수 있다. 전체 함종별 도크 통과와 인원 지원소·아카데미의 실물 마우스 조작도 후속 직접 확인 대상이다.
+
+## 알려진 제한
+
+- **탑승 인원·함재기 보유 운영 함선의 시험 저장 제한 (알려진 제약)**: 함재기나 선내 인원을 태운 기지 운영 함선은 시험 저장(`SaveTrial`)을 지원하지 않으며, 저장 시 사유를 안내하고 기존 슬롯을 보존한다. 이는 실제 접안·출항 중 탑승 상태가 사라지는 결함과 별개이며, 일반 접안·재출항 자체는 처음 배정한 `Actor`와 `BaseVesselId`를 그대로 유지하면서 영웅·병력·함재기 상태를 보존한다(`ValidateBaseStage4.py`에서 검증 완료).
+- 조선소에서는 현재 시험 함가와 시간을 사용한다. 시설 개조는 가능한 재배치 한 쌍을 제안하는 방식이며 자유 배치 편집기는 후속이다.
+- 이전 빌드 로그에 남았던 일부 선택적 추진·쉴드 VFX 패키지 누락 경고는 신규 `BaseStage4Final`(1,078패키지) DX11 부팅 로그에서 0건으로 해소됐다.
